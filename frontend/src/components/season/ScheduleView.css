@@ -1,0 +1,205 @@
+.schedule-container {
+  font-family: "Inter", sans-serif;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.nav-button:hover:not(:disabled) {
+  background-color: #444;
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.week-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.week-label {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.week-select {
+  background-color: #252525;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.week-select:hover {
+  border-color: #666;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.game-card {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #333;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+  border-color: #444;
+}
+
+.game-header {
+  background-color: #252525;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+}
+
+.game-date {
+  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.game-status {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.status-scheduled {
+  background-color: #333;
+  color: #aaa;
+}
+
+.status-final {
+  background-color: #1a3a1a;
+  color: #4caf50;
+  border: 1px solid #2e7d32;
+}
+
+.game-content {
+  padding: 16px;
+}
+
+.team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-logo-placeholder {
+  width: 32px;
+  height: 32px;
+  background-color: #333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+}
+
+.team-name-display {
+  font-weight: 600;
+  color: #fff;
+  font-size: 16px;
+}
+
+.team-score {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  width: 40px;
+  text-align: right;
+}
+
+.score-winner {
+  color: #4caf50;
+}
+
+.score-loser {
+  color: #aaa;
+}
+
+.game-actions {
+  padding: 12px 16px;
+  border-top: 1px solid #333;
+  display: flex;
+  justify-content: center;
+}
+
+.watch-button {
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.watch-button:hover {
+  background-color: #444;
+}
+
+.no-games {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+}

@@ -1,0 +1,24 @@
+from pydantic import BaseModel
+from typing import Optional
+
+class TeamBase(BaseModel):
+    name: str
+    city: str
+    abbreviation: str
+    conference: str
+    division: str
+    wins: int = 0
+    losses: int = 0
+    ties: int = 0
+    logo_url: Optional[str] = None
+    primary_color: Optional[str] = None
+    secondary_color: Optional[str] = None
+
+class TeamCreate(TeamBase):
+    pass
+
+class Team(TeamBase):
+    id: int
+
+    class Config:
+        orm_mode = True

@@ -1,0 +1,67 @@
+{
+  "timestamp": "2025-11-24T13:52:03.398447",
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "avg_response_time_ms": 1693.5716666666667
+  },
+  "results": [
+    {
+      "test": "1.2 Get All Teams",
+      "url": "http://localhost:8000/api/teams",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "response_time_ms": 44.192,
+      "data_count": 32,
+      "sample_data": "[{'id': 1, 'city': 'Arizona', 'name': 'Cardinals', 'abbreviation': 'ARI', 'conference': 'NFC', 'division': 'West', 'wins': 0, 'losses': 0}, {'id': 2, 'city': 'Atlanta', 'name': 'Falcons', 'abbreviatio"
+    },
+    {
+      "test": "1.3a Get Team by ID (Valid)",
+      "url": "http://localhost:8000/api/teams/1",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "response_time_ms": 2016.038,
+      "sample_data": "{'id': 1, 'city': 'Arizona', 'name': 'Cardinals', 'abbreviation': 'ARI', 'conference': 'NFC', 'division': 'West', 'wins': 0, 'losses': 0}"
+    },
+    {
+      "test": "1.3b Get Team by ID (Invalid)",
+      "url": "http://localhost:8000/api/teams/999",
+      "status_code": 404,
+      "expected": 404,
+      "success": true,
+      "response_time_ms": 2021.893,
+      "sample_data": "{'detail': 'Team not found'}"
+    },
+    {
+      "test": "1.4 Get Team Roster",
+      "url": "http://localhost:8000/api/teams/1/roster",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "response_time_ms": 2028.401,
+      "data_count": 52,
+      "sample_data": "[{'id': 1, 'first_name': 'Pat', 'last_name': 'Brown', 'position': 'QB', 'jersey_number': 45, 'overall_rating': 80, 'age': 27, 'experience': 3}, {'id': 2, 'first_name': 'Chuck', 'last_name': 'Garcia', "
+    },
+    {
+      "test": "1.5a Get Player by ID (Valid)",
+      "url": "http://localhost:8000/api/players/1",
+      "status_code": 200,
+      "expected": 200,
+      "success": true,
+      "response_time_ms": 2028.6339999999998,
+      "sample_data": "{'id': 1, 'first_name': 'Pat', 'last_name': 'Brown', 'position': 'QB', 'jersey_number': 45, 'overall_rating': 80, 'age': 27, 'experience': 3, 'height': None, 'weight': None, 'team_id': 1, 'speed': 50,"
+    },
+    {
+      "test": "1.5b Get Player by ID (Invalid)",
+      "url": "http://localhost:8000/api/players/9999",
+      "status_code": 404,
+      "expected": 404,
+      "success": true,
+      "response_time_ms": 2022.2720000000002,
+      "sample_data": "{'detail': 'Player not found'}"
+    }
+  ]
+}
