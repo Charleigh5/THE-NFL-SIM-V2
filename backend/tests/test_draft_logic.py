@@ -7,6 +7,8 @@ from app.models.draft import DraftPick
 class MockPlayer:
     def __init__(self, id, position, overall_rating, is_rookie=True, team_id=None):
         self.id = id
+        self.first_name = "Mock"
+        self.last_name = "Player"
         self.position = position
         self.overall_rating = overall_rating
         self.is_rookie = is_rookie
@@ -18,6 +20,7 @@ class MockPick:
         self.team_id = team_id
         self.pick_number = pick_number
         self.player_id = None
+        self.round = 1
 
 @pytest.fixture
 def mock_db():

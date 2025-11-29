@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { seasonApi } from "../services/season";
 import type { Season } from "../types/season";
+import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import "./OffseasonDashboard.css";
 
 const OffseasonDashboard: React.FC = () => {
@@ -69,12 +70,24 @@ const OffseasonDashboard: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="offseason-dashboard">Loading...</div>;
+  if (loading)
+    return (
+      <div className="offseason-dashboard">
+        <LoadingSpinner text="Loading offseason data..." size="large" />
+      </div>
+    );
+
   if (!season)
     return <div className="offseason-dashboard">No active season.</div>;
 
   return (
     <div className="offseason-dashboard">
+      {processing && (
+        <div className="loading-overlay">
+          <LoadingSpinner text="Processing..." size="large" color="white" />
+        </div>
+      )}
+
       <h1>Offseason Dashboard</h1>
       <div className="season-info">
         <h2>{season.year} Offseason</h2>

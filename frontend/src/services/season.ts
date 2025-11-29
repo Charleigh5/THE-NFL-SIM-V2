@@ -4,8 +4,11 @@ import type {
   Game,
   TeamStanding,
   WeekSimulationResult,
+  SeasonSummary,
 } from "../types/season";
 import type { PlayoffMatchup } from "../types/playoff";
+import type { LeagueLeaders } from "../types/stats";
+import type { TeamNeed, Prospect, DraftPickSummary } from "../types/offseason";
 
 export const seasonApi = {
   // Initialize a new season
@@ -22,6 +25,12 @@ export const seasonApi = {
   // Get current active season
   getCurrentSeason: async (): Promise<Season> => {
     const response = await api.get("/api/season/current");
+    return response.data;
+  },
+
+  // Get season summary
+  getSeasonSummary: async (): Promise<SeasonSummary> => {
+    const response = await api.get("/api/season/summary");
     return response.data;
   },
 
@@ -95,11 +104,37 @@ export const seasonApi = {
     await api.post(`/api/season/${seasonId}/offseason/start`);
   },
 
-  simulateDraft: async (seasonId: number): Promise<void> => {
-    await api.post(`/api/season/${seasonId}/draft/simulate`);
+  simulateDraft: async (seasonId: number): Promise<DraftPickSummary[]> => {
+    const response = await api.post(`/api/season/${seasonId}/draft/simulate`);
+    return response.data;
   },
 
   simulateFreeAgency: async (seasonId: number): Promise<void> => {
     await api.post(`/api/season/${seasonId}/free-agency/simulate`);
+  },
+
+  getTeamNeeds: async (
+    seasonId: number,
+    teamId: number
+  ): Promise<TeamNeed[]> => {
+    const response = await api.get(
+      `/api/season/${seasonId}/offseason/needs/${teamId}`
+    );
+    return response.data;
+  },
+
+  getTopProspects: async (
+    seasonId: number,
+    limit: number = 50
+  ): Promise<Prospect[]> => {
+    const response = await api.get(
+      `/api/season/${seasonId}/offseason/prospects?limit=${limit}`
+    );
+    return response.data;
+  },
+
+  getLeagueLeaders: async (seasonId: number): Promise<LeagueLeaders> => {
+    const response = await api.get(`/api/season/${seasonId}/leaders`);
+    return response.data;
   },
 };

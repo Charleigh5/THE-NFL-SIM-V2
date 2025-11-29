@@ -1,0 +1,91 @@
+.team-needs {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1rem;
+  color: white;
+  border: 1px solid #333;
+}
+
+.team-needs h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.needs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.need-card {
+  background: #2a2a2a;
+  padding: 0.75rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+}
+
+.need-card.high-need {
+  border-color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.need-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.need-pos {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.need-badge {
+  background: #f44336;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.need-counts {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.count-item .label {
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.count-item .value {
+  font-weight: bold;
+}
+
+.need-progress {
+  height: 6px;
+  background: #444;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.need-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}

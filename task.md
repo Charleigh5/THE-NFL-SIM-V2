@@ -88,32 +88,145 @@
 
 ## Phase 6: Testing, Polish & Advanced Features
 
-- [/] **6.1: Comprehensive Testing & Verification**
+### **6.1: Comprehensive Testing & Verification** [IN PROGRESS]
 
-  - [x] Run and verify draft logic tests
-  - [x] Create playoff service tests (6/6 passing)
-  - [x] Create comprehensive offseason service tests (11/11 passing)
-  - [ ] Manual testing: Playoff flow
-  - [ ] Manual testing: Offseason flow
-  - [ ] Run all verification scripts
+#### Automated Testing ✅ COMPLETE
 
-- [/] **6.2: Technical Debt & Code Quality**
+- [x] Run and verify draft logic tests
+- [x] Create playoff service tests (6/6 passing)
+- [x] Create comprehensive offseason service tests (11/11 passing)
+- [x] Fix SQLAlchemy deprecation warning (`backend/app/models/base.py`)
 
-  - [x] Fix SQLAlchemy deprecation warning (`backend/app/models/base.py`)
-  - [ ] Fix Pydantic deprecation warnings (use `ConfigDict`)
-  - [ ] Add database indexes for performance
-  - [ ] Improve API error handling
-  - [ ] Resolve all linting errors
+#### Manual Testing Flow
 
-- [ ] **6.3: Quality of Life Improvements**
+- [ ] **Manual Test: Full Season Simulation**
 
-  - [ ] Create `LoadingSpinner` component
-  - [ ] Enhance `SeasonDashboard` (progress indicator, quick actions)
-  - [ ] Enhance `OffseasonDashboard` (draft board preview, needs analysis)
-  - [ ] Add `GET /api/season/summary` endpoint
-  - [ ] Add `GET /api/team/{team_id}/needs` endpoint
+  - [ ] Initialize a new season via API
+  - [ ] Simulate all 18 weeks of regular season
+  - [ ] Verify standings calculation is correct
+  - [ ] Check game results are persisted correctly
+  - [ ] Document any issues found
 
-- [ ] **6.4: Advanced Features (Optional)**
-  - [ ] Multi-season franchise mode (player retirement, age curves)
-  - [ ] Interactive draft room UI
-  - [ ] Advanced player development system
+- [ ] **Manual Test: Playoff Flow**
+
+  - [ ] Verify playoff bracket generation after regular season
+  - [ ] Test Wild Card round simulation
+  - [ ] Test Divisional round advancement and reseeding
+  - [ ] Test Conference Championship advancement
+  - [ ] Test Super Bowl simulation
+  - [ ] Verify correct champion is declared
+  - [ ] Check playoff stats are tracked
+
+- [ ] **Manual Test: Offseason Flow**
+
+  - [ ] Test contract expiration processing
+  - [ ] Verify draft order generation (worst to best)
+  - [ ] Test rookie class generation (224 players)
+  - [ ] Simulate full draft (7 rounds, 32 teams)
+  - [ ] Test free agency roster filling
+  - [ ] Verify all teams have 53 players post-offseason
+  - [ ] Test transition to new season
+
+- [ ] **Run All Verification Scripts**
+  - [ ] `backend/test_base_import.py`
+  - [ ] `backend/verify_player_columns.py`
+  - [ ] Review output and document findings
+
+### **6.2: Technical Debt & Code Quality** [NEXT PRIORITY]
+
+#### Backend Code Quality
+
+- [ ] **Fix Pydantic Deprecation Warnings**
+
+  - [ ] Audit all models using Pydantic v1 style config
+  - [ ] Update to use `ConfigDict` (Pydantic v2)
+  - [ ] Test that serialization still works correctly
+  - [ ] Run tests to verify no regressions
+
+- [ ] **Add Database Indexes**
+
+  - [ ] Add index on `Player.team_id` for faster roster queries
+  - [ ] Add index on `Game.season_id` and `Game.week` for schedule queries
+  - [ ] Add index on `PlayoffMatchup.season_id` for playoff bracket
+  - [ ] Add composite index on `DraftPick.season_id` + `DraftPick.round`
+  - [ ] Create migration file for indexes
+  - [ ] Test query performance improvements
+
+- [ ] **Improve API Error Handling**
+  - [ ] Add try-catch blocks to all endpoint handlers
+  - [ ] Return proper HTTP status codes (400, 404, 500)
+  - [ ] Add error response models
+  - [ ] Log errors with sufficient context
+  - [ ] Test error cases
+
+#### Frontend Code Quality
+
+- [ ] **Resolve All Linting Errors**
+  - [ ] Fix ESLint warnings in React components
+  - [ ] Fix TypeScript type errors
+  - [ ] Fix markdown linting issues
+  - [ ] Configure pre-commit hooks (optional)
+
+### **6.3: Quality of Life Improvements** [UX POLISH]
+
+#### UI Components
+
+- [x] **Create `LoadingSpinner` Component**
+
+  - [x] Design spinner styles (`LoadingSpinner.css`)
+  - [x] Create reusable React component
+  - [x] Add size variants (small, medium, large)
+  - [x] Add optional loading text prop
+
+- [x] **Enhance `SeasonDashboard`**
+
+  - [x] Add season progress indicator (Week X of 18)
+  - [ ] Add quick action buttons (Simulate Week, View Playoffs)
+  - [ ] Display current league leader stats
+  - [ ] Add season summary card
+  - [x] Improve loading states
+
+- [x] **Enhance `OffseasonDashboard`**
+  - [ ] Add draft board preview (top prospects)
+  - [ ] Show team needs analysis
+  - [ ] Display salary cap information
+  - [ ] Add offseason timeline/checklist
+  - [x] Improve free agency UI (Added loading/processing states)
+
+#### API Enhancements
+
+- [x] **Add `GET /api/season/summary` Endpoint**
+
+  - [x] Return current season status
+  - [ ] Include playoff bracket if applicable
+  - [ ] Return league leaders (passing, rushing, receiving)
+  - [ ] Add team records and standings
+  - [x] Test endpoint
+
+- [ ] **Add `GET /api/team/{team_id}/needs` Endpoint**
+  - [ ] Analyze roster by position
+  - [ ] Calculate starter quality scores
+  - [ ] Return priority positions to draft
+  - [ ] Test with various team configurations
+
+### **6.4: Advanced Features (Optional)** [FUTURE WORK]
+
+- [ ] **Multi-Season Franchise Mode**
+
+  - [ ] Player retirement logic (age-based)
+  - [ ] Age curves for attribute progression/regression
+  - [ ] Hall of Fame tracking
+  - [ ] Career statistics preservation
+
+- [ ] **Interactive Draft Room UI**
+
+  - [ ] Live draft board with prospect cards
+  - [ ] Team needs overlay
+  - [ ] Mock draft simulator
+  - [ ] Trade draft pick functionality
+
+- [ ] **Advanced Player Development**
+  - [ ] Position-specific training programs
+  - [ ] Injury system with recovery
+  - [ ] Player morale and chemistry
+  - [ ] Coaching staff influence on development

@@ -14,6 +14,11 @@ from app.services.week_simulator import WeekSimulator
 from app.services.playoff_service import PlayoffService
 from app.services.offseason_service import OffseasonService
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
+from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary
+from app.schemas.stats import LeagueLeaders, PlayerLeader
+from app.models.stats import PlayerGameStats
+from app.models.player import Player
+from sqlalchemy import func, desc
 
 
 router = APIRouter(prefix="/api/season", tags=["season"])
@@ -55,6 +60,42 @@ class GameResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class SeasonSummary(BaseModel):
+    """Schema for season summary."""
+    season: SeasonResponse
+    total_games: int
+    games_played: int
+    completion_percentage: float
+
+
+@router.get("/summary", response_model=SeasonSummary)
+def get_season_summary(db: Session = Depends(get_db)):
+    """
+    Get a summary of the current active season.
+    """
+    season = db.query(Season).filter(Season.is_active == True).first()
+    if not season:
+        raise HTTPException(status_code=404, detail="No active season found")
+    
+    # Calculate stats
+    total_games = db.query(Game).filter(Game.season_id == season.id).count()
+    games_played = db.query(Game).filter(
+        Game.season_id == season.id, 
+        Game.is_played == True
+    ).count()
+    
+    completion = 0.0
+    if total_games > 0:
+        completion = (games_played / total_games) * 100
+        
+    return {
+        "season": season,
+        "total_games": total_games,
+        "games_played": games_played,
+        "completion_percentage": round(completion, 1)
+    }
 
 
 @router.post("/init", response_model=SeasonResponse)
@@ -301,7 +342,21 @@ def start_offseason(season_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/{season_id}/draft/simulate")
+@router.get("/{season_id}/offseason/needs/{team_id}", response_model=List[TeamNeed])
+def get_team_needs(season_id: int, team_id: int, db: Session = Depends(get_db)):
+    """Get team needs analysis."""
+    service = OffseasonService(db)
+    return service.get_team_needs(team_id)
+
+
+@router.get("/{season_id}/offseason/prospects", response_model=List[Prospect])
+def get_top_prospects(season_id: int, limit: int = 50, db: Session = Depends(get_db)):
+    """Get top draft prospects."""
+    service = OffseasonService(db)
+    return service.get_top_prospects(limit)
+
+
+@router.post("/{season_id}/draft/simulate", response_model=List[DraftPickSummary])
 def simulate_draft(season_id: int, db: Session = Depends(get_db)):
     """Simulate the rookie draft."""
     service = OffseasonService(db)
@@ -313,3 +368,55 @@ def simulate_free_agency(season_id: int, db: Session = Depends(get_db)):
     """Simulate free agency signings."""
     service = OffseasonService(db)
     return service.simulate_free_agency(season_id)
+
+
+@router.get("/{season_id}/leaders", response_model=LeagueLeaders)
+def get_league_leaders(
+    season_id: int,
+    limit: int = 5,
+    db: Session = Depends(get_db)
+):
+    """
+    Get league leaders for passing, rushing, and receiving yards.
+    """
+    # Helper to get top players for a stat
+    def get_top_stats(stat_column, stat_type):
+        results = db.query(
+            Player.id,
+            Player.first_name,
+            Player.last_name,
+            Team.name.label("team_name"),
+            Player.position,
+            func.sum(stat_column).label("total_value")
+        ).join(
+            PlayerGameStats, Player.id == PlayerGameStats.player_id
+        ).join(
+            Game, PlayerGameStats.game_id == Game.id
+        ).join(
+            Team, Player.team_id == Team.id
+        ).filter(
+            Game.season_id == season_id
+        ).group_by(
+            Player.id, Team.name
+        ).order_by(
+            desc("total_value")
+        ).limit(limit).all()
+
+        return [
+            PlayerLeader(
+                player_id=r.id,
+                name=f"{r.first_name} {r.last_name}",
+                team=r.team_name,
+                position=r.position,
+                value=r.total_value or 0,
+                stat_type=stat_type
+            )
+            for r in results
+        ]
+
+    return LeagueLeaders(
+        passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
+        rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
+        receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards")
+    )
+

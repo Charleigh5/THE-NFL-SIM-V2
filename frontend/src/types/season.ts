@@ -62,3 +62,10 @@ export interface GameResult {
   total_plays: number;
   winner: "home" | "away" | "tie";
 }
+
+export interface SeasonSummary {
+  season: Season;
+  total_games: number;
+  games_played: number;
+  completion_percentage: number;
+}

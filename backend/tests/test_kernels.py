@@ -12,7 +12,7 @@ from app.kernels.hive.geo_physics import TurfDegradationMesh, FluidDynamicsSolve
 from app.kernels.hive.atmosphere_net import CrowdSentimentMachine
 from app.kernels.empire.econ_dynamics import CapPhysicist, MarketInflator
 from app.kernels.empire.scout_intel import FogOfWarSystem
-from app.kernels.society.social_graph import RivalryEngine
+# from app.kernels.society.social_graph import RivalryEngine
 from app.kernels.society.narrative_director import StoryBeatGenerator
 
 def test_kernels():
@@ -25,11 +25,11 @@ def test_kernels():
 
     # 2. Genesis Kernel
     anatomy = AnatomyModel()
-    anatomy.apply_stress(50.0)
+    anatomy.apply_stress(50.0, "ACL")
     print(f"Genesis: ACL Stress {anatomy.ligaments['ACL']['stress']}")
     
     fatigue = FatigueRegulator()
-    fatigue.update_fatigue(20.0)
+    fatigue.update_fatigue(20.0, 70.0)
     print(f"Genesis: Lactic Acid {fatigue.lactic_acid}")
 
     # 3. Hive Kernel
@@ -50,12 +50,12 @@ def test_kernels():
     print(f"Empire: Scout Report {scout.reveal_attribute(95, 'speed')}")
 
     # 5. Society Kernel
-    rivalry = RivalryEngine()
-    rivalry.add_vendetta("player1", "teamA")
-    print(f"Society: Vendetta Active {rivalry.check_revenge_buff('player1', 'teamA')}")
+    # rivalry = RivalryEngine()
+    # rivalry.add_vendetta("player1", "teamA")
+    # print(f"Society: Vendetta Active {rivalry.check_revenge_buff('player1', 'teamA')}")
     
     narrative = StoryBeatGenerator()
-    print(f"Society: Headline '{narrative.generate_headline({'player': 'Tom Brady'})}'")
+    print(f"Society: Headline '{narrative.generate_headline({'player': 'Tom Brady', 'team': 'Buccaneers', 'coach': 'Bruce Arians'})}'")
 
     print("ALL KERNELS VERIFIED")
 

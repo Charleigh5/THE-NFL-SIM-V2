@@ -3,11 +3,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from app.models.team import Team
 from app.models.game import Game
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class TeamStanding(BaseModel):
     """Represents a team's standing in the season."""
+    model_config = ConfigDict(from_attributes=True)
+    
     team_id: int
     team_name: str
     team_abbreviation: str
@@ -22,9 +24,6 @@ class TeamStanding(BaseModel):
     point_differential: int
     division_rank: int
     conference_rank: int
-    
-    class Config:
-        from_attributes = True
 
 
 class StandingsCalculator:

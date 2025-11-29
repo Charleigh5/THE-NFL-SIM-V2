@@ -1,0 +1,61 @@
+.draft-board {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1rem;
+  color: white;
+  border: 1px solid #333;
+}
+
+.draft-board h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.prospect-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.prospect-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #2a2a2a;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.prospect-card:hover {
+  background: #333;
+}
+
+.prospect-pos {
+  font-weight: bold;
+  color: #aaa;
+  margin-right: 0.75rem;
+  width: 35px;
+  display: inline-block;
+  text-align: center;
+  background: #111;
+  border-radius: 3px;
+  padding: 2px 0;
+  font-size: 0.8rem;
+}
+
+.prospect-rating {
+  font-weight: bold;
+  color: #4caf50;
+  font-size: 1.1rem;
+}
+
+.no-prospects {
+  color: #666;
+  text-align: center;
+  padding: 1rem;
+}

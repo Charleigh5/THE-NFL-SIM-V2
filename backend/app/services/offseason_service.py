@@ -7,6 +7,8 @@ from app.models.playoff import PlayoffMatchup, PlayoffRound
 from app.services.standings_calculator import StandingsCalculator
 from app.services.rookie_generator import RookieGenerator
 import random
+from typing import List
+from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary
 
 class OffseasonService:
     def __init__(self, db: Session):
@@ -124,6 +126,46 @@ class OffseasonService:
             position_counts[p.position] = position_counts.get(p.position, 0) + 1
         return position_counts
 
+    def get_team_needs(self, team_id: int) -> List[TeamNeed]:
+        """Get structured team needs analysis."""
+        needs_dict = self._get_team_needs(team_id)
+        TARGET_COUNTS = {
+            "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
+            "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
+        }
+        
+        result = []
+        for pos, target in TARGET_COUNTS.items():
+            current = needs_dict.get(pos, 0)
+            diff = target - current
+            score = max(0, diff) 
+            
+            result.append(TeamNeed(
+                position=pos,
+                current_count=current,
+                target_count=target,
+                need_score=float(score)
+            ))
+        
+        result.sort(key=lambda x: x.need_score, reverse=True)
+        return result
+
+    def get_top_prospects(self, limit: int = 50) -> List[Prospect]:
+        """Get top available rookie prospects."""
+        rookies = self.db.query(Player).filter(
+            Player.is_rookie == True,
+            Player.team_id == None
+        ).order_by(Player.overall_rating.desc()).limit(limit).all()
+        
+        return [
+            Prospect(
+                id=p.id,
+                name=f"{p.first_name} {p.last_name}",
+                position=p.position,
+                overall_rating=p.overall_rating
+            ) for p in rookies
+        ]
+
     def simulate_draft(self, season_id: int):
         """Simulate the entire draft with position need logic."""
         picks = self.db.query(DraftPick).filter(
@@ -145,6 +187,8 @@ class OffseasonService:
             "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
         }
         
+        drafted_players = {}
+
         for pick in picks:
             if not rookie_pool:
                 break
@@ -176,9 +220,27 @@ class OffseasonService:
             selected_player.team_id = pick.team_id
             selected_player.contract_years = 4
             selected_player.is_rookie = False # No longer a prospect
-            
+            drafted_players[pick.pick_number] = selected_player
+
         self.db.commit()
-        return {"message": "Draft simulated."}
+        
+        # Generate summary of picks
+        summary = []
+        picks = self.db.query(DraftPick).filter(DraftPick.season_id == season_id).order_by(DraftPick.pick_number).all()
+        for pick in picks:
+             if pick.player_id:
+                 player = drafted_players.get(pick.pick_number)
+                 if player:
+                     summary.append(DraftPickSummary(
+                         round=pick.round,
+                         pick_number=pick.pick_number,
+                         team_id=pick.team_id,
+                         player_name=f"{player.first_name} {player.last_name}",
+                         player_position=player.position,
+                         player_overall=player.overall_rating
+                     ))
+        
+        return summary
 
     def simulate_free_agency(self, season_id: int):
         """Fill rosters with free agents."""

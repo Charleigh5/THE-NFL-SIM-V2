@@ -39,7 +39,7 @@ class MockPlayer:
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
-        self.position = position
+        self.position = position.value if isinstance(position, Position) else position
         self.team_id = team_id
         self.contract_years = contract_years
         self.overall_rating = overall_rating
