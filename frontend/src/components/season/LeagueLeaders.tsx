@@ -1,8 +1,6 @@
 import React from "react";
-import type {
-  LeagueLeaders as LeagueLeadersType,
-  PlayerLeader,
-} from "../../types/stats";
+import type { LeagueLeaders as LeagueLeadersType } from "../../types/stats";
+import { LoadingSpinner } from "../ui/LoadingSpinner";
 import "./LeagueLeaders.css";
 
 interface LeagueLeadersProps {
@@ -10,63 +8,37 @@ interface LeagueLeadersProps {
   loading: boolean;
 }
 
-const LeaderList: React.FC<{
-  title: string;
-  players: PlayerLeader[];
-  unit: string;
-}> = ({ title, players, unit }) => (
-  <div className="leader-category">
-    <h3>{title}</h3>
-    <div className="leader-list">
-      {players.map((player, index) => (
-        <div key={player.player_id} className="leader-item">
-          <div className="leader-rank">{index + 1}</div>
-          <div className="leader-info">
-            <div className="leader-name">{player.name}</div>
-            <div className="leader-team-pos">
-              {player.team} • {player.position}
-            </div>
-          </div>
-          <div className="leader-value">
-            {player.value} <span className="leader-unit">{unit}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
 export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({
   leaders,
   loading,
 }) => {
   if (loading) {
-    return <div className="leaders-loading">Loading leaders...</div>;
+    return <LoadingSpinner text="Loading Leaders..." />;
   }
 
   if (!leaders) {
-    return null;
+    return <div className="league-leaders-container">No stats available.</div>;
   }
 
   return (
     <div className="league-leaders-container">
-      <h2 className="section-title">League Leaders</h2>
+      <h3 className="leaders-title">League Leaders</h3>
       <div className="leaders-grid">
-        <LeaderList
-          title="Passing Yards"
-          players={leaders.passing_yards}
-          unit="yds"
-        />
-        <LeaderList
-          title="Rushing Yards"
-          players={leaders.rushing_yards}
-          unit="yds"
-        />
-        <LeaderList
-          title="Receiving Yards"
-          players={leaders.receiving_yards}
-          unit="yds"
-        />
+        <div className="leader-category">
+          <h4>Passing</h4>
+          <p>{leaders.passing_yards[0]?.name || "N/A"}</p>
+          <span>{leaders.passing_yards[0]?.value || 0} YDS</span>
+        </div>
+        <div className="leader-category">
+          <h4>Rushing</h4>
+          <p>{leaders.rushing_yards[0]?.name || "N/A"}</p>
+          <span>{leaders.rushing_yards[0]?.value || 0} YDS</span>
+        </div>
+        <div className="leader-category">
+          <h4>Receiving</h4>
+          <p>{leaders.receiving_yards[0]?.name || "N/A"}</p>
+          <span>{leaders.receiving_yards[0]?.value || 0} YDS</span>
+        </div>
       </div>
     </div>
   );

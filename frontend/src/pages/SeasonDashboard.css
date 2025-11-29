@@ -1,123 +1,8 @@
 .season-dashboard {
-  padding: 24px;
+  padding: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  color: #fff;
-  font-family: "Inter", sans-serif;
-}
-
-.season-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  background-color: #1e1e1e;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  border: 1px solid #333;
-}
-
-.season-info h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(45deg, #fff, #aaa);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.season-status {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  color: #888;
-  font-size: 14px;
-}
-
-.status-badge {
-  background-color: #333;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.season-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.action-button {
-  background-color: #2196f3;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.action-button:hover:not(:disabled) {
-  background-color: #1976d2;
-  transform: translateY(-1px);
-}
-
-.action-button:disabled {
-  background-color: #333;
-  color: #666;
-  cursor: not-allowed;
-}
-
-.action-button.secondary {
-  background-color: #333;
-}
-
-.action-button.secondary:hover:not(:disabled) {
-  background-color: #444;
-}
-
-.dashboard-tabs {
-  display: flex;
-  gap: 2px;
-  margin-bottom: 24px;
-  background-color: #1e1e1e;
-  padding: 4px;
-  border-radius: 8px;
-  width: fit-content;
-}
-
-.tab-button {
-  background: none;
-  border: none;
-  color: #888;
-  padding: 10px 24px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.tab-button:hover {
-  color: #fff;
-  background-color: #2a2a2a;
-}
-
-.tab-button.active {
-  background-color: #333;
-  color: #fff;
-}
-
-.dashboard-content {
-  min-height: 400px;
+  color: #eee;
 }
 
 .loading-overlay {
@@ -126,75 +11,139 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
-}
-
-.season-progress-container {
-  width: 100%;
-  height: 4px;
-  background-color: #333;
-  border-radius: 2px;
-  margin-top: 12px;
-  overflow: hidden;
-}
-
-.season-progress-bar {
-  height: 100%;
-  background-color: #2196f3;
-  transition: width 0.3s ease;
 }
 
 .no-season-state {
   text-align: center;
-  padding: 60px;
+  padding: 4rem 2rem;
   background-color: #1e1e1e;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid #333;
 }
 
 .no-season-state h2 {
-  margin-bottom: 16px;
-  color: #fff;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 .no-season-state p {
-  color: #888;
-  margin-bottom: 32px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 1.1rem;
+  color: #aaa;
+  margin-bottom: 2rem;
 }
 
-@media (max-width: 768px) {
-  .season-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
+.dashboard-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: start;
+}
 
-  .season-actions {
-    width: 100%;
-    justify-content: stretch;
-  }
+.season-summary-card {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
 
-  .action-button {
-    flex: 1;
-    justify-content: center;
-  }
+.season-info h1 {
+  margin-top: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
 
-  .dashboard-tabs {
-    width: 100%;
-    overflow-x: auto;
-  }
+.season-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
 
-  .tab-button {
-    flex: 1;
-    white-space: nowrap;
-  }
+.status-badge {
+  background-color: #00aaff;
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.season-progress-container {
+  width: 100%;
+  background-color: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 8px;
+  margin-top: auto;
+}
+
+.season-progress-bar {
+  height: 100%;
+  background-color: #00aaff;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+.dashboard-tabs {
+  display: flex;
+  border-bottom: 1px solid #333;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background-color: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 1rem;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tab-button:hover {
+  color: #eee;
+}
+
+.tab-button.active {
+  color: #00aaff;
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #00aaff;
+}
+
+.dashboard-content {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.error-message {
+  color: #ff4d4d;
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ff4d4d;
+  margin-bottom: 1.5rem;
 }

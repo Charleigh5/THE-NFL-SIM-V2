@@ -8,7 +8,12 @@ import type {
 } from "../types/season";
 import type { PlayoffMatchup } from "../types/playoff";
 import type { LeagueLeaders } from "../types/stats";
-import type { TeamNeed, Prospect, DraftPickSummary } from "../types/offseason";
+import type {
+  TeamNeed,
+  Prospect,
+  DraftPickSummary,
+  PlayerProgressionResult,
+} from "../types/offseason";
 
 export const seasonApi = {
   // Initialize a new season
@@ -129,6 +134,15 @@ export const seasonApi = {
   ): Promise<Prospect[]> => {
     const response = await api.get(
       `/api/season/${seasonId}/offseason/prospects?limit=${limit}`
+    );
+    return response.data;
+  },
+
+  simulateProgression: async (
+    seasonId: number
+  ): Promise<PlayerProgressionResult[]> => {
+    const response = await api.post(
+      `/api/season/${seasonId}/offseason/progression`
     );
     return response.data;
   },

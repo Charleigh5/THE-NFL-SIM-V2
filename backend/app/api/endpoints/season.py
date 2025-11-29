@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.database import get_db
 from app.models.season import Season, SeasonStatus
@@ -14,7 +14,7 @@ from app.services.week_simulator import WeekSimulator
 from app.services.playoff_service import PlayoffService
 from app.services.offseason_service import OffseasonService
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary
+from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.models.stats import PlayerGameStats
 from app.models.player import Player
@@ -43,8 +43,7 @@ class SeasonResponse(BaseModel):
     total_weeks: int
     playoff_weeks: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class GameResponse(BaseModel):
@@ -58,8 +57,7 @@ class GameResponse(BaseModel):
     is_played: bool
     date: datetime
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SeasonSummary(BaseModel):
@@ -338,6 +336,16 @@ def start_offseason(season_id: int, db: Session = Depends(get_db)):
     service = OffseasonService(db)
     try:
         return service.start_offseason(season_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/{season_id}/offseason/progression", response_model=List[PlayerProgressionResult])
+def simulate_player_progression(season_id: int, db: Session = Depends(get_db)):
+    """Simulate player progression and regression."""
+    service = OffseasonService(db)
+    try:
+        return service.simulate_player_progression(season_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

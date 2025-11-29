@@ -1,15 +1,48 @@
 .offseason-dashboard {
-  padding: 20px;
-  color: white;
-  background: #121212;
+  padding: 2rem;
+  color: #e0e0e0;
+  background: #0f0f0f;
   min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .season-info {
-  margin-bottom: 30px;
-  padding: 20px;
-  background: #1e1e1e;
-  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #1a1a1a;
+  border-radius: 12px;
+  border: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.season-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.team-info {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.salary-cap {
+  color: #4caf50;
+  font-weight: 600;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
 }
 
 .status-message {
@@ -20,20 +53,45 @@
   margin-bottom: 20px;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .offseason-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .action-card {
-  background: #1e1e1e;
-  padding: 20px;
-  border-radius: 8px;
+  background: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: 12px;
   border: 1px solid #333;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1rem;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  border-color: #444;
 }
 
 .action-card h3 {
@@ -72,11 +130,21 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .side-column {
+    order: -1; /* Show draft board on top on mobile? Or keep bottom */
+  }
 }

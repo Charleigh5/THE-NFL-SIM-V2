@@ -99,33 +99,33 @@
 
 #### Manual Testing Flow
 
-- [ ] **Manual Test: Full Season Simulation**
+- [x] **Manual Test: Full Season Simulation**
 
-  - [ ] Initialize a new season via API
-  - [ ] Simulate all 18 weeks of regular season
-  - [ ] Verify standings calculation is correct
-  - [ ] Check game results are persisted correctly
-  - [ ] Document any issues found
+  - [x] Initialize a new season via API
+  - [x] Simulate all 18 weeks of regular season
+  - [x] Verify standings calculation is correct
+  - [x] Check game results are persisted correctly
+  - [x] Document any issues found
 
-- [ ] **Manual Test: Playoff Flow**
+- [x] **Manual Test: Playoff Flow**
 
-  - [ ] Verify playoff bracket generation after regular season
-  - [ ] Test Wild Card round simulation
-  - [ ] Test Divisional round advancement and reseeding
-  - [ ] Test Conference Championship advancement
-  - [ ] Test Super Bowl simulation
-  - [ ] Verify correct champion is declared
-  - [ ] Check playoff stats are tracked
+  - [x] Verify playoff bracket generation after regular season
+  - [x] Test Wild Card round simulation
+  - [x] Test Divisional round advancement and reseeding
+  - [x] Test Conference Championship advancement
+  - [x] Test Super Bowl simulation
+  - [x] Verify correct champion is declared
+  - [x] Check playoff stats are tracked
 
-- [ ] **Manual Test: Offseason Flow**
+- [x] **Manual Test: Offseason Flow**
 
-  - [ ] Test contract expiration processing
-  - [ ] Verify draft order generation (worst to best)
-  - [ ] Test rookie class generation (224 players)
-  - [ ] Simulate full draft (7 rounds, 32 teams)
-  - [ ] Test free agency roster filling
-  - [ ] Verify all teams have 53 players post-offseason
-  - [ ] Test transition to new season
+  - [x] Test contract expiration processing
+  - [x] Verify draft order generation (worst to best)
+  - [x] Test rookie class generation (224 players)
+  - [x] Simulate full draft (7 rounds, 32 teams)
+  - [x] Test free agency roster filling
+  - [x] Verify all teams have 53 players post-offseason
+  - [x] Test transition to new season
 
 - [ ] **Run All Verification Scripts**
   - [ ] `backend/test_base_import.py`
@@ -136,12 +136,12 @@
 
 #### Backend Code Quality
 
-- [ ] **Fix Pydantic Deprecation Warnings**
+- [x] **Fix Pydantic Deprecation Warnings**
 
-  - [ ] Audit all models using Pydantic v1 style config
-  - [ ] Update to use `ConfigDict` (Pydantic v2)
-  - [ ] Test that serialization still works correctly
-  - [ ] Run tests to verify no regressions
+  - [x] Audit all models using Pydantic v1 style config
+  - [x] Update to use `ConfigDict` (Pydantic v2)
+  - [x] Test that serialization still works correctly
+  - [x] Run tests to verify no regressions
 
 - [ ] **Add Database Indexes**
 

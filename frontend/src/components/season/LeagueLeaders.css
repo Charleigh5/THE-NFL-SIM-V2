@@ -1,97 +1,52 @@
 .league-leaders-container {
-  background: rgba(20, 20, 30, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #1e1e1e;
   padding: 1.5rem;
-  margin-top: 2rem;
+  border-radius: 8px;
+  border: 1px solid #333;
 }
 
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+.leaders-title {
+  margin-top: 0;
   margin-bottom: 1.5rem;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #eee;
 }
 
 .leaders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.leader-category h3 {
-  font-size: 1.1rem;
-  color: #a0a0b0;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.5rem;
-}
-
-.leader-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.leader-item {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  transition: background 0.2s ease;
-}
-
-.leader-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.leader-rank {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #646cff;
-  width: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
   text-align: center;
-  margin-right: 10px;
 }
 
-.leader-info {
-  flex: 1;
+.leader-category {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 6px;
 }
 
-.leader-name {
-  font-weight: 600;
-  color: #fff;
-}
-
-.leader-team-pos {
-  font-size: 0.8rem;
-  color: #888;
-}
-
-.leader-value {
-  font-weight: 700;
-  color: #fff;
-  font-size: 1.1rem;
-}
-
-.leader-unit {
-  font-size: 0.8rem;
-  color: #888;
+.leader-category h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #aaa;
+  font-size: 1rem;
   font-weight: 400;
+  text-transform: uppercase;
 }
 
-.leaders-loading {
-  text-align: center;
-  padding: 2rem;
-  color: #888;
+.leader-category p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-@media (max-width: 768px) {
-  .leaders-grid {
-    grid-template-columns: 1fr;
-  }
+.leader-category span {
+  font-size: 1rem;
+  color: #00aaff;
+  font-weight: 700;
 }

@@ -4,7 +4,7 @@ from typing import List
 
 from app.core.database import get_db
 from app.models.player import Player
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
 
@@ -28,8 +28,7 @@ class PlayerDetailSchema(BaseModel):
     agility: int
     awareness: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 @router.get("/{player_id}", response_model=PlayerDetailSchema)
 def read_player(player_id: int, db: Session = Depends(get_db)):

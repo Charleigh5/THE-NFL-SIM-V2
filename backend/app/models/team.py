@@ -14,8 +14,8 @@ class Team(Base):
     gm = relationship("GM", back_populates="team", uselist=False)
     
     # Division/Conference
-    conference = Column(String) # AFC/NFC
-    division = Column(String) # North/South/East/West
+    conference = Column(String, index=True) # AFC/NFC
+    division = Column(String, index=True) # North/South/East/West
     
     # Stats/Record
     wins = Column(Integer, default=0)

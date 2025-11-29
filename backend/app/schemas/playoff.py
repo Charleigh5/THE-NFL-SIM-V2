@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from app.models.playoff import PlayoffRound, PlayoffConference
 from app.schemas.team import Team
@@ -26,8 +26,7 @@ class PlayoffMatchup(PlayoffMatchupBase):
     away_team: Optional[Team] = None
     winner: Optional[Team] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class PlayoffBracket(BaseModel):
     season_id: int

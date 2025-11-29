@@ -62,3 +62,14 @@ def test_advance_week(season):
     print(f"Current week after advancing: {data['current_week']}")
     assert data["current_week"] == current_week + 1
 
+def test_simulate_player_progression(season):
+    """Test simulating player progression."""
+    url = f"{BASE_URL}/api/season/{season}/offseason/progression"
+    response = requests.post(url)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    if data:
+        assert "player_id" in data[0]
+        assert "change" in data[0]
+

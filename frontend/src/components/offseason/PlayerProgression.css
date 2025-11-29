@@ -1,0 +1,62 @@
+.player-progression-card {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #333;
+}
+
+.player-progression-card h3 {
+  margin-top: 0;
+  color: #e0e0e0;
+  border-bottom: 1px solid #333;
+  padding-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.progression-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.progression-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #252525;
+  transition: background 0.2s;
+}
+
+.progression-item:last-child {
+  border-bottom: none;
+}
+
+.progression-item:hover {
+  background: #252525;
+  border-radius: 6px;
+}
+
+.player-name {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.rating-change {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.rating-change.positive {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.rating-change.negative {
+  color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}

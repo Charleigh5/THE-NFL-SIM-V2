@@ -10,6 +10,7 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
 }) => {
   const steps = [
     { id: "contract_expirations", label: "Contracts" },
+    { id: "player_progression", label: "Progression" },
     { id: "draft", label: "NFL Draft" },
     { id: "free_agency", label: "Free Agency" },
     { id: "complete", label: "Season Ready" },
@@ -18,7 +19,13 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
   const getStepStatus = (stepId: string) => {
     // Map backend status or phase to these steps
     // Assuming currentPhase matches one of the IDs or we map it
-    const phases = ["contract_expirations", "draft", "free_agency", "complete"];
+    const phases = [
+      "contract_expirations",
+      "player_progression",
+      "draft",
+      "free_agency",
+      "complete",
+    ];
 
     // Simple mapping if needed, but for now assume direct match
     let phaseIndex = phases.indexOf(currentPhase);

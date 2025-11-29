@@ -4,6 +4,8 @@ from app.schemas.play import PlayResult
 from app.core.database import SessionLocal
 from app.models.game import Game
 from app.models.stats import PlayerGameStats
+from app.models.player import Player
+from app.orchestrator.match_context import MatchContext
 
 from typing import List, Optional, Callable, Awaitable
 import asyncio
@@ -32,6 +34,9 @@ class SimulationOrchestrator:
         self.db_session = None
         self.current_game_id = None
         
+        # Match Context (Data Hydration)
+        self.match_context: Optional[MatchContext] = None
+        
         # Callbacks for WebSocket broadcasting
         self.on_play_complete: Optional[Callable[[PlayResult], Awaitable[None]]] = None
         self.on_game_update: Optional[Callable[[dict], Awaitable[None]]] = None
@@ -55,7 +60,17 @@ class SimulationOrchestrator:
         self.db_session.commit()
         self.db_session.refresh(new_game)
         self.current_game_id = new_game.id
-        print(f"Started new game session: ID {self.current_game_id}")
+        
+        # Hydrate Match Context
+        print(f"Hydrating Match Context for Game {new_game.id}...")
+        home_roster = self.db_session.query(Player).filter(Player.team_id == home_team_id).all()
+        away_roster = self.db_session.query(Player).filter(Player.team_id == away_team_id).all()
+        self.match_context = MatchContext(home_roster, away_roster)
+        
+        # Register players with Kernels
+        self.play_resolver.register_players(self.match_context)
+        
+        print(f"Match Context Hydrated. Home: {len(home_roster)} players, Away: {len(away_roster)} players.")
 
     def _save_progress(self):
         """Save current game state and history to database."""
@@ -193,10 +208,25 @@ class SimulationOrchestrator:
         """Execute a single play and update game state."""
         import random
         
-        # Simple play calling logic (alternates pass/run)
+        # Get Real Players from MatchContext if available
         offense_players = []
         defense_players = []
         
+        if self.match_context:
+            off_side = "home" if self.possession == "home" else "away"
+            def_side = "away" if self.possession == "home" else "home"
+            
+            off_starters = self.match_context.get_starters(off_side)
+            def_starters = self.match_context.get_starters(def_side)
+            
+            # Pass the dict values for now. 
+            # Ideally we pass the dict so kernels know who is QB, WR1, etc.
+            # But PlayCommand currently expects List[Player].
+            # We should stick to List for now but we might want to update PlayCommand later.
+            offense_players = list(off_starters.values())
+            defense_players = list(def_starters.values())
+        
+        # Simple play calling logic (alternates pass/run)
         if random.random() < 0.6:  # 60% pass, 40% run
             command = PassPlayCommand(
                 offense_players=offense_players,

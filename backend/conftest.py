@@ -1,7 +1,4 @@
 import pytest
 
-collect_ignore = ["test_offseason_e2e.py"]
-
-@pytest.fixture
-def season_id():
-    return 1
+# No fixtures or collect_ignore needed in this conftest,
+# as tests/conftest.py handles global setup.

@@ -5,9 +5,10 @@ from app.models.base import Base
 class PlayerGameStats(Base):
     id = Column(Integer, primary_key=True, index=True)
     
-    player_id = Column(Integer, ForeignKey("player.id"))
-    game_id = Column(Integer, ForeignKey("game.id"))
-    team_id = Column(Integer, ForeignKey("team.id"))
+    
+    player_id = Column(Integer, ForeignKey("player.id"), index=True)
+    game_id = Column(Integer, ForeignKey("game.id"), index=True)
+    team_id = Column(Integer, ForeignKey("team.id"), index=True)
     
     player = relationship("Player")
     game = relationship("Game")

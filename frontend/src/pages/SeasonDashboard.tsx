@@ -207,46 +207,48 @@ const SeasonDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="season-header">
-        <div className="season-info">
-          <h1>{season.year} Season</h1>
-          <div className="season-status">
-            <span className="status-badge">
-              {season.status.replace("_", " ")}
-            </span>
-            <span>
-              Week {season.current_week}{" "}
-              {season.status === "REGULAR_SEASON"
-                ? `of ${season.total_weeks}`
-                : ""}
-            </span>
-          </div>
-          {season.status === "REGULAR_SEASON" && (
-            <div
-              className="season-progress-container"
-              title={`Season ${seasonProgress}% Complete`}
-            >
-              <div
-                className="season-progress-bar"
-                style={{ width: `${seasonProgress}%` }}
-              ></div>
+      <div className="dashboard-header">
+        <div className="season-summary-card">
+          <div className="season-info">
+            <h1>{season.year} Season</h1>
+            <div className="season-status">
+              <span className="status-badge">
+                {season.status.replace('_', ' ')}
+              </span>
+              <span>
+                Week {season.current_week}{' '}
+                {season.status === 'REGULAR_SEASON'
+                  ? `of ${season.total_weeks}`
+                  : ''}
+              </span>
             </div>
-          )}
+            {season.status === 'REGULAR_SEASON' && (
+              <div
+                className="season-progress-container"
+                title={`Season ${seasonProgress}% Complete`}
+              >
+                <div
+                  className="season-progress-bar"
+                  style={{ width: `${seasonProgress}%` }}
+                ></div>
+              </div>
+            )}
+          </div>
+          <QuickActions
+            actions={[
+              {
+                id: 'simulate',
+                label: simulating ? 'Simulating...' : 'Simulate Week',
+                icon: '⚡',
+                onClick: handleSimulateWeek,
+                disabled: simulating || season.status === 'OFF_SEASON',
+                tooltip: 'Simulate all games for the current week',
+              },
+            ]}
+          />
         </div>
+        <LeagueLeaders leaders={leaders} loading={loading} />
       </div>
-
-      <QuickActions
-        actions={[
-          {
-            id: "simulate",
-            label: simulating ? "Simulating..." : "Simulate Week",
-            icon: "⚡",
-            onClick: handleSimulateWeek,
-            disabled: simulating || season.status === "OFF_SEASON",
-            tooltip: "Simulate all games for the current week",
-          },
-        ]}
-      />
 
       <div className="dashboard-tabs">
         <button

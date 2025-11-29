@@ -1,3 +1,11 @@
+import React from "react";
+import type { TeamNeed } from "../../types/offseason";
+import "./TeamNeeds.css";
+
+interface TeamNeedsProps {
+  needs: TeamNeed[];
+}
+
 export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
   return (
     <div className="team-needs">

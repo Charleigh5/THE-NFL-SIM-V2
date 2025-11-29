@@ -2,11 +2,35 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import system, simulation, data, websocket, teams, players, season, genesis
 
+from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import IntegrityError, OperationalError
+from pydantic import ValidationError
+import logging
+
+from app.core.error_handlers import (
+    database_exception_handler,
+    database_operational_error_handler,
+    validation_exception_handler,
+    pydantic_validation_handler,
+    generic_exception_handler
+)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI(
     title="Stellar Sagan - NFL Simulation Engine",
     description="Backend API for the Stellar Sagan NFL Football Simulation.",
     version="0.1.0",
 )
+
+# Register exception handlers
+app.add_exception_handler(IntegrityError, database_exception_handler)
+app.add_exception_handler(OperationalError, database_operational_error_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(ValidationError, pydantic_validation_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 # CORS Configuration
 origins = [

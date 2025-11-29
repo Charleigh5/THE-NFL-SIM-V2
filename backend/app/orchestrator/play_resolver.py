@@ -10,9 +10,13 @@ class PlayResolver:
     def __init__(self, kernels: KernelInterface = None):
         self.kernels = kernels or KernelInterface()
         
-        # Initialize a dummy player for testing kernel integration
-        # In a real scenario, this would happen during Game Setup
-        self.kernels.genesis.register_player(1, {"anatomy": {}, "fatigue": {}})
+    def register_players(self, match_context):
+        """Register all players from the match context with the kernels."""
+        all_players = match_context.home_roster + match_context.away_roster
+        for p in all_players:
+            # Register with Genesis (Biology/Fatigue)
+            # In the future, we pass bio-metrics from MatchContext here
+            self.kernels.genesis.register_player(p.id, {"anatomy": {}, "fatigue": {}})
 
     def resolve_play(self, command: PlayCommand) -> PlayResult:
         """
@@ -28,12 +32,23 @@ class PlayResolver:
         """
         Resolves a pass play using Kernel logic.
         """
-        # 1. Genesis Kernel: Calculate Fatigue & Injury Risk
-        # Simulating a player (ID 1) exerting effort
-        current_fatigue = self.kernels.genesis.calculate_fatigue(1, exertion=0.8, temperature=75.0)
+        # Identify key players (QB, WR, etc.)
+        # For now, if no specific players are passed in command, we pick random registered ones or default
+        # Command has offense list.
         
-        # Simulating a tackle impact
-        injury_check = self.kernels.genesis.check_injury_risk(1, impact_force=600.0, body_part="ACL")
+        qb_id = 1 # Default
+        if command.offense:
+            # Find QB
+            for p in command.offense:
+                if p.position == "QB":
+                    qb_id = p.id
+                    break
+        
+        # 1. Genesis Kernel: Calculate Fatigue & Injury Risk
+        current_fatigue = self.kernels.genesis.calculate_fatigue(qb_id, exertion=0.8, temperature=75.0)
+        
+        # Simulating a tackle impact (random player risk)
+        injury_check = self.kernels.genesis.check_injury_risk(qb_id, impact_force=600.0, body_part="ACL")
         
         injuries = []
         if injury_check["is_injured"]:

@@ -1,3 +1,11 @@
+import React from "react";
+import type { Prospect } from "../../types/offseason";
+import "./DraftBoard.css";
+
+interface DraftBoardProps {
+  prospects: Prospect[];
+}
+
 export const DraftBoard: React.FC<DraftBoardProps> = ({ prospects }) => {
   return (
     <div className="draft-board">

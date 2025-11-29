@@ -20,3 +20,12 @@ export interface DraftPickSummary {
   player_position: string;
   player_overall: number;
 }
+
+export interface PlayerProgressionResult {
+  player_id: number;
+  name: string;
+  position: string;
+  change: number;
+  old_rating: number;
+  new_rating: number;
+}

@@ -277,3 +277,13 @@ class PlayoffService:
         self._create_matchup(season_id, PlayoffRound.SUPER_BOWL, "SUPER_BOWL", "SB", 
                              afc_winner, nfc_winner, None, None, week=22)
 
+    def get_champion(self, season_id: int):
+        sb = self.db.query(PlayoffMatchup).filter(
+            PlayoffMatchup.season_id == season_id,
+            PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
+        ).first()
+        
+        if sb and sb.winner_id:
+            return self.db.query(Team).filter(Team.id == sb.winner_id).first()
+        return None
+

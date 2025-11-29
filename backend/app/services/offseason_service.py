@@ -8,7 +8,7 @@ from app.services.standings_calculator import StandingsCalculator
 from app.services.rookie_generator import RookieGenerator
 import random
 from typing import List
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary
+from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
 
 class OffseasonService:
     def __init__(self, db: Session):
@@ -44,6 +44,69 @@ class OffseasonService:
             print(f"Error starting offseason: {e}")
             self.db.rollback()
             raise e
+
+    def simulate_player_progression(self, season_id: int) -> List[PlayerProgressionResult]:
+        """Simulate player progression and regression based on age and experience."""
+        # Query only active roster players
+        players = self.db.query(Player).filter(Player.team_id != None).all()
+        progression_results = []
+
+        for player in players:
+            old_rating = player.overall_rating
+            
+            # Age-based rating change
+            age_change = 0
+            if player.age <= 24:
+                # Young players: +1 to +3
+                age_change = random.randint(1, 3)
+            elif player.age <= 28:
+                # Peak years: -1 to +2
+                age_change = random.randint(-1, 2)
+            elif player.age <= 32:
+                # Gradual decline: -2 to +1
+                age_change = random.randint(-2, 1)
+            else:
+                # Significant decline: -3 to -1
+                age_change = random.randint(-3, -1)
+            
+            # Experience factor adjustment
+            exp_modifier = 0
+            if player.experience <= 2:
+                # Young players more likely to improve
+                exp_modifier = random.randint(0, 2)
+            elif player.experience >= 8:
+                # Veterans more likely to decline
+                exp_modifier = random.randint(-2, 0)
+            
+            # Random variance
+            variance = random.randint(-1, 1)
+            
+            # Total change
+            total_change = age_change + exp_modifier + variance
+            
+            # Apply change and clamp between 40-99
+            new_rating = max(40, min(99, old_rating + total_change))
+            actual_change = new_rating - old_rating
+            
+            # Update player
+            player.overall_rating = new_rating
+            player.age += 1
+            player.experience += 1
+
+            # Store result
+            progression_results.append(
+                PlayerProgressionResult(
+                    player_id=player.id,
+                    name=f"{player.first_name} {player.last_name}",
+                    position=player.position,
+                    change=actual_change,
+                    old_rating=old_rating,
+                    new_rating=new_rating
+                )
+            )
+
+        self.db.commit()
+        return progression_results
 
     def process_contract_expirations(self):
         """Decrement contract years and release expired players."""

@@ -18,6 +18,7 @@ export interface Team {
   division: string;
   wins: number;
   losses: number;
+  salary_cap_space: number;
 }
 
 export interface Player {

@@ -5,7 +5,7 @@ from typing import List
 from app.core.database import get_db
 from app.models.team import Team
 from app.models.player import Player
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
 
@@ -20,8 +20,7 @@ class TeamSchema(BaseModel):
     wins: int
     losses: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class PlayerSchema(BaseModel):
     id: int
@@ -33,8 +32,7 @@ class PlayerSchema(BaseModel):
     age: int
     experience: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 @router.get("/", response_model=List[TeamSchema])
 def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

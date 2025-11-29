@@ -23,16 +23,16 @@ class Player(Base):
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String, index=True)
     last_name = Column(String, index=True)
-    position = Column(String) # Using String for flexibility, or Enum
+    position = Column(String, index=True) # Using String for flexibility, or Enum
     height = Column(Integer) # in inches
     weight = Column(Integer) # in lbs
     age = Column(Integer)
     experience = Column(Integer, default=0) # Years pro
     jersey_number = Column(Integer, default=0)
-    overall_rating = Column(Integer, default=50)
+    overall_rating = Column(Integer, default=50, index=True)
     
     # Team Relationship
-    team_id = Column(Integer, ForeignKey("team.id"), nullable=True)
+    team_id = Column(Integer, ForeignKey("team.id"), nullable=True, index=True)
     team = relationship("Team", back_populates="players")
 
     # --- RPG Attributes (0-100 Scale) ---
@@ -88,4 +88,4 @@ class Player(Base):
     # --- Contracts & Offseason ---
     contract_years = Column(Integer, default=1)
     contract_salary = Column(Integer, default=1000000) # In dollars
-    is_rookie = Column(Boolean, default=False)
+    is_rookie = Column(Boolean, default=False, index=True)
