@@ -428,3 +428,91 @@ def get_league_leaders(
         receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards")
     )
 
+
+@router.get("/team/{team_id}/salary-cap")
+def get_team_salary_cap(team_id: int, season_id: Optional[int] = None, db: Session = Depends(get_db)):
+    """
+    Get detailed salary cap breakdown for a team.
+    """
+    from app.services.salary_cap_service import SalaryCapService
+    
+    # If season_id not provided, use current season
+    if not season_id:
+        season = db.query(Season).filter(Season.is_active == True).first()
+        season_id = season.id if season else 0
+        
+    service = SalaryCapService(db)
+    try:
+        return service.get_team_cap_breakdown(team_id, season_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/{season_id}/offseason/needs/{team_id}/enhanced")
+def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(get_db)):
+    """
+    Get enhanced team needs with quality scores and priorities.
+    """
+    service = OffseasonService(db)
+    basic_needs = service.get_team_needs(team_id)
+    
+    # Enhance the needs with additional data
+    enhanced_needs = []
+    
+    # Get all players to calculate league averages
+    all_players = db.query(Player).all()
+    avg_ratings = {}
+    positions = set(p.position for p in all_players)
+    
+    for pos in positions:
+        pos_players = [p for p in all_players if p.position == pos]
+        if pos_players:
+            avg = sum(p.overall_rating for p in pos_players) / len(pos_players)
+            avg_ratings[pos] = avg
+            
+    # Get team players
+    team_players = db.query(Player).filter(Player.team_id == team_id).all()
+    
+    for need in basic_needs:
+        pos = need.position
+        
+        # Calculate starter quality
+        pos_players = sorted(
+            [p for p in team_players if p.position == pos],
+            key=lambda x: x.overall_rating,
+            reverse=True
+        )
+        
+        starter_quality = 0
+        if pos_players:
+            # Top player is the starter (simplified)
+            starter_quality = pos_players[0].overall_rating
+            
+        # Determine priority
+        priority = "low"
+        if need.need_score > 0.7:
+            priority = "high"
+        elif need.need_score > 0.3:
+            priority = "medium"
+            
+        # Depth breakdown
+        starters_count = 1 # Simplified
+        backups_count = max(0, len(pos_players) - starters_count)
+        
+        enhanced_needs.append({
+            "position": need.position,
+            "current_count": need.current_count,
+            "target_count": need.target_count,
+            "need_score": need.need_score,
+            "priority": priority,
+            "starter_quality": starter_quality,
+            "league_avg_quality": avg_ratings.get(pos, 70),
+            "depth_breakdown": {
+                "starters": min(len(pos_players), starters_count),
+                "backups": backups_count
+            }
+        })
+        
+    return enhanced_needs
+
+

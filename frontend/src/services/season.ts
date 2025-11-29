@@ -13,6 +13,7 @@ import type {
   Prospect,
   DraftPickSummary,
   PlayerProgressionResult,
+  SalaryCapData,
 } from "../types/offseason";
 
 export const seasonApi = {
@@ -128,6 +129,16 @@ export const seasonApi = {
     return response.data;
   },
 
+  getEnhancedTeamNeeds: async (
+    seasonId: number,
+    teamId: number
+  ): Promise<TeamNeed[]> => {
+    const response = await api.get(
+      `/api/season/${seasonId}/offseason/needs/${teamId}/enhanced`
+    );
+    return response.data;
+  },
+
   getTopProspects: async (
     seasonId: number,
     limit: number = 50
@@ -149,6 +160,17 @@ export const seasonApi = {
 
   getLeagueLeaders: async (seasonId: number): Promise<LeagueLeaders> => {
     const response = await api.get(`/api/season/${seasonId}/leaders`);
+    return response.data;
+  },
+
+  getSalaryCapData: async (
+    teamId: number,
+    seasonId?: number
+  ): Promise<SalaryCapData> => {
+    const params = seasonId ? `?season_id=${seasonId}` : "";
+    const response = await api.get(
+      `/api/season/team/${teamId}/salary-cap${params}`
+    );
     return response.data;
   },
 };

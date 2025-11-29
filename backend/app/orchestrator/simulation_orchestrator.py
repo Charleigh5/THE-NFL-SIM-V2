@@ -1,5 +1,6 @@
 from .play_resolver import PlayResolver
 from .play_commands import PassPlayCommand, RunPlayCommand
+from .play_caller import PlayCaller, PlayCallingContext
 from app.schemas.play import PlayResult
 from app.core.database import SessionLocal
 from app.models.game import Game
@@ -17,6 +18,7 @@ class SimulationOrchestrator:
     """
     def __init__(self):
         self.play_resolver = PlayResolver()
+        self.play_caller = PlayCaller(aggression=0.5) # Default balanced coach
         self.history: List[PlayResult] = []
         
         # Game State
@@ -43,9 +45,11 @@ class SimulationOrchestrator:
         
         # Configuration
         self.play_delay_seconds = 5.0  # Delay between plays for animation
+        self.game_config = {}
 
     def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None):
         """Initialize a new game session in the database."""
+        self.game_config = config or {}
         self.db_session = SessionLocal()
         new_game = Game(
             home_team_id=home_team_id,
@@ -206,7 +210,6 @@ class SimulationOrchestrator:
     
     async def _execute_single_play(self) -> PlayResult:
         """Execute a single play and update game state."""
-        import random
         
         # Get Real Players from MatchContext if available
         offense_players = []
@@ -220,25 +223,41 @@ class SimulationOrchestrator:
             def_starters = self.match_context.get_starters(def_side)
             
             # Pass the dict values for now. 
-            # Ideally we pass the dict so kernels know who is QB, WR1, etc.
-            # But PlayCommand currently expects List[Player].
-            # We should stick to List for now but we might want to update PlayCommand later.
             offense_players = list(off_starters.values())
             defense_players = list(def_starters.values())
         
-        # Simple play calling logic (alternates pass/run)
-        if random.random() < 0.6:  # 60% pass, 40% run
-            command = PassPlayCommand(
-                offense_players=offense_players,
-                defense_players=defense_players,
-                depth=random.choice(["short", "mid", "deep"])
-            )
+        # Build PlayCallingContext
+        try:
+            minutes, seconds = map(int, self.time_left.split(":"))
+            time_left_seconds = minutes * 60 + seconds
+        except ValueError:
+            time_left_seconds = 900 # 15 mins
+
+        if self.possession == "home":
+            distance_to_goal = 100 - self.yard_line
+            score_diff = self.home_score - self.away_score
+            aggression = self.game_config.get("home_aggression", 0.5)
         else:
-            command = RunPlayCommand(
-                offense_players=offense_players,
-                defense_players=defense_players,
-                run_direction=random.choice(["left", "middle", "right"])
-            )
+            distance_to_goal = self.yard_line
+            score_diff = self.away_score - self.home_score
+            aggression = self.game_config.get("away_aggression", 0.5)
+
+        context = PlayCallingContext(
+            down=self.down,
+            distance=self.distance,
+            distance_to_goal=distance_to_goal,
+            time_left_seconds=time_left_seconds,
+            score_diff=score_diff,
+            offense_players=offense_players,
+            defense_players=defense_players,
+            possession=self.possession
+        )
+
+        # Update Coach Personality
+        self.play_caller.aggression = float(aggression)
+
+        # Select Play
+        command = self.play_caller.select_play(context)
         
         # Resolve play
         result = self.play_resolver.resolve_play(command)
