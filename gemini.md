@@ -1,165 +1,144 @@
-# Helios V6 Blueprint: The MVP Orchestrator
+# NFL Sim Engine: The Digital Gridiron
 
-**DOCUMENT ID:** H6-BP-001
-**STATUS:** FRAMEWORK_VALIDATED
-**AUTHOR:** Helios V6
-**DIRECTIVE:** Generate a comprehensive blueprint and task list for a Full-Stack MVP Generator.
+**DOCUMENT ID:** NFL-SIM-001
+**STATUS:** ARCHITECTURE_DEFINED
+**AUTHOR:** Gemini
+**DIRECTIVE:** Generate a comprehensive blueprint and task list for the NFL Sim Engine.
 
 ---
 
 ## 1.0 NARRATIVE ARC: THE PROBLEM EXPOSITION
 
-The modern developer, even at a junior level, is capable of immense creation. However, the initial friction of scaffolding a new, production-ready application—spanning frontend, backend, database, and deployment—is a significant barrier to velocity. The cognitive load of boilerplate, configuration, and architectural decisions inhibits the translation of a validated idea into a tangible product.
+Professional football is a game of immense complexity, with interacting systems of player skills, team strategy, financial management, and career progression. Most sports simulation games offer a surface-level experience. The goal of the **NFL Sim Engine** is to create a deeply immersive, highly detailed, and endlessly replayable simulation of managing a professional football franchise.
 
-This document outlines the architecture for a system to solve this. We will build an **MVP Orchestrator**: a tool that takes a structured application definition and generates a complete, well-architected, and deployable full-stack application.
+This system is built to model the granular details of the sport, from individual player attributes and physics-based game outcomes to complex AI-driven decision-making for coaches and general managers. It aims to be the "Dwarf Fortress" of football simulations—a true digital gridiron.
 
-The guiding philosophy is the **Untouchable Minimalist Abstraction Principle (UMAP)**: we will provide simplicity through sophisticated understanding, generating code that is clean, maintainable, and immediately useful.
+The guiding philosophy is **Emergent Narrative Generation**: the system will not tell stories, but create a world so detailed that compelling stories naturally emerge from the simulation.
 
 ## 2.0 SYSTEM ARCHITECTURE BLUEPRINT
 
-The MVP Orchestrator is a modular, agent-based system designed for clarity and extensibility.
+The NFL Sim Engine is a full-stack application with a clear separation between the backend simulation engine and the frontend user interface.
 
 ```text
-[ User Input (Web UI) ] -> [ MasterAgent (Orchestrator) ]
+[ User Input (React UI) ] -> [ FastAPI Backend ]
                                 |
-                                +--> [ SchemaAgent ] -> Generates DB schema, migrations
+                                +--> [ API Layer ] -> Exposes REST endpoints for all game data.
                                 |
-                                +--> [ API_Agent ] -> Generates REST/GraphQL endpoints, services
+                                +--> [ Orchestrator ] -> Manages game state, calendar, and events (e.g., season, offseason, draft).
                                 |
-                                +--> [ UI_Agent ] -> Generates frontend components, views, styles
+                                +--> [ RPG Engine ] -> Handles player progression, traits, and narrative events.
                                 |
-                                +--> [ AuthAgent ] -> Generates authentication logic (JWT/OAuth)
+                                +--> [ Game Engine ] -> Simulates individual plays and games using physics and AI.
                                 |
-                                +--> [ DeployAgent ] -> Generates Dockerfiles, CI/CD pipelines
+                                +--> [ Database (SQLAlchemy) ] -> Persists all game state via a detailed relational schema.
                                 |
                                 V
-[ Packaged Codebase (Output) ]
+[ Simulated NFL World (Dynamic UI) ]
 ```
 
-### **2.1 Input Layer: The Narrative Deconstruction**
+### **2.1 Input Layer: The Front Office**
 
-A web-based interface where the user defines their application's "DNA."
+A web-based interface for the user to act as the General Manager and Head Coach of their team.
 
-- **UI:** A clean, minimalist React/Vite application.
-- **Function:** Guides the user through defining:
-  - **Data Models:** (e.g., `User`, `Post`, `Product`) with fields and relationships.
-  - **API Endpoints:** Standard CRUD operations are inferred; custom actions can be defined.
-  - **UI Views:** (e.g., `Dashboard`, `UserProfile`, `Settings`).
-  - **Authentication:** (e.g., Google/GitHub OAuth, email/password).
-- **Output:** A single JSON object representing the application specification.
+*   **UI:** A React/Vite application.
+*   **Function:** Allows the user to:
+    *   Manage the roster (sign, trade, draft players).
+    *   Set team strategy and depth charts.
+    *   Advance the game week by week.
+    *   View detailed stats, standings, and league news.
+*   **Output:** API calls to the backend to execute user actions and fetch updated game state.
 
-### **2.2 Core Logic: The Master Agent & Specialists**
+### **2.2 Core Logic: The Simulation Engine (Python/FastAPI)**
 
-A Python (FastAPI) backend that receives the JSON specification and orchestrates the generation process.
+The backend is a powerful Python application that runs the entire simulation.
 
-- **MasterAgent:** The central orchestrator. It receives the JSON spec and delegates tasks to specialized agents in a logical sequence (Schema -> API -> UI).
-- **SchemaAgent:**
-  - **Input:** Data model definitions from the JSON spec.
-  - **Output:** Generates `models.py` (using SQLAlchemy or Django ORM), and initial database migration files.
-- **API_Agent:**
-  - **Input:** API endpoint definitions.
-  - **Output:** Generates `main.py` (FastAPI routes), `services.py` (business logic), and `schemas.py` (Pydantic models).
-- **UI_Agent:**
-  - **Input:** UI view definitions.
-  - **Output:** Generates React components (`.jsx`/`.tsx`) for each view, basic routing (`react-router-dom`), and CSS modules for styling. Adheres to **Airbnb-jealous UI standards**.
-- **AuthAgent:**
-  - **Input:** Authentication method choice.
-  - **Output:** Generates all necessary logic, from frontend login components to backend token handling and middleware.
-- **DeployAgent:**
-  - **Input:** Deployment target (e.g., Docker).
-  - **Output:** Generates `Dockerfile`, `docker-compose.yml`, and a basic `ci.yml` for GitHub Actions.
+*   **API Layer:** Built with FastAPI, it provides endpoints for the frontend to interact with the game world. Uses Pydantic for data validation.
+*   **Orchestrator (`/orchestrator`):** The heart of the simulation's lifecycle. It manages the progression of time, from advancing weeks in the season to stepping through the complex phases of the offseason (free agency, draft, etc.).
+*   **RPG Engine (`/rpg`):** Manages the "human" elements of the simulation. This includes player personality traits, career progression, coaching styles, and narrative event generation.
+*   **Game Engine (`/engine`):** The low-level simulation core. It simulates individual game outcomes based on player ratings, team strategies, AI decisions, and a physics model.
+*   **Database (`/models`):** A highly detailed database schema managed with SQLAlchemy and Alembic. It models everything from player contracts and detailed attributes to game stats and team financial data.
 
-### **2.3 Output Layer: The Production-Ready Delivery**
+### **2.3 Output Layer: The Living League**
 
-The final, generated codebase is packaged into a `.zip` file for the user to download. The structure is clean, logical, and immediately runnable.
+The state of the simulated NFL world is presented to the user through the frontend. The UI dynamically updates to reflect the results of the user's decisions and the outcomes of the background simulation.
 
 ```text
-/generated-app
+/
   /backend
     /app
       /api
       /core
+      /engine
       /models
+      /orchestrator
+      /rpg
       /schemas
     main.py
     requirements.txt
-    Dockerfile
   /frontend
     /src
       /components
-      /views
-      /assets
+      /pages
+      /services
     package.json
-    vite.config.js
-    Dockerfile
-  docker-compose.yml
-  README.md
+  ...
 ```
 
 ---
 
-## 3.0 TASK EXECUTION FRAMEWORK: THE TO-DO LIST
+## 3.0 TASK EXECUTION FRAMEWORK: THE DEVELOPMENT ROADMAP
 
-This is the implementation storyboard, broken down by the **Untouchable DevOps Lifecycle Framework (UDLF)**.
+This represents a potential storyboard for the project's development and future.
 
-### **STAGE 1: CONCEPTUALIZE & ARCHITECT**
+### **STAGE 1: FOUNDATION & CORE MODELS**
 
-- **[x] Define System Architecture Blueprint (`H6-BP-001`)**
-- **[ ] Technology Stack Optimization**
-  - `[ ]` Backend: Solidify choice of Python `FastAPI` for performance and modern features.
-  - `[ ]` Frontend: Solidify choice of `React/Vite` for speed and ecosystem.
-  - `[ ]` Database: Default to `PostgreSQL` for robustness.
-- **[ ] UI/UX Storyboard Generation (Input Layer)**
-  - `[ ]` Wireframe the user journey for defining a new application.
-  - `[ ]` Design the data model creation interface.
-  - `[ ]` Design the API endpoint definition interface.
+*   **[x] Define System Architecture Blueprint (`NFL-SIM-001`)**
+*   **[x] Technology Stack Selection**
+    *   `[x]` Backend: Python `FastAPI`
+    *   `[x]` Frontend: `React/Vite` with TypeScript
+    *   `[x]` Database: `PostgreSQL` / `SQLite` via `SQLAlchemy`
+*   **[x] Database Schema Implementation (`/models`)**
+    *   `[x]` Implement core models: `Player`, `Team`, `Game`, `Season`.
+    *   `[x]` Add detailed player attributes (skills, contract, RPG traits).
+    *   `[x]` Set up Alembic for database migrations.
 
-### **STAGE 2: IMPLEMENT (Development Execution Climax)**
+### **STAGE 2: SIMULATION ENGINE IMPLEMENTATION**
 
-- **[ ] Task 2.1: Setup Project Scaffolding**
-  - `[ ]` Create a monorepo structure (e.g., using `pnpm workspaces`).
-  - `[ ]` `/apps/generator-ui`: Initialize React/Vite project.
-  - `[ ]` `/apps/generator-api`: Initialize FastAPI project.
-- **[ ] Task 2.2: Build the Input Layer (generator-ui)**
-  - `[ ]` Implement the Data Model definition form.
-  - `[ ]` Implement state management for the application spec JSON (e.g., Zustand or Redux Toolkit).
-  - `[ ]` Implement the "Generate" button to POST the final JSON to the backend.
-- **[ ] Task 2.3: Build the Core Logic (generator-api)**
-  - `[ ]` Create the `/generate` endpoint to receive the JSON spec.
-  - `[ ]` Implement the `MasterAgent` class.
-  - `[ ]` Implement the `SchemaAgent` to generate Python ORM models from the spec.
-  - `[ ]` Implement the `API_Agent` to generate FastAPI routes and services.
-  - `[ ]` Implement the `UI_Agent` to generate React components and routing files.
-  - `[ ]` Implement the `DeployAgent` to generate Dockerfiles.
-  - `[ ]` Implement logic to assemble the generated files into a `.zip` archive.
-- **[ ] Task 2.4: Develop Code Templates**
-  - `[ ]` Create a `/templates` directory in `generator-api`.
-  - `[ ]` Create parameterized templates for:
-    - `template.model.py`
-    - `template.route.py`
-    - `template.service.py`
-    - `template.component.jsx`
-    - `template.Dockerfile`
+*   **[ ] Task 2.1: Game Simulation Engine (`/engine`)**
+    *   `[ ]` Develop play resolution logic.
+    *   `[ ]` Implement basic AI for play-calling.
+    *   `[ ]` Develop physics model for on-field action.
+*   **[ ] Task 2.2: Season Orchestrator (`/orchestrator`)**
+    *   `[ ]` Implement week-by-week season progression.
+    *   `[ ]` Implement standings calculation.
+    *   `[ ]` Implement playoff simulation logic.
+*   **[ ] Task 2.3: Offseason Orchestrator**
+    *   `[ ]` Implement player progression and regression logic (`/rpg`).
+    *   `[ ]` Implement rookie generation and the NFL Draft.
+    *   `[ ]` Implement free agency logic.
 
-### **STAGE 3: DEPLOY (Production Delivery Resolution)**
+### **STAGE 3: FRONTEND UI & USER INTERACTION**
 
-- **[ ] Task 3.1: Containerize the Orchestrator**
-  - `[ ]` Write a `Dockerfile` for the `generator-ui`.
-  - `[ ]` Write a `Dockerfile` for the `generator-api`.
-  - `[ ]` Create a `docker-compose.yml` to run the entire Orchestrator locally.
-- **[ ] Task 3.2: Implement CI/CD Pipeline**
-  - `[ ]` Set up GitHub Actions.
-  - `[ ]` Create a workflow to lint, test, and build the Docker images on every push to `main`.
+*   **[ ] Task 3.1: Setup Project Scaffolding**
+    *   `[x]` Initialize React/Vite project.
+*   **[ ] Task 3.2: Build Core UI Views (`/pages`)**
+    *   `[ ]` Implement Roster management screen.
+    *   `[ ]` Implement Standings and Schedule views.
+    *   `[ ]` Implement Player profile pages.
+*   **[ ] Task 3.3: API Integration (`/services`)**
+    *   `[ ]` Create services to fetch data from the FastAPI backend.
+    *   `[ ]` Implement state management for the application (e.g., Zustand or Redux Toolkit).
 
-### **STAGE 4: OPTIMIZE (Continuous Improvement)**
+### **STAGE 4: DEPLOYMENT & CONTINUOUS IMPROVEMENT**
 
-- **[ ] Task 4.1: Enhance Agent Intelligence**
-  - `[ ]` `SchemaAgent`: Add support for more complex relationships (many-to-many).
-  - `[ ]` `UI_Agent`: Add a selection of UI component libraries (e.g., Material UI, Shadcn).
-  - `[ ]` `API_Agent`: Add support for GraphQL generation.
-- **[ ] Task 4.2: Establish Testing Framework**
-  - `[ ]` Add unit tests for each Agent, ensuring generated code is valid.
-  - `[ ]` Add E2E tests for the `generator-ui` to validate the user flow.
+*   **[ ] Task 4.1: Containerize the Application**
+    *   `[x]` Write a `Dockerfile` for the backend.
+    *   `[x]` Write a `Dockerfile` for the frontend.
+    *   `[x]` Create a `docker-compose.yml` for local development.
+*   **[ ] Task 4.2: Establish Testing Framework**
+    *   `[ ]` Add unit tests for the simulation engine.
+    *   `[ ]` Add API integration tests.
+    *   `[ ]` Add E2E tests for the frontend user flows.
 
 ---
 

@@ -47,6 +47,7 @@ class Base(DeclarativeBase):
 
 ### Test Coverage
 
+THE NFL SIM
 Verified playoff service functionality in [`tests/test_playoff_service.py`](file:///c:/Users/cweir/Documents/GitHub/THE%20NFL%20SIM/backend/tests/test_playoff_service.py):
 
 1. ✅ `test_get_bracket` - Retrieving playoff bracket
@@ -58,7 +59,7 @@ Verified playoff service functionality in [`tests/test_playoff_service.py`](file
 
 ### Test Results
 
-```
+```text
 ======================== 6 passed, 1 warning in 0.47s ===================
 ```
 
@@ -70,7 +71,7 @@ Verified playoff service functionality in [`tests/test_playoff_service.py`](file
 
 **Status:** COMPLETE - 11/11 tests passing (fixed 1 failing test)
 
-### Test Coverage
+### Offseason Test Coverage
 
 Comprehensive testing in [`tests/test_offseason_service.py`](file:///c:/Users/cweir/Documents/GitHub/THE%20NFL%20SIM/backend/tests/test_offseason_service.py):
 
@@ -81,27 +82,27 @@ Comprehensive testing in [`tests/test_offseason_service.py`](file:///c:/Users/cw
 
 #### Draft Order Generation (2 tests)
 
-3. ✅ `test_generate_draft_order_creates_correct_number_of_picks` - Verifies 224 picks (7 rounds × 32 teams)
-4. ✅ `test_generate_draft_order_worst_team_picks_first` - Draft order logic
+1. ✅ `test_generate_draft_order_creates_correct_number_of_picks` - Verifies 224 picks (7 rounds × 32 teams)
+2. ✅ `test_generate_draft_order_worst_team_picks_first` - Draft order logic
 
 #### Rookie Generation (2 tests)
 
-5. ✅ `test_rookie_generator_creates_correct_count`
-6. ✅ `test_rookie_generator_creates_players_with_correct_attributes`
+1. ✅ `test_rookie_generator_creates_correct_count`
+2. ✅ `test_rookie_generator_creates_players_with_correct_attributes`
 
 #### Draft Simulation (2 tests)
 
-7. ✅ `test_simulate_draft_fills_all_picks`
-8. ✅ `test_simulate_draft_respects_team_needs` - Position-based draft logic
+1. ✅ `test_simulate_draft_fills_all_picks`
+2. ✅ `test_simulate_draft_respects_team_needs` - Position-based draft logic
 
 #### Free Agency (2 tests)
 
-9. ✅ `test_simulate_free_agency_fills_rosters_to_53`
-10. ✅ `test_simulate_free_agency_signs_best_available_players`
+1. ✅ `test_simulate_free_agency_fills_rosters_to_53`
+2. ✅ `test_simulate_free_agency_signs_best_available_players`
 
 #### Integration Test (1 test)
 
-11. ✅ `test_start_offseason_executes_all_steps` - **(FIXED)**
+1. ✅ `test_start_offseason_executes_all_steps` - **(FIXED)**
 
 ### Bug Fix
 
@@ -117,9 +118,9 @@ elif model == DraftPick:
     mock_query.filter.return_value = filter_mock
 ```
 
-### Test Results
+### Offseason Test Results
 
-```
+```text
 ======================== 11 passed, 1 warning in 0.48s ===================
 ```
 
