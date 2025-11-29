@@ -88,18 +88,18 @@
 
 ## Phase 6: Testing, Polish & Advanced Features
 
-- [ ] **6.1: Comprehensive Testing & Verification**
+- [/] **6.1: Comprehensive Testing & Verification**
 
   - [x] Run and verify draft logic tests
-  - [ ] Create playoff service tests
-  - [ ] Create comprehensive offseason service tests
+  - [x] Create playoff service tests (6/6 passing)
+  - [x] Create comprehensive offseason service tests (11/11 passing)
   - [ ] Manual testing: Playoff flow
   - [ ] Manual testing: Offseason flow
   - [ ] Run all verification scripts
 
-- [ ] **6.2: Technical Debt & Code Quality**
+- [/] **6.2: Technical Debt & Code Quality**
 
-  - [ ] Fix SQLAlchemy deprecation warning (`backend/app/models/base.py`)
+  - [x] Fix SQLAlchemy deprecation warning (`backend/app/models/base.py`)
   - [ ] Fix Pydantic deprecation warnings (use `ConfigDict`)
   - [ ] Add database indexes for performance
   - [ ] Improve API error handling

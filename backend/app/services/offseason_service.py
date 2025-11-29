@@ -24,17 +24,24 @@ class OffseasonService:
         # We might want a more granular status enum for phases, but for now we use OFF_SEASON
         # and maybe track phase in a separate field or just assume flow.
         
-        # 1. Process Contracts
-        self.process_contract_expirations()
-        
-        # 2. Generate Draft Order
-        self.generate_draft_order(season_id)
-        
-        # 3. Generate Rookie Class
-        self.rookie_generator.generate_draft_class(season_id)
-        
-        self.db.commit()
-        return {"message": "Offseason started. Contracts processed, Draft order set, Rookies generated."}
+        try:
+            # 1. Process Contracts
+            self.process_contract_expirations()
+            
+            # 2. Generate Draft Order
+            existing_picks = self.db.query(DraftPick).filter(DraftPick.season_id == season_id).first()
+            if not existing_picks:
+                self.generate_draft_order(season_id)
+            
+            # 3. Generate Rookie Class
+            self.rookie_generator.generate_draft_class(season_id)
+            
+            self.db.commit()
+            return {"message": "Offseason started. Contracts processed, Draft order set, Rookies generated."}
+        except Exception as e:
+            print(f"Error starting offseason: {e}")
+            self.db.rollback()
+            raise e
 
     def process_contract_expirations(self):
         """Decrement contract years and release expired players."""
@@ -49,7 +56,21 @@ class OffseasonService:
         """Generate 7 rounds of draft picks based on reverse standings."""
         # 1. Get Standings
         standings = self.standings_calculator.calculate_standings(season_id)
-        
+        if not standings:
+            # Fallback: Get all teams if standings are empty (e.g. new season or error)
+            # But this shouldn't happen after a played season.
+            # If it does, we can't really generate a draft order based on merit.
+            # Let's just log and maybe return or use random order?
+            # For now, let's assume we need standings.
+            print("Error: No standings found for draft order generation.")
+            # We could try to fetch teams directly but they won't have win_pct
+            # Let's try to fetch teams and give them default stats so we don't crash
+            teams = self.db.query(Team).all()
+            # Create dummy standings objects or just use team IDs
+            # But the code below expects objects with win_pct, etc.
+            # So let's just raise an error or return to avoid crash
+            raise ValueError("Cannot generate draft order: No standings data found.")
+
         # 2. Adjust for Playoffs (Super Bowl winner last, etc.)
         # Simplified: Just use reverse standings for non-playoff teams, 
         # and append playoff teams based on elimination round?
@@ -79,6 +100,8 @@ class OffseasonService:
             if loser_id in ordered_team_ids:
                 ordered_team_ids.remove(loser_id)
                 ordered_team_ids.insert(len(ordered_team_ids)-1, loser_id) # Second to last
+        elif not sb_matchup:
+            print("Warning: No Super Bowl matchup found for draft order generation.")
         
         # Create Picks
         for round_num in range(1, 8):

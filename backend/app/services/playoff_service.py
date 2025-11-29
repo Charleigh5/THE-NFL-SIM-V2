@@ -16,6 +16,16 @@ class PlayoffService:
         season = self.db.query(Season).filter(Season.id == season_id).first()
         if not season:
             raise ValueError("Season not found")
+            
+        # Check if playoffs already generated
+        existing = self.db.query(PlayoffMatchup).filter(PlayoffMatchup.season_id == season_id).first()
+        if existing:
+            # If they exist, we just return the bracket? Or raise error?
+            # Raising error is safer to prevent accidental re-generation
+            # But for idempotency, maybe return bracket?
+            # The user requested "generate", implying creation.
+            # Let's raise error as per plan.
+            raise ValueError("Playoffs already generated for this season")
         
         # 1. Calculate Seeds
         afc_seeds = self._calculate_conference_seeds(season_id, "AFC")
@@ -132,7 +142,30 @@ class PlayoffService:
             return # No playoffs yet
 
         # Check if current round is complete
+        # Check if current round is complete
         current_round_matchups = [m for m in matchups if not m.winner_id]
+        
+        # Try to update winners from games
+        for m in current_round_matchups:
+            if m.game_id:
+                game = self.db.query(Game).filter(Game.id == m.game_id).first()
+                if game and game.is_played:
+                    if game.home_score > game.away_score:
+                        m.winner_id = m.home_team_id
+                    elif game.away_score > game.home_score:
+                        m.winner_id = m.away_team_id
+                    else:
+                        # Tie? In playoffs? Should not happen.
+                        # For now, let's say home wins ties (higher seed)
+                        m.winner_id = m.home_team_id
+                    self.db.add(m)
+        
+        self.db.commit()
+        
+        # Re-fetch matchups to see if we can advance
+        matchups = self.db.query(PlayoffMatchup).filter(PlayoffMatchup.season_id == season_id).all()
+        current_round_matchups = [m for m in matchups if not m.winner_id]
+
         if current_round_matchups:
             # Round not finished
             return
@@ -160,8 +193,11 @@ class PlayoffService:
             season.current_week = 22
             
         elif current_week == 22: # Super Bowl -> Offseason
-            # Season over
-            pass
+            # Season over, move to offseason
+            season.status = SeasonStatus.OFF_SEASON
+            # We don't advance week here, offseason starts at week 22 or resets?
+            # Usually offseason is a state, not a week.
+            # Let's keep week at 22 so we know it ended there.
             
         self.db.commit()
 

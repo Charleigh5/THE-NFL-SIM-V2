@@ -494,6 +494,11 @@ def test_start_offseason_executes_all_steps(service, mock_db):
             filter_mock = MagicMock()
             filter_mock.first.return_value = season
             mock_query.filter.return_value = filter_mock
+        elif model == DraftPick:
+            # Return None for existing picks so generate_draft_order will be called
+            filter_mock = MagicMock()
+            filter_mock.first.return_value = None
+            mock_query.filter.return_value = filter_mock
         return mock_query
     
     mock_db.query.side_effect = query_side_effect
@@ -519,3 +524,4 @@ def test_start_offseason_executes_all_steps(service, mock_db):
         
         # Verify success message
         assert "Offseason started" in result["message"]
+

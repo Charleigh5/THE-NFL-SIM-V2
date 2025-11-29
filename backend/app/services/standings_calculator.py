@@ -120,7 +120,7 @@ class StandingsCalculator:
         
         # Calculate win percentage
         total_games = wins + losses + ties
-        win_pct = wins / total_games if total_games > 0 else 0.0
+        win_pct = (wins + 0.5 * ties) / total_games if total_games > 0 else 0.0
         
         return {
             'team_id': team.id,
