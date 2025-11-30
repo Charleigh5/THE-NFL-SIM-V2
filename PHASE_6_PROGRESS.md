@@ -208,3 +208,40 @@ Based on [`task.md`](file:///c:/Users/cweir/Documents/GitHub/THE%20NFL%20SIM/tas
 - API router has all endpoints properly wired
 
 **Recommendation:** Continue with manual testing of playoff and offseason flows, or tackle the Pydantic deprecation warnings as another quick win.
+
+---
+
+## ✅ Task 5: Gameplay Mechanics & Simulation Verification
+
+**Status:** COMPLETE - All verification scripts passing
+
+### Verification Results
+
+Verified core gameplay mechanics, AI decision making, and full game simulation loop.
+
+1. **Speed Mechanics (`verify_gameplay_mechanics.py`)**
+
+   - ✅ Fast WR (95 Speed) consistently outperforms Slow CB (60 Speed).
+   - Completion Rate Diff: +13.1%
+   - Avg Yards Diff: +4.20
+
+2. **Fatigue Impact (`verify_fatigue_impact.py`)**
+
+   - ✅ Fatigue significantly degrades QB performance.
+   - Fresh (0 Fatigue): 80.20% Completion
+   - Tired (100 Fatigue): 68.60% Completion
+   - Degradation: 11.60%
+
+3. **AI Play Calling (`verify_play_calling.py`)**
+
+   - ✅ Conservative Punt: Correctly chose Punt on 4th & 10.
+   - ✅ Aggressive Goal Line: Correctly chose Run on 4th & 1 (down 4, Q4).
+   - ✅ Field Goal Range: Correctly chose Field Goal on 4th & 5 (tied).
+   - ✅ Strategic tendencies verified for 3rd & Long (Pass) and Short Yardage (Run).
+
+4. **Full Game Simulation (`simulate_full_game.py`)**
+   - ✅ Completed full 4-quarter game.
+   - ✅ Final Score: 14-14.
+   - ✅ No infinite loops or stuck states.
+
+See [`GAMEPLAY_VERIFICATION_RESULTS.md`](file:///c:/Users/cweir/Documents/GitHub/THE%20NFL%20SIM/GAMEPLAY_VERIFICATION_RESULTS.md) for full details.

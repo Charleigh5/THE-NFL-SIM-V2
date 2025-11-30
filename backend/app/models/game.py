@@ -1,10 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, JSON, Index
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 import datetime
 
 class Game(Base):
     __tablename__ = "game"
+    __table_args__ = (
+        Index("ix_game_season_week", "season_id", "week"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     

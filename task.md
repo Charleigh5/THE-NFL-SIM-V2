@@ -130,7 +130,11 @@
 - [ ] **Run All Verification Scripts**
   - [ ] `backend/test_base_import.py`
   - [ ] `backend/verify_player_columns.py`
-  - [ ] Review output and document findings
+  - [x] `backend/tests/verify_gameplay_mechanics.py`
+  - [x] `backend/tests/verify_fatigue_impact.py`
+  - [x] `backend/tests/verify_play_calling.py`
+  - [x] `backend/tests/simulate_full_game.py`
+  - [x] Review output and document findings
 
 ### **6.2: Technical Debt & Code Quality** [NEXT PRIORITY]
 

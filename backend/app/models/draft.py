@@ -1,9 +1,12 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 
 class DraftPick(Base):
     __tablename__ = "draft_pick"
+    __table_args__ = (
+        Index("ix_draft_pick_season_round", "season_id", "round"),
+    )
     
     id = Column(Integer, primary_key=True, index=True)
     season_id = Column(Integer, ForeignKey("season.id"), nullable=False, index=True)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum as SQLEnum, Index
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 import enum
@@ -16,9 +16,12 @@ class PlayoffConference(str, enum.Enum):
 
 class PlayoffMatchup(Base):
     __tablename__ = "playoff_matchup"
+    __table_args__ = (
+        Index("ix_playoff_matchup_season_round", "season_id", "round"),
+    )
 
     id = Column(Integer, primary_key=True, index=True)
-    season_id = Column(Integer, ForeignKey("season.id"), nullable=False)
+    season_id = Column(Integer, ForeignKey("season.id"), nullable=False, index=True)
     
     # Bracket Info
     round = Column(SQLEnum(PlayoffRound), nullable=False)
