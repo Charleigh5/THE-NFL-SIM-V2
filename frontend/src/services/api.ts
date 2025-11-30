@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 30000, // 30 second timeout
 });
 
 export interface Team {
@@ -33,6 +34,14 @@ export interface Player {
   team_id: number;
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
 export const api = {
   // Expose axios methods
   get: apiClient.get,
@@ -42,9 +51,12 @@ export const api = {
   patch: apiClient.patch,
 
   // Team/Player Service methods
-  getTeams: async (): Promise<Team[]> => {
-    const response = await apiClient.get("/api/teams");
-    return response.data;
+  getTeams: async (page: number = 1, pageSize: number = 100): Promise<Team[]> => {
+    const response = await apiClient.get<PaginatedResponse<Team>>(
+      `/api/teams?page=${page}&page_size=${pageSize}`
+    );
+    // Return all items for backward compatibility, can be changed to return full response
+    return response.data.items;
   },
 
   getTeam: async (teamId: number): Promise<Team> => {

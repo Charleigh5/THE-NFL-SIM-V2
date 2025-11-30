@@ -8,7 +8,7 @@ class MatchContext:
     Holds the runtime state of a match, including full rosters,
     depth charts, and kernel-specific player states (fatigue, injury).
     """
-    def __init__(self, home_roster: List[Player], away_roster: List[Player], weather_config: Optional[Dict] = None):
+    def __init__(self, home_roster: List[Player], away_roster: List[Player], weather_config: Optional[Dict] = None) -> None:
         self.home_roster = home_roster
         self.away_roster = away_roster
         self.weather_config = weather_config or {"temperature": 70, "condition": "Sunny"}
@@ -25,7 +25,7 @@ class MatchContext:
         self._initialize_states(home_roster, team_type="home")
         self._initialize_states(away_roster, team_type="away")
         
-    def _initialize_states(self, players: List[Player], team_type: str):
+    def _initialize_states(self, players: List[Player], team_type: str) -> None:
         temperature = self.weather_config.get("temperature", 70)
         
         for p in players:

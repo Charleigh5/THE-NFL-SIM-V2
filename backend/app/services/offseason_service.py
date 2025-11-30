@@ -16,7 +16,7 @@ class OffseasonService:
         self.standings_calculator = StandingsCalculator(db)
         self.rookie_generator = RookieGenerator(db)
 
-    def start_offseason(self, season_id: int):
+    def start_offseason(self, season_id: int) -> dict:
         """Transition from Super Bowl to Offseason."""
         season = self.db.query(Season).filter(Season.id == season_id).first()
         if not season:
@@ -108,7 +108,7 @@ class OffseasonService:
         self.db.commit()
         return progression_results
 
-    def process_contract_expirations(self):
+    def process_contract_expirations(self) -> None:
         """Decrement contract years and release expired players."""
         players = self.db.query(Player).filter(Player.team_id != None).all()
         for player in players:
@@ -117,7 +117,7 @@ class OffseasonService:
                 player.team_id = None # Released to Free Agency
                 player.contract_years = 0
 
-    def generate_draft_order(self, season_id: int):
+    def generate_draft_order(self, season_id: int) -> None:
         """Generate 7 rounds of draft picks based on reverse standings."""
         # 1. Get Standings
         standings = self.standings_calculator.calculate_standings(season_id)
@@ -229,7 +229,7 @@ class OffseasonService:
             ) for p in rookies
         ]
 
-    def simulate_draft(self, season_id: int):
+    def simulate_draft(self, season_id: int) -> List[DraftPickSummary]:
         """Simulate the entire draft with position need logic."""
         picks = self.db.query(DraftPick).filter(
             DraftPick.season_id == season_id,
@@ -305,7 +305,7 @@ class OffseasonService:
         
         return summary
 
-    def simulate_free_agency(self, season_id: int):
+    def simulate_free_agency(self, season_id: int) -> dict:
         """Fill rosters with free agents."""
         teams = self.db.query(Team).all()
         

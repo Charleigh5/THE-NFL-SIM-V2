@@ -2,16 +2,17 @@ from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
 from app.schemas.play import PlayResult
 import random
 from app.orchestrator.kernels_interface import KernelInterface
+from typing import Optional, Any
 
 class PlayResolver:
     """
     Resolves a PlayCommand by orchestrating the various simulation kernels.
     """
-    def __init__(self, kernels: KernelInterface = None):
+    def __init__(self, kernels: Optional[KernelInterface] = None) -> None:
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
         
-    def register_players(self, match_context):
+    def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
         self.current_match_context = match_context
         all_players = match_context.home_roster + match_context.away_roster
@@ -42,7 +43,7 @@ class PlayResolver:
         # Add resolvers for other command types here
         return command.execute({})
 
-    def _get_player_by_position(self, players: list, position_prefix: str) -> any:
+    def _get_player_by_position(self, players: list, position_prefix: str) -> Optional[Any]:
         """Helper to find a player by position prefix (e.g., 'QB', 'WR')."""
         if not players:
             return None
@@ -244,6 +245,7 @@ class PlayResolver:
             rusher_id=rb.id
         )
 
+    def _resolve_legacy_random_pass(self, command: PassPlayCommand) -> PlayResult:
         """Fallback for when no player data is available."""
         success_chance = 0.60
         is_complete = random.random() < success_chance

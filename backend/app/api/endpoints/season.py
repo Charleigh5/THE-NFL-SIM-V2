@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
@@ -92,6 +92,8 @@ def get_season_summary(db: Session = Depends(get_db)):
     completion = 0.0
     if total_games > 0:
         completion = (games_played / total_games) * 100
+    
+    logger.info(f"Season summary retrieved: {season.id}")
         
     return {
         "season": season,
@@ -207,8 +209,11 @@ def get_schedule(
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
     
-    # Build query
-    query = db.query(Game).filter(Game.season_id == season_id)
+    # Build query with eager loading to prevent N+1 queries
+    query = db.query(Game).options(
+        joinedload(Game.home_team),
+        joinedload(Game.away_team)
+    ).filter(Game.season_id == season_id)
     
     if week is not None:
         query = query.filter(Game.week == week)
@@ -469,6 +474,7 @@ def get_league_leaders(
             for r in results
         ]
 
+    logger.info(f"League leaders retrieved: {limit} per category")
     return LeagueLeaders(
         passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
         rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),

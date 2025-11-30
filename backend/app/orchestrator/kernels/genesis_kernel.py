@@ -6,11 +6,11 @@ class GenesisKernel:
     Facade for the Genesis (Biological/Injury) Engine.
     Manages player health, fatigue, and injury risks.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         # In a real system, this would load from a DB or state manager
         self.player_states: Dict[int, Dict[str, Any]] = {}
 
-    def register_player(self, player_id: int, profile_data: Dict[str, Any]):
+    def register_player(self, player_id: int, profile_data: Dict[str, Any]) -> None:
         """Initialize biological components for a player."""
         self.player_states[player_id] = {
             "anatomy": AnatomyModel(**profile_data.get("anatomy", {})),

@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import SeasonDashboard from "./pages/SeasonDashboard";
 import OffseasonDashboard from "./pages/OffseasonDashboard";
 import { FrontOffice } from "./pages/FrontOffice";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./App.css";
 
 // Placeholder components for engine pages
@@ -29,9 +30,10 @@ const NotFound = () => <div className="page-placeholder">404 Not Found</div>;
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="season" element={<SeasonDashboard />} />
           <Route path="offseason" element={<OffseasonDashboard />} />
@@ -43,9 +45,10 @@ function App() {
           <Route path="core" element={<CorePage />} />
           <Route path="rpg" element={<RPGPage />} />
           <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
+          </Route>
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

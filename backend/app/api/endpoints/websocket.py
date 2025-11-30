@@ -2,10 +2,11 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import List, Dict, Any
 import asyncio
 import json
+import logging
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
 
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 class ConnectionManager:
     """Manages active WebSocket connections for live simulation broadcasting."""
@@ -17,12 +18,13 @@ class ConnectionManager:
         """Accept and register a new WebSocket connection."""
         await websocket.accept()
         self.active_connections.append(websocket)
-        print(f"Client connected. Total connections: {len(self.active_connections)}")
+        logger.info(f"Client connected. Total connections: {len(self.active_connections)}")
     
     def disconnect(self, websocket: WebSocket):
         """Remove a WebSocket connection from active list."""
-        self.active_connections.remove(websocket)
-        print(f"Client disconnected. Total connections: {len(self.active_connections)}")
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+            logger.info(f"Client disconnected. Total connections: {len(self.active_connections)}")
     
     async def broadcast(self, message: Dict[str, Any]):
         """
@@ -36,13 +38,12 @@ class ConnectionManager:
             try:
                 await connection.send_text(json.dumps(message))
             except Exception as e:
-                print(f"Error broadcasting to client: {e}")
+                logger.error(f"Error broadcasting to client: {e}")
                 disconnected.append(connection)
         
         # Clean up disconnected clients
         for conn in disconnected:
-            if conn in self.active_connections:
-                self.active_connections.remove(conn)
+            self.disconnect(conn)
 
 
 # Global connection manager instance
@@ -72,13 +73,14 @@ async def websocket_simulation_endpoint(websocket: WebSocket):
                 if message.get("type") == "PING":
                     await websocket.send_text(json.dumps({"type": "PONG"}))
             except json.JSONDecodeError:
+                logger.warning("Received invalid JSON from WebSocket client")
                 pass
                 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        print("Client disconnected normally")
+        logger.info("Client disconnected normally")
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error: {e}", exc_info=True)
         manager.disconnect(websocket)
 
 

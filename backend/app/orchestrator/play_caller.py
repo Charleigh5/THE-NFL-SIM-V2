@@ -21,7 +21,7 @@ class PlayCaller:
     """
     Handles situation-aware play selection based on game state and coach personality.
     """
-    def __init__(self, aggression: float = 0.5, run_pass_ratio: float = 0.45):
+    def __init__(self, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
         """
         Initialize PlayCaller.
         

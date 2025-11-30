@@ -16,7 +16,7 @@ class SimulationOrchestrator:
     """
     Orchestrates the setup and execution of a simulation.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.play_resolver = PlayResolver()
         self.play_caller = PlayCaller(aggression=0.5) # Default balanced coach
         self.history: List[PlayResult] = []
@@ -47,7 +47,7 @@ class SimulationOrchestrator:
         self.play_delay_seconds = 5.0  # Delay between plays for animation
         self.game_config = {}
 
-    def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None):
+    def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
         self.db_session = SessionLocal()
@@ -76,7 +76,7 @@ class SimulationOrchestrator:
         
         print(f"Match Context Hydrated. Home: {len(home_roster)} players, Away: {len(away_roster)} players.")
 
-    def _save_progress(self):
+    def _save_progress(self) -> None:
         """Save current game state and history to database."""
         if not self.db_session or not self.current_game_id:
             return
@@ -100,7 +100,7 @@ class SimulationOrchestrator:
             print(f"Error saving progress: {e}")
             self.db_session.rollback()
 
-    def save_game_result(self):
+    def save_game_result(self) -> None:
         """Finalize the game in the database."""
         if not self.db_session or not self.current_game_id:
             return
@@ -162,7 +162,7 @@ class SimulationOrchestrator:
 
         return result
     
-    async def run_continuous_simulation(self, num_plays: int = 100, config: Optional[dict] = None):
+    async def run_continuous_simulation(self, num_plays: int = 100, config: Optional[dict] = None) -> None:
         """
         Run a continuous simulation for a specified number of plays.
         Broadcasts each play result via WebSocket.
@@ -268,7 +268,7 @@ class SimulationOrchestrator:
         
         return result
 
-    def _update_game_state(self, result: PlayResult):
+    def _update_game_state(self, result: PlayResult) -> None:
         """Update game state based on play result."""
         # Update yard line
         if self.possession == "home":
@@ -337,7 +337,7 @@ class SimulationOrchestrator:
         except ValueError:
             return False
     
-    def reset_game_state(self):
+    def reset_game_state(self) -> None:
         """Reset game state to initial values."""
         self.current_quarter = 1
         self.time_left = "15:00"
@@ -366,6 +366,6 @@ class SimulationOrchestrator:
         """Return the history of plays in this session."""
         return self.history
 
-    def stop_simulation(self):
+    def stop_simulation(self) -> None:
         """Stop the currently running simulation."""
         self.is_running = False

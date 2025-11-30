@@ -5,10 +5,10 @@ class EmpireKernel:
     Facade for the Empire (Franchise/Management) Engine.
     Manages XP, morale, and team dynamics.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def process_play_result(self, play_result: Dict[str, Any]):
+    def process_play_result(self, play_result: Dict[str, Any]) -> Dict[str, Any]:
         """
         Analyze play result for XP awards and morale shifts.
         """

@@ -11,7 +11,7 @@ class SalaryCapService:
     """
     Service for calculating and analyzing team salary cap situations.
     """
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
     def get_team_cap_breakdown(self, team_id: int, season_id: int) -> Dict[str, Any]:

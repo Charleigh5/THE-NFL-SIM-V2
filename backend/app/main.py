@@ -20,27 +20,38 @@ from app.core.error_handlers import (
 from app.middlewares.logging_middleware import LoggingMiddleware
 
 # Configure logging
-LOG_DIR = "logs"
+from app.core.config import settings
+
+LOG_DIR = settings.LOG_DIR
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
+log_format = (
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    if settings.LOG_FORMAT == "text"
+    else '{"time":"%(asctime)s","name":"%(name)s","level":"%(levelname)s","message":"%(message)s"}'
+)
+
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=getattr(logging, settings.LOG_LEVEL.upper()),
+    format=log_format,
     handlers=[
         logging.StreamHandler(sys.stdout),
         logging.handlers.RotatingFileHandler(
-            os.path.join(LOG_DIR, "app.log"), maxBytes=10485760, backupCount=5
-        )
-    ]
+            os.path.join(LOG_DIR, "app.log"),
+            maxBytes=settings.LOG_MAX_BYTES,
+            backupCount=settings.LOG_BACKUP_COUNT,
+        ),
+    ],
 )
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Stellar Sagan - NFL Simulation Engine",
-    description="Backend API for the Stellar Sagan NFL Football Simulation.",
-    version="0.1.0",
+    title=settings.API_TITLE,
+    description=settings.API_DESCRIPTION,
+    version=settings.API_VERSION,
+    debug=settings.DEBUG,
 )
 
 # Register Middlewares
@@ -54,17 +65,12 @@ app.add_exception_handler(ValidationError, pydantic_validation_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
 
 # CORS Configuration
-origins = [
-    "http://localhost:5173",  # Vite default
-    "http://localhost:3000",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=settings.CORS_ALLOW_METHODS,
+    allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
 # Include API routers

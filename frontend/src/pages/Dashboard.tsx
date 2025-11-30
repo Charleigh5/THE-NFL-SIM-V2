@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/ui/Card";
+import { Badge } from "../components/ui/Badge";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -70,38 +72,34 @@ const Dashboard = () => {
         </div>
         <div className="system-status">
           {isLoading ? (
-            <span className="status-badge loading">Checking...</span>
+            <Badge variant="neutral">Checking...</Badge>
           ) : health?.status === "healthy" ? (
-            <span className="status-badge online">All Systems Online</span>
+            <Badge variant="success">All Systems Online</Badge>
           ) : (
-            <span className="status-badge offline">System Offline</span>
+            <Badge variant="danger">System Offline</Badge>
           )}
         </div>
       </header>
 
       <div className="engines-grid">
         {engines.map((engine) => (
-          <div key={engine.name} className="engine-card">
-            <div className="engine-header">
+          <Card key={engine.name} variant="interactive" className="engine-card">
+            <CardHeader>
               <span
-                className="engine-icon"
-                style={{ backgroundColor: engine.color }}
+                className="engine-icon-wrapper"
+                style={{ backgroundColor: `${engine.color}20`, color: engine.color, border: `1px solid ${engine.color}40` }}
               >
                 {engine.icon}
               </span>
-              <div
-                className="engine-status-dot"
-                style={{ backgroundColor: engine.color }}
-              ></div>
-            </div>
-            <h3 className="engine-name">{engine.name}</h3>
-            <p className="engine-description">{engine.description}</p>
-            <div className="engine-footer">
-              <span className="engine-status-label">
-                Status: {engine.status}
-              </span>
-            </div>
-          </div>
+              <CardTitle>{engine.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {engine.description}
+            </CardContent>
+            <CardFooter>
+              <Badge variant="success">Operational</Badge>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>

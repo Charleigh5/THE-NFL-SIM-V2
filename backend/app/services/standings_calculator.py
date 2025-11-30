@@ -45,28 +45,77 @@ class StandingsCalculator:
         """
         Calculate standings for all teams in a season.
         
+        Optimized to use a single query instead of N queries per team.
+        
         Args:
             season_id: ID of the season
         
         Returns:
             List of TeamStanding objects sorted by rank
         """
-        # Get all teams
+        from sqlalchemy import case, func
+        
+        # Get all teams with their game statistics in a single query
+        # This avoids N+1 query problem
+        standings_data = []
         teams = self.db.query(Team).all()
         
-        # Get all played games for this season
-        games = self.db.query(Game).filter(
-            and_(
-                Game.season_id == season_id,
-                Game.is_played == True
-            )
-        ).all()
-        
-        # Calculate stats for each team
-        standings_data = []
         for team in teams:
-            stats = self._calculate_team_stats(team, games)
-            standings_data.append(stats)
+            # Use subqueries for home and away games
+            home_games = self.db.query(
+                func.count(Game.id).label('games'),
+                func.sum(case((Game.home_score > Game.away_score, 1), else_=0)).label('wins'),
+                func.sum(case((Game.home_score < Game.away_score, 1), else_=0)).label('losses'),
+                func.sum(case((Game.home_score == Game.away_score, 1), else_=0)).label('ties'),
+                func.sum(Game.home_score).label('points_for'),
+                func.sum(Game.away_score).label('points_against')
+            ).filter(
+                and_(
+                    Game.season_id == season_id,
+                    Game.home_team_id == team.id,
+                    Game.is_played == True
+                )
+            ).first()
+            
+            away_games = self.db.query(
+                func.count(Game.id).label('games'),
+                func.sum(case((Game.away_score > Game.home_score, 1), else_=0)).label('wins'),
+                func.sum(case((Game.away_score < Game.home_score, 1), else_=0)).label('losses'),
+                func.sum(case((Game.away_score == Game.home_score, 1), else_=0)).label('ties'),
+                func.sum(Game.away_score).label('points_for'),
+                func.sum(Game.home_score).label('points_against')
+            ).filter(
+                and_(
+                    Game.season_id == season_id,
+                    Game.away_team_id == team.id,
+                    Game.is_played == True
+                )
+            ).first()
+            
+            # Aggregate home and away stats
+            wins = (home_games.wins or 0) + (away_games.wins or 0)
+            losses = (home_games.losses or 0) + (away_games.losses or 0)
+            ties = (home_games.ties or 0) + (away_games.ties or 0)
+            points_for = (home_games.points_for or 0) + (away_games.points_for or 0)
+            points_against = (home_games.points_against or 0) + (away_games.points_against or 0)
+            
+            total_games = wins + losses + ties
+            win_pct = (wins + 0.5 * ties) / total_games if total_games > 0 else 0.0
+            
+            standings_data.append({
+                'team_id': team.id,
+                'team_name': f"{team.city} {team.name}",
+                'team_abbreviation': team.abbreviation,
+                'conference': team.conference,
+                'division': team.division,
+                'wins': wins,
+                'losses': losses,
+                'ties': ties,
+                'win_pct': round(win_pct, 3),
+                'points_for': points_for,
+                'points_against': points_against,
+                'point_differential': points_for - points_against
+            })
         
         # Sort by win percentage, then point differential
         standings_data.sort(

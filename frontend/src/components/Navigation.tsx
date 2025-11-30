@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { Badge } from "./ui/Badge";
 import "./Navigation.css";
 
 const Navigation = () => {
@@ -39,10 +40,7 @@ const Navigation = () => {
       </ul>
 
       <div className="nav-footer">
-        <div className="status-indicator">
-          <span className="status-dot"></span>
-          <span className="status-text">System Online</span>
-        </div>
+        <Badge variant="success">System Online</Badge>
       </div>
     </nav>
   );

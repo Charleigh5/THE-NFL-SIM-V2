@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List
 import logging
@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.core.error_decorators import handle_errors
 from app.models.team import Team
 from app.models.player import Player
+from app.schemas.pagination import PaginatedResponse
 from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
@@ -37,15 +38,20 @@ class PlayerSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-@router.get("/", response_model=List[TeamSchema])
+@router.get("/", response_model=PaginatedResponse[TeamSchema])
 @handle_errors
-def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_teams(
+    page: int = Query(default=1, ge=1, description="Page number"),
+    page_size: int = Query(default=32, ge=1, le=100, description="Items per page"),
+    db: Session = Depends(get_db),
+):
     """
-    Retrieve all teams.
+    Retrieve all teams with pagination.
     """
-    logger.info(f"Fetching teams (skip={skip}, limit={limit})")
-    teams = db.query(Team).offset(skip).limit(limit).all()
-    return teams
+    logger.info(f"Fetching teams (page={page}, page_size={page_size})")
+    total = db.query(Team).count()
+    teams = db.query(Team).offset((page - 1) * page_size).limit(page_size).all()
+    return PaginatedResponse.create(items=teams, total=total, page=page, page_size=page_size)
 
 @router.get("/{team_id}", response_model=TeamSchema)
 @handle_errors

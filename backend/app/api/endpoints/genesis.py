@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+import logging
+
 from app.core.database import get_db
+from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
 # from app.kernels.genesis.recruiting import RecruitingEngine  # TODO: Implement RecruitingEngine class
@@ -8,6 +11,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 router = APIRouter(prefix="/api/genesis", tags=["genesis"])
+logger = logging.getLogger(__name__)
 
 class BioMetricsResponse(BaseModel):
     fast_twitch_ratio: float
@@ -18,12 +22,14 @@ class BioMetricsResponse(BaseModel):
     fumble_risk: float
 
 @router.get("/player/{player_id}/bio-metrics", response_model=BioMetricsResponse)
+@handle_errors
 def get_player_bio_metrics(
     player_id: int, 
     temperature_f: float = 72.0,
     db: Session = Depends(get_db)
 ):
     """Get biological metrics for a player."""
+    logger.info(f"Fetching bio-metrics for player {player_id}")
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -49,8 +55,10 @@ def get_player_bio_metrics(
     )
 
 @router.get("/player/{player_id}/fatigue")
+@handle_errors
 def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
     """Get fatigue status for a player."""
+    logger.info(f"Fetching fatigue status for player {player_id}")
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")

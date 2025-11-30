@@ -1,164 +1,42 @@
 .dashboard {
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 2rem;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #2a2e3a;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
 }
 
 .dashboard-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #fff;
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(90deg, #fff 0%, #a0a0b0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin: 0 0 0.5rem 0;
 }
 
 .dashboard-subtitle {
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
-  color: #7a7f8e;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.system-status {
-  display: flex;
-  gap: 1rem;
-}
-
-.status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-badge.online {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-  border: 1px solid #10b981;
-}
-
-.status-badge.offline {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid #ef4444;
-}
-
-.status-badge.loading {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
-  border: 1px solid #3b82f6;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .engines-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
 }
 
-.engine-card {
-  background: linear-gradient(135deg, #1a1d29 0%, #0f1117 100%);
-  border: 1px solid #2a2e3a;
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.engine-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.engine-card:hover {
-  border-color: #6366f1;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2);
-}
-
-.engine-card:hover::before {
-  opacity: 1;
-}
-
-.engine-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.engine-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+.engine-icon-wrapper {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.engine-status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.engine-name {
+  border-radius: 8px;
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 0.75rem 0;
-}
-
-.engine-description {
-  font-size: 0.9rem;
-  color: #b8bcc8;
-  line-height: 1.6;
-  margin: 0 0 1.5rem 0;
-}
-
-.engine-footer {
-  padding-top: 1rem;
-  border-top: 1px solid #2a2e3a;
-}
-
-.engine-status-label {
-  font-size: 0.8rem;
-  color: #7a7f8e;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
 }

@@ -1,0 +1,15 @@
+2025-11-30 00:40:07,921 - api.access - INFO - Request started
+2025-11-30 00:40:07,924 - app.api.endpoints.season - INFO - Generating playoff bracket for season 999
+2025-11-30 00:40:07,928 - app.core.error_decorators - WARNING - Value error in generate_playoffs: Season not found
+2025-11-30 00:40:07,929 - api.access - INFO - Request completed
+2025-11-30 00:40:07,931 - httpx - INFO - HTTP Request: POST http://testserver/api/season/999/playoffs/generate "HTTP/1.1 400 Bad Request"
+2025-11-30 00:40:07,933 - api.access - INFO - Request started
+2025-11-30 00:40:07,936 - app.api.endpoints.season - INFO - Starting offseason for season 999
+2025-11-30 00:40:07,937 - app.core.error_decorators - WARNING - Value error in start_offseason: Season not found
+2025-11-30 00:40:07,938 - api.access - INFO - Request completed
+2025-11-30 00:40:07,940 - httpx - INFO - HTTP Request: POST http://testserver/api/season/999/offseason/start "HTTP/1.1 400 Bad Request"
+2025-11-30 00:40:07,942 - api.access - INFO - Request started
+2025-11-30 00:40:07,944 - app.api.endpoints.season - INFO - Fetching salary cap for team 999
+2025-11-30 00:40:07,947 - app.core.error_decorators - WARNING - Value error in get_team_salary_cap: Team 999 not found
+2025-11-30 00:40:07,948 - api.access - INFO - Request completed
+2025-11-30 00:40:07,949 - httpx - INFO - HTTP Request: GET http://testserver/api/season/team/999/salary-cap "HTTP/1.1 400 Bad Request"
