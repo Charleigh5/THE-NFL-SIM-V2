@@ -187,10 +187,10 @@
   - [x] Improve loading states
 
 - [x] **Enhance `OffseasonDashboard`**
-  - [ ] Add draft board preview (top prospects)
-  - [ ] Show team needs analysis
-  - [ ] Display salary cap information
-  - [ ] Add offseason timeline/checklist
+  - [x] Add draft board preview (top prospects)
+  - [x] Show team needs analysis
+  - [x] Display salary cap information
+  - [x] Add offseason timeline/checklist
   - [x] Improve free agency UI (Added loading/processing states)
 
 #### API Enhancements
@@ -203,11 +203,11 @@
   - [ ] Add team records and standings
   - [x] Test endpoint
 
-- [ ] **Add `GET /api/team/{team_id}/needs` Endpoint**
-  - [ ] Analyze roster by position
-  - [ ] Calculate starter quality scores
-  - [ ] Return priority positions to draft
-  - [ ] Test with various team configurations
+- [x] **Add `GET /api/team/{team_id}/needs` Endpoint** (Implemented as `/enhanced`)
+  - [x] Analyze roster by position
+  - [x] Calculate starter quality scores
+  - [x] Return priority positions to draft
+  - [x] Test with various team configurations
 
 ### **6.4: Advanced Features (Optional)** [FUTURE WORK]
 
