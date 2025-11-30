@@ -10,29 +10,21 @@ logger = logging.getLogger(__name__)
 # Create database engine with connection pooling
 is_sqlite = "sqlite" in settings.DATABASE_URL
 
-if is_sqlite:
-    # SQLite specific configuration
-    connect_args = {"check_same_thread": False}
-    poolclass = StaticPool
-    pool_size = None
-    max_overflow = None
-else:
-    # PostgreSQL/other databases configuration
-    connect_args = {}
-    poolclass = QueuePool
-    pool_size = settings.DB_POOL_SIZE
-    max_overflow = settings.DB_MAX_OVERFLOW
+engine_args = {
+    "connect_args": {"check_same_thread": False} if is_sqlite else {},
+    "poolclass": StaticPool if is_sqlite else QueuePool,
+    "echo": settings.DEBUG,
+}
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args=connect_args,
-    poolclass=poolclass,
-    pool_size=pool_size,
-    max_overflow=max_overflow,
-    pool_timeout=settings.DB_POOL_TIMEOUT,
-    pool_recycle=settings.DB_POOL_RECYCLE,
-    echo=settings.DEBUG,
-)
+if not is_sqlite:
+    engine_args.update({
+        "pool_size": settings.DB_POOL_SIZE,
+        "max_overflow": settings.DB_MAX_OVERFLOW,
+        "pool_timeout": settings.DB_POOL_TIMEOUT,
+        "pool_recycle": settings.DB_POOL_RECYCLE,
+    })
+
+engine = create_engine(settings.DATABASE_URL, **engine_args)
 
 # Enable SQLite foreign keys
 if is_sqlite:

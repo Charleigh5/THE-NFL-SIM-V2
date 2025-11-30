@@ -26,9 +26,21 @@ export interface Game {
   home_team_id: number;
   away_team_id: number;
   scheduled_date: string;
+  date: string;
   is_played: boolean;
+  is_playoff?: boolean;
   home_score?: number;
   away_score?: number;
+  home_team?: {
+    name: string;
+    abbreviation: string;
+    logo_url?: string;
+  };
+  away_team?: {
+    name: string;
+    abbreviation: string;
+    logo_url?: string;
+  };
 }
 
 export interface TeamStanding {
@@ -46,6 +58,12 @@ export interface TeamStanding {
   point_differential: number;
   division_rank: number;
   conference_rank: number;
+  strength_of_schedule: number;
+  clinched_playoff: boolean;
+  clinched_division: boolean;
+  clinched_seed?: number;
+  tiebreaker_reason?: string;
+  seed?: number;
 }
 
 export interface WeekSimulationResult {
@@ -68,4 +86,21 @@ export interface SeasonSummary {
   total_games: number;
   games_played: number;
   completion_percentage: number;
+}
+
+export interface AwardCandidate {
+  player_id: number;
+  name: string;
+  team: string;
+  position: string;
+  stats: Record<string, number>;
+  score: number;
+}
+
+export interface SeasonAwards {
+  mvp: AwardCandidate[];
+  opoy: AwardCandidate[];
+  dpoy: AwardCandidate[];
+  oroy: AwardCandidate[];
+  droy: AwardCandidate[];
 }

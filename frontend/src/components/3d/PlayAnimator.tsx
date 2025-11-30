@@ -74,13 +74,7 @@ export const PlayAnimator = ({ onAnimationComplete }: PlayAnimatorProps) => {
       setIsAnimating(false);
       onAnimationComplete?.();
     },
-    [
-      gameState.yardLine,
-      onAnimationComplete,
-      animatePassPlay,
-      animateRunPlay,
-      animateKickoff,
-    ]
+    [gameState.yardLine, onAnimationComplete, animatePassPlay, animateRunPlay, animateKickoff]
   );
 
   useEffect(() => {

@@ -41,9 +41,7 @@ export const FrontOffice = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 glass-panel p-6 rounded-xl border border-white/5 min-h-[500px]">
-          <h2 className="text-xl font-bold text-white mb-4">
-            Active Roster ({roster.length})
-          </h2>
+          <h2 className="text-xl font-bold text-white mb-4">Active Roster ({roster.length})</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2">
             {roster.map((player) => (
               <DraggableCard

@@ -56,25 +56,17 @@ export const SalaryCapWidget: React.FC<SalaryCapWidgetProps> = ({ data }) => {
           </div>
           <div className="cap-row highlight">
             <span className="label">Available</span>
-            <span
-              className={`value ${
-                data.available_cap < 0 ? "negative" : "positive"
-              }`}
-            >
+            <span className={`value ${data.available_cap < 0 ? "negative" : "positive"}`}>
               {formatMoney(data.available_cap)}
             </span>
           </div>
           <div className="cap-row sub-row">
             <span className="label">League Avg Space</span>
-            <span className="value">
-              {formatMillions(data.league_avg_available)}
-            </span>
+            <span className="value">{formatMillions(data.league_avg_available)}</span>
           </div>
           <div className="cap-row sub-row">
             <span className="label">Proj. Rookie Pool</span>
-            <span className="value">
-              {formatMillions(data.projected_rookie_impact)}
-            </span>
+            <span className="value">{formatMillions(data.projected_rookie_impact)}</span>
           </div>
         </div>
       </div>
@@ -86,15 +78,10 @@ export const SalaryCapWidget: React.FC<SalaryCapWidgetProps> = ({ data }) => {
             <div key={group.group} className="pos-bar-row">
               <div className="pos-label">
                 <span>{group.group}</span>
-                <span className="pos-amount">
-                  {formatMillions(group.total_salary)}
-                </span>
+                <span className="pos-amount">{formatMillions(group.total_salary)}</span>
               </div>
               <div className="pos-track">
-                <div
-                  className="pos-fill"
-                  style={{ width: `${group.percentage}%` }}
-                ></div>
+                <div className="pos-fill" style={{ width: `${group.percentage}%` }}></div>
               </div>
             </div>
           ))}

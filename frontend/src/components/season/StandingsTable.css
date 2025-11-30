@@ -6,12 +6,25 @@
   font-family: "Inter", sans-serif;
 }
 
-.standings-filters {
-  padding: 16px;
+.standings-header {
   display: flex;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
   background-color: #252525;
   border-bottom: 1px solid #333;
+  padding: 12px 16px;
+}
+
+.standings-filters {
+  display: flex;
+  gap: 12px;
+}
+
+.standings-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #888;
 }
 
 .filter-select {
@@ -80,6 +93,19 @@
   background-color: #2a2a2a;
 }
 
+/* Playoff Highlighting */
+.clinched-playoff {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.playoff-position {
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+.playoff-separator {
+  border-bottom: 2px solid #4caf50 !important;
+}
+
 .team-cell {
   display: flex;
   align-items: center;
@@ -91,11 +117,25 @@
   font-weight: 500;
   width: 20px;
   text-align: right;
+  cursor: help;
 }
 
 .team-name {
   font-weight: 600;
   color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clinch-indicator {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
 }
 
 .team-abbr {
@@ -120,6 +160,14 @@
   color: #f44336;
 }
 
+.division-group {
+  border-bottom: 4px solid #1a1a1a;
+}
+
+.division-group:last-child {
+  border-bottom: none;
+}
+
 .division-header {
   background-color: #1a1a1a;
   color: #888;
@@ -128,4 +176,35 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+/* View Toggles */
+.view-toggles {
+  display: flex;
+  background-color: #333;
+  border-radius: 4px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  color: #fff;
+}
+
+.toggle-btn.active {
+  background-color: #4caf50;
+  color: #fff;
+  font-weight: 600;
 }

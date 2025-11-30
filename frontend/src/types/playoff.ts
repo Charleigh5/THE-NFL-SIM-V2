@@ -15,8 +15,7 @@ export const PlayoffConference = {
   SUPER_BOWL: "SUPER_BOWL",
 } as const;
 
-export type PlayoffConference =
-  (typeof PlayoffConference)[keyof typeof PlayoffConference];
+export type PlayoffConference = (typeof PlayoffConference)[keyof typeof PlayoffConference];
 
 export interface PlayoffMatchup {
   id: number;

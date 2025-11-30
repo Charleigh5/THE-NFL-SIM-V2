@@ -38,8 +38,7 @@ export const PlayerCharacter = ({
       // Breathing animation (bobbing/scaling)
       // Only breathe if not moving fast? Or always.
       // Let's scale slightly on Y
-      const breath =
-        1 + Math.sin(state.clock.elapsedTime * 3 + playerNumber) * 0.02;
+      const breath = 1 + Math.sin(state.clock.elapsedTime * 3 + playerNumber) * 0.02;
       meshRef.current.scale.set(1, breath, 1);
     }
   });
@@ -69,11 +68,7 @@ export const PlayerCharacter = ({
       {/* Helmet (sphere) */}
       <mesh position={[0, 1.2, 0]} castShadow>
         <sphereGeometry args={[0.25, 16, 16]} />
-        <meshStandardMaterial
-          color={helmetColor}
-          roughness={0.3}
-          metalness={0.5}
-        />
+        <meshStandardMaterial color={helmetColor} roughness={0.3} metalness={0.5} />
       </mesh>
 
       {/* Jersey Number (text sprite - optional, simplified for MVP) */}

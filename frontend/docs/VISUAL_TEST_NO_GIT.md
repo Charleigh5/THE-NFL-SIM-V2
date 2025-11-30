@@ -11,14 +11,12 @@ I've created `FrontOffice_Baseline.tsx` with the original mock data version.
 **Steps:**
 
 1. **View Baseline (Mock Data):**
-
    - Temporarily modify `frontend/src/App.tsx` routing
    - Replace `<FrontOffice />` with `<FrontOffice_Baseline />`
    - Take screenshots of the mock data version
    - Save to `frontend/docs/screenshots/baseline/`
 
 2. **View Current (Real Data):**
-
    - Revert routing back to `<FrontOffice />`
    - Take identical screenshots
    - Save to `frontend/docs/screenshots/current/`
@@ -63,7 +61,6 @@ Since both servers are running:
 1. Open <http://localhost:5173> in your browser
 2. Navigate to Front Office
 3. Visually verify:
-
    - ✅ Page loads without errors
    - ✅ Header shows "Front Office: Arizona Cardinals"
    - ✅ Roster shows "Active Roster (52)"

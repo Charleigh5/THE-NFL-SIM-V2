@@ -64,18 +64,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
     return filtered;
   }, [prospects, filterPos, sortBy]);
 
-  const positions = [
-    "ALL",
-    "QB",
-    "RB",
-    "WR",
-    "TE",
-    "OL",
-    "DL",
-    "LB",
-    "DB",
-    "ST",
-  ];
+  const positions = ["ALL", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ST"];
 
   return (
     <div className="draft-board">
@@ -124,16 +113,12 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 
                 <div className="prospect-main">
                   <div className="prospect-header">
-                    <span className={`pos-badge pos-${p.position}`}>
-                      {p.position}
-                    </span>
+                    <span className={`pos-badge pos-${p.position}`}>{p.position}</span>
                     <span className="prospect-name">{p.name}</span>
                   </div>
 
                   <div className="prospect-details">
-                    <span className={`grade-badge grade-${grade.charAt(0)}`}>
-                      {grade}
-                    </span>
+                    <span className={`grade-badge grade-${grade.charAt(0)}`}>{grade}</span>
                     <span className="rating-text">{p.overall_rating} OVR</span>
                   </div>
                 </div>
@@ -154,9 +139,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                       <span>Rd {Math.ceil(rank / 32)}</span>
                     </div>
                     {needLevel !== "low" && (
-                      <div className="need-match">
-                        Team Need Match: {needLevel.toUpperCase()}
-                      </div>
+                      <div className="need-match">Team Need Match: {needLevel.toUpperCase()}</div>
                     )}
                   </div>
                 </div>

@@ -8,21 +8,9 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "glass" | "interactive";
 }
 
-export const Card = ({
-  children,
-  className,
-  variant = "default",
-  ...props
-}: CardProps) => {
+export const Card = ({ children, className, variant = "default", ...props }: CardProps) => {
   return (
-    <div
-      className={clsx(
-        "ui-card",
-        `ui-card--${variant}`,
-        className
-      )}
-      {...props}
-    >
+    <div className={clsx("ui-card", `ui-card--${variant}`, className)} {...props}>
       {children}
     </div>
   );

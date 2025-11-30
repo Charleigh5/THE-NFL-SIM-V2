@@ -16,9 +16,7 @@ export const PlayByPlayFeed = () => {
   return (
     <div className="flex flex-col h-full bg-black/20 backdrop-blur-sm border border-white/5 rounded-xl overflow-hidden">
       <div className="p-3 border-b border-white/5 bg-white/5">
-        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
-          Play Feed
-        </h3>
+        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Play Feed</h3>
       </div>
 
       <div
@@ -40,9 +38,7 @@ export const PlayByPlayFeed = () => {
                 className="flex gap-3 text-sm"
               >
                 <span className="text-cyan-400 font-mono text-xs mt-1 opacity-70">
-                  {play.yards_gained >= 0
-                    ? `+${play.yards_gained}`
-                    : play.yards_gained}
+                  {play.yards_gained >= 0 ? `+${play.yards_gained}` : play.yards_gained}
                 </span>
                 <p className="text-gray-300 leading-snug">{play.description}</p>
               </motion.div>

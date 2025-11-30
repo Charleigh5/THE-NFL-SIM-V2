@@ -5,6 +5,7 @@ import type {
   TeamStanding,
   WeekSimulationResult,
   SeasonSummary,
+  SeasonAwards,
 } from "../types/season";
 import type { PlayoffMatchup } from "../types/playoff";
 import type { LeagueLeaders } from "../types/stats";
@@ -63,22 +64,20 @@ export const seasonApi = {
     if (conference) params.append("conference", conference);
     if (division) params.append("division", division);
     const queryString = params.toString() ? `?${params.toString()}` : "";
-    const response = await api.get(
-      `/api/season/${seasonId}/standings${queryString}`
-    );
+    const response = await api.get(`/api/season/${seasonId}/standings${queryString}`);
     return response.data;
   },
 
   // Simulate an entire week
-  simulateWeek: async (
-    seasonId: number,
-    week?: number
-  ): Promise<WeekSimulationResult> => {
+  simulateWeek: async (seasonId: number, week?: number): Promise<WeekSimulationResult> => {
     const body = week ? { week } : {};
-    const response = await api.post(
-      `/api/season/${seasonId}/simulate-week`,
-      body
-    );
+    const response = await api.post(`/api/season/${seasonId}/simulate-week`, body);
+    return response.data;
+  },
+
+  // Simulate a single game
+  simulateGame: async (gameId: number): Promise<any> => {
+    const response = await api.post(`/api/season/game/${gameId}/simulate`);
     return response.data;
   },
 
@@ -88,11 +87,15 @@ export const seasonApi = {
     return response.data;
   },
 
+  // Simulate to playoffs
+  simulateToPlayoffs: async (seasonId: number): Promise<{ message: string; season: Season }> => {
+    const response = await api.post(`/api/season/${seasonId}/simulate-to-playoffs`);
+    return response.data;
+  },
+
   // --- Playoffs ---
   generatePlayoffs: async (seasonId: number): Promise<PlayoffMatchup[]> => {
-    const response = await api.post(
-      `/api/season/${seasonId}/playoffs/generate`
-    );
+    const response = await api.post(`/api/season/${seasonId}/playoffs/generate`);
     return response.data;
   },
 
@@ -119,42 +122,23 @@ export const seasonApi = {
     await api.post(`/api/season/${seasonId}/free-agency/simulate`);
   },
 
-  getTeamNeeds: async (
-    seasonId: number,
-    teamId: number
-  ): Promise<TeamNeed[]> => {
-    const response = await api.get(
-      `/api/season/${seasonId}/offseason/needs/${teamId}`
-    );
+  getTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {
+    const response = await api.get(`/api/season/${seasonId}/offseason/needs/${teamId}`);
     return response.data;
   },
 
-  getEnhancedTeamNeeds: async (
-    seasonId: number,
-    teamId: number
-  ): Promise<TeamNeed[]> => {
-    const response = await api.get(
-      `/api/season/${seasonId}/offseason/needs/${teamId}/enhanced`
-    );
+  getEnhancedTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {
+    const response = await api.get(`/api/season/${seasonId}/offseason/needs/${teamId}/enhanced`);
     return response.data;
   },
 
-  getTopProspects: async (
-    seasonId: number,
-    limit: number = 50
-  ): Promise<Prospect[]> => {
-    const response = await api.get(
-      `/api/season/${seasonId}/offseason/prospects?limit=${limit}`
-    );
+  getTopProspects: async (seasonId: number, limit: number = 50): Promise<Prospect[]> => {
+    const response = await api.get(`/api/season/${seasonId}/offseason/prospects?limit=${limit}`);
     return response.data;
   },
 
-  simulateProgression: async (
-    seasonId: number
-  ): Promise<PlayerProgressionResult[]> => {
-    const response = await api.post(
-      `/api/season/${seasonId}/offseason/progression`
-    );
+  simulateProgression: async (seasonId: number): Promise<PlayerProgressionResult[]> => {
+    const response = await api.post(`/api/season/${seasonId}/offseason/progression`);
     return response.data;
   },
 
@@ -163,14 +147,14 @@ export const seasonApi = {
     return response.data;
   },
 
-  getSalaryCapData: async (
-    teamId: number,
-    seasonId?: number
-  ): Promise<SalaryCapData> => {
+  getProjectedAwards: async (seasonId: number): Promise<SeasonAwards> => {
+    const response = await api.get(`/api/season/${seasonId}/awards/projected`);
+    return response.data;
+  },
+
+  getSalaryCapData: async (teamId: number, seasonId?: number): Promise<SalaryCapData> => {
     const params = seasonId ? `?season_id=${seasonId}` : "";
-    const response = await api.get(
-      `/api/season/team/${teamId}/salary-cap${params}`
-    );
+    const response = await api.get(`/api/season/team/${teamId}/salary-cap${params}`);
     return response.data;
   },
 };

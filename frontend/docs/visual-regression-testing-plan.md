@@ -169,7 +169,6 @@ Ensure the DraggableCard component renders and behaves properly with real data.
 
 - [ ] Select random card and inspect props
 - [ ] In React DevTools:
-
   - Open Components tab
   - Find DraggableCard instance
   - Check props values:
@@ -388,20 +387,17 @@ Ensure consistent rendering across major browsers.
 ## Deliverables
 
 1. **Screenshots**
-
    - Baseline (mock data) vs Current (real data)
    - Responsive layouts for all major breakpoints
    - Cross-browser comparisons
 
 2. **Visual Regression Report**
-
    - Document in `frontend/docs/visual-regression-report.md`
    - List all differences found
    - Categorize severity (bug, acceptable, expected)
    - Include screenshots with annotations
 
 3. **Responsive Test Results**
-
    - Table of breakpoints tested
    - Pass/Fail status for each device
    - Notes on any issues

@@ -101,13 +101,11 @@ export const FieldVisualizer = () => {
       {/* Endzones */}
       <mesh position={[-60, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[10, 53.3]} />
-        <meshBasicMaterial color="#002244" opacity={0.8} transparent />{" "}
-        {/* Empire Navy */}
+        <meshBasicMaterial color="#002244" opacity={0.8} transparent /> {/* Empire Navy */}
       </mesh>
       <mesh position={[60, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[10, 53.3]} />
-        <meshBasicMaterial color="#880000" opacity={0.8} transparent />{" "}
-        {/* Genesis Red */}
+        <meshBasicMaterial color="#880000" opacity={0.8} transparent /> {/* Genesis Red */}
       </mesh>
 
       {/* PLAYERS - Offensive Team (Blue) */}

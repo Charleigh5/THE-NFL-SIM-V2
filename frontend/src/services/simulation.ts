@@ -37,9 +37,7 @@ export const simulationService = {
   },
 
   getPlayByPlay: async (gameId: string) => {
-    const response = await api.get<PlayResult[]>(
-      `/api/simulation/${gameId}/plays`
-    );
+    const response = await api.get<PlayResult[]>(`/api/simulation/${gameId}/plays`);
     return response.data;
   },
 };

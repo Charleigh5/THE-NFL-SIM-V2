@@ -1,5 +1,5 @@
-import React from 'react';
-import './PlayerProgression.css';
+import React from "react";
+import "./PlayerProgression.css";
 
 interface ProgressionData {
   name: string;
@@ -27,9 +27,12 @@ export const PlayerProgression: React.FC<PlayerProgressionProps> = ({ progressio
       <div className="progression-list">
         {progressionData.map((player, index) => (
           <div key={index} className="progression-item">
-            <span className="player-name">{player.name} ({player.position})</span>
-            <span className={`rating-change ${player.change > 0 ? 'positive' : 'negative'}`}>
-              {player.change > 0 ? '+' : ''}{player.change} OVR
+            <span className="player-name">
+              {player.name} ({player.position})
+            </span>
+            <span className={`rating-change ${player.change > 0 ? "positive" : "negative"}`}>
+              {player.change > 0 ? "+" : ""}
+              {player.change} OVR
             </span>
           </div>
         ))}

@@ -1,0 +1,7 @@
+dist
+node_modules
+coverage
+.vscode
+.idea
+*.min.js
+package-lock.json

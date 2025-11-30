@@ -2,12 +2,25 @@ import { useEffect, useRef, useCallback } from "react";
 import { useSimulationStore } from "../store/useSimulationStore";
 import { simulationService } from "../services/simulation";
 
+/**
+ * Custom hook to manage WebSocket connection for real-time game updates.
+ *
+ * Handles connection establishment, automatic reconnection with exponential backoff,
+ * and dispatching of received messages to the simulation store.
+ *
+ * @param url - The WebSocket URL to connect to.
+ * @returns An object containing the sendMessage function.
+ */
 export const useWebSocket = (url: string) => {
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectDelay = 30000; // 30 seconds
   const { updateGameState, addPlay, updateEngineData } = useSimulationStore();
 
+  /**
+   * Synchronizes the current game state from the REST API.
+   * Called upon successful WebSocket connection to ensure state is fresh.
+   */
   const syncState = useCallback(async () => {
     try {
       const status = await simulationService.getSimulationStatus();
@@ -71,10 +84,7 @@ export const useWebSocket = (url: string) => {
       socket.onclose = () => {
         if (!isMounted) return;
 
-        const delay = Math.min(
-          1000 * Math.pow(2, reconnectAttempts.current),
-          maxReconnectDelay
-        );
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), maxReconnectDelay);
         console.log(`WebSocket disconnected. Reconnecting in ${delay}ms...`);
 
         reconnectAttempts.current += 1;
@@ -98,6 +108,12 @@ export const useWebSocket = (url: string) => {
     };
   }, [url, updateGameState, addPlay, updateEngineData, syncState]);
 
+  /**
+   * Sends a message over the WebSocket connection.
+   *
+   * @param type - The type of message to send.
+   * @param payload - The data payload to send.
+   */
   const sendMessage = (type: string, payload: unknown) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type, payload }));

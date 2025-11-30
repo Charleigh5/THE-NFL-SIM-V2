@@ -9,13 +9,7 @@ interface PlayerCardProps {
   className?: string;
 }
 
-export const PlayerCard = ({
-  name,
-  position,
-  rating,
-  team,
-  className,
-}: PlayerCardProps) => {
+export const PlayerCard = ({ name, position, rating, team, className }: PlayerCardProps) => {
   return (
     <div
       className={clsx(

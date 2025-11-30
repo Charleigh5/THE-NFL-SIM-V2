@@ -29,12 +29,8 @@ const OffseasonDashboard: React.FC = () => {
   const [needs, setNeeds] = useState<TeamNeed[]>([]);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [draftSummary, setDraftSummary] = useState<DraftPickSummary[]>([]);
-  const [playerProgression, setPlayerProgression] = useState<
-    PlayerProgressionResult[]
-  >([]);
-  const [salaryCapData, setSalaryCapData] = useState<SalaryCapData | null>(
-    null
-  );
+  const [playerProgression, setPlayerProgression] = useState<PlayerProgressionResult[]>([]);
+  const [salaryCapData, setSalaryCapData] = useState<SalaryCapData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,18 +45,12 @@ const OffseasonDashboard: React.FC = () => {
           setTeam(myTeam);
 
           // Fetch enhanced needs
-          const teamNeeds = await seasonApi.getEnhancedTeamNeeds(
-            currentSeason.id,
-            myTeam.id
-          );
+          const teamNeeds = await seasonApi.getEnhancedTeamNeeds(currentSeason.id, myTeam.id);
           setNeeds(teamNeeds);
 
           // Fetch salary cap data
           try {
-            const capData = await seasonApi.getSalaryCapData(
-              myTeam.id,
-              currentSeason.id
-            );
+            const capData = await seasonApi.getSalaryCapData(myTeam.id, currentSeason.id);
             setSalaryCapData(capData);
           } catch (e) {
             console.error("Failed to load salary cap data", e);
@@ -84,9 +74,7 @@ const OffseasonDashboard: React.FC = () => {
     setProcessing(true);
     try {
       await seasonApi.startOffseason(season.id);
-      setMessage(
-        "Offseason started! Contracts processed and Draft Order generated."
-      );
+      setMessage("Offseason started! Contracts processed and Draft Order generated.");
       // Refresh prospects
       const topProspects = await seasonApi.getTopProspects(season.id);
       setProspects(topProspects);
@@ -123,10 +111,7 @@ const OffseasonDashboard: React.FC = () => {
 
       // Refresh data
       if (team) {
-        const teamNeeds = await seasonApi.getEnhancedTeamNeeds(
-          season.id,
-          team.id
-        );
+        const teamNeeds = await seasonApi.getEnhancedTeamNeeds(season.id, team.id);
         setNeeds(teamNeeds);
 
         // Refresh cap data
@@ -151,10 +136,7 @@ const OffseasonDashboard: React.FC = () => {
       setMessage("Free Agency Simulated! Rosters are filled.");
 
       if (team) {
-        const teamNeeds = await seasonApi.getEnhancedTeamNeeds(
-          season.id,
-          team.id
-        );
+        const teamNeeds = await seasonApi.getEnhancedTeamNeeds(season.id, team.id);
         setNeeds(teamNeeds);
 
         const capData = await seasonApi.getSalaryCapData(team.id, season.id);
@@ -175,8 +157,7 @@ const OffseasonDashboard: React.FC = () => {
       </div>
     );
 
-  if (!season)
-    return <div className="offseason-dashboard">No active season.</div>;
+  if (!season) return <div className="offseason-dashboard">No active season.</div>;
 
   // Determine current phase
   let currentPhase = "contract_expirations";
@@ -261,11 +242,7 @@ const OffseasonDashboard: React.FC = () => {
             <div className="action-card">
               <h3>Phase 3: The Draft</h3>
               <p>Simulate NFL Draft.</p>
-              <button
-                className="action-button"
-                onClick={handleSimulateDraft}
-                disabled={processing}
-              >
+              <button className="action-button" onClick={handleSimulateDraft} disabled={processing}>
                 Simulate Draft
               </button>
             </div>
@@ -300,9 +277,7 @@ const OffseasonDashboard: React.FC = () => {
                       <span className="pick-player">
                         {pick.player_position} {pick.player_name}
                       </span>
-                      <span className="pick-rating">
-                        {pick.player_overall} OVR
-                      </span>
+                      <span className="pick-rating">{pick.player_overall} OVR</span>
                     </div>
                   ))}
               </div>

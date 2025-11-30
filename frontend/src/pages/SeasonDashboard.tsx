@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
-import type { Season, Game, TeamStanding } from "../types/season";
+import type { Season, Game, TeamStanding, SeasonAwards } from "../types/season";
 import type { Team } from "../services/api";
 import type { PlayoffMatchup } from "../types/playoff";
 import { StandingsTable } from "../components/season/StandingsTable";
@@ -21,9 +21,10 @@ const SeasonDashboard: React.FC = () => {
   const [playoffBracket, setPlayoffBracket] = useState<PlayoffMatchup[]>([]);
   const [leaders, setLeaders] = useState<LeagueLeadersType | null>(null);
   const [seasonProgress, setSeasonProgress] = useState<number>(0);
+  const [awards, setAwards] = useState<SeasonAwards | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "standings" | "schedule" | "playoffs" | "leaders"
-  >("standings");
+    "overview" | "standings" | "schedule" | "playoffs" | "leaders"
+  >("overview");
   const [loading, setLoading] = useState<boolean>(true);
   const [simulating, setSimulating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,25 +44,22 @@ const SeasonDashboard: React.FC = () => {
           setSeason(summary.season);
           setSeasonProgress(summary.completion_percentage);
 
-          // Fetch standings, schedule, and leaders for current season
-          const [standingsData, scheduleData, leadersData] = await Promise.all([
+          // Fetch standings, schedule, leaders, and awards for current season
+          const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
             seasonApi.getStandings(summary.season.id),
-            seasonApi.getSchedule(
-              summary.season.id,
-              summary.season.current_week
-            ),
+            seasonApi.getSchedule(summary.season.id, summary.season.current_week),
             seasonApi.getLeagueLeaders(summary.season.id),
+            seasonApi.getProjectedAwards(summary.season.id),
           ]);
 
           setStandings(standingsData);
           setGames(scheduleData);
           setLeaders(leadersData);
+          setAwards(awardsData);
 
           // If in playoffs, fetch bracket
           if (summary.season.status === "POST_SEASON") {
-            const bracket = await seasonApi.getPlayoffBracket(
-              summary.season.id
-            );
+            const bracket = await seasonApi.getPlayoffBracket(summary.season.id);
             setPlayoffBracket(bracket);
             setActiveTab("playoffs");
           }
@@ -98,15 +96,17 @@ const SeasonDashboard: React.FC = () => {
       setSeason(newSeason);
 
       // Refresh data
-      const [standingsData, scheduleData, leadersData] = await Promise.all([
+      const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
         seasonApi.getStandings(newSeason.id),
         seasonApi.getSchedule(newSeason.id, 1),
         seasonApi.getLeagueLeaders(newSeason.id),
+        seasonApi.getProjectedAwards(newSeason.id),
       ]);
 
       setStandings(standingsData);
       setGames(scheduleData);
       setLeaders(leadersData);
+      setAwards(awardsData);
     } catch (err) {
       setError("Failed to initialize season");
       console.error(err);
@@ -141,10 +141,7 @@ const SeasonDashboard: React.FC = () => {
         setSeason(updatedSeason);
 
         // Check if we just entered Playoffs
-        if (
-          updatedSeason.status === "POST_SEASON" &&
-          season.status === "REGULAR_SEASON"
-        ) {
+        if (updatedSeason.status === "POST_SEASON" && season.status === "REGULAR_SEASON") {
           // Generate Playoffs
           const bracket = await seasonApi.generatePlayoffs(season.id);
           setPlayoffBracket(bracket);
@@ -152,18 +149,97 @@ const SeasonDashboard: React.FC = () => {
         }
 
         // Refresh data
-        const [standingsData, scheduleData, leadersData] = await Promise.all([
+        const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
           seasonApi.getStandings(season.id),
           seasonApi.getSchedule(season.id, updatedSeason.current_week),
           seasonApi.getLeagueLeaders(season.id),
+          seasonApi.getProjectedAwards(season.id),
         ]);
 
         setStandings(standingsData);
         setGames(scheduleData);
         setLeaders(leadersData);
+        setAwards(awardsData);
       }
     } catch (err) {
       setError("Failed to simulate week");
+      console.error(err);
+    } finally {
+      setSimulating(false);
+    }
+  };
+
+  const handleSimulateToPlayoffs = async () => {
+    if (!season) return;
+    try {
+      setSimulating(true);
+      const result = await seasonApi.simulateToPlayoffs(season.id);
+      setSeason(result.season);
+
+      if (result.season.status === "POST_SEASON") {
+        const bracket = await seasonApi.getPlayoffBracket(season.id);
+        setPlayoffBracket(bracket);
+        setActiveTab("playoffs");
+      }
+
+      // Refresh data
+      const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
+        seasonApi.getStandings(season.id),
+        seasonApi.getSchedule(season.id, result.season.current_week),
+        seasonApi.getLeagueLeaders(season.id),
+        seasonApi.getProjectedAwards(season.id),
+      ]);
+
+      setStandings(standingsData);
+      setGames(scheduleData);
+      setLeaders(leadersData);
+      setAwards(awardsData);
+    } catch (err) {
+      setError("Failed to simulate to playoffs");
+      console.error(err);
+    } finally {
+      setSimulating(false);
+    }
+  };
+
+  const handleSimulateGame = async (gameId: number) => {
+    if (!season) return;
+    try {
+      setSimulating(true);
+      await seasonApi.simulateGame(gameId);
+
+      // Refresh schedule (use current view week if possible, but for now refresh current week or just refresh games)
+      // Note: ScheduleView manages its own selectedWeek, but we update 'games' state.
+      // Ideally we should know which week is being viewed.
+      // But 'games' state is what ScheduleView renders.
+      // So we just need to re-fetch the games that are currently in 'games' state.
+      // Wait, 'games' state might be for a different week if user navigated.
+      // We should probably track 'viewingWeek' in SeasonDashboard if we want to be precise.
+      // For now, let's assume we refresh the week that the game belongs to.
+      // But we don't know the week easily without looking at the game object.
+      // Let's just re-fetch the schedule for the week of the game.
+      // Actually, 'games' state holds the games for the currently viewed week.
+      // So we can just re-fetch for that week.
+      // But we don't have 'viewingWeek' state here, only 'season.current_week' and 'games'.
+      // However, ScheduleView calls 'handleWeekChange' which updates 'games'.
+      // So 'games' corresponds to the week the user is looking at.
+      // We can get the week from the first game in 'games'.
+      const viewingWeek = games.length > 0 ? games[0].week : season.current_week;
+
+      const scheduleData = await seasonApi.getSchedule(season.id, viewingWeek);
+      setGames(scheduleData);
+
+      // Refresh standings and leaders
+      const [standingsData, leadersData, awardsData] = await Promise.all([
+        seasonApi.getStandings(season.id),
+        seasonApi.getLeagueLeaders(season.id),
+        seasonApi.getProjectedAwards(season.id),
+      ]);
+      setStandings(standingsData);
+      setLeaders(leadersData);
+      setAwards(awardsData);
+    } catch (err) {
+      setError("Failed to simulate game");
       console.error(err);
     } finally {
       setSimulating(false);
@@ -183,10 +259,7 @@ const SeasonDashboard: React.FC = () => {
       <div className="season-dashboard">
         <div className="no-season-state">
           <h2>No Active Season</h2>
-          <p>
-            Start a new franchise mode season to begin your journey to the Super
-            Bowl.
-          </p>
+          <p>Start a new franchise mode season to begin your journey to the Super Bowl.</p>
           <button className="action-button" onClick={handleInitializeSeason}>
             Initialize New Season
           </button>
@@ -199,11 +272,7 @@ const SeasonDashboard: React.FC = () => {
     <div className="season-dashboard">
       {simulating && (
         <div className="loading-overlay">
-          <LoadingSpinner
-            text={`Simulating Week ${season.current_week}...`}
-            size="large"
-            color="white"
-          />
+          <LoadingSpinner text={`Simulating...`} size="large" color="white" />
         </div>
       )}
 
@@ -212,37 +281,55 @@ const SeasonDashboard: React.FC = () => {
           <div className="season-info">
             <h1>{season.year} Season</h1>
             <div className="season-status">
-              <span className="status-badge">
-                {season.status.replace('_', ' ')}
-              </span>
+              <span className="status-badge">{season.status.replace("_", " ")}</span>
               <span>
-                Week {season.current_week}{' '}
-                {season.status === 'REGULAR_SEASON'
-                  ? `of ${season.total_weeks}`
-                  : ''}
+                Week {season.current_week}{" "}
+                {season.status === "REGULAR_SEASON" ? `of ${season.total_weeks}` : ""}
               </span>
             </div>
-            {season.status === 'REGULAR_SEASON' && (
-              <div
-                className="season-progress-container"
-                title={`Season ${seasonProgress}% Complete`}
-              >
+            {season.status === "REGULAR_SEASON" && (
+              <div className="season-progress-wrapper">
+                <div className="season-progress-stats">
+                  <span>Season Progress</span>
+                  <span>{Math.round(seasonProgress)}% Complete</span>
+                </div>
                 <div
-                  className="season-progress-bar"
-                  style={{ width: `${seasonProgress}%` }}
-                ></div>
+                  className="season-progress-container"
+                  title={`Season ${seasonProgress}% Complete`}
+                >
+                  <div
+                    className="season-progress-bar"
+                    style={{ width: `${seasonProgress}%` }}
+                  ></div>
+                </div>
               </div>
             )}
           </div>
           <QuickActions
             actions={[
               {
-                id: 'simulate',
-                label: simulating ? 'Simulating...' : 'Simulate Week',
-                icon: '⚡',
+                id: "simulate",
+                label: simulating ? "Simulating..." : "Simulate Week",
+                icon: "⚡",
                 onClick: handleSimulateWeek,
-                disabled: simulating || season.status === 'OFF_SEASON',
-                tooltip: 'Simulate all games for the current week',
+                disabled: simulating || season.status === "OFF_SEASON",
+                tooltip: "Simulate all games for the current week",
+              },
+              {
+                id: "sim-playoffs",
+                label: "Sim to Playoffs",
+                icon: "⏩",
+                onClick: handleSimulateToPlayoffs,
+                disabled: simulating || season.status !== "REGULAR_SEASON",
+                tooltip: "Simulate remaining regular season games",
+              },
+              {
+                id: "playoffs",
+                label: "View Playoffs",
+                icon: "🏆",
+                onClick: () => setActiveTab("playoffs"),
+                disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
+                tooltip: "View playoff bracket",
               },
             ]}
           />
@@ -251,6 +338,13 @@ const SeasonDashboard: React.FC = () => {
       </div>
 
       <div className="dashboard-tabs">
+        <button
+          className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
+          onClick={() => setActiveTab("overview")}
+          title="Season Overview"
+        >
+          Overview
+        </button>
         <button
           className={`tab-button ${activeTab === "standings" ? "active" : ""}`}
           onClick={() => setActiveTab("standings")}
@@ -265,8 +359,7 @@ const SeasonDashboard: React.FC = () => {
         >
           Schedule
         </button>
-        {(season.status === "POST_SEASON" ||
-          season.status === "OFF_SEASON") && (
+        {(season.status === "POST_SEASON" || season.status === "OFF_SEASON") && (
           <button
             className={`tab-button ${activeTab === "playoffs" ? "active" : ""}`}
             onClick={() => setActiveTab("playoffs")}
@@ -287,6 +380,114 @@ const SeasonDashboard: React.FC = () => {
       <div className="dashboard-content">
         {error && <div className="error-message">{error}</div>}
 
+        {activeTab === "overview" && (
+          <div className="overview-grid">
+            <div className="overview-section">
+              <h3>Upcoming Games (Week {season.current_week})</h3>
+              <div className="games-list-compact">
+                {games
+                  .filter((g) => !g.is_played)
+                  .slice(0, 5)
+                  .map((game) => (
+                    <div key={game.id} className="game-card-compact">
+                      <div className="team-row">
+                        <span className="team-name">{game.away_team?.name}</span>
+                        <span className="team-record">vs</span>
+                        <span className="team-name">{game.home_team?.name}</span>
+                      </div>
+                      <div className="game-date">
+                        {new Date(game.scheduled_date).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))}
+                {games.filter((g) => !g.is_played).length === 0 && (
+                  <p>No upcoming games this week.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="overview-section">
+              <h3>Recent Results</h3>
+              <div className="games-list-compact">
+                {games
+                  .filter((g) => g.is_played)
+                  .slice(0, 5)
+                  .map((game) => (
+                    <div key={game.id} className="game-card-compact">
+                      <div className="team-row">
+                        <span className="team-name">{game.away_team?.name}</span>
+                        <span className="score">{game.away_score}</span>
+                      </div>
+                      <span className="vs">@</span>
+                      <div className="team-row">
+                        <span className="score">{game.home_score}</span>
+                        <span className="team-name">{game.home_team?.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                {games.filter((g) => g.is_played).length === 0 && (
+                  <p>No games played this week yet.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="overview-section">
+              <h3>Standings Overview</h3>
+              <StandingsTable standings={standings} compact={true} />
+            </div>
+
+            <div className="overview-section">
+              <h3>Season Awards Race</h3>
+              {awards ? (
+                <div className="awards-race">
+                  <div className="award-item">
+                    <h4>MVP</h4>
+                    {awards.mvp[0] ? (
+                      <div className="award-leader">
+                        <p className="leader-name">{awards.mvp[0].name}</p>
+                        <p className="leader-team">
+                          {awards.mvp[0].team} • {awards.mvp[0].position}
+                        </p>
+                        <p className="leader-stats">Score: {awards.mvp[0].score.toFixed(1)}</p>
+                      </div>
+                    ) : (
+                      <p>No candidates</p>
+                    )}
+                  </div>
+                  <div className="award-item">
+                    <h4>OPOY</h4>
+                    {awards.opoy[0] ? (
+                      <div className="award-leader">
+                        <p className="leader-name">{awards.opoy[0].name}</p>
+                        <p className="leader-team">
+                          {awards.opoy[0].team} • {awards.opoy[0].position}
+                        </p>
+                      </div>
+                    ) : (
+                      <p>No candidates</p>
+                    )}
+                  </div>
+                  <div className="award-item">
+                    <h4>DPOY</h4>
+                    {awards.dpoy[0] ? (
+                      <div className="award-leader">
+                        <p className="leader-name">{awards.dpoy[0].name}</p>
+                        <p className="leader-team">
+                          {awards.dpoy[0].team} • {awards.dpoy[0].position}
+                        </p>
+                      </div>
+                    ) : (
+                      <p>No candidates</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <LoadingSpinner />
+              )}
+            </div>
+          </div>
+        )}
+
         {activeTab === "standings" && <StandingsTable standings={standings} />}
 
         {activeTab === "schedule" && (
@@ -296,16 +497,13 @@ const SeasonDashboard: React.FC = () => {
             currentWeek={season.current_week}
             totalWeeks={season.total_weeks + 4} // Approx playoff weeks
             onWeekChange={handleWeekChange}
+            onSimulateGame={handleSimulateGame}
           />
         )}
 
-        {activeTab === "playoffs" && (
-          <PlayoffBracket matchups={playoffBracket} />
-        )}
+        {activeTab === "playoffs" && <PlayoffBracket matchups={playoffBracket} />}
 
-        {activeTab === "leaders" && (
-          <LeagueLeaders leaders={leaders} loading={loading} />
-        )}
+        {activeTab === "leaders" && <LeagueLeaders leaders={leaders} loading={loading} />}
       </div>
     </div>
   );

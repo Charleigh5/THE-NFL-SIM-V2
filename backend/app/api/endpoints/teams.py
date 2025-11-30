@@ -23,6 +23,9 @@ class TeamSchema(BaseModel):
     division: str
     wins: int
     losses: int
+    logo_url: str | None = None
+    primary_color: str | None = None
+    secondary_color: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

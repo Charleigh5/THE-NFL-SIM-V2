@@ -45,9 +45,7 @@ export const LiveSim = () => {
       {/* Header Area */}
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">
-            Live Simulation
-          </h1>
+          <h1 className="text-3xl font-bold text-white tracking-tight">Live Simulation</h1>
           <p className="text-cyan-400/80 text-sm">Week 4: Empire vs. Genesis</p>
         </div>
         <GameClock />

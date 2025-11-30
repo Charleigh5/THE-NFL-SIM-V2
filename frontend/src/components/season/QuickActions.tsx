@@ -1,5 +1,5 @@
-import React from 'react';
-import './QuickActions.css';
+import React from "react";
+import "./QuickActions.css";
 
 interface Action {
   id: string;

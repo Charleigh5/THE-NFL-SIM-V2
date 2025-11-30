@@ -9,10 +9,7 @@ export const FieldView = () => {
   // or we need to handle direction. For MVP, let's just show the line.
 
   const yardLinePercent = gameState.yardLine; // 0-100
-  const firstDownLinePercent = Math.min(
-    100,
-    gameState.yardLine + gameState.distance
-  );
+  const firstDownLinePercent = Math.min(100, gameState.yardLine + gameState.distance);
 
   return (
     <div className="w-full h-full bg-green-900/20 border border-white/10 rounded-xl relative overflow-hidden perspective-1000">
@@ -21,14 +18,10 @@ export const FieldView = () => {
 
       {/* Endzones */}
       <div className="absolute left-0 top-0 bottom-0 w-[10%] bg-red-900/30 border-r border-white/20 flex items-center justify-center">
-        <span className="text-white/20 -rotate-90 font-bold tracking-widest">
-          HOME
-        </span>
+        <span className="text-white/20 -rotate-90 font-bold tracking-widest">HOME</span>
       </div>
       <div className="absolute right-0 top-0 bottom-0 w-[10%] bg-blue-900/30 border-l border-white/20 flex items-center justify-center">
-        <span className="text-white/20 90 font-bold tracking-widest rotate-90">
-          AWAY
-        </span>
+        <span className="text-white/20 90 font-bold tracking-widest rotate-90">AWAY</span>
       </div>
 
       {/* Yard Markers (Every 10 yards) */}

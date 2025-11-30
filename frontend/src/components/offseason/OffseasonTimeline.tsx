@@ -57,12 +57,8 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
         return (
           <div key={step.id} className={`timeline-step ${status}`}>
             <div className="step-indicator-container">
-              <div className="step-indicator">
-                {status === "completed" ? "✓" : index + 1}
-              </div>
-              {index < steps.length - 1 && (
-                <div className="step-connector"></div>
-              )}
+              <div className="step-indicator">{status === "completed" ? "✓" : index + 1}</div>
+              {index < steps.length - 1 && <div className="step-connector"></div>}
             </div>
 
             <div className="step-content">
@@ -71,17 +67,11 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
               {isActive && stats && (
                 <div className="step-details">
                   <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: `${stats.percentage}%` }}
-                    ></div>
+                    <div className="progress-fill" style={{ width: `${stats.percentage}%` }}></div>
                   </div>
                   <div className="step-desc">{stats.description}</div>
                   {stats.actionAvailable && (
-                    <button
-                      className="step-action-btn"
-                      onClick={() => onPhaseAction?.(step.id)}
-                    >
+                    <button className="step-action-btn" onClick={() => onPhaseAction?.(step.id)}>
                       Continue
                     </button>
                   )}

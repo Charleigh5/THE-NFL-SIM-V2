@@ -21,7 +21,7 @@ class WeekSimulator:
     def __init__(self, db: Session):
         self.db = db
     
-    def simulate_week(
+    async def simulate_week(
         self,
         season_id: int,
         week: int,
@@ -68,8 +68,8 @@ class WeekSimulator:
                 config={"fast_sim": use_fast_sim}
             )
             
-            # Run simulation synchronously (no WebSocket needed)
-            result = self._run_sync_simulation(orchestrator, play_count)
+            # Run simulation asynchronously
+            await self._run_simulation(orchestrator, play_count)
             
             # Update the original game record with the results
             game.is_played = True
@@ -98,12 +98,60 @@ class WeekSimulator:
             "games_simulated": len(results),
             "results": results
         }
-    
-    def _run_sync_simulation(self, orchestrator: SimulationOrchestrator, num_plays: int) -> None:
+
+    async def simulate_game(self, game_id: int, play_count: int = 100, use_fast_sim: bool = True) -> Dict:
         """
-        Run simulation synchronously (blocking).
+        Simulate a single game.
+        """
+        game = self.db.query(Game).filter(Game.id == game_id).first()
+        if not game:
+            return {"error": "Game not found"}
+            
+        if game.is_played:
+            return {"error": "Game already played"}
+            
+        print(f"Simulating Game {game.id}: Team {game.home_team_id} vs Team {game.away_team_id}")
         
-        This is a simplified version that doesn't need WebSocket callbacks.
+        orchestrator = SimulationOrchestrator()
+        if use_fast_sim:
+            orchestrator.play_delay_seconds = 0.0
+            
+        orchestrator.start_new_game_session(
+            home_team_id=game.home_team_id,
+            away_team_id=game.away_team_id,
+            config={"fast_sim": use_fast_sim}
+        )
+        
+        await self._run_simulation(orchestrator, play_count)
+        
+        game.is_played = True
+        game.home_score = orchestrator.home_score
+        game.away_score = orchestrator.away_score
+        game.game_data = {
+            "final_score": f"{orchestrator.home_score}-{orchestrator.away_score}",
+            "plays": len(orchestrator.history),
+            "quarters": orchestrator.current_quarter
+        }
+        self.db.commit()
+        
+        return {
+            "id": game.id,
+            "home_team_id": game.home_team_id,
+            "away_team_id": game.away_team_id,
+            "home_score": orchestrator.home_score,
+            "away_score": orchestrator.away_score,
+            "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away"
+        }
+    
+    async def _run_simulation(self, orchestrator: SimulationOrchestrator, num_plays: int) -> None:
+        """
+        Run the simulation loop for a single game asynchronously.
+        
+        Executes plays sequentially until the play count is reached or the game ends.
+        
+        Args:
+            orchestrator: The SimulationOrchestrator instance for the game.
+            num_plays: Maximum number of plays to simulate.
         """
         orchestrator.is_running = True
         orchestrator.reset_game_state()
@@ -112,8 +160,8 @@ class WeekSimulator:
             if not orchestrator.is_running:
                 break
             
-            # Execute play synchronously using the async method but in sync context
-            result = asyncio.run(orchestrator._execute_single_play())
+            # Execute play
+            result = await orchestrator._execute_single_play()
             
             # Check if game should end (could add more sophisticated logic here)
             if orchestrator._is_quarter_over():

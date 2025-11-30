@@ -15,26 +15,18 @@ export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
       <h3>Team Needs Analysis</h3>
       <div className="needs-grid">
         {sortedNeeds.map((need) => {
-          const priority =
-            need.priority || (need.need_score > 0.5 ? "high" : "low");
+          const priority = need.priority || (need.need_score > 0.5 ? "high" : "low");
           const quality = need.starter_quality || 0;
           const leagueAvg = need.league_avg_quality || 75;
 
           return (
-            <div
-              key={need.position}
-              className={`need-card priority-${priority}`}
-            >
+            <div key={need.position} className={`need-card priority-${priority}`}>
               <div className="need-header">
                 <div className="need-title">
                   <span className="need-pos">{need.position}</span>
-                  <span className={`priority-badge ${priority}`}>
-                    {priority.toUpperCase()}
-                  </span>
+                  <span className={`priority-badge ${priority}`}>{priority.toUpperCase()}</span>
                 </div>
-                <div className="need-score">
-                  Score: {need.need_score.toFixed(2)}
-                </div>
+                <div className="need-score">Score: {need.need_score.toFixed(2)}</div>
               </div>
 
               <div className="need-metrics">
@@ -45,10 +37,7 @@ export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
                     <div
                       className="depth-fill"
                       style={{
-                        width: `${Math.min(
-                          100,
-                          (need.current_count / need.target_count) * 100
-                        )}%`,
+                        width: `${Math.min(100, (need.current_count / need.target_count) * 100)}%`,
                       }}
                     ></div>
                     <span className="depth-text">
@@ -82,15 +71,11 @@ export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
                   <div className="depth-breakdown">
                     <div className="breakdown-item">
                       <span className="bd-label">Starters</span>
-                      <span className="bd-value">
-                        {need.depth_breakdown.starters}
-                      </span>
+                      <span className="bd-value">{need.depth_breakdown.starters}</span>
                     </div>
                     <div className="breakdown-item">
                       <span className="bd-label">Backups</span>
-                      <span className="bd-value">
-                        {need.depth_breakdown.backups}
-                      </span>
+                      <span className="bd-value">{need.depth_breakdown.backups}</span>
                     </div>
                   </div>
                 )}

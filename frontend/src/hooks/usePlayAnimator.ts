@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { useSimulationStore } from "../store/useSimulationStore";
 
 /**
- * Hook to track animation state based on play log updates
- * Returns isAnimating state that becomes true when new plays are added
+ * Hook to track animation state based on play log updates.
+ *
+ * Monitors the `playLog` in the simulation store. When a new play is added,
+ * it triggers an animation state (`isAnimating`) for a set duration.
+ * This is used to drive visual effects in the UI when a play occurs.
+ *
+ * @returns An object containing the `isAnimating` boolean state.
  */
 export const usePlayAnimator = () => {
   const { playLog } = useSimulationStore();

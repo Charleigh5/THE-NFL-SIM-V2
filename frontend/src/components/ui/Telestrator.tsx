@@ -36,19 +36,14 @@ export const Telestrator = ({ isActive, onClose }: TelestratorProps) => {
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    setCurrentPath((prev) => [
-      ...prev,
-      { x: e.clientX - rect.left, y: e.clientY - rect.top },
-    ]);
+    setCurrentPath((prev) => [...prev, { x: e.clientX - rect.left, y: e.clientY - rect.top }]);
   };
 
   const handlePointerUp = () => {
     if (!isDrawing) return;
 
     if (currentPath.length > 1) {
-      const pathString = `M ${currentPath
-        .map((p) => `${p.x},${p.y}`)
-        .join(" L ")}`;
+      const pathString = `M ${currentPath.map((p) => `${p.x},${p.y}`).join(" L ")}`;
       setPaths((prev) => [...prev, pathString]);
     }
 

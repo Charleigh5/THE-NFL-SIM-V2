@@ -80,13 +80,25 @@
   text-transform: uppercase;
 }
 
+.season-progress-wrapper {
+  margin-top: auto;
+  width: 100%;
+}
+
+.season-progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
 .season-progress-container {
   width: 100%;
   background-color: #333;
   border-radius: 4px;
   overflow: hidden;
   height: 8px;
-  margin-top: auto;
 }
 
 .season-progress-bar {
@@ -123,7 +135,7 @@
 }
 
 .tab-button.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: 0;
@@ -146,4 +158,120 @@
   border-radius: 8px;
   border: 1px solid #ff4d4d;
   margin-bottom: 1.5rem;
+}
+
+/* Overview Grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.overview-section {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+}
+
+.overview-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #ddd;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+/* Compact Games List */
+.games-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.game-card-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #333;
+  border-radius: 4px;
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.team-record {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.game-date {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.score {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.vs {
+  color: #666;
+  font-size: 0.8rem;
+  margin: 0 0.5rem;
+}
+
+/* Awards Race */
+.awards-race {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.award-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #444;
+}
+
+.award-item:last-child {
+  border-bottom: none;
+}
+
+.award-item h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+.award-leader {
+  display: flex;
+  flex-direction: column;
+}
+
+.leader-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.leader-team {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0;
+}
+
+.leader-stats {
+  font-size: 0.8rem;
+  color: #00aaff;
+  margin: 0.2rem 0 0 0;
 }

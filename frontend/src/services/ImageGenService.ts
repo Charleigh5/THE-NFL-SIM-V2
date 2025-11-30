@@ -31,8 +31,7 @@ class ImageGenServiceClass {
     const { type, player, team, weather } = event;
 
     const weatherDesc = weather ? `, ${weather} conditions` : "";
-    const styleTag =
-      "cinematic wide shot, hyper-realistic, cyberpunk aesthetic, dramatic lighting";
+    const styleTag = "cinematic wide shot, hyper-realistic, cyberpunk aesthetic, dramatic lighting";
 
     const eventDescriptions = {
       touchdown: `futuristic football player ${player} in ${team} armor scoring a touchdown`,
@@ -53,8 +52,7 @@ class ImageGenServiceClass {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Return mock image
-    const url =
-      this.mockImages[Math.floor(Math.random() * this.mockImages.length)];
+    const url = this.mockImages[Math.floor(Math.random() * this.mockImages.length)];
 
     return {
       url,

@@ -1,17 +1,30 @@
 import React from "react";
 
+/**
+ * Handlers for draggable elements.
+ */
 export interface DraggableHandlers {
   onPointerDown: (e: React.PointerEvent) => void;
   onPointerMove: (e: React.PointerEvent) => void;
   onPointerUp: (e: React.PointerEvent) => void;
 }
 
+/**
+ * Handlers for press-and-hold interactions.
+ */
 export interface PressHoldHandlers {
   onPointerDown: () => void;
   onPointerUp: () => void;
   onPointerLeave: () => void;
 }
 
+/**
+ * Creates handlers for preventing event propagation on draggable elements.
+ * Useful for elements inside a larger interactive area (like a map or field)
+ * that should capture their own drag events.
+ *
+ * @returns Object containing pointer event handlers.
+ */
 export const createDraggableHandlers = (): DraggableHandlers => {
   return {
     onPointerDown: (e: React.PointerEvent) => e.stopPropagation(),
@@ -20,6 +33,13 @@ export const createDraggableHandlers = (): DraggableHandlers => {
   };
 };
 
+/**
+ * Creates handlers for a press-and-hold interaction.
+ *
+ * @param onPressEnd - Callback function to execute when the press ends (either by timeout or release).
+ * @param duration - Duration in milliseconds to wait before triggering the callback (default: 500ms).
+ * @returns Object containing pointer event handlers.
+ */
 export const createPressHoldHandlers = (
   onPressEnd?: () => void,
   duration: number = 500

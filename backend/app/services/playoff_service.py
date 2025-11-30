@@ -8,11 +8,36 @@ from app.models.game import Game
 import datetime
 
 class PlayoffService:
+    """
+    Service for managing the NFL playoff lifecycle.
+    
+    Handles the generation of playoff brackets, seeding calculation based on regular season standings,
+    matchup creation for each round (Wild Card, Divisional, Conference, Super Bowl), and advancing
+    the playoffs as games are completed.
+    """
     def __init__(self, db: Session):
         self.db = db
         self.standings_calculator = StandingsCalculator(db)
 
     def generate_playoffs(self, season_id: int):
+        """
+        Generate the initial playoff bracket for a season.
+        
+        This method:
+        1. Validates the season exists and playoffs haven't been generated.
+        2. Calculates seeds for AFC and NFC conferences.
+        3. Creates Wild Card round matchups.
+        4. Updates the season status to POST_SEASON.
+        
+        Args:
+            season_id: The ID of the season to generate playoffs for.
+            
+        Returns:
+            List[PlayoffMatchup]: The generated playoff bracket matchups.
+            
+        Raises:
+            ValueError: If season not found or playoffs already generated.
+        """
         season = self.db.query(Season).filter(Season.id == season_id).first()
         if not season:
             raise ValueError("Season not found")
@@ -43,6 +68,21 @@ class PlayoffService:
         return self.get_bracket(season_id)
 
     def _calculate_conference_seeds(self, season_id: int, conference: str) -> List[Team]:
+        """
+        Calculate playoff seeds for a conference based on NFL rules.
+        
+        Seeding Rules:
+        1. The 4 division winners are seeded 1-4 based on record.
+        2. The next 3 best teams (Wild Cards) are seeded 5-7 based on record.
+        3. Tiebreakers used: Win Percentage, Total Wins, Point Differential.
+        
+        Args:
+            season_id: The season ID.
+            conference: "AFC" or "NFC".
+            
+        Returns:
+            List[Team]: Ordered list of 7 teams, where index 0 is Seed 1.
+        """
         # Get all standings for conference
         # Get all standings for conference
         standings = self.standings_calculator.calculate_standings(season_id)
@@ -62,15 +102,15 @@ class PlayoffService:
         
         for div, teams in divisions.items():
             # Sort by win pct, then wins, then point diff
-            sorted_teams = sorted(teams, key=lambda x: (x.win_pct, x.wins, x.point_differential), reverse=True)
+            sorted_teams = sorted(teams, key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
             div_winners.append(sorted_teams[0])
             wild_card_candidates.extend(sorted_teams[1:])
             
         # Sort Division Winners (Seeds 1-4)
-        div_winners.sort(key=lambda x: (x.win_pct, x.wins, x.point_differential), reverse=True)
+        div_winners.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
         
         # Sort Wild Cards (Seeds 5-7)
-        wild_card_candidates.sort(key=lambda x: (x.win_pct, x.wins, x.point_differential), reverse=True)
+        wild_card_candidates.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
         top_wild_cards = wild_card_candidates[:3]
         
         # Combine
@@ -86,6 +126,20 @@ class PlayoffService:
         return ordered_teams
 
     def _create_wild_card_round(self, season_id: int, conference: str, seeds: List[Team]):
+        """
+        Create matchups for the Wild Card round.
+        
+        Matchups:
+        - Seed 2 vs Seed 7
+        - Seed 3 vs Seed 6
+        - Seed 4 vs Seed 5
+        - Seed 1 gets a Bye
+        
+        Args:
+            season_id: The season ID.
+            conference: "AFC" or "NFC".
+            seeds: Ordered list of seeded teams.
+        """
         # Seeds: 1 (Bye), 2vs7, 3vs6, 4vs5
         
         # 2 vs 7
@@ -99,6 +153,21 @@ class PlayoffService:
         self._create_matchup(season_id, PlayoffRound.WILD_CARD, conference, f"{conference}_BYE", seeds[0], None, 1, None, winner=seeds[0], week=19)
 
     def _create_matchup(self, season_id, round, conference, code, home, away, home_seed, away_seed, winner=None, week=None):
+        """
+        Helper to create a PlayoffMatchup record and optionally a Game record.
+        
+        Args:
+            season_id: Season ID.
+            round: PlayoffRound enum value.
+            conference: Conference name.
+            code: Unique matchup code (e.g., "AFC_WC_1").
+            home: Home Team object.
+            away: Away Team object (None for Bye).
+            home_seed: Seed of home team.
+            away_seed: Seed of away team.
+            winner: Winner Team object (if pre-determined, e.g., Bye).
+            week: Week number to schedule the game.
+        """
         game = None
         if home and away and not winner and week:
             # Create Game record
@@ -129,9 +198,33 @@ class PlayoffService:
         self.db.add(matchup)
 
     def get_bracket(self, season_id: int):
+        """
+        Retrieve the full playoff bracket for a season.
+        
+        Args:
+            season_id: Season ID.
+            
+        Returns:
+            List[PlayoffMatchup]: All playoff matchups for the season.
+        """
         return self.db.query(PlayoffMatchup).filter(PlayoffMatchup.season_id == season_id).all()
 
     def advance_round(self, season_id: int):
+        """
+        Check if the current playoff round is complete and generate the next round.
+        
+        Logic:
+        1. Checks if all matchups in the current round have a winner.
+        2. If games are played but winners not recorded in Matchup, updates Matchup winner.
+        3. If round is complete, generates matchups for the next round based on NFL re-seeding rules.
+        4. Updates season current_week.
+        
+        Args:
+            season_id: Season ID.
+            
+        Raises:
+            ValueError: If season not found.
+        """
         season = self.db.query(Season).filter(Season.id == season_id).first()
         if not season:
             raise ValueError("Season not found")
@@ -202,6 +295,17 @@ class PlayoffService:
         self.db.commit()
 
     def _create_divisional_round(self, season_id: int, conference: str):
+        """
+        Create matchups for the Divisional Round.
+        
+        Re-seeding Rule:
+        The highest remaining seed plays the lowest remaining seed.
+        The other two remaining teams play each other.
+        
+        Args:
+            season_id: Season ID.
+            conference: "AFC" or "NFC".
+        """
         # Get all winners from WC round + Bye
         wc_matchups = self.db.query(PlayoffMatchup).filter(
             PlayoffMatchup.season_id == season_id,
@@ -237,6 +341,16 @@ class PlayoffService:
                              middle_high["team"], middle_low["team"], middle_high["seed"], middle_low["seed"], week=20)
 
     def _create_conference_round(self, season_id: int, conference: str):
+        """
+        Create matchups for the Conference Championship.
+        
+        The two winners from the Divisional round play each other.
+        Higher seed hosts.
+        
+        Args:
+            season_id: Season ID.
+            conference: "AFC" or "NFC".
+        """
         div_matchups = self.db.query(PlayoffMatchup).filter(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.DIVISIONAL,
@@ -256,6 +370,14 @@ class PlayoffService:
                              winners[0]["team"], winners[1]["team"], winners[0]["seed"], winners[1]["seed"], week=21)
 
     def _create_super_bowl(self, season_id: int):
+        """
+        Create the Super Bowl matchup.
+        
+        AFC Champion vs NFC Champion.
+        
+        Args:
+            season_id: Season ID.
+        """
         # Get AFC Winner
         afc_conf = self.db.query(PlayoffMatchup).filter(
             PlayoffMatchup.season_id == season_id,
@@ -278,6 +400,15 @@ class PlayoffService:
                              afc_winner, nfc_winner, None, None, week=22)
 
     def get_champion(self, season_id: int):
+        """
+        Get the Super Bowl winner if the season is complete.
+        
+        Args:
+            season_id: Season ID.
+            
+        Returns:
+            Team: The winning team, or None if not yet decided.
+        """
         sb = self.db.query(PlayoffMatchup).filter(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.SUPER_BOWL

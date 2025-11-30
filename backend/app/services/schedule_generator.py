@@ -65,7 +65,15 @@ class ScheduleGenerator:
         return games
     
     def _organize_by_division(self, teams: List[Team]) -> Dict[str, List[Team]]:
-        """Organize teams by division."""
+        """
+        Organize teams into a dictionary keyed by division.
+        
+        Args:
+            teams: List of all teams.
+            
+        Returns:
+            Dict[str, List[Team]]: Key is "Conference-Division" (e.g., "AFC-North"), value is list of Teams.
+        """
         divisions = {}
         for team in teams:
             div_key = f"{team.conference}-{team.division}"
@@ -75,7 +83,17 @@ class ScheduleGenerator:
         return divisions
     
     def _generate_division_games(self, divisions: Dict[str, List[Team]]) -> List[Tuple[Team, Team]]:
-        """Generate divisional matchups (home and away for each pair)."""
+        """
+        Generate divisional matchups (home and away for each pair).
+        
+        Each team plays every other team in their division twice (6 games total).
+        
+        Args:
+            divisions: Dictionary of teams organized by division.
+            
+        Returns:
+            List[Tuple[Team, Team]]: List of (Home, Away) tuples.
+        """
         matchups = []
         for div_teams in divisions.values():
             # Each team plays every other team in division twice
@@ -87,7 +105,17 @@ class ScheduleGenerator:
         return matchups
     
     def _generate_conference_games(self, divisions: Dict[str, List[Team]]) -> List[Tuple[Team, Team]]:
-        """Generate inter-division conference matchups."""
+        """
+        Generate inter-division conference matchups.
+        
+        Simplified logic: Rotates divisions within the conference so each division plays another division.
+        
+        Args:
+            divisions: Dictionary of teams organized by division.
+            
+        Returns:
+            List[Tuple[Team, Team]]: List of (Home, Away) tuples.
+        """
         matchups = []
         
         # Group divisions by conference
@@ -111,7 +139,19 @@ class ScheduleGenerator:
         teams: List[Team],
         existing_matchups: List[Tuple[Team, Team]]
     ) -> List[Tuple[Team, Team]]:
-        """Fill in remaining games to ensure each team has 17."""
+        """
+        Fill in remaining games to ensure each team has 17 games.
+        
+        This method finds teams with fewer than 17 games and pairs them up,
+        avoiding duplicate matchups.
+        
+        Args:
+            teams: List of all teams.
+            existing_matchups: List of matchups already generated.
+            
+        Returns:
+            List[Tuple[Team, Team]]: List of additional (Home, Away) tuples.
+        """
         # Count games per team
         game_count = {team.id: 0 for team in teams}
         for home, away in existing_matchups:
@@ -152,7 +192,20 @@ class ScheduleGenerator:
         start_date: datetime,
         games_per_week: int
     ) -> List[Game]:
-        """Assign matchups to specific weeks."""
+        """
+        Assign matchups to specific weeks and create Game objects.
+        
+        Shuffles matchups to randomize the schedule, then distributes them across weeks.
+        
+        Args:
+            matchups: List of (Home, Away) tuples.
+            season_id: Season ID.
+            start_date: Date of the first Sunday.
+            games_per_week: Target number of games per week.
+            
+        Returns:
+            List[Game]: List of Game objects ready to be saved to DB.
+        """
         # Shuffle for randomness
         random.shuffle(matchups)
         
@@ -179,7 +232,12 @@ class ScheduleGenerator:
         return games
     
     def _get_next_sunday(self) -> datetime:
-        """Get the next Sunday from today."""
+        """
+        Get the next Sunday from today at 1:00 PM.
+        
+        Returns:
+            datetime: Next Sunday at 13:00:00.
+        """
         today = datetime.now()
         days_until_sunday = (6 - today.weekday()) % 7
         if days_until_sunday == 0:

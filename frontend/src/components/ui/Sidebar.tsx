@@ -1,11 +1,5 @@
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Activity,
-  Users,
-  Briefcase,
-  PenTool,
-} from "lucide-react";
+import { LayoutDashboard, Activity, Users, Briefcase, PenTool } from "lucide-react";
 import clsx from "clsx";
 
 const navItems = [

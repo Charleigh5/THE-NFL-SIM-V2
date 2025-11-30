@@ -1,0 +1,944 @@
+{"time":"2025-11-30 02:55:03,118","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:03,120","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:09,641","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:09,642","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:10,658","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:10,660","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:12,665","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:12,665","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:16,674","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:16,675","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:16,931","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:16,932","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:16,934","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:16,935","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:22,463","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:22,464","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:32,197","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:32,198","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:32,200","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:32,201","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,176","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,177","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,179","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,180","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,181","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,183","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:55:53,215","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,217","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,218","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:55:53,221","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,224","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,224","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:55:53,233","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:55:53,234","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,236","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,237","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:55:53,239","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:55:53,240","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,241","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,242","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:55:53,297","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:55:53,298","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,300","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,301","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:55:53,306","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:55:53,307","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,309","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,310","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:55:53,310","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:55:53,320","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,322","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,323","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:55:53,387","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:55:53,388","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,391","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,392","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:55:53,395","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:55:53,397","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:55:53,398","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:55:53,400","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:55:53,400","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:55:53,405","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:00,005","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:00,006","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,273","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,274","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,276","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,276","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,280","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,282","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:05,286","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,287","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,289","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:05,292","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,294","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,295","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:05,299","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:05,300","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,302","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,304","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:05,306","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:05,308","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,309","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,309","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,313","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,314","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:05,386","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:05,387","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:05,389","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:05,389","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:05,390","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:05,393","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,394","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,395","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,397","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,398","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,398","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:05,399","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:05,400","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:05,404","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:05,463","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:05,464","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:05,466","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:05,467","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,468","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:05,469","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,453","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,453","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,455","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,455","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,457","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,457","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:15,460","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,461","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,462","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:15,465","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,467","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,468","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:15,470","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:15,470","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,472","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,472","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:15,474","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:15,475","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,477","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,478","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:15,530","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:15,532","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,534","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,535","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:15,536","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:15,537","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,538","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,539","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:15,540","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:15,543","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,545","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,546","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:15,613","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:15,614","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,616","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,618","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:15,621","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:15,622","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:15,624","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:15,625","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:15,626","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:15,631","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:25,859","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:25,860","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,589","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,589","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,591","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,592","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,593","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,593","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:30,596","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,598","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,598","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 02:56:30,601","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,601","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,602","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:30,604","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:30,605","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,606","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,607","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 02:56:30,609","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 02:56:30,609","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,610","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,610","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,612","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,613","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:30,613","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:30,616","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:30,617","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:30,617","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:30,665","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:30,667","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,668","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,669","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,671","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,671","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,672","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 02:56:30,673","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 02:56:30,675","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 02:56:30,676","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 02:56:30,677","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 02:56:30,680","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 02:56:30,737","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 02:56:30,739","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,741","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 02:56:30,742","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:19,425","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:19,426","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:19,427","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:19,429","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:19,452","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,373","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,374","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,376","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,376","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,381","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,382","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:01:24,392","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,394","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,395","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:01:24,398","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,431","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,432","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:01:24,438","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:01:24,439","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,441","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,442","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:01:24,444","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:01:24,445","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,446","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,447","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,448","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:01:24,500","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:01:24,501","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:01:24,506","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:01:24,507","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,508","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,510","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,510","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,511","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:01:24,512","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:01:24,521","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:01:24,574","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:01:24,575","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,576","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,577","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,578","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:24,578","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:01:24,580","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:01:24,582","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:01:24,582","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:01:24,585","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:24,586","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:40,686","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:40,687","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:01:40,690","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:01:40,691","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:50,667","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:50,668","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:50,668","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:50,670","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:50,672","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:50,675","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:50,676","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:50,678","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:55,153","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:55,155","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:01:55,174","name":"app.api.endpoints.season","level":"INFO","message":"Generated 182 games for season 2026"}
+{"time":"2025-11-30 03:01:55,194","name":"app.api.endpoints.season","level":"INFO","message":"Season 43 initialized successfully"}
+{"time":"2025-11-30 03:01:55,196","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:55,203","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:55,203","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:55,205","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:55,395","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:55,396","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:55,396","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:55,397","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:55,399","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:01:55,400","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:01:55,401","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:01:55,402","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,456","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,457","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,458","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,459","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,461","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,462","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:02:07,464","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,466","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,467","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:02:07,469","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,471","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,472","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:02:07,474","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:02:07,475","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,477","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,478","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:02:07,480","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:02:07,481","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,483","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,484","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:02:07,532","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:02:07,533","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,535","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,536","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:02:07,537","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:02:07,538","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,540","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,541","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:02:07,542","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:02:07,545","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,548","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,549","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:02:07,611","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:02:07,613","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,615","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,616","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:02:07,618","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:02:07,618","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:02:07,620","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:02:07,621","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:02:07,621","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:02:07,626","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:03:42,430","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:03:42,431","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:03:42,432","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:03:42,433","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:03:42,435","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:03:42,437","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:03:42,438","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:03:42,440","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:03:58,118","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:03:58,120","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:03:58,122","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,156","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,157","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,158","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,159","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,160","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,161","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:11,163","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,165","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,166","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:11,169","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,171","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,172","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:11,174","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:11,175","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,177","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,178","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:11,180","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:11,181","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,184","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,185","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:11,235","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:11,237","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,240","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,241","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:11,243","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:11,244","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,247","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,248","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:11,248","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:11,252","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,254","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,255","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:11,314","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:11,315","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,316","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,317","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:11,319","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:11,321","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:11,323","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:11,324","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:11,325","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:11,328","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:16,601","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:16,602","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:16,602","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:16,603","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:04:16,606","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:16,608","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:16,610","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:04:16,612","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:29,579","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:29,580","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:04:29,582","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,266","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,267","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,268","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,269","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,270","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,271","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:42,273","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,275","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,276","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:42,278","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,279","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,279","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:42,281","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:42,282","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,284","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,284","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:42,286","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:42,287","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,288","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,289","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:42,336","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:42,337","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,338","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,339","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:42,341","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:42,342","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,344","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,345","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:42,345","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:42,348","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,349","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,349","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:42,403","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:42,404","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,405","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,407","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:42,409","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:42,410","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:42,411","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:42,411","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:42,412","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:42,416","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,016","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,016","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,019","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,019","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,021","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,022","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:59,024","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,026","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,027","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:04:59,029","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,030","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,031","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:59,033","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:59,033","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,035","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,036","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:04:59,040","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:04:59,040","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,041","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,042","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,043","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,044","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:59,093","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:59,094","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:59,094","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:59,097","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:59,098","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:59,099","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,100","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,101","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,102","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,103","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,105","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:04:59,106","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:04:59,108","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:04:59,109","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:04:59,168","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:04:59,169","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:04:59,169","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:04:59,173","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,174","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:04:59,176","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:06:31,752","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:06:31,754","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:06:31,754","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:06:31,756","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:06:31,789","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:06:31,792","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:06:31,793","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:06:31,795","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,325","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,326","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,327","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,328","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,330","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:07:20,352","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,354","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,354","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,355","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:07:20,363","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,365","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,366","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:07:20,369","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,371","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,372","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:07:20,378","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:07:20,379","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,382","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,382","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:07:20,385","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:07:20,386","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,388","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,389","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:07:20,435","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:07:20,436","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,438","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,439","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:07:20,444","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:07:20,445","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,447","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,448","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:07:20,449","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:07:20,458","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,459","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,460","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:07:20,505","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:07:20,507","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,509","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,510","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:07:20,512","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:07:20,513","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:07:20,514","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:07:20,515","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:07:20,515","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:07:20,518","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:22,679","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:22,682","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 21"}
+{"time":"2025-11-30 03:16:22,717","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 2 games"}
+{"time":"2025-11-30 03:16:22,719","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:35,826","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:35,827","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:35,830","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:35,832","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:16:35,836","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:35,839","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:35,840","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:16:35,843","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:40,547","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:40,549","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:16:40,551","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,272","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,273","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,276","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,276","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,278","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,280","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:16:53,288","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,290","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,292","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:16:53,294","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,330","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,331","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:16:53,338","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:16:53,339","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,341","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,342","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:16:53,345","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:16:53,346","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,348","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,349","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:16:53,403","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:16:53,405","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,406","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,407","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:16:53,409","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:16:53,410","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,413","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,414","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:16:53,414","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:16:53,423","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,426","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,427","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:16:53,478","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:16:53,479","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,482","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,482","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 22"}
+{"time":"2025-11-30 03:16:53,484","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 1 games"}
+{"time":"2025-11-30 03:16:53,485","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:53,486","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:53,488","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:16:53,488","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:16:53,491","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:58,390","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:58,391","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:58,392","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:58,393","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:16:58,395","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:16:58,397","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:16:58,398","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:16:58,399","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:17:03,232","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:17:03,233","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:17:03,235","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:19:10,039","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:19:10,040","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:19:10,041","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:19:10,042","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:19:10,044","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:19:10,047","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:19:10,048","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:19:10,049","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:19:18,045","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:19:18,047","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:19:18,049","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:11,273","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:11,274","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:11,276","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:11,278","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:25:11,313","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:11,315","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:11,316","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:25:11,318","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:23,644","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:23,646","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2025"}
+{"time":"2025-11-30 03:25:23,648","name":"app.api.endpoints.season","level":"INFO","message":"Initializing new season for year 2025"}
+{"time":"2025-11-30 03:25:23,666","name":"app.api.endpoints.season","level":"INFO","message":"Generated 182 games for season 2025"}
+{"time":"2025-11-30 03:25:23,679","name":"app.api.endpoints.season","level":"INFO","message":"Season 1 initialized successfully"}
+{"time":"2025-11-30 03:25:23,680","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:23,685","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:23,686","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:25:23,687","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:23,855","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:23,856","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:23,858","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:23,859","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:25:23,860","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:23,861","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:23,862","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:25:23,864","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,718","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,718","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,720","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,721","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,722","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,723","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:25:36,727","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,729","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,729","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:25:36,732","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,733","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,734","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:25:36,740","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:25:36,741","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,743","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,743","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:25:36,745","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:25:36,746","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,747","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,748","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:25:36,792","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:25:36,793","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,795","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,796","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:25:36,801","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:25:36,803","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,805","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,807","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:25:36,807","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:25:36,816","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,819","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,820","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:25:36,868","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:25:36,869","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,872","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,872","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:25:36,874","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:25:36,875","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:25:36,878","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:25:36,878","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:25:36,879","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:25:36,882","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:09,191","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:09,192","name":"app.api.endpoints.season","level":"INFO","message":"Simulating week current for season 1"}
+{"time":"2025-11-30 03:26:09,204","name":"app.core.error_decorators","level":"ERROR","message":"Unexpected error in simulate_week"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 328, in simulate_week
+    results = simulator.simulate_week(
+        season_id=season_id,
+    ...<2 lines>...
+        use_fast_sim=True
+    )
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\week_simulator.py", line 72, in simulate_week
+    result = self._run_sync_simulation(orchestrator, play_count)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\week_simulator.py", line 116, in _run_sync_simulation
+    result = asyncio.run(orchestrator._execute_single_play())
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 191, in run
+    raise RuntimeError(
+        "asyncio.run() cannot be called from a running event loop")
+RuntimeError: asyncio.run() cannot be called from a running event loop
+{"time":"2025-11-30 03:26:09,208","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:25,885","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:25,886","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:25,886","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:25,888","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:25,889","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:25,891","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:25,891","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:25,893","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:29,271","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:29,272","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:29,273","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:29,274","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:29,275","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:29,278","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:29,278","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:29,279","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:40,672","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:40,673","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2026"}
+{"time":"2025-11-30 03:26:40,676","name":"app.api.endpoints.season","level":"INFO","message":"Initializing new season for year 2026"}
+{"time":"2025-11-30 03:26:40,689","name":"app.api.endpoints.season","level":"INFO","message":"Generated 182 games for season 2026"}
+{"time":"2025-11-30 03:26:40,700","name":"app.api.endpoints.season","level":"INFO","message":"Season 2 initialized successfully"}
+{"time":"2025-11-30 03:26:40,701","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:40,708","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:40,708","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:40,710","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:40,865","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:40,866","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:40,868","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:40,868","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:40,870","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:26:40,872","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:26:40,873","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:26:40,874","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:44,682","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:44,684","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:44,684","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:44,686","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:32:44,708","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:44,710","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:44,711","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:32:44,713","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:57,148","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:57,150","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2025"}
+{"time":"2025-11-30 03:32:57,152","name":"app.api.endpoints.season","level":"INFO","message":"Initializing new season for year 2025"}
+{"time":"2025-11-30 03:32:57,170","name":"app.api.endpoints.season","level":"INFO","message":"Generated 182 games for season 2025"}
+{"time":"2025-11-30 03:32:57,183","name":"app.api.endpoints.season","level":"INFO","message":"Season 1 initialized successfully"}
+{"time":"2025-11-30 03:32:57,184","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:57,188","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:57,189","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:32:57,191","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:57,354","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:57,355","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:57,357","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:57,358","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:32:57,360","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:32:57,363","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:32:57,364","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-11-30 03:32:57,366","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,394","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,394","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,397","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,397","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,398","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,399","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:33:12,407","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,409","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,410","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:33:12,413","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,415","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,415","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:33:12,421","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:33:12,422","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,424","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,425","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:33:12,428","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:33:12,429","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,430","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,431","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:33:12,498","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:33:12,499","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,500","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,501","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:33:12,508","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:33:12,509","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,511","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,512","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:33:12,512","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:33:12,522","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,523","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,524","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:33:12,581","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:33:12,582","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,583","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,584","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:33:12,586","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:33:12,587","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:12,588","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:12,589","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:33:12,590","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:33:12,595","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:33:23,238","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:33:23,240","name":"app.api.endpoints.season","level":"INFO","message":"Simulating week current for season 1"}
+{"time":"2025-11-30 03:33:23,265","name":"app.core.error_decorators","level":"ERROR","message":"Unexpected error in simulate_week"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 328, in simulate_week
+    results = simulator.simulate_week(
+        season_id=season_id,
+    ...<2 lines>...
+        use_fast_sim=True
+    )
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\week_simulator.py", line 72, in simulate_week
+    result = self._run_sync_simulation(orchestrator, play_count)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\week_simulator.py", line 116, in _run_sync_simulation
+    result = asyncio.run(orchestrator._execute_single_play())
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 191, in run
+    raise RuntimeError(
+        "asyncio.run() cannot be called from a running event loop")
+RuntimeError: asyncio.run() cannot be called from a running event loop
+{"time":"2025-11-30 03:33:23,270","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,126","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,127","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,129","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,129","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,130","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,132","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:34:57,161","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,163","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,164","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:34:57,167","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,169","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,169","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:34:57,177","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:34:57,178","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,180","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,181","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:34:57,183","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:34:57,184","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,186","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,187","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:34:57,235","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:34:57,236","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,238","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,240","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:34:57,247","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:34:57,248","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,250","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,251","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:34:57,251","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:34:57,261","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,263","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,263","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:34:57,312","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:34:57,313","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,315","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,316","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:34:57,318","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:34:57,319","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:34:57,320","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:34:57,321","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:34:57,322","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:34:57,325","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,640","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,640","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,643","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,644","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,646","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,647","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:35:21,649","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,651","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,652","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:35:21,654","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,655","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,656","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:35:21,658","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:35:21,659","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,660","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,661","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:35:21,663","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:35:21,664","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,665","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,665","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,666","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,667","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:35:21,669","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:35:21,669","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:35:21,713","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:35:21,714","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:35:21,714","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:35:21,717","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,718","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,719","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,720","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,721","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,722","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:21,723","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:35:21,774","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:35:21,775","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:35:21,776","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:35:21,781","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 1"}
+{"time":"2025-11-30 03:35:21,784","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:35:21,786","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,787","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:21,788","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:39,798","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:39,799","name":"app.api.endpoints.season","level":"INFO","message":"Simulating week current for season 1"}
+{"time":"2025-11-30 03:35:53,658","name":"app.api.endpoints.season","level":"INFO","message":"Week 1 simulation complete: 3 games"}
+{"time":"2025-11-30 03:35:53,665","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:53,671","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:53,672","name":"app.api.endpoints.season","level":"INFO","message":"Advancing week for season 1"}
+{"time":"2025-11-30 03:35:53,674","name":"app.api.endpoints.season","level":"INFO","message":"Season 1 advanced to week 3, status: SeasonStatus.REGULAR_SEASON"}
+{"time":"2025-11-30 03:35:53,681","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:53,686","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:53,687","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:35:53,740","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:35:53,742","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:53,744","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:53,745","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 3"}
+{"time":"2025-11-30 03:35:53,747","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:35:53,748","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:35:53,750","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:35:53,751","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:35:53,751","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:35:53,755","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,447","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,448","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,450","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,451","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,452","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,454","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:56:12,482","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,484","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,485","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-11-30 03:56:12,487","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,491","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,492","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:56:12,498","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:56:12,499","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,502","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,502","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season summary"}
+{"time":"2025-11-30 03:56:12,504","name":"app.api.endpoints.season","level":"INFO","message":"Season summary retrieved: 1"}
+{"time":"2025-11-30 03:56:12,505","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,508","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,509","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:56:12,553","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:56:12,554","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,557","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,558","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 3"}
+{"time":"2025-11-30 03:56:12,564","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:56:12,565","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,567","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,568","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:56:12,569","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:56:12,577","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,579","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,580","name":"app.api.endpoints.season","level":"INFO","message":"Calculating standings for season 1"}
+{"time":"2025-11-30 03:56:12,623","name":"app.api.endpoints.season","level":"INFO","message":"Standings calculated: 32 teams"}
+{"time":"2025-11-30 03:56:12,624","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,627","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,628","name":"app.api.endpoints.season","level":"INFO","message":"Fetching schedule for season 1, week 3"}
+{"time":"2025-11-30 03:56:12,629","name":"app.api.endpoints.season","level":"INFO","message":"Retrieved 16 games"}
+{"time":"2025-11-30 03:56:12,630","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 03:56:12,632","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 03:56:12,632","name":"app.api.endpoints.season","level":"INFO","message":"Fetching league leaders for season 1, limit 5"}
+{"time":"2025-11-30 03:56:12,633","name":"app.api.endpoints.season","level":"INFO","message":"League leaders retrieved: 5 per category"}
+{"time":"2025-11-30 03:56:12,636","name":"api.access","level":"INFO","message":"Request completed"}

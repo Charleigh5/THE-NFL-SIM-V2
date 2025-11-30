@@ -20,6 +20,9 @@ export interface Team {
   wins: number;
   losses: number;
   salary_cap_space: number;
+  logo_url?: string;
+  primary_color?: string;
+  secondary_color?: string;
 }
 
 export interface Player {

@@ -58,9 +58,26 @@ class GameResponse(BaseModel):
     home_score: int
     away_score: int
     is_played: bool
+    is_playoff: bool = False
     date: datetime
     
     model_config = ConfigDict(from_attributes=True)
+
+
+class AwardCandidate(BaseModel):
+    player_id: int
+    name: str
+    team: str
+    position: str
+    stats: dict
+    score: float
+
+class SeasonAwards(BaseModel):
+    mvp: List[AwardCandidate]
+    opoy: List[AwardCandidate]
+    dpoy: List[AwardCandidate]
+    oroy: List[AwardCandidate]
+    droy: List[AwardCandidate]
 
 
 class SeasonSummary(BaseModel):
@@ -123,14 +140,21 @@ def initialize_season(
             detail=f"Season {season_data.year} already exists"
         )
     
+    # Deactivate all other seasons
+    db.query(Season).update(
+        {Season.is_active: False}
+    )
+    db.flush()
+    
     # Create season
+    logger.info(f"Initializing new season for year {season_data.year}")
     new_season = Season(
         year=season_data.year,
-        current_week=1,
         is_active=True,
         status=SeasonStatus.REGULAR_SEASON,
         total_weeks=season_data.total_weeks,
-        playoff_weeks=season_data.playoff_weeks
+        playoff_weeks=season_data.playoff_weeks,
+        current_week=1
     )
     db.add(new_season)
     db.flush()  # Get the ID
@@ -289,7 +313,7 @@ def advance_week(season_id: int, db: Session = Depends(get_db)):
 
 @router.post("/{season_id}/simulate-week")
 @handle_errors
-def simulate_week(
+async def simulate_week(
     season_id: int,
     week: Optional[int] = None,
     play_count: int = 100,
@@ -318,7 +342,7 @@ def simulate_week(
     
     # Create simulator and run
     simulator = WeekSimulator(db)
-    results = simulator.simulate_week(
+    results = await simulator.simulate_week(
         season_id=season_id,
         week=week,
         play_count=play_count,
@@ -333,6 +357,69 @@ def simulate_week(
         db.commit()
     
     return results
+
+
+@router.post("/game/{game_id}/simulate")
+@handle_errors
+async def simulate_game(
+    game_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Simulate a single game.
+    """
+    logger.info(f"Simulating game {game_id}")
+    simulator = WeekSimulator(db)
+    result = await simulator.simulate_game(game_id, play_count=100, use_fast_sim=True)
+    
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+        
+    return result
+
+
+@router.post("/{season_id}/simulate-to-playoffs")
+@handle_errors
+async def simulate_to_playoffs(
+    season_id: int,
+    db: Session = Depends(get_db)
+):
+    """Simulate the rest of the regular season."""
+    logger.info(f"Simulating to playoffs for season {season_id}")
+    season = db.query(Season).filter(Season.id == season_id).first()
+    if not season:
+        raise HTTPException(status_code=404, detail="Season not found")
+
+    simulator = WeekSimulator(db)
+    
+    # Limit to avoid infinite loops
+    max_weeks = 20
+    weeks_simulated = 0
+    
+    while season.status == SeasonStatus.REGULAR_SEASON and weeks_simulated < max_weeks:
+        logger.info(f"Simulating week {season.current_week}")
+        # Simulate current week
+        await simulator.simulate_week(
+            season_id=season_id,
+            week=season.current_week,
+            play_count=50, # Faster sim
+            use_fast_sim=True
+        )
+        
+        # Advance week logic (duplicated from advance_week to avoid API overhead)
+        if season.current_week >= season.total_weeks:
+             season.status = SeasonStatus.POST_SEASON
+             season.current_week = 1
+             # Generate playoffs
+             PlayoffService(db).generate_playoffs(season_id)
+        else:
+             season.current_week += 1
+        
+        db.commit()
+        db.refresh(season)
+        weeks_simulated += 1
+        
+    return {"message": f"Simulated {weeks_simulated} weeks", "season": season}
 
 
 @router.post("/{season_id}/playoffs/generate", response_model=List[PlayoffMatchupSchema])
@@ -479,6 +566,93 @@ def get_league_leaders(
         passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
         rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
         receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards")
+    )
+
+
+@router.get("/{season_id}/awards/projected", response_model=SeasonAwards)
+@handle_errors
+def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
+    """
+    Get projected season awards based on current stats.
+    """
+    logger.info(f"Calculating projected awards for season {season_id}")
+    
+    def get_candidates(position_group, is_rookie_only=False, limit=5):
+        query = db.query(
+            Player.id,
+            Player.first_name,
+            Player.last_name,
+            Team.name.label("team_name"),
+            Player.position,
+            func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
+            func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
+            func.sum(PlayerGameStats.pass_ints).label("pass_ints"),
+            func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
+            func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
+            func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
+            func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
+            func.sum(PlayerGameStats.sacks).label("sacks"),
+            func.sum(PlayerGameStats.interceptions).label("interceptions"),
+            func.sum(PlayerGameStats.tackles_solo).label("tackles")
+        ).join(
+            PlayerGameStats, Player.id == PlayerGameStats.player_id
+        ).join(
+            Game, PlayerGameStats.game_id == Game.id
+        ).join(
+            Team, Player.team_id == Team.id
+        ).filter(
+            Game.season_id == season_id
+        )
+        
+        if is_rookie_only:
+            query = query.filter(Player.is_rookie == True)
+            
+        if position_group == "QB":
+            query = query.filter(Player.position == "QB")
+        elif position_group == "OFFENSE":
+            query = query.filter(Player.position.in_(["QB", "RB", "WR", "TE"]))
+        elif position_group == "DEFENSE":
+            query = query.filter(Player.position.in_(["DE", "DT", "LB", "CB", "S"]))
+            
+        stats = query.group_by(Player.id, Team.name).all()
+        
+        candidates = []
+        for p in stats:
+            score = 0
+            stats_dict = {}
+            
+            if position_group == "QB":
+                # Simple MVP score: Yards/10 + TDs*6 - Ints*3
+                score = (p.pass_yards or 0)/10 + (p.pass_tds or 0)*6 - (p.pass_ints or 0)*3 + (p.rush_yards or 0)/10 + (p.rush_tds or 0)*6
+                stats_dict = {"Pass Yds": p.pass_yards, "Pass TDs": p.pass_tds, "Ints": p.pass_ints}
+            elif position_group == "OFFENSE":
+                # OPOY: Yards + TDs*6
+                total_yards = (p.rush_yards or 0) + (p.rec_yards or 0)
+                total_tds = (p.rush_tds or 0) + (p.rec_tds or 0)
+                score = total_yards + total_tds * 10
+                stats_dict = {"Total Yds": total_yards, "Total TDs": total_tds}
+            elif position_group == "DEFENSE":
+                # DPOY: Sacks*4 + Ints*5 + Tackles
+                score = (p.sacks or 0)*4 + (p.interceptions or 0)*5 + (p.tackles or 0)
+                stats_dict = {"Sacks": p.sacks, "Ints": p.interceptions, "Tackles": p.tackles}
+                
+            candidates.append(AwardCandidate(
+                player_id=p.id,
+                name=f"{p.first_name} {p.last_name}",
+                team=p.team_name,
+                position=p.position,
+                stats=stats_dict,
+                score=score
+            ))
+            
+        return sorted(candidates, key=lambda x: x.score, reverse=True)[:limit]
+
+    return SeasonAwards(
+        mvp=get_candidates("QB"),
+        opoy=get_candidates("OFFENSE"),
+        dpoy=get_candidates("DEFENSE"),
+        oroy=get_candidates("OFFENSE", is_rookie_only=True),
+        droy=get_candidates("DEFENSE", is_rookie_only=True)
     )
 
 
