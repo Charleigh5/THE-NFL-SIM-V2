@@ -41,6 +41,25 @@
   - Mix of Run, Pass, Punt plays observed.
   - No infinite loops or stuck states.
 
+## 5. Database & Schema Verification
+
+**Test Files:** `backend/test_base_import.py`, `backend/verify_player_columns.py`
+
+- **SQLAlchemy Models:** Successfully mapped to DeclarativeBase.
+- **Player Schema:** Verified presence of all new fields:
+  - `contract_years`
+  - `contract_salary`
+  - `is_rookie`
+
+## 6. Match Context & Engine Integration
+
+**Test File:** `backend/tests/test_match_context_integration.py`
+
+- **Initialization:** `MatchContext` correctly loads rosters and weather config.
+- **Kernel Integration:** `GenesisKernel` correctly registers players from the context.
+- **Fatigue Loop:** Executing a play successfully updates the player's lactic acid in the `GenesisKernel`.
+- **Result:** The simulation loop is now "Hydrated" and connected to the bio-metrics engine.
+
 ## Conclusion
 
 The gameplay mechanics, AI decision making, and full game simulation loop are verified and functioning as expected. The system is ready for Phase 7 integration.

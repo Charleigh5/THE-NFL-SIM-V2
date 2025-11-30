@@ -9,14 +9,26 @@ class PlayResolver:
     """
     def __init__(self, kernels: KernelInterface = None):
         self.kernels = kernels or KernelInterface()
+        self.current_match_context = None
         
     def register_players(self, match_context):
         """Register all players from the match context with the kernels."""
+        self.current_match_context = match_context
         all_players = match_context.home_roster + match_context.away_roster
+        
         for p in all_players:
+            # Extract initialized state from MatchContext
+            fatigue_reg = match_context.get_fatigue(p.id)
+            bio_profile = match_context.get_player_bio(p.id)
+            
+            fatigue_data = fatigue_reg.model_dump() if fatigue_reg else {}
+            # anatomy data placeholder for now
+            
             # Register with Genesis (Biology/Fatigue)
-            # In the future, we pass bio-metrics from MatchContext here
-            self.kernels.genesis.register_player(p.id, {"anatomy": {}, "fatigue": {}})
+            self.kernels.genesis.register_player(p.id, {
+                "anatomy": {}, 
+                "fatigue": fatigue_data
+            })
 
     def resolve_play(self, command: PlayCommand) -> PlayResult:
         """
@@ -42,6 +54,11 @@ class PlayResolver:
                 
         # Fallback to first player if specific position not found
         return players[0]
+    
+    def _get_weather_temp(self) -> float:
+        if self.current_match_context and self.current_match_context.weather_config:
+            return self.current_match_context.weather_config.get("temperature", 75.0)
+        return 75.0
 
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
@@ -66,7 +83,8 @@ class PlayResolver:
         
         # 2. Genesis Kernel: Calculate Fatigue & Injury Risk
         # We use the QB for fatigue calculation
-        current_fatigue = self.kernels.genesis.calculate_fatigue(qb.id, exertion=0.8, temperature=75.0)
+        temp = self._get_weather_temp()
+        current_fatigue = self.kernels.genesis.calculate_fatigue(qb.id, exertion=0.8, temperature=temp)
         
         # Simulating a tackle impact (random player risk)
         injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
@@ -79,38 +97,33 @@ class PlayResolver:
         
         # A. Throw Accuracy vs Depth
         throw_accuracy = 50 # Default
-        if command.depth == "short":
-            throw_accuracy = qb.throw_accuracy_short
-        elif command.depth == "mid":
-            throw_accuracy = qb.throw_accuracy_mid
-        elif command.depth == "deep":
-            throw_accuracy = qb.throw_accuracy_deep
+        if hasattr(qb, "throw_accuracy_short"):
+             if command.depth == "short":
+                 throw_accuracy = qb.throw_accuracy_short
+             elif command.depth == "mid":
+                 throw_accuracy = qb.throw_accuracy_mid
+             elif command.depth == "deep":
+                 throw_accuracy = qb.throw_accuracy_deep
             
         # B. Receiver vs Defender (Speed & Route Running)
         # Speed differential (Faster WR = more separation)
-        speed_diff = target.speed - defender.speed
+        speed_diff = (target.speed - defender.speed) if hasattr(target, "speed") and hasattr(defender, "speed") else 0
         separation_bonus = max(0, speed_diff) * 0.5
         
         # Route Running vs Man Coverage
-        route_skill = target.route_running
-        coverage_skill = defender.man_coverage
+        route_skill = target.route_running if hasattr(target, "route_running") else 50
+        coverage_skill = defender.man_coverage if hasattr(defender, "man_coverage") else 50
         matchup_factor = (route_skill - coverage_skill) * 0.5
         
-        # C. Weather Impact (Placeholder)
-        weather_penalty = 0 # TODO: Get from MatchContext
+        # C. Weather Impact
+        weather_penalty = 0 
+        if temp < 32: weather_penalty = 5
+        elif temp > 90: weather_penalty = 2
         
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 10
         
         # E. Final Probability Calculation
-        # Base of 50%, adjusted by accuracy and matchups
-        # Accuracy 50 -> 0 adjustment. Accuracy 90 -> +40 adjustment.
-        # We want a 99 accuracy QB to have high completion chance.
-        
-        # Formula: (Accuracy + Matchup + Separation - Fatigue - Weather) / 100
-        # Example: (90 + 5 + 5 - 0 - 0) = 100 score -> high chance
-        # Example: (60 + -10 + 0 - 5 - 0) = 45 score -> low chance
-        
         score = throw_accuracy + matchup_factor + separation_bonus - fatigue_penalty - weather_penalty
         
         # Clamp probability between 5% and 95%

@@ -6,6 +6,9 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 from pydantic import ValidationError
 import logging
+import logging.handlers
+import os
+import sys
 
 from app.core.error_handlers import (
     database_exception_handler,
@@ -14,9 +17,24 @@ from app.core.error_handlers import (
     pydantic_validation_handler,
     generic_exception_handler
 )
+from app.middlewares.logging_middleware import LoggingMiddleware
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+LOG_DIR = "logs"
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.handlers.RotatingFileHandler(
+            os.path.join(LOG_DIR, "app.log"), maxBytes=10485760, backupCount=5
+        )
+    ]
+)
+
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
@@ -24,6 +42,9 @@ app = FastAPI(
     description="Backend API for the Stellar Sagan NFL Football Simulation.",
     version="0.1.0",
 )
+
+# Register Middlewares
+app.add_middleware(LoggingMiddleware)
 
 # Register exception handlers
 app.add_exception_handler(IntegrityError, database_exception_handler)

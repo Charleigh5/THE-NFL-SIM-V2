@@ -127,9 +127,9 @@
   - [x] Verify all teams have 53 players post-offseason
   - [x] Test transition to new season
 
-- [ ] **Run All Verification Scripts**
-  - [ ] `backend/test_base_import.py`
-  - [ ] `backend/verify_player_columns.py`
+- [x] **Run All Verification Scripts**
+  - [x] `backend/test_base_import.py`
+  - [x] `backend/verify_player_columns.py`
   - [x] `backend/tests/verify_gameplay_mechanics.py`
   - [x] `backend/tests/verify_fatigue_impact.py`
   - [x] `backend/tests/verify_play_calling.py`
@@ -147,29 +147,29 @@
   - [x] Test that serialization still works correctly
   - [x] Run tests to verify no regressions
 
-- [ ] **Add Database Indexes**
+- [x] **Add Database Indexes**
 
-  - [ ] Add index on `Player.team_id` for faster roster queries
-  - [ ] Add index on `Game.season_id` and `Game.week` for schedule queries
-  - [ ] Add index on `PlayoffMatchup.season_id` for playoff bracket
-  - [ ] Add composite index on `DraftPick.season_id` + `DraftPick.round`
-  - [ ] Create migration file for indexes
-  - [ ] Test query performance improvements
+  - [x] Add index on `Player.team_id` for faster roster queries
+  - [x] Add index on `Game.season_id` and `Game.week` for schedule queries
+  - [x] Add index on `PlayoffMatchup.season_id` for playoff bracket
+  - [x] Add composite index on `DraftPick.season_id` + `DraftPick.round`
+  - [x] Create migration file for indexes
+  - [x] Test query performance improvements
 
-- [ ] **Improve API Error Handling**
-  - [ ] Add try-catch blocks to all endpoint handlers
-  - [ ] Return proper HTTP status codes (400, 404, 500)
-  - [ ] Add error response models
-  - [ ] Log errors with sufficient context
-  - [ ] Test error cases
+- [x] **Improve API Error Handling**
+  - [x] Add try-catch blocks to all endpoint handlers
+  - [x] Return proper HTTP status codes (400, 404, 500)
+  - [x] Add error response models
+  - [x] Log errors with sufficient context
+  - [x] Test error cases
 
 #### Frontend Code Quality
 
-- [ ] **Resolve All Linting Errors**
-  - [ ] Fix ESLint warnings in React components
-  - [ ] Fix TypeScript type errors
-  - [ ] Fix markdown linting issues
-  - [ ] Configure pre-commit hooks (optional)
+- [x] **Resolve All Linting Errors**
+  - [x] Fix ESLint warnings in React components
+  - [x] Fix TypeScript type errors
+  - [x] Fix markdown linting issues
+  - [x] Configure pre-commit hooks (optional)
 
 ### **6.3: Quality of Life Improvements** [UX POLISH]
 

@@ -1,17 +1,23 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
+import logging
+
 from app.core.database import get_db
+from app.core.error_decorators import handle_errors
 from app.models.game import Game
 from app.models.team import Team
 from app.models.player import Player
 
 router = APIRouter(prefix="/api/data", tags=["data"])
+logger = logging.getLogger(__name__)
 
 
 @router.get("/game-state/{game_id}")
+@handle_errors
 def get_game_state(game_id: int, db: Session = Depends(get_db)):
     """Fetch the current state of a specific game."""
+    logger.info(f"Fetching game state for game {game_id}")
     game = db.query(Game).filter(Game.id == game_id).first()
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
@@ -43,8 +49,10 @@ def get_game_state(game_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/teams")
+@handle_errors
 def get_teams(limit: Optional[int] = 32, db: Session = Depends(get_db)):
     """Fetch all teams in the simulation."""
+    logger.info(f"Fetching teams with limit {limit}")
     teams = db.query(Team).limit(limit).all()
     return {
         "teams": [
@@ -68,8 +76,10 @@ def get_teams(limit: Optional[int] = 32, db: Session = Depends(get_db)):
 
 
 @router.get("/players")
+@handle_errors
 def get_players(team_id: Optional[int] = None, position: Optional[str] = None, limit: int = 100, db: Session = Depends(get_db)):
     """Fetch players, optionally filtered by team or position."""
+    logger.info(f"Fetching players (team_id={team_id}, position={position}, limit={limit})")
     query = db.query(Player)
     
     if team_id:
@@ -102,8 +112,10 @@ def get_players(team_id: Optional[int] = None, position: Optional[str] = None, l
 
 
 @router.get("/logs/{game_id}")
+@handle_errors
 def get_game_logs(game_id: int, db: Session = Depends(get_db)):
     """Fetch play-by-play logs for a specific game."""
+    logger.info(f"Fetching logs for game {game_id}")
     game = db.query(Game).filter(Game.id == game_id).first()
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")

@@ -10,6 +10,7 @@ from app.models.base import Base
 # Import your FastAPI application instance
 # You might need to adjust this import based on your actual project structure
 from app.main import app
+from app.core.database import get_db
 
 # Use an in-memory SQLite database for testing for speed and isolation
 TEST_DATABASE_URL = "sqlite:///:memory:"

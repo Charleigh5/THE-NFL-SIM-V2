@@ -1,0 +1,142 @@
+2025-11-30 00:10:47,362 - api.access - INFO - Request started
+2025-11-30 00:10:47,364 - app.api.endpoints.season - INFO - Fetching season 999999
+2025-11-30 00:10:47,384 - app.core.error_decorators - ERROR - Database operational error in get_season
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 186, in get_season
+    season = db.query(Season).filter(Season.id == season_id).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (999999, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-11-30 00:10:47,471 - api.access - INFO - Request completed
+2025-11-30 00:10:47,472 - httpx - INFO - HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 503 Service Unavailable"
+2025-11-30 00:10:47,613 - api.access - INFO - Request started
+2025-11-30 00:10:47,614 - app.api.endpoints.season - INFO - Generating playoff bracket for season 1
+2025-11-30 00:10:47,614 - app.core.error_decorators - WARNING - Value error in generate_playoffs: Test Value Error
+2025-11-30 00:10:47,615 - api.access - INFO - Request completed
+2025-11-30 00:10:47,616 - httpx - INFO - HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request"
+2025-11-30 00:13:29,761 - api.access - INFO - Request started
+2025-11-30 00:13:29,762 - app.api.endpoints.season - INFO - Fetching season 999999
+2025-11-30 00:13:29,781 - api.access - INFO - Request completed
+2025-11-30 00:13:29,783 - httpx - INFO - HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found"
+2025-11-30 00:13:29,788 - api.access - INFO - Request started
+2025-11-30 00:13:29,789 - app.api.endpoints.season - INFO - Generating playoff bracket for season 1
+2025-11-30 00:13:29,789 - app.core.error_decorators - WARNING - Value error in generate_playoffs: Test Value Error
+2025-11-30 00:13:29,789 - api.access - INFO - Request completed
+2025-11-30 00:13:29,790 - httpx - INFO - HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request"
+2025-11-30 00:13:49,579 - api.access - INFO - Request started
+2025-11-30 00:13:49,580 - app.api.endpoints.season - INFO - Fetching season 999999
+2025-11-30 00:13:49,582 - api.access - INFO - Request completed
+2025-11-30 00:13:49,583 - httpx - INFO - HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found"
+2025-11-30 00:13:49,586 - api.access - INFO - Request started
+2025-11-30 00:13:49,587 - app.api.endpoints.season - INFO - Generating playoff bracket for season 1
+2025-11-30 00:13:49,587 - app.core.error_decorators - WARNING - Value error in generate_playoffs: Test Value Error
+2025-11-30 00:13:49,588 - api.access - INFO - Request completed
+2025-11-30 00:13:49,588 - httpx - INFO - HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request"
+2025-11-30 00:13:49,607 - api.access - INFO - Request started
+2025-11-30 00:13:49,607 - app.api.endpoints.season - INFO - Fetching salary cap for team 1
+2025-11-30 00:13:49,608 - api.access - INFO - Request completed
+2025-11-30 00:13:49,608 - httpx - INFO - HTTP Request: GET http://testserver/api/season/team/1/salary-cap?season_id=1 "HTTP/1.1 200 OK"
