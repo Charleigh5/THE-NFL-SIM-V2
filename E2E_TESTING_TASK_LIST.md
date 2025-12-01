@@ -122,7 +122,7 @@
 ### 2.1: Front Office Journey
 **File:** `frontend/e2e/front-office.spec.ts` (NEW)
 
-- [ ] Test: Load Front Office page
+- [x] Test: Load Front Office page
   ```typescript
   test('should load front office with team roster', async ({ page }) => {
     await page.goto('/front-office');
@@ -144,7 +144,7 @@
   });
   ```
 
-- [ ] Test: Filter players by position
+- [x] Test: Filter players by position
   ```typescript
   test('should filter roster by position', async ({ page }) => {
     await page.goto('/front-office');

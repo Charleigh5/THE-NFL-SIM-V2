@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "⚡ Stellar Sagan" [level=1] [ref=e6]
+      - paragraph [ref=e7]: NFL Simulation Engine
+    - list [ref=e8]:
+      - listitem [ref=e9]:
+        - link "🎮 Dashboard" [ref=e10]:
+          - /url: /
+          - generic [ref=e11]: 🎮
+          - generic [ref=e12]: Dashboard
+      - listitem [ref=e13]:
+        - link "🏆 Season" [ref=e14]:
+          - /url: /season
+          - generic [ref=e15]: 🏆
+          - generic [ref=e16]: Season
+      - listitem [ref=e17]:
+        - link "🌟 Offseason" [ref=e18]:
+          - /url: /offseason
+          - generic [ref=e19]: 🌟
+          - generic [ref=e20]: Offseason
+      - listitem [ref=e21]:
+        - link "🏈 Draft Room" [ref=e22]:
+          - /url: /offseason/draft
+          - generic [ref=e23]: 🏈
+          - generic [ref=e24]: Draft Room
+      - listitem [ref=e25]:
+        - link "👥 Roster" [ref=e26]:
+          - /url: /empire/front-office
+          - generic [ref=e27]: 👥
+          - generic [ref=e28]: Roster
+      - listitem [ref=e29]:
+        - link "📋 Depth Chart" [ref=e30]:
+          - /url: /empire/depth-chart
+          - generic [ref=e31]: 📋
+          - generic [ref=e32]: Depth Chart
+      - listitem [ref=e33]:
+        - link "⭐ My Team" [ref=e34]:
+          - /url: /team-selection
+          - generic [ref=e35]: ⭐
+          - generic [ref=e36]: My Team
+      - listitem [ref=e37]:
+        - link "⚙️ Settings" [ref=e38]:
+          - /url: /settings
+          - generic [ref=e39]: ⚙️
+          - generic [ref=e40]: Settings
+    - generic [ref=e42]: System Online
+  - main [ref=e44]:
+    - generic [ref=e45]: 404 Not Found
+```

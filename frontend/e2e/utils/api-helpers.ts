@@ -24,3 +24,17 @@ export async function simulateWeek(page: Page, seasonId: number, week: number) {
   }
   return await response.json();
 }
+export async function setupCompletedSeason(page: Page) {
+  const season = await createTestSeason(page);
+  
+  // Simulate to playoffs (this includes generating the bracket)
+  const response = await page.request.post(`/api/season/${season.id}/simulate-to-playoffs`, {
+    timeout: 60000 // Allow more time for full season simulation
+  });
+  
+  if (!response.ok()) {
+    throw new Error(`Failed to simulate to playoffs: ${response.status()} ${response.statusText()}`);
+  }
+  
+  return season;
+}

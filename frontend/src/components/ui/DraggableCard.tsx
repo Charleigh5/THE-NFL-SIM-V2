@@ -15,6 +15,7 @@ interface DraggableCardProps {
   position: string;
   rating: number;
   team: string;
+  onClick?: () => void;
 }
 
 export const DraggableCard = (props: DraggableCardProps) => {
