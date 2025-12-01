@@ -2,6 +2,7 @@ from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
 from app.schemas.play import PlayResult
 import random
 from app.orchestrator.kernels_interface import KernelInterface
+from app.engine.probability_engine import ProbabilityEngine
 from typing import Optional, Any
 
 class PlayResolver:
@@ -66,38 +67,29 @@ class PlayResolver:
         Resolves a pass play using Kernel logic with attribute-based calculations.
         """
         # 1. Identify key players
-        # If no players provided (e.g. testing), use placeholders or fail gracefully
         if not command.offense or not command.defense:
-            # Fallback to legacy random logic if no players
             return self._resolve_legacy_random_pass(command)
 
         qb = self._get_player_by_position(command.offense, "QB")
-        # Try to find a WR or TE
         target = self._get_player_by_position(command.offense, "WR") or \
                  self._get_player_by_position(command.offense, "TE") or \
                  command.offense[0]
 
-        # Try to find a CB or S
         defender = self._get_player_by_position(command.defense, "CB") or \
                    self._get_player_by_position(command.defense, "S") or \
                    command.defense[0]
 
         # 2. Genesis Kernel: Calculate Fatigue & Injury Risk
-        # We use the QB for fatigue calculation
         temp = self._get_weather_temp()
         current_fatigue = self.kernels.genesis.calculate_fatigue(qb.id, exertion=0.8, temperature=temp)
-
-        # Simulating a tackle impact (random player risk)
+        # Injury Check
         injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
+        injuries = [injury_check] if injury_check["is_injured"] else []
 
-        injuries = []
-        if injury_check["is_injured"]:
-            injuries.append(injury_check)
-
-        # 3. Attribute-Based Core Logic
+        # 3. Attribute-Based Core Logic via ProbabilityEngine
 
         # A. Throw Accuracy vs Depth
-        throw_accuracy = 50 # Default
+        throw_accuracy = 50 # Default base
         if hasattr(qb, "throw_accuracy_short"):
              if command.depth == "short":
                  throw_accuracy = qb.throw_accuracy_short
@@ -107,55 +99,70 @@ class PlayResolver:
                  throw_accuracy = qb.throw_accuracy_deep
 
         # B. Receiver vs Defender (Speed & Route Running)
-        # Speed differential (Faster WR = more separation)
-        speed_diff = (target.speed - defender.speed) if hasattr(target, "speed") and hasattr(defender, "speed") else 0
-        separation_bonus = max(0, speed_diff) * 0.5
+        speed_diff = ProbabilityEngine.compare_speed(
+            target.speed if hasattr(target, "speed") else 50,
+            defender.speed if hasattr(defender, "speed") else 50
+        )
 
-        # Route Running vs Man Coverage
-        route_skill = target.route_running if hasattr(target, "route_running") else 50
-        coverage_skill = defender.man_coverage if hasattr(defender, "man_coverage") else 50
-        matchup_factor = (route_skill - coverage_skill) * 0.5
+        matchup_factor = ProbabilityEngine.compare_skill(
+            target.route_running if hasattr(target, "route_running") else 50,
+            defender.man_coverage if hasattr(defender, "man_coverage") else 50
+        )
 
         # C. Weather Impact
         weather_penalty = 0
-        if temp < 32: weather_penalty = 5
-        elif temp > 90: weather_penalty = 2
+        if temp < 32: weather_penalty = 0.05
+        elif temp > 90: weather_penalty = 0.02
 
         # D. Fatigue Impact
-        fatigue_penalty = (current_fatigue / 100.0) * 10
+        fatigue_penalty = (current_fatigue / 100.0) * 0.10
 
         # E. Final Probability Calculation
-        score = throw_accuracy + matchup_factor + separation_bonus - fatigue_penalty - weather_penalty
+        # Normalize throw accuracy (0-100) to 0.0-1.0 base probability
+        base_prob = throw_accuracy / 100.0
 
-        # Clamp probability between 5% and 95%
-        success_chance = max(0.05, min(0.95, score / 100.0))
+        # Modifiers are already in float format (-0.2 to 0.2)
+        attr_modifiers = speed_diff + matchup_factor
 
-        # F. Random Roll
-        is_complete = random.random() < success_chance
+        success_chance = ProbabilityEngine.calculate_success_chance(
+            base_probability=base_prob,
+            attribute_modifiers=attr_modifiers,
+            context_modifiers=-weather_penalty,
+            fatigue_penalty=fatigue_penalty
+        )
+
+        # F. Resolve Outcome
+        is_complete = ProbabilityEngine.resolve_outcome(success_chance)
 
         if is_complete:
             # Calculate Yards Gained
-            # Base yards by depth + random variance + speed bonus (YAC)
             if command.depth == "short":
-                base_yards = random.randint(3, 8)
+                base_yards = 5.0
+                variance = 3.0
             elif command.depth == "mid":
-                base_yards = random.randint(10, 18)
+                base_yards = 12.0
+                variance = 5.0
             else: # deep
-                base_yards = random.randint(20, 40)
+                base_yards = 25.0
+                variance = 10.0
 
             # YAC Bonus if WR is faster
-            yac_bonus = 0
-            if target.speed > defender.speed:
-                if random.random() < (target.speed - defender.speed) / 100.0:
-                    yac_bonus = random.randint(5, 20) # Breakaway
+            yac_bonus = 0.0
+            if speed_diff > 0:
+                yac_bonus = speed_diff * 50.0 # e.g. 0.10 diff * 50 = 5 yards
 
-            yards_gained = base_yards + yac_bonus
+            yards_gained = int(ProbabilityEngine.calculate_variable_outcome(
+                base_value=base_yards,
+                variance=variance,
+                modifiers=yac_bonus
+            ))
+            yards_gained = max(1, yards_gained) # Minimum 1 yard on completion
 
             # Touchdown check
             is_touchdown = False
-            if yards_gained > 80: # Long TD
+            if yards_gained > 80:
                 is_touchdown = True
-            elif yards_gained > 20 and random.random() < 0.1:
+            elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(0.1):
                 is_touchdown = True
 
             # 4. Empire Kernel: XP Awards
@@ -189,48 +196,84 @@ class PlayResolver:
         """
         # 1. Identify key players
         if not command.offense or not command.defense:
-            # Fallback
             return PlayResult(yards_gained=random.randint(1, 5), description="Run play (Legacy)")
 
         rb = self._get_player_by_position(command.offense, "RB") or command.offense[0]
 
-        # Find a defender based on run direction (simplified)
+        # Find a defender based on run direction
         defender_pos = "DT" if command.run_direction == "middle" else "DE"
         defender = self._get_player_by_position(command.defense, defender_pos) or \
                    self._get_player_by_position(command.defense, "LB") or \
                    command.defense[0]
 
         # 2. Genesis Kernel: Fatigue
-        current_fatigue = self.kernels.genesis.calculate_fatigue(rb.id, exertion=1.0, temperature=75.0)
+        temp = self._get_weather_temp()
+        print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
+        current_fatigue = self.kernels.genesis.calculate_fatigue(rb.id, exertion=1.0, temperature=temp)
+        print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
 
-        # 3. Attribute Logic
-        # RB Strength vs Defender Tackle
-        power_diff = rb.strength - defender.tackle
-        break_tackle_bonus = max(0, power_diff) * 0.2
+        # 3. Attribute Logic via ProbabilityEngine
 
-        # Speed vs Speed (for outside runs)
-        speed_bonus = 0
+        # Power Run (Strength vs Tackle)
+        power_diff = ProbabilityEngine.compare_strength(
+            rb.strength if hasattr(rb, "strength") else 50,
+            defender.tackle if hasattr(defender, "tackle") else 50
+        )
+
+        # Speed (for outside runs)
+        speed_diff = 0.0
         if command.run_direction != "middle":
-            if rb.speed > defender.speed:
-                speed_bonus = (rb.speed - defender.speed) * 0.3
+            speed_diff = ProbabilityEngine.compare_speed(
+                rb.speed if hasattr(rb, "speed") else 50,
+                defender.speed if hasattr(defender, "speed") else 50
+            )
 
         # Fatigue Penalty
-        fatigue_penalty = (current_fatigue / 100.0) * 2
+        fatigue_penalty = (current_fatigue / 100.0) * 2.0 # Yards penalty
 
-        # Base Yards
-        base_yards = random.randint(-1, 4)
+        # Calculate Base Yards
+        # Middle run: consistent but lower ceiling
+        # Outside run: higher variance
+        if command.run_direction == "middle":
+            base_yards = 3.0 + (power_diff * 10.0) # +/- 2 yards based on strength
+            variance = 2.0
+        else:
+            base_yards = 2.0 + (speed_diff * 20.0) # +/- 4 yards based on speed
+            variance = 4.0
 
-        # Total Yards
-        yards_gained = base_yards + break_tackle_bonus + speed_bonus - fatigue_penalty
+        # Calculate Total Yards
+        yards_gained = ProbabilityEngine.calculate_variable_outcome(
+            base_value=base_yards,
+            variance=variance,
+            modifiers=-fatigue_penalty
+        )
+
+        # Breakaway Chance (Big Play)
+        # If RB is much faster or stronger, chance to break free
+        breakaway_chance = 0.05 + speed_diff + power_diff
+        if yards_gained > 5 and ProbabilityEngine.resolve_outcome(breakaway_chance):
+            bonus_yards = ProbabilityEngine.calculate_variable_outcome(20.0, 10.0)
+            yards_gained += bonus_yards
+
         yards_gained = int(yards_gained)
 
-        # Big Play Chance
-        if yards_gained > 5 and random.random() < 0.1:
-            yards_gained += random.randint(10, 40)
+        # Fumble Check
+        # Base fumble rate 1%
+        # Increased by fatigue and big hits (high defender strength)
+        fumble_chance = 0.01
+        if current_fatigue > 70: fumble_chance += 0.02
+        if hasattr(defender, "hit_power") and defender.hit_power > 85: fumble_chance += 0.01
+        if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
+
+        is_fumble = ProbabilityEngine.resolve_outcome(fumble_chance)
+        is_turnover = is_fumble # Simplified turnover logic
 
         is_touchdown = False
         if yards_gained > 80:
             is_touchdown = True
+        elif yards_gained > 10 and yards_gained >= (100 - 20): # Assuming red zone logic handled elsewhere, simplified here
+             # If yards gained is huge, likely TD
+             pass
 
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
@@ -238,6 +281,7 @@ class PlayResolver:
         return PlayResult(
             yards_gained=yards_gained,
             is_touchdown=is_touchdown,
+            is_turnover=is_turnover,
             description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards.",
             headline=f"Big run! {rb.last_name} breaks free!" if yards_gained > 15 else None,
             is_highlight_worthy=is_touchdown or yards_gained > 15,

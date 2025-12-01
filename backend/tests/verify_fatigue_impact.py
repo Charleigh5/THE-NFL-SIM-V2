@@ -18,7 +18,7 @@ def create_balanced_player(position, **kwargs):
     player.position = position
     player.first_name = "Mock"
     player.last_name = position
-    
+
     # Default stats
     player.speed = 80
     player.acceleration = 80
@@ -34,33 +34,33 @@ def create_balanced_player(position, **kwargs):
     player.throw_accuracy_mid = 80
     player.throw_accuracy_deep = 80
     player.fatigue = 0 # Default, will be mocked via kernel
-    
+
     # Override with kwargs
     for key, value in kwargs.items():
         setattr(player, key, value)
-        
+
     return player
 
 def run_fatigue_test():
     print("Starting Fatigue Impact Verification...")
-    
+
     # 2.1 Configure Fatigue Mocking & Setup
     mock_kernels = MagicMock()
-    
+
     # Mock genesis (injury)
     mock_kernels.genesis.check_injury_risk.return_value = {"is_injured": False}
-    
+
     # Mock empire (XP)
     mock_kernels.empire.process_play_result.return_value = {"xp_awards": {}}
-    
+
     # Initialize Resolver
     resolver = PlayResolver(kernels=mock_kernels)
-    
+
     # 2.2 Create Balanced Mock Players
     qb = create_balanced_player("QB", throw_accuracy_mid=80)
     wr = create_balanced_player("WR", speed=80, route_running=80)
     cb = create_balanced_player("CB", speed=80, man_coverage=80)
-    
+
     # Setup Play Command (Mid range pass)
     play_command = PassPlayCommand(
         offense_players=[qb, wr],
@@ -68,39 +68,39 @@ def run_fatigue_test():
         target_receiver_id=wr.id,
         depth="mid"
     )
-    
+
     iterations = 1000
-    
+
     # 2.3 Scenario A: Fresh QB (Fatigue = 0)
     print(f"\nRunning Scenario A: Fresh QB (Fatigue = 0) for {iterations} iterations...")
-    mock_kernels.genesis.calculate_fatigue.return_value = 0
-    
+    mock_kernels.genesis.get_current_fatigue.return_value = 0
+
     fresh_completions = 0
     for _ in range(iterations):
         result = resolver.resolve_play(play_command)
         if result.yards_gained > 0: # Check for success (yards > 0)
             fresh_completions += 1
-            
+
     fresh_rate = fresh_completions / iterations
     print(f"Fresh QB: {fresh_rate:.2%} completion rate ({fresh_completions}/{iterations})")
-    
+
     # 2.4 Scenario B: Exhausted QB (Fatigue = 100)
     print(f"\nRunning Scenario B: Exhausted QB (Fatigue = 100) for {iterations} iterations...")
-    mock_kernels.genesis.calculate_fatigue.return_value = 100
-    
+    mock_kernels.genesis.get_current_fatigue.return_value = 100
+
     tired_completions = 0
     for _ in range(iterations):
         result = resolver.resolve_play(play_command)
         if result.yards_gained > 0:
             tired_completions += 1
-            
+
     tired_rate = tired_completions / iterations
     print(f"Tired QB: {tired_rate:.2%} completion rate ({tired_completions}/{iterations})")
-    
+
     # 2.5 Compare Fatigue Impact
     diff = fresh_rate - tired_rate
     print(f"\nDifference: {diff:.2%} (Fresh - Tired)")
-    
+
     if fresh_rate > tired_rate + 0.05:
         print("PASS: Fresh performance measurably exceeds tired performance (> 5% degradation).")
     else:

@@ -45,7 +45,7 @@ class SeasonResponse(BaseModel):
     status: str
     total_weeks: int
     playoff_weeks: int
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -60,7 +60,7 @@ class GameResponse(BaseModel):
     is_played: bool
     is_playoff: bool = False
     date: datetime
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -107,7 +107,7 @@ class SeasonSummaryResponse(BaseModel):
 def get_season_summary(db: Session = Depends(get_db)):
     """
     Get a comprehensive summary of the current active season.
-    
+
     Includes:
     - Basic season information (week, status, completion)
     - Playoff bracket data (if in playoffs)
@@ -118,30 +118,30 @@ def get_season_summary(db: Session = Depends(get_db)):
     season = db.query(Season).filter(Season.is_active == True).first()
     if not season:
         raise HTTPException(status_code=404, detail="No active season found")
-    
+
     # Calculate basic stats
     total_games = db.query(Game).filter(Game.season_id == season.id).count()
     games_played = db.query(Game).filter(
-        Game.season_id == season.id, 
+        Game.season_id == season.id,
         Game.is_played == True
     ).count()
-    
+
     completion = 0.0
     if total_games > 0:
         completion = (games_played / total_games) * 100
-    
+
     # Initialize optional fields
     playoff_bracket = None
     current_playoff_round = None
     league_leaders = None
     standings = None
-    
+
     # Add playoff bracket if season is in playoffs
     if season.status == SeasonStatus.POST_SEASON:
         try:
             playoff_service = PlayoffService(db)
             playoff_bracket = playoff_service.get_bracket(season.id)
-            
+
             # Determine current playoff round
             if playoff_bracket:
                 # Get the latest round with incomplete games
@@ -153,11 +153,11 @@ def get_season_summary(db: Session = Depends(get_db)):
                             current_playoff_round = round_name
                             break
                         current_playoff_round = round_name  # Last completed round
-            
+
             logger.info(f"Playoff bracket included: {len(playoff_bracket)} matchups, round: {current_playoff_round}")
         except Exception as e:
             logger.warning(f"Could not fetch playoff bracket: {e}")
-    
+
     # Get league leaders
     try:
         # Helper function to get top stats (copied from get_league_leaders endpoint)
@@ -194,7 +194,7 @@ def get_season_summary(db: Session = Depends(get_db)):
                 )
                 for r in results
             ]
-        
+
         league_leaders = LeagueLeaders(
             passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
             passing_tds=get_top_stats(PlayerGameStats.pass_tds, "passing_tds"),
@@ -206,39 +206,39 @@ def get_season_summary(db: Session = Depends(get_db)):
         logger.info("League leaders included in summary")
     except Exception as e:
         logger.warning(f"Could not fetch league leaders: {e}")
-    
+
     # Get standings
     try:
         calculator = StandingsCalculator(db)
         flat_standings = calculator.calculate_standings(season.id)
-        
+
         # Group by Conference -> Division
         grouped_standings = []
         conferences = {}
-        
+
         for team in flat_standings:
             if team.conference not in conferences:
                 conferences[team.conference] = {}
             if team.division not in conferences[team.conference]:
                 conferences[team.conference][team.division] = []
             conferences[team.conference][team.division].append(team)
-            
+
         for conf_name, divisions in conferences.items():
             div_list = []
             for div_name, teams in divisions.items():
                 # Sort teams by rank (should be already sorted but good to ensure)
                 teams.sort(key=lambda x: x.division_rank)
                 div_list.append(DivisionStandings(division=div_name, teams=teams))
-            
+
             grouped_standings.append(ConferenceStandings(conference=conf_name, divisions=div_list))
-            
+
         standings = grouped_standings
         logger.info(f"Standings included in summary: {len(standings)} conferences")
     except Exception as e:
         logger.warning(f"Could not fetch standings: {e}")
-    
+
     logger.info(f"Enhanced season summary retrieved: {season.id}")
-        
+
     return {
         "season": season,
         "total_games": total_games,
@@ -259,7 +259,7 @@ def initialize_season(
 ):
     """
     Initialize a new season.
-    
+
     Creates a Season record and generates the full schedule.
     """
     logger.info(f"Initializing season {season_data.year}")
@@ -270,13 +270,13 @@ def initialize_season(
             status_code=400,
             detail=f"Season {season_data.year} already exists"
         )
-    
+
     # Deactivate all other seasons
     db.query(Season).update(
         {Season.is_active: False}
     )
     db.flush()
-    
+
     # Create season
     logger.info(f"Initializing new season for year {season_data.year}")
     new_season = Season(
@@ -289,7 +289,7 @@ def initialize_season(
     )
     db.add(new_season)
     db.flush()  # Get the ID
-    
+
     # Get all teams
     teams = db.query(Team).all()
     if len(teams) < 4:
@@ -297,29 +297,29 @@ def initialize_season(
             status_code=400,
             detail="Need at least 4 teams to generate a schedule"
         )
-    
+
     # Generate schedule
     generator = ScheduleGenerator(db)
-    
+
     start_date = None
     if season_data.start_date:
         start_date = datetime.fromisoformat(season_data.start_date)
-    
+
     games = generator.generate_schedule(
         season_id=new_season.id,
         teams=teams,
         start_date=start_date
     )
-    
+
     # Add games to database
     for game in games:
         db.add(game)
-    
+
     logger.info(f"Generated {len(games)} games for season {season_data.year}")
-    
+
     db.commit()
     db.refresh(new_season)
-    
+
     logger.info(f"Season {new_season.id} initialized successfully")
     return new_season
 
@@ -355,7 +355,7 @@ def get_schedule(
 ):
     """
     Get the schedule for a season.
-    
+
     Can optionally filter by week.
     """
     logger.info(f"Fetching schedule for season {season_id}, week {week}")
@@ -363,16 +363,16 @@ def get_schedule(
     season = db.query(Season).filter(Season.id == season_id).first()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
-    
+
     # Build query with eager loading to prevent N+1 queries
     query = db.query(Game).options(
         joinedload(Game.home_team),
         joinedload(Game.away_team)
     ).filter(Game.season_id == season_id)
-    
+
     if week is not None:
         query = query.filter(Game.week == week)
-    
+
     games = query.order_by(Game.week, Game.date).all()
     logger.info(f"Retrieved {len(games)} games")
     return games
@@ -388,7 +388,7 @@ def get_standings(
 ):
     """
     Get standings for a season.
-    
+
     Can optionally filter by conference and/or division.
     """
     logger.info(f"Calculating standings for season {season_id}")
@@ -396,16 +396,16 @@ def get_standings(
     season = db.query(Season).filter(Season.id == season_id).first()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
-    
+
     calculator = StandingsCalculator(db)
-    
+
     if division and conference:
         standings = calculator.get_division_standings(season_id, conference, division)
     elif conference:
         standings = calculator.get_conference_standings(season_id, conference)
     else:
         standings = calculator.calculate_standings(season_id)
-    
+
     logger.info(f"Standings calculated: {len(standings)} teams")
     return standings
 
@@ -418,7 +418,7 @@ def advance_week(season_id: int, db: Session = Depends(get_db)):
     season = db.query(Season).filter(Season.id == season_id).first()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
-    
+
     if season.current_week >= season.total_weeks:
         # Move to playoffs or offseason
         if season.status == SeasonStatus.REGULAR_SEASON:
@@ -428,12 +428,12 @@ def advance_week(season_id: int, db: Session = Depends(get_db)):
             season.status = SeasonStatus.OFF_SEASON
     else:
         season.current_week += 1
-    
+
     logger.info(f"Season {season_id} advanced to week {season.current_week}, status: {season.status}")
-    
+
     db.commit()
     db.refresh(season)
-    
+
     return {
         "season_id": season.id,
         "current_week": season.current_week,
@@ -452,12 +452,12 @@ async def simulate_week(
 ):
     """
     Simulate all games in a week.
-    
+
     Args:
         season_id: ID of the season
         week: Week to simulate (default: current week)
         play_count: Number of plays per game (default: 100)
-    
+
     Returns:
         Results for all simulated games
     """
@@ -466,11 +466,11 @@ async def simulate_week(
     season = db.query(Season).filter(Season.id == season_id).first()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
-    
+
     # Use current week if not specified
     if week is None:
         week = season.current_week
-    
+
     # Create simulator and run
     simulator = WeekSimulator(db)
     results = await simulator.simulate_week(
@@ -479,14 +479,14 @@ async def simulate_week(
         play_count=play_count,
         use_fast_sim=True
     )
-    
+
     logger.info(f"Week {week} simulation complete: {len(results)} games")
-    
+
     # Auto-advance to next week after simulating
     if week == season.current_week and season.current_week < season.total_weeks:
         season.current_week += 1
         db.commit()
-    
+
     return results
 
 
@@ -502,10 +502,10 @@ async def simulate_game(
     logger.info(f"Simulating game {game_id}")
     simulator = WeekSimulator(db)
     result = await simulator.simulate_game(game_id, play_count=100, use_fast_sim=True)
-    
+
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
-        
+
     return result
 
 
@@ -522,11 +522,11 @@ async def simulate_to_playoffs(
         raise HTTPException(status_code=404, detail="Season not found")
 
     simulator = WeekSimulator(db)
-    
+
     # Limit to avoid infinite loops
     max_weeks = 20
     weeks_simulated = 0
-    
+
     while season.status == SeasonStatus.REGULAR_SEASON and weeks_simulated < max_weeks:
         logger.info(f"Simulating week {season.current_week}")
         # Simulate current week
@@ -536,7 +536,7 @@ async def simulate_to_playoffs(
             play_count=50, # Faster sim
             use_fast_sim=True
         )
-        
+
         # Advance week logic (duplicated from advance_week to avoid API overhead)
         if season.current_week >= season.total_weeks:
              season.status = SeasonStatus.POST_SEASON
@@ -545,11 +545,11 @@ async def simulate_to_playoffs(
              PlayoffService(db).generate_playoffs(season_id)
         else:
              season.current_week += 1
-        
+
         db.commit()
         db.refresh(season)
         weeks_simulated += 1
-        
+
     return {"message": f"Simulated {weeks_simulated} weeks", "season": season}
 
 
@@ -586,11 +586,11 @@ def advance_playoff_round(season_id: int, db: Session = Depends(get_db)):
 
 @router.post("/{season_id}/offseason/start")
 @handle_errors
-def start_offseason(season_id: int, db: Session = Depends(get_db)):
+async def start_offseason(season_id: int, db: Session = Depends(get_db)):
     """Start the offseason (process contracts, generate draft order)."""
     logger.info(f"Starting offseason for season {season_id}")
     service = OffseasonService(db)
-    result = service.start_offseason(season_id)
+    result = await service.start_offseason(season_id)
     logger.info(f"Offseason started for season {season_id}")
     return result
 
@@ -662,8 +662,8 @@ def simulate_next_pick(season_id: int, db: Session = Depends(get_db)):
 @router.post("/{season_id}/draft/trade-current", response_model=DraftPickDetail)
 @handle_errors
 def trade_current_pick(
-    season_id: int, 
-    target_team_id: int, 
+    season_id: int,
+    target_team_id: int,
     db: Session = Depends(get_db)
 ):
     """Trade the current pick to another team."""
@@ -680,6 +680,45 @@ def simulate_free_agency(season_id: int, db: Session = Depends(get_db)):
     result = service.simulate_free_agency(season_id)
     logger.info(f"Free agency complete for season {season_id}")
     return result
+
+
+@router.post("/{season_id}/draft/suggest-pick")
+@handle_errors
+async def suggest_draft_pick(season_id: int, team_id: int, db: Session = Depends(get_db)):
+    """Suggest a draft pick using AI Assistant."""
+    from app.services.draft_assistant import DraftAssistant
+
+    # Get available players
+    service = OffseasonService(db)
+    prospects = service.get_top_prospects(limit=20)
+    # Convert prospects (schemas) back to models or just query models directly
+    # DraftAssistant expects models.
+    # Let's query models directly here for simplicity
+    available_players = db.query(Player).filter(
+        Player.is_rookie == True,
+        Player.team_id == None
+    ).order_by(Player.overall_rating.desc()).limit(20).all()
+
+    assistant = DraftAssistant(db)
+    suggestion = await assistant.suggest_pick(team_id, available_players)
+    return suggestion
+
+
+@router.post("/{season_id}/gm/evaluate-trade")
+@handle_errors
+async def evaluate_trade(
+    season_id: int,
+    team_id: int,
+    offered_ids: List[int],
+    requested_ids: List[int],
+    db: Session = Depends(get_db)
+):
+    """Evaluate a trade proposal using AI GM Agent."""
+    from app.services.gm_agent import GMAgent
+
+    agent = GMAgent(db, team_id)
+    evaluation = await agent.evaluate_trade(offered_ids, requested_ids)
+    return evaluation
 
 
 @router.get("/{season_id}/leaders", response_model=LeagueLeaders)
@@ -746,7 +785,7 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
     Get projected season awards based on current stats.
     """
     logger.info(f"Calculating projected awards for season {season_id}")
-    
+
     def get_candidates(position_group, is_rookie_only=False, limit=5):
         query = db.query(
             Player.id,
@@ -773,24 +812,24 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
         ).filter(
             Game.season_id == season_id
         )
-        
+
         if is_rookie_only:
             query = query.filter(Player.is_rookie == True)
-            
+
         if position_group == "QB":
             query = query.filter(Player.position == "QB")
         elif position_group == "OFFENSE":
             query = query.filter(Player.position.in_(["QB", "RB", "WR", "TE"]))
         elif position_group == "DEFENSE":
             query = query.filter(Player.position.in_(["DE", "DT", "LB", "CB", "S"]))
-            
+
         stats = query.group_by(Player.id, Team.name).all()
-        
+
         candidates = []
         for p in stats:
             score = 0
             stats_dict = {}
-            
+
             if position_group == "QB":
                 # Simple MVP score: Yards/10 + TDs*6 - Ints*3
                 score = (p.pass_yards or 0)/10 + (p.pass_tds or 0)*6 - (p.pass_ints or 0)*3 + (p.rush_yards or 0)/10 + (p.rush_tds or 0)*6
@@ -805,7 +844,7 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
                 # DPOY: Sacks*4 + Ints*5 + Tackles
                 score = (p.sacks or 0)*4 + (p.interceptions or 0)*5 + (p.tackles or 0)
                 stats_dict = {"Sacks": p.sacks, "Ints": p.interceptions, "Tackles": p.tackles}
-                
+
             candidates.append(AwardCandidate(
                 player_id=p.id,
                 name=f"{p.first_name} {p.last_name}",
@@ -814,7 +853,7 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
                 stats=stats_dict,
                 score=score
             ))
-            
+
         return sorted(candidates, key=lambda x: x.score, reverse=True)[:limit]
 
     return SeasonAwards(
@@ -834,12 +873,12 @@ def get_team_salary_cap(team_id: int, season_id: Optional[int] = None, db: Sessi
     """
     logger.info(f"Fetching salary cap for team {team_id}")
     from app.services.salary_cap_service import SalaryCapService
-    
+
     # If season_id not provided, use current season
     if not season_id:
         season = db.query(Season).filter(Season.is_active == True).first()
         season_id = season.id if season else 0
-        
+
     service = SalaryCapService(db)
     return service.get_team_cap_breakdown(team_id, season_id)
 
@@ -853,50 +892,50 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
     logger.info(f"Fetching enhanced team needs for team {team_id}")
     service = OffseasonService(db)
     basic_needs = service.get_team_needs(team_id)
-    
+
     # Enhance the needs with additional data
     enhanced_needs = []
-    
+
     # Get all players to calculate league averages
     all_players = db.query(Player).all()
     avg_ratings = {}
     positions = set(p.position for p in all_players)
-    
+
     for pos in positions:
         pos_players = [p for p in all_players if p.position == pos]
         if pos_players:
             avg = sum(p.overall_rating for p in pos_players) / len(pos_players)
             avg_ratings[pos] = avg
-            
+
     # Get team players
     team_players = db.query(Player).filter(Player.team_id == team_id).all()
-    
+
     for need in basic_needs:
         pos = need.position
-        
+
         # Calculate starter quality
         pos_players = sorted(
             [p for p in team_players if p.position == pos],
             key=lambda x: x.overall_rating,
             reverse=True
         )
-        
+
         starter_quality = 0
         if pos_players:
             # Top player is the starter (simplified)
             starter_quality = pos_players[0].overall_rating
-            
+
         # Determine priority
         priority = "low"
         if need.need_score > 0.7:
             priority = "high"
         elif need.need_score > 0.3:
             priority = "medium"
-            
+
         # Depth breakdown
         starters_count = 1 # Simplified
         backups_count = max(0, len(pos_players) - starters_count)
-        
+
         enhanced_needs.append({
             "position": need.position,
             "current_count": need.current_count,
@@ -910,7 +949,7 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
                 "backups": backups_count
             }
         })
-        
+
     logger.info(f"Enhanced needs calculated: {len(enhanced_needs)} positions")
     return enhanced_needs
 

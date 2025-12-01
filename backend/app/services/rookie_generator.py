@@ -17,15 +17,29 @@ class RookieGenerator:
     def __init__(self, db: Session):
         self.db = db
 
-    def generate_draft_class(self, season_id: int, count: int = 256):
+    async def generate_draft_class(self, season_id: int, count: int = 256):
         """Generates a class of rookie players."""
-        
+
         # Determine count per position based on weights
         total_weight = sum(POSITION_WEIGHTS.values())
-        
+
+        # Fetch league averages via MCP if available
+        league_avgs = {}
+        try:
+            from app.core.mcp_registry import registry
+            client = registry.get_client("nfl_stats")
+            if client:
+                # Mock call to get averages for QB to influence generation
+                # In a real scenario, we'd fetch for all positions or cache this
+                result = await client.call_tool("get_league_averages", arguments={"position": "QB", "season": 2024})
+                if result and not isinstance(result, str): # Ensure we got data
+                     league_avgs["QB"] = result
+        except Exception as e:
+            print(f"MCP Warning: Could not fetch league averages: {e}")
+
         generated_count = 0
         players = []
-        
+
         for _ in range(count):
             # Pick a position
             r = random.uniform(0, total_weight)
@@ -36,33 +50,40 @@ class RookieGenerator:
                     selected_pos = pos
                     break
                 upto += weight
-                
-            player = self._create_rookie(selected_pos)
+
+            player = self._create_rookie(selected_pos, league_avgs.get(selected_pos.value if hasattr(selected_pos, 'value') else selected_pos))
             players.append(player)
-            
+
         self.db.add_all(players)
         self.db.commit()
         return players
 
-    def _create_rookie(self, position: Position) -> Player:
+    def _create_rookie(self, position: Position, stats_context: dict = None) -> Player:
         first = random.choice(FIRST_NAMES)
         last = random.choice(LAST_NAMES)
-        
+
         # Base attributes
         age = random.randint(21, 23)
         height = random.randint(68, 80) # 5'8" to 6'8"
         weight = random.randint(180, 350)
-        
+
         # Adjust height/weight by position (simplified)
         if position in [Position.OT, Position.OG, Position.C, Position.DT]:
             weight = random.randint(280, 350)
         elif position in [Position.WR, Position.CB, Position.S]:
             weight = random.randint(180, 220)
-            
+
         # Generate Ratings (Bell curve centered around 65-70 for rookies)
-        overall = int(random.gauss(68, 8))
+        mean_rating = 68
+        if stats_context:
+             # If we have context (e.g. high passing yards avg), maybe this is a strong QB class?
+             # Or we just use it to slightly bump the mean
+             if "passing_yards" in stats_context and stats_context["passing_yards"] > 3000:
+                 mean_rating += 2
+
+        overall = int(random.gauss(mean_rating, 8))
         overall = max(50, min(99, overall))
-        
+
         # Create Player
         player = Player(
             first_name=first,
@@ -76,16 +97,16 @@ class RookieGenerator:
             overall_rating=overall,
             is_rookie=True,
             team_id=None, # Free agent / Draft pool
-            
+
             # Simplified stats generation (just setting base stats to overall for now)
             speed=overall,
             acceleration=overall,
             strength=overall,
             agility=overall,
             awareness=overall - 10, # Rookies have lower awareness
-            
+
             contract_years=4, # Standard rookie deal
             contract_salary=500000 + (overall * 10000) # Salary based on rating
         )
-        
+
         return player

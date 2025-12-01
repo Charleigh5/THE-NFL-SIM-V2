@@ -3,6 +3,7 @@ import { seasonApi } from "../services/season";
 import { DraftBoard } from "../components/offseason/DraftBoard";
 import { DraftTicker } from "../components/offseason/DraftTicker";
 import { TradeModal } from "../components/offseason/TradeModal";
+import { DraftAssistant } from "../components/draft/DraftAssistant";
 import type { Prospect, DraftPickDetail, DraftPickSummary, TeamNeed } from "../types/offseason";
 import "./DraftRoom.css";
 
@@ -127,6 +128,12 @@ export const DraftRoom: React.FC = () => {
         </div>
 
         <div className="draft-sidebar">
+          {seasonId && currentPick && (
+            <div className="assistant-panel">
+              <DraftAssistant seasonId={seasonId} teamId={currentPick.team_id} />
+            </div>
+          )}
+
           <div className="team-needs-panel">
             <h3>Team Needs</h3>
             <div className="needs-list">
@@ -134,10 +141,7 @@ export const DraftRoom: React.FC = () => {
                 <div key={need.position} className="need-item">
                   <div className="need-info">
                     <span className="need-pos">{need.position}</span>
-                    <div
-                      className="need-bar"
-                      style={{ width: `${Math.min(100, need.need_score * 20)}%` }}
-                    ></div>
+                    <progress className="need-progress" value={need.need_score} max={5} />
                   </div>
                   <span className="need-score">{need.need_score.toFixed(1)}</span>
                 </div>

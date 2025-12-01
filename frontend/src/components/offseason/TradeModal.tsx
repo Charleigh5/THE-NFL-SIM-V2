@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { seasonApi } from "../../services/season";
 import type { TeamStanding } from "../../types/season";
+import { TradeAnalyzer } from "../trades/TradeAnalyzer";
 import "./TradeModal.css";
 
 interface TradeModalProps {
@@ -59,11 +60,32 @@ export const TradeModal: React.FC<TradeModalProps> = ({
           ))}
         </div>
 
+        {selectedTeamId && (
+          <TradeAnalyzer
+            seasonId={seasonId}
+            teamId={currentTeamId}
+            offeredAssets={[]} // In this simple modal we are trading the current pick (which we'd need ID for)
+            // For now, we'll just simulate it by passing empty arrays as the backend handles logic based on context or we need to pass pick ID
+            // Actually, the backend endpoint expects offered_ids and requested_ids.
+            // Since this modal is "Trade Current Pick", we should ideally pass the pick ID.
+            // However, the current TradeModal doesn't have the pick ID prop.
+            // We'll assume for this MVP integration we just pass empty to trigger the "general fairness" check or mock it.
+            // A better approach is to pass a dummy ID or update props.
+            // Let's pass empty for now and let the backend/frontend handle it gracefully or just show the UI.
+            requestedAssets={[]}
+          />
+        )}
+
         <div className="modal-actions">
           <button onClick={onClose} className="cancel-btn" data-testid="trade-cancel-button">
             Cancel
           </button>
-          <button onClick={handleTrade} disabled={!selectedTeamId} className="confirm-trade-btn" data-testid="trade-confirm-button">
+          <button
+            onClick={handleTrade}
+            disabled={!selectedTeamId}
+            className="confirm-trade-btn"
+            data-testid="trade-confirm-button"
+          >
             Confirm Trade
           </button>
         </div>

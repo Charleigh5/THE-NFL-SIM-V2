@@ -254,3 +254,174 @@
   - [x] Injury system with recovery
   - [x] Player morale and chemistry
   - [x] Coaching staff influence on development
+
+## Phase 7: MCP Integration & AI Enhancement
+
+### **7.1: MCP Infrastructure Setup** [COMPLETED]
+
+- [x] **Task 7.1.1: Install MCP Dependencies**
+
+  - [x] Add `langchain>=0.1.0` to `backend/requirements.txt`
+  - [x] Add `langchain-mcp-adapters>=0.1.0`
+  - [x] Add `mcp>=1.0.0`
+  - [x] Add `httpx>=0.25.0`
+  - [x] Run `pip install -r backend/requirements.txt`
+  - [x] Verify imports work in Python REPL
+
+- [x] **Task 7.1.2: Create MCP Host Client**
+
+  - [x] Create `backend/app/core/mcp_client.py`
+  - [x] Implement `MCPHostClient` class with stdio transport
+  - [x] Implement HTTP/SSE transport support
+  - [x] Add connection pooling for multiple MCP servers
+  - [x] Implement retry logic and error handling
+  - [x] Write unit tests in `backend/tests/test_mcp_client.py`
+
+- [x] **Task 7.1.3: Create MCP Server Registry**
+  - [x] Create `backend/app/core/mcp_registry.py`
+  - [x] Implement `MCPRegistry` class
+  - [x] Add server registration/discovery
+  - [x] Add health check mechanisms
+  - [x] Create `backend/mcp_config.json` configuration file
+  - [x] Add environment variable support for API keys
+
+### **7.2: Build Custom MCP Servers** [COMPLETED]
+
+- [x] **Task 7.2.1: NFL Stats MCP Server**
+
+  - [x] Create `backend/mcp_servers/nfl_stats_server/` directory
+  - [x] Create `server.py` with MCP protocol implementation
+  - [x] Integrate ESPN API or public NFL stats API
+  - [x] Implement tool: `get_player_career_stats(player_name, years)`
+  - [x] Implement tool: `get_league_averages(position, season)`
+  - [x] Implement tool: `get_team_historical_performance(team_id)`
+  - [x] Add caching layer (Redis or in-memory)
+  - [x] Write integration tests
+  - [x] Document available tools in README
+
+- [x] **Task 7.2.2: Weather Data MCP Server**
+
+  - [x] Create `backend/mcp_servers/weather_server/` directory
+  - [x] Create `server.py` with MCP protocol
+  - [x] Integrate OpenWeatherMap or Weather.gov API
+  - [x] Implement tool: `get_game_weather(stadium_location, datetime)`
+  - [x] Implement tool: `get_historical_conditions(location, date_range)`
+  - [x] Add weather effect mappings (rain, snow, wind impacts)
+  - [x] Write integration tests
+  - [x] Document tool usage
+
+- [x] **Task 7.2.3: Sports News MCP Server**
+  - [x] Create `backend/mcp_servers/sports_news_server/` directory
+  - [x] Create `server.py` with MCP protocol
+  - [x] Integrate sports news API (NewsAPI, ESPN)
+  - [x] Implement tool: `get_player_news(player_id)`
+  - [x] Implement tool: `get_team_news(team_id)`
+  - [x] Implement tool: `get_injury_reports(week)`
+  - [x] Add news filtering and relevance scoring
+  - [x] Write integration tests
+
+### **7.3: Integration with Existing Systems**
+
+- [ ] **Task 7.3.1: Enhanced Rookie Generator with Real Data**
+
+  - [ ] Create prompt template for draft analysis
+  - [ ] Analyze team roster gaps using Player Data MCP
+  - [ ] Use NFL Stats MCP for historical draft comparisons
+  - [ ] Generate draft recommendations with reasoning
+  - [ ] Add API endpoint: `POST /api/draft/suggest-pick`
+  - [ ] Create Pydantic schemas in `backend/app/schemas/draft.py`
+  - [ ] Write integration tests
+  - [ ] Test recommendation quality manually
+
+- [ ] **Task 7.3.4: Intelligent GM System**
+  - [ ] Create `backend/app/services/gm_agent.py`
+  - [ ] Define GM personality traits (aggressive, conservative, analytics-focused)
+  - [ ] Implement LLM-based trade evaluation
+  - [ ] Add context from team philosophy, cap space, draft picks
+  - [ ] Create trade proposal generation logic
+  - [ ] Add contract negotiation simulation
+  - [ ] Store GM decisions in database for consistency
+  - [ ] Write unit tests with mocked LLM responses
+  - [ ] Test GM personalities across scenarios
+
+### **7.4: Frontend Integration**
+
+- [x] **Task 7.4.1: Draft Assistant UI Component**
+
+  - [x] Create `frontend/src/components/draft/DraftAssistant.tsx`
+  - [x] Add "Get AI Recommendation" button to Draft Room
+  - [x] Display recommendation card with player info
+  - [x] Show reasoning and analytics breakdown
+  - [x] Add alternative suggestions list
+  - [x] Implement loading state while waiting for AI
+  - [x] Add error handling for failed requests
+  - [x] Style component to match existing UI
+  - [x] Test user flow end-to-end
+
+- [x] **Task 7.4.2: Weather Widget Component**
+
+  - [x] Create `frontend/src/components/game/WeatherWidget.tsx`
+  - [x] Design weather icons (sunny, rainy, snowy, windy)
+  - [x] Display current game weather conditions
+  - [x] Show weather impact modifiers (e.g., "Passing -15%")
+  - [x] Add tooltip with detailed explanations
+  - [x] Integrate into Game Simulation UI
+  - [x] Add to game results summary
+  - [x] Style widget with animations
+  - [x] Test with various weather conditions
+
+- [x] **Task 7.4.3: Trade Analyzer Component**
+  - [x] Create `frontend/src/components/trades/TradeAnalyzer.tsx`
+  - [x] Add "AI Analysis" button to trade proposal UI
+  - [x] Display fairness score (0-100)
+  - [x] Show historical comparison trades
+  - [x] Suggest counteroffers if trade is unfair
+  - [x] Add detailed breakdown of trade value
+  - [x] Implement loading and error states
+  - [x] Style analyzer panel
+  - [x] Test with various trade scenarios
+
+### **7.5: Testing, Performance & Documentation**
+
+- [ ] **Task 7.5.1: MCP Server Testing**
+
+  - [ ] Write unit tests for each MCP server
+  - [ ] Create mock API responses for consistent testing
+  - [ ] Write integration tests with live APIs
+  - [ ] Add end-to-end tests for MCP workflows
+  - [ ] Verify error handling (network failures, API limits)
+  - [ ] Test concurrent MCP requests
+  - [ ] Run tests in CI/CD pipeline
+  - [ ] Achieve 80%+ code coverage
+
+- [ ] **Task 7.5.2: Performance Optimization**
+
+  - [ ] Benchmark MCP call latency (target <500ms p95)
+  - [ ] Implement caching strategy for frequently accessed data
+  - [ ] Add request batching where applicable
+  - [ ] Set up monitoring with Prometheus/Grafana
+  - [ ] Add logging for MCP tool invocations
+  - [ ] Implement rate limiting for external APIs
+  - [ ] Create performance dashboard
+  - [ ] Load test with 100+ concurrent requests
+
+- [ ] **Task 7.5.3: Security & Configuration**
+
+  - [ ] Create `.env.example` with MCP API key placeholders
+  - [ ] Add API key validation on startup
+  - [ ] Implement request sanitization for MCP responses
+  - [ ] Add audit logging for all MCP tool calls
+  - [ ] Set up network isolation for MCP servers (Docker)
+  - [ ] Review and fix any API key leaks in logs
+  - [ ] Create security documentation
+  - [ ] Conduct security review
+
+- [ ] **Task 7.5.4: Documentation**
+  - [ ] Document MCP architecture in `docs/mcp_architecture.md`
+  - [ ] Create API documentation for MCP endpoints
+  - [ ] Write developer guide for adding new MCP servers
+  - [ ] Document all available MCP tools and their usage
+  - [ ] Add configuration guide for API keys
+  - [ ] Create troubleshooting guide
+  - [ ] Add examples and code snippets
+  - [ ] Update main README with MCP features

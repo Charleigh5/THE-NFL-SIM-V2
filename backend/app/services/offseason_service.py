@@ -20,31 +20,31 @@ class OffseasonService:
         self.standings_calculator = StandingsCalculator(db)
         self.rookie_generator = RookieGenerator(db)
 
-    def start_offseason(self, season_id: int) -> dict:
+    async def start_offseason(self, season_id: int) -> dict:
         """Transition from Super Bowl to Offseason."""
         season = self.db.query(Season).filter(Season.id == season_id).first()
         if not season:
             raise ValueError("Season not found")
-            
+
         season.status = SeasonStatus.OFF_SEASON
         # We might want a more granular status enum for phases, but for now we use OFF_SEASON
         # and maybe track phase in a separate field or just assume flow.
-        
+
         try:
             # 1. Process Retirements
             self.process_retirements(season_id)
 
             # 2. Process Contracts
             self.process_contract_expirations()
-            
+
             # 2. Generate Draft Order
             existing_picks = self.db.query(DraftPick).filter(DraftPick.season_id == season_id).first()
             if not existing_picks:
                 self.generate_draft_order(season_id)
-            
+
             # 3. Generate Rookie Class
-            self.rookie_generator.generate_draft_class(season_id)
-            
+            await self.rookie_generator.generate_draft_class(season_id)
+
             self.db.commit()
             return {"message": "Offseason started. Contracts processed, Draft order set, Rookies generated."}
         except Exception as e:
@@ -60,7 +60,7 @@ class OffseasonService:
 
         for player in players:
             old_rating = player.overall_rating
-            
+
             # Age-based rating change
             age_change = 0
             if player.age <= 24:
@@ -75,7 +75,7 @@ class OffseasonService:
             else:
                 # Significant decline: -3 to -1
                 age_change = random.randint(-3, -1)
-            
+
             # Experience factor adjustment
             exp_modifier = 0
             if player.experience <= 2:
@@ -84,10 +84,10 @@ class OffseasonService:
             elif player.experience >= 8:
                 # Veterans more likely to decline
                 exp_modifier = random.randint(-2, 0)
-            
+
             # Random variance
             variance = random.randint(-1, 1)
-            
+
             # Dev Trait Modifier
             dev_trait_mod = 0
             if player.development_trait == DevelopmentTrait.STAR:
@@ -96,7 +96,7 @@ class OffseasonService:
                 dev_trait_mod = 2
             elif player.development_trait == DevelopmentTrait.XFACTOR:
                 dev_trait_mod = 3
-                
+
             # Coach Modifier
             coach_mod = 0
             if player.team:
@@ -111,11 +111,11 @@ class OffseasonService:
 
             # Total change
             total_change = age_change + exp_modifier + variance + dev_trait_mod + coach_mod
-            
+
             # Apply change and clamp between 40-99
             new_rating = max(40, min(99, old_rating + total_change))
             actual_change = new_rating - old_rating
-            
+
             # Update player
             player.overall_rating = new_rating
             player.age += 1
@@ -165,37 +165,37 @@ class OffseasonService:
             raise ValueError("Cannot generate draft order: No standings data found.")
 
         # 2. Adjust for Playoffs (Super Bowl winner last, etc.)
-        # Simplified: Just use reverse standings for non-playoff teams, 
+        # Simplified: Just use reverse standings for non-playoff teams,
         # and append playoff teams based on elimination round?
         # MVP: Just reverse standings for everyone, then swap SB winner to last.
-        
+
         # Sort by record (worst to best)
         # Note: Standings are already sorted best to worst by calculate_standings
         # We want worst to best for draft order
         standings.sort(key=lambda x: (x.win_pct, x.wins, x.point_differential))
-        
+
         # Find SB Winner and Loser to move to end
         sb_matchup = self.db.query(PlayoffMatchup).filter(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
         ).first()
-        
+
         ordered_team_ids = [s.team_id for s in standings]
-        
+
         if sb_matchup and sb_matchup.winner_id:
             winner_id = sb_matchup.winner_id
             loser_id = sb_matchup.home_team_id if sb_matchup.winner_id == sb_matchup.away_team_id else sb_matchup.away_team_id
-            
+
             if winner_id in ordered_team_ids:
                 ordered_team_ids.remove(winner_id)
                 ordered_team_ids.append(winner_id) # Last
-            
+
             if loser_id in ordered_team_ids:
                 ordered_team_ids.remove(loser_id)
                 ordered_team_ids.insert(len(ordered_team_ids)-1, loser_id) # Second to last
         elif not sb_matchup:
             print("Warning: No Super Bowl matchup found for draft order generation.")
-        
+
         # Create Picks
         for round_num in range(1, 8):
             for i, team_id in enumerate(ordered_team_ids):
@@ -224,20 +224,20 @@ class OffseasonService:
             "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
             "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
         }
-        
+
         result = []
         for pos, target in TARGET_COUNTS.items():
             current = needs_dict.get(pos, 0)
             diff = target - current
-            score = max(0, diff) 
-            
+            score = max(0, diff)
+
             result.append(TeamNeed(
                 position=pos,
                 current_count=current,
                 target_count=target,
                 need_score=float(score)
             ))
-        
+
         result.sort(key=lambda x: x.need_score, reverse=True)
         return result
 
@@ -247,7 +247,7 @@ class OffseasonService:
             Player.is_rookie == True,
             Player.team_id == None
         ).order_by(Player.overall_rating.desc()).limit(limit).all()
-        
+
         return [
             Prospect(
                 id=p.id,
@@ -269,19 +269,19 @@ class OffseasonService:
         pick = self.get_current_pick(season_id)
         if not pick:
             raise ValueError("No picks remaining in the draft.")
-            
+
         player = self.db.query(Player).get(player_id)
         if not player:
             raise ValueError("Player not found.")
         if player.team_id is not None:
              raise ValueError("Player already on a team.")
-             
+
         # Assign player to team
         pick.player_id = player.id
         player.team_id = pick.team_id
         player.contract_years = 4
         player.is_rookie = False
-        
+
         self.db.commit()
         return pick
 
@@ -290,7 +290,7 @@ class OffseasonService:
         pick = self.get_current_pick(season_id)
         if not pick:
             raise ValueError("No active pick to trade.")
-            
+
         pick.team_id = target_team_id
         self.db.commit()
         return pick
@@ -300,43 +300,43 @@ class OffseasonService:
         pick = self.get_current_pick(season_id)
         if not pick:
             return None
-            
+
         # Get available rookies
         # Optimization: Just get top 20 to choose from
         rookies = self.db.query(Player).filter(
             Player.is_rookie == True,
             Player.team_id == None
         ).order_by(Player.overall_rating.desc()).limit(20).all()
-        
+
         if not rookies:
             return None
-            
+
         rookie_pool = list(rookies)
         team_needs = self._get_team_needs(pick.team_id)
-        
+
         TARGET_COUNTS = {
             "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
             "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
         }
-        
+
         selected_player = None
-        
+
         # 1. Look for high-value need
         for i, prospect in enumerate(rookie_pool):
-            if i > 10: 
+            if i > 10:
                 break
-                
+
             current_count = team_needs.get(prospect.position, 0)
             target = TARGET_COUNTS.get(prospect.position, 5)
-            
+
             if current_count < target:
                 selected_player = prospect
                 break
-        
+
         # 2. BPA
         if not selected_player:
             selected_player = rookie_pool[0]
-            
+
         # Execute pick
         return self._execute_pick(pick, selected_player)
 
@@ -346,9 +346,9 @@ class OffseasonService:
         player.team_id = pick.team_id
         player.contract_years = 4
         player.is_rookie = False
-        
+
         self.db.commit()
-        
+
         return DraftPickSummary(
             round=pick.round,
             pick_number=pick.pick_number,
@@ -366,24 +366,24 @@ class OffseasonService:
             if not result:
                 break
             summary.append(result)
-        
+
         return summary
-        
+
         return summary
 
     def simulate_free_agency(self, season_id: int) -> dict:
         """Fill rosters with free agents."""
         teams = self.db.query(Team).all()
-        
+
         # Get available FAs
         free_agents = self.db.query(Player).filter(Player.team_id == None).order_by(Player.overall_rating.desc()).all()
         fa_pool = list(free_agents)
-        
+
         for team in teams:
             # Check roster size
             roster_count = self.db.query(Player).filter(Player.team_id == team.id).count()
             needed = 53 - roster_count
-            
+
             if needed > 0:
                 # Sign top available players
                 # Real logic would check positions
@@ -393,7 +393,7 @@ class OffseasonService:
                     player = fa_pool.pop(0)
                     player.team_id = team.id
                     player.contract_years = 1
-                    
+
         self.db.commit()
         return {"message": "Free Agency simulated."}
 
@@ -407,12 +407,12 @@ class OffseasonService:
             Player.is_retired == False,
             Player.team_id != None
         ).all()
-        
+
         retired_names = []
-        
+
         for player in players:
             should_retire = False
-            
+
             # Base logic
             if player.age >= 40:
                 should_retire = True
@@ -425,16 +425,16 @@ class OffseasonService:
             elif player.age >= 30:
                 if player.overall_rating < 65:
                     should_retire = random.random() < 0.2
-            
+
             if should_retire:
                 player.is_retired = True
                 player.retirement_year = season.year
                 player.team_id = None
                 retired_names.append(f"{player.first_name} {player.last_name}")
-                
+
                 # Check Hall of Fame
                 self._check_hall_of_fame(player, season.year)
-                
+
         self.db.commit()
         return retired_names
 
@@ -446,7 +446,7 @@ class OffseasonService:
             is_hof = True
         elif player.legacy_score >= 1000:
             is_hof = True
-            
+
         if is_hof:
             stats = self._calculate_career_stats(player.id)
             hof_entry = HallOfFame(
@@ -467,7 +467,7 @@ class OffseasonService:
             func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
             func.count(PlayerGameStats.id).label("games_played")
         ).filter(PlayerGameStats.player_id == player_id).first()
-        
+
         return {
             "games_played": stats.games_played or 0,
             "pass_yards": stats.pass_yards or 0,

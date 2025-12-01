@@ -6,6 +6,7 @@ import { ScoreBoard } from "../components/ScoreBoard";
 import { GameClock } from "../components/GameClock";
 import { FieldView } from "../components/FieldView";
 import { PlayByPlayFeed } from "../components/PlayByPlayFeed";
+import { WeatherWidget } from "../components/game/WeatherWidget";
 import { Play, Pause, FastForward } from "lucide-react";
 
 export const LiveSim = () => {
@@ -61,6 +62,16 @@ export const LiveSim = () => {
           <div className="flex-1 glass-panel rounded-xl border border-white/5 relative overflow-hidden p-1">
             <FieldView />
 
+            {/* Weather Overlay */}
+            <div className="absolute top-4 right-4 z-10">
+              <WeatherWidget
+                temperature={35}
+                condition="Snow"
+                windSpeed={12}
+                location="Lambeau Field"
+              />
+            </div>
+
             {/* Overlay Controls */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
               {!isLive ? (
@@ -77,10 +88,16 @@ export const LiveSim = () => {
                   <button
                     onClick={handleStopSimulation}
                     className="p-3 bg-red-500 hover:bg-red-400 text-white rounded-full backdrop-blur-md transition-all shadow-lg"
+                    aria-label="Pause Simulation"
+                    title="Pause Simulation"
                   >
                     <Pause className="w-4 h-4" />
                   </button>
-                  <button className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all">
+                  <button
+                    className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all"
+                    aria-label="Fast Forward"
+                    title="Fast Forward"
+                  >
                     <FastForward className="w-4 h-4" />
                   </button>
                 </>

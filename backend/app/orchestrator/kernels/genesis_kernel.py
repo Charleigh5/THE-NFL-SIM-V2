@@ -24,9 +24,20 @@ class GenesisKernel:
         """
         if player_id not in self.player_states:
             return 0.0
-            
+
         state = self.player_states[player_id]["fatigue"]
         state.update_fatigue(exertion, temperature)
+        return state.lactic_acid
+
+    def get_current_fatigue(self, player_id: int) -> float:
+        """
+        Return current fatigue level for a player without updating it.
+        Returns: Fatigue percentage (0.0 - 100.0)
+        """
+        if player_id not in self.player_states:
+            return 0.0
+
+        state = self.player_states[player_id]["fatigue"]
         return state.lactic_acid
 
     def check_injury_risk(self, player_id: int, impact_force: float, body_part: str) -> Dict[str, Any]:
@@ -39,7 +50,7 @@ class GenesisKernel:
 
         state = self.player_states[player_id]["anatomy"]
         state.apply_stress(impact_force, body_part)
-        
+
         if state.current_health < 80.0:
              return {
                  "is_injured": True,

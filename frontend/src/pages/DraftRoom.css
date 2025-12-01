@@ -114,17 +114,34 @@
   font-weight: bold;
 }
 
-.need-bar-container {
+.need-info {
+  display: flex;
+  align-items: center;
   flex: 1;
-  height: 8px;
-  background-color: #333;
-  margin: 0 10px;
-  border-radius: 4px;
-  overflow: hidden;
+  margin-right: 10px;
 }
 
-.need-bar {
-  height: 100%;
+.need-progress {
+  flex: 1;
+  height: 8px;
+  margin-left: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #333;
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.need-progress::-webkit-progress-bar {
+  background-color: #333;
+}
+
+.need-progress::-webkit-progress-value {
+  background-color: #e74c3c;
+}
+
+.need-progress::-moz-progress-bar {
   background-color: #e74c3c;
 }
 
