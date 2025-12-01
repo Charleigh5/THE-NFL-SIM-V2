@@ -11,4 +11,4 @@ from app.models.season import Season, SeasonStatus
 from app.models.playoff import PlayoffMatchup, PlayoffRound, PlayoffConference
 from app.models.draft import DraftPick
 from app.models.history import SeasonHistory, PlayerSeasonStats, TeamSeasonStats
-
+from app.models.depth_chart import DepthChart

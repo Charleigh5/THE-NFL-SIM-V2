@@ -15,17 +15,17 @@ class MatchContext:
         self.away_team_id = away_team_id
         self.session = session
         self.weather_config = weather_config or {"temperature": 70, "condition": "Sunny"}
-        
+
         self.home_roster: Dict[int, Player] = {}
         self.away_roster: Dict[int, Player] = {}
-        
+
         self.genesis: Optional[GenesisKernel] = None
         self.cortex: Optional[CortexKernel] = None
-        
+
         # Load rosters immediately
         self.home_roster = self.load_roster(home_team_id)
         self.away_roster = self.load_roster(away_team_id)
-        
+
         # Initialize systems
         self.initialize_systems()
 
@@ -36,7 +36,7 @@ class MatchContext:
         players = self.session.query(Player).filter(Player.team_id == team_id).all()
         if not players:
             raise ValueError(f"No players found for team_id {team_id}")
-            
+
         return {p.id: p for p in players}
 
     def initialize_systems(self) -> None:
@@ -47,22 +47,22 @@ class MatchContext:
         """
         # Initialize Genesis
         self.genesis = GenesisKernel()
-        
+
         all_players = list(self.home_roster.values()) + list(self.away_roster.values())
-        
+
         temperature = self.weather_config.get("temperature", 70)
         home_climate = "Neutral"
         if temperature < 40:
             home_climate = "Cold"
         elif temperature > 80:
             home_climate = "Warm"
-        
+
         for player in all_players:
             # Prepare profile data for Genesis
             fast_twitch = (player.acceleration or 50) / 100.0
-            wingspan = (player.height or 72) * 1.02 
+            wingspan = (player.height or 72) * 1.02
             hand_size = (player.height or 72) / 8.5
-            
+
             profile_data = {
                 "anatomy": {
                     "fast_twitch_ratio": fast_twitch,
@@ -76,7 +76,7 @@ class MatchContext:
                 }
             }
             self.genesis.register_player(player.id, profile_data)
-            
+
         # Initialize Cortex
         # Note: CortexKernel currently does not accept coaches in init.
         # Future improvement: Pass coach data to CortexKernel.
@@ -90,20 +90,20 @@ class MatchContext:
         """
         if side not in ["home", "away"]:
             raise ValueError("Side must be 'home' or 'away'")
-            
+
         roster_dict = self.home_roster if side == "home" else self.away_roster
         roster_list = list(roster_dict.values())
-        
+
         starters_map = {}
-        
+
         if formation.startswith("special_teams") or formation in ["kickoff", "punt", "field_goal"]:
              starters_map = DepthChartService.get_special_teams(roster_list, formation)
              # Special teams might not return full 11, need to fill
              # For now, if we don't have 11, we fill with backups
-             
+
         elif formation.startswith("defense") or formation in ["4-3", "3-4", "nickel", "dime"]:
             starters_map = DepthChartService.get_starting_defense(roster_list, formation)
-                    
+
         else:
             # Assume Offense
             starters_map = DepthChartService.get_starting_offense(roster_list, formation)
@@ -116,7 +116,7 @@ class MatchContext:
              # Get all players sorted by overall
              sorted_roster = sorted(roster_list, key=lambda x: -x.overall_rating)
              existing_ids = {p.id for p in fielded_players}
-             
+
              for p in sorted_roster:
                  if len(fielded_players) >= 11:
                      break
@@ -135,7 +135,21 @@ class MatchContext:
         """
         if not self.genesis:
             return None
-        
+
         if player_id in self.genesis.player_states:
             return self.genesis.player_states[player_id].get("fatigue")
         return None
+
+    def get_player_bio(self, player_id: int) -> Dict[str, Any]:
+        """
+        Get the biological profile for a player from GenesisKernel.
+        Returns dict with 'anatomy' and 'fatigue' data.
+        """
+        if not self.genesis or player_id not in self.genesis.player_states:
+            return {}
+
+        state = self.genesis.player_states[player_id]
+        return {
+            "anatomy": state["anatomy"].model_dump() if hasattr(state["anatomy"], "model_dump") else state["anatomy"].__dict__,
+            "fatigue": state["fatigue"].model_dump() if hasattr(state["fatigue"], "model_dump") else state["fatigue"].__dict__
+        }

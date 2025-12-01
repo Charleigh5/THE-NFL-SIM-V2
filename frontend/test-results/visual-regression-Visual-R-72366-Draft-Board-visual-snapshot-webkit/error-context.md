@@ -1,0 +1,116 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "⚡ Stellar Sagan" [level=1] [ref=e6]
+      - paragraph [ref=e7]: NFL Simulation Engine
+    - list [ref=e8]:
+      - listitem [ref=e9]:
+        - link "🎮 Dashboard" [ref=e10]:
+          - /url: /
+          - generic [ref=e11]: 🎮
+          - generic [ref=e12]: Dashboard
+      - listitem [ref=e13]:
+        - link "🏆 Season" [ref=e14]:
+          - /url: /season
+          - generic [ref=e15]: 🏆
+          - generic [ref=e16]: Season
+      - listitem [ref=e17]:
+        - link "🌟 Offseason" [ref=e18]:
+          - /url: /offseason
+          - generic [ref=e19]: 🌟
+          - generic [ref=e20]: Offseason
+      - listitem [ref=e21]:
+        - link "🏈 Draft Room" [ref=e22]:
+          - /url: /offseason/draft
+          - generic [ref=e23]: 🏈
+          - generic [ref=e24]: Draft Room
+      - listitem [ref=e25]:
+        - link "👥 Roster" [ref=e26]:
+          - /url: /empire/front-office
+          - generic [ref=e27]: 👥
+          - generic [ref=e28]: Roster
+      - listitem [ref=e29]:
+        - link "📋 Depth Chart" [ref=e30]:
+          - /url: /empire/depth-chart
+          - generic [ref=e31]: 📋
+          - generic [ref=e32]: Depth Chart
+      - listitem [ref=e33]:
+        - link "⭐ My Team" [ref=e34]:
+          - /url: /team-selection
+          - generic [ref=e35]: ⭐
+          - generic [ref=e36]: My Team
+      - listitem [ref=e37]:
+        - link "⚙️ Settings" [ref=e38]:
+          - /url: /settings
+          - generic [ref=e39]: ⚙️
+          - generic [ref=e40]: Settings
+    - generic [ref=e42]: System Online
+  - main [ref=e44]:
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "NFL Draft Room" [level=1] [ref=e47]
+        - generic [ref=e48]:
+          - text: "ON THE CLOCK:"
+          - generic [ref=e49]: Team 1
+          - generic [ref=e50]: Round 1 • Pick 1
+      - generic [ref=e52]: "RECENT PICKS:"
+      - generic [ref=e53]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "Draft Board" [level=3] [ref=e57]
+            - generic [ref=e58]:
+              - combobox [ref=e59] [cursor=pointer]:
+                - option "ALL" [selected]
+                - option "QB"
+                - option "RB"
+                - option "WR"
+                - option "TE"
+                - option "OL"
+                - option "DL"
+                - option "LB"
+                - option "DB"
+                - option "ST"
+              - combobox [ref=e60] [cursor=pointer]:
+                - option "Rank" [selected]
+                - option "Rating"
+                - option "Position"
+          - generic [ref=e61]:
+            - generic [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]: "#1"
+              - generic [ref=e64]:
+                - generic [ref=e65]:
+                  - generic [ref=e66]: QB
+                  - generic [ref=e67]: Caleb Williams
+                - generic [ref=e68]:
+                  - generic [ref=e69]: A+
+                  - generic [ref=e70]: 90 OVR
+            - generic [ref=e71] [cursor=pointer]:
+              - generic [ref=e72]: "#2"
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - generic [ref=e75]: QB
+                  - generic [ref=e76]: Drake Maye
+                - generic [ref=e77]:
+                  - generic [ref=e78]: A
+                  - generic [ref=e79]: 88 OVR
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - heading "Team Needs" [level=3] [ref=e82]
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - generic [ref=e85]: QB
+                - generic [ref=e86]: "9.5"
+              - generic [ref=e87]:
+                - generic [ref=e88]: WR
+                - generic [ref=e89]: "8.0"
+          - generic [ref=e90]:
+            - heading "Draft Simulator" [level=3] [ref=e91]
+            - paragraph [ref=e92]: Simulate the remainder of the draft automatically.
+            - button "Simulate Rest of Draft" [ref=e93] [cursor=pointer]
+          - generic [ref=e94]:
+            - heading "Trade Options" [level=3] [ref=e95]
+            - button "Trade Current Pick" [ref=e96]
+```

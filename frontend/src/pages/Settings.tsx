@@ -27,6 +27,7 @@ const Settings: React.FC = () => {
               value={difficultyLevel}
               onChange={(e) => setDifficulty(e.target.value)}
               className="setting-select"
+              aria-label="Difficulty Level"
             >
               <option value="Rookie">Rookie</option>
               <option value="Pro">Pro</option>
