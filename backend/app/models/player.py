@@ -37,6 +37,7 @@ class Player(Base):
     first_name = Column(String, index=True)
     last_name = Column(String, index=True)
     position = Column(String, index=True) # Using String for flexibility, or Enum
+    college = Column(String, index=True, nullable=True)
     height = Column(Integer) # in inches
     weight = Column(Integer) # in lbs
     age = Column(Integer)
@@ -117,3 +118,7 @@ class Player(Base):
     is_retired = Column(Boolean, default=False, index=True)
     retirement_year = Column(Integer, nullable=True)
     legacy_score = Column(Integer, default=0) # For Hall of Fame tracking
+    
+    # History
+    season_stats = relationship("PlayerSeasonStats", back_populates="player")
+

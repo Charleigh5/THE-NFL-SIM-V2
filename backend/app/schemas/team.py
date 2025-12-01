@@ -13,6 +13,8 @@ class TeamBase(BaseModel):
     logo_url: Optional[str] = None
     primary_color: Optional[str] = None
     secondary_color: Optional[str] = None
+    established_year: Optional[int] = None
+    stadium_id: Optional[int] = None
 
 class TeamCreate(TeamBase):
     pass

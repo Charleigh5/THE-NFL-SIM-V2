@@ -24,3 +24,12 @@ class GM(Base):
     
     xp = Column(Integer, default=0)
     level = Column(Integer, default=1)
+
+    # Philosophy & Strategy
+    philosophy = Column(String, default="BALANCED") # WIN_NOW, REBUILD, etc.
+    aggression = Column(Integer, default=50) # 0-100, trade frequency
+    patience = Column(Integer, default=50) # 0-100, tolerance for losing
+    
+    # Traits
+    traits = Column(JSON, default=list) # e.g. ["ScoutingGuru", "CapWizard"]
+

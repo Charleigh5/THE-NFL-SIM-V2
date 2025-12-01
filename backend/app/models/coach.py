@@ -25,3 +25,8 @@ class Coach(Base):
     
     xp = Column(Integer, default=0)
     level = Column(Integer, default=1)
+
+    # Strategy
+    playbook_offense = Column(String, nullable=True) # e.g. "West Coast", "Spread"
+    playbook_defense = Column(String, nullable=True) # e.g. "4-3", "3-4"
+    philosophy = Column(JSON, default=dict) # e.g. {"run_heavy": 70, "blitz_frequency": 40}

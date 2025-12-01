@@ -12,6 +12,7 @@ class Team(Base):
     players = relationship("Player", back_populates="team")
     coaches = relationship("Coach", back_populates="team")
     gm = relationship("GM", back_populates="team", uselist=False)
+    stadium = relationship("Stadium", back_populates="team", uselist=False)
     
     # Division/Conference
     conference = Column(String, index=True) # AFC/NFC
@@ -31,3 +32,13 @@ class Team(Base):
     logo_url = Column(String, nullable=True)
     primary_color = Column(String, default="#000000")
     secondary_color = Column(String, default="#FFFFFF")
+
+    # History
+    established_year = Column(Integer, nullable=True)
+    
+    # Foreign Keys
+    stadium_id = Column(Integer, ForeignKey("stadium.id"), nullable=True)
+
+    # History
+    season_history = relationship("TeamSeasonStats", back_populates="team")
+
