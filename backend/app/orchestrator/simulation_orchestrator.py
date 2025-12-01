@@ -67,14 +67,18 @@ class SimulationOrchestrator:
         
         # Hydrate Match Context
         print(f"Hydrating Match Context for Game {new_game.id}...")
-        home_roster = self.db_session.query(Player).filter(Player.team_id == home_team_id).all()
-        away_roster = self.db_session.query(Player).filter(Player.team_id == away_team_id).all()
-        self.match_context = MatchContext(home_roster, away_roster)
         
-        # Register players with Kernels
+        # Initialize MatchContext with rosters and weather config
+        weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
+        
+        # Create MatchContext instance with home/away teams
+        # MatchContext handles roster loading internally
+        self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+        
+        # Register players with Kernels (Now handled inside MatchContext init, but PlayResolver needs reference)
         self.play_resolver.register_players(self.match_context)
         
-        print(f"Match Context Hydrated. Home: {len(home_roster)} players, Away: {len(away_roster)} players.")
+        print(f"Match Context Hydrated. Home: {len(self.match_context.home_roster)} players, Away: {len(self.match_context.away_roster)} players.")
 
     def _save_progress(self) -> None:
         """Save current game state and history to database."""
@@ -119,25 +123,34 @@ class SimulationOrchestrator:
             import traceback
             traceback.print_exc()
         finally:
+            # Cleanup Match Context
+            self.match_context = None
+            
             if self.db_session:
                 self.db_session.close()
                 self.db_session = None
             self.current_game_id = None
 
-    def _save_player_stats(self, game: Game) -> None:
+    def _save_player_stats(self, game: Game = None) -> None:
         """Aggregate and save player stats from game history."""
         if not self.history:
             return
+            
+        # If game object not passed, fetch it
+        if not game and self.current_game_id:
+             game = self.db_session.query(Game).filter(Game.id == self.current_game_id).first()
+        
+        if not game: return
 
         print(f"Saving player stats for Game {game.id}...")
         
         # 1. Map player IDs to Team IDs
         player_team_map = {}
         if self.match_context:
-            for p in self.match_context.home_roster:
-                player_team_map[p.id] = game.home_team_id
-            for p in self.match_context.away_roster:
-                player_team_map[p.id] = game.away_team_id
+            for pid, p in self.match_context.home_roster.items():
+                player_team_map[pid] = game.home_team_id
+            for pid, p in self.match_context.away_roster.items():
+                player_team_map[pid] = game.away_team_id
         
         # 2. Aggregate Stats
         # Structure: player_id -> {stat_name: value}
@@ -197,14 +210,25 @@ class SimulationOrchestrator:
             if not team_id:
                 continue
 
-            # Create PlayerGameStats record
-            pgs = PlayerGameStats(
-                player_id=pid,
-                game_id=game.id,
-                team_id=team_id,
-                **stats
-            )
-            self.db_session.add(pgs)
+            # Check if exists first
+            pgs = self.db_session.query(PlayerGameStats).filter(
+                PlayerGameStats.player_id == pid,
+                PlayerGameStats.game_id == game.id
+            ).first()
+            
+            if not pgs:
+                pgs = PlayerGameStats(
+                    player_id=pid,
+                    game_id=game.id,
+                    team_id=team_id,
+                    **stats
+                )
+                self.db_session.add(pgs)
+            else:
+                # Update existing
+                for k, v in stats.items():
+                    setattr(pgs, k, getattr(pgs, k) + v)
+            
             count += 1
         
         self.db_session.commit()
@@ -310,12 +334,9 @@ class SimulationOrchestrator:
             off_side = "home" if self.possession == "home" else "away"
             def_side = "away" if self.possession == "home" else "home"
             
-            off_starters = self.match_context.get_starters(off_side)
-            def_starters = self.match_context.get_starters(def_side)
-            
-            # Pass the dict values for now. 
-            offense_players = list(off_starters.values())
-            defense_players = list(def_starters.values())
+            # Use default formations for now as PlayCaller hasn't run yet
+            offense_players = self.match_context.get_fielded_players(off_side, "standard")
+            defense_players = self.match_context.get_fielded_players(def_side, "4-3")
         
         # Build PlayCallingContext
         try:
@@ -357,7 +378,38 @@ class SimulationOrchestrator:
         # Update game state based on result
         self._update_game_state(result)
         
+        # Update Fatigue in MatchContext
+        if self.match_context:
+            self._update_fatigue(offense_players, defense_players, result)
+        
         return result
+
+    def _update_fatigue(self, offense: List[Player], defense: List[Player], result: PlayResult) -> None:
+        """Update fatigue for players involved in the play."""
+        if not self.match_context:
+            return
+            
+        temp = self.match_context.weather_config.get("temperature", 70)
+        
+        # Identify key players who exerted more energy
+        key_players = set()
+        if result.passer_id: key_players.add(result.passer_id)
+        if result.rusher_id: key_players.add(result.rusher_id)
+        if result.receiver_id: key_players.add(result.receiver_id)
+        
+        # Update Offense
+        for p in offense:
+            regulator = self.match_context.get_fatigue(p.id)
+            if regulator:
+                exertion = 1.0 if p.id in key_players else 0.3
+                regulator.update_fatigue(exertion, temp)
+                
+        # Update Defense
+        for p in defense:
+            regulator = self.match_context.get_fatigue(p.id)
+            if regulator:
+                exertion = 0.4 # Defenders generally react
+                regulator.update_fatigue(exertion, temp)
 
     def _update_game_state(self, result: PlayResult) -> None:
         """Update game state based on play result."""
@@ -370,8 +422,8 @@ class SimulationOrchestrator:
         # Bounds check
         self.yard_line = max(0, min(100, self.yard_line))
         
-        # Update Player Stats
-        self._update_player_stats(result)
+        # Update Player Stats (in-memory aggregation removed, using _save_player_stats at end)
+        # self._update_player_stats(result) 
         
         # Check for touchdown
         if result.is_touchdown or self.yard_line >= 100 or self.yard_line <= 0:
@@ -423,99 +475,6 @@ class SimulationOrchestrator:
         # Persist state
         self._save_progress()
     
-    def _update_player_stats(self, result: PlayResult) -> None:
-        """Aggregate stats from the play result."""
-        if not hasattr(self, "player_stats"):
-            self.player_stats = {} # player_id -> dict of stats
-
-        def get_stat_entry(player_id):
-            if player_id not in self.player_stats:
-                self.player_stats[player_id] = {
-                    "pass_attempts": 0, "pass_completions": 0, "pass_yards": 0, "pass_tds": 0,
-                    "rush_attempts": 0, "rush_yards": 0, "rush_tds": 0,
-                    "targets": 0, "receptions": 0, "rec_yards": 0, "rec_tds": 0
-                }
-            return self.player_stats[player_id]
-
-        # Passing
-        if result.passer_id:
-            stats = get_stat_entry(result.passer_id)
-            stats["pass_attempts"] += 1
-            if result.yards_gained > 0 or result.is_touchdown: # Simplified completion check
-                stats["pass_completions"] += 1
-                stats["pass_yards"] += result.yards_gained
-                if result.is_touchdown:
-                    stats["pass_tds"] += 1
-
-        # Receiving
-        if result.receiver_id:
-            stats = get_stat_entry(result.receiver_id)
-            stats["targets"] += 1
-            if result.yards_gained > 0 or result.is_touchdown:
-                stats["receptions"] += 1
-                stats["rec_yards"] += result.yards_gained
-                if result.is_touchdown:
-                    stats["rec_tds"] += 1
-
-        # Rushing
-        if result.rusher_id:
-            stats = get_stat_entry(result.rusher_id)
-            stats["rush_attempts"] += 1
-            stats["rush_yards"] += result.yards_gained
-            if result.is_touchdown:
-                stats["rush_tds"] += 1
-
-    def _save_player_stats(self) -> None:
-        """Save aggregated player stats to database."""
-        if not self.db_session or not self.current_game_id or not hasattr(self, "player_stats"):
-            return
-            
-        try:
-            # Get team IDs for players (needed for PlayerGameStats)
-            player_ids = list(self.player_stats.keys())
-            players = self.db_session.query(Player).filter(Player.id.in_(player_ids)).all()
-            player_team_map = {p.id: p.team_id for p in players}
-
-            for player_id, stats in self.player_stats.items():
-                team_id = player_team_map.get(player_id)
-                if not team_id: continue
-
-                # Check if stat record exists
-                pgs = self.db_session.query(PlayerGameStats).filter(
-                    PlayerGameStats.player_id == player_id,
-                    PlayerGameStats.game_id == self.current_game_id
-                ).first()
-
-                if not pgs:
-                    pgs = PlayerGameStats(
-                        player_id=player_id,
-                        game_id=self.current_game_id,
-                        team_id=team_id
-                    )
-                    self.db_session.add(pgs)
-                
-                # Update stats
-                pgs.pass_attempts += stats["pass_attempts"]
-                pgs.pass_completions += stats["pass_completions"]
-                pgs.pass_yards += stats["pass_yards"]
-                pgs.pass_tds += stats["pass_tds"]
-                
-                pgs.rush_attempts += stats["rush_attempts"]
-                pgs.rush_yards += stats["rush_yards"]
-                pgs.rush_tds += stats["rush_tds"]
-                
-                pgs.targets += stats["targets"]
-                pgs.receptions += stats["receptions"]
-                pgs.rec_yards += stats["rec_yards"]
-                pgs.rec_tds += stats["rec_tds"]
-
-            self.db_session.commit()
-            print(f"Saved stats for {len(self.player_stats)} players.")
-            
-        except Exception as e:
-            print(f"Error saving player stats: {e}")
-            self.db_session.rollback()
-
     def _is_quarter_over(self) -> bool:
         """Check if the current quarter is over."""
         try:
@@ -535,7 +494,7 @@ class SimulationOrchestrator:
         self.distance = 10
         self.yard_line = 25
         self.history = []
-        self.player_stats = {} # Reset stats
+        # self.player_stats = {} # Reset stats
     
     def get_game_state(self) -> dict:
         """Get current game state as a dictionary for broadcasting."""

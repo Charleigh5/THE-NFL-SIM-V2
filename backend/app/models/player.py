@@ -57,6 +57,8 @@ class Player(Base):
     strength = Column(Integer, default=50)
     agility = Column(Integer, default=50)
     awareness = Column(Integer, default=50)
+    stamina = Column(Integer, default=80) # New for Phase 7
+    injury_resistance = Column(Integer, default=80) # New for Phase 7
     
     # Offensive Specific
     throw_power = Column(Integer, default=50)
@@ -76,6 +78,7 @@ class Player(Base):
     zone_coverage = Column(Integer, default=50)
     pass_rush_power = Column(Integer, default=50)
     pass_rush_finesse = Column(Integer, default=50)
+    play_recognition = Column(Integer, default=50) # New for Phase 7
     
     # Special Teams
     kick_power = Column(Integer, default=50)
@@ -121,4 +124,3 @@ class Player(Base):
     
     # History
     season_stats = relationship("PlayerSeasonStats", back_populates="player")
-

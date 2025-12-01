@@ -1,74 +1,141 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
+from sqlalchemy.orm import Session
 from app.models.player import Player
 from app.services.depth_chart_service import DepthChartService
-from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
+from app.orchestrator.kernels.genesis_kernel import GenesisKernel
+from app.orchestrator.kernels.cortex_kernel import CortexKernel
 
 class MatchContext:
     """
     Holds the runtime state of a match, including full rosters,
     depth charts, and kernel-specific player states (fatigue, injury).
     """
-    def __init__(self, home_roster: List[Player], away_roster: List[Player], weather_config: Optional[Dict] = None) -> None:
-        self.home_roster = home_roster
-        self.away_roster = away_roster
+    def __init__(self, home_team_id: int, away_team_id: int, session: Session, weather_config: Optional[Dict] = None) -> None:
+        self.home_team_id = home_team_id
+        self.away_team_id = away_team_id
+        self.session = session
         self.weather_config = weather_config or {"temperature": 70, "condition": "Sunny"}
         
-        # Organize Depth Charts
-        self.home_depth_chart = DepthChartService.organize_roster(home_roster)
-        self.away_depth_chart = DepthChartService.organize_roster(away_roster)
+        self.home_roster: Dict[int, Player] = {}
+        self.away_roster: Dict[int, Player] = {}
         
-        # Kernel State Maps (Player ID -> State)
-        self.biological_profiles: Dict[int, BiologicalProfile] = {}
-        self.fatigue_regulators: Dict[int, FatigueRegulator] = {}
+        self.genesis: Optional[GenesisKernel] = None
+        self.cortex: Optional[CortexKernel] = None
         
-        # Initialize Kernel States
-        self._initialize_states(home_roster, team_type="home")
-        self._initialize_states(away_roster, team_type="away")
+        # Load rosters immediately
+        self.home_roster = self.load_roster(home_team_id)
+        self.away_roster = self.load_roster(away_team_id)
         
-    def _initialize_states(self, players: List[Player], team_type: str) -> None:
+        # Initialize systems
+        self.initialize_systems()
+
+    def load_roster(self, team_id: int) -> Dict[int, Player]:
+        """
+        Query database for all players on team and convert to dictionary indexed by player_id.
+        """
+        players = self.session.query(Player).filter(Player.team_id == team_id).all()
+        if not players:
+            raise ValueError(f"No players found for team_id {team_id}")
+            
+        return {p.id: p for p in players}
+
+    def initialize_systems(self) -> None:
+        """
+        Create GenesisKernel instance with all players.
+        Create CortexSystem instance with team coaches.
+        Set initial fatigue states to zero.
+        """
+        # Initialize Genesis
+        self.genesis = GenesisKernel()
+        
+        all_players = list(self.home_roster.values()) + list(self.away_roster.values())
+        
         temperature = self.weather_config.get("temperature", 70)
+        home_climate = "Neutral"
+        if temperature < 40:
+            home_climate = "Cold"
+        elif temperature > 80:
+            home_climate = "Warm"
         
-        for p in players:
-            # --- Genesis: Biological Profile ---
-            # Map attributes to bio metrics
-            fast_twitch = (p.acceleration or 50) / 100.0
+        for player in all_players:
+            # Prepare profile data for Genesis
+            fast_twitch = (player.acceleration or 50) / 100.0
+            wingspan = (player.height or 72) * 1.02 
+            hand_size = (player.height or 72) / 8.5
             
-            # Estimate physical traits if not explicit
-            # Height is in inches. Wingspan approx Height * 1.0 to 1.05
-            # Hand size approx Height / 9.0
-            wingspan = (p.height or 72) * 1.02 
-            hand_size = (p.height or 72) / 8.5
+            profile_data = {
+                "anatomy": {
+                    "fast_twitch_ratio": fast_twitch,
+                    "hand_size_inches": hand_size,
+                    "wingspan_inches": wingspan
+                },
+                "fatigue": {
+                    "home_climate": home_climate,
+                    "hrv": 100.0,
+                    "lactic_acid": 0.0
+                }
+            }
+            self.genesis.register_player(player.id, profile_data)
             
-            self.biological_profiles[p.id] = BiologicalProfile(
-                fast_twitch_ratio=fast_twitch,
-                hand_size_inches=hand_size,
-                wingspan_inches=wingspan
-            )
-            
-            # --- Genesis: Fatigue Regulator ---
-            # Determine home climate (simplified heuristic for now)
-            # In future, link to StadiumDB
-            home_climate = "Neutral"
-            if temperature < 40:
-                home_climate = "Cold" 
-            elif temperature > 80:
-                home_climate = "Warm"
-                
-            self.fatigue_regulators[p.id] = FatigueRegulator(
-                home_climate=home_climate, # Placeholder until Stadium link is robust
-                hrv=100.0,
-                lactic_acid=0.0
-            )
+        # Initialize Cortex
+        # Note: CortexKernel currently does not accept coaches in init.
+        # Future improvement: Pass coach data to CortexKernel.
+        self.cortex = CortexKernel()
 
-    def get_starters(self, team_side: str, formation: str = "standard") -> Dict[str, Player]:
+    def get_fielded_players(self, side: str, formation: str) -> List[Player]:
         """
-        Get starting players for a specific side ('home' or 'away').
+        Pull 11 starters based on depth chart.
+        Handle special teams formations.
+        Return Player objects with current fatigue levels.
         """
-        roster = self.home_roster if team_side == "home" else self.away_roster
-        return DepthChartService.get_starters(roster, formation)
+        if side not in ["home", "away"]:
+            raise ValueError("Side must be 'home' or 'away'")
+            
+        roster_dict = self.home_roster if side == "home" else self.away_roster
+        roster_list = list(roster_dict.values())
+        
+        starters_map = {}
+        
+        if formation.startswith("special_teams") or formation in ["kickoff", "punt", "field_goal"]:
+             starters_map = DepthChartService.get_special_teams(roster_list, formation)
+             # Special teams might not return full 11, need to fill
+             # For now, if we don't have 11, we fill with backups
+             
+        elif formation.startswith("defense") or formation in ["4-3", "3-4", "nickel", "dime"]:
+            starters_map = DepthChartService.get_starting_defense(roster_list, formation)
+                    
+        else:
+            # Assume Offense
+            starters_map = DepthChartService.get_starting_offense(roster_list, formation)
 
-    def get_player_bio(self, player_id: int) -> Optional[BiologicalProfile]:
-        return self.biological_profiles.get(player_id)
+        fielded_players = list(starters_map.values())
 
-    def get_fatigue(self, player_id: int) -> Optional[FatigueRegulator]:
-        return self.fatigue_regulators.get(player_id)
+        # Fallback if filtering failed or not enough players (e.g. unknown formation or missing roles)
+        # Just return the first 11 players from the roster sorted by overall
+        if len(fielded_players) < 11:
+             # Get all players sorted by overall
+             sorted_roster = sorted(roster_list, key=lambda x: -x.overall_rating)
+             existing_ids = {p.id for p in fielded_players}
+             
+             for p in sorted_roster:
+                 if len(fielded_players) >= 11:
+                     break
+                 if p.id not in existing_ids:
+                     fielded_players.append(p)
+                     existing_ids.add(p.id)
+
+        if not fielded_players:
+             raise ValueError(f"No fielded players found for {side} team with formation {formation}")
+
+        return fielded_players
+
+    def get_fatigue(self, player_id: int) -> Optional[Any]:
+        """
+        Get the fatigue regulator for a specific player from GenesisKernel.
+        """
+        if not self.genesis:
+            return None
+        
+        if player_id in self.genesis.player_states:
+            return self.genesis.player_states[player_id].get("fatigue")
+        return None

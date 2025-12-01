@@ -17,7 +17,7 @@ def test_organize_roster():
     assert "WR" in chart
     assert len(chart["WR"]) == 1
 
-def test_get_starters_offense():
+def test_get_starting_offense():
     players = []
     # QB
     players.append(Player(id=1, position="QB", overall_rating=90))
@@ -36,7 +36,7 @@ def test_get_starters_offense():
     players.append(Player(id=10, position="OG", overall_rating=87)) # RG
     players.append(Player(id=11, position="C", overall_rating=86))  # C
     
-    starters = DepthChartService.get_starters(players, "standard")
+    starters = DepthChartService.get_starting_offense(players, "standard")
     
     assert starters["QB"].id == 1
     assert starters["RB"].id == 2
@@ -47,7 +47,7 @@ def test_get_starters_offense():
     assert starters["LT"].id == 7
     assert starters["RT"].id == 8
 
-def test_get_starters_defense():
+def test_get_starting_defense():
     players = []
     # DL
     players.append(Player(id=20, position="DE", overall_rating=90))
@@ -64,7 +64,7 @@ def test_get_starters_defense():
     players.append(Player(id=29, position="S", overall_rating=90))
     players.append(Player(id=30, position="S", overall_rating=89))
     
-    starters = DepthChartService.get_starters(players, "standard")
+    starters = DepthChartService.get_starting_defense(players, "standard")
     
     assert starters["LE"].id == 20
     assert starters["RE"].id == 21
@@ -77,3 +77,26 @@ def test_get_starters_defense():
     assert starters["CB2"].id == 28
     assert starters["FS"].id == 29
     assert starters["SS"].id == 30
+
+def test_injury_handling():
+    players = [
+        Player(id=1, position="QB", overall_rating=90, injury_status="OUT"),
+        Player(id=2, position="QB", overall_rating=80, injury_status="ACTIVE"),
+    ]
+    
+    starters = DepthChartService.get_starting_offense(players)
+    # Should pick the active backup (id 2) because id 1 is OUT
+    assert starters["QB"].id == 2
+
+def test_get_special_teams():
+    players = [
+        Player(id=1, position="K", overall_rating=90),
+        Player(id=2, position="P", overall_rating=85),
+        Player(id=3, position="WR", overall_rating=95, depth_chart_rank=4), # KR candidate
+    ]
+    
+    starters = DepthChartService.get_special_teams(players)
+    
+    assert starters["K"].id == 1
+    assert starters["P"].id == 2
+    assert "KR" in starters
