@@ -306,14 +306,46 @@ def test_simulate_draft_fills_all_picks(service, mock_db):
         if model == DraftPick:
             filter_mock = MagicMock()
             order_mock = MagicMock()
+            
+            # Mock first() for get_current_pick
+            # We need to return the first unpicked pick
+            # Since we can't easily track state in simple mock, let's just return picks[0] 
+            # and rely on the service loop to break when it returns None?
+            # Actually, simulate_draft calls simulate_next_pick loop.
+            # simulate_next_pick calls get_current_pick.
+            # We need get_current_pick to return next pick.
+            # Let's use side_effect for first()
+            
+            # For simplicity in this test, we can just return picks[0] always, 
+            # but we need to make sure we don't infinite loop.
+            # The service loop breaks if simulate_next_pick returns None.
+            # simulate_next_pick returns None if get_current_pick returns None.
+            
+            # Let's make first() return picks[0], then picks[1], etc.
+            # But picks list is static.
+            # The service modifies picks in place (player_id).
+            # So we can return the first pick that has player_id is None.
+            
+            def first_side_effect():
+                return next((p for p in picks if p.player_id is None), None)
+            
+            order_mock.first.side_effect = first_side_effect
             order_mock.all.return_value = picks
             filter_mock.order_by.return_value = order_mock
             mock_query.filter.return_value = filter_mock
         elif model == Player:
             filter_mock = MagicMock()
             order_mock = MagicMock()
+            limit_mock = MagicMock()
+            
+            limit_mock.all.return_value = rookies
+            order_mock.limit.return_value = limit_mock
             order_mock.all.return_value = rookies
+            
             filter_mock.order_by.return_value = order_mock
+            # Handle _get_team_needs which calls filter().all() directly
+            filter_mock.all.return_value = [] # Empty team needs for this test
+            
             mock_query.filter.return_value = filter_mock
         return mock_query
     
@@ -355,6 +387,12 @@ def test_simulate_draft_respects_team_needs(service, mock_db):
         if model == DraftPick:
             filter_mock = MagicMock()
             order_mock = MagicMock()
+            
+            # Mock first()
+            def first_side_effect():
+                return next((p for p in picks if p.player_id is None), None)
+            order_mock.first.side_effect = first_side_effect
+            
             order_mock.all.return_value = picks
             filter_mock.order_by.return_value = order_mock
             mock_query.filter.return_value = filter_mock
@@ -365,7 +403,12 @@ def test_simulate_draft_respects_team_needs(service, mock_db):
             # First call gets rookies, subsequent calls get team roster
             if query_call_count[0] == 1:
                 order_mock = MagicMock()
+                limit_mock = MagicMock()
+                
+                limit_mock.all.return_value = rookies
+                order_mock.limit.return_value = limit_mock
                 order_mock.all.return_value = rookies
+                
                 filter_mock.order_by.return_value = order_mock
             else:
                 filter_mock.all.return_value = team_players

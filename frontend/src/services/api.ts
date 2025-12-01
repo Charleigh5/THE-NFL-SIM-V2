@@ -32,9 +32,27 @@ export interface Player {
   position: string;
   jersey_number: number;
   overall_rating: number;
+  depth_chart_rank?: number;
   age: number;
   experience: number;
   team_id: number;
+  height?: number;
+  weight?: number;
+  speed?: number;
+  strength?: number;
+  agility?: number;
+  acceleration?: number;
+  awareness?: number;
+}
+
+export interface PlayerStats {
+  games_played: number;
+  passing_yards: number;
+  passing_tds: number;
+  rushing_yards: number;
+  rushing_tds: number;
+  receiving_yards: number;
+  receiving_tds: number;
 }
 
 export interface PaginatedResponse<T> {
@@ -74,6 +92,22 @@ export const api = {
 
   getPlayer: async (playerId: number): Promise<Player> => {
     const response = await apiClient.get(`/api/players/${playerId}`);
+    return response.data;
+  },
+
+  updateDepthChart: async (
+    teamId: number,
+    position: string,
+    playerIds: number[]
+  ): Promise<void> => {
+    await apiClient.put(`/api/teams/${teamId}/depth-chart`, {
+      position,
+      player_ids: playerIds,
+    });
+  },
+
+  getPlayerStats: async (playerId: number): Promise<PlayerStats> => {
+    const response = await apiClient.get<PlayerStats>(`/api/players/${playerId}/stats`);
     return response.data;
   },
 };

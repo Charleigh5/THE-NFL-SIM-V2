@@ -16,7 +16,7 @@ from app.services.week_simulator import WeekSimulator
 from app.services.playoff_service import PlayoffService
 from app.services.offseason_service import OffseasonService
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
+from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult, DraftPickDetail
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.models.stats import PlayerGameStats
 from app.models.player import Player
@@ -80,26 +80,46 @@ class SeasonAwards(BaseModel):
     droy: List[AwardCandidate]
 
 
-class SeasonSummary(BaseModel):
-    """Schema for season summary."""
+class DivisionStandings(BaseModel):
+    division: str
+    teams: List[TeamStanding]
+
+
+class ConferenceStandings(BaseModel):
+    conference: str
+    divisions: List[DivisionStandings]
+
+
+class SeasonSummaryResponse(BaseModel):
+    """Schema for season summary with enhanced dashboard data."""
     season: SeasonResponse
     total_games: int
     games_played: int
     completion_percentage: float
+    playoff_bracket: Optional[List[PlayoffMatchupSchema]] = None
+    league_leaders: Optional[LeagueLeaders] = None
+    standings: Optional[List[ConferenceStandings]] = None
+    current_playoff_round: Optional[str] = None
 
 
-@router.get("/summary", response_model=SeasonSummary)
+@router.get("/summary", response_model=SeasonSummaryResponse)
 @handle_errors
 def get_season_summary(db: Session = Depends(get_db)):
     """
-    Get a summary of the current active season.
+    Get a comprehensive summary of the current active season.
+    
+    Includes:
+    - Basic season information (week, status, completion)
+    - Playoff bracket data (if in playoffs)
+    - League leaders (top 5 passing/rushing/receiving)
+    - Current standings (all teams, division-grouped)
     """
-    logger.info("Fetching season summary")
+    logger.info("Fetching enhanced season summary")
     season = db.query(Season).filter(Season.is_active == True).first()
     if not season:
         raise HTTPException(status_code=404, detail="No active season found")
     
-    # Calculate stats
+    # Calculate basic stats
     total_games = db.query(Game).filter(Game.season_id == season.id).count()
     games_played = db.query(Game).filter(
         Game.season_id == season.id, 
@@ -110,13 +130,124 @@ def get_season_summary(db: Session = Depends(get_db)):
     if total_games > 0:
         completion = (games_played / total_games) * 100
     
-    logger.info(f"Season summary retrieved: {season.id}")
+    # Initialize optional fields
+    playoff_bracket = None
+    current_playoff_round = None
+    league_leaders = None
+    standings = None
+    
+    # Add playoff bracket if season is in playoffs
+    if season.status == SeasonStatus.POST_SEASON:
+        try:
+            playoff_service = PlayoffService(db)
+            playoff_bracket = playoff_service.get_bracket(season.id)
+            
+            # Determine current playoff round
+            if playoff_bracket:
+                # Get the latest round with incomplete games
+                rounds = set(m.round for m in playoff_bracket)
+                for round_name in ["WILD_CARD", "DIVISIONAL", "CONFERENCE", "SUPER_BOWL"]:
+                    if round_name in rounds:
+                        round_matchups = [m for m in playoff_bracket if m.round == round_name]
+                        if any(not m.winner_id for m in round_matchups):
+                            current_playoff_round = round_name
+                            break
+                        current_playoff_round = round_name  # Last completed round
+            
+            logger.info(f"Playoff bracket included: {len(playoff_bracket)} matchups, round: {current_playoff_round}")
+        except Exception as e:
+            logger.warning(f"Could not fetch playoff bracket: {e}")
+    
+    # Get league leaders
+    try:
+        # Helper function to get top stats (copied from get_league_leaders endpoint)
+        def get_top_stats(stat_column, stat_type, limit=5):
+            results = db.query(
+                Player.id,
+                Player.first_name,
+                Player.last_name,
+                Team.name.label("team_name"),
+                Player.position,
+                func.sum(stat_column).label("total_value")
+            ).join(
+                PlayerGameStats, Player.id == PlayerGameStats.player_id
+            ).join(
+                Game, PlayerGameStats.game_id == Game.id
+            ).join(
+                Team, Player.team_id == Team.id
+            ).filter(
+                Game.season_id == season.id
+            ).group_by(
+                Player.id, Team.name
+            ).order_by(
+                desc("total_value")
+            ).limit(limit).all()
+
+            return [
+                PlayerLeader(
+                    player_id=r.id,
+                    name=f"{r.first_name} {r.last_name}",
+                    team=r.team_name,
+                    position=r.position,
+                    value=r.total_value or 0,
+                    stat_type=stat_type
+                )
+                for r in results
+            ]
+        
+        league_leaders = LeagueLeaders(
+            passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
+            passing_tds=get_top_stats(PlayerGameStats.pass_tds, "passing_tds"),
+            rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
+            rushing_tds=get_top_stats(PlayerGameStats.rush_tds, "rushing_tds"),
+            receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards"),
+            receiving_tds=get_top_stats(PlayerGameStats.rec_tds, "receiving_tds")
+        )
+        logger.info("League leaders included in summary")
+    except Exception as e:
+        logger.warning(f"Could not fetch league leaders: {e}")
+    
+    # Get standings
+    try:
+        calculator = StandingsCalculator(db)
+        flat_standings = calculator.calculate_standings(season.id)
+        
+        # Group by Conference -> Division
+        grouped_standings = []
+        conferences = {}
+        
+        for team in flat_standings:
+            if team.conference not in conferences:
+                conferences[team.conference] = {}
+            if team.division not in conferences[team.conference]:
+                conferences[team.conference][team.division] = []
+            conferences[team.conference][team.division].append(team)
+            
+        for conf_name, divisions in conferences.items():
+            div_list = []
+            for div_name, teams in divisions.items():
+                # Sort teams by rank (should be already sorted but good to ensure)
+                teams.sort(key=lambda x: x.division_rank)
+                div_list.append(DivisionStandings(division=div_name, teams=teams))
+            
+            grouped_standings.append(ConferenceStandings(conference=conf_name, divisions=div_list))
+            
+        standings = grouped_standings
+        logger.info(f"Standings included in summary: {len(standings)} conferences")
+    except Exception as e:
+        logger.warning(f"Could not fetch standings: {e}")
+    
+    logger.info(f"Enhanced season summary retrieved: {season.id}")
         
     return {
         "season": season,
         "total_games": total_games,
         "games_played": games_played,
-        "completion_percentage": round(completion, 1)
+        "completion_percentage": round(completion, 1),
+        "playoff_bracket": playoff_bracket,
+        "current_playoff_round": current_playoff_round,
+        "league_leaders": league_leaders,
+        "standings": standings
     }
 
 
@@ -504,6 +635,42 @@ def simulate_draft(season_id: int, db: Session = Depends(get_db)):
     return result
 
 
+@router.get("/{season_id}/draft/current", response_model=Optional[DraftPickDetail])
+@handle_errors
+def get_current_pick(season_id: int, db: Session = Depends(get_db)):
+    """Get the current draft pick."""
+    service = OffseasonService(db)
+    return service.get_current_pick(season_id)
+
+
+@router.post("/{season_id}/draft/pick", response_model=DraftPickDetail)
+@handle_errors
+def make_pick(season_id: int, player_id: int, db: Session = Depends(get_db)):
+    """Make a selection for the current pick."""
+    service = OffseasonService(db)
+    return service.make_pick(season_id, player_id)
+
+
+@router.post("/{season_id}/draft/simulate-next", response_model=Optional[DraftPickSummary])
+@handle_errors
+def simulate_next_pick(season_id: int, db: Session = Depends(get_db)):
+    """Simulate the next pick."""
+    service = OffseasonService(db)
+    return service.simulate_next_pick(season_id)
+
+
+@router.post("/{season_id}/draft/trade-current", response_model=DraftPickDetail)
+@handle_errors
+def trade_current_pick(
+    season_id: int, 
+    target_team_id: int, 
+    db: Session = Depends(get_db)
+):
+    """Trade the current pick to another team."""
+    service = OffseasonService(db)
+    return service.trade_current_pick(season_id, target_team_id)
+
+
 @router.post("/{season_id}/free-agency/simulate")
 @handle_errors
 def simulate_free_agency(season_id: int, db: Session = Depends(get_db)):
@@ -564,8 +731,11 @@ def get_league_leaders(
     logger.info(f"League leaders retrieved: {limit} per category")
     return LeagueLeaders(
         passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
+        passing_tds=get_top_stats(PlayerGameStats.pass_tds, "passing_tds"),
         rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
-        receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards")
+        rushing_tds=get_top_stats(PlayerGameStats.rush_tds, "rushing_tds"),
+        receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards"),
+        receiving_tds=get_top_stats(PlayerGameStats.rec_tds, "receiving_tds")
     )
 
 

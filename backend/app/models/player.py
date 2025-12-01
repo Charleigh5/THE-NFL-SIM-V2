@@ -19,6 +19,19 @@ class Position(str, enum.Enum):
     K = "K"
     P = "P"
 
+class InjuryStatus(str, enum.Enum):
+    ACTIVE = "ACTIVE"
+    QUESTIONABLE = "QUESTIONABLE"
+    DOUBTFUL = "DOUBTFUL"
+    OUT = "OUT"
+    IR = "IR"
+
+class DevelopmentTrait(str, enum.Enum):
+    NORMAL = "NORMAL"
+    STAR = "STAR"
+    SUPERSTAR = "SUPERSTAR"
+    XFACTOR = "XFACTOR"
+
 class Player(Base):
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String, index=True)
@@ -30,6 +43,7 @@ class Player(Base):
     experience = Column(Integer, default=0) # Years pro
     jersey_number = Column(Integer, default=0)
     overall_rating = Column(Integer, default=50, index=True)
+    depth_chart_rank = Column(Integer, default=999) # Lower is better (starter = 1)
     
     # Team Relationship
     team_id = Column(Integer, ForeignKey("team.id"), nullable=True, index=True)
@@ -80,6 +94,15 @@ class Player(Base):
     level = Column(Integer, default=1)
     skill_points = Column(Integer, default=0)
     traits = Column(JSON, default=list) # List of trait strings e.g. ["DeepBall", "Clutch"]
+    development_trait = Column(String, default=DevelopmentTrait.NORMAL) # Using String to store Enum value
+    
+    # --- Morale & Chemistry ---
+    morale = Column(Integer, default=50) # 0-100
+    
+    # --- Injury System ---
+    injury_status = Column(String, default=InjuryStatus.ACTIVE)
+    injury_type = Column(String, nullable=True) # e.g. "ACL Tear", "Sprained Ankle"
+    weeks_to_recovery = Column(Integer, default=0)
     
     # Nano Banana
     image_url = Column(String, nullable=True)
@@ -89,3 +112,8 @@ class Player(Base):
     contract_years = Column(Integer, default=1)
     contract_salary = Column(Integer, default=1000000) # In dollars
     is_rookie = Column(Boolean, default=False, index=True)
+
+    # --- Retirement & Legacy ---
+    is_retired = Column(Boolean, default=False, index=True)
+    retirement_year = Column(Integer, nullable=True)
+    legacy_score = Column(Integer, default=0) # For Hall of Fame tracking

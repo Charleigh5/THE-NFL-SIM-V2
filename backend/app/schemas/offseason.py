@@ -23,6 +23,17 @@ class DraftPickSummary(BaseModel):
     player_position: str
     player_overall: int
 
+class DraftPickDetail(BaseModel):
+    id: int
+    season_id: int
+    team_id: int
+    original_team_id: int
+    round: int
+    pick_number: int
+    player_id: Optional[int] = None
+    
+    model_config = ConfigDict(from_attributes=True)
+
 class PlayerProgressionResult(BaseModel):
     player_id: int
     name: str

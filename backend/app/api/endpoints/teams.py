@@ -36,6 +36,7 @@ class PlayerSchema(BaseModel):
     position: str
     jersey_number: int
     overall_rating: int
+    depth_chart_rank: int = 999
     age: int
     experience: int
 
@@ -76,4 +77,42 @@ def read_team_roster(team_id: int, db: Session = Depends(get_db)):
     """
     logger.info(f"Fetching roster for team {team_id}")
     players = db.query(Player).filter(Player.team_id == team_id).all()
+    # Sort by depth chart rank then overall
+    players.sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
     return players
+
+class DepthChartUpdate(BaseModel):
+    position: str
+    player_ids: List[int]
+
+@router.put("/{team_id}/depth-chart")
+@handle_errors
+def update_depth_chart(
+    team_id: int,
+    update: DepthChartUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Update the depth chart for a specific position.
+    Receives an ordered list of player IDs.
+    """
+    logger.info(f"Updating depth chart for team {team_id}, position {update.position}")
+    
+    # Verify all players belong to the team and position
+    players = db.query(Player).filter(
+        Player.team_id == team_id,
+        Player.position == update.position,
+        Player.id.in_(update.player_ids)
+    ).all()
+    
+    player_map = {p.id: p for p in players}
+    
+    if len(players) != len(update.player_ids):
+        raise HTTPException(status_code=400, detail="Some players not found or do not belong to this team/position")
+        
+    for rank, player_id in enumerate(update.player_ids):
+        player = player_map[player_id]
+        player.depth_chart_rank = rank + 1 # 1-based rank
+        
+    db.commit()
+    return {"message": "Depth chart updated successfully"}

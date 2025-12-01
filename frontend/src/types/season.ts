@@ -81,6 +81,15 @@ export interface GameResult {
   winner: "home" | "away" | "tie";
 }
 
+export interface SingleGameResult {
+  id: number;
+  home_team_id: number;
+  away_team_id: number;
+  home_score: number;
+  away_score: number;
+  winner: "home" | "away" | "tie";
+}
+
 export interface SeasonSummary {
   season: Season;
   total_games: number;

@@ -24,7 +24,7 @@ const Dashboard = () => {
       try {
         const season = await seasonApi.getCurrentSeason();
         setCurrentSeason(season);
-      } catch (e) {
+      } catch {
         console.log("No active season found");
       } finally {
         setLoadingSeason(false);

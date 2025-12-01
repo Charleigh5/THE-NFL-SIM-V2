@@ -4,16 +4,13 @@ import Dashboard from "./pages/Dashboard";
 import SeasonDashboard from "./pages/SeasonDashboard";
 import OffseasonDashboard from "./pages/OffseasonDashboard";
 import { FrontOffice } from "./pages/FrontOffice";
+import { DepthChart } from "./pages/DepthChart";
+import { DraftRoom } from "./pages/DraftRoom";
+import TeamSelection from "./pages/TeamSelection";
+import Settings from "./pages/Settings";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./App.css";
 
-// Placeholder components for engine pages
-const GenesisPage = () => <div className="page-placeholder">🧬 Genesis Engine (Coming Soon)</div>;
-const EmpirePage = () => <div className="page-placeholder">💰 Empire Engine (Coming Soon)</div>;
-const HivePage = () => <div className="page-placeholder">🌦️ Hive Engine (Coming Soon)</div>;
-const SocietyPage = () => <div className="page-placeholder">📰 Society Engine (Coming Soon)</div>;
-const CorePage = () => <div className="page-placeholder">⚙️ Core Engine (Coming Soon)</div>;
-const RPGPage = () => <div className="page-placeholder">📊 RPG Engine (Coming Soon)</div>;
 const NotFound = () => <div className="page-placeholder">404 Not Found</div>;
 
 function App() {
@@ -25,13 +22,11 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="season" element={<SeasonDashboard />} />
             <Route path="offseason" element={<OffseasonDashboard />} />
-            <Route path="genesis" element={<GenesisPage />} />
-            <Route path="empire" element={<EmpirePage />} />
+            <Route path="offseason/draft" element={<DraftRoom />} />
             <Route path="empire/front-office" element={<FrontOffice />} />
-            <Route path="hive" element={<HivePage />} />
-            <Route path="society" element={<SocietyPage />} />
-            <Route path="core" element={<CorePage />} />
-            <Route path="rpg" element={<RPGPage />} />
+            <Route path="empire/depth-chart" element={<DepthChart />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="team-selection" element={<TeamSelection />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

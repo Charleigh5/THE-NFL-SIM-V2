@@ -12,13 +12,13 @@ def test_match_context_integration():
     # Create Mock Players with Stats
     qb = Player(id=1, first_name="Test", last_name="QB", position="QB", 
                 throw_accuracy_short=90, throw_accuracy_mid=85, throw_accuracy_deep=80,
-                acceleration=80, height=75)
+                acceleration=80, height=75, overall_rating=85)
     
     wr = Player(id=2, first_name="Test", last_name="WR", position="WR", 
-                speed=95, route_running=90, acceleration=95, height=72)
+                speed=95, route_running=90, acceleration=95, height=72, overall_rating=90)
     
     cb = Player(id=3, first_name="Test", last_name="CB", position="CB", 
-                speed=85, man_coverage=80, acceleration=90, height=70)
+                speed=85, man_coverage=80, acceleration=90, height=70, overall_rating=82)
                 
     home_roster = [qb, wr]
     away_roster = [cb]

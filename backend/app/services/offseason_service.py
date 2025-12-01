@@ -1,14 +1,18 @@
 from sqlalchemy.orm import Session
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
-from app.models.player import Player
+from app.models.player import Player, DevelopmentTrait
+from app.models.coach import Coach
 from app.models.draft import DraftPick
 from app.models.playoff import PlayoffMatchup, PlayoffRound
 from app.services.standings_calculator import StandingsCalculator
 from app.services.rookie_generator import RookieGenerator
 import random
-from typing import List
+from typing import List, Optional
 from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
+from app.models.hall_of_fame import HallOfFame
+from app.models.stats import PlayerGameStats
+from sqlalchemy import func
 
 class OffseasonService:
     def __init__(self, db: Session):
@@ -27,7 +31,10 @@ class OffseasonService:
         # and maybe track phase in a separate field or just assume flow.
         
         try:
-            # 1. Process Contracts
+            # 1. Process Retirements
+            self.process_retirements(season_id)
+
+            # 2. Process Contracts
             self.process_contract_expirations()
             
             # 2. Generate Draft Order
@@ -81,8 +88,29 @@ class OffseasonService:
             # Random variance
             variance = random.randint(-1, 1)
             
+            # Dev Trait Modifier
+            dev_trait_mod = 0
+            if player.development_trait == DevelopmentTrait.STAR:
+                dev_trait_mod = 1
+            elif player.development_trait == DevelopmentTrait.SUPERSTAR:
+                dev_trait_mod = 2
+            elif player.development_trait == DevelopmentTrait.XFACTOR:
+                dev_trait_mod = 3
+                
+            # Coach Modifier
+            coach_mod = 0
+            if player.team:
+                head_coach = next((c for c in player.team.coaches if c.role == "Head Coach"), None)
+                if head_coach:
+                    # Rating 50 is neutral. Every 10 points is +/- 1 modifier chance?
+                    # Let's just add small bonus for high rating
+                    if head_coach.development_rating > 70:
+                        coach_mod = 1
+                    elif head_coach.development_rating < 30:
+                        coach_mod = -1
+
             # Total change
-            total_change = age_change + exp_modifier + variance
+            total_change = age_change + exp_modifier + variance + dev_trait_mod + coach_mod
             
             # Apply change and clamp between 40-99
             new_rating = max(40, min(99, old_rating + total_change))
@@ -229,79 +257,117 @@ class OffseasonService:
             ) for p in rookies
         ]
 
-    def simulate_draft(self, season_id: int) -> List[DraftPickSummary]:
-        """Simulate the entire draft with position need logic."""
-        picks = self.db.query(DraftPick).filter(
+    def get_current_pick(self, season_id: int) -> Optional[DraftPick]:
+        """Get the next available draft pick."""
+        return self.db.query(DraftPick).filter(
             DraftPick.season_id == season_id,
             DraftPick.player_id == None
-        ).order_by(DraftPick.pick_number).all()
+        ).order_by(DraftPick.pick_number).first()
+
+    def make_pick(self, season_id: int, player_id: int) -> DraftPick:
+        """Make a draft pick for the current slot."""
+        pick = self.get_current_pick(season_id)
+        if not pick:
+            raise ValueError("No picks remaining in the draft.")
+            
+        player = self.db.query(Player).get(player_id)
+        if not player:
+            raise ValueError("Player not found.")
+        if player.team_id is not None:
+             raise ValueError("Player already on a team.")
+             
+        # Assign player to team
+        pick.player_id = player.id
+        player.team_id = pick.team_id
+        player.contract_years = 4
+        player.is_rookie = False
         
+        self.db.commit()
+        return pick
+
+    def trade_current_pick(self, season_id: int, target_team_id: int) -> DraftPick:
+        """Trade the current pick to another team."""
+        pick = self.get_current_pick(season_id)
+        if not pick:
+            raise ValueError("No active pick to trade.")
+            
+        pick.team_id = target_team_id
+        self.db.commit()
+        return pick
+
+    def simulate_next_pick(self, season_id: int) -> Optional[DraftPickSummary]:
+        """Simulate the next single pick in the draft."""
+        pick = self.get_current_pick(season_id)
+        if not pick:
+            return None
+            
         # Get available rookies
+        # Optimization: Just get top 20 to choose from
         rookies = self.db.query(Player).filter(
             Player.is_rookie == True,
             Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).all()
+        ).order_by(Player.overall_rating.desc()).limit(20).all()
         
+        if not rookies:
+            return None
+            
         rookie_pool = list(rookies)
+        team_needs = self._get_team_needs(pick.team_id)
         
-        # Target roster counts (simplified)
         TARGET_COUNTS = {
             "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
             "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
         }
         
-        drafted_players = {}
-
-        for pick in picks:
-            if not rookie_pool:
+        selected_player = None
+        
+        # 1. Look for high-value need
+        for i, prospect in enumerate(rookie_pool):
+            if i > 10: 
                 break
                 
-            team_needs = self._get_team_needs(pick.team_id)
+            current_count = team_needs.get(prospect.position, 0)
+            target = TARGET_COUNTS.get(prospect.position, 5)
             
-            # Find best player at a position of need
-            selected_player = None
+            if current_count < target:
+                selected_player = prospect
+                break
+        
+        # 2. BPA
+        if not selected_player:
+            selected_player = rookie_pool[0]
             
-            # 1. Look for high-value need (Best player available at a position where we are under target)
-            for i, prospect in enumerate(rookie_pool):
-                # Don't reach too far down the board (e.g., only look at top 10 available)
-                if i > 10: 
-                    break
-                    
-                current_count = team_needs.get(prospect.position, 0)
-                target = TARGET_COUNTS.get(prospect.position, 5) # Default to 5 if unknown
-                
-                if current_count < target:
-                    selected_player = prospect
-                    rookie_pool.pop(i)
-                    break
-            
-            # 2. If no need found in top prospects, just take Best Player Available (BPA)
-            if not selected_player:
-                selected_player = rookie_pool.pop(0)
-            
-            pick.player_id = selected_player.id
-            selected_player.team_id = pick.team_id
-            selected_player.contract_years = 4
-            selected_player.is_rookie = False # No longer a prospect
-            drafted_players[pick.pick_number] = selected_player
+        # Execute pick
+        return self._execute_pick(pick, selected_player)
 
+    def _execute_pick(self, pick: DraftPick, player: Player) -> DraftPickSummary:
+        """Internal helper to execute a pick."""
+        pick.player_id = player.id
+        player.team_id = pick.team_id
+        player.contract_years = 4
+        player.is_rookie = False
+        
         self.db.commit()
         
-        # Generate summary of picks
+        return DraftPickSummary(
+            round=pick.round,
+            pick_number=pick.pick_number,
+            team_id=pick.team_id,
+            player_name=f"{player.first_name} {player.last_name}",
+            player_position=player.position,
+            player_overall=player.overall_rating
+        )
+
+    def simulate_draft(self, season_id: int) -> List[DraftPickSummary]:
+        """Simulate the remainder of the draft."""
         summary = []
-        picks = self.db.query(DraftPick).filter(DraftPick.season_id == season_id).order_by(DraftPick.pick_number).all()
-        for pick in picks:
-             if pick.player_id:
-                 player = drafted_players.get(pick.pick_number)
-                 if player:
-                     summary.append(DraftPickSummary(
-                         round=pick.round,
-                         pick_number=pick.pick_number,
-                         team_id=pick.team_id,
-                         player_name=f"{player.first_name} {player.last_name}",
-                         player_position=player.position,
-                         player_overall=player.overall_rating
-                     ))
+        while True:
+            result = self.simulate_next_pick(season_id)
+            if not result:
+                break
+            summary.append(result)
+        
+        return summary
         
         return summary
 
@@ -330,3 +396,84 @@ class OffseasonService:
                     
         self.db.commit()
         return {"message": "Free Agency simulated."}
+
+    def process_retirements(self, season_id: int) -> List[str]:
+        """Process player retirements based on age and rating."""
+        season = self.db.query(Season).get(season_id)
+        if not season:
+            return []
+
+        players = self.db.query(Player).filter(
+            Player.is_retired == False,
+            Player.team_id != None
+        ).all()
+        
+        retired_names = []
+        
+        for player in players:
+            should_retire = False
+            
+            # Base logic
+            if player.age >= 40:
+                should_retire = True
+            elif player.age >= 35:
+                # High chance if rating is low
+                if player.overall_rating < 75:
+                    should_retire = random.random() < 0.5
+                else:
+                    should_retire = random.random() < 0.1
+            elif player.age >= 30:
+                if player.overall_rating < 65:
+                    should_retire = random.random() < 0.2
+            
+            if should_retire:
+                player.is_retired = True
+                player.retirement_year = season.year
+                player.team_id = None
+                retired_names.append(f"{player.first_name} {player.last_name}")
+                
+                # Check Hall of Fame
+                self._check_hall_of_fame(player, season.year)
+                
+        self.db.commit()
+        return retired_names
+
+    def _check_hall_of_fame(self, player: Player, year: int):
+        """Check if a retired player qualifies for the Hall of Fame."""
+        # Simple criteria for MVP: High Overall or High Legacy Score
+        is_hof = False
+        if player.overall_rating >= 90: # Lowered slightly for MVP testing
+            is_hof = True
+        elif player.legacy_score >= 1000:
+            is_hof = True
+            
+        if is_hof:
+            stats = self._calculate_career_stats(player.id)
+            hof_entry = HallOfFame(
+                player_id=player.id,
+                year_inducted=year,
+                career_stats_snapshot=stats
+            )
+            self.db.add(hof_entry)
+
+    def _calculate_career_stats(self, player_id: int) -> dict:
+        """Aggregate career stats for a player."""
+        stats = self.db.query(
+            func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
+            func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
+            func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
+            func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
+            func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
+            func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
+            func.count(PlayerGameStats.id).label("games_played")
+        ).filter(PlayerGameStats.player_id == player_id).first()
+        
+        return {
+            "games_played": stats.games_played or 0,
+            "pass_yards": stats.pass_yards or 0,
+            "pass_tds": stats.pass_tds or 0,
+            "rush_yards": stats.rush_yards or 0,
+            "rush_tds": stats.rush_tds or 0,
+            "rec_yards": stats.rec_yards or 0,
+            "rec_tds": stats.rec_tds or 0
+        }

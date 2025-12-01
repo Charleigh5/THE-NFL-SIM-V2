@@ -80,3 +80,22 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
 #     recruiting = RecruitingEngine()
 #     recruit = recruiting.generate_prospect(position)
 #     return recruit
+
+@router.post("/seed")
+@handle_errors
+def seed_database(db: Session = Depends(get_db)):
+    """Seed the database with initial data for testing."""
+    logger.info("Seeding database...")
+    
+    from app.core.seed import seed_teams, seed_players
+    from app.models.season import Season
+    
+    # Ensure teams and players exist
+    seed_teams(db)
+    seed_players(db)
+    
+    # Reset seasons (deactivate all)
+    db.query(Season).update({Season.is_active: False})
+    db.commit()
+    
+    return {"message": "Database seeded successfully"}

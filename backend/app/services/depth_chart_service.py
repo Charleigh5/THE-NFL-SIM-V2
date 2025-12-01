@@ -18,9 +18,9 @@ class DepthChartService:
                 chart[pos] = []
             chart[pos].append(p)
             
-        # Sort each position group
+        # Sort each position group: Primary by depth_chart_rank (asc), Secondary by overall_rating (desc)
         for pos in chart:
-            chart[pos].sort(key=lambda x: x.overall_rating, reverse=True)
+            chart[pos].sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
             
         return chart
 

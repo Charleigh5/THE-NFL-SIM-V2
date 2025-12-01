@@ -11,5 +11,8 @@ class PlayerLeader(BaseModel):
 
 class LeagueLeaders(BaseModel):
     passing_yards: List[PlayerLeader]
+    passing_tds: List[PlayerLeader]
     rushing_yards: List[PlayerLeader]
+    rushing_tds: List[PlayerLeader]
     receiving_yards: List[PlayerLeader]
+    receiving_tds: List[PlayerLeader]

@@ -1,0 +1,127 @@
+.player-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.player-modal-content {
+  background: rgba(20, 20, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(to right, rgba(0, 255, 255, 0.1), transparent);
+}
+
+.player-info h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.player-meta {
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #fff;
+}
+
+.player-modal-body {
+  padding: 20px;
+}
+
+.attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.attribute-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.attribute-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.attribute-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00ffff;
+}
+
+.career-stats-section h3 {
+  margin-bottom: 15px;
+  color: #ddd;
+  border-left: 3px solid #00ffff;
+  padding-left: 10px;
+}
+
+.career-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.career-stats-table th,
+.career-stats-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.career-stats-table th {
+  color: #888;
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.career-stats-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}

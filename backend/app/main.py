@@ -74,6 +74,8 @@ app.add_middleware(
 )
 
 # Include API routers
+
+# Include API routers
 app.include_router(system.router)
 app.include_router(simulation.router)
 app.include_router(data.router)
@@ -82,6 +84,8 @@ app.include_router(teams.router, prefix="/api/teams", tags=["teams"])
 app.include_router(players.router, prefix="/api/players", tags=["players"])
 app.include_router(season.router)
 app.include_router(genesis.router)
+from app.api.endpoints import settings as settings_endpoint
+app.include_router(settings_endpoint.router)
 
 @app.get("/")
 def read_root():

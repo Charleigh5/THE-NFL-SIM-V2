@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import type { LeagueLeaders as LeagueLeadersType } from "../../types/stats";
+import type { Team } from "../../services/api";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
+import { PlayerModal } from "../ui/PlayerModal";
 import "./LeagueLeaders.css";
 
 interface LeagueLeadersProps {
   leaders: LeagueLeadersType | null;
   loading: boolean;
+  teams: Team[];
 }
 
-export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading }) => {
+export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, teams }) => {
   const [activeCategory, setActiveCategory] = useState<"passing" | "rushing" | "receiving">(
     "passing"
   );
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
 
   if (loading) {
     return <LoadingSpinner text="Loading Leaders..." />;
@@ -20,6 +24,16 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading }
   if (!leaders) {
     return <div className="league-leaders-container">No stats available.</div>;
   }
+
+  const getTeamLogo = (teamAbbr: string) => {
+    const team = teams.find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
+    return team?.logo_url;
+  };
+
+  const getTeamColor = (teamAbbr: string) => {
+    const team = teams.find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
+    return team?.primary_color || "#2a2a2a";
+  };
 
   const renderLeader = (category: "passing" | "rushing" | "receiving") => {
     const list =
@@ -33,14 +47,33 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading }
 
     if (!topLeader) return <div className="no-leaders">No leaders found</div>;
 
+    const topLeaderColor = getTeamColor(topLeader.team);
+    const topLeaderLogo = getTeamLogo(topLeader.team);
+
     return (
       <div className="leader-card">
-        <div className="leader-top">
-          <div className="leader-info">
-            <h4>{topLeader.name}</h4>
-            <p>
-              {topLeader.team} • {topLeader.position}
-            </p>
+        <div
+          className="leader-top"
+          style={{
+            background: `linear-gradient(135deg, ${topLeaderColor}40 0%, #2a2a2a 100%)`,
+            borderLeft: `4px solid ${topLeaderColor}`,
+          }}
+        >
+          <div className="leader-info-group">
+            {topLeaderLogo && (
+              <img src={topLeaderLogo} alt={topLeader.team} className="leader-team-logo" />
+            )}
+            <div className="leader-info">
+              <h4
+                onClick={() => setSelectedPlayerId(topLeader.player_id)}
+                className="cursor-pointer hover:text-cyan-400 transition-colors"
+              >
+                {topLeader.name}
+              </h4>
+              <p>
+                {topLeader.team} • {topLeader.position}
+              </p>
+            </div>
           </div>
           <div className="leader-stat">
             <span className="stat-value">{topLeader.value}</span>
@@ -51,7 +84,13 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading }
           {list.slice(1, 5).map((p, i) => (
             <div key={i} className="leader-row">
               <span className="rank">{i + 2}</span>
-              <span className="name">{p.name}</span>
+              <span
+                className="name cursor-pointer hover:text-cyan-400 transition-colors"
+                onClick={() => setSelectedPlayerId(p.player_id)}
+              >
+                {p.name}
+              </span>
+              <span className="team-abbr">{p.team}</span>
               <span className="value">{p.value}</span>
             </div>
           ))}
@@ -86,6 +125,9 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading }
         </div>
       </div>
       <div className="leaders-content">{renderLeader(activeCategory)}</div>
+      {selectedPlayerId && (
+        <PlayerModal playerId={selectedPlayerId} onClose={() => setSelectedPlayerId(null)} />
+      )}
     </div>
   );
 };

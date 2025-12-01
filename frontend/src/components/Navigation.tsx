@@ -8,12 +8,12 @@ const Navigation = () => {
   const navItems = [
     { path: "/", label: "Dashboard", icon: "🎮" },
     { path: "/season", label: "Season", icon: "🏆" },
-    { path: "/genesis", label: "Genesis", icon: "🧬" },
-    { path: "/empire", label: "Empire", icon: "💰" },
-    { path: "/hive", label: "Hive", icon: "🌦️" },
-    { path: "/society", label: "Society", icon: "📰" },
-    { path: "/core", label: "Core", icon: "⚙️" },
-    { path: "/rpg", label: "RPG", icon: "📊" },
+    { path: "/offseason", label: "Offseason", icon: "🌟" },
+    { path: "/offseason/draft", label: "Draft Room", icon: "🏈" },
+    { path: "/empire/front-office", label: "Roster", icon: "👥" },
+    { path: "/empire/depth-chart", label: "Depth Chart", icon: "📋" },
+    { path: "/team-selection", label: "My Team", icon: "⭐" },
+    { path: "/settings", label: "Settings", icon: "⚙️" },
   ];
 
   return (

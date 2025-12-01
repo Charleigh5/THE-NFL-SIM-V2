@@ -28,6 +28,16 @@ export interface DraftPickSummary {
   player_overall: number;
 }
 
+export interface DraftPickDetail {
+  id: number;
+  season_id: number;
+  team_id: number;
+  original_team_id: number;
+  round: number;
+  pick_number: number;
+  player_id?: number;
+}
+
 export interface PlayerProgressionResult {
   player_id: number;
   name: string;

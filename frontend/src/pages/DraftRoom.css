@@ -1,0 +1,154 @@
+.draft-room {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #121212;
+  color: #fff;
+  overflow: hidden;
+}
+
+.draft-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  border-bottom: 1px solid #333;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: #ecf0f1;
+}
+
+.current-pick-display {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+}
+
+.round-info {
+  font-size: 0.9rem;
+  color: #bdc3c7;
+}
+
+.on-the-clock {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f1c40f;
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.simulate-btn {
+  background-color: #2980b9;
+  color: white;
+}
+
+.simulate-btn:hover {
+  background-color: #3498db;
+}
+
+.simulate-btn:disabled {
+  background-color: #34495e;
+  cursor: not-allowed;
+}
+
+.trade-btn {
+  background-color: #e67e22;
+  color: white;
+}
+
+.draft-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.draft-board-container {
+  flex: 3;
+  overflow-y: auto;
+  padding: 1rem;
+  border-right: 1px solid #333;
+}
+
+.draft-sidebar {
+  flex: 1;
+  background-color: #1a1a1a;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.team-needs-panel h3,
+.mock-sim-panel h3 {
+  border-bottom: 2px solid #c0392b;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.need-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.need-pos {
+  width: 40px;
+  font-weight: bold;
+}
+
+.need-bar-container {
+  flex: 1;
+  height: 8px;
+  background-color: #333;
+  margin: 0 10px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.need-bar {
+  height: 100%;
+  background-color: #e74c3c;
+}
+
+.need-score {
+  width: 30px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.mock-sim-panel {
+  background-color: #2c3e50;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.mock-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}

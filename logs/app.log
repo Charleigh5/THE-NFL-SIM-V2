@@ -288,3 +288,1073 @@ Traceback (most recent call last):
     "timestamp": datetime.now(datetime.UTC).isoformat()
                               ^^^^^^^^^^^^
 AttributeError: type object 'datetime.datetime' has no attribute 'UTC'
+{"time":"2025-11-30 11:36:33,711","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:36:33,714","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:36:33,750","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:36:33,752","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 11:36:33,966","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:36:33,967","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:36:33,978","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 0 matchups, round: None"}
+{"time":"2025-11-30 11:36:34,006","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:36:34,009","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 0 teams"}
+{"time":"2025-11-30 11:36:34,009","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:36:34,011","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:36:34,014","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 11:37:05,156","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:37:05,159","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:37:05,192","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:37:05,195","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 11:37:05,323","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:37:05,324","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:37:05,334","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 0 matchups, round: None"}
+{"time":"2025-11-30 11:37:05,352","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:37:05,355","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 0 teams"}
+{"time":"2025-11-30 11:37:05,356","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:37:05,357","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:37:05,359","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 11:55:23,786","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:55:23,789","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:55:23,822","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:55:23,824","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 11:55:23,840","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:55:23,842","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:55:23,872","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:55:23,874","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 4 teams"}
+{"time":"2025-11-30 11:55:23,874","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:55:23,919","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:55:23,921","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 11:55:24,147","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:55:24,149","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:55:24,156","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:55:24,157","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 4 teams"}
+{"time":"2025-11-30 11:55:24,157","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:55:24,158","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:55:24,159","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 11:55:24,168","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:55:24,169","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:55:24,175","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:55:24,176","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 4 teams"}
+{"time":"2025-11-30 11:55:24,177","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:55:24,177","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:55:24,178","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 11:55:24,202","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 11:55:24,204","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 11:55:24,215","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 11:55:24,216","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 teams"}
+{"time":"2025-11-30 11:55:24,216","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 11:55:24,217","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 11:55:24,220","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:05,257","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,261","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season 999999"}
+{"time":"2025-11-30 15:15:05,266","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,269","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:15:05,275","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,276","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 1"}
+{"time":"2025-11-30 15:15:05,276","name":"app.core.error_decorators","level":"WARNING","message":"Value error in generate_playoffs: Test Value Error"}
+{"time":"2025-11-30 15:15:05,277","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,278","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request""}
+{"time":"2025-11-30 15:15:05,306","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,308","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 1"}
+{"time":"2025-11-30 15:15:05,309","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,310","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/1/salary-cap?season_id=1 "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:05,505","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,506","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:05,508","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,510","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:15:05,523","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,525","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:05,550","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:05,552","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:05,552","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:05,553","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,554","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:05,656","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,657","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:05,662","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:05,663","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:05,663","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:05,664","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,665","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:05,672","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,673","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:05,678","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:05,679","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:05,679","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:05,679","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,680","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:05,706","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:05,707","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:05,712","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:05,712","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:05,713","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:05,713","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:05,714","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:18,387","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:18,388","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 999"}
+{"time":"2025-11-30 15:15:18,390","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in generate_playoffs"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 562, in generate_playoffs
+    result = service.generate_playoffs(season_id)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\playoff_service.py", line 41, in generate_playoffs
+    season = self.db.query(Season).filter(Season.id == season_id).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (999, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:15:18,397","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:18,399","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/999/playoffs/generate "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:15:18,406","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:18,407","name":"app.api.endpoints.season","level":"INFO","message":"Starting offseason for season 999"}
+{"time":"2025-11-30 15:15:18,407","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in start_offseason"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 593, in start_offseason
+    result = service.start_offseason(season_id)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\offseason_service.py", line 22, in start_offseason
+    season = self.db.query(Season).filter(Season.id == season_id).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (999, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:15:18,410","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:18,411","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/999/offseason/start "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:15:18,418","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:18,419","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 999"}
+{"time":"2025-11-30 15:15:18,420","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in get_team_salary_cap"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 840, in get_team_salary_cap
+    season = db.query(Season).filter(Season.is_active == True).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.is_active = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:15:18,423","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:18,424","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/999/salary-cap "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:15:53,561","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:53,564","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:53,594","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:53,596","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:15:53,634","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:53,635","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:53,700","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:53,701","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:53,702","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:53,704","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:53,705","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:54,422","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:54,423","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:54,428","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:54,429","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:54,429","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:54,430","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:54,431","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:54,439","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:54,440","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:54,445","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:54,446","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:54,446","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:54,447","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:54,448","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:15:54,495","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:15:54,496","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:15:54,502","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:15:54,502","name":"app.api.endpoints.season","level":"WARNING","message":"Could not fetch standings: '<' not supported between instances of 'NoneType' and 'NoneType'"}
+{"time":"2025-11-30 15:15:54,503","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:15:54,503","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:15:54,504","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:16:50,522","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,525","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,558","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,560","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:16:50,578","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,579","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,644","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:16:50,646","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:16:50,646","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:16:50,647","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,649","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:16:50,682","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,683","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,687","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 2 matchups, round: WILD_CARD"}
+{"time":"2025-11-30 15:16:50,692","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:16:50,693","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:16:50,693","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:16:50,694","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,696","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:16:50,823","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,824","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,829","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:16:50,830","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:16:50,830","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:16:50,830","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,832","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:16:50,851","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,853","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,858","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:16:50,858","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:16:50,859","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:16:50,859","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,860","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:16:50,887","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:16:50,888","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:16:50,893","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:16:50,894","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 1 conferences"}
+{"time":"2025-11-30 15:16:50,894","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:16:50,894","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:16:50,895","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:17:12,621","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,623","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,653","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,655","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:17:12,674","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,675","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,752","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:17:12,755","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:17:12,756","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:17:12,758","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,760","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:17:12,776","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,778","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,784","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 2 matchups, round: WILD_CARD"}
+{"time":"2025-11-30 15:17:12,789","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:17:12,791","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:17:12,791","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:17:12,792","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,795","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:17:12,809","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,811","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,818","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:17:12,819","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:17:12,819","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:17:12,820","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,822","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:17:12,834","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,836","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,845","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:17:12,846","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:17:12,846","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:17:12,847","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,849","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:17:12,872","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:17:12,873","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:17:12,879","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:17:12,879","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 1 conferences"}
+{"time":"2025-11-30 15:17:12,880","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:17:12,880","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:17:12,881","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,481","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,484","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season 999999"}
+{"time":"2025-11-30 15:36:40,488","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,491","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:36:40,497","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,499","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 1"}
+{"time":"2025-11-30 15:36:40,499","name":"app.core.error_decorators","level":"WARNING","message":"Value error in generate_playoffs: Test Value Error"}
+{"time":"2025-11-30 15:36:40,500","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,501","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request""}
+{"time":"2025-11-30 15:36:40,544","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,546","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 1"}
+{"time":"2025-11-30 15:36:40,547","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,549","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/1/salary-cap?season_id=1 "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,754","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,755","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,757","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,758","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:36:40,788","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,789","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,815","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:36:40,817","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:36:40,817","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:36:40,818","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,819","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,829","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,830","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,832","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 2 matchups, round: WILD_CARD"}
+{"time":"2025-11-30 15:36:40,836","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:36:40,837","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:36:40,837","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:36:40,838","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,839","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,847","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,849","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,853","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:36:40,854","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:36:40,854","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:36:40,855","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,856","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,864","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,865","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,869","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:36:40,870","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:36:40,870","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:36:40,871","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,872","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:40,889","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:40,890","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:36:40,896","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:36:40,896","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 1 conferences"}
+{"time":"2025-11-30 15:36:40,896","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:36:40,897","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:40,898","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:36:53,435","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:53,436","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 999"}
+{"time":"2025-11-30 15:36:53,438","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in generate_playoffs"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 562, in generate_playoffs
+    result = service.generate_playoffs(season_id)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\playoff_service.py", line 41, in generate_playoffs
+    season = self.db.query(Season).filter(Season.id == season_id).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (999, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:36:53,445","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:53,446","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/999/playoffs/generate "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:36:53,454","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:53,455","name":"app.api.endpoints.season","level":"INFO","message":"Starting offseason for season 999"}
+{"time":"2025-11-30 15:36:53,456","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in start_offseason"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 593, in start_offseason
+    result = service.start_offseason(season_id)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\offseason_service.py", line 22, in start_offseason
+    season = self.db.query(Season).filter(Season.id == season_id).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.id = ?
+ LIMIT ? OFFSET ?]
+[parameters: (999, 1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:36:53,458","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:53,459","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/999/offseason/start "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:36:53,466","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:36:53,467","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 999"}
+{"time":"2025-11-30 15:36:53,468","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in get_team_salary_cap"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: season
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 840, in get_team_salary_cap
+    season = db.query(Season).filter(Season.is_active == True).first()
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: season
+[SQL: SELECT season.id AS season_id, season.year AS season_year, season.current_week AS season_current_week, season.is_active AS season_is_active, season.status AS season_status, season.total_weeks AS season_total_weeks, season.playoff_weeks AS season_playoff_weeks 
+FROM season 
+WHERE season.is_active = 1
+ LIMIT ? OFFSET ?]
+[parameters: (1, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-11-30 15:36:53,471","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:36:53,472","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/999/salary-cap "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-11-30 15:38:20,083","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,088","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season 999999"}
+{"time":"2025-11-30 15:38:20,097","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,102","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:38:20,114","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,117","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 1"}
+{"time":"2025-11-30 15:38:20,118","name":"app.core.error_decorators","level":"WARNING","message":"Value error in generate_playoffs: Test Value Error"}
+{"time":"2025-11-30 15:38:20,119","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,121","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request""}
+{"time":"2025-11-30 15:38:20,161","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,162","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 1"}
+{"time":"2025-11-30 15:38:20,163","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,164","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/1/salary-cap?season_id=1 "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:38:20,321","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,323","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,324","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,326","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:38:20,338","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,339","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,365","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:38:20,367","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:38:20,367","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:38:20,369","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,370","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:38:20,399","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,400","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,403","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 2 matchups, round: WILD_CARD"}
+{"time":"2025-11-30 15:38:20,407","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:38:20,408","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:38:20,408","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:38:20,409","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,410","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:38:20,420","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,421","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,426","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:38:20,427","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:38:20,427","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:38:20,428","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,429","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:38:20,436","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,437","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,442","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:38:20,443","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:38:20,443","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:38:20,444","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,445","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:38:20,465","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:38:20,467","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:38:20,473","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:38:20,474","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 1 conferences"}
+{"time":"2025-11-30 15:38:20,474","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:38:20,475","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:38:20,476","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,496","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,498","name":"app.api.endpoints.season","level":"INFO","message":"Fetching season 999999"}
+{"time":"2025-11-30 15:39:02,502","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,504","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/999999 "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:39:02,509","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,510","name":"app.api.endpoints.season","level":"INFO","message":"Generating playoff bracket for season 1"}
+{"time":"2025-11-30 15:39:02,510","name":"app.core.error_decorators","level":"WARNING","message":"Value error in generate_playoffs: Test Value Error"}
+{"time":"2025-11-30 15:39:02,511","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,512","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/1/playoffs/generate "HTTP/1.1 400 Bad Request""}
+{"time":"2025-11-30 15:39:02,540","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,542","name":"app.api.endpoints.season","level":"INFO","message":"Fetching salary cap for team 1"}
+{"time":"2025-11-30 15:39:02,542","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,543","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/team/1/salary-cap?season_id=1 "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,724","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,725","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,727","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,728","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 404 Not Found""}
+{"time":"2025-11-30 15:39:02,739","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,740","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,764","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:39:02,766","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:39:02,766","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:39:02,767","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,768","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,792","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,793","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,796","name":"app.api.endpoints.season","level":"INFO","message":"Playoff bracket included: 2 matchups, round: WILD_CARD"}
+{"time":"2025-11-30 15:39:02,799","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:39:02,800","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:39:02,800","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:39:02,801","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,802","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,811","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,812","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,816","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:39:02,817","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:39:02,817","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:39:02,818","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,819","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,826","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,827","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,831","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:39:02,832","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 2 conferences"}
+{"time":"2025-11-30 15:39:02,832","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:39:02,833","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,834","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}
+{"time":"2025-11-30 15:39:02,853","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-11-30 15:39:02,854","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-11-30 15:39:02,859","name":"app.api.endpoints.season","level":"INFO","message":"League leaders included in summary"}
+{"time":"2025-11-30 15:39:02,860","name":"app.api.endpoints.season","level":"INFO","message":"Standings included in summary: 1 conferences"}
+{"time":"2025-11-30 15:39:02,860","name":"app.api.endpoints.season","level":"INFO","message":"Enhanced season summary retrieved: 1"}
+{"time":"2025-11-30 15:39:02,861","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-11-30 15:39:02,862","name":"httpx","level":"INFO","message":"HTTP Request: GET http://testserver/api/season/summary "HTTP/1.1 200 OK""}

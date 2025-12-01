@@ -9,6 +9,9 @@ export interface PlayerLeader {
 
 export interface LeagueLeaders {
   passing_yards: PlayerLeader[];
+  passing_tds: PlayerLeader[];
   rushing_yards: PlayerLeader[];
+  rushing_tds: PlayerLeader[];
   receiving_yards: PlayerLeader[];
+  receiving_tds: PlayerLeader[];
 }

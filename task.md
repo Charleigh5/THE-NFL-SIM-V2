@@ -185,9 +185,9 @@
 - [x] **Enhance `SeasonDashboard`**
 
   - [x] Add season progress indicator (Week X of 18)
-  - [ ] Add quick action buttons (Simulate Week, View Playoffs)
-  - [ ] Display current league leader stats
-  - [ ] Add season summary card
+  - [x] Add quick action buttons (Simulate Week, View Playoffs) - Actions integrated inline
+  - [x] Display current league leader stats - `LeagueLeaders` component
+  - [x] Add season summary card - `SeasonSummaryCard` component
   - [x] Improve loading states
 
 - [x] **Enhance `OffseasonDashboard`**
@@ -202,9 +202,9 @@
 - [x] **Add `GET /api/season/summary` Endpoint**
 
   - [x] Return current season status
-  - [ ] Include playoff bracket if applicable
-  - [ ] Return league leaders (passing, rushing, receiving)
-  - [ ] Add team records and standings
+  - [x] Include playoff bracket if applicable
+  - [x] Return league leaders (passing, rushing, receiving)
+  - [x] Add team records and standings
   - [x] Test endpoint
 
 - [x] **Add `GET /api/team/{team_id}/needs` Endpoint** (Implemented as `/enhanced`)
@@ -213,24 +213,44 @@
   - [x] Return priority positions to draft
   - [x] Test with various team configurations
 
-### **6.4: Advanced Features (Optional)** [FUTURE WORK]
+### **6.4: Critical Bug Fixes** [URGENT]
 
-- [ ] **Multi-Season Franchise Mode**
+- [x] **Fix Backend Test Failure**
 
-  - [ ] Player retirement logic (age-based)
-  - [ ] Age curves for attribute progression/regression
-  - [ ] Hall of Fame tracking
-  - [ ] Career statistics preservation
+  - [x] Update `backend/tests/test_match_context_integration.py`
+  - [x] Add `overall_rating` attribute to all mock Player objects
+  - [x] Verify test passes: `pytest tests/test_match_context_integration.py -v`
+  - [x] Ensure all 20 tests pass: `pytest tests/ -v`
 
-- [ ] **Interactive Draft Room UI**
+- [x] **Fix Frontend Linting Errors**
+  - [x] Run auto-fix: `npm run lint -- --fix` in `frontend/` directory
+  - [x] Manually fix `enhanced-dashboard.spec.ts` if needed (CRLF → LF conversion)
+  - [x] Verify: `npm run lint` returns 0 errors
 
-  - [ ] Live draft board with prospect cards
-  - [ ] Team needs overlay
-  - [ ] Mock draft simulator
-  - [ ] Trade draft pick functionality
+### **6.5: Future Enhancements (Optional)** [FUTURE WORK]
 
-- [ ] **Advanced Player Development**
-  - [ ] Position-specific training programs
-  - [ ] Injury system with recovery
-  - [ ] Player morale and chemistry
-  - [ ] Coaching staff influence on development
+- [x] **User Team Selection**
+
+  - [x] Implement team selection/preference system
+  - [x] Replace hardcoded `teams[0]` logic in OffseasonDashboard
+  - [x] Add user profile/settings page
+
+- [x] **Multi-Season Franchise Mode**
+
+  - [x] Player retirement logic (age-based)
+  - [x] Age curves for attribute progression/regression
+  - [x] Hall of Fame tracking
+  - [x] Career statistics preservation
+
+- [x] **Interactive Draft Room UI**
+
+  - [x] Live draft board with prospect cards
+  - [x] Team needs overlay
+  - [x] Mock draft simulator
+  - [x] Trade draft pick functionality
+
+- [x] **Advanced Player Development**
+  - [x] Position-specific training programs
+  - [x] Injury system with recovery
+  - [x] Player morale and chemistry
+  - [x] Coaching staff influence on development

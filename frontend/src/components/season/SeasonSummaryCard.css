@@ -1,0 +1,173 @@
+.season-summary-card {
+  background: linear-gradient(135deg, #1a1f2e 0%, #252a3d 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.season-summary-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.season-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.season-year {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b9bb4;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.season-phase {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #fff, #a5b4fc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.regular-season {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.post-season {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.off-season {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #8b9bb4;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #8b9bb4;
+}
+
+.progress-bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 4px;
+  transition: width 1s ease-in-out;
+}
+
+.champion-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.trophy-icon {
+  font-size: 24px;
+}
+
+.champion-info h4 {
+  margin: 0;
+  font-size: 12px;
+  color: #fbbf24;
+  text-transform: uppercase;
+}
+
+.champion-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+/* Animation for updates */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-update {
+  animation: pulse 0.3s ease-in-out;
+}

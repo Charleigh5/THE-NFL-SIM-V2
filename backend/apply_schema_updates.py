@@ -19,6 +19,10 @@ def update_schema():
     if 'is_rookie' not in columns:
         print("Adding is_rookie...")
         cursor.execute("ALTER TABLE player ADD COLUMN is_rookie BOOLEAN DEFAULT 0")
+
+    if 'depth_chart_rank' not in columns:
+        print("Adding depth_chart_rank...")
+        cursor.execute("ALTER TABLE player ADD COLUMN depth_chart_rank INTEGER DEFAULT 999")
         
     conn.commit()
     conn.close()

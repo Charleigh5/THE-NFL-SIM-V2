@@ -65,15 +65,22 @@ def test_draft_logic_needs(service, mock_db):
     def query_side_effect(model):
         mock_query = MagicMock()
         if model == DraftPick:
+            # Mock first() for get_current_pick
+            def first_side_effect():
+                return next((p for p in [pick] if p.player_id is None), None)
+            
+            mock_query.filter.return_value.order_by.return_value.first.side_effect = first_side_effect
             mock_query.filter.return_value.order_by.return_value.all.return_value = [pick]
         elif model == Player:
-            # This is tricky because Player is used for both Rookies and Team Needs
-            # Rookies has order_by, Team Needs does not.
+            # Rookies query: filter().order_by().limit().all()
+            limit_mock = MagicMock()
+            limit_mock.all.return_value = rookies
+            mock_query.filter.return_value.order_by.return_value.limit.return_value = limit_mock
             
-            # Mock for Rookies (has order_by)
+            # Also support non-limit call if any (though service uses limit)
             mock_query.filter.return_value.order_by.return_value.all.return_value = rookies
             
-            # Mock for Team Needs (no order_by)
+            # Team Needs query: filter().all()
             mock_query.filter.return_value.all.return_value = existing_players
         return mock_query
 
@@ -115,9 +122,16 @@ def test_draft_logic_bpa(service, mock_db):
     def query_side_effect(model):
         mock_query = MagicMock()
         if model == DraftPick:
+            def first_side_effect():
+                return next((p for p in [pick] if p.player_id is None), None)
+            mock_query.filter.return_value.order_by.return_value.first.side_effect = first_side_effect
             mock_query.filter.return_value.order_by.return_value.all.return_value = [pick]
         elif model == Player:
+            limit_mock = MagicMock()
+            limit_mock.all.return_value = rookies
+            mock_query.filter.return_value.order_by.return_value.limit.return_value = limit_mock
             mock_query.filter.return_value.order_by.return_value.all.return_value = rookies
+            
             mock_query.filter.return_value.all.return_value = existing_players
         return mock_query
 

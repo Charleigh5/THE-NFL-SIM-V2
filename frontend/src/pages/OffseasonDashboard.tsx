@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSettingsStore } from "../store/useSettingsStore";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
 import type { Season } from "../types/season";
@@ -32,16 +34,28 @@ const OffseasonDashboard: React.FC = () => {
   const [playerProgression, setPlayerProgression] = useState<PlayerProgressionResult[]>([]);
   const [salaryCapData, setSalaryCapData] = useState<SalaryCapData | null>(null);
 
+  const { userTeamId, fetchSettings, isLoading: settingsLoading } = useSettingsStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+
+  useEffect(() => {
+    if (!settingsLoading && userTeamId === null) {
+      navigate("/team-selection");
+    }
+  }, [settingsLoading, userTeamId, navigate]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const currentSeason = await seasonApi.getCurrentSeason();
         setSeason(currentSeason);
 
-        // Fetch user team (mocking as first team for now)
-        const teams = await api.getTeams();
-        if (teams.length > 0) {
-          const myTeam = teams[0]; // TODO: Get actual user team
+        // Fetch user team
+        if (userTeamId) {
+          const myTeam = await api.getTeam(userTeamId);
           setTeam(myTeam);
 
           // Fetch enhanced needs
@@ -67,7 +81,7 @@ const OffseasonDashboard: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [userTeamId]);
 
   const handleStartOffseason = async () => {
     if (!season) return;

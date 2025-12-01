@@ -6,6 +6,7 @@ import type {
   WeekSimulationResult,
   SeasonSummary,
   SeasonAwards,
+  SingleGameResult,
 } from "../types/season";
 import type { PlayoffMatchup } from "../types/playoff";
 import type { LeagueLeaders } from "../types/stats";
@@ -13,6 +14,7 @@ import type {
   TeamNeed,
   Prospect,
   DraftPickSummary,
+  DraftPickDetail,
   PlayerProgressionResult,
   SalaryCapData,
 } from "../types/offseason";
@@ -76,7 +78,7 @@ export const seasonApi = {
   },
 
   // Simulate a single game
-  simulateGame: async (gameId: number): Promise<any> => {
+  simulateGame: async (gameId: number): Promise<SingleGameResult> => {
     const response = await api.post(`/api/season/game/${gameId}/simulate`);
     return response.data;
   },
@@ -115,6 +117,28 @@ export const seasonApi = {
 
   simulateDraft: async (seasonId: number): Promise<DraftPickSummary[]> => {
     const response = await api.post(`/api/season/${seasonId}/draft/simulate`);
+    return response.data;
+  },
+
+  getCurrentPick: async (seasonId: number): Promise<DraftPickDetail | null> => {
+    const response = await api.get(`/api/season/${seasonId}/draft/current`);
+    return response.data;
+  },
+
+  makePick: async (seasonId: number, playerId: number): Promise<DraftPickDetail> => {
+    const response = await api.post(`/api/season/${seasonId}/draft/pick?player_id=${playerId}`);
+    return response.data;
+  },
+
+  tradeCurrentPick: async (seasonId: number, targetTeamId: number): Promise<DraftPickDetail> => {
+    const response = await api.post(
+      `/api/season/${seasonId}/draft/trade-current?target_team_id=${targetTeamId}`
+    );
+    return response.data;
+  },
+
+  simulateNextPick: async (seasonId: number): Promise<DraftPickSummary | null> => {
+    const response = await api.post(`/api/season/${seasonId}/draft/simulate-next`);
     return response.data;
   },
 

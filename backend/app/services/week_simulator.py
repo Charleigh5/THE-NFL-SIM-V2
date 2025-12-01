@@ -10,6 +10,8 @@ from app.schemas.play import PlayResult
 import asyncio
 
 
+from app.services.player_development_service import PlayerDevelopmentService
+
 class WeekSimulator:
     """
     Simulates all games in a week using the SimulationOrchestrator.
@@ -20,6 +22,7 @@ class WeekSimulator:
     
     def __init__(self, db: Session):
         self.db = db
+        self.player_development_service = PlayerDevelopmentService(db)
     
     async def simulate_week(
         self,
@@ -93,6 +96,10 @@ class WeekSimulator:
             
             print(f"  Result: {orchestrator.home_score}-{orchestrator.away_score}")
         
+        # Process weekly development (Training, Injuries, Morale)
+        print("Processing weekly player development...")
+        self.player_development_service.process_weekly_development(season_id, week)
+
         return {
             "week": week,
             "games_simulated": len(results),

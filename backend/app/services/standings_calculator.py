@@ -296,22 +296,11 @@ class StandingsCalculator:
         if group_type == 'division':
             return (win_pct, div_pct, conf_pct, sos, diff)
         else:
-            # For conference, division winners should be top 4 (if we were doing that logic)
-            # But standard standings just list by record. 
-            # In NFL, division winners get top 4 seeds.
-            # We need to know if they won their division.
-            # But we haven't finished ranking divisions yet? 
-            # Actually we did division ranking first in _assign_ranks!
+            # Prioritize division winners for conference ranking/seeding
+            # Division winners (rank 1) get top seeds
             is_div_winner = 1 if team.get('division_rank') == 1 else 0
             
-            # If we want to enforce division winners getting top seeds:
-            # return (is_div_winner, win_pct, conf_pct, sos, diff)
-            
-            # Standard "Wild Card" view usually just sorts by record, 
-            # but official playoff picture separates division leaders.
-            # Let's stick to record for general standings, but maybe boost division winners?
-            # Let's just do record for now to keep it simple and consistent with standard tables.
-            return (win_pct, conf_pct, sos, diff)
+            return (is_div_winner, win_pct, conf_pct, sos, diff)
 
     def _determine_tiebreaker_reason(self, t1: Dict, t2: Dict, group_type: str) -> str:
         """Explain why t1 is ranked above t2."""

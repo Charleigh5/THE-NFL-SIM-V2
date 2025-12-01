@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
 import type { Season, Game, TeamStanding, SeasonAwards } from "../types/season";
@@ -9,7 +9,7 @@ import { ScheduleView } from "../components/season/ScheduleView";
 import { PlayoffBracket } from "../components/season/PlayoffBracket";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { LeagueLeaders } from "../components/season/LeagueLeaders";
-import { QuickActions } from "../components/season/QuickActions";
+import { SeasonSummaryCard } from "../components/season/SeasonSummaryCard";
 import type { LeagueLeaders as LeagueLeadersType } from "../types/stats";
 import "./SeasonDashboard.css";
 
@@ -57,8 +57,8 @@ const SeasonDashboard: React.FC = () => {
           setLeaders(leadersData);
           setAwards(awardsData);
 
-          // If in playoffs, fetch bracket
-          if (summary.season.status === "POST_SEASON") {
+          // If in playoffs or off-season, fetch bracket
+          if (summary.season.status === "POST_SEASON" || summary.season.status === "OFF_SEASON") {
             const bracket = await seasonApi.getPlayoffBracket(summary.season.id);
             setPlayoffBracket(bracket);
             setActiveTab("playoffs");
@@ -202,6 +202,15 @@ const SeasonDashboard: React.FC = () => {
     }
   };
 
+  // Calculate champion name using useMemo (must be before any early returns)
+  const championName = useMemo(() => {
+    if (season?.status === "OFF_SEASON" && playoffBracket.length > 0) {
+      const superBowl = playoffBracket.find((m) => m.round === "SUPER_BOWL");
+      return superBowl?.winner?.name;
+    }
+    return undefined;
+  }, [season, playoffBracket]);
+
   const handleSimulateGame = async (gameId: number) => {
     if (!season) return;
     try {
@@ -268,6 +277,33 @@ const SeasonDashboard: React.FC = () => {
     );
   }
 
+  const actions = [
+    {
+      id: "simulate",
+      label: simulating ? "Simulating..." : "Simulate Week",
+      icon: "⚡",
+      onClick: handleSimulateWeek,
+      disabled: simulating || season.status === "OFF_SEASON",
+      tooltip: "Simulate all games for the current week",
+    },
+    {
+      id: "sim-playoffs",
+      label: "Sim to Playoffs",
+      icon: "⏩",
+      onClick: handleSimulateToPlayoffs,
+      disabled: simulating || season.status !== "REGULAR_SEASON",
+      tooltip: "Simulate remaining regular season games",
+    },
+    {
+      id: "playoffs",
+      label: "View Playoffs",
+      icon: "🏆",
+      onClick: () => setActiveTab("playoffs"),
+      disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
+      tooltip: "View playoff bracket",
+    },
+  ];
+
   return (
     <div className="season-dashboard">
       {simulating && (
@@ -277,64 +313,13 @@ const SeasonDashboard: React.FC = () => {
       )}
 
       <div className="dashboard-header">
-        <div className="season-summary-card">
-          <div className="season-info">
-            <h1>{season.year} Season</h1>
-            <div className="season-status">
-              <span className="status-badge">{season.status.replace("_", " ")}</span>
-              <span>
-                Week {season.current_week}{" "}
-                {season.status === "REGULAR_SEASON" ? `of ${season.total_weeks}` : ""}
-              </span>
-            </div>
-            {season.status === "REGULAR_SEASON" && (
-              <div className="season-progress-wrapper">
-                <div className="season-progress-stats">
-                  <span>Season Progress</span>
-                  <span>{Math.round(seasonProgress)}% Complete</span>
-                </div>
-                <div
-                  className="season-progress-container"
-                  title={`Season ${seasonProgress}% Complete`}
-                >
-                  <div
-                    className="season-progress-bar"
-                    style={{ width: `${seasonProgress}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
-          </div>
-          <QuickActions
-            actions={[
-              {
-                id: "simulate",
-                label: simulating ? "Simulating..." : "Simulate Week",
-                icon: "⚡",
-                onClick: handleSimulateWeek,
-                disabled: simulating || season.status === "OFF_SEASON",
-                tooltip: "Simulate all games for the current week",
-              },
-              {
-                id: "sim-playoffs",
-                label: "Sim to Playoffs",
-                icon: "⏩",
-                onClick: handleSimulateToPlayoffs,
-                disabled: simulating || season.status !== "REGULAR_SEASON",
-                tooltip: "Simulate remaining regular season games",
-              },
-              {
-                id: "playoffs",
-                label: "View Playoffs",
-                icon: "🏆",
-                onClick: () => setActiveTab("playoffs"),
-                disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
-                tooltip: "View playoff bracket",
-              },
-            ]}
-          />
-        </div>
-        <LeagueLeaders leaders={leaders} loading={loading} />
+        <SeasonSummaryCard
+          season={season}
+          progress={seasonProgress}
+          actions={actions}
+          champion={championName}
+        />
+        <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
       </div>
 
       <div className="dashboard-tabs">
@@ -503,7 +488,9 @@ const SeasonDashboard: React.FC = () => {
 
         {activeTab === "playoffs" && <PlayoffBracket matchups={playoffBracket} />}
 
-        {activeTab === "leaders" && <LeagueLeaders leaders={leaders} loading={loading} />}
+        {activeTab === "leaders" && (
+          <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
+        )}
       </div>
     </div>
   );
