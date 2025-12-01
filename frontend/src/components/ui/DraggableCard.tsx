@@ -16,6 +16,7 @@ interface DraggableCardProps {
   rating: number;
   team: string;
   onClick?: () => void;
+  testId?: string;
 }
 
 export const DraggableCard = (props: DraggableCardProps) => {
@@ -27,7 +28,7 @@ export const DraggableCard = (props: DraggableCardProps) => {
       whileDrag={{ scale: 1.05, cursor: "grabbing", zIndex: 50 }}
       className="cursor-grab active:cursor-grabbing"
     >
-      <PlayerCard {...props} />
+      <PlayerCard {...props} testId={props.testId} />
     </motion.div>
   );
 };

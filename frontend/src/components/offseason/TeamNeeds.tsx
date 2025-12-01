@@ -11,16 +11,16 @@ export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
   const sortedNeeds = [...needs].sort((a, b) => b.need_score - a.need_score);
 
   return (
-    <div className="team-needs">
+    <div className="team-needs" data-testid="team-needs-container">
       <h3>Team Needs Analysis</h3>
-      <div className="needs-grid">
+      <div className="needs-grid" data-testid="team-needs-grid">
         {sortedNeeds.map((need) => {
           const priority = need.priority || (need.need_score > 0.5 ? "high" : "low");
           const quality = need.starter_quality || 0;
           const leagueAvg = need.league_avg_quality || 75;
 
           return (
-            <div key={need.position} className={`need-card priority-${priority}`}>
+            <div key={need.position} className={`need-card priority-${priority}`} data-testid={`team-need-card-${need.position}`}>
               <div className="need-header">
                 <div className="need-title">
                   <span className="need-pos">{need.position}</span>

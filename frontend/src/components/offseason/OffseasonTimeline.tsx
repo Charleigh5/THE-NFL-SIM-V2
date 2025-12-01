@@ -48,14 +48,14 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
   };
 
   return (
-    <div className="offseason-timeline">
+    <div className="offseason-timeline" data-testid="offseason-timeline">
       {steps.map((step, index) => {
         const status = getStepStatus(step.id);
         const stats = phaseStats[step.id];
         const isActive = status === "active";
 
         return (
-          <div key={step.id} className={`timeline-step ${status}`}>
+          <div key={step.id} className={`timeline-step ${status}`} data-testid={`timeline-step-${step.id}`}>
             <div className="step-indicator-container">
               <div className="step-indicator">{status === "completed" ? "✓" : index + 1}</div>
               {index < steps.length - 1 && <div className="step-connector"></div>}
@@ -71,7 +71,7 @@ export const OffseasonTimeline: React.FC<OffseasonTimelineProps> = ({
                   </div>
                   <div className="step-desc">{stats.description}</div>
                   {stats.actionAvailable && (
-                    <button className="step-action-btn" onClick={() => onPhaseAction?.(step.id)}>
+                    <button className="step-action-btn" onClick={() => onPhaseAction?.(step.id)} data-testid={`timeline-action-button-${step.id}`}>
                       Continue
                     </button>
                   )}

@@ -22,11 +22,11 @@ export const PlayerProgression: React.FC<PlayerProgressionProps> = ({ progressio
   }
 
   return (
-    <div className="player-progression-card">
+    <div className="player-progression-card" data-testid="player-progression-card">
       <h3>Player Progression</h3>
-      <div className="progression-list">
+      <div className="progression-list" data-testid="progression-list">
         {progressionData.map((player, index) => (
-          <div key={index} className="progression-item">
+          <div key={index} className="progression-item" data-testid={`progression-item-${index}`}>
             <span className="player-name">
               {player.name} ({player.position})
             </span>

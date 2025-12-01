@@ -38,17 +38,18 @@ export const TradeModal: React.FC<TradeModalProps> = ({
   };
 
   return (
-    <div className="trade-modal-overlay">
-      <div className="trade-modal">
+    <div className="trade-modal-overlay" data-testid="trade-modal-overlay">
+      <div className="trade-modal" data-testid="trade-modal">
         <h2>Trade Current Pick</h2>
         <p>Select a team to trade the current pick to:</p>
 
-        <div className="team-list">
+        <div className="team-list" data-testid="trade-team-list">
           {teams.map((team) => (
             <div
               key={team.team_id}
               className={`team-option ${selectedTeamId === team.team_id ? "selected" : ""}`}
               onClick={() => setSelectedTeamId(team.team_id)}
+              data-testid={`trade-team-option-${team.team_id}`}
             >
               <span className="team-name">{team.team_name}</span>
               <span className="team-record">
@@ -59,10 +60,10 @@ export const TradeModal: React.FC<TradeModalProps> = ({
         </div>
 
         <div className="modal-actions">
-          <button onClick={onClose} className="cancel-btn">
+          <button onClick={onClose} className="cancel-btn" data-testid="trade-cancel-button">
             Cancel
           </button>
-          <button onClick={handleTrade} disabled={!selectedTeamId} className="confirm-trade-btn">
+          <button onClick={handleTrade} disabled={!selectedTeamId} className="confirm-trade-btn" data-testid="trade-confirm-button">
             Confirm Trade
           </button>
         </div>

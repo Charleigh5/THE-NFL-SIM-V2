@@ -38,7 +38,7 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
     const awayWinner = m.winner_id && m.winner_id === m.away_team_id;
 
     return (
-      <div key={m.id} className={`matchup-card ${m.winner_id ? "winner-decided" : ""}`}>
+      <div key={m.id} className={`matchup-card ${m.winner_id ? "winner-decided" : ""}`} data-testid={`matchup-card-${m.id}`}>
         <div className={`matchup-team ${homeWinner ? "winner" : ""} ${awayWinner ? "loser" : ""}`}>
           <span className="seed">{m.home_team_seed || "-"}</span>
           <span className="team-name">
@@ -64,18 +64,18 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
     const confRound = getMatchups(conf, PlayoffRound.CONFERENCE);
 
     return (
-      <div className="conference-bracket">
+      <div className="conference-bracket" data-testid={`conference-bracket-${conf}`}>
         <div className="conference-title">{conf}</div>
         <div className="bracket-rounds">
-          <div className="round-column">
+          <div className="round-column" data-testid={`round-column-${conf}-wild-card`}>
             <div className="round-title">Wild Card</div>
             {wc.map(renderMatchup)}
           </div>
-          <div className="round-column">
+          <div className="round-column" data-testid={`round-column-${conf}-divisional`}>
             <div className="round-title">Divisional</div>
             {div.map(renderMatchup)}
           </div>
-          <div className="round-column">
+          <div className="round-column" data-testid={`round-column-${conf}-conference`}>
             <div className="round-title">Conference</div>
             {confRound.map(renderMatchup)}
           </div>
@@ -87,12 +87,12 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
   const sbMatchup = matchups.find((m) => m.round === PlayoffRound.SUPER_BOWL);
 
   return (
-    <div className="playoff-bracket">
+    <div className="playoff-bracket" data-testid="playoff-bracket-container">
       {renderConference(PlayoffConference.AFC)}
       {renderConference(PlayoffConference.NFC)}
 
       {sbMatchup && (
-        <div className="super-bowl-section">
+        <div className="super-bowl-section" data-testid="super-bowl-section">
           <div className="conference-title">Super Bowl</div>
           <div className="bracket-rounds" style={{ justifyContent: "center" }}>
             {renderMatchup(sbMatchup)}

@@ -67,7 +67,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
   const positions = ["ALL", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ST"];
 
   return (
-    <div className="draft-board">
+    <div className="draft-board" data-testid="draft-board">
       <div className="draft-header">
         <h3>Draft Board</h3>
         <div className="draft-controls">
@@ -75,6 +75,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
             value={filterPos}
             onChange={(e) => setFilterPos(e.target.value)}
             className="filter-select"
+            data-testid="draft-filter-position"
           >
             {positions.map((pos) => (
               <option key={pos} value={pos}>
@@ -86,6 +87,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
             className="sort-select"
+            data-testid="draft-sort-by"
           >
             <option value="rank">Rank</option>
             <option value="rating">Rating</option>
@@ -94,7 +96,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
         </div>
       </div>
 
-      <div className="prospect-list">
+      <div className="prospect-list" data-testid="prospect-list">
         {filteredProspects.length === 0 ? (
           <div className="no-prospects">No prospects found.</div>
         ) : (
@@ -108,6 +110,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                 key={p.id}
                 className={`prospect-card need-${needLevel}`}
                 onClick={() => onProspectSelect?.(p)}
+                data-testid={`prospect-card-${p.id}`}
               >
                 <div className="prospect-rank">#{rank}</div>
 

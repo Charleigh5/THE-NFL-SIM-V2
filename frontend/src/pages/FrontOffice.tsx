@@ -32,8 +32,8 @@ export const FrontOffice = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
+    <div className="space-y-6" data-testid="front-office-page">
+      <header data-testid="front-office-header">
         <h1 className="text-4xl font-bold text-white tracking-tight">
           Front Office: {team?.city} {team?.name}
         </h1>
@@ -41,9 +41,9 @@ export const FrontOffice = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 glass-panel p-6 rounded-xl border border-white/5 min-h-[500px]">
+        <div className="lg:col-span-2 glass-panel p-6 rounded-xl border border-white/5 min-h-[500px]" data-testid="roster-section">
           <h2 className="text-xl font-bold text-white mb-4">Active Roster ({roster.length})</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2" data-testid="roster-grid">
             {roster.map((player) => (
               <DraggableCard
                 key={player.id}
@@ -52,11 +52,12 @@ export const FrontOffice = () => {
                 rating={player.overall_rating}
                 team={team?.abbreviation || "UNK"}
                 onClick={() => setSelectedPlayer(player)}
+                testId={`player-card-${player.id}`}
               />
             ))}
           </div>
         </div>
-        <div className="glass-panel p-6 rounded-xl border border-white/5 min-h-[500px] flex items-center justify-center">
+        <div className="glass-panel p-6 rounded-xl border border-white/5 min-h-[500px] flex items-center justify-center" data-testid="transaction-log">
           <span className="text-white/20 font-mono">TRANSACTION_LOG</span>
         </div>
       </div>
@@ -64,10 +65,11 @@ export const FrontOffice = () => {
       {/* Player Detail Modal */}
       {selectedPlayer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" data-testid="player-modal">
-          <div className="bg-slate-900 border border-white/10 rounded-xl p-6 max-w-md w-full relative shadow-2xl">
+          <div className="bg-slate-900 border border-white/10 rounded-xl p-6 max-w-md w-full relative shadow-2xl" data-testid="player-modal-content">
             <button 
               onClick={() => setSelectedPlayer(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              data-testid="close-modal-button"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
             </button>

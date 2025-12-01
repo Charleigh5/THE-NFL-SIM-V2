@@ -63,8 +63,8 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
   const gamesRemaining = Math.max(0, season.total_weeks - gamesPlayed);
 
   return (
-    <div className={`season-summary-card ${animate ? "animate-update" : ""}`}>
-      <div className="card-header">
+    <div className={`season-summary-card ${animate ? "animate-update" : ""}`} data-testid="season-summary-card">
+      <div className="card-header" data-testid="season-summary-header">
         <div className="season-title-group">
           <span className="season-year">{season.year} Season</span>
           <h2 className="season-phase">
@@ -80,7 +80,7 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
 
       {season.status === "REGULAR_SEASON" && (
         <>
-          <div className="stats-grid">
+          <div className="stats-grid" data-testid="season-stats-grid">
             <div className="stat-item">
               <span className="stat-label">Games Played</span>
               <span className="stat-value">{gamesPlayed}</span>
@@ -95,7 +95,7 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
             </div>
           </div>
 
-          <div className="progress-section">
+          <div className="progress-section" data-testid="season-progress-section">
             <div className="progress-header">
               <span>Season Progress</span>
               <span>{Math.round(progress)}%</span>
@@ -121,7 +121,7 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
       )}
 
       {season.status === "OFF_SEASON" && champion && (
-        <div className="champion-display">
+        <div className="champion-display" data-testid="champion-display">
           <span className="trophy-icon">🏆</span>
           <div className="champion-info">
             <h4>Super Bowl Champion</h4>

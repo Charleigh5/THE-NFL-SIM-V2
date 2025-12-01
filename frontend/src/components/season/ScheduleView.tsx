@@ -77,13 +77,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   }
 
   return (
-    <div className="schedule-container">
-      <div className="week-navigation">
+    <div className="schedule-container" data-testid="schedule-view">
+      <div className="week-navigation" data-testid="week-navigation">
         <button
           className="nav-button"
           disabled={selectedWeek <= 1}
           onClick={() => handleWeekChange(selectedWeek - 1)}
           aria-label="Previous Week"
+          data-testid="prev-week-button"
         >
           <span className="nav-arrow">←</span> Prev Week
         </button>
@@ -94,6 +95,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             className="week-select"
             value={selectedWeek}
             onChange={(e) => handleWeekChange(Number(e.target.value))}
+            data-testid="week-selector"
           >
             {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((week) => (
               <option key={week} value={week}>
@@ -108,12 +110,13 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           disabled={selectedWeek >= totalWeeks}
           onClick={() => handleWeekChange(selectedWeek + 1)}
           aria-label="Next Week"
+          data-testid="next-week-button"
         >
           Next Week <span className="nav-arrow">→</span>
         </button>
       </div>
 
-      <div className="games-grid">
+      <div className="games-grid" data-testid="games-grid">
         {games.length === 0 ? (
           <div className="no-games">No games scheduled for Week {selectedWeek}</div>
         ) : (
@@ -131,7 +134,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             const displayDate = game.date || game.scheduled_date;
 
             return (
-              <div key={game.id} className={`game-card ${game.is_playoff ? "playoff-game" : ""}`}>
+              <div key={game.id} className={`game-card ${game.is_playoff ? "playoff-game" : ""}`} data-testid={`game-card-${game.id}`}>
                 {game.is_playoff && <div className="playoff-badge">Playoff Game</div>}
                 <div className="game-header">
                   <span className="game-date">{formatDate(displayDate)}</span>
@@ -220,6 +223,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       className="watch-button primary"
                       onClick={() => onSimulateGame && onSimulateGame(game.id)}
                       disabled={!onSimulateGame}
+                      data-testid={`simulate-game-button-${game.id}`}
                     >
                       Simulate Game
                     </button>

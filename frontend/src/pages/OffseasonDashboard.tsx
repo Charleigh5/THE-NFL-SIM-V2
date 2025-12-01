@@ -166,7 +166,7 @@ const OffseasonDashboard: React.FC = () => {
 
   if (loading)
     return (
-      <div className="offseason-dashboard">
+      <div className="offseason-dashboard" data-testid="loading-offseason-data">
         <LoadingSpinner text="Loading offseason data..." size="large" />
       </div>
     );
@@ -208,7 +208,7 @@ const OffseasonDashboard: React.FC = () => {
   };
 
   return (
-    <div className="offseason-dashboard">
+    <div className="offseason-dashboard" data-testid="offseason-dashboard-page">
       {processing && (
         <div className="loading-overlay">
           <LoadingSpinner text="Processing..." size="large" color="white" />
@@ -216,7 +216,7 @@ const OffseasonDashboard: React.FC = () => {
       )}
 
       <h1>Offseason Dashboard</h1>
-      <div className="season-info">
+      <div className="season-info" data-testid="offseason-header">
         <h2>{season.year} Offseason</h2>
         <p>Status: {season.status}</p>
       </div>
@@ -228,7 +228,7 @@ const OffseasonDashboard: React.FC = () => {
       <div className="dashboard-grid">
         <div className="main-column">
           {/* Action Cards Row */}
-          <div className="offseason-actions">
+          <div className="offseason-actions" data-testid="offseason-actions">
             <div className="action-card">
               <h3>Phase 1: Roster Prep</h3>
               <p>Process contracts & draft order.</p>
@@ -236,6 +236,7 @@ const OffseasonDashboard: React.FC = () => {
                 className="action-button"
                 onClick={handleStartOffseason}
                 disabled={processing}
+                data-testid="start-offseason-button"
               >
                 Start Offseason
               </button>
@@ -248,6 +249,7 @@ const OffseasonDashboard: React.FC = () => {
                 className="action-button"
                 onClick={handleSimulateProgression}
                 disabled={processing}
+                data-testid="simulate-progression-button"
               >
                 Simulate
               </button>
@@ -256,7 +258,7 @@ const OffseasonDashboard: React.FC = () => {
             <div className="action-card">
               <h3>Phase 3: The Draft</h3>
               <p>Simulate NFL Draft.</p>
-              <button className="action-button" onClick={handleSimulateDraft} disabled={processing}>
+              <button className="action-button" onClick={handleSimulateDraft} disabled={processing} data-testid="simulate-draft-button">
                 Simulate Draft
               </button>
             </div>
@@ -268,6 +270,7 @@ const OffseasonDashboard: React.FC = () => {
                 className="action-button"
                 onClick={handleSimulateFreeAgency}
                 disabled={processing}
+                data-testid="simulate-fa-button"
               >
                 Simulate FA
               </button>
@@ -278,13 +281,13 @@ const OffseasonDashboard: React.FC = () => {
           <TeamNeeds needs={needs} />
 
           {draftSummary.length > 0 && (
-            <div className="draft-summary">
+            <div className="draft-summary" data-testid="draft-summary">
               <h3>Draft Results</h3>
-              <div className="draft-picks-list">
+              <div className="draft-picks-list" data-testid="draft-picks-list">
                 {draftSummary
                   .filter((p) => team && p.team_id === team.id)
                   .map((pick) => (
-                    <div key={pick.pick_number} className="draft-pick-item">
+                    <div key={pick.pick_number} className="draft-pick-item" data-testid={`draft-pick-item-${pick.pick_number}`}>
                       <span className="pick-round">
                         Rd {pick.round} Pick {pick.pick_number}
                       </span>

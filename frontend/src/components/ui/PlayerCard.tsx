@@ -9,11 +9,11 @@ interface PlayerCardProps {
   className?: string;
 }
 
-export const PlayerCard = ({ name, position, rating, team, className, onClick }: PlayerCardProps & { onClick?: () => void }) => {
+export const PlayerCard = ({ name, position, rating, team, className, onClick, testId }: PlayerCardProps & { onClick?: () => void; testId?: string }) => {
   return (
     <div
       onClick={onClick}
-      data-testid="player-card"
+      data-testid={testId || "player-card"}
       className={clsx(
         "w-64 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-lg",
         "hover:border-cyan-500/50 transition-colors duration-300",

@@ -51,7 +51,7 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
     const topLeaderLogo = getTeamLogo(topLeader.team);
 
     return (
-      <div className="leader-card">
+      <div className="leader-card" data-testid="leader-card">
         <div
           className="leader-top"
           style={{
@@ -80,7 +80,7 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
             <span className="stat-label">YDS</span>
           </div>
         </div>
-        <div className="leader-list">
+        <div className="leader-list" data-testid="leader-list">
           {list.slice(1, 5).map((p, i) => (
             <div key={i} className="leader-row">
               <span className="rank">{i + 2}</span>
@@ -100,25 +100,28 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
   };
 
   return (
-    <div className="league-leaders-container">
+    <div className="league-leaders-container" data-testid="league-leaders-container">
       <div className="leaders-header">
         <h3>League Leaders</h3>
-        <div className="leaders-tabs">
+        <div className="leaders-tabs" data-testid="leaders-tabs">
           <button
             className={`tab-btn ${activeCategory === "passing" ? "active" : ""}`}
             onClick={() => setActiveCategory("passing")}
+            data-testid="tab-passing"
           >
             Pass
           </button>
           <button
             className={`tab-btn ${activeCategory === "rushing" ? "active" : ""}`}
             onClick={() => setActiveCategory("rushing")}
+            data-testid="tab-rushing"
           >
             Rush
           </button>
           <button
             className={`tab-btn ${activeCategory === "receiving" ? "active" : ""}`}
             onClick={() => setActiveCategory("receiving")}
+            data-testid="tab-receiving"
           >
             Rec
           </button>

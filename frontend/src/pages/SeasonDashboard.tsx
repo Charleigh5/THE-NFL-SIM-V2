@@ -257,7 +257,7 @@ const SeasonDashboard: React.FC = () => {
 
   if (loading && !season) {
     return (
-      <div className="season-dashboard">
+      <div className="season-dashboard" data-testid="loading-season-data">
         <LoadingSpinner text="Loading season data..." size="large" />
       </div>
     );
@@ -265,11 +265,11 @@ const SeasonDashboard: React.FC = () => {
 
   if (!season) {
     return (
-      <div className="season-dashboard">
-        <div className="no-season-state">
+      <div className="season-dashboard" data-testid="season-dashboard-page">
+        <div className="no-season-state" data-testid="no-season-state">
           <h2>No Active Season</h2>
           <p>Start a new franchise mode season to begin your journey to the Super Bowl.</p>
-          <button className="action-button" onClick={handleInitializeSeason}>
+          <button className="action-button" onClick={handleInitializeSeason} data-testid="initialize-season-button">
             Initialize New Season
           </button>
         </div>
@@ -305,14 +305,14 @@ const SeasonDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="season-dashboard">
+    <div className="season-dashboard" data-testid="season-dashboard-page">
       {simulating && (
         <div className="loading-overlay">
           <LoadingSpinner text={`Simulating...`} size="large" color="white" />
         </div>
       )}
 
-      <div className="dashboard-header">
+      <div className="dashboard-header" data-testid="dashboard-header">
         <SeasonSummaryCard
           season={season}
           progress={seasonProgress}
@@ -322,11 +322,12 @@ const SeasonDashboard: React.FC = () => {
         <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
       </div>
 
-      <div className="dashboard-tabs">
+      <div className="dashboard-tabs" data-testid="dashboard-tabs">
         <button
           className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
           onClick={() => setActiveTab("overview")}
           title="Season Overview"
+          data-testid="tab-overview"
         >
           Overview
         </button>
@@ -334,6 +335,7 @@ const SeasonDashboard: React.FC = () => {
           className={`tab-button ${activeTab === "standings" ? "active" : ""}`}
           onClick={() => setActiveTab("standings")}
           title="View current season standings"
+          data-testid="tab-standings"
         >
           Standings
         </button>
@@ -341,6 +343,7 @@ const SeasonDashboard: React.FC = () => {
           className={`tab-button ${activeTab === "schedule" ? "active" : ""}`}
           onClick={() => setActiveTab("schedule")}
           title="View season schedule and results"
+          data-testid="tab-schedule"
         >
           Schedule
         </button>
@@ -349,6 +352,7 @@ const SeasonDashboard: React.FC = () => {
             className={`tab-button ${activeTab === "playoffs" ? "active" : ""}`}
             onClick={() => setActiveTab("playoffs")}
             title="View playoff bracket"
+            data-testid="tab-playoffs"
           >
             Playoffs
           </button>
@@ -357,24 +361,25 @@ const SeasonDashboard: React.FC = () => {
           className={`tab-button ${activeTab === "leaders" ? "active" : ""}`}
           onClick={() => setActiveTab("leaders")}
           title="View league statistical leaders"
+          data-testid="tab-leaders"
         >
           Leaders
         </button>
       </div>
 
-      <div className="dashboard-content">
+      <div className="dashboard-content" data-testid="dashboard-content">
         {error && <div className="error-message">{error}</div>}
 
         {activeTab === "overview" && (
-          <div className="overview-grid">
-            <div className="overview-section">
+          <div className="overview-grid" data-testid="overview-grid">
+            <div className="overview-section" data-testid="upcoming-games-section">
               <h3>Upcoming Games (Week {season.current_week})</h3>
               <div className="games-list-compact">
                 {games
                   .filter((g) => !g.is_played)
                   .slice(0, 5)
                   .map((game) => (
-                    <div key={game.id} className="game-card-compact">
+                    <div key={game.id} className="game-card-compact" data-testid={`upcoming-game-${game.id}`}>
                       <div className="team-row">
                         <span className="team-name">{game.away_team?.name}</span>
                         <span className="team-record">vs</span>
@@ -391,14 +396,14 @@ const SeasonDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="overview-section">
+            <div className="overview-section" data-testid="recent-results-section">
               <h3>Recent Results</h3>
               <div className="games-list-compact">
                 {games
                   .filter((g) => g.is_played)
                   .slice(0, 5)
                   .map((game) => (
-                    <div key={game.id} className="game-card-compact">
+                    <div key={game.id} className="game-card-compact" data-testid={`recent-game-${game.id}`}>
                       <div className="team-row">
                         <span className="team-name">{game.away_team?.name}</span>
                         <span className="score">{game.away_score}</span>
@@ -416,12 +421,12 @@ const SeasonDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="overview-section">
+            <div className="overview-section" data-testid="standings-overview-section">
               <h3>Standings Overview</h3>
               <StandingsTable standings={standings} compact={true} />
             </div>
 
-            <div className="overview-section">
+            <div className="overview-section" data-testid="awards-race-section">
               <h3>Season Awards Race</h3>
               {awards ? (
                 <div className="awards-race">

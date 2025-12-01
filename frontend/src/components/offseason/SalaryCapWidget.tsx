@@ -32,10 +32,10 @@ export const SalaryCapWidget: React.FC<SalaryCapWidgetProps> = ({ data }) => {
   };
 
   return (
-    <div className="salary-cap-widget">
+    <div className="salary-cap-widget" data-testid="salary-cap-widget">
       <h3>Salary Cap Situation</h3>
 
-      <div className="cap-overview">
+      <div className="cap-overview" data-testid="cap-overview">
         <div className="cap-gauge-container">
           <div className="cap-donut" style={donutStyle}>
             <div className="cap-donut-inner">
@@ -71,7 +71,7 @@ export const SalaryCapWidget: React.FC<SalaryCapWidgetProps> = ({ data }) => {
         </div>
       </div>
 
-      <div className="cap-breakdown-section">
+      <div className="cap-breakdown-section" data-testid="cap-breakdown">
         <h4>Position Allocation</h4>
         <div className="position-bars">
           {data.position_breakdown.map((group) => (
@@ -90,7 +90,7 @@ export const SalaryCapWidget: React.FC<SalaryCapWidgetProps> = ({ data }) => {
 
       <div className="top-contracts-section">
         <h4>Top Contracts</h4>
-        <div className="contracts-list">
+        <div className="contracts-list" data-testid="top-contracts-list">
           {data.top_contracts.map((player) => (
             <div key={player.player_id} className="contract-item">
               <div className="player-info">

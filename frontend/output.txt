@@ -1,0 +1,82 @@
+
+Running 1 test using 1 worker
+
+[1A[2K[1/1] [chromium] ΓÇ║ e2e\visual-regression.spec.ts:27:3 ΓÇ║ Visual Regression Tests ΓÇ║ Season Dashboard visual snapshot
+[1A[2K[chromium] ΓÇ║ e2e\visual-regression.spec.ts:27:3 ΓÇ║ Visual Regression Tests ΓÇ║ Season Dashboard visual snapshot
+BROWSER LOG: [vite] connecting...
+
+[1A[2KBROWSER LOG: [vite] connected.
+
+[1A[2KBROWSER LOG: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KIntercepted teams request: http://localhost:8000/api/teams?page=1&page_size=100
+
+[1A[2KIntercepted teams request: http://localhost:8000/api/teams?page=1&page_size=100
+
+[1A[2KBROWSER LOG: %o
+
+%s
+
+%s
+ TypeError: Cannot read properties of undefined (reading '0')
+    at renderLeader (http://localhost:5173/src/components/season/LeagueLeaders.tsx:37:27)
+    at LeagueLeaders (http://localhost:5173/src/components/season/LeagueLeaders.tsx:242:77)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:18509:20)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:5654:24)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:7475:21)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:8525:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:997:72)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12561:98)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12424:43)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12408:13) The above error occurred in the <LeagueLeaders> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+[1A[2KBROWSER LOG: ErrorBoundary caught an error: TypeError: Cannot read properties of undefined (reading '0')
+    at renderLeader (http://localhost:5173/src/components/season/LeagueLeaders.tsx:37:27)
+    at LeagueLeaders (http://localhost:5173/src/components/season/LeagueLeaders.tsx:242:77)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:18509:20)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:5654:24)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:7475:21)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:8525:20)
+    at runWithFiberInDEV (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:997:72)
+    at performUnitOfWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12561:98)
+    at workLoopSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12424:43)
+    at renderRootSync (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=6d085b41:12408:13) {componentStack: 
+    at LeagueLeaders (http://localhost:5173/src/cΓÇª/deps/@tanstack_react-query.js?v=6d085b41:3028:3)}
+
+[1A[2K  1) [chromium] ΓÇ║ e2e\visual-regression.spec.ts:27:3 ΓÇ║ Visual Regression Tests ΓÇ║ Season Dashboard visual snapshot 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.loading-spinner')
+    Expected: not visible
+    Error: strict mode violation: locator('.loading-spinner') resolved to 2 elements:
+        1) <div class="loading-spinner"></div> aka locator('.loading-spinner').first()
+        2) <div class="loading-spinner"></div> aka locator('.overview-section > .loading-spinner-container > .loading-spinner')
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.loading-spinner')[22m
+    [2m    - locator resolved to <div class="loading-spinner"></div>[22m
+    [2m    - unexpected value "visible"[22m
+
+
+      78 |     
+      79 |     // Wait for loading to finish
+    > 80 |     await expect(page.locator('.loading-spinner')).not.toBeVisible();
+         |                                                        ^
+      81 |     await page.waitForSelector('.season-dashboard');
+      82 |     
+      83 |     await expect(page).toHaveScreenshot('season-dashboard.png');
+        at C:\Users\cweir\OneDrive\Desktop\GitHub\THE-NFL-SIM-V2\frontend\e2e\visual-regression.spec.ts:80:56
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\visual-regression-Visual-R-899f6-n-Dashboard-visual-snapshot-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\visual-regression-Visual-R-899f6-n-Dashboard-visual-snapshot-chromium\error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] ΓÇ║ e2e\visual-regression.spec.ts:27:3 ΓÇ║ Visual Regression Tests ΓÇ║ Season Dashboard visual snapshot 
+
+[36m  Serving HTML report at http://localhost:55480. Press Ctrl+C to quit.[39m

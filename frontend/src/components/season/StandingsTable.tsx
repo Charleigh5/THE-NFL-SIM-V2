@@ -177,6 +177,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
             <React.Fragment key={team.team_id}>
               <tr
                 className={`${team.clinched_playoff ? "clinched-playoff" : ""} ${isPlayoffPosition ? "playoff-position" : ""} ${showSeparator ? "playoff-separator" : ""}`}
+                data-testid={`standings-row-${team.team_abbreviation}`}
               >
                 <td
                   className="team-rank"
@@ -225,7 +226,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
   );
 
   return (
-    <div className="standings-container">
+    <div className="standings-container" data-testid="standings-table">
       {!compact && (
         <div className="standings-header">
           <div className="standings-filters">
@@ -233,6 +234,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               className="filter-select"
               value={conferenceFilter}
               onChange={(e) => setConferenceFilter(e.target.value)}
+              data-testid="conference-filter"
             >
               <option value="ALL">All Conferences</option>
               <option value="AFC">AFC</option>
@@ -243,6 +245,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               className="filter-select"
               value={divisionFilter}
               onChange={(e) => setDivisionFilter(e.target.value)}
+              data-testid="division-filter"
             >
               <option value="ALL">All Divisions</option>
               <option value="North">North</option>
@@ -255,12 +258,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
             <button
               className={`toggle-btn ${groupBy === "division" ? "active" : ""}`}
               onClick={() => setGroupBy("division")}
+              data-testid="toggle-division-view"
             >
               Division
             </button>
             <button
               className={`toggle-btn ${groupBy === "conference" ? "active" : ""}`}
               onClick={() => setGroupBy("conference")}
+              data-testid="toggle-conference-view"
             >
               Conference
             </button>

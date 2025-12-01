@@ -16,7 +16,7 @@ interface QuickActionsProps {
 
 export const QuickActions: React.FC<QuickActionsProps> = ({ actions }) => {
   return (
-    <div className="quick-actions-container">
+    <div className="quick-actions-container" data-testid="quick-actions-container">
       {actions.map((action) => (
         <button
           key={action.id}
@@ -24,6 +24,7 @@ export const QuickActions: React.FC<QuickActionsProps> = ({ actions }) => {
           onClick={action.onClick}
           disabled={action.disabled}
           title={action.tooltip}
+          data-testid={`${action.id}-btn`}
         >
           <span className="action-icon">{action.icon}</span>
           <span className="action-label">{action.label}</span>
