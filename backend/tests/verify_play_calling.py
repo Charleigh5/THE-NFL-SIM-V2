@@ -9,14 +9,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
 from app.orchestrator.play_commands import (
-    PlayCommand, PassPlayCommand, RunPlayCommand, 
+    PlayCommand, PassPlayCommand, RunPlayCommand,
     PuntCommand, FieldGoalCommand
 )
 
 def get_context(down: int, distance: int, dist_to_goal: int, time_left: int, score_diff: int) -> PlayCallingContext:
     """
     Helper to build PlayCallingContext.
-    
+
     Args:
         down: Current down (1-4)
         distance: Yards to go for first down
@@ -43,12 +43,12 @@ def test_situation_1_conservative_punt():
     """
     print("\n--- Test Situation 1: Conservative Punt Decision ---")
     caller = PlayCaller(aggression=0.5)
-    
+
     # Own 20 means 80 yards to goal
     context = get_context(down=4, distance=10, dist_to_goal=80, time_left=900, score_diff=0)
-    
+
     command = caller.select_play(context)
-    
+
     if isinstance(command, PuntCommand):
         print("PASS: AI chose PuntCommand")
     else:
@@ -64,15 +64,15 @@ def test_situation_2_aggressive_goal_line():
     """
     print("\n--- Test Situation 2: Aggressive Goal Line Attempt ---")
     caller = PlayCaller(aggression=0.5)
-    
+
     # Opponent 5 means 5 yards to goal. Down 4 points (-4). 60 seconds left.
     context = get_context(down=4, distance=1, dist_to_goal=5, time_left=60, score_diff=-4)
-    
+
     command = caller.select_play(context)
-    
+
     is_punt = isinstance(command, PuntCommand)
     is_fg = isinstance(command, FieldGoalCommand)
-    
+
     if not is_punt and not is_fg:
         print(f"PASS: AI chose {type(command).__name__} (Going for it)")
     else:
@@ -87,15 +87,15 @@ def test_situation_3_field_goal_range():
     """
     print("\n--- Test Situation 3: Field Goal Range ---")
     caller = PlayCaller(aggression=0.5)
-    
-    # Opponent 30 means 30 yards to goal. Tied (0). 900 seconds left (start of Q3 is 30:00 left in game, but let's say 15:00 left in Q3 means 30 mins total? 
-    # Actually Q3 starts at 30:00 remaining. 15:00 left in Q3 means 30:00 - 15:00 = 15 mins elapsed in half? 
-    # Let's just use a large enough time so desperation logic doesn't kick in. 
+
+    # Opponent 30 means 30 yards to goal. Tied (0). 900 seconds left (start of Q3 is 30:00 left in game, but let's say 15:00 left in Q3 means 30 mins total?
+    # Actually Q3 starts at 30:00 remaining. 15:00 left in Q3 means 30:00 - 15:00 = 15 mins elapsed in half?
+    # Let's just use a large enough time so desperation logic doesn't kick in.
     # 15:00 left in Q3 = 15 mins + 15 mins (Q4) = 30 mins = 1800 seconds left.
     context = get_context(down=4, distance=5, dist_to_goal=30, time_left=1800, score_diff=0)
-    
+
     command = caller.select_play(context)
-    
+
     if isinstance(command, FieldGoalCommand):
         print("PASS: AI chose FieldGoalCommand")
     else:
@@ -110,21 +110,21 @@ def test_situation_4_passing_3rd_long():
     """
     print("\n--- Test Situation 4: Passing on 3rd & Long ---")
     caller = PlayCaller(aggression=0.5)
-    
+
     # Own 40 means 60 yards to goal.
     context = get_context(down=3, distance=15, dist_to_goal=60, time_left=1200, score_diff=0)
-    
+
     iterations = 100
     pass_count = 0
-    
+
     for _ in range(iterations):
         command = caller.select_play(context)
         if isinstance(command, PassPlayCommand):
             pass_count += 1
-            
+
     pass_rate = (pass_count / iterations) * 100
     print(f"Pass Rate: {pass_rate}%")
-    
+
     if pass_rate > 70:
         print("PASS: Pass rate > 70%")
     else:
@@ -138,21 +138,21 @@ def test_situation_5_running_short_yardage():
     """
     print("\n--- Test Situation 5: Running on Short Yardage ---")
     caller = PlayCaller(aggression=0.5)
-    
+
     # Midfield means 50 yards to goal.
     context = get_context(down=3, distance=1, dist_to_goal=50, time_left=1080, score_diff=0)
-    
+
     iterations = 100
     run_count = 0
-    
+
     for _ in range(iterations):
         command = caller.select_play(context)
         if isinstance(command, RunPlayCommand):
             run_count += 1
-            
+
     run_rate = (run_count / iterations) * 100
     print(f"Run Rate: {run_rate}%")
-    
+
     if run_rate > 50:
         print("PASS: Run rate > 50%")
     else:
@@ -164,3 +164,99 @@ if __name__ == "__main__":
     test_situation_3_field_goal_range()
     test_situation_4_passing_3rd_long()
     test_situation_5_running_short_yardage()
+
+def test_situation_6_advanced_coach_personality():
+    """
+    Situation 6: Advanced Coach Personality System
+    Context: West Coast offense vs aggressive defense, neutral game state
+    Rationale: Should demonstrate coach-specific play calling tendencies
+    """
+    print("\n--- Test Situation 6: Advanced Coach Personality ---")
+    from app.orchestrator.play_caller import PlayCaller
+
+    # West Coast coach - pass-heavy
+    west_coast_caller = PlayCaller(aggression=0.6, run_pass_ratio=0.3)
+
+    context = get_context(down=2, distance=8, dist_to_goal=50, time_left=900, score_diff=0)
+
+    iterations = 50
+    pass_count = 0
+
+    for _ in range(iterations):
+        command = west_coast_caller.select_play(context)
+        if isinstance(command, PassPlayCommand):
+            pass_count += 1
+
+    pass_rate = (pass_count / iterations) * 100
+    print(f"West Coast Pass Rate: {pass_rate}%")
+
+    if pass_rate > 70:
+        print("PASS: West Coast offense shows pass-heavy tendency")
+    else:
+        print("FAIL: West Coast offense not pass-heavy enough")
+
+def test_situation_7_situational_awareness():
+    """
+    Situation 7: Situational Awareness System
+    Context: Late game desperation, down by 7 with 2 minutes left
+    Rationale: Should favor aggressive passing to catch up
+    """
+    print("\n--- Test Situation 7: Situational Awareness ---")
+    caller = PlayCaller(aggression=0.7)
+
+    # Late game, down by 7, 2 minutes left
+    context = get_context(down=2, distance=10, dist_to_goal=50, time_left=120, score_diff=-7)
+
+    iterations = 30
+    pass_count = 0
+
+    for _ in range(iterations):
+        command = caller.select_play(context)
+        if isinstance(command, PassPlayCommand):
+            pass_count += 1
+
+    pass_rate = (pass_count / iterations) * 100
+    print(f"Desperation Pass Rate: {pass_rate}%")
+
+    if pass_rate > 80:
+        print("PASS: Situational awareness favors passing when behind late")
+    else:
+        print("FAIL: Situational awareness not aggressive enough")
+
+def test_situation_8_adaptive_strategy():
+    """
+    Situation 8: Adaptive Strategy System
+    Context: Protecting lead late in game
+    Rationale: Should favor running to burn clock
+    """
+    print("\n--- Test Situation 8: Adaptive Strategy ---")
+    conservative_caller = PlayCaller(aggression=0.3)
+
+    # Leading by 7, 3 minutes left - should run to burn clock
+    context = get_context(down=2, distance=6, dist_to_goal=50, time_left=180, score_diff=7)
+
+    iterations = 25
+    run_count = 0
+
+    for _ in range(iterations):
+        command = conservative_caller.select_play(context)
+        if isinstance(command, RunPlayCommand):
+            run_count += 1
+
+    run_rate = (run_count / iterations) * 100
+    print(f"Clock Management Run Rate: {run_rate}%")
+
+    if run_rate > 70:
+        print("PASS: Adaptive strategy favors running when protecting lead")
+    else:
+        print("FAIL: Adaptive strategy not conservative enough")
+
+if __name__ == "__main__":
+    test_situation_1_conservative_punt()
+    test_situation_2_aggressive_goal_line()
+    test_situation_3_field_goal_range()
+    test_situation_4_passing_3rd_long()
+    test_situation_5_running_short_yardage()
+    test_situation_6_advanced_coach_personality()
+    test_situation_7_situational_awareness()
+    test_situation_8_adaptive_strategy()

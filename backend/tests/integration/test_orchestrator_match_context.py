@@ -5,6 +5,8 @@ from app.models.player import Player
 from app.models.game import Game
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
 from app.orchestrator.match_context import MatchContext
+from app.orchestrator.kernels.cortex_kernel import CortexKernel
+from app.orchestrator.kernels.genesis_kernel import GenesisKernel
 
 def create_full_team(session: Session, team_id: int):
     """

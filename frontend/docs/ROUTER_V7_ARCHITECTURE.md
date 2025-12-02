@@ -2,7 +2,7 @@
 
 ## Route Configuration Flow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         App.tsx                             │
 │  ┌───────────────────────────────────────────────────────┐ │
@@ -64,7 +64,7 @@
 
 ### Navigation Event: User clicks "Season Dashboard"
 
-```
+```text
 TIME    │ REACT ROUTER v6 (OLD)        │ REACT ROUTER v7 (NEW)
 ────────┼──────────────────────────────┼─────────────────────────────
 0ms     │ Navigate to /season          │ Navigate to /season
@@ -92,7 +92,7 @@ TIME    │ REACT ROUTER v6 (OLD)        │ REACT ROUTER v7 (NEW)
 
 ## Error Handling Flow
 
-```
+```text
 ┌────────────────────────────────────────────────────────────┐
 │                     Error Occurs                           │
 └────────────────────────────────────────────────────────────┘
@@ -150,7 +150,7 @@ function SeasonDashboard() {
 
 ## File Organization
 
-```
+```text
 frontend/src/
 │
 ├── App.tsx                           ← Entry point
@@ -184,7 +184,7 @@ frontend/src/
 
 ## Benefits Summary
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                   BEFORE (v6)    │    AFTER (v7)            │
 ├─────────────────────────────────────────────────────────────┤
