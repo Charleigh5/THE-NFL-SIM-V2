@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import system, simulation, data, websocket, teams, players, season, genesis, feedback
+from app.api.endpoints import system, simulation, data, websocket, teams, players, season, genesis, feedback, draft
 
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -85,8 +85,11 @@ app.include_router(players.router, prefix="/api/players", tags=["players"])
 app.include_router(season.router)
 app.include_router(genesis.router)
 app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
+app.include_router(draft.router)
 from app.api.endpoints import settings as settings_endpoint
 app.include_router(settings_endpoint.router)
+from app.api.endpoints import draft
+app.include_router(draft.router)
 
 @app.get("/")
 def read_root():

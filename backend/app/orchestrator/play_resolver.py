@@ -24,10 +24,10 @@ class PlayResolver:
 
         for p in all_players:
             # Extract initialized state from MatchContext
-            fatigue_reg = match_context.get_fatigue(p.id)
-            bio_profile = match_context.get_player_bio(p.id)
+            fatigue_val = match_context.get_player_fatigue(p.id)
+            # bio_profile = match_context.get_player_bio(p.id)
 
-            fatigue_data = fatigue_reg.model_dump() if fatigue_reg else {}
+            fatigue_data = {"current_fatigue": fatigue_val}
             # anatomy data placeholder for now
 
             # Register with Genesis (Biology/Fatigue)

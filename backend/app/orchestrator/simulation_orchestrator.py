@@ -81,7 +81,8 @@ class SimulationOrchestrator:
             weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
 
             # Create MatchContext instance with home/away teams
-            self.match_context = await MatchContext.create(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            await self.match_context.load_rosters()
 
             # --- Pre-Game Services ---
             try:
@@ -387,12 +388,12 @@ class SimulationOrchestrator:
         defense_players = []
 
         if self.match_context:
-            off_side = "home" if self.possession == "home" else "away"
-            def_side = "away" if self.possession == "home" else "home"
+            off_team_id = self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id
+            def_team_id = self.match_context.away_team_id if self.possession == "home" else self.match_context.home_team_id
 
             # Use default formations for now as PlayCaller hasn't run yet
-            offense_players = self.match_context.get_fielded_players(off_side, "standard")
-            defense_players = self.match_context.get_fielded_players(def_side, "4-3")
+            offense_players = self.match_context.get_fielded_players(off_team_id, "standard", "OFFENSE")
+            defense_players = self.match_context.get_fielded_players(def_team_id, "4-3", "DEFENSE")
 
         # Build PlayCallingContext
         try:
@@ -425,7 +426,7 @@ class SimulationOrchestrator:
         self.play_caller.aggression = float(aggression)
 
         # Select Play
-        if self.match_context and self.match_context.cortex:
+        if self.match_context and hasattr(self.match_context, 'cortex') and self.match_context.cortex:
             # Use Cortex AI
             situation = GameSituation(
                 down=self.down,
@@ -510,18 +511,17 @@ class SimulationOrchestrator:
         if result.receiver_id: key_players.add(result.receiver_id)
 
         # Update Offense
-        for p in offense:
-            regulator = self.match_context.get_fatigue(p.id)
-            if regulator:
-                exertion = 1.0 if p.id in key_players else 0.3
-                regulator.update_fatigue(exertion, temp)
+        offense_ids = [p.id for p in offense]
+        # Key players exert more energy
+        key_ids = [pid for pid in offense_ids if pid in key_players]
+        other_ids = [pid for pid in offense_ids if pid not in key_players]
+
+        self.match_context.update_fatigue(key_ids, 0.05) # High exertion
+        self.match_context.update_fatigue(other_ids, 0.01) # Low exertion
 
         # Update Defense
-        for p in defense:
-            regulator = self.match_context.get_fatigue(p.id)
-            if regulator:
-                exertion = 0.4 # Defenders generally react
-                regulator.update_fatigue(exertion, temp)
+        defense_ids = [p.id for p in defense]
+        self.match_context.update_fatigue(defense_ids, 0.02) # Medium exertion
 
     async def _update_game_state(self, result: PlayResult) -> None:
         """Update game state based on play result."""
