@@ -45,7 +45,7 @@ class Player(Base):
     jersey_number = Column(Integer, default=0)
     overall_rating = Column(Integer, default=50, index=True)
     depth_chart_rank = Column(Integer, default=999) # Lower is better (starter = 1)
-    
+
     # Team Relationship
     team_id = Column(Integer, ForeignKey("team.id"), nullable=True, index=True)
     team = relationship("Team", back_populates="players")
@@ -59,7 +59,7 @@ class Player(Base):
     awareness = Column(Integer, default=50)
     stamina = Column(Integer, default=80) # New for Phase 7
     injury_resistance = Column(Integer, default=80) # New for Phase 7
-    
+
     # Offensive Specific
     throw_power = Column(Integer, default=50)
     throw_accuracy_short = Column(Integer, default=50)
@@ -69,7 +69,7 @@ class Player(Base):
     route_running = Column(Integer, default=50)
     pass_block = Column(Integer, default=50)
     run_block = Column(Integer, default=50)
-    
+
     # Defensive Specific
     tackle = Column(Integer, default=50)
     hit_power = Column(Integer, default=50)
@@ -79,35 +79,74 @@ class Player(Base):
     pass_rush_power = Column(Integer, default=50)
     pass_rush_finesse = Column(Integer, default=50)
     play_recognition = Column(Integer, default=50) # New for Phase 7
-    
+
     # Special Teams
     kick_power = Column(Integer, default=50)
     kick_accuracy = Column(Integer, default=50)
+
+    # --- Proposed QB Enhancements ---
+    pocket_presence = Column(Integer, default=50, nullable=False)
+    quick_release = Column(Integer, default=50, nullable=False)
+    scramble_willingness = Column(Integer, default=50, nullable=False)
+    throw_on_run = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed RB Enhancements ---
+    patience = Column(Integer, default=50, nullable=False)
+    pass_pro_rating = Column(Integer, default=50, nullable=False)
+    juke_efficiency = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed WR/TE Enhancements ---
+    release = Column(Integer, default=50, nullable=False)
+    blocking_tenacity = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed OL Enhancements ---
+    pull_speed = Column(Integer, default=50, nullable=False)
+    anchor = Column(Integer, default=50, nullable=False)
+    discipline = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed DL Enhancements ---
+    first_step = Column(Integer, default=50, nullable=False)
+    gap_integrity = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed LB Enhancements ---
+    coverage_disguise = Column(Integer, default=50, nullable=False)
+    blitz_timing = Column(Integer, default=50, nullable=False)
+    run_fit = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed DB Enhancements ---
+    press = Column(Integer, default=50, nullable=False)
+    ball_tracking = Column(Integer, default=50, nullable=False)
+    run_support = Column(Integer, default=50, nullable=False)
+
+    # --- Proposed K/P Enhancements ---
+    hang_time = Column(Integer, default=50, nullable=False)
+    coffin_corner = Column(Integer, default=50, nullable=False)
+    return_vision = Column(Integer, default=50, nullable=False)
 
     # --- Physics & Simulation Attributes ---
     # QB
     arm_slot = Column(String, default="OverTop") # OverTop, ThreeQuarter, Sidearm
     release_point_height = Column(Float, default=6.0) # in feet
-    
+
     # RB/Ball Carrier
     vision_cone_angle = Column(Integer, default=45) # Degrees
     break_tackle_threshold = Column(Float, default=100.0) # Force needed to tackle
-    
+
     # --- RPG Progression ---
     xp = Column(Integer, default=0)
     level = Column(Integer, default=1)
     skill_points = Column(Integer, default=0)
-    traits = Column(JSON, default=list) # List of trait strings e.g. ["DeepBall", "Clutch"]
+    traits = relationship("Trait", secondary="player_traits")
     development_trait = Column(String, default=DevelopmentTrait.NORMAL) # Using String to store Enum value
-    
+
     # --- Morale & Chemistry ---
     morale = Column(Integer, default=50) # 0-100
-    
+
     # --- Injury System ---
     injury_status = Column(String, default=InjuryStatus.ACTIVE)
     injury_type = Column(String, nullable=True) # e.g. "ACL Tear", "Sprained Ankle"
     weeks_to_recovery = Column(Integer, default=0)
-    
+
     # Nano Banana
     image_url = Column(String, nullable=True)
     nano_id = Column(String, nullable=True) # Reference to Nano Banana processed asset
@@ -121,6 +160,17 @@ class Player(Base):
     is_retired = Column(Boolean, default=False, index=True)
     retirement_year = Column(Integer, nullable=True)
     legacy_score = Column(Integer, default=0) # For Hall of Fame tracking
-    
+
     # History
     season_stats = relationship("PlayerSeasonStats", back_populates="player")
+
+class Trait(Base):
+    __tablename__ = 'traits'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(String)
+
+class PlayerTrait(Base):
+    __tablename__ = 'player_traits'
+    player_id = Column(Integer, ForeignKey('player.id'), primary_key=True)
+    trait_id = Column(Integer, ForeignKey('traits.id'), primary_key=True)

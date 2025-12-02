@@ -44,7 +44,8 @@ class MatchContext:
 
     async def _load_roster_async(self, team_id: int) -> Dict[int, Player]:
         """Async load roster."""
-        stmt = select(Player).where(Player.team_id == team_id)
+        from sqlalchemy.orm import selectinload
+        stmt = select(Player).options(selectinload(Player.traits)).where(Player.team_id == team_id)
         result = await self.session.execute(stmt)
         players = result.scalars().all()
         if not players:
@@ -55,7 +56,8 @@ class MatchContext:
         """
         Query database for all players on team and convert to dictionary indexed by player_id.
         """
-        players = self.session.query(Player).filter(Player.team_id == team_id).all()
+        from sqlalchemy.orm import selectinload
+        players = self.session.query(Player).options(selectinload(Player.traits)).filter(Player.team_id == team_id).all()
         if not players:
             raise ValueError(f"No players found for team_id {team_id}")
 

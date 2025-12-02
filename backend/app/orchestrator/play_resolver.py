@@ -3,7 +3,10 @@ from app.schemas.play import PlayResult
 import random
 from app.orchestrator.kernels_interface import KernelInterface
 from app.engine.probability_engine import ProbabilityEngine
-from typing import Optional, Any
+from app.engine.blocking import BlockingEngine, BlockingResult
+from app.engine.event_bus import EventBus, EventType
+from app.engine.offensive_line_ai import OffensiveLineAI
+from typing import Optional, Any, List, Tuple
 
 class PlayResolver:
     """
@@ -12,6 +15,7 @@ class PlayResolver:
     def __init__(self, kernels: Optional[KernelInterface] = None) -> None:
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
+        self.offensive_line_ai = OffensiveLineAI()
 
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
@@ -36,13 +40,18 @@ class PlayResolver:
         """
         Executes the logic for a given play command.
         """
+        result = None
         if isinstance(command, PassPlayCommand):
-            return self._resolve_pass_play(command)
+            result = self._resolve_pass_play(command)
         elif isinstance(command, RunPlayCommand):
-            return self._resolve_run_play(command)
+            result = self._resolve_run_play(command)
+        else:
+            # Add resolvers for other command types here
+            result = command.execute({})
 
-        # Add resolvers for other command types here
-        return command.execute({})
+        # Decrement debuffs after every play
+        self.offensive_line_ai.decrement_debuffs()
+        return result
 
     def _get_player_by_position(self, players: list, position_prefix: str) -> Optional[Any]:
         """Helper to find a player by position prefix (e.g., 'QB', 'WR')."""
@@ -61,6 +70,58 @@ class PlayResolver:
         if self.current_match_context and self.current_match_context.weather_config:
             return self.current_match_context.weather_config.get("temperature", 75.0)
         return 75.0
+
+    def _resolve_line_battle(self, offense: List[Any], defense: List[Any]) -> Tuple[BlockingResult, Optional[Any], Optional[Any]]:
+        """
+        Simulate the battle between OL and DL.
+        Returns (BlockingResult, winning_defender, beaten_lineman)
+        """
+        # Identify matchups (Simplified: LT vs RE, RT vs LE)
+        # We'll check a few key matchups and see if anyone breaks through
+
+        matchups = [
+            ("LT", "RE"),
+            ("RT", "LE"),
+            ("C", "DT"),
+            ("LG", "DT"),
+            ("RG", "DT")
+        ]
+
+        worst_result = BlockingResult.WIN # Default to clean pocket
+        winning_defender = None
+        beaten_lineman = None
+
+        for ol_pos, dl_pos in matchups:
+            ol = self._get_player_by_position(offense, ol_pos)
+            dl = self._get_player_by_position(defense, dl_pos)
+
+            if not ol or not dl:
+                continue
+
+            # Get attributes
+            ol_rating = getattr(ol, "pass_block", 70)
+            dl_rating = getattr(dl, "pass_rush", 70) # Assuming pass_rush attribute exists, else use power/finesse
+
+            # Apply Intimidation Debuff
+            modifier = self.offensive_line_ai.get_player_modifier(ol.id)
+            ol_rating += modifier
+
+            # Resolve block
+            result = BlockingEngine.resolve_pass_block(ol_rating, dl_rating)
+
+            # Check if this result is worse than current worst (LOSS < STALEMATE < WIN)
+            # BlockingResult enum: WIN, LOSS, STALEMATE, PANCAKE
+            # We treat LOSS and PANCAKE as bad for offense
+
+            if result == BlockingResult.LOSS or result == BlockingResult.PANCAKE:
+                worst_result = result
+                winning_defender = dl
+                beaten_lineman = ol
+                break # Sack!
+            elif result == BlockingResult.STALEMATE and worst_result == BlockingResult.WIN:
+                worst_result = BlockingResult.STALEMATE
+
+        return worst_result, winning_defender, beaten_lineman
 
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
@@ -86,7 +147,40 @@ class PlayResolver:
         injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
         injuries = [injury_check] if injury_check["is_injured"] else []
 
-        # 3. Attribute-Based Core Logic via ProbabilityEngine
+        # 3. Line Battle & Sack Check
+        block_result, sacker, beaten_ol = self._resolve_line_battle(command.offense, command.defense)
+
+        if block_result == BlockingResult.LOSS or block_result == BlockingResult.PANCAKE:
+            # SACK!
+            loss_yards = random.randint(5, 10)
+
+            # Publish Event
+            if sacker and beaten_ol:
+                intimidation_factor = 1.0
+                # Check for Intimidation trait
+                if hasattr(sacker, "traits"):
+                    for trait in sacker.traits:
+                        if trait.name == "Intimidation":
+                            intimidation_factor = 1.5
+                            break
+
+                EventBus.publish(EventType.SACK_EVENT, {
+                    "beaten_linemen_ids": [beaten_ol.id],
+                    "sacker_id": sacker.id,
+                    "intimidation_factor": intimidation_factor
+                })
+
+            return PlayResult(
+                yards_gained=-loss_yards,
+                is_touchdown=False,
+                description=f"SACKED! {qb.last_name} is taken down by {sacker.last_name if sacker else 'the defense'} for a loss of {loss_yards} yards.",
+                headline=f"Sack! {sacker.last_name if sacker else 'Defense'} gets home!",
+                is_highlight_worthy=True,
+                injuries=injuries,
+                passer_id=qb.id
+            )
+
+        # 4. Attribute-Based Core Logic via ProbabilityEngine
 
         # A. Throw Accuracy vs Depth
         throw_accuracy = 50 # Default base
@@ -117,7 +211,12 @@ class PlayResolver:
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 0.10
 
-        # E. Final Probability Calculation
+        # E. Pressure Impact (Stalemate means pressure)
+        pressure_penalty = 0.0
+        if block_result == BlockingResult.STALEMATE:
+            pressure_penalty = 0.15 # 15% penalty to accuracy under pressure
+
+        # F. Final Probability Calculation
         # Normalize throw accuracy (0-100) to 0.0-1.0 base probability
         base_prob = throw_accuracy / 100.0
 
@@ -127,11 +226,11 @@ class PlayResolver:
         success_chance = ProbabilityEngine.calculate_success_chance(
             base_probability=base_prob,
             attribute_modifiers=attr_modifiers,
-            context_modifiers=-weather_penalty,
+            context_modifiers=-weather_penalty - pressure_penalty,
             fatigue_penalty=fatigue_penalty
         )
 
-        # F. Resolve Outcome
+        # G. Resolve Outcome
         is_complete = ProbabilityEngine.resolve_outcome(success_chance)
 
         if is_complete:
@@ -208,9 +307,9 @@ class PlayResolver:
 
         # 2. Genesis Kernel: Fatigue
         temp = self._get_weather_temp()
-        print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
+        # print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
         current_fatigue = self.kernels.genesis.calculate_fatigue(rb.id, exertion=1.0, temperature=temp)
-        print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
+        # print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
 
         # 3. Attribute Logic via ProbabilityEngine
 

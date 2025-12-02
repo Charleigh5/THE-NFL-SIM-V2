@@ -83,6 +83,22 @@ class SimulationOrchestrator:
             # Create MatchContext instance with home/away teams
             self.match_context = await MatchContext.create(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
 
+            # --- Pre-Game Services ---
+            try:
+                from app.services.pre_game_service import PreGameService
+                pre_game_service = PreGameService(self.db_session)
+
+                # 1. Apply Unit Chemistry Boosts
+                await pre_game_service.apply_chemistry_boosts(self.match_context)
+
+                # 2. Record Starters (for future chemistry)
+                await pre_game_service.record_starters(new_game.id, home_team_id, away_team_id)
+
+                logger.info("Pre-game services executed", extra={"game_id": new_game.id})
+            except Exception as e:
+                logger.error("Error executing pre-game services", exc_info=e)
+            # -------------------------
+
             # Register players with Kernels
             self.play_resolver.register_players(self.match_context)
 
