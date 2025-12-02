@@ -280,7 +280,3 @@ See [`GAMEPLAY_VERIFICATION_RESULTS.md`](file:///c:/Users/cweir/Documents/GitHub
 
 - **Backend:** All new tests passing.
 - **Frontend:** Playwright E2E tests passing.
-
-```
-
-```
