@@ -13,8 +13,11 @@ import random
 from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
 import datetime
+import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
+logger = logging.getLogger(__name__)
 
 class SimulationOrchestrator:
     """
@@ -72,7 +75,7 @@ class SimulationOrchestrator:
             self.current_game_id = new_game.id
 
             # Hydrate Match Context
-            print(f"Hydrating Match Context for Game {new_game.id}...")
+            logger.info("Hydrating match context", extra={"game_id": new_game.id})
 
             # Initialize MatchContext with rosters and weather config
             weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
@@ -83,7 +86,14 @@ class SimulationOrchestrator:
             # Register players with Kernels
             self.play_resolver.register_players(self.match_context)
 
-            print(f"Match Context Hydrated. Home: {len(self.match_context.home_roster)} players, Away: {len(self.match_context.away_roster)} players.")
+            logger.info(
+                "Match context hydrated",
+                extra={
+                    "game_id": new_game.id,
+                    "home_roster_size": len(self.match_context.home_roster),
+                    "away_roster_size": len(self.match_context.away_roster),
+                },
+            )
         else:
             # Fallback for no DB (testing)
              weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
@@ -116,7 +126,7 @@ class SimulationOrchestrator:
 
                 await self.db_session.commit()
         except Exception as e:
-            print(f"Error saving progress: {e}")
+            logger.exception("Error saving game progress", extra={"game_id": self.current_game_id})
             await self.db_session.rollback()
 
     async def save_game_result(self) -> None:
@@ -135,11 +145,9 @@ class SimulationOrchestrator:
                 await self._save_player_stats()
                 await self._save_progress() # Ensure final state is saved
 
-                print(f"Finalized game result for Game ID {self.current_game_id}")
+                logger.info("Finalized game result", extra={"game_id": self.current_game_id})
         except Exception as e:
-            print(f"Error finalizing game: {e}")
-            import traceback
-            traceback.print_exc()
+            logger.exception("Error finalizing game", extra={"game_id": self.current_game_id})
         finally:
             # Cleanup Match Context
             self.match_context = None
@@ -162,7 +170,7 @@ class SimulationOrchestrator:
 
         if not game: return
 
-        print(f"Saving player stats for Game {game.id}...")
+        logger.info("Saving player stats", extra={"game_id": game.id})
 
         # 1. Map player IDs to Team IDs
         player_team_map = {}
@@ -257,7 +265,7 @@ class SimulationOrchestrator:
             count += 1
 
         await self.db_session.commit()
-        print(f"Saved stats for {count} players.")
+        logger.info("Player stats saved", extra={"game_id": game.id, "player_count": count})
 
     def run_simulation(self) -> PlayResult:
         """
@@ -265,7 +273,7 @@ class SimulationOrchestrator:
         (Legacy method for backward compatibility)
         """
         self.is_running = True
-        print("Setting up simulation scenario: Pass Play")
+        logger.debug("Setting up simulation scenario: Pass Play")
 
         # For now, we are not using real player objects
         offense_players = []
@@ -279,7 +287,7 @@ class SimulationOrchestrator:
         )
 
         # 2. Resolve the play
-        print("Resolving play...")
+        logger.debug("Resolving play")
         result = self.play_resolver.resolve_play(pass_command)
         self.history.append(result)
 
@@ -296,7 +304,7 @@ class SimulationOrchestrator:
         except ValueError:
             self.time_left = "14:45"
 
-        print("Play resolved.")
+        logger.debug("Play resolved")
 
         self._save_progress()
 
@@ -321,15 +329,15 @@ class SimulationOrchestrator:
             # We assume self.db_session is set or we can't start.
             if not self.db_session:
                  # Try to get one? No, we are async.
-                 print("Error: No DB session available for continuous simulation")
+                 logger.error("No DB session available for continuous simulation")
                  return
             await self.start_new_game_session(home_team_id=1, away_team_id=2, config=config, db_session=self.db_session)
 
-        print(f"Starting continuous simulation for {num_plays} plays...")
+        logger.info("Starting continuous simulation", extra={"num_plays": num_plays})
 
         for play_num in range(num_plays):
             if not self.is_running:
-                print("Simulation stopped by user")
+                logger.info("Simulation stopped by user")
                 break
 
             # Execute single play
@@ -348,13 +356,12 @@ class SimulationOrchestrator:
 
             # Check if quarter/game is over
             if self._is_quarter_over():
-                print(f"Quarter {self.current_quarter} complete")
+                logger.info("Quarter complete", extra={"quarter": self.current_quarter})
                 break
 
         self.is_running = False
-        self.is_running = False
         await self.save_game_result()
-        print("Simulation complete")
+        logger.info("Simulation complete")
 
     async def _execute_single_play(self) -> PlayResult:
         """Execute a single play and update game state."""
@@ -421,7 +428,10 @@ class SimulationOrchestrator:
 
             play_decision = self.match_context.cortex.call_play(situation, coach_philosophy)
             command = self._convert_decision_to_command(play_decision, context)
-            print(f"DEBUG: Cortex AI Decision: {play_decision} (Down: {self.down}, Dist: {self.distance})")
+            logger.debug(
+                "Cortex AI decision",
+                extra={"decision": play_decision, "down": self.down, "distance": self.distance},
+            )
         else:
             # Legacy PlayCaller
             command = self.play_caller.select_play(context)

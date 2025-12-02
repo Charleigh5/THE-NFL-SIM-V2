@@ -21,6 +21,7 @@ from app.services.offseason_service import OffseasonService
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
 from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult, DraftPickDetail
 from app.schemas.stats import LeagueLeaders, PlayerLeader
+from app.schemas import draft as draft_schemas
 from app.models.stats import PlayerGameStats
 from app.models.player import Player
 from sqlalchemy import func, desc
@@ -1120,3 +1121,29 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
     return enhanced_needs
 
 
+# ===== Draft Assistant Endpoint =====
+
+@router.post("/draft/suggest-pick", response_model=draft_schemas.DraftSuggestionResponse)
+@handle_errors
+async def suggest_draft_pick(
+    request: draft_schemas.DraftSuggestionRequest,
+    db: AsyncSession = Depends(get_async_db)
+):
+    """
+    Get AI-powered draft pick recommendation.
+
+    Uses DraftAssistant service to analyze team needs and player value,
+    providing a recommended pick with reasoning and alternatives.
+    """
+    from app.services.draft_assistant import DraftAssistant
+
+    assistant = DraftAssistant()
+    suggestion = await assistant.suggest_pick(
+        team_id=request.team_id,
+        pick_number=request.pick_number,
+        available_players=request.available_players,
+        db=db
+    )
+
+    logger.info(f"Draft suggestion for team {request.team_id}: player {suggestion.recommended_player_id}")
+    return suggestion

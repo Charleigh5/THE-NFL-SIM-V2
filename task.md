@@ -96,6 +96,10 @@
 - [x] Create playoff service tests (6/6 passing)
 - [x] Create comprehensive offseason service tests (11/11 passing)
 - [x] Fix SQLAlchemy deprecation warning (`backend/app/models/base.py`)
+- [x] Unit test models (`backend/tests/test_models.py`)
+- [x] Integration test queries (`backend/tests/integration/test_queries.py`)
+- [x] Test API endpoints (`backend/tests/test_api_endpoints.py`)
+- [x] Frontend router tests (`frontend/e2e/router.spec.ts`)
 
 #### Manual Testing Flow
 

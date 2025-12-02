@@ -4,15 +4,16 @@ Batch simulation service for simulating entire weeks of games.
 from typing import List, Dict, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy import select
 from app.models.game import Game
 from app.models.season import Season
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
 from app.schemas.play import PlayResult
 import asyncio
-
+import logging
 
 from app.services.player_development_service import PlayerDevelopmentService
+
+logger = logging.getLogger(__name__)
 
 class WeekSimulator:
     """
@@ -48,7 +49,7 @@ class WeekSimulator:
                 if isinstance(weather_data, dict):
                     return weather_data
         except Exception as e:
-            print(f"MCP Warning: Could not fetch weather: {e}")
+            logger.warning("Could not fetch weather from MCP", exc_info=e)
         return None
 
     def _parse_weather(self, weather_data: Dict) -> Dict:
@@ -102,7 +103,14 @@ class WeekSimulator:
         results = {}
 
         for game in games:
-            print(f"Simulating Game {game.id}: Team {game.home_team_id} vs Team {game.away_team_id}")
+            logger.info(
+                "Simulating game",
+                extra={
+                    "game_id": game.id,
+                    "home_team_id": game.home_team_id,
+                    "away_team_id": game.away_team_id,
+                },
+            )
 
             # Create orchestrator for this game
             orchestrator = SimulationOrchestrator()
@@ -151,10 +159,17 @@ class WeekSimulator:
                 "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away"
             }
 
-            print(f"  Result: {orchestrator.home_score}-{orchestrator.away_score}")
+            logger.info(
+                "Game simulation complete",
+                extra={
+                    "game_id": game.id,
+                    "home_score": orchestrator.home_score,
+                    "away_score": orchestrator.away_score,
+                },
+            )
 
         # Process weekly development (Training, Injuries, Morale)
-        print("Processing weekly player development...")
+        logger.info("Processing weekly player development", extra={"season_id": season_id, "week": week})
         await self.player_development_service.process_weekly_development(season_id, week)
 
         return {
@@ -176,7 +191,14 @@ class WeekSimulator:
         if game.is_played:
             return {"error": "Game already played"}
 
-        print(f"Simulating Game {game.id}: Team {game.home_team_id} vs Team {game.away_team_id}")
+        logger.info(
+            "Simulating single game",
+            extra={
+                "game_id": game.id,
+                "home_team_id": game.home_team_id,
+                "away_team_id": game.away_team_id,
+            },
+        )
 
         orchestrator = SimulationOrchestrator()
         if use_fast_sim:
@@ -279,7 +301,7 @@ class WeekSimulator:
         all_results = {}
 
         for week_num in range(start_week, end_week + 1):
-            print(f"\n=== SIMULATING WEEK {week_num} ===")
+            logger.info("Simulating week", extra={"season_id": season_id, "week": week_num})
             week_results = await self.simulate_week(season_id, week_num)
             all_results[f"week_{week_num}"] = week_results
 

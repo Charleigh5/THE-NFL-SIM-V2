@@ -3,13 +3,37 @@ import { test, expect } from "@playwright/test";
 test.describe("Router Navigation", () => {
   test.beforeEach(async ({ page }) => {
     // Mock API responses
-    await page.route("**/api/teams", async (route) => {
+    await page.route("**/api/teams*", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify([
-          { id: 1, name: "Test Team", city: "Test City", abbreviation: "TST" },
-        ]),
+        body: JSON.stringify({
+          items: [
+            {
+              id: 1,
+              name: "Test Team",
+              city: "Test City",
+              abbreviation: "TST",
+              conference: "AFC",
+              division: "North",
+            },
+          ],
+          total: 1,
+          page: 1,
+          page_size: 100,
+          total_pages: 1,
+        }),
+      });
+    });
+
+    await page.route("**/api/settings*", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          user_team_id: null,
+          difficulty_level: "All-Pro",
+        }),
       });
     });
 

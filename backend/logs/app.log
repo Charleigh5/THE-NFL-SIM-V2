@@ -5233,3 +5233,11 @@ FROM team) AS anon_1]
 {"time":"2025-12-01 01:09:25,764","name":"api.access","level":"INFO","message":"Request completed"}
 {"time":"2025-12-01 01:11:15,290","name":"api.access","level":"INFO","message":"Request started"}
 {"time":"2025-12-01 01:11:15,291","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 01:02:07,512","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 01:02:07,856","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-02 01:02:07,857","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 01:02:07,858","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 01:02:41,050","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 01:02:41,408","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-02 01:02:41,409","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 01:02:41,412","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
