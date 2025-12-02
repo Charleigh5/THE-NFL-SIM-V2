@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./TradeAnalyzer.css";
+import { FeedbackCollector } from "../draft/FeedbackCollector";
 
 interface TradeAnalyzerProps {
   seasonId: number;
@@ -92,6 +93,12 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
           <div className="gm-reasoning">
             <p>"{evaluation.reasoning}"</p>
           </div>
+
+          <FeedbackCollector
+            contextId={`trade-${seasonId}-${teamId}-${Date.now()}`}
+            contextType="trade"
+          />
+
           <button className="re-analyze-btn" onClick={handleAnalyze}>
             Re-evaluate
           </button>

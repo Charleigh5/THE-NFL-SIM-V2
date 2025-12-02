@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./DraftAssistant.css";
+import { FeedbackCollector } from "./FeedbackCollector";
 
 interface DraftAssistantProps {
   seasonId: number;
@@ -114,6 +115,11 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
                 </div>
               )}
             </div>
+
+            <FeedbackCollector
+              contextId={`draft-${seasonId}-${teamId}-${suggestion.player_id}`}
+              contextType="draft"
+            />
 
             <button className="reset-btn" onClick={() => setSuggestion(null)}>
               New Analysis

@@ -704,20 +704,24 @@ async def suggest_draft_pick(season_id: int, team_id: int, db: Session = Depends
     return suggestion
 
 
+class TradeEvaluationRequest(BaseModel):
+    team_id: int
+    offered_ids: List[int]
+    requested_ids: List[int]
+
+
 @router.post("/{season_id}/gm/evaluate-trade")
 @handle_errors
 async def evaluate_trade(
     season_id: int,
-    team_id: int,
-    offered_ids: List[int],
-    requested_ids: List[int],
+    request: TradeEvaluationRequest,
     db: Session = Depends(get_db)
 ):
     """Evaluate a trade proposal using AI GM Agent."""
     from app.services.gm_agent import GMAgent
 
-    agent = GMAgent(db, team_id)
-    evaluation = await agent.evaluate_trade(offered_ids, requested_ids)
+    agent = GMAgent(db, request.team_id)
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
     return evaluation
 
 

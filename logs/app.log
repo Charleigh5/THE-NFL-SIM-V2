@@ -12636,3 +12636,84 @@ Traceback (most recent call last):
     ...<2 lines>...
     )
 RuntimeError: Attempted to exit cancel scope in a different task than it was entered in
+{"time":"2025-12-01 19:45:32,422","name":"app.core.mcp_registry","level":"WARNING","message":"MCP config file not found at mcp_config.json"}
+{"time":"2025-12-01 19:45:53,244","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: nfl_stats"}
+{"time":"2025-12-01 19:45:53,986","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats"}
+{"time":"2025-12-01 19:45:53,995","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats"}
+{"time":"2025-12-01 19:45:53,996","name":"test_mcp_health","level":"INFO","message":"Server nfl_stats tools: ['get_player_career_stats', 'get_league_averages', 'get_team_historical_performance']"}
+{"time":"2025-12-01 19:45:54,042","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats"}
+{"time":"2025-12-01 19:45:54,042","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: weather"}
+{"time":"2025-12-01 19:45:54,570","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: weather"}
+{"time":"2025-12-01 19:45:54,575","name":"app.core.mcp_client","level":"INFO","message":"Discovered 2 tools for server weather"}
+{"time":"2025-12-01 19:45:54,575","name":"test_mcp_health","level":"INFO","message":"Server weather tools: ['get_game_weather', 'get_historical_conditions']"}
+{"time":"2025-12-01 19:45:54,620","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: weather"}
+{"time":"2025-12-01 19:45:54,621","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: sports_news"}
+{"time":"2025-12-01 19:45:55,154","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: sports_news"}
+{"time":"2025-12-01 19:45:55,158","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server sports_news"}
+{"time":"2025-12-01 19:45:55,158","name":"test_mcp_health","level":"INFO","message":"Server sports_news tools: ['get_player_news', 'get_team_news', 'get_injury_reports']"}
+{"time":"2025-12-01 19:45:55,203","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: sports_news"}
+{"time":"2025-12-01 19:45:55,203","name":"test_mcp_health","level":"INFO","message":"Health Check Results: {'nfl_stats': 'HEALTHY', 'weather': 'HEALTHY', 'sports_news': 'HEALTHY'}"}
+{"time":"2025-12-01 19:49:46,411","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:49:46,414","name":"app.core.error_handlers","level":"WARNING","message":"Validation error: [{'type': 'missing', 'loc': ('query', 'team_id'), 'msg': 'Field required', 'input': None}]"}
+{"time":"2025-12-01 19:49:46,414","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:49:46,416","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 422 Unprocessable Entity""}
+{"time":"2025-12-01 19:49:46,505","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:49:46,506","name":"app.core.error_handlers","level":"WARNING","message":"Validation error: [{'type': 'missing', 'loc': ('query', 'team_id'), 'msg': 'Field required', 'input': None}]"}
+{"time":"2025-12-01 19:49:46,507","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:49:46,508","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 422 Unprocessable Entity""}
+{"time":"2025-12-01 19:49:46,526","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:49:46,528","name":"app.core.error_handlers","level":"WARNING","message":"Validation error: [{'type': 'missing', 'loc': ('query', 'team_id'), 'msg': 'Field required', 'input': None}]"}
+{"time":"2025-12-01 19:49:46,528","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:49:46,529","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 422 Unprocessable Entity""}
+{"time":"2025-12-01 19:50:13,544","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:50:13,556","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:50:13,558","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:50:13,563","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:50:13,565","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:50:13,566","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:50:13,572","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:50:13,574","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:50:13,575","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:17,168","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:17,179","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:17,182","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:17,187","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:17,190","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:17,191","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:17,215","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:17,217","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:17,218","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:54,376","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:54,387","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:54,389","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:54,393","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:54,396","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:54,397","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:51:54,402","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:51:54,405","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:51:54,407","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:53:09,340","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:53:09,352","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:53:09,355","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:53:09,377","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:53:09,380","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:53:09,381","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 19:53:09,389","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-01 19:53:09,394","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-01 19:53:09,395","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-01 20:06:14,647","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: nfl_stats"}
+{"time":"2025-12-01 20:06:15,211","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats"}
+{"time":"2025-12-01 20:06:15,215","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats"}
+{"time":"2025-12-01 20:06:15,215","name":"test_mcp_health","level":"INFO","message":"Server nfl_stats tools: ['get_player_career_stats', 'get_league_averages', 'get_team_historical_performance']"}
+{"time":"2025-12-01 20:06:15,261","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats"}
+{"time":"2025-12-01 20:06:15,262","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: weather"}
+{"time":"2025-12-01 20:06:15,787","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: weather"}
+{"time":"2025-12-01 20:06:15,791","name":"app.core.mcp_client","level":"INFO","message":"Discovered 2 tools for server weather"}
+{"time":"2025-12-01 20:06:15,791","name":"test_mcp_health","level":"INFO","message":"Server weather tools: ['get_game_weather', 'get_historical_conditions']"}
+{"time":"2025-12-01 20:06:15,836","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: weather"}
+{"time":"2025-12-01 20:06:15,836","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: sports_news"}
+{"time":"2025-12-01 20:06:16,359","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: sports_news"}
+{"time":"2025-12-01 20:06:16,363","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server sports_news"}
+{"time":"2025-12-01 20:06:16,363","name":"test_mcp_health","level":"INFO","message":"Server sports_news tools: ['get_player_news', 'get_team_news', 'get_injury_reports']"}
+{"time":"2025-12-01 20:06:16,410","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: sports_news"}
+{"time":"2025-12-01 20:06:16,410","name":"test_mcp_health","level":"INFO","message":"Health Check Results: {'nfl_stats': 'HEALTHY', 'weather': 'HEALTHY', 'sports_news': 'HEALTHY'}"}

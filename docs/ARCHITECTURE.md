@@ -73,3 +73,20 @@ The core of the application is the simulation loop, which runs in the backend. I
 ├── docs/                 # Documentation
 └── docker-compose.yml    # Container Orchestration
 ```
+
+### 4. AI & Integration Layer
+
+- **MCP (Model Context Protocol)**: Standardized protocol for connecting to external AI tools and data sources.
+
+  - **Registry**: Manages connections to MCP servers (`nfl_stats`, `weather`, `sports_news`).
+  - **Client**: Handles communication and tool execution.
+  - **Cache**: In-memory caching layer (`MCPCache`) to optimize performance and reduce external calls.
+
+- **AI Agents**:
+
+  - **Draft Assistant**: Analyzes team needs and prospect value to suggest draft picks.
+  - **GM Agent**: Evaluates trade proposals using player value and external news sentiment.
+
+- **Feedback System**:
+  - **Collector**: Frontend component for gathering user feedback on AI recommendations.
+  - **Analysis**: Data is stored for future tuning of AI models.

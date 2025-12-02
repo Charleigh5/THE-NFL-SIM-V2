@@ -4,6 +4,7 @@ from app.models.player import Player, Position
 from app.models.draft import DraftPick
 from app.schemas.offseason import Prospect
 from app.core.mcp_registry import registry
+from app.core.mcp_cache import mcp_cache
 
 class DraftAssistant:
     def __init__(self, db: Session):
@@ -31,9 +32,17 @@ class DraftAssistant:
         client = registry.get_client("nfl_stats")
         if client and top_candidates:
             try:
-                # Mock: Compare top candidate to league average
                 candidate = top_candidates[0]
-                stats = await client.call_tool("get_league_averages", arguments={"position": candidate.position, "season": 2024})
+
+                # Check cache first
+                cache_key = f"league_avg_{candidate.position}_{2024}"
+                stats = mcp_cache.get(cache_key, "league_averages")
+
+                if not stats:
+                    # Mock: Compare top candidate to league average
+                    stats = await client.call_tool("get_league_averages", arguments={"position": candidate.position, "season": 2024})
+                    if stats:
+                        mcp_cache.set(cache_key, stats, "league_averages")
 
                 if stats and isinstance(stats, dict):
                     suggestion["reasoning"] += f" {candidate.first_name} {candidate.last_name} projects to exceed league average {candidate.position} stats."

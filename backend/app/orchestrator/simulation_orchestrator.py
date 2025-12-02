@@ -1,6 +1,6 @@
-from .play_resolver import PlayResolver
-from .play_commands import PassPlayCommand, RunPlayCommand
-from .play_caller import PlayCaller, PlayCallingContext
+from app.orchestrator.play_resolver import PlayResolver
+from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
 from app.schemas.play import PlayResult
 from app.core.database import SessionLocal
 from app.models.game import Game
@@ -223,6 +223,7 @@ class SimulationOrchestrator:
                     player_id=pid,
                     game_id=game.id,
                     team_id=team_id,
+                    season_id=game.season_id,
                     **stats
                 )
                 self.db_session.add(pgs)

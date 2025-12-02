@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.player import Player
 from app.models.team import Team
 from app.core.mcp_registry import registry
+from app.core.mcp_cache import mcp_cache
 
 class GMAgent:
     def __init__(self, db: Session, team_id: int):
@@ -31,7 +32,15 @@ class GMAgent:
                 for pid in offered_players:
                     player = self.db.query(Player).get(pid)
                     if player:
-                        news = await news_client.call_tool("get_player_news", arguments={"player_name": f"{player.first_name} {player.last_name}"})
+                        # Check cache first
+                        cache_key = f"player_news_{player.id}"
+                        news = mcp_cache.get(cache_key, "player_news")
+
+                        if not news:
+                            news = await news_client.call_tool("get_player_news", arguments={"player_name": f"{player.first_name} {player.last_name}"})
+                            if news:
+                                mcp_cache.set(cache_key, news, "player_news")
+
                         if news and isinstance(news, list) and len(news) > 0:
                             # Simple sentiment analysis mock
                             latest = news[0]

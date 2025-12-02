@@ -14,6 +14,7 @@ import app.models.playoff
 import app.models.draft
 import app.models.history
 import app.models.depth_chart
+import app.models.feedback
 
 # Create all tables
 print(f"Creating tables in: {engine.url}")
