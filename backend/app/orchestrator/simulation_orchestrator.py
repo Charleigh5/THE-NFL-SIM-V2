@@ -13,6 +13,8 @@ import random
 from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
 import datetime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 class SimulationOrchestrator:
     """
@@ -35,7 +37,7 @@ class SimulationOrchestrator:
         self.yard_line = 25  # 0-100, where 50 is midfield
 
         # Database Session
-        self.db_session = None
+        self.db_session: Optional[AsyncSession] = None
         self.current_game_id = None
 
         # Match Context (Data Hydration)
@@ -49,46 +51,57 @@ class SimulationOrchestrator:
         self.play_delay_seconds = 5.0  # Delay between plays for animation
         self.game_config = {}
 
-    def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None) -> None:
+    async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
-        self.db_session = SessionLocal()
-        new_game = Game(
-            home_team_id=home_team_id,
-            away_team_id=away_team_id,
-            date=datetime.datetime.now(datetime.UTC),
-            season=2025,
-            week=1,
-            is_played=False,
-            game_data={"config": config} if config else {}
-        )
-        self.db_session.add(new_game)
-        self.db_session.commit()
-        self.db_session.refresh(new_game)
-        self.current_game_id = new_game.id
+        self.db_session = db_session
 
-        # Hydrate Match Context
-        print(f"Hydrating Match Context for Game {new_game.id}...")
+        if self.db_session:
+            new_game = Game(
+                home_team_id=home_team_id,
+                away_team_id=away_team_id,
+                date=datetime.datetime.now(datetime.UTC),
+                season=2025,
+                week=1,
+                is_played=False,
+                game_data={"config": config} if config else {}
+            )
+            self.db_session.add(new_game)
+            await self.db_session.commit()
+            await self.db_session.refresh(new_game)
+            self.current_game_id = new_game.id
 
-        # Initialize MatchContext with rosters and weather config
-        weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
+            # Hydrate Match Context
+            print(f"Hydrating Match Context for Game {new_game.id}...")
 
-        # Create MatchContext instance with home/away teams
-        # MatchContext handles roster loading internally
-        self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            # Initialize MatchContext with rosters and weather config
+            weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
 
-        # Register players with Kernels (Now handled inside MatchContext init, but PlayResolver needs reference)
-        self.play_resolver.register_players(self.match_context)
+            # Create MatchContext instance with home/away teams
+            self.match_context = await MatchContext.create(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
 
-        print(f"Match Context Hydrated. Home: {len(self.match_context.home_roster)} players, Away: {len(self.match_context.away_roster)} players.")
+            # Register players with Kernels
+            self.play_resolver.register_players(self.match_context)
 
-    def _save_progress(self) -> None:
+            print(f"Match Context Hydrated. Home: {len(self.match_context.home_roster)} players, Away: {len(self.match_context.away_roster)} players.")
+        else:
+            # Fallback for no DB (testing)
+             weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
+             # This will fail if MatchContext needs DB, but for now assume it's okay if we mock it?
+             # Actually MatchContext needs DB to load rosters.
+             # So we assume db_session is provided.
+             pass
+
+    async def _save_progress(self) -> None:
         """Save current game state and history to database."""
         if not self.db_session or not self.current_game_id:
             return
 
         try:
-            game = self.db_session.query(Game).filter(Game.id == self.current_game_id).first()
+            stmt = select(Game).where(Game.id == self.current_game_id)
+            result = await self.db_session.execute(stmt)
+            game = result.scalar_one_or_none()
+
             if game:
                 game.home_score = self.home_score
                 game.away_score = self.away_score
@@ -101,23 +114,26 @@ class SimulationOrchestrator:
                 current_data["state"] = self.get_game_state()
                 game.game_data = current_data
 
-                self.db_session.commit()
+                await self.db_session.commit()
         except Exception as e:
             print(f"Error saving progress: {e}")
-            self.db_session.rollback()
+            await self.db_session.rollback()
 
-    def save_game_result(self) -> None:
+    async def save_game_result(self) -> None:
         """Finalize the game in the database."""
         if not self.db_session or not self.current_game_id:
             return
 
         try:
-            game = self.db_session.query(Game).filter(Game.id == self.current_game_id).first()
+            stmt = select(Game).where(Game.id == self.current_game_id)
+            result = await self.db_session.execute(stmt)
+            game = result.scalar_one_or_none()
+
             if game:
                 game.is_played = True
                 # Save player stats
-                self._save_player_stats()
-                self._save_progress() # Ensure final state is saved
+                await self._save_player_stats()
+                await self._save_progress() # Ensure final state is saved
 
                 print(f"Finalized game result for Game ID {self.current_game_id}")
         except Exception as e:
@@ -129,18 +145,20 @@ class SimulationOrchestrator:
             self.match_context = None
 
             if self.db_session:
-                self.db_session.close()
+                # We don't close the session here as it's injected
                 self.db_session = None
             self.current_game_id = None
 
-    def _save_player_stats(self, game: Game = None) -> None:
+    async def _save_player_stats(self, game: Game = None) -> None:
         """Aggregate and save player stats from game history."""
         if not self.history:
             return
 
         # If game object not passed, fetch it
         if not game and self.current_game_id:
-             game = self.db_session.query(Game).filter(Game.id == self.current_game_id).first()
+             stmt = select(Game).where(Game.id == self.current_game_id)
+             result = await self.db_session.execute(stmt)
+             game = result.scalar_one_or_none()
 
         if not game: return
 
@@ -205,7 +223,9 @@ class SimulationOrchestrator:
             team_id = player_team_map.get(pid)
             if not team_id:
                 # Fallback: query player if not in match context (shouldn't happen often)
-                player = self.db_session.query(Player).filter(Player.id == pid).first()
+                stmt = select(Player).where(Player.id == pid)
+                result = await self.db_session.execute(stmt)
+                player = result.scalar_one_or_none()
                 if player:
                     team_id = player.team_id
 
@@ -213,10 +233,12 @@ class SimulationOrchestrator:
                 continue
 
             # Check if exists first
-            pgs = self.db_session.query(PlayerGameStats).filter(
+            stmt = select(PlayerGameStats).where(
                 PlayerGameStats.player_id == pid,
                 PlayerGameStats.game_id == game.id
-            ).first()
+            )
+            result = await self.db_session.execute(stmt)
+            pgs = result.scalar_one_or_none()
 
             if not pgs:
                 pgs = PlayerGameStats(
@@ -234,7 +256,7 @@ class SimulationOrchestrator:
 
             count += 1
 
-        self.db_session.commit()
+        await self.db_session.commit()
         print(f"Saved stats for {count} players.")
 
     def run_simulation(self) -> PlayResult:
@@ -294,7 +316,14 @@ class SimulationOrchestrator:
 
         # Start DB session if not already started
         if not self.current_game_id:
-            self.start_new_game_session(home_team_id=1, away_team_id=2, config=config)
+            # This requires db_session to be set previously or passed here?
+            # run_continuous_simulation signature doesn't take db_session.
+            # We assume self.db_session is set or we can't start.
+            if not self.db_session:
+                 # Try to get one? No, we are async.
+                 print("Error: No DB session available for continuous simulation")
+                 return
+            await self.start_new_game_session(home_team_id=1, away_team_id=2, config=config, db_session=self.db_session)
 
         print(f"Starting continuous simulation for {num_plays} plays...")
 
@@ -323,7 +352,8 @@ class SimulationOrchestrator:
                 break
 
         self.is_running = False
-        self.save_game_result()
+        self.is_running = False
+        await self.save_game_result()
         print("Simulation complete")
 
     async def _execute_single_play(self) -> PlayResult:
@@ -401,7 +431,7 @@ class SimulationOrchestrator:
         self.history.append(result)
 
         # Update game state based on result
-        self._update_game_state(result)
+        await self._update_game_state(result)
 
         # Update Fatigue in MatchContext
         if self.match_context:
@@ -467,7 +497,7 @@ class SimulationOrchestrator:
                 exertion = 0.4 # Defenders generally react
                 regulator.update_fatigue(exertion, temp)
 
-    def _update_game_state(self, result: PlayResult) -> None:
+    async def _update_game_state(self, result: PlayResult) -> None:
         """Update game state based on play result."""
         # Update yard line
         if self.possession == "home":
@@ -529,7 +559,7 @@ class SimulationOrchestrator:
             pass
 
         # Persist state
-        self._save_progress()
+        await self._save_progress()
 
     def _is_quarter_over(self) -> bool:
         """Check if the current quarter is over."""

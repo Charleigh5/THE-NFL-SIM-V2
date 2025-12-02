@@ -1,5 +1,7 @@
 from typing import List, Dict, Optional, Any
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models.player import Player
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
@@ -10,24 +12,44 @@ class MatchContext:
     Holds the runtime state of a match, including full rosters,
     depth charts, and kernel-specific player states (fatigue, injury).
     """
-    def __init__(self, home_team_id: int, away_team_id: int, session: Session, weather_config: Optional[Dict] = None) -> None:
+    def __init__(self, home_team_id: int, away_team_id: int, session: Session | AsyncSession, weather_config: Optional[Dict] = None, home_roster: Dict[int, Player] = None, away_roster: Dict[int, Player] = None) -> None:
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
         self.session = session
         self.weather_config = weather_config or {"temperature": 70, "condition": "Sunny"}
 
-        self.home_roster: Dict[int, Player] = {}
-        self.away_roster: Dict[int, Player] = {}
+        self.home_roster: Dict[int, Player] = home_roster or {}
+        self.away_roster: Dict[int, Player] = away_roster or {}
 
         self.genesis: Optional[GenesisKernel] = None
         self.cortex: Optional[CortexKernel] = None
 
-        # Load rosters immediately
-        self.home_roster = self.load_roster(home_team_id)
-        self.away_roster = self.load_roster(away_team_id)
+        # If rosters provided, initialize immediately
+        if self.home_roster and self.away_roster:
+            self.initialize_systems()
+        # Otherwise, legacy sync init will call load_roster if session is sync
+        elif isinstance(session, Session):
+            self.home_roster = self.load_roster(home_team_id)
+            self.away_roster = self.load_roster(away_team_id)
+            self.initialize_systems()
 
-        # Initialize systems
-        self.initialize_systems()
+    @classmethod
+    async def create(cls, home_team_id: int, away_team_id: int, session: AsyncSession, weather_config: Optional[Dict] = None) -> "MatchContext":
+        """Async factory to create MatchContext."""
+        instance = cls(home_team_id, away_team_id, session, weather_config)
+        instance.home_roster = await instance._load_roster_async(home_team_id)
+        instance.away_roster = await instance._load_roster_async(away_team_id)
+        instance.initialize_systems()
+        return instance
+
+    async def _load_roster_async(self, team_id: int) -> Dict[int, Player]:
+        """Async load roster."""
+        stmt = select(Player).where(Player.team_id == team_id)
+        result = await self.session.execute(stmt)
+        players = result.scalars().all()
+        if not players:
+            raise ValueError(f"No players found for team_id {team_id}")
+        return {p.id: p for p in players}
 
     def load_roster(self, team_id: int) -> Dict[int, Player]:
         """

@@ -4,7 +4,9 @@
       "name": "nfl_stats",
       "transport": "stdio",
       "command": "python",
-      "args": ["backend/mcp_servers/nfl_stats_server/server.py"],
+      "args": [
+        "mcp_servers/nfl_stats_server/server.py"
+      ],
       "env": {
         "PYTHONPATH": "."
       }
@@ -13,7 +15,9 @@
       "name": "weather",
       "transport": "stdio",
       "command": "python",
-      "args": ["backend/mcp_servers/weather_server/server.py"],
+      "args": [
+        "mcp_servers/weather_server/server.py"
+      ],
       "env": {
         "PYTHONPATH": "."
       }
@@ -22,7 +26,9 @@
       "name": "sports_news",
       "transport": "stdio",
       "command": "python",
-      "args": ["backend/mcp_servers/sports_news_server/server.py"],
+      "args": [
+        "mcp_servers/sports_news_server/server.py"
+      ],
       "env": {
         "PYTHONPATH": "."
       }

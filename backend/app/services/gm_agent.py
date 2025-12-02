@@ -9,7 +9,7 @@ class GMAgent:
     def __init__(self, db: Session, team_id: int):
         self.db = db
         self.team_id = team_id
-        self.team = db.query(Team).get(team_id)
+        self.team = db.get(Team, team_id)
 
     async def evaluate_trade(self, offered_players: list[int], requested_players: list[int]) -> Dict[str, Any]:
         """
@@ -30,7 +30,7 @@ class GMAgent:
             try:
                 # Check news for offered players
                 for pid in offered_players:
-                    player = self.db.query(Player).get(pid)
+                    player = self.db.get(Player, pid)
                     if player:
                         # Check cache first
                         cache_key = f"player_news_{player.id}"

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, select
 from typing import List, Optional
 from app.models.stats import PlayerGameStats
 from app.models.player import Player
@@ -14,13 +14,13 @@ class StatsService:
     def get_league_leaders(self, season_id: int, stat_type: str, limit: int = 5) -> List[PlayerLeader]:
         """
         Get top players for a specific statistic in a season.
-        
+
         Args:
             season_id: The season to query
-            stat_type: One of 'passing_yards', 'passing_tds', 'rushing_yards', 
+            stat_type: One of 'passing_yards', 'passing_tds', 'rushing_yards',
                       'rushing_tds', 'receiving_yards', 'receiving_tds'
             limit: Number of results to return
-            
+
         Returns:
             List of PlayerLeader objects
         """
@@ -33,16 +33,16 @@ class StatsService:
             'receiving_yards': PlayerGameStats.rec_yards,
             'receiving_tds': PlayerGameStats.rec_tds
         }
-        
+
         if stat_type not in stat_map:
             raise ValueError(f"Invalid stat_type: {stat_type}")
-            
+
         stat_col = stat_map[stat_type]
-        
+
         # Query: Join PlayerGameStats -> Game (filter season) -> Player -> Team
         # Group by Player, Sum stat
-        results = (
-            self.db.query(
+        stmt = (
+            select(
                 Player.id,
                 Player.first_name,
                 Player.last_name,
@@ -54,13 +54,14 @@ class StatsService:
             .join(Game, PlayerGameStats.game_id == Game.id)
             .join(Player, PlayerGameStats.player_id == Player.id)
             .join(Team, PlayerGameStats.team_id == Team.id)
-            .filter(Game.season_id == season_id)
+            .where(Game.season_id == season_id)
             .group_by(Player.id, Player.first_name, Player.last_name, Player.position, Team.name, Team.city)
             .order_by(desc("total_value"))
             .limit(limit)
-            .all()
         )
-        
+
+        results = self.db.execute(stmt).all()
+
         leaders = []
         for r in results:
             leaders.append(PlayerLeader(
@@ -71,5 +72,5 @@ class StatsService:
                 value=r.total_value or 0,
                 stat_type=stat_type
             ))
-            
+
         return leaders

@@ -12,7 +12,7 @@ from typing import List, Optional
 from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
 from app.models.hall_of_fame import HallOfFame
 from app.models.stats import PlayerGameStats
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 class OffseasonService:
     def __init__(self, db: Session):
@@ -22,7 +22,7 @@ class OffseasonService:
 
     async def start_offseason(self, season_id: int) -> dict:
         """Transition from Super Bowl to Offseason."""
-        season = self.db.query(Season).filter(Season.id == season_id).first()
+        season = self.db.get(Season, season_id)
         if not season:
             raise ValueError("Season not found")
 
@@ -38,7 +38,8 @@ class OffseasonService:
             self.process_contract_expirations()
 
             # 2. Generate Draft Order
-            existing_picks = self.db.query(DraftPick).filter(DraftPick.season_id == season_id).first()
+            stmt = select(DraftPick).where(DraftPick.season_id == season_id)
+            existing_picks = self.db.execute(stmt).first()
             if not existing_picks:
                 self.generate_draft_order(season_id)
 
@@ -55,7 +56,8 @@ class OffseasonService:
     def simulate_player_progression(self, season_id: int) -> List[PlayerProgressionResult]:
         """Simulate player progression and regression based on age and experience."""
         # Query only active roster players
-        players = self.db.query(Player).filter(Player.team_id != None).all()
+        stmt = select(Player).where(Player.team_id != None)
+        players = list(self.db.execute(stmt).scalars().all())
         progression_results = []
 
         for player in players:
@@ -138,7 +140,8 @@ class OffseasonService:
 
     def process_contract_expirations(self) -> None:
         """Decrement contract years and release expired players."""
-        players = self.db.query(Player).filter(Player.team_id != None).all()
+        stmt = select(Player).where(Player.team_id != None)
+        players = list(self.db.execute(stmt).scalars().all())
         for player in players:
             player.contract_years -= 1
             if player.contract_years <= 0:
@@ -158,7 +161,8 @@ class OffseasonService:
             print("Error: No standings found for draft order generation.")
             # We could try to fetch teams directly but they won't have win_pct
             # Let's try to fetch teams and give them default stats so we don't crash
-            teams = self.db.query(Team).all()
+            stmt = select(Team)
+            teams = list(self.db.execute(stmt).scalars().all())
             # Create dummy standings objects or just use team IDs
             # But the code below expects objects with win_pct, etc.
             # So let's just raise an error or return to avoid crash
@@ -175,10 +179,11 @@ class OffseasonService:
         standings.sort(key=lambda x: (x.win_pct, x.wins, x.point_differential))
 
         # Find SB Winner and Loser to move to end
-        sb_matchup = self.db.query(PlayoffMatchup).filter(
+        stmt = select(PlayoffMatchup).where(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
-        ).first()
+        )
+        sb_matchup = self.db.execute(stmt).scalar_one_or_none()
 
         ordered_team_ids = [s.team_id for s in standings]
 
@@ -211,7 +216,8 @@ class OffseasonService:
 
     def _get_team_needs(self, team_id: int) -> dict:
         """Analyze roster and return count of players by position."""
-        players = self.db.query(Player).filter(Player.team_id == team_id).all()
+        stmt = select(Player).where(Player.team_id == team_id)
+        players = list(self.db.execute(stmt).scalars().all())
         position_counts = {}
         for p in players:
             position_counts[p.position] = position_counts.get(p.position, 0) + 1
@@ -243,10 +249,11 @@ class OffseasonService:
 
     def get_top_prospects(self, limit: int = 50) -> List[Prospect]:
         """Get top available rookie prospects."""
-        rookies = self.db.query(Player).filter(
+        stmt = select(Player).where(
             Player.is_rookie == True,
             Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).limit(limit).all()
+        ).order_by(Player.overall_rating.desc()).limit(limit)
+        rookies = list(self.db.execute(stmt).scalars().all())
 
         return [
             Prospect(
@@ -259,10 +266,11 @@ class OffseasonService:
 
     def get_current_pick(self, season_id: int) -> Optional[DraftPick]:
         """Get the next available draft pick."""
-        return self.db.query(DraftPick).filter(
+        stmt = select(DraftPick).where(
             DraftPick.season_id == season_id,
             DraftPick.player_id == None
-        ).order_by(DraftPick.pick_number).first()
+        ).order_by(DraftPick.pick_number)
+        return self.db.execute(stmt).scalars().first()
 
     def make_pick(self, season_id: int, player_id: int) -> DraftPick:
         """Make a draft pick for the current slot."""
@@ -270,7 +278,7 @@ class OffseasonService:
         if not pick:
             raise ValueError("No picks remaining in the draft.")
 
-        player = self.db.query(Player).get(player_id)
+        player = self.db.get(Player, player_id)
         if not player:
             raise ValueError("Player not found.")
         if player.team_id is not None:
@@ -303,10 +311,11 @@ class OffseasonService:
 
         # Get available rookies
         # Optimization: Just get top 20 to choose from
-        rookies = self.db.query(Player).filter(
+        stmt = select(Player).where(
             Player.is_rookie == True,
             Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).limit(20).all()
+        ).order_by(Player.overall_rating.desc()).limit(20)
+        rookies = list(self.db.execute(stmt).scalars().all())
 
         if not rookies:
             return None
@@ -369,19 +378,20 @@ class OffseasonService:
 
         return summary
 
-        return summary
-
     def simulate_free_agency(self, season_id: int) -> dict:
         """Fill rosters with free agents."""
-        teams = self.db.query(Team).all()
+        stmt = select(Team)
+        teams = list(self.db.execute(stmt).scalars().all())
 
         # Get available FAs
-        free_agents = self.db.query(Player).filter(Player.team_id == None).order_by(Player.overall_rating.desc()).all()
+        stmt_fa = select(Player).where(Player.team_id == None).order_by(Player.overall_rating.desc())
+        free_agents = list(self.db.execute(stmt_fa).scalars().all())
         fa_pool = list(free_agents)
 
         for team in teams:
             # Check roster size
-            roster_count = self.db.query(Player).filter(Player.team_id == team.id).count()
+            stmt_count = select(func.count()).select_from(Player).where(Player.team_id == team.id)
+            roster_count = self.db.execute(stmt_count).scalar() or 0
             needed = 53 - roster_count
 
             if needed > 0:
@@ -399,14 +409,15 @@ class OffseasonService:
 
     def process_retirements(self, season_id: int) -> List[str]:
         """Process player retirements based on age and rating."""
-        season = self.db.query(Season).get(season_id)
+        season = self.db.get(Season, season_id)
         if not season:
             return []
 
-        players = self.db.query(Player).filter(
+        stmt = select(Player).where(
             Player.is_retired == False,
             Player.team_id != None
-        ).all()
+        )
+        players = list(self.db.execute(stmt).scalars().all())
 
         retired_names = []
 
@@ -458,7 +469,7 @@ class OffseasonService:
 
     def _calculate_career_stats(self, player_id: int) -> dict:
         """Aggregate career stats for a player."""
-        stats = self.db.query(
+        stmt = select(
             func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
             func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
             func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
@@ -466,7 +477,9 @@ class OffseasonService:
             func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
             func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
             func.count(PlayerGameStats.id).label("games_played")
-        ).filter(PlayerGameStats.player_id == player_id).first()
+        ).where(PlayerGameStats.player_id == player_id)
+
+        stats = self.db.execute(stmt).first()
 
         return {
             "games_played": stats.games_played or 0,

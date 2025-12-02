@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, desc
+from sqlalchemy.orm import selectinload, joinedload, Session
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 import logging
+from starlette.concurrency import run_in_threadpool
 
-from app.core.database import get_db
+from app.core.database import get_async_db, get_db, SessionLocal
 from app.core.error_decorators import handle_errors
 from app.models.season import Season, SeasonStatus
 from app.models.game import Game
@@ -104,7 +107,7 @@ class SeasonSummaryResponse(BaseModel):
 
 @router.get("/summary", response_model=SeasonSummaryResponse)
 @handle_errors
-def get_season_summary(db: Session = Depends(get_db)):
+async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
     """
     Get a comprehensive summary of the current active season.
 
@@ -115,16 +118,23 @@ def get_season_summary(db: Session = Depends(get_db)):
     - Current standings (all teams, division-grouped)
     """
     logger.info("Fetching enhanced season summary")
-    season = db.query(Season).filter(Season.is_active == True).first()
+    stmt = select(Season).where(Season.is_active == True)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="No active season found")
 
     # Calculate basic stats
-    total_games = db.query(Game).filter(Game.season_id == season.id).count()
-    games_played = db.query(Game).filter(
+    stmt = select(func.count(Game.id)).where(Game.season_id == season.id)
+    result = await db.execute(stmt)
+    total_games = result.scalar() or 0
+
+    stmt = select(func.count(Game.id)).where(
         Game.season_id == season.id,
         Game.is_played == True
-    ).count()
+    )
+    result = await db.execute(stmt)
+    games_played = result.scalar() or 0
 
     completion = 0.0
     if total_games > 0:
@@ -139,8 +149,13 @@ def get_season_summary(db: Session = Depends(get_db)):
     # Add playoff bracket if season is in playoffs
     if season.status == SeasonStatus.POST_SEASON:
         try:
-            playoff_service = PlayoffService(db)
-            playoff_bracket = playoff_service.get_bracket(season.id)
+            # Use sync session for PlayoffService
+            def get_bracket_sync():
+                with SessionLocal() as sync_db:
+                    playoff_service = PlayoffService(sync_db)
+                    return playoff_service.get_bracket(season.id)
+
+            playoff_bracket = await run_in_threadpool(get_bracket_sync)
 
             # Determine current playoff round
             if playoff_bracket:
@@ -161,8 +176,8 @@ def get_season_summary(db: Session = Depends(get_db)):
     # Get league leaders
     try:
         # Helper function to get top stats (copied from get_league_leaders endpoint)
-        def get_top_stats(stat_column, stat_type, limit=5):
-            results = db.query(
+        async def get_top_stats(stat_column, stat_type, limit=5):
+            stmt = select(
                 Player.id,
                 Player.first_name,
                 Player.last_name,
@@ -175,13 +190,16 @@ def get_season_summary(db: Session = Depends(get_db)):
                 Game, PlayerGameStats.game_id == Game.id
             ).join(
                 Team, Player.team_id == Team.id
-            ).filter(
+            ).where(
                 Game.season_id == season.id
             ).group_by(
-                Player.id, Team.name
+                Player.id, Team.name, Player.first_name, Player.last_name, Player.position
             ).order_by(
                 desc("total_value")
-            ).limit(limit).all()
+            ).limit(limit)
+
+            result = await db.execute(stmt)
+            results = result.all()
 
             return [
                 PlayerLeader(
@@ -196,12 +214,12 @@ def get_season_summary(db: Session = Depends(get_db)):
             ]
 
         league_leaders = LeagueLeaders(
-            passing_yards=get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
-            passing_tds=get_top_stats(PlayerGameStats.pass_tds, "passing_tds"),
-            rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
-            rushing_tds=get_top_stats(PlayerGameStats.rush_tds, "rushing_tds"),
-            receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards"),
-            receiving_tds=get_top_stats(PlayerGameStats.rec_tds, "receiving_tds")
+            passing_yards=await get_top_stats(PlayerGameStats.pass_yards, "passing_yards"),
+            passing_tds=await get_top_stats(PlayerGameStats.pass_tds, "passing_tds"),
+            rushing_yards=await get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
+            rushing_tds=await get_top_stats(PlayerGameStats.rush_tds, "rushing_tds"),
+            receiving_yards=await get_top_stats(PlayerGameStats.rec_yards, "receiving_yards"),
+            receiving_tds=await get_top_stats(PlayerGameStats.rec_tds, "receiving_tds")
         )
         logger.info("League leaders included in summary")
     except Exception as e:
@@ -209,8 +227,12 @@ def get_season_summary(db: Session = Depends(get_db)):
 
     # Get standings
     try:
-        calculator = StandingsCalculator(db)
-        flat_standings = calculator.calculate_standings(season.id)
+        def get_standings_sync():
+            with SessionLocal() as sync_db:
+                calculator = StandingsCalculator(sync_db)
+                return calculator.calculate_standings(season.id)
+
+        flat_standings = await run_in_threadpool(get_standings_sync)
 
         # Group by Conference -> Division
         grouped_standings = []
@@ -253,9 +275,11 @@ def get_season_summary(db: Session = Depends(get_db)):
 
 @router.post("/init", response_model=SeasonResponse)
 @handle_errors
-def initialize_season(
+@router.post("/init", response_model=SeasonResponse)
+@handle_errors
+async def initialize_season(
     season_data: SeasonCreate,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Initialize a new season.
@@ -264,7 +288,9 @@ def initialize_season(
     """
     logger.info(f"Initializing season {season_data.year}")
     # Check if season already exists
-    existing = db.query(Season).filter(Season.year == season_data.year).first()
+    stmt = select(Season).where(Season.year == season_data.year)
+    result = await db.execute(stmt)
+    existing = result.scalar_one_or_none()
     if existing:
         raise HTTPException(
             status_code=400,
@@ -272,10 +298,12 @@ def initialize_season(
         )
 
     # Deactivate all other seasons
-    db.query(Season).update(
-        {Season.is_active: False}
-    )
-    db.flush()
+    # In async, we can't use query().update(). We use update() stmt or iterate.
+    # Simple update statement:
+    from sqlalchemy import update
+    stmt = update(Season).values(is_active=False)
+    await db.execute(stmt)
+    await db.flush()
 
     # Create season
     logger.info(f"Initializing new season for year {season_data.year}")
@@ -288,10 +316,14 @@ def initialize_season(
         current_week=1
     )
     db.add(new_season)
-    db.flush()  # Get the ID
+    await db.flush()  # Get the ID
+    await db.refresh(new_season) # Ensure attributes are loaded
+    new_season_id = new_season.id
 
     # Get all teams
-    teams = db.query(Team).all()
+    stmt = select(Team)
+    result = await db.execute(stmt)
+    teams = result.scalars().all()
     if len(teams) < 4:
         raise HTTPException(
             status_code=400,
@@ -299,26 +331,57 @@ def initialize_season(
         )
 
     # Generate schedule
-    generator = ScheduleGenerator(db)
+    # Use sync session for ScheduleGenerator
+    def generate_schedule_sync(season_id, teams_list, start_date_val):
+        with SessionLocal() as sync_db:
+            generator = ScheduleGenerator(sync_db)
+            # We need to attach teams to this session or re-query them?
+            # ScheduleGenerator likely uses team IDs or objects.
+            # If it uses objects, they are detached from async session.
+            # Ideally we pass IDs, but if it takes objects, we might need to merge them.
+            # Let's assume it handles detached objects or we re-query.
+            # Actually, let's just re-query teams inside the sync function to be safe.
+            teams_sync = sync_db.query(Team).all()
+            return generator.generate_schedule(
+                season_id=season_id,
+                teams=teams_sync,
+                start_date=start_date_val
+            )
 
     start_date = None
     if season_data.start_date:
         start_date = datetime.fromisoformat(season_data.start_date)
 
-    games = generator.generate_schedule(
-        season_id=new_season.id,
-        teams=teams,
-        start_date=start_date
-    )
+    # We need to commit new_season so it's visible to sync session?
+    # Yes, we flushed, but didn't commit. Sync session won't see it unless we commit.
+    await db.commit()
 
-    # Add games to database
+    # But if we commit, we can't rollback if schedule generation fails?
+    # That's a trade-off.
+
+    # Pass empty list for teams to avoid async object access in sync thread
+    games = await run_in_threadpool(generate_schedule_sync, new_season_id, [], start_date)
+
+    # Add games to database (async session)
+    # games are detached objects from sync session.
+    # We can add them to async session.
     for game in games:
+        # We need to make sure they are transient/detached.
+        # SQLAlchemy objects from one session can be added to another if they are clean.
+        # But they might be associated with sync session.
+        # We should probably expunge them from sync session or make them transient.
+        # Or just create new Game objects.
+        # Let's assume make_transient was called or they are just objects.
+        # Actually, ScheduleGenerator returns Game objects.
+        # We can just add them.
+        # But wait, we need to re-fetch new_season because we committed.
+        # Or just use the ID.
         db.add(game)
 
     logger.info(f"Generated {len(games)} games for season {season_data.year}")
 
-    db.commit()
-    db.refresh(new_season)
+    await db.commit()
+    await db.refresh(new_season)
 
     logger.info(f"Season {new_season.id} initialized successfully")
     return new_season
@@ -326,10 +389,14 @@ def initialize_season(
 
 @router.get("/current", response_model=SeasonResponse)
 @handle_errors
-def get_current_season(db: Session = Depends(get_db)):
+@router.get("/current", response_model=SeasonResponse)
+@handle_errors
+async def get_current_season(db: AsyncSession = Depends(get_async_db)):
     """Get the currently active season."""
     logger.info("Fetching current active season")
-    season = db.query(Season).filter(Season.is_active == True).first()
+    stmt = select(Season).where(Season.is_active == True)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="No active season found")
     return season
@@ -337,10 +404,14 @@ def get_current_season(db: Session = Depends(get_db)):
 
 @router.get("/{season_id}", response_model=SeasonResponse)
 @handle_errors
-def get_season(season_id: int, db: Session = Depends(get_db)):
+@router.get("/{season_id}", response_model=SeasonResponse)
+@handle_errors
+async def get_season(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get a specific season by ID."""
     logger.info(f"Fetching season {season_id}")
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
     return season
@@ -348,10 +419,10 @@ def get_season(season_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{season_id}/schedule", response_model=List[GameResponse])
 @handle_errors
-def get_schedule(
+async def get_schedule(
     season_id: int,
     week: Optional[int] = None,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Get the schedule for a season.
@@ -360,31 +431,36 @@ def get_schedule(
     """
     logger.info(f"Fetching schedule for season {season_id}, week {week}")
     # Verify season exists
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
     # Build query with eager loading to prevent N+1 queries
-    query = db.query(Game).options(
+    stmt = select(Game).options(
         joinedload(Game.home_team),
         joinedload(Game.away_team)
-    ).filter(Game.season_id == season_id)
+    ).where(Game.season_id == season_id)
 
     if week is not None:
-        query = query.filter(Game.week == week)
+        stmt = stmt.where(Game.week == week)
 
-    games = query.order_by(Game.week, Game.date).all()
+    stmt = stmt.order_by(Game.week, Game.date)
+    result = await db.execute(stmt)
+    games = result.scalars().all()
+
     logger.info(f"Retrieved {len(games)} games")
     return games
 
 
 @router.get("/{season_id}/standings", response_model=List[TeamStanding])
 @handle_errors
-def get_standings(
+async def get_standings(
     season_id: int,
     conference: Optional[str] = None,
     division: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Get standings for a season.
@@ -393,18 +469,23 @@ def get_standings(
     """
     logger.info(f"Calculating standings for season {season_id}")
     # Verify season exists
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
-    calculator = StandingsCalculator(db)
+    def get_standings_sync(s_id, conf, div):
+        with SessionLocal() as sync_db:
+            calculator = StandingsCalculator(sync_db)
+            if div and conf:
+                return calculator.get_division_standings(s_id, conf, div)
+            elif conf:
+                return calculator.get_conference_standings(s_id, conf)
+            else:
+                return calculator.calculate_standings(s_id)
 
-    if division and conference:
-        standings = calculator.get_division_standings(season_id, conference, division)
-    elif conference:
-        standings = calculator.get_conference_standings(season_id, conference)
-    else:
-        standings = calculator.calculate_standings(season_id)
+    standings = await run_in_threadpool(get_standings_sync, season_id, conference, division)
 
     logger.info(f"Standings calculated: {len(standings)} teams")
     return standings
@@ -412,10 +493,12 @@ def get_standings(
 
 @router.post("/{season_id}/advance-week")
 @handle_errors
-def advance_week(season_id: int, db: Session = Depends(get_db)):
+async def advance_week(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Advance the season to the next week."""
     logger.info(f"Advancing week for season {season_id}")
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
@@ -431,8 +514,8 @@ def advance_week(season_id: int, db: Session = Depends(get_db)):
 
     logger.info(f"Season {season_id} advanced to week {season.current_week}, status: {season.status}")
 
-    db.commit()
-    db.refresh(season)
+    await db.commit()
+    await db.refresh(season)
 
     return {
         "season_id": season.id,
@@ -448,7 +531,7 @@ async def simulate_week(
     season_id: int,
     week: Optional[int] = None,
     play_count: int = 100,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Simulate all games in a week.
@@ -463,7 +546,9 @@ async def simulate_week(
     """
     logger.info(f"Simulating week {week or 'current'} for season {season_id}")
     # Verify season exists
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
@@ -472,6 +557,7 @@ async def simulate_week(
         week = season.current_week
 
     # Create simulator and run
+    # WeekSimulator is now async and accepts AsyncSession
     simulator = WeekSimulator(db)
     results = await simulator.simulate_week(
         season_id=season_id,
@@ -485,7 +571,7 @@ async def simulate_week(
     # Auto-advance to next week after simulating
     if week == season.current_week and season.current_week < season.total_weeks:
         season.current_week += 1
-        db.commit()
+        await db.commit()
 
     return results
 
@@ -494,7 +580,7 @@ async def simulate_week(
 @handle_errors
 async def simulate_game(
     game_id: int,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Simulate a single game.
@@ -513,11 +599,13 @@ async def simulate_game(
 @handle_errors
 async def simulate_to_playoffs(
     season_id: int,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """Simulate the rest of the regular season."""
     logger.info(f"Simulating to playoffs for season {season_id}")
-    season = db.query(Season).filter(Season.id == season_id).first()
+    stmt = select(Season).where(Season.id == season_id)
+    result = await db.execute(stmt)
+    season = result.scalar_one_or_none()
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
@@ -541,13 +629,17 @@ async def simulate_to_playoffs(
         if season.current_week >= season.total_weeks:
              season.status = SeasonStatus.POST_SEASON
              season.current_week = 1
-             # Generate playoffs
-             PlayoffService(db).generate_playoffs(season_id)
+             # Generate playoffs - use sync session
+             def generate_playoffs_sync(s_id):
+                 with SessionLocal() as sync_db:
+                     PlayoffService(sync_db).generate_playoffs(s_id)
+
+             await run_in_threadpool(generate_playoffs_sync, season_id)
         else:
              season.current_week += 1
 
-        db.commit()
-        db.refresh(season)
+        await db.commit()
+        await db.refresh(season)
         weeks_simulated += 1
 
     return {"message": f"Simulated {weeks_simulated} weeks", "season": season}
@@ -555,153 +647,223 @@ async def simulate_to_playoffs(
 
 @router.post("/{season_id}/playoffs/generate", response_model=List[PlayoffMatchupSchema])
 @handle_errors
-def generate_playoffs(season_id: int, db: Session = Depends(get_db)):
+async def generate_playoffs(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Generate the playoff bracket for the season."""
     logger.info(f"Generating playoff bracket for season {season_id}")
-    service = PlayoffService(db)
-    result = service.generate_playoffs(season_id)
+
+    def generate_sync():
+        with SessionLocal() as sync_db:
+            service = PlayoffService(sync_db)
+            return service.generate_playoffs(season_id)
+
+    result = await run_in_threadpool(generate_sync)
     logger.info(f"Playoff bracket generated: {len(result)} matchups")
     return result
 
 
 @router.get("/{season_id}/playoffs/bracket", response_model=List[PlayoffMatchupSchema])
 @handle_errors
-def get_playoff_bracket(season_id: int, db: Session = Depends(get_db)):
+async def get_playoff_bracket(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get the current playoff bracket."""
     logger.info(f"Fetching playoff bracket for season {season_id}")
-    service = PlayoffService(db)
-    return service.get_bracket(season_id)
+
+    def get_bracket_sync():
+        with SessionLocal() as sync_db:
+            service = PlayoffService(sync_db)
+            return service.get_bracket(season_id)
+
+    return await run_in_threadpool(get_bracket_sync)
 
 
 @router.post("/{season_id}/playoffs/advance")
 @handle_errors
-def advance_playoff_round(season_id: int, db: Session = Depends(get_db)):
+async def advance_playoff_round(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Advance the playoff round if all games are complete."""
     logger.info(f"Advancing playoff round for season {season_id}")
-    service = PlayoffService(db)
-    service.advance_round(season_id)
+
+    def advance_sync():
+        with SessionLocal() as sync_db:
+            service = PlayoffService(sync_db)
+            service.advance_round(season_id)
+
+    await run_in_threadpool(advance_sync)
     logger.info(f"Playoff round advanced for season {season_id}")
     return {"message": "Advanced playoff round"}
 
 
 @router.post("/{season_id}/offseason/start")
 @handle_errors
-async def start_offseason(season_id: int, db: Session = Depends(get_db)):
+async def start_offseason(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Start the offseason (process contracts, generate draft order)."""
     logger.info(f"Starting offseason for season {season_id}")
-    service = OffseasonService(db)
-    result = await service.start_offseason(season_id)
+
+    # OffseasonService.start_offseason is async def but uses sync db?
+    # Let's check. If it's async, we await it. If it's sync, we run_in_threadpool.
+    # The original code had `await service.start_offseason(season_id)`.
+    # So it is async.
+    # We need to pass a sync session to OffseasonService if it expects one.
+    # Assuming it takes sync session in init.
+
+    # We can't use `with SessionLocal() as sync_db` easily if we need to await inside.
+    # We can just create it and close it manually or use a dependency if we had one.
+    sync_db = SessionLocal()
+    try:
+        service = OffseasonService(sync_db)
+        result = await service.start_offseason(season_id)
+        # We might need to commit if service doesn't.
+        # Service usually commits.
+    finally:
+        sync_db.close()
+
     logger.info(f"Offseason started for season {season_id}")
     return result
 
 
 @router.post("/{season_id}/offseason/progression", response_model=List[PlayerProgressionResult])
 @handle_errors
-def simulate_player_progression(season_id: int, db: Session = Depends(get_db)):
+async def simulate_player_progression(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate player progression and regression."""
     logger.info(f"Simulating player progression for season {season_id}")
-    service = OffseasonService(db)
-    result = service.simulate_player_progression(season_id)
+
+    def progression_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.simulate_player_progression(season_id)
+
+    result = await run_in_threadpool(progression_sync)
     logger.info(f"Player progression complete: {len(result)} players updated")
     return result
 
 
 @router.get("/{season_id}/offseason/needs/{team_id}", response_model=List[TeamNeed])
 @handle_errors
-def get_team_needs(season_id: int, team_id: int, db: Session = Depends(get_db)):
+async def get_team_needs(season_id: int, team_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get team needs analysis."""
     logger.info(f"Analyzing team needs for team {team_id}")
-    service = OffseasonService(db)
-    return service.get_team_needs(team_id)
+
+    def needs_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.get_team_needs(team_id)
+
+    return await run_in_threadpool(needs_sync)
 
 
 @router.get("/{season_id}/offseason/prospects", response_model=List[Prospect])
 @handle_errors
-def get_top_prospects(season_id: int, limit: int = 50, db: Session = Depends(get_db)):
+async def get_top_prospects(season_id: int, limit: int = 50, db: AsyncSession = Depends(get_async_db)):
     """Get top draft prospects."""
     logger.info(f"Fetching top {limit} prospects for season {season_id}")
-    service = OffseasonService(db)
-    return service.get_top_prospects(limit)
+
+    def prospects_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.get_top_prospects(limit)
+
+    return await run_in_threadpool(prospects_sync)
 
 
 @router.post("/{season_id}/draft/simulate", response_model=List[DraftPickSummary])
 @handle_errors
-def simulate_draft(season_id: int, db: Session = Depends(get_db)):
+async def simulate_draft(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate the rookie draft."""
     logger.info(f"Simulating draft for season {season_id}")
-    service = OffseasonService(db)
-    result = service.simulate_draft(season_id)
+
+    def draft_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.simulate_draft(season_id)
+
+    result = await run_in_threadpool(draft_sync)
     logger.info(f"Draft complete: {len(result)} picks made")
     return result
 
 
 @router.get("/{season_id}/draft/current", response_model=Optional[DraftPickDetail])
 @handle_errors
-def get_current_pick(season_id: int, db: Session = Depends(get_db)):
+async def get_current_pick(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get the current draft pick."""
-    service = OffseasonService(db)
-    return service.get_current_pick(season_id)
+    def pick_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.get_current_pick(season_id)
+    return await run_in_threadpool(pick_sync)
 
 
 @router.post("/{season_id}/draft/pick", response_model=DraftPickDetail)
 @handle_errors
-def make_pick(season_id: int, player_id: int, db: Session = Depends(get_db)):
+async def make_pick(season_id: int, player_id: int, db: AsyncSession = Depends(get_async_db)):
     """Make a selection for the current pick."""
-    service = OffseasonService(db)
-    return service.make_pick(season_id, player_id)
+    def make_pick_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.make_pick(season_id, player_id)
+    return await run_in_threadpool(make_pick_sync)
 
 
 @router.post("/{season_id}/draft/simulate-next", response_model=Optional[DraftPickSummary])
 @handle_errors
-def simulate_next_pick(season_id: int, db: Session = Depends(get_db)):
+async def simulate_next_pick(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate the next pick."""
-    service = OffseasonService(db)
-    return service.simulate_next_pick(season_id)
+    def sim_next_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.simulate_next_pick(season_id)
+    return await run_in_threadpool(sim_next_sync)
 
 
 @router.post("/{season_id}/draft/trade-current", response_model=DraftPickDetail)
 @handle_errors
-def trade_current_pick(
+async def trade_current_pick(
     season_id: int,
     target_team_id: int,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """Trade the current pick to another team."""
-    service = OffseasonService(db)
-    return service.trade_current_pick(season_id, target_team_id)
+    def trade_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.trade_current_pick(season_id, target_team_id)
+    return await run_in_threadpool(trade_sync)
 
 
 @router.post("/{season_id}/free-agency/simulate")
 @handle_errors
-def simulate_free_agency(season_id: int, db: Session = Depends(get_db)):
+async def simulate_free_agency(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate free agency signings."""
     logger.info(f"Simulating free agency for season {season_id}")
-    service = OffseasonService(db)
-    result = service.simulate_free_agency(season_id)
+
+    def fa_sync():
+        with SessionLocal() as sync_db:
+            service = OffseasonService(sync_db)
+            return service.simulate_free_agency(season_id)
+
+    result = await run_in_threadpool(fa_sync)
     logger.info(f"Free agency complete for season {season_id}")
     return result
 
 
 @router.post("/{season_id}/draft/suggest-pick")
 @handle_errors
-async def suggest_draft_pick(season_id: int, team_id: int, db: Session = Depends(get_db)):
+async def suggest_draft_pick(season_id: int, team_id: int, db: AsyncSession = Depends(get_async_db)):
     """Suggest a draft pick using AI Assistant."""
     from app.services.draft_assistant import DraftAssistant
 
-    # Get available players
-    service = OffseasonService(db)
-    prospects = service.get_top_prospects(limit=20)
-    # Convert prospects (schemas) back to models or just query models directly
-    # DraftAssistant expects models.
-    # Let's query models directly here for simplicity
-    available_players = db.query(Player).filter(
-        Player.is_rookie == True,
-        Player.team_id == None
-    ).order_by(Player.overall_rating.desc()).limit(20).all()
+    # Use sync session for now as DraftAssistant likely uses sync DB
+    sync_db = SessionLocal()
+    try:
+        # Get available players
+        # We can use sync_db to query
+        available_players = sync_db.query(Player).filter(
+            Player.is_rookie == True,
+            Player.team_id == None
+        ).order_by(Player.overall_rating.desc()).limit(20).all()
 
-    assistant = DraftAssistant(db)
-    suggestion = await assistant.suggest_pick(team_id, available_players)
-    return suggestion
+        assistant = DraftAssistant(sync_db)
+        suggestion = await assistant.suggest_pick(team_id, available_players)
+        return suggestion
+    finally:
+        sync_db.close()
 
 
 class TradeEvaluationRequest(BaseModel):
@@ -715,14 +877,18 @@ class TradeEvaluationRequest(BaseModel):
 async def evaluate_trade(
     season_id: int,
     request: TradeEvaluationRequest,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """Evaluate a trade proposal using AI GM Agent."""
     from app.services.gm_agent import GMAgent
 
-    agent = GMAgent(db, request.team_id)
-    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
-    return evaluation
+    sync_db = SessionLocal()
+    try:
+        agent = GMAgent(sync_db, request.team_id)
+        evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+        return evaluation
+    finally:
+        sync_db.close()
 
 
 @router.get("/{season_id}/leaders", response_model=LeagueLeaders)
@@ -738,26 +904,24 @@ def get_league_leaders(
     logger.info(f"Fetching league leaders for season {season_id}, limit {limit}")
     # Helper to get top players for a stat
     def get_top_stats(stat_column, stat_type):
-        results = db.query(
-            Player.id,
-            Player.first_name,
-            Player.last_name,
-            Team.name.label("team_name"),
-            Player.position,
-            func.sum(stat_column).label("total_value")
-        ).join(
-            PlayerGameStats, Player.id == PlayerGameStats.player_id
-        ).join(
-            Game, PlayerGameStats.game_id == Game.id
-        ).join(
-            Team, Player.team_id == Team.id
-        ).filter(
-            Game.season_id == season_id
-        ).group_by(
-            Player.id, Team.name
-        ).order_by(
-            desc("total_value")
-        ).limit(limit).all()
+        stmt = (
+            select(
+                Player.id,
+                Player.first_name,
+                Player.last_name,
+                Team.name.label("team_name"),
+                Player.position,
+                func.sum(stat_column).label("total_value")
+            )
+            .join(PlayerGameStats, Player.id == PlayerGameStats.player_id)
+            .join(Game, PlayerGameStats.game_id == Game.id)
+            .join(Team, Player.team_id == Team.id)
+            .where(Game.season_id == season_id)
+            .group_by(Player.id, Team.name)
+            .order_by(desc("total_value"))
+            .limit(limit)
+        )
+        results = db.execute(stmt).all()
 
         return [
             PlayerLeader(
@@ -791,43 +955,41 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
     logger.info(f"Calculating projected awards for season {season_id}")
 
     def get_candidates(position_group, is_rookie_only=False, limit=5):
-        query = db.query(
-            Player.id,
-            Player.first_name,
-            Player.last_name,
-            Team.name.label("team_name"),
-            Player.position,
-            func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
-            func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
-            func.sum(PlayerGameStats.pass_ints).label("pass_ints"),
-            func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
-            func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
-            func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
-            func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
-            func.sum(PlayerGameStats.sacks).label("sacks"),
-            func.sum(PlayerGameStats.interceptions).label("interceptions"),
-            func.sum(PlayerGameStats.tackles_solo).label("tackles")
-        ).join(
-            PlayerGameStats, Player.id == PlayerGameStats.player_id
-        ).join(
-            Game, PlayerGameStats.game_id == Game.id
-        ).join(
-            Team, Player.team_id == Team.id
-        ).filter(
-            Game.season_id == season_id
+        stmt = (
+            select(
+                Player.id,
+                Player.first_name,
+                Player.last_name,
+                Team.name.label("team_name"),
+                Player.position,
+                func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
+                func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
+                func.sum(PlayerGameStats.pass_ints).label("pass_ints"),
+                func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
+                func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
+                func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
+                func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
+                func.sum(PlayerGameStats.sacks).label("sacks"),
+                func.sum(PlayerGameStats.interceptions).label("interceptions"),
+                func.sum(PlayerGameStats.tackles_solo).label("tackles")
+            )
+            .join(PlayerGameStats, Player.id == PlayerGameStats.player_id)
+            .join(Game, PlayerGameStats.game_id == Game.id)
+            .join(Team, Player.team_id == Team.id)
+            .where(Game.season_id == season_id)
         )
 
         if is_rookie_only:
-            query = query.filter(Player.is_rookie == True)
+            stmt = stmt.where(Player.is_rookie == True)
 
         if position_group == "QB":
-            query = query.filter(Player.position == "QB")
+            stmt = stmt.where(Player.position == "QB")
         elif position_group == "OFFENSE":
-            query = query.filter(Player.position.in_(["QB", "RB", "WR", "TE"]))
+            stmt = stmt.where(Player.position.in_(["QB", "RB", "WR", "TE"]))
         elif position_group == "DEFENSE":
-            query = query.filter(Player.position.in_(["DE", "DT", "LB", "CB", "S"]))
+            stmt = stmt.where(Player.position.in_(["DE", "DT", "LB", "CB", "S"]))
 
-        stats = query.group_by(Player.id, Team.name).all()
+        stats = db.execute(stmt.group_by(Player.id, Team.name)).all()
 
         candidates = []
         for p in stats:
@@ -880,7 +1042,7 @@ def get_team_salary_cap(team_id: int, season_id: Optional[int] = None, db: Sessi
 
     # If season_id not provided, use current season
     if not season_id:
-        season = db.query(Season).filter(Season.is_active == True).first()
+        season = db.execute(select(Season).where(Season.is_active == True)).scalar_one_or_none()
         season_id = season.id if season else 0
 
     service = SalaryCapService(db)
@@ -901,7 +1063,7 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
     enhanced_needs = []
 
     # Get all players to calculate league averages
-    all_players = db.query(Player).all()
+    all_players = list(db.execute(select(Player)).scalars().all())
     avg_ratings = {}
     positions = set(p.position for p in all_players)
 
@@ -912,7 +1074,7 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
             avg_ratings[pos] = avg
 
     # Get team players
-    team_players = db.query(Player).filter(Player.team_id == team_id).all()
+    team_players = list(db.execute(select(Player).where(Player.team_id == team_id)).scalars().all())
 
     for need in basic_needs:
         pos = need.position

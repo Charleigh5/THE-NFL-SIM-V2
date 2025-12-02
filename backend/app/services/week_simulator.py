@@ -2,7 +2,9 @@
 Batch simulation service for simulating entire weeks of games.
 """
 from typing import List, Dict, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy import select
 from app.models.game import Game
 from app.models.season import Season
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
@@ -20,7 +22,7 @@ class WeekSimulator:
     simulating multiple games without requiring WebSocket connections.
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
         self.player_development_service = PlayerDevelopmentService(db)
 
@@ -86,11 +88,13 @@ class WeekSimulator:
             Dictionary mapping game IDs to game results
         """
         # Get all games for this week
-        games = self.db.query(Game).filter(
+        stmt = select(Game).filter(
             Game.season_id == season_id,
             Game.week == week,
             Game.is_played == False
-        ).all()
+        )
+        result = await self.db.execute(stmt)
+        games = result.scalars().all()
 
         if not games:
             return {"error": "No unplayed games found for this week"}
@@ -117,10 +121,11 @@ class WeekSimulator:
                 weather_config = parsed
 
             # Start game session (this will create/update db entry)
-            orchestrator.start_new_game_session(
+            await orchestrator.start_new_game_session(
                 home_team_id=game.home_team_id,
                 away_team_id=game.away_team_id,
-                config={"fast_sim": use_fast_sim, "weather": weather_config}
+                config={"fast_sim": use_fast_sim, "weather": weather_config},
+                db_session=self.db
             )
 
             # Run simulation asynchronously
@@ -135,7 +140,7 @@ class WeekSimulator:
                 "plays": len(orchestrator.history),
                 "quarters": orchestrator.current_quarter
             }
-            self.db.commit()
+            await self.db.commit()
 
             results[game.id] = {
                 "home_team_id": game.home_team_id,
@@ -150,7 +155,7 @@ class WeekSimulator:
 
         # Process weekly development (Training, Injuries, Morale)
         print("Processing weekly player development...")
-        self.player_development_service.process_weekly_development(season_id, week)
+        await self.player_development_service.process_weekly_development(season_id, week)
 
         return {
             "week": week,
@@ -162,7 +167,9 @@ class WeekSimulator:
         """
         Simulate a single game.
         """
-        game = self.db.query(Game).filter(Game.id == game_id).first()
+        stmt = select(Game).filter(Game.id == game_id)
+        result = await self.db.execute(stmt)
+        game = result.scalar_one_or_none()
         if not game:
             return {"error": "Game not found"}
 
@@ -185,10 +192,11 @@ class WeekSimulator:
             game.wind_speed = parsed["wind_speed"]
             weather_config = parsed
 
-        orchestrator.start_new_game_session(
+        await orchestrator.start_new_game_session(
             home_team_id=game.home_team_id,
             away_team_id=game.away_team_id,
-            config={"fast_sim": use_fast_sim, "weather": weather_config}
+            config={"fast_sim": use_fast_sim, "weather": weather_config},
+            db_session=self.db
         )
 
         await self._run_simulation(orchestrator, play_count)
@@ -201,7 +209,7 @@ class WeekSimulator:
             "plays": len(orchestrator.history),
             "quarters": orchestrator.current_quarter
         }
-        self.db.commit()
+        await self.db.commit()
 
         return {
             "id": game.id,
@@ -241,7 +249,7 @@ class WeekSimulator:
         orchestrator.is_running = False
         orchestrator.save_game_result()
 
-    def simulate_full_season(
+    async def simulate_full_season(
         self,
         season_id: int,
         start_week: int = 1,
@@ -259,7 +267,9 @@ class WeekSimulator:
             Summary of all simulated weeks
         """
         # Get season info
-        season = self.db.query(Season).filter(Season.id == season_id).first()
+        stmt = select(Season).filter(Season.id == season_id)
+        result = await self.db.execute(stmt)
+        season = result.scalar_one_or_none()
         if not season:
             return {"error": "Season not found"}
 
@@ -270,12 +280,12 @@ class WeekSimulator:
 
         for week_num in range(start_week, end_week + 1):
             print(f"\n=== SIMULATING WEEK {week_num} ===")
-            week_results = self.simulate_week(season_id, week_num)
+            week_results = await self.simulate_week(season_id, week_num)
             all_results[f"week_{week_num}"] = week_results
 
             # Update season's current week
             season.current_week = week_num
-            self.db.commit()
+            await self.db.commit()
 
         return {
             "season_id": season_id,

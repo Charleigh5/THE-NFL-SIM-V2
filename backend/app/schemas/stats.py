@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List
 
 class PlayerLeader(BaseModel):
@@ -8,6 +8,8 @@ class PlayerLeader(BaseModel):
     position: str
     value: int | float
     stat_type: str  # "passing_yards", "rushing_yards", "receiving_yards"
+
+    model_config = ConfigDict(from_attributes=True)
 
 class LeagueLeaders(BaseModel):
     passing_yards: List[PlayerLeader]

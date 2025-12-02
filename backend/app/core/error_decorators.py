@@ -21,23 +21,23 @@ def handle_errors(func):
             if isinstance(arg, Request):
                 request = arg
                 break
-        
+
         # Try to get request_id from state, or use 'unknown'
         request_id = 'unknown'
         if request and hasattr(request, 'state') and hasattr(request.state, 'request_id'):
             request_id = request.state.request_id
-        
+
         try:
             # Call the actual endpoint function
             if asyncio.iscoroutinefunction(func):
                 return await func(*args, **kwargs)
             else:
                 return func(*args, **kwargs)
-            
+
         except HTTPException:
             # Re-raise HTTPExceptions (already handled)
             raise
-            
+
         except IntegrityError as e:
             logger.error(
                 f"Database integrity error in {func.__name__}",
@@ -58,8 +58,10 @@ def handle_errors(func):
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
-            
+
         except OperationalError as e:
+            import sys
+            print(f"DEBUG EXCEPTION: {type(e).__name__}: {e}", file=sys.stderr)
             logger.error(
                 f"Database operational error in {func.__name__}",
                 extra={
@@ -78,7 +80,7 @@ def handle_errors(func):
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
-            
+
         except ValidationError as e:
             logger.warning(
                 f"Validation error in {func.__name__}",
@@ -98,7 +100,7 @@ def handle_errors(func):
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
-            
+
         except ValueError as e:
              # Business logic errors often raise ValueError
             logger.warning(
@@ -109,7 +111,7 @@ def handle_errors(func):
                 }
             )
             raise HTTPException(
-                status_code=400, 
+                status_code=400,
                 detail={
                     "error": "Bad Request",
                     "message": str(e),
@@ -119,6 +121,12 @@ def handle_errors(func):
             )
 
         except Exception as e:
+            import sys
+            with open("debug_error.txt", "a") as f:
+                f.write(f"DEBUG EXCEPTION: {type(e).__name__}: {e}\n")
+                import traceback
+                traceback.print_exc(file=f)
+            print(f"DEBUG EXCEPTION: {type(e).__name__}: {e}", file=sys.stderr)
             logger.exception(
                 f"Unexpected error in {func.__name__}",
                 extra={
@@ -136,5 +144,5 @@ def handle_errors(func):
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
-    
+
     return wrapper

@@ -1,6 +1,7 @@
 
+
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, select
 from typing import List, Dict, Any, Optional
 from app.models.player import Player, Position
 from app.models.team import Team
@@ -18,16 +19,18 @@ class SalaryCapService:
         """
         Get a detailed breakdown of a team's salary cap situation.
         """
-        team = self.db.query(Team).filter(Team.id == team_id).first()
+        stmt = select(Team).where(Team.id == team_id)
+        team = self.db.execute(stmt).scalar_one_or_none()
         if not team:
             raise ValueError(f"Team {team_id} not found")
 
         # Get all active players on the team
-        players = self.db.query(Player).filter(Player.team_id == team_id).all()
-        
+        stmt_players = select(Player).where(Player.team_id == team_id)
+        players = list(self.db.execute(stmt_players).scalars().all())
+
         # Calculate total cap usage
         used_cap = sum(p.contract_salary for p in players)
-        
+
         # Get top 5 contracts
         top_contracts = sorted(players, key=lambda p: p.contract_salary, reverse=True)[:5]
         top_contracts_data = [
@@ -40,7 +43,7 @@ class SalaryCapService:
             }
             for p in top_contracts
         ]
-        
+
         # Calculate position breakdown
         position_groups = {
             "QB": ["QB"],
@@ -52,7 +55,7 @@ class SalaryCapService:
             "DB": ["CB", "S"],
             "ST": ["K", "P"]
         }
-        
+
         pos_breakdown = []
         for group_name, positions in position_groups.items():
             group_salary = sum(p.contract_salary for p in players if p.position in positions)
@@ -60,25 +63,26 @@ class SalaryCapService:
                 percentage = (group_salary / used_cap) * 100
             else:
                 percentage = 0
-                
+
             pos_breakdown.append({
                 "group": group_name,
                 "total_salary": group_salary,
                 "percentage": round(percentage, 1)
             })
-            
+
         # Sort breakdown by salary
         pos_breakdown.sort(key=lambda x: x["total_salary"], reverse=True)
-        
+
         # Calculate league average available cap
-        all_teams = self.db.query(Team).all()
+        stmt_teams = select(Team)
+        all_teams = list(self.db.execute(stmt_teams).scalars().all())
         total_league_space = sum(t.salary_cap_space for t in all_teams)
         league_avg_space = total_league_space / len(all_teams) if all_teams else 0
-        
+
         # Calculate projected rookie pool (simplified estimation based on draft picks)
         # In a real scenario, we'd look at specific draft picks owned
         projected_rookie_impact = 10000000 # Placeholder $10M rookie pool
-        
+
         return {
             "team_id": team.id,
             "team_name": team.name,

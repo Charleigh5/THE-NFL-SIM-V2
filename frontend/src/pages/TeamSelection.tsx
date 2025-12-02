@@ -1,31 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../services/api";
-import type { Team } from "../services/api";
+import React, { useEffect } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
 import { useNavigate } from "react-router-dom";
+import { useTeamSelectionData } from "../hooks/useLoaderData";
 import "./TeamSelection.css";
 
 const TeamSelection: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+  const { teams } = useTeamSelectionData();
   const { setUserTeam, userTeamId, fetchSettings } = useSettingsStore();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+
+  // Sort teams by city
+  const sortedTeams = [...teams].sort((a, b) => a.city.localeCompare(b.city));
 
   useEffect(() => {
-    const init = async () => {
-      await fetchSettings();
-      try {
-        const allTeams = await api.getTeams();
-        // Sort teams by name or city
-        allTeams.sort((a, b) => a.city.localeCompare(b.city));
-        setTeams(allTeams);
-      } catch (error) {
-        console.error("Failed to fetch teams:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    init();
+    fetchSettings();
   }, [fetchSettings]);
 
   const handleSelectTeam = async (teamId: number) => {
@@ -37,10 +25,6 @@ const TeamSelection: React.FC = () => {
     }, 500);
   };
 
-  if (loading) {
-    return <div className="loading-container">Loading Teams...</div>;
-  }
-
   return (
     <div className="team-selection-container">
       <div className="team-selection-header">
@@ -49,7 +33,7 @@ const TeamSelection: React.FC = () => {
       </div>
 
       <div className="teams-grid">
-        {teams.map((team) => (
+        {sortedTeams.map((team) => (
           <div
             key={team.id}
             className={`team-card ${userTeamId === team.id ? "selected" : ""}`}

@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from typing import List
 import logging
 
-from app.core.database import get_db
+from app.core.database import get_async_db
+from app.core.db_helpers import get_object_or_404_async, get_all_paginated_async
 from app.core.error_decorators import handle_errors
 from app.models.team import Team
 from app.models.player import Player
@@ -44,39 +46,38 @@ class PlayerSchema(BaseModel):
 
 @router.get("/", response_model=PaginatedResponse[TeamSchema])
 @handle_errors
-def read_teams(
+async def read_teams(
     page: int = Query(default=1, ge=1, description="Page number"),
     page_size: int = Query(default=32, ge=1, le=100, description="Items per page"),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_async_db),
 ):
     """
     Retrieve all teams with pagination.
     """
     logger.info(f"Fetching teams (page={page}, page_size={page_size})")
-    total = db.query(Team).count()
-    teams = db.query(Team).offset((page - 1) * page_size).limit(page_size).all()
+    teams, total = await get_all_paginated_async(db, Team, page, page_size)
     return PaginatedResponse.create(items=teams, total=total, page=page, page_size=page_size)
 
 @router.get("/{team_id}", response_model=TeamSchema)
 @handle_errors
-def read_team(team_id: int, db: Session = Depends(get_db)):
+async def read_team(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Retrieve a specific team by ID.
     """
     logger.info(f"Fetching team {team_id}")
-    team = db.query(Team).filter(Team.id == team_id).first()
-    if team is None:
-        raise HTTPException(status_code=404, detail="Team not found")
-    return team
+    return await get_object_or_404_async(db, Team, team_id)
 
 @router.get("/{team_id}/roster", response_model=List[PlayerSchema])
 @handle_errors
-def read_team_roster(team_id: int, db: Session = Depends(get_db)):
+async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Retrieve the roster (players) for a specific team.
     """
     logger.info(f"Fetching roster for team {team_id}")
-    players = db.query(Player).filter(Player.team_id == team_id).all()
+    stmt = select(Player).where(Player.team_id == team_id)
+    result = await db.execute(stmt)
+    players = list(result.scalars().all())
+
     # Sort by depth chart rank then overall
     players.sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
     return players
@@ -87,32 +88,34 @@ class DepthChartUpdate(BaseModel):
 
 @router.put("/{team_id}/depth-chart")
 @handle_errors
-def update_depth_chart(
+async def update_depth_chart(
     team_id: int,
     update: DepthChartUpdate,
-    db: Session = Depends(get_db)
+    db: AsyncSession = Depends(get_async_db)
 ):
     """
     Update the depth chart for a specific position.
     Receives an ordered list of player IDs.
     """
     logger.info(f"Updating depth chart for team {team_id}, position {update.position}")
-    
+
     # Verify all players belong to the team and position
-    players = db.query(Player).filter(
+    stmt = select(Player).where(
         Player.team_id == team_id,
         Player.position == update.position,
         Player.id.in_(update.player_ids)
-    ).all()
-    
+    )
+    result = await db.execute(stmt)
+    players = list(result.scalars().all())
+
     player_map = {p.id: p for p in players}
-    
+
     if len(players) != len(update.player_ids):
         raise HTTPException(status_code=400, detail="Some players not found or do not belong to this team/position")
-        
+
     for rank, player_id in enumerate(update.player_ids):
         player = player_map[player_id]
         player.depth_chart_rank = rank + 1 # 1-based rank
-        
-    db.commit()
+
+    await db.commit()
     return {"message": "Depth chart updated successfully"}
