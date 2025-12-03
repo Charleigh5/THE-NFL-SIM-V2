@@ -165,12 +165,23 @@ class PlayResolver:
                 sacker = sackers[0]
                 beaten_ol = beaten_ols[0]
 
-        # Loss = Chance of Sack
+        # Loss = Chance of Sack (with QB Pocket Presence mitigation)
         elif BlockingResult.LOSS in block_results:
             # Chance increases with number of losses
             loss_count = block_results.count(BlockingResult.LOSS)
-            sack_chance = 0.20 * loss_count
-            if ProbabilityEngine.resolve_outcome(sack_chance):
+            base_sack_chance = 0.20 * loss_count
+
+            # QB POCKET PRESENCE MITIGATION (INT-001)
+            # QB's ability to sense pressure reduces sack probability
+            pocket_presence = getattr(qb, 'pocket_presence', 50) if qb else 50
+
+            # Scale reduction: 0% at PP=0, up to 50% at PP=100
+            sack_reduction_factor = (pocket_presence / 200.0)  # Max 0.5 reduction
+
+            # Apply mitigation
+            adjusted_sack_chance = base_sack_chance * (1 - sack_reduction_factor)
+
+            if ProbabilityEngine.resolve_outcome(adjusted_sack_chance):
                 is_sack = True
                 if sackers:
                     sacker = sackers[0]

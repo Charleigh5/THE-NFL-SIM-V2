@@ -6,8 +6,8 @@ This guide explains how to create and integrate a new Model Context Protocol (MC
 
 We recommend using the `fastmcp` library for Python-based servers.
 
-1.  Create a new directory in `backend/mcp_servers/` (e.g., `my_new_server`).
-2.  Create a `server.py` file inside it.
+1. Create a new directory in `backend/mcp_servers/` (e.g., `my_new_server`).
+2. Create a `server.py` file inside it.
 
 ```python
 from mcp.server.fastmcp import FastMCP
@@ -57,8 +57,8 @@ Add the new server to `backend/mcp_config.json`.
 
 If your server requires API keys or other secrets:
 
-1.  Add the variable to `.env` (and `.env.example`).
-2.  Reference it in `mcp_config.json` using the `${VAR_NAME}` syntax.
+1. Add the variable to `.env` (and `.env.example`).
+2. Reference it in `mcp_config.json` using the `${VAR_NAME}` syntax.
 
 ```json
     "env": {
@@ -69,10 +69,10 @@ If your server requires API keys or other secrets:
 
 ## 4. Testing
 
-1.  Restart the backend to load the new configuration.
-2.  Verify the server connection in the logs:
-    `Connected to MCP server: my_new_server`
-3.  Use the `inspect_mcp.py` script (if available) or write a test case to verify the tool is callable.
+1. Restart the backend to load the new configuration.
+2. Verify the server connection in the logs:
+   `Connected to MCP server: my_new_server`
+3. Use the `inspect_mcp.py` script (if available) or write a test case to verify the tool is callable.
 
 ## Best Practices
 

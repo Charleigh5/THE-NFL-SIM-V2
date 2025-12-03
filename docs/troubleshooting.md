@@ -17,8 +17,8 @@
 
 **Resolution**:
 
-1.  Try running the server script manually: `python backend/mcp_servers/<name>/server.py`.
-2.  Check `backend_out.log` for specific error tracebacks.
+1. Try running the server script manually: `python backend/mcp_servers/<name>/server.py`.
+2. Check `backend_out.log` for specific error tracebacks.
 
 ### Tool Execution Errors
 
@@ -33,8 +33,8 @@
 
 **Resolution**:
 
-1.  Check the audit logs to see the arguments passed.
-2.  Verify the tool logic handles edge cases.
+1. Check the audit logs to see the arguments passed.
+2. Verify the tool logic handles edge cases.
 
 ## Database Issues
 
@@ -46,8 +46,8 @@
 
 **Resolution**:
 
-1.  Ensure Docker containers are running: `docker-compose up -d`.
-2.  Check database logs: `docker-compose logs db`.
+1. Ensure Docker containers are running: `docker-compose up -d`.
+2. Check database logs: `docker-compose logs db`.
 
 ## General Debugging
 

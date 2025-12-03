@@ -479,3 +479,191 @@ See `PHASE_7_COMPLETION.md` for details.
 - [ ] **Task 8.4.1: Responsive Design Review**
 - [ ] **Task 8.4.2: Performance Tuning (Frontend)**
 - [ ] **Task 8.4.3: End-to-End Testing (Cypress/Playwright)**
+
+---
+
+## **Phase 8.5: Complete Feature Definition & Documentation**
+
+> **Objective**: Fully document every feature, create specifications for proposed features, build tracking systems, and implement high-priority gameplay enhancements.
+
+**Duration**: 8-10 weeks
+**Completion Target**: Early February 2026
+
+See `implementation_plan.md` for full details.
+
+### **8.5.1: Foundation & Tracking**
+
+- [x] **Feature Status Matrix**
+
+  - [x] Create `docs/FEATURE_STATUS_MATRIX.md`
+  - [x] Catalog all 122 features across 8 categories
+  - [x] Track status: PROPOSED → SPEC → IMPLEMENTED → TESTED
+  - [x] Assign priorities (P0-P3)
+  - [ ] Update weekly as features progress
+
+- [/] **Architecture Decision Records (ADRs)**
+  - [x] Create ADR template
+  - [x] ADR-001: Database ORM Choice (SQLAlchemy)
+  - [x] ADR-002: MCP Integration Architecture
+  - [ ] ADR-003: Trait System Design
+  - [ ] ADR-004: Attribute Interaction Model
+  - [ ] Create 6+ additional ADRs for major decisions
+
+### **8.5.2: Reverse-Engineer Existing Features**
+
+- [ ] **Core Game Engine Specs**
+
+  - [ ] `docs/game-engine/play-resolution.md`
+  - [ ] `docs/game-engine/ai-decision-making.md`
+  - [ ] `docs/game-engine/match-context.md` (enhance existing)
+
+- [ ] **Player & Franchise Specs**
+
+  - [ ] `docs/franchise/contract-system.md`
+  - [ ] `docs/franchise/draft-system.md`
+  - [ ] `docs/player-system/progression-curves.md`
+
+- [ ] **MCP & AI Specs**
+  - [ ] `docs/ai/draft-assistant-algorithm.md`
+  - [ ] `docs/ai/trade-evaluation.md`
+
+### **8.5.3: Specifications for Proposed Features**
+
+- [ ] **Trait System (P1)**
+
+  - [ ] `docs/player-system/trait-system-spec.md`
+  - [ ] Document all 30+ traits from proposed-features.md
+  - [ ] Define acquisition methods, activation triggers, effects
+  - [ ] Create implementation phases roadmap
+
+- [ ] **Attribute Interactions (P1)**
+
+  - [ ] `docs/player-system/attribute-interactions-spec.md`
+  - [ ] Document QB Pocket Presence → OL mitigation
+  - [ ] Document OL Unit Chemistry system
+  - [ ] Document all inter-positional dynamics
+
+- [ ] **Environmental Effects (P1)**
+
+  - [ ] `docs/game-engine/environmental-effects-spec.md`
+  - [ ] Weather modifier formulas
+  - [ ] Venue-specific effects
+  - [ ] Integration with Weather MCP
+
+- [ ] **Advanced Features (P2-P3)**
+  - [ ] `docs/player-system/injury-system-spec.md`
+  - [ ] `docs/player-system/morale-system-spec.md`
+  - [ ] `docs/franchise/scouting-system-spec.md`
+  - [ ] `docs/ui/narrative-engine-spec.md`
+
+### **8.5.4: High-Priority Feature Implementation**
+
+#### Set 1: Core Gameplay Enhancement (Weeks 1-3)
+
+- [ ] **QB Pocket Presence (GAME-008)**
+
+  - [ ] Add `pocket_presence` attribute to Player model
+  - [ ] Implement sack mitigation logic in play_resolver
+  - [ ] Add pressure sensing to QB AI
+  - [ ] Update UI to display attribute
+  - [ ] Write tests (unit + integration)
+  - [ ] **Acceptance**: 30-50% sack reduction for high-rated QBs
+
+- [ ] **Offensive Line Unit Chemistry (ATTR-007)**
+
+  - [ ] Create PlayerGameStarts model
+  - [ ] Create PreGameService for chemistry calculation
+  - [ ] Integrate with simulation orchestrator
+  - [ ] Add UI chemistry indicator
+  - [ ] Write tests
+  - [ ] **Acceptance**: +3-5 blocking bonus for 5+ games together
+
+- [ ] **Environmental Effects Integration (GAME-009)**
+  - [ ] Add weather data to MatchContext
+  - [ ] Implement weather modifiers in play_resolver
+  - [ ] Fetch weather from Weather MCP
+  - [ ] Enhance WeatherWidget UI component
+  - [ ] Write tests for all weather types
+  - [ ] **Acceptance**: All weather types apply documented modifiers
+
+#### Set 2: Trait System Foundation (Weeks 4-6)
+
+- [ ] **Phase 1: Database & Service**
+
+  - [ ] Create Trait model
+  - [ ] Create PlayerTrait association model
+  - [ ] Create TraitService
+  - [ ] Database migration
+  - [ ] API endpoints: GET /api/traits, POST /api/players/{id}/traits
+
+- [ ] **Phase 2: Initial Traits (Top 5)**
+
+  - [ ] Implement QB Field General
+  - [ ] Implement WR Possession Receiver
+  - [ ] Implement RB Chip Block
+  - [ ] Implement LB Green Dot
+  - [ ] Implement DB Pick Artist
+  - [ ] Write unit tests for each trait
+  - [ ] Integration tests for trait activation
+  - [ ] Balance testing
+
+- [ ] **Phase 3: Full Trait Catalog**
+  - [ ] Implement remaining 25+ traits
+  - [ ] UI integration (trait display on player cards)
+  - [ ] Draft integration (traits in prospect generation)
+
+#### Set 3: Attribute Interactions (Weeks 7-8)
+
+- [ ] **AttributeInteractionEngine Service**
+  - [ ] Create service architecture
+  - [ ] Implement top 10 interactions from spec
+  - [ ] Integrate with play resolution
+  - [ ] Performance optimization (caching)
+  - [ ] UI indicators for active bonuses
+  - [ ] Comprehensive testing
+
+### **8.5.5: Testing & Documentation**
+
+- [ ] **Test Suite Expansion**
+
+  - [ ] `backend/tests/unit/test_trait_system.py`
+  - [ ] `backend/tests/unit/test_attribute_interactions.py`
+  - [ ] `backend/tests/integration/test_environmental_effects.py`
+  - [ ] `backend/tests/integration/test_pocket_presence.py`
+  - [ ] `backend/tests/integration/test_oline_chemistry.py`
+  - [ ] Achieve >90% coverage on new features
+
+- [ ] **Manual Testing Documentation**
+  - [ ] Create `docs/testing/manual-test-scenarios.md`
+  - [ ] Document full season with traits scenario
+  - [ ] Document weather impact testing
+  - [ ] Document pocket presence validation
+  - [ ] Document OL chemistry testing
+
+---
+
+## **Phase 8.5 Metrics**
+
+**Documentation Coverage**:
+
+- [ ] Feature Status Matrix: 100% of features tracked ✅ DONE
+- [ ] Core specs complete: 18/18 new documents
+- [ ] ADRs created: 10+ decisions documented (2/10 done)
+- [ ] Test coverage mapped: Every feature has test plan
+
+**Implementation Milestones**:
+
+- [ ] QB Pocket Presence working and validated
+- [ ] OL Chemistry working and validated
+- [ ] Environmental Effects fully integrated
+- [ ] 5 traits implemented and tested
+- [ ] Top 10 attribute interactions working
+
+**Quality Gates**:
+
+- [ ] Zero P0/P1 bugs introduced
+- [ ] Test coverage >85% on all new code
+- [ ] All specs peer-reviewed
+- [ ] Performance: <10% slowdown in sim speed
+
+---

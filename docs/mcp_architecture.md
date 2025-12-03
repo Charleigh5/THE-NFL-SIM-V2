@@ -36,15 +36,15 @@ These servers are built using the `fastmcp` library for rapid development.
 
 ## Data Flow
 
-1.  **Initialization**: On startup, `main.py` initializes the `MCPRegistry`.
-2.  **Connection**: The registry iterates through `mcp_config.json`, creating an `MCPHostClient` for each server and establishing a connection.
-3.  **Tool Call**:
-    - The application (e.g., `DraftAssistant` or `GMAgent`) requests a tool execution via the registry or a specific client.
-    - The `MCPHostClient` sanitizes the request arguments.
-    - The request is sent to the MCP server via the configured transport.
-    - The server executes the tool and returns the result.
-    - The client sanitizes the result and logs the transaction.
-    - The result is returned to the caller.
+1. **Initialization**: On startup, `main.py` initializes the `MCPRegistry`.
+2. **Connection**: The registry iterates through `mcp_config.json`, creating an `MCPHostClient` for each server and establishing a connection.
+3. **Tool Call**:
+   - The application (e.g., `DraftAssistant` or `GMAgent`) requests a tool execution via the registry or a specific client.
+   - The `MCPHostClient` sanitizes the request arguments.
+   - The request is sent to the MCP server via the configured transport.
+   - The server executes the tool and returns the result.
+   - The client sanitizes the result and logs the transaction.
+   - The result is returned to the caller.
 
 ## Configuration
 
