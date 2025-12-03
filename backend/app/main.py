@@ -10,6 +10,11 @@ import logging.handlers
 import os
 import sys
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from prometheus_fastapi_instrumentator import Instrumentator
+
 from app.core.error_handlers import (
     database_exception_handler,
     database_operational_error_handler,
@@ -53,6 +58,14 @@ app = FastAPI(
     version=settings.API_VERSION,
     debug=settings.DEBUG,
 )
+
+# Rate Limiting
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Prometheus Instrumentation
+Instrumentator().instrument(app).expose(app)
 
 # Register Middlewares
 app.add_middleware(LoggingMiddleware)

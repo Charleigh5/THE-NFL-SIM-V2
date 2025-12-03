@@ -7,9 +7,12 @@ Welcome to the NFL Simulation Engine, a comprehensive full-stack application for
 We have detailed documentation available to help you get started, understand the system, and contribute.
 
 - **[System Architecture](docs/ARCHITECTURE.md)**: High-level overview of the system design, components, and technology stack.
+- **[MCP Architecture](docs/mcp_architecture.md)**: Details on the Model Context Protocol integration and external tools.
+- **[MCP Tools Reference](docs/mcp_tools.md)**: List of available tools provided by MCP servers.
 - **[API Documentation](docs/API.md)**: Detailed guide to the backend API endpoints, usage, and error handling.
 - **[Deployment Guide](docs/DEPLOYMENT.md)**: Instructions for building and deploying the application using Docker.
 - **[Development Guide](docs/DEVELOPMENT.md)**: Comprehensive guide for local development, testing, and debugging.
+- **[Adding MCP Servers](docs/guides/adding_mcp_servers.md)**: Guide for extending the system with new tools.
 
 ## Quick Start
 

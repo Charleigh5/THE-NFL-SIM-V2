@@ -1,5 +1,13 @@
 import random
 from typing import Optional
+from enum import Enum
+import math
+
+class OutcomeType(Enum):
+    CRITICAL_FAILURE = "critical_failure"
+    FAILURE = "failure"
+    SUCCESS = "success"
+    CRITICAL_SUCCESS = "critical_success"
 
 class ProbabilityEngine:
     """
@@ -8,15 +16,24 @@ class ProbabilityEngine:
     """
 
     @staticmethod
+    def compare_attributes(attacker_val: int, defender_val: int, scale: float = 0.01, max_mod: float = 0.3) -> float:
+        """
+        Generic attribute comparison.
+        Returns a probability modifier (e.g., 0.10 for +10% chance).
+        """
+        diff = attacker_val - defender_val
+        mod = diff * scale
+        return max(-max_mod, min(max_mod, mod))
+
+    @staticmethod
     def compare_speed(attacker_speed: int, defender_speed: int) -> float:
         """
         Compare speed attributes to determine a separation bonus.
-        Returns a value between -0.2 and 0.5.
-        Positive means attacker is faster.
+        Returns a value between -0.10 and 0.20.
         """
+        # Custom scaling for speed: 1 point = 1%
+        # Asymmetric cap: Speed kills, so advantage is higher than disadvantage
         diff = attacker_speed - defender_speed
-        # Each point of speed difference is worth 1% separation
-        # Cap at 20% advantage or 10% disadvantage
         return max(-0.10, min(0.20, diff / 100.0))
 
     @staticmethod
@@ -25,8 +42,7 @@ class ProbabilityEngine:
         Compare strength attributes for blocking/tackling.
         Returns a value between -0.2 and 0.2.
         """
-        diff = attacker_str - defender_str
-        return max(-0.20, min(0.20, diff / 100.0))
+        return ProbabilityEngine.compare_attributes(attacker_str, defender_str, scale=0.01, max_mod=0.20)
 
     @staticmethod
     def compare_skill(attacker_skill: int, defender_skill: int) -> float:
@@ -34,8 +50,7 @@ class ProbabilityEngine:
         Compare specific skills (e.g., Route Running vs Man Coverage).
         Returns a value between -0.25 and 0.25.
         """
-        diff = attacker_skill - defender_skill
-        return max(-0.25, min(0.25, diff / 100.0))
+        return ProbabilityEngine.compare_attributes(attacker_skill, defender_skill, scale=0.01, max_mod=0.25)
 
     @staticmethod
     def calculate_success_chance(
@@ -48,17 +63,6 @@ class ProbabilityEngine:
     ) -> float:
         """
         Calculate final success probability.
-
-        Args:
-            base_probability: The baseline chance of success (0.0 to 1.0)
-            attribute_modifiers: Sum of attribute comparison bonuses/penalties
-            context_modifiers: Sum of situational modifiers (weather, home field, etc.)
-            fatigue_penalty: Penalty due to fatigue (should be positive value, subtracted)
-            min_chance: Floor for probability
-            max_chance: Ceiling for probability
-
-        Returns:
-            Float between min_chance and max_chance
         """
         total_chance = base_probability + attribute_modifiers + context_modifiers - fatigue_penalty
         return max(min_chance, min(max_chance, total_chance))
@@ -71,14 +75,63 @@ class ProbabilityEngine:
         return random.random() < probability
 
     @staticmethod
+    def resolve_tiered_outcome(probability: float, critical_threshold: float = 0.10) -> OutcomeType:
+        """
+        Resolve an outcome into 4 tiers:
+        - Critical Failure: Roll > Probability + (1 - Probability) * (1 - Critical Threshold)? No.
+        Let's define ranges:
+        0.0 to Prob: Success
+            0.0 to (Prob * CritThreshold): Critical Success
+        Prob to 1.0: Failure
+            (1.0 - (1-Prob)*CritThreshold) to 1.0: Critical Failure
+        """
+        roll = random.random()
+
+        if roll < probability:
+            # Success branch
+            # If probability is 0.6, crit threshold 0.1 -> top 10% of success range?
+            # Or absolute top 5% of all rolls?
+            # Let's use absolute top/bottom of the range relative to the success/fail blocks.
+
+            # Critical Success: if roll is in the top 10% of the success range?
+            # Actually, usually low roll = success in some systems, high in others.
+            # Here resolve_outcome(p) returns true if roll < p. So 0.0 is best.
+
+            # Let's say Critical Success is the bottom 10% of the success range.
+            if roll < (probability * critical_threshold):
+                return OutcomeType.CRITICAL_SUCCESS
+            return OutcomeType.SUCCESS
+        else:
+            # Failure branch
+            # Critical Failure is the top 10% of the failure range.
+            failure_range_start = probability
+            failure_range_width = 1.0 - probability
+            if roll > (1.0 - (failure_range_width * critical_threshold)):
+                return OutcomeType.CRITICAL_FAILURE
+            return OutcomeType.FAILURE
+
+    @staticmethod
     def calculate_variable_outcome(
         base_value: float,
         variance: float,
         modifiers: float = 0.0
     ) -> float:
         """
-        Calculate a scalar outcome (e.g., yards gained) with variance.
+        Calculate a scalar outcome (e.g., yards gained) with uniform variance.
         """
-        # Random factor between -variance and +variance
         random_factor = random.uniform(-variance, variance)
         return base_value + random_factor + modifiers
+
+    @staticmethod
+    def calculate_normal_outcome(
+        mean: float,
+        std_dev: float,
+        min_val: float = 0.0,
+        max_val: float = 100.0
+    ) -> float:
+        """
+        Calculate a scalar outcome using a normal distribution (bell curve).
+        More realistic for yards gained, etc.
+        """
+        val = random.gauss(mean, std_dev)
+        return max(min_val, min(max_val, val))

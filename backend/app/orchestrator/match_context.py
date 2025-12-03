@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.models.player import Player
 from app.models.team import Team
 from app.services.depth_chart_service import DepthChartService
-# from app.engine.kernels.genesis import GenesisKernel # To be implemented/imported
+from app.orchestrator.kernels.genesis_kernel import GenesisKernel
 # from app.engine.kernels.cortex import CortexSystem # To be implemented/imported
 
 class MatchContext:
@@ -31,7 +31,7 @@ class MatchContext:
         self.fatigue_state: Dict[int, float] = {}
 
         # Systems
-        # self.genesis: Optional[GenesisKernel] = None
+        self.genesis: Optional[GenesisKernel] = None
         # self.cortex: Optional[CortexSystem] = None
 
     async def load_rosters(self):
@@ -58,9 +58,21 @@ class MatchContext:
 
     def initialize_systems(self):
         """Initializes the simulation kernels."""
-        # self.genesis = GenesisKernel(self.home_roster, self.away_roster)
+        self.genesis = GenesisKernel()
+
+        # Register all players
+        all_players = list(self.home_roster.values()) + list(self.away_roster.values())
+        for p in all_players:
+            # Determine climate familiarity based on team (placeholder logic)
+            # In real app, Team model would have 'stadium_type' or 'climate'
+            climate = "Neutral"
+
+            self.genesis.register_player(p.id, {
+                "fatigue": {"home_climate": climate},
+                "anatomy": {}
+            })
+
         # self.cortex = CortexSystem(self.db)
-        pass
 
     def get_fielded_players(self, team_id: int, formation: str, side: str) -> List[Player]:
         """
@@ -104,8 +116,17 @@ class MatchContext:
     def update_fatigue(self, player_ids: List[int], fatigue_delta: float):
         """Updates fatigue for a list of players."""
         for pid in player_ids:
-            if pid in self.fatigue_state:
-                self.fatigue_state[pid] = min(1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta))
+            if self.genesis:
+                # Genesis uses 0-100 scale, MatchContext used 0.0-1.0
+                # We assume fatigue_delta passed here is 0.0-1.0 (e.g. 0.05)
+                # So we multiply by 100
+                self.genesis.update_fatigue(pid, fatigue_delta * 100.0)
+            else:
+                if pid in self.fatigue_state:
+                    self.fatigue_state[pid] = min(1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta))
 
     def get_player_fatigue(self, player_id: int) -> float:
+        if self.genesis:
+            # Genesis returns 0-100, we convert back to 0.0-1.0 for compatibility
+            return self.genesis.get_current_fatigue(player_id) / 100.0
         return self.fatigue_state.get(player_id, 0.0)

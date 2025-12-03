@@ -14562,3 +14562,302 @@ Traceback (most recent call last):
   File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
     raise StopAsyncIteration
 StopAsyncIteration
+{"time":"2025-12-02 21:13:16,774","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:13:59,346","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:13:59,352","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:13:59,352","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:14:39,566","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:14:39,571","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:14:39,572","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:15:02,106","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:15:02,112","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:15:02,113","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:15:02,115","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 156, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:15:08,439","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:15:08,444","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:15:08,444","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:17:00,760","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:17:00,765","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:17:00,765","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:17:58,487","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:17:58,492","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:17:58,492","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:18:34,571","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:18:34,576","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:18:34,576","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:20:09,843","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:20:09,848","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:20:09,848","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:20:52,719","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:20:52,723","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:20:52,723","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:21:30,185","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:21:30,191","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:21:30,192","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:21:45,520","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:45,533","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-02 21:21:45,534","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-02 21:21:45,534","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-02 21:21:45,534","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:45,536","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:21:45,559","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:45,564","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-02 21:21:45,565","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:45,565","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:21:45,621","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:45,623","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-02 21:21:45,623","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:45,624","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:21:46,557","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:21:46,561","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:21:46,561","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:21:46,586","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: nfl_stats"}
+{"time":"2025-12-02 21:21:46,704","name":"app.core.mcp_client","level":"ERROR","message":"Failed to connect to MCP server nfl_stats: Connection closed"}
+{"time":"2025-12-02 21:21:46,704","name":"test_mcp_health","level":"ERROR","message":"Health check failed for nfl_stats: Connection closed"}
+{"time":"2025-12-02 21:21:46,705","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats"}
+{"time":"2025-12-02 21:21:47,031","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:21:47,034","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:21:47,034","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:21:47,036","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 156, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:21:47,201","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:47,213","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:47,215","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:21:47,234","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:47,236","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:47,237","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:21:47,259","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:21:47,261","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:21:47,263","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:23:09,273","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:23:09,279","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:23:09,279","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:23:39,078","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:23:39,082","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:23:39,083","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:23:39,086","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 129, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:23:39,090","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 129, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:23:39,091","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 156, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:24:22,535","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-02 21:24:22,538","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-02 21:24:22,538","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-02 21:24:22,542","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 129, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:24:22,547","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 129, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:24:22,548","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 156, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-02 21:33:44,027","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:33:44,080","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-02 21:33:44,080","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:33:44,081","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:35:23,890","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:23,907","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 1: Player 1 (QB)"}
+{"time":"2025-12-02 21:35:23,908","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:23,910","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:24,042","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,046","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 2 pick 1: Top QB (QB)"}
+{"time":"2025-12-02 21:35:24,046","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,047","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:24,069","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,073","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 1: Elite Prospect (WR)"}
+{"time":"2025-12-02 21:35:24,073","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,073","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:24,074","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,077","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 224: Elite Prospect (WR)"}
+{"time":"2025-12-02 21:35:24,078","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,078","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:24,095","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,097","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-02 21:35:24,097","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,097","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:35:24,100","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,103","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: No available players"}
+{"time":"2025-12-02 21:35:24,103","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,103","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:35:24,122","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:24,126","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 5 pick 10: Best Player (QB)"}
+{"time":"2025-12-02 21:35:24,126","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:24,127","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:48,690","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,702","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 1: Player 1 (QB)"}
+{"time":"2025-12-02 21:35:48,703","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,704","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:48,726","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,731","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 2 pick 1: Top QB (QB)"}
+{"time":"2025-12-02 21:35:48,731","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,732","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:48,773","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,781","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 1: Elite Prospect (WR)"}
+{"time":"2025-12-02 21:35:48,782","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,783","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:48,784","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,792","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 224: Elite Prospect (WR)"}
+{"time":"2025-12-02 21:35:48,793","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,793","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:35:48,816","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,818","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-02 21:35:48,818","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,819","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:35:48,821","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,824","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: No available players"}
+{"time":"2025-12-02 21:35:48,825","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,825","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-02 21:35:48,855","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-02 21:35:48,860","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 5 pick 10: Best Player (QB)"}
+{"time":"2025-12-02 21:35:48,860","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-02 21:35:48,860","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-02 21:47:30,175","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_test"}
+{"time":"2025-12-02 21:47:30,186","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_test"}
+{"time":"2025-12-02 21:47:30,187","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_test, Tool: get_player_career_stats, Args: {'player_name': 'Test Player'}"}
+{"time":"2025-12-02 21:47:30,190","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_test, Tool: get_player_career_stats, Duration: 0.0030s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:30,259","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_test"}
+{"time":"2025-12-02 21:47:31,031","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_concurrent"}
+{"time":"2025-12-02 21:47:31,041","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_concurrent"}
+{"time":"2025-12-02 21:47:31,042","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 0'}"}
+{"time":"2025-12-02 21:47:31,043","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 1'}"}
+{"time":"2025-12-02 21:47:31,043","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 2'}"}
+{"time":"2025-12-02 21:47:31,043","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 3'}"}
+{"time":"2025-12-02 21:47:31,044","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 4'}"}
+{"time":"2025-12-02 21:47:31,054","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0123s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,061","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0185s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,062","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0193s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,063","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0200s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,064","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0200s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,138","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_concurrent"}
+{"time":"2025-12-02 21:47:31,846","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_error"}
+{"time":"2025-12-02 21:47:31,851","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_error"}
+{"time":"2025-12-02 21:47:31,851","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_error, Tool: non_existent_tool, Args: {}"}
+{"time":"2025-12-02 21:47:31,855","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_error, Tool: non_existent_tool, Duration: 0.0034s, Result: meta=None content=[TextContent(type='text', text='Unknown tool: non_existent_tool', annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:47:31,925","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_error"}
+{"time":"2025-12-02 21:48:28,717","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_test"}
+{"time":"2025-12-02 21:48:28,724","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_test"}
+{"time":"2025-12-02 21:48:28,724","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_test, Tool: get_player_career_stats, Args: {'player_name': 'Test Player'}"}
+{"time":"2025-12-02 21:48:28,727","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_test, Tool: get_player_career_stats, Duration: 0.0033s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:28,804","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_test"}
+{"time":"2025-12-02 21:48:29,520","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_concurrent"}
+{"time":"2025-12-02 21:48:29,525","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_concurrent"}
+{"time":"2025-12-02 21:48:29,526","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 0'}"}
+{"time":"2025-12-02 21:48:29,526","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 1'}"}
+{"time":"2025-12-02 21:48:29,526","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 2'}"}
+{"time":"2025-12-02 21:48:29,526","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 3'}"}
+{"time":"2025-12-02 21:48:29,526","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 4'}"}
+{"time":"2025-12-02 21:48:29,531","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0050s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:29,536","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0097s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:29,536","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0103s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:29,537","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0105s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:29,537","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0106s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:29,607","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_concurrent"}
+{"time":"2025-12-02 21:48:30,291","name":"app.core.mcp_client","level":"INFO","message":"Connected to MCP server: nfl_stats_error"}
+{"time":"2025-12-02 21:48:30,296","name":"app.core.mcp_client","level":"INFO","message":"Discovered 3 tools for server nfl_stats_error"}
+{"time":"2025-12-02 21:48:30,296","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_error, Tool: non_existent_tool, Args: {}"}
+{"time":"2025-12-02 21:48:30,299","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_error, Tool: non_existent_tool, Duration: 0.0033s, Result: meta=None content=[TextContent(type='text', text='Unknown tool: non_existent_tool', annotations=None, meta=None)] structuredContent=None isError=True"}
+{"time":"2025-12-02 21:48:30,357","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_error"}

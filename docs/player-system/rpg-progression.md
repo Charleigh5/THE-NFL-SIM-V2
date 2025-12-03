@@ -1,6 +1,9 @@
 # Proposed RPG & Leveling Overhaul
 
-This section proposes deep RPG progression systems designed to give each position a unique developmental path. These features move beyond simple attribute increases, offering **Unlockable Mechanics** and **Specialization Trees**.
+This section proposes deep RPG progression systems designed to give each
+position a unique developmental path. These features move beyond simple
+attribute increases, offering **Unlockable Mechanics** and **Specialization
+Trees**.
 
 ## Offensive Positions
 
@@ -8,9 +11,11 @@ This section proposes deep RPG progression systems designed to give each positio
 
 - **`Film Study Master`**
 
-  - **Mechanism**: **Unlockable Ability**: Reveals one defensive coverage shell (Man/Zone) pre-snap after standing in the pocket for 2 seconds.
+  - **Mechanism**: **Unlockable Ability**: Reveals one defensive coverage shell
+    (Man/Zone) pre-snap after standing in the pocket for 2 seconds.
   - **XP Cost / Requirement**: Level 10 + 5000 XP
-  - **Positional Impact**: Drastically increases pre-snap read accuracy, reducing interceptions.
+  - **Positional Impact**: Drastically increases pre-snap read accuracy,
+    reducing interceptions.
 
 - **`The Architect`**
   - **Mechanism**: **Skill Tree**: Custom hot routes.
@@ -26,7 +31,8 @@ This section proposes deep RPG progression systems designed to give each positio
   - **Positional Impact**: Reduces stamina drain for elite runs.
 
 - **`Bell Cow Certification`**
-  - **Mechanism**: **Badge**: Boosts injury resistance and stamina in 4th quarter.
+  - **Mechanism**: **Badge**: Boosts injury resistance and stamina in 4th
+    quarter.
   - **XP Cost / Requirement**: 200 Carries/season
   - **Positional Impact**: Key for Power Back builds.
 
@@ -52,7 +58,8 @@ This section proposes deep RPG progression systems designed to give each positio
   - **Positional Impact**: Creates vertical threat.
 
 - **`Sixth Lineman`**
-  - **Mechanism**: **Toggle**: Switch between receiver (agility) and blocker (strength) stance.
+  - **Mechanism**: **Toggle**: Switch between receiver (agility) and blocker
+    (strength) stance.
   - **XP Cost / Requirement**: Level 5
   - **Positional Impact**: Adds tactical depth.
 
@@ -101,14 +108,18 @@ This section proposes deep RPG progression systems designed to give each positio
 
 - **`Edge Threat`**
 
-  - **Mechanism**: **Stance Modifier**: Can choose a "Wide 9" alignment to sacrifice run defense for a massive speed rush bonus.
+  - **Mechanism**: **Stance Modifier**: Can choose a "Wide 9" alignment to
+    sacrifice run defense for a massive speed rush bonus.
   - **XP Cost / Requirement**: Level 10
-  - **Positional Impact**: Forces the offense to chip with a RB or keep a TE in to block.
+  - **Positional Impact**: Forces the offense to chip with a RB or keep a TE in
+    to block.
 
 - **`Spin Cycle`**
-  - **Mechanism**: **Animation Unlock**: Unlocks a "Elite Spin Move" that is twice as fast as the default.
+  - **Mechanism**: **Animation Unlock**: Unlocks a "Elite Spin Move" that is
+    twice as fast as the default.
   - **XP Cost / Requirement**: Level 8 + Finesse > 85
-  - **Positional Impact**: Gives speed rushers a reliable counter to heavy, slow Offensive Tackles.
+  - **Positional Impact**: Gives speed rushers a reliable counter to heavy, slow
+    Offensive Tackles.
 
 ### Defensive Tackle
 

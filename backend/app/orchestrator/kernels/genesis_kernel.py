@@ -58,3 +58,30 @@ class GenesisKernel:
                  "severity": "Low"
              }
         return {"is_injured": False}
+
+    def update_fatigue(self, player_id: int, delta: float) -> None:
+        """
+        Directly update fatigue by a delta amount.
+        Positive delta increases fatigue, negative decreases it.
+        """
+        if player_id not in self.player_states:
+            return
+
+        state = self.player_states[player_id]["fatigue"]
+        if delta > 0:
+            # Treat as generic exertion without temp modifier
+            state.lactic_acid += delta
+        else:
+            state.recover(-delta)
+
+    def reset_all_fatigue(self) -> None:
+        """Reset fatigue for all players (e.g. halftime)."""
+        for pid, state in self.player_states.items():
+            state["fatigue"].lactic_acid = 0.0
+            state["fatigue"].hrv = 100.0
+            state["fatigue"].max_burst_capacity = 100.0
+
+    def recover_all_fatigue(self, amount: float) -> None:
+        """Recover fatigue for all players (e.g. timeout)."""
+        for pid, state in self.player_states.items():
+            state["fatigue"].recover(amount)

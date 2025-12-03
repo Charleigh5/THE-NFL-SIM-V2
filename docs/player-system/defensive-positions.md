@@ -4,7 +4,7 @@
 
 Pass rushers and run stuffers.
 
-### Defensive Line Key Attributes
+### DL Key Attributes
 
 - **`pass_rush_power`**
 
@@ -21,7 +21,7 @@ Pass rushers and run stuffers.
 - **`tackle`**
   - Ability to wrap up the ball carrier.
 
-### Progression Logic
+### DL Progression Logic
 
 - Huge XP bonuses for **Sacks** (100 XP) and **Tackles for Loss** (30 XP).
 
@@ -29,7 +29,7 @@ Pass rushers and run stuffers.
 
 Hybrid defenders.
 
-### Linebacker Key Attributes
+### LB Key Attributes
 
 - **`play_recognition`**
 
@@ -46,7 +46,7 @@ Hybrid defenders.
 
 Pass defenders.
 
-### Defensive Back Key Attributes
+### DB Key Attributes
 
 - **`man_coverage`**
 
@@ -55,11 +55,12 @@ Pass defenders.
 - **`zone_coverage`**
 
   - Effectiveness in a designated area.
-  - _Link_: `DefenseEngine.resolve_zone_coverage` uses this + `awareness` to determine reaction speed.
+  - _Link_: `DefenseEngine.resolve_zone_coverage` uses this + `awareness` to
+    determine reaction speed.
 
 - **`catching`**
   - Ability to make Interceptions.
 
-### Stats Tracked
+### DB Stats Tracked
 
 - **`interceptions`**, **`pass_deflections`**.

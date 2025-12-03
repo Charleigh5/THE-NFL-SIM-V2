@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -11,6 +11,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/stellar_sagan
     depends_on:
       - db
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
@@ -21,6 +23,8 @@ services:
       - /app/node_modules
     environment:
       - VITE_API_URL=http://localhost:8000
+    networks:
+      - app-network
 
   db:
     image: postgres:15-alpine
@@ -32,6 +36,44 @@ services:
       - POSTGRES_DB=stellar_sagan
     ports:
       - "5432:5432"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

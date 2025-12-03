@@ -2,7 +2,7 @@ from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
 from app.schemas.play import PlayResult
 import random
 from app.orchestrator.kernels_interface import KernelInterface
-from app.engine.probability_engine import ProbabilityEngine
+from app.engine.probability_engine import ProbabilityEngine, OutcomeType
 from app.engine.blocking import BlockingEngine, BlockingResult
 from app.engine.event_bus import EventBus, EventType
 from app.engine.offensive_line_ai import OffensiveLineAI
@@ -20,6 +20,11 @@ class PlayResolver:
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
         self.current_match_context = match_context
+
+        # Sync Genesis Kernel if MatchContext has one
+        if hasattr(match_context, 'genesis') and match_context.genesis:
+            self.kernels.genesis = match_context.genesis
+
         all_players = list(match_context.home_roster.values()) + list(match_context.away_roster.values())
 
         for p in all_players:
@@ -31,10 +36,13 @@ class PlayResolver:
             # anatomy data placeholder for now
 
             # Register with Genesis (Biology/Fatigue)
-            self.kernels.genesis.register_player(p.id, {
-                "anatomy": {},
-                "fatigue": fatigue_data
-            })
+            # Note: MatchContext already registers players, so this might be redundant if we synced the kernel
+            # But we keep it for safety or if using a different kernel instance
+            if not hasattr(match_context, 'genesis') or not match_context.genesis:
+                self.kernels.genesis.register_player(p.id, {
+                    "anatomy": {},
+                    "fatigue": fatigue_data
+                })
 
     def resolve_play(self, command: PlayCommand) -> PlayResult:
         """
@@ -71,14 +79,11 @@ class PlayResolver:
             return self.current_match_context.weather_config.get("temperature", 75.0)
         return 75.0
 
-    def _resolve_line_battle(self, offense: List[Any], defense: List[Any]) -> Tuple[BlockingResult, Optional[Any], Optional[Any]]:
+    def _resolve_line_battle(self, offense: List[Any], defense: List[Any]) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
         """
         Simulate the battle between OL and DL.
-        Returns (BlockingResult, winning_defender, beaten_lineman)
+        Returns (results, winning_defenders, beaten_linemen)
         """
-        # Identify matchups (Simplified: LT vs RE, RT vs LE)
-        # We'll check a few key matchups and see if anyone breaks through
-
         matchups = [
             ("LT", "RE"),
             ("RT", "LE"),
@@ -87,9 +92,9 @@ class PlayResolver:
             ("RG", "DT")
         ]
 
-        worst_result = BlockingResult.WIN # Default to clean pocket
-        winning_defender = None
-        beaten_lineman = None
+        results = []
+        winning_defenders = []
+        beaten_linemen = []
 
         for ol_pos, dl_pos in matchups:
             ol = self._get_player_by_position(offense, ol_pos)
@@ -99,29 +104,20 @@ class PlayResolver:
                 continue
 
             # Get attributes
-            ol_rating = getattr(ol, "pass_block", 70)
-            dl_rating = getattr(dl, "pass_rush", 70) # Assuming pass_rush attribute exists, else use power/finesse
-
-            # Apply Intimidation Debuff
+            ol_rating = getattr(ol, "pass_block", None) or 70
+            dl_rating = getattr(dl, "pass_rush", None) or 70 # Assuming pass_rush attribute exists, else use power/finessef
             modifier = self.offensive_line_ai.get_player_modifier(ol.id)
             ol_rating += modifier
 
             # Resolve block
             result = BlockingEngine.resolve_pass_block(ol_rating, dl_rating)
 
-            # Check if this result is worse than current worst (LOSS < STALEMATE < WIN)
-            # BlockingResult enum: WIN, LOSS, STALEMATE, PANCAKE
-            # We treat LOSS and PANCAKE as bad for offense
-
+            results.append(result)
             if result == BlockingResult.LOSS or result == BlockingResult.PANCAKE:
-                worst_result = result
-                winning_defender = dl
-                beaten_lineman = ol
-                break # Sack!
-            elif result == BlockingResult.STALEMATE and worst_result == BlockingResult.WIN:
-                worst_result = BlockingResult.STALEMATE
+                winning_defenders.append(dl)
+                beaten_linemen.append(ol)
 
-        return worst_result, winning_defender, beaten_lineman
+        return results, winning_defenders, beaten_linemen
 
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
@@ -142,15 +138,45 @@ class PlayResolver:
 
         # 2. Genesis Kernel: Calculate Fatigue & Injury Risk
         temp = self._get_weather_temp()
-        current_fatigue = self.kernels.genesis.calculate_fatigue(qb.id, exertion=0.8, temperature=temp)
+        # Use get_current_fatigue (read-only) for penalty calculation
+        # Fatigue update happens in Orchestrator
+        current_fatigue = self.kernels.genesis.get_current_fatigue(qb.id)
+
         # Injury Check
         injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
         injuries = [injury_check] if injury_check["is_injured"] else []
 
         # 3. Line Battle & Sack Check
-        block_result, sacker, beaten_ol = self._resolve_line_battle(command.offense, command.defense)
+        block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense)
 
-        if block_result == BlockingResult.LOSS or block_result == BlockingResult.PANCAKE:
+        # Determine if Sack occurred
+        is_sack = False
+        sacker = None
+        beaten_ol = None
+
+        # Pancake = Automatic Sack
+        if BlockingResult.PANCAKE in block_results:
+            is_sack = True
+            idx = block_results.index(BlockingResult.PANCAKE)
+            # Find corresponding sacker (approximate since we don't track idx in lists perfectly aligned if skips happen)
+            # But sackers list only contains winners.
+            # Let's just take the first one for simplicity or improve _resolve_line_battle to return structured data.
+            if sackers:
+                sacker = sackers[0]
+                beaten_ol = beaten_ols[0]
+
+        # Loss = Chance of Sack
+        elif BlockingResult.LOSS in block_results:
+            # Chance increases with number of losses
+            loss_count = block_results.count(BlockingResult.LOSS)
+            sack_chance = 0.20 * loss_count
+            if ProbabilityEngine.resolve_outcome(sack_chance):
+                is_sack = True
+                if sackers:
+                    sacker = sackers[0]
+                    beaten_ol = beaten_ols[0]
+
+        if is_sack:
             # SACK!
             loss_yards = random.randint(5, 10)
 
@@ -184,23 +210,22 @@ class PlayResolver:
 
         # A. Throw Accuracy vs Depth
         throw_accuracy = 50 # Default base
-        if hasattr(qb, "throw_accuracy_short"):
-             if command.depth == "short":
-                 throw_accuracy = qb.throw_accuracy_short
-             elif command.depth == "mid":
-                 throw_accuracy = qb.throw_accuracy_mid
-             elif command.depth == "deep":
-                 throw_accuracy = qb.throw_accuracy_deep
+        if command.depth == "short":
+             throw_accuracy = getattr(qb, "throw_accuracy_short", None) or 50
+        elif command.depth == "mid":
+             throw_accuracy = getattr(qb, "throw_accuracy_mid", None) or 50
+        elif command.depth == "deep":
+             throw_accuracy = getattr(qb, "throw_accuracy_deep", None) or 50
 
         # B. Receiver vs Defender (Speed & Route Running)
         speed_diff = ProbabilityEngine.compare_speed(
-            target.speed if hasattr(target, "speed") else 50,
-            defender.speed if hasattr(defender, "speed") else 50
+            getattr(target, "speed", None) or 50,
+            getattr(defender, "speed", None) or 50
         )
 
         matchup_factor = ProbabilityEngine.compare_skill(
-            target.route_running if hasattr(target, "route_running") else 50,
-            defender.man_coverage if hasattr(defender, "man_coverage") else 50
+            getattr(target, "route_running", None) or 50,
+            getattr(defender, "man_coverage", None) or 50
         )
 
         # C. Weather Impact
@@ -211,10 +236,14 @@ class PlayResolver:
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 0.10
 
-        # E. Pressure Impact (Stalemate means pressure)
+        # E. Pressure Impact
         pressure_penalty = 0.0
-        if block_result == BlockingResult.STALEMATE:
-            pressure_penalty = 0.15 # 15% penalty to accuracy under pressure
+        if BlockingResult.LOSS in block_results:
+             # Heavy pressure
+             pressure_penalty = 0.25
+        elif BlockingResult.STALEMATE in block_results:
+             # Mild pressure
+             pressure_penalty = 0.10
 
         # F. Final Probability Calculation
         # Normalize throw accuracy (0-100) to 0.0-1.0 base probability
@@ -279,6 +308,7 @@ class PlayResolver:
                 receiver_id=target.id
             )
         else:
+            # Normal Incomplete
             return PlayResult(
                 yards_gained=0,
                 description=f"Incomplete pass intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
@@ -308,23 +338,24 @@ class PlayResolver:
         # 2. Genesis Kernel: Fatigue
         temp = self._get_weather_temp()
         # print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
-        current_fatigue = self.kernels.genesis.calculate_fatigue(rb.id, exertion=1.0, temperature=temp)
+        # Use get_current_fatigue (read-only)
+        current_fatigue = self.kernels.genesis.get_current_fatigue(rb.id)
         # print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
 
         # 3. Attribute Logic via ProbabilityEngine
 
         # Power Run (Strength vs Tackle)
         power_diff = ProbabilityEngine.compare_strength(
-            rb.strength if hasattr(rb, "strength") else 50,
-            defender.tackle if hasattr(defender, "tackle") else 50
+            getattr(rb, "strength", None) or 50,
+            getattr(defender, "tackle", None) or 50
         )
 
         # Speed (for outside runs)
         speed_diff = 0.0
         if command.run_direction != "middle":
             speed_diff = ProbabilityEngine.compare_speed(
-                rb.speed if hasattr(rb, "speed") else 50,
-                defender.speed if hasattr(defender, "speed") else 50
+                getattr(rb, "speed", None) or 50,
+                getattr(defender, "speed", None) or 50
             )
 
         # Fatigue Penalty
@@ -334,25 +365,40 @@ class PlayResolver:
         # Middle run: consistent but lower ceiling
         # Outside run: higher variance
         if command.run_direction == "middle":
-            base_yards = 3.0 + (power_diff * 10.0) # +/- 2 yards based on strength
-            variance = 2.0
+            base_yards = 3.5 + (power_diff * 10.0) # +/- 2 yards based on strength
+            std_dev = 1.5
         else:
-            base_yards = 2.0 + (speed_diff * 20.0) # +/- 4 yards based on speed
-            variance = 4.0
+            base_yards = 2.5 + (speed_diff * 20.0) # +/- 4 yards based on speed
+            std_dev = 3.0
 
-        # Calculate Total Yards
-        yards_gained = ProbabilityEngine.calculate_variable_outcome(
-            base_value=base_yards,
-            variance=variance,
-            modifiers=-fatigue_penalty
+        # Calculate Total Yards using Normal Distribution
+        yards_gained = ProbabilityEngine.calculate_normal_outcome(
+            mean=base_yards - fatigue_penalty,
+            std_dev=std_dev,
+            min_val=-5.0, # Can lose yards
+            max_val=99.0
         )
 
-        # Breakaway Chance (Big Play)
+        # Breakaway / Big Play Check
         # If RB is much faster or stronger, chance to break free
         breakaway_chance = 0.05 + speed_diff + power_diff
-        if yards_gained > 5 and ProbabilityEngine.resolve_outcome(breakaway_chance):
-            bonus_yards = ProbabilityEngine.calculate_variable_outcome(20.0, 10.0)
-            yards_gained += bonus_yards
+
+        # Use tiered outcome for the "Breakaway" check
+        breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(breakaway_chance, critical_threshold=0.20)
+
+        headline = None
+        is_highlight_worthy = False
+
+        if breakaway_outcome == OutcomeType.SUCCESS:
+             # Good run, add some yards
+             yards_gained += 5.0
+             headline = f"Nice run by {rb.last_name}."
+        elif breakaway_outcome == OutcomeType.CRITICAL_SUCCESS:
+             # HUGE run
+             bonus = ProbabilityEngine.calculate_normal_outcome(25.0, 10.0)
+             yards_gained += bonus
+             headline = f"BREAKAWAY! {rb.last_name} is loose!"
+             is_highlight_worthy = True
 
         yards_gained = int(yards_gained)
 
@@ -361,18 +407,27 @@ class PlayResolver:
         # Increased by fatigue and big hits (high defender strength)
         fumble_chance = 0.01
         if current_fatigue > 70: fumble_chance += 0.02
-        if hasattr(defender, "hit_power") and defender.hit_power > 85: fumble_chance += 0.01
+        # Fumble Chance
+        fumble_chance = 0.01
+        hit_power = getattr(defender, "hit_power", None) or 50
+        if hit_power > 85: fumble_chance += 0.01
         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
 
+        # Use resolve_outcome for simple binary check
         is_fumble = ProbabilityEngine.resolve_outcome(fumble_chance)
-        is_turnover = is_fumble # Simplified turnover logic
+        is_turnover = is_fumble
 
         is_touchdown = False
         if yards_gained > 80:
             is_touchdown = True
-        elif yards_gained > 10 and yards_gained >= (100 - 20): # Assuming red zone logic handled elsewhere, simplified here
-             # If yards gained is huge, likely TD
+        elif yards_gained > 15 and yards_gained >= (100 - 20):
+             # Simplified red zone logic
              pass
+
+        if is_turnover:
+            headline = f"FUMBLE! {rb.last_name} loses the ball!"
+            is_highlight_worthy = True
+            yards_gained = 0 # Or yards until fumble? Simplified to 0.
 
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
@@ -382,8 +437,8 @@ class PlayResolver:
             is_touchdown=is_touchdown,
             is_turnover=is_turnover,
             description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards.",
-            headline=f"Big run! {rb.last_name} breaks free!" if yards_gained > 15 else None,
-            is_highlight_worthy=is_touchdown or yards_gained > 15,
+            headline=headline,
+            is_highlight_worthy=is_highlight_worthy or is_touchdown,
             xp_awards=xp_result.get("xp_awards", {}),
             rusher_id=rb.id
         )

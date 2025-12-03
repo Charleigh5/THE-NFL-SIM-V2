@@ -41,7 +41,8 @@ These attributes apply to every player regardless of position.
 
 - **`morale`** (0-100)
   - **Description**: Player happiness.
-  - **System Usage**: **Critical**: Affects team chemistry. Low morale triggers "Mutiny Cascades" in `SocialGraph`.
+  - **System Usage**: **Critical**: Affects team chemistry. Low morale triggers
+    "Mutiny Cascades" in `SocialGraph`.
 
 ## Contract & Status
 
@@ -54,4 +55,5 @@ These attributes apply to every player regardless of position.
   - **Description**: Remaining seasons.
 
 - **`development_trait`**
-  - **Description**: Growth potential (`NORMAL`, `STAR`, `SUPERSTAR`, `XFACTOR`). Affects XP multipliers in `OffseasonService`.
+  - **Description**: Growth potential (`NORMAL`, `STAR`, `SUPERSTAR`,
+    `XFACTOR`). Affects XP multipliers in `OffseasonService`.

@@ -1,0 +1,16 @@
+.fatigue-bar-fill {
+  height: 100%;
+  transition: all 500ms ease-out;
+}
+
+.fatigue-bar-fill.high {
+  background-color: #22c55e;
+}
+
+.fatigue-bar-fill.medium {
+  background-color: #eab308;
+}
+
+.fatigue-bar-fill.low {
+  background-color: #ef4444;
+}

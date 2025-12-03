@@ -4,17 +4,19 @@
 
 The primary ball handler and decision maker.
 
-### Key Attributes
+### QB Key Attributes
 
 - **`throw_power`**
 
   - Maximum distance and velocity of throws.
-  - _Link_: Used in `PlayResolver` to determine if a deep pass is physically possible.
+  - _Link_: Used in `PlayResolver` to determine if a deep pass is physically
+    possible.
 
 - **`throw_accuracy_short/mid/deep`**
 
   - Probability modifiers for pass success at varying ranges.
-  - _Link_: `PlayResolver` selects the specific attribute based on target distance.
+  - _Link_: `PlayResolver` selects the specific attribute based on target
+    distance.
 
 - **`awareness`**
 
@@ -27,7 +29,7 @@ The primary ball handler and decision maker.
 - **`release_point_height`**
   - Height in feet. Affects ball trajectory start point.
 
-### Progression Logic
+### QB Progression Logic
 
 - Gains XP heavily from **Passing TDs** (50 XP) and **Yards** (0.5 XP).
 - Loses XP for **Interceptions** (-20 XP).
@@ -36,11 +38,12 @@ The primary ball handler and decision maker.
 
 Ball carriers focused on evasion and power.
 
-### Running Back Key Attributes
+### RB Key Attributes
 
 - **`vision_cone_angle`**
 
-  - (Degrees) The field of view where the AI can "see" defenders to react. Narrower cones mean missing open lanes.
+  - (Degrees) The field of view where the AI can "see" defenders to react.
+    Narrower cones mean missing open lanes.
 
 - **`break_tackle_threshold`**
 
@@ -54,7 +57,7 @@ Ball carriers focused on evasion and power.
 - **`catching`**
   - Ability to act as a receiver out of the backfield.
 
-### Running Back Progression Logic
+### RB Progression Logic
 
 - Gains XP from **Rush TDs** (40 XP) and **Rush Yards** (0.8 XP).
 
@@ -62,7 +65,7 @@ Ball carriers focused on evasion and power.
 
 Pass catchers.
 
-### Receiver Key Attributes
+### WR/TE Key Attributes
 
 - **`catching`**
 
@@ -76,7 +79,7 @@ Pass catchers.
 - **`pass_block` / `run_block`**
   - TE specifically relies on these for dual-threat utility.
 
-### Receiver Progression Logic
+### WR/TE Progression Logic
 
 - Gains XP from **Receptions**, **Yards**, and **TDs**.
 
@@ -84,12 +87,13 @@ Pass catchers.
 
 The protectors.
 
-### Offensive Line Key Attributes
+### OL Key Attributes
 
 - **`pass_block`**
 
   - Rating vs. Pass Rush.
-  - _Link_: `BlockingEngine.resolve_pass_block` compares this vs. Defender's `pass_rush_power`.
+  - _Link_: `BlockingEngine.resolve_pass_block` compares this vs. Defender's
+    `pass_rush_power`.
 
 - **`run_block`**
 
@@ -98,7 +102,7 @@ The protectors.
 - **`strength`**
   - Critical to avoid "Bull Rush" moves.
 
-### Stats Tracked
+### OL Stats Tracked
 
 - **`pancakes`**: Times they flattened a defender.
 - **`sacks_allowed`**: Negative stat.

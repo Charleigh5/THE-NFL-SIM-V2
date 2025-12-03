@@ -1,4 +1,5 @@
 import asyncio
+import time
 import logging
 from typing import Any, Dict, List, Optional, Union
 from contextlib import AsyncExitStack
@@ -93,16 +94,37 @@ class MCPHostClient:
             raise RuntimeError("Client is not connected")
         return self._tools
 
+    def _sanitize(self, data: Any) -> Any:
+        """Sanitize sensitive information from logs."""
+        if isinstance(data, dict):
+            return {k: self._sanitize(v) if k.lower() not in ["api_key", "password", "token", "secret"] else "***REDACTED***" for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._sanitize(item) for item in data]
+        return data
+
     async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
         """Call a specific tool on the server."""
         if not self.session:
             raise RuntimeError("Client is not connected")
 
+        start_time = time.time()
+
+        # Audit Log: Request
+        sanitized_args = self._sanitize(arguments)
+        logger.info(f"MCP Tool Call Request - Server: {self.name}, Tool: {tool_name}, Args: {sanitized_args}")
+
         try:
             result = await self.session.call_tool(tool_name, arguments)
+            duration = time.time() - start_time
+
+            # Audit Log: Response
+            sanitized_result = self._sanitize(result) if isinstance(result, (dict, list)) else str(result)
+            logger.info(f"MCP Tool Call Response - Server: {self.name}, Tool: {tool_name}, Duration: {duration:.4f}s, Result: {sanitized_result}")
+
             return result
         except Exception as e:
-            logger.error(f"Error calling tool {tool_name} on server {self.name}: {e}")
+            duration = time.time() - start_time
+            logger.error(f"Error calling tool {tool_name} on server {self.name} after {duration:.4f}s: {e}")
             raise
 
     async def ping(self) -> bool:
