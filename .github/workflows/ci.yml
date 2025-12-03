@@ -1,0 +1,263 @@
+name: NFL SIM CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "20"
+
+jobs:
+  # Backend testing and linting
+  backend-tests:
+    name: Backend Tests & Linting
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: nfl_sim_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-benchmark bandit
+
+      - name: Run linting
+        run: |
+          cd backend
+          pip install ruff
+          ruff check app/
+
+      - name: Run security scan (Bandit)
+        run: |
+          bandit -r backend/app -c .bandit -f json -o bandit-report.json
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-security-report
+          path: bandit-report.json
+
+      - name: Run unit tests with coverage
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/nfl_sim_test
+        run: |
+          cd backend
+          pytest tests/ -v --cov=app --cov-report=xml --cov-report=html --cov-report=term
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+
+      - name: Run benchmark tests
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/nfl_sim_test
+        run: |
+          cd backend
+          pytest tests/test_benchmarks.py -v --benchmark-only --benchmark-json=benchmark-results.json
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: backend/benchmark-results.json
+
+  # Frontend testing and linting
+  frontend-tests:
+    name: Frontend Tests & Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run linting
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Check formatting
+        run: |
+          cd frontend
+          npm run format:check
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Run E2E tests
+        run: |
+          cd frontend
+          npx playwright install --with-deps
+          npm run test:e2e
+
+      - name: Upload E2E test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 30
+
+  # Database migration checks
+  migration-check:
+    name: Database Migration Check
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: nfl_sim_migration_test
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install alembic
+
+      - name: Run migrations (upgrade)
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/nfl_sim_migration_test
+        run: |
+          cd backend
+          alembic upgrade head
+
+      - name: Test migration rollback
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/nfl_sim_migration_test
+        run: |
+          cd backend
+          alembic downgrade -1
+          alembic upgrade head
+
+  # Docker build and push
+  docker-build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/nfl-sim-backend:latest
+            ${{ secrets.DOCKER_USERNAME }}/nfl-sim-backend:${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/nfl-sim-backend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/nfl-sim-backend:buildcache,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/nfl-sim-frontend:latest
+            ${{ secrets.DOCKER_USERNAME }}/nfl-sim-frontend:${{ github.sha }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/nfl-sim-frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/nfl-sim-frontend:buildcache,mode=max
+
+  # Deployment (placeholder - customize for your deployment target)
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://nfl-sim.example.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to production
+        run: |
+          echo "Add your deployment commands here"
+          echo "Examples: kubectl apply, docker-compose pull, etc."
+
+      # Example for deployment notification
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "Deployment successful!"
+          # Add notification logic (Slack, Discord, etc.)

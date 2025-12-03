@@ -1,0 +1,43 @@
+[bandit]
+# Bandit configuration for NFL SIM security scanning
+# Run with: bandit -r backend/app -c .bandit
+
+# Directories to exclude from scanning
+exclude_dirs =
+    /tests/
+    /migrations/
+    /__pycache__/
+    /.venv/
+    /venv/
+
+# Test IDs to skip (add specific test IDs if needed)
+# Format: B### where ### is the test number
+# Example: B101 = assert_used
+skips =
+    B101
+
+# Confidence level filter (LOW, MEDIUM, HIGH)
+# Only report issues with confidence >= this level
+confidence = MEDIUM
+
+# Severity level filter (LOW, MEDIUM, HIGH)
+# Only report issues with severity >= this level
+severity = MEDIUM
+
+# Specify which test IDs to run (empty means run all except skips)
+tests =
+
+# Output format: csv, custom, html, json, screen, txt, xml, yaml
+# Use 'json' for CI/CD integration
+output_format = screen
+
+# Recursively scan subdirectories
+recursive = True
+
+# Aggregate output by filename
+aggregate = file
+
+# Number of lines of code context to display
+number = 3
+
+# Report only issues with defined severity/confidence

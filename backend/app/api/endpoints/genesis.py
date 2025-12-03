@@ -6,7 +6,9 @@ from app.core.database import get_db
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
-# from app.kernels.genesis.recruiting import RecruitingEngine  # TODO: Implement RecruitingEngine class
+# NOTE: RecruitingEngine class needs to be implemented as a service that
+# orchestrates RecruitingProfile and WorkoutEngine components for full
+# prospect generation. Currently only component classes exist in recruiting.py.
 from pydantic import BaseModel
 from typing import Optional
 
@@ -24,7 +26,7 @@ class BioMetricsResponse(BaseModel):
 @router.get("/player/{player_id}/bio-metrics", response_model=BioMetricsResponse)
 @handle_errors
 def get_player_bio_metrics(
-    player_id: int, 
+    player_id: int,
     temperature_f: float = 72.0,
     db: Session = Depends(get_db)
 ):
@@ -33,18 +35,18 @@ def get_player_bio_metrics(
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
-    
+
     # Initialize bio-metrics (could be stored in DB in future)
     # For now, we derive them from existing player stats to ensure consistency
     speed_rating = player.speed if hasattr(player, 'speed') else 70.0
     height_inches = player.height if hasattr(player, 'height') else 72.0
-    
+
     bio = BiologicalProfile(
         fast_twitch_ratio=0.5 + (speed_rating / 200.0),  # Derive from speed
         hand_size_inches=9.0, # Default for now
         wingspan_inches=height_inches * 1.04  # Rough wingspan estimate (height * 1.04 is typical)
     )
-    
+
     return BioMetricsResponse(
         fast_twitch_ratio=bio.fast_twitch_ratio,
         max_acceleration_cap=bio.max_acceleration_cap,
@@ -62,10 +64,10 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
-        
+
     # Create default regulator
     regulator = FatigueRegulator()
-    
+
     return {
         "hrv": regulator.hrv,
         "lactic_acid": regulator.lactic_acid,
@@ -73,7 +75,9 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
         "home_climate": regulator.home_climate
     }
 
-# TODO: Re-enable once RecruitingEngine is implemented
+# NOTE: Recruit generation endpoint will be re-enabled once RecruitingEngine
+# service is implemented. This service will orchestrate RecruitingProfile and
+# WorkoutEngine components to provide complete prospect generation capabilities.
 # @router.post("/recruit/generate")
 # def generate_recruit(position: str, db: Session = Depends(get_db)):
 #     """Generate a new draft prospect."""
@@ -86,16 +90,16 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
 def seed_database(db: Session = Depends(get_db)):
     """Seed the database with initial data for testing."""
     logger.info("Seeding database...")
-    
+
     from app.core.seed import seed_teams, seed_players
     from app.models.season import Season
-    
+
     # Ensure teams and players exist
     seed_teams(db)
     seed_players(db)
-    
+
     # Reset seasons (deactivate all)
     db.query(Season).update({Season.is_active: False})
     db.commit()
-    
+
     return {"message": "Database seeded successfully"}

@@ -1,0 +1,131 @@
+# Prometheus Alert Rules for NFL SIM
+
+groups:
+  - name: nfl_sim_api_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: backend-api
+        annotations:
+          summary: "High error rate detected"
+          description: "API error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      # Slow response time alert
+      - alert: SlowResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: backend-api
+        annotations:
+          summary: "API response time degraded"
+          description: "95th percentile response time is {{ $value }}s (threshold: 1s)"
+
+      # High request rate (potential DDoS)
+      - alert: HighRequestRate
+        expr: |
+          rate(http_requests_total[1m]) > 1000
+        for: 2m
+        labels:
+          severity: warning
+          service: backend-api
+        annotations:
+          summary: "Unusually high request rate"
+          description: "Request rate is {{ $value }} req/s (threshold: 1000 req/s)"
+
+  - name: nfl_sim_database_alerts
+    interval: 30s
+    rules:
+      # Database connection pool exhaustion
+      - alert: DatabaseConnectionPoolExhausted
+        expr: |
+          pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "Database connection pool nearly exhausted"
+          description: "{{ $value | humanizePercentage }} of connections in use (threshold: 80%)"
+
+      # Slow queries
+      - alert: SlowQueries
+        expr: |
+          rate(pg_stat_statements_mean_exec_time[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "Database queries running slowly"
+          description: "Average query time is {{ $value }}ms (threshold: 1000ms)"
+
+  - name: nfl_sim_system_alerts
+    interval: 30s
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanize }}% (threshold: 80%)"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanize }}% (threshold: 85%)"
+
+      # Disk space running low
+      - alert: DiskSpaceLow
+        expr: |
+          (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk space running low"
+          description: "Disk usage is {{ $value | humanize }}% (threshold: 85%)"
+
+  - name: nfl_sim_simulation_alerts
+    interval: 1m
+    rules:
+      # Simulation performance degradation
+      - alert: SlowSimulation
+        expr: |
+          histogram_quantile(0.95, rate(simulation_duration_seconds_bucket[10m])) > 60
+        for: 10m
+        labels:
+          severity: warning
+          service: simulation-engine
+        annotations:
+          summary: "Game simulation running slowly"
+          description: "95th percentile simulation time is {{ $value }}s (threshold: 60s)"
+
+      # High simulation failure rate
+      - alert: HighSimulationFailureRate
+        expr: |
+          rate(simulation_failures_total[10m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          service: simulation-engine
+        annotations:
+          summary: "High simulation failure rate"
+          description: "Simulation failure rate is {{ $value }} failures/s"

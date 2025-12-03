@@ -1,0 +1,143 @@
+global:
+  resolve_timeout: 5m
+  # SMTP configuration for email notifications
+  smtp_smarthost: "smtp.gmail.com:587"
+  smtp_from: "alerts@nfl-sim.example.com"
+  smtp_auth_username: "your-email@gmail.com"
+  smtp_auth_password: "your-app-password" # Use app password, not regular password
+  smtp_require_tls: true
+
+# Templates for notification messages
+templates:
+  - "/etc/alertmanager/templates/*.tmpl"
+
+# Route tree for alert routing
+route:
+  # Default receiver
+  receiver: "default"
+
+  # How long to wait before sending a notification again
+  repeat_interval: 12h
+
+  # How long to wait before grouping alerts
+  group_wait: 30s
+
+  # How long to wait before sending a notification for new alerts in a group
+  group_interval: 5m
+
+  # Group alerts by these labels
+  group_by: ["alertname", "service", "severity"]
+
+  # Child routes for specific routing
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: "critical-alerts"
+      repeat_interval: 5m
+      continue: true # Also send to default receiver
+
+    # Database alerts
+    - match:
+        service: postgres
+      receiver: "database-team"
+      continue: false
+
+    # API alerts
+    - match:
+        service: backend-api
+      receiver: "backend-team"
+      continue: false
+
+    # Simulation engine alerts
+    - match:
+        service: simulation-engine
+      receiver: "simulation-team"
+      continue: false
+
+# Inhibition rules - suppress notifications based on other active alerts
+inhibit_rules:
+  # If the entire service is down, don't alert on individual endpoints
+  - source_match:
+      severity: "critical"
+      alertname: "ServiceDown"
+    target_match_re:
+      severity: "warning|info"
+    equal: ["service"]
+
+receivers:
+  # Default receiver - logs only
+  - name: "default"
+    webhook_configs:
+      - url: "http://localhost:5001/webhook"
+        send_resolved: true
+
+  # Critical alerts - multiple channels
+  - name: "critical-alerts"
+    email_configs:
+      - to: "oncall@nfl-sim.example.com"
+        headers:
+          Subject: "[CRITICAL] NFL SIM Alert: {{ .GroupLabels.alertname }}"
+        html: |
+          <!DOCTYPE html>
+          <html>
+          <body>
+            <h2 style="color: red;">Critical Alert</h2>
+            <p><strong>Alert:</strong> {{ .GroupLabels.alertname }}</p>
+            <p><strong>Service:</strong> {{ .GroupLabels.service }}</p>
+            <p><strong>Severity:</strong> {{ .GroupLabels.severity }}</p>
+            <p><strong>Summary:</strong> {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}</p>
+            <p><strong>Description:</strong> {{ range .Alerts }}{{ .Annotations.description }}{{ end }}</p>
+          </body>
+          </html>
+
+    # Slack notifications
+    slack_configs:
+      - api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        channel: "#nfl-sim-critical"
+        title: "Critical Alert: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
+        color: "danger"
+        send_resolved: true
+
+    # PagerDuty integration (optional)
+    # pagerduty_configs:
+    #   - service_key: 'your-pagerduty-service-key'
+    #     description: '{{ .GroupLabels.alertname }}: {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+
+  # Database team notifications
+  - name: "database-team"
+    email_configs:
+      - to: "database-team@nfl-sim.example.com"
+        headers:
+          Subject: "[Database Alert] {{ .GroupLabels.alertname }}"
+    slack_configs:
+      - api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        channel: "#nfl-sim-database"
+        title: "Database Alert: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
+        color: "warning"
+
+  # Backend team notifications
+  - name: "backend-team"
+    email_configs:
+      - to: "backend-team@nfl-sim.example.com"
+        headers:
+          Subject: "[Backend Alert] {{ .GroupLabels.alertname }}"
+    slack_configs:
+      - api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        channel: "#nfl-sim-backend"
+        title: "Backend Alert: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
+
+  # Simulation team notifications
+  - name: "simulation-team"
+    email_configs:
+      - to: "simulation-team@nfl-sim.example.com"
+        headers:
+          Subject: "[Simulation Alert] {{ .GroupLabels.alertname }}"
+    slack_configs:
+      - api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        channel: "#nfl-sim-simulation"
+        title: "Simulation Alert: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
