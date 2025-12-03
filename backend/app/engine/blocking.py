@@ -14,22 +14,21 @@ class BlockingResult(str, enum.Enum):
     PANCAKE = "Pancake"
 
 class BlockingEngine:
-    
+
     @staticmethod
-    def resolve_pass_block(ol_rating: int, dl_rating: int, ol_technique: str = "KickStep") -> BlockingResult:
+    def resolve_pass_block(rng, ol_rating: int, dl_rating: int, ol_technique: str = "KickStep") -> BlockingResult:
         """
         Resolve 1-on-1 pass block interaction.
         """
         # Base leverage calculation
         leverage = ol_rating - dl_rating
-        
+
         # Technique modifier
         if ol_technique == "KickStep":
             leverage += 5 # Bonus for proper technique
-            
-        import random
-        roll = random.randint(0, 100) + leverage
-        
+
+        roll = rng.randint(0, 100) + leverage
+
         if roll > 80:
             return BlockingResult.WIN # Clean pocket
         elif roll > 40:
@@ -46,11 +45,11 @@ class BlockingEngine:
         """
         force = ol_strength * 1.2 # Assertive force
         resistance = dl_anchor
-        
+
         net_force = force - resistance
-        
+
         displacement = 0.0
         if net_force > 0:
             displacement = net_force / 10.0 # Yards pushed
-            
+
         return {"displacement": round(displacement, 2), "gap_integrity": net_force > -10}

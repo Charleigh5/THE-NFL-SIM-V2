@@ -97,9 +97,14 @@ class QuarterbackAI:
         return round(total_pressure, 2)
 
     @staticmethod
-    def check_pressure_response(qb, pressure_score: float) -> str:
+    def check_pressure_response(rng, qb, pressure_score: float) -> str:
         """
         Determines QB's reaction to pressure based on pocket presence.
+
+        Args:
+            rng: DeterministicRNG instance
+            qb: Player object
+            pressure_score: float
 
         Returns:
             str: "NORMAL", "SCRAMBLE", "THROW_AWAY", or "OBLIVIOUS"
@@ -118,15 +123,14 @@ class QuarterbackAI:
         sense_chance = 0.50 + ((pocket_presence - 50) / 100.0)
         sense_chance = max(0.1, min(0.95, sense_chance))
 
-        import random
-        if random.random() > sense_chance:
+        if rng.random() > sense_chance:
             return "OBLIVIOUS" # Doesn't see it coming, high sack risk
 
         # 2. Reaction: Scramble vs Throw Away
         # Based on scramble willingness
         scramble_chance = scramble_willingness / 100.0
 
-        if random.random() < scramble_chance:
+        if rng.random() < scramble_chance:
             return "SCRAMBLE"
         else:
             return "THROW_AWAY"

@@ -1,4 +1,4 @@
-import random
+
 from typing import Optional
 from enum import Enum
 import math
@@ -68,14 +68,14 @@ class ProbabilityEngine:
         return max(min_chance, min(max_chance, total_chance))
 
     @staticmethod
-    def resolve_outcome(probability: float) -> bool:
+    def resolve_outcome(rng, probability: float) -> bool:
         """
         Resolve a boolean outcome based on probability.
         """
-        return random.random() < probability
+        return rng.random() < probability
 
     @staticmethod
-    def resolve_tiered_outcome(probability: float, critical_threshold: float = 0.10) -> OutcomeType:
+    def resolve_tiered_outcome(rng, probability: float, critical_threshold: float = 0.10) -> OutcomeType:
         """
         Resolve an outcome into 4 tiers:
         - Critical Failure: Roll > Probability + (1 - Probability) * (1 - Critical Threshold)? No.
@@ -85,7 +85,7 @@ class ProbabilityEngine:
         Prob to 1.0: Failure
             (1.0 - (1-Prob)*CritThreshold) to 1.0: Critical Failure
         """
-        roll = random.random()
+        roll = rng.random()
 
         if roll < probability:
             # Success branch
@@ -112,6 +112,7 @@ class ProbabilityEngine:
 
     @staticmethod
     def calculate_variable_outcome(
+        rng,
         base_value: float,
         variance: float,
         modifiers: float = 0.0
@@ -119,11 +120,12 @@ class ProbabilityEngine:
         """
         Calculate a scalar outcome (e.g., yards gained) with uniform variance.
         """
-        random_factor = random.uniform(-variance, variance)
+        random_factor = rng.uniform(-variance, variance)
         return base_value + random_factor + modifiers
 
     @staticmethod
     def calculate_normal_outcome(
+        rng,
         mean: float,
         std_dev: float,
         min_val: float = 0.0,
@@ -133,5 +135,5 @@ class ProbabilityEngine:
         Calculate a scalar outcome using a normal distribution (bell curve).
         More realistic for yards gained, etc.
         """
-        val = random.gauss(mean, std_dev)
+        val = rng.gauss(mean, std_dev)
         return max(min_val, min(max_val, val))
