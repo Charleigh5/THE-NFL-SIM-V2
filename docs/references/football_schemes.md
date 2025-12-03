@@ -214,7 +214,7 @@
 - Ability to drop into Zone Coverage
 - Role: Primary pass rushers of the scheme
 
-##### Defensive Ends (DE)
+##### Defensive Ends (DE) (3-4)
 
 - High Strength
 - High Size (280-300lbs)
@@ -446,7 +446,7 @@
 
 #### Key Position Requirements: Air Coryell
 
-##### Quarterback (QB)
+##### Quarterback (QB) (Air Coryell)
 
 - Elite Deep Accuracy
 - Elite Arm Strength
@@ -524,7 +524,7 @@
 
 #### Key Position Requirements: Spread / Air Raid
 
-##### Quarterback (QB)
+##### Quarterback (QB) (Spread/Air Raid)
 
 - High Short Accuracy
 - High Decision Making
@@ -599,14 +599,14 @@ The Air Raid is fundamentally different at the two levels:
 
 #### Key Position Requirements: RPO / Pistol
 
-##### Quarterback (QB)
+##### Quarterback (QB) (RPO/Pistol)
 
 - Elite Decision Making
 - High IQ
 - Credible threat to run (for QB-run RPOs)
 - High Short Accuracy
 
-##### Running Back (RB)
+##### Running Back (RB) (RPO/Pistol)
 
 - High Vision
 - High Acceleration
