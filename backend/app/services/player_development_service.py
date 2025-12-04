@@ -6,6 +6,7 @@ from app.models.team import Team
 from app.models.coach import Coach
 import random
 from typing import List, Dict
+from app.core.random_utils import DeterministicRNG
 
 class TrainingFocus(str):
     GENERAL = "GENERAL"
@@ -14,8 +15,9 @@ class TrainingFocus(str):
     DRILLS = "DRILLS" # Skill specific
 
 class PlayerDevelopmentService:
-    def __init__(self, db: AsyncSession):
+    def __init__(self, db: AsyncSession, seed: int = None):
         self.db = db
+        self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
 
     async def process_weekly_development(self, season_id: int, week: int):
         """
@@ -88,7 +90,7 @@ class PlayerDevelopmentService:
 
         # Let's bump specific stats based on position
         relevant_stats = self._get_relevant_stats(player.position)
-        stat_to_boost = random.choice(relevant_stats)
+        stat_to_boost = self.rng.choice(relevant_stats)
 
         current_val = getattr(player, stat_to_boost)
         if current_val < 99:
@@ -142,9 +144,9 @@ class PlayerDevelopmentService:
             change = 0
             # Winning helps
             if win_pct > 0.6:
-                change += random.randint(0, 2)
+                change += self.rng.randint(0, 2)
             elif win_pct < 0.4:
-                change -= random.randint(0, 2)
+                change -= self.rng.randint(0, 2)
 
             # Playing time (Starter vs Bench)
             if player.depth_chart_rank == 1:
@@ -163,15 +165,15 @@ class PlayerDevelopmentService:
         if severity_roll < 50:
             # Minor
             player.injury_type = "Minor Sprain"
-            player.weeks_to_recovery = random.randint(1, 2)
+            player.weeks_to_recovery = self.rng.randint(1, 2)
             player.injury_status = InjuryStatus.QUESTIONABLE
         elif severity_roll < 80:
             # Moderate
             player.injury_type = "Muscle Tear"
-            player.weeks_to_recovery = random.randint(3, 6)
+            player.weeks_to_recovery = self.rng.randint(3, 6)
             player.injury_status = InjuryStatus.OUT
         else:
             # Severe
             player.injury_type = "Major Fracture"
-            player.weeks_to_recovery = random.randint(8, 52)
+            player.weeks_to_recovery = self.rng.randint(8, 52)
             player.injury_status = InjuryStatus.IR

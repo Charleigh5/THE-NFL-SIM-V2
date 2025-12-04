@@ -2,7 +2,9 @@ from app.kernels.core.ecs_manager import Component
 from typing import Tuple
 from pydantic import Field
 import math
-import random
+import math
+from typing import Optional
+from app.core.random_utils import DeterministicRNG
 
 class WeatherSys(Component):
     # Directive 5: Dynamic Weather
@@ -11,7 +13,7 @@ class WeatherSys(Component):
     wind_direction_deg: float = 0.0 # 0 = North
     precipitation_intensity: float = 0.0 # 0.0 - 1.0 (Rain/Snow)
     is_snowing: bool = False
-    
+
     # Directive 14: Altitude
     altitude_ft: float = 0.0 # Sea level default
 
@@ -22,7 +24,7 @@ class WeatherSys(Component):
         """
         # Altitude: +1% distance per 1000ft
         altitude_boost = 1.0 + (self.altitude_ft / 1000.0) * 0.01
-        
+
         # Wind: Headwind/Tailwind calculation would go here, simplified for now
         return (altitude_boost, self.wind_speed_mph * 0.5)
 
@@ -43,16 +45,19 @@ class WeatherSys(Component):
     forecast: str = "Clear" # "Rain", "Snow", "Heavy Snow"
     fog_density: float = 0.0 # 0.0 - 1.0
 
-    def generate_forecast(self, month: int, location_climate: str):
+    def generate_forecast(self, month: int, location_climate: str, rng: Optional[DeterministicRNG] = None):
         """
         Generates a forecast based on season and location.
         """
+        if rng is None:
+            rng = DeterministicRNG(0)
+
         if location_climate == "Cold" and month > 10:
-            self.forecast = "Snow" if random.random() > 0.5 else "Clear"
+            self.forecast = "Snow" if rng.random() > 0.5 else "Clear"
             self.temperature_f = 25.0
             self.is_snowing = True
         elif location_climate == "Warm":
-            self.forecast = "Rain" if random.random() > 0.7 else "Clear"
+            self.forecast = "Rain" if rng.random() > 0.7 else "Clear"
             self.temperature_f = 75.0
 
     def get_ballistic_modifiers(self) -> Tuple[float, float, float]:
@@ -62,12 +67,12 @@ class WeatherSys(Component):
         """
         # Altitude: +1% distance per 1000ft
         altitude_boost = 1.0 + (self.altitude_ft / 1000.0) * 0.01
-        
+
         # Snow Weight: Heavy snow weighs down the ball
         weight_multiplier = 1.0
         if self.is_snowing and self.precipitation_intensity > 0.5:
             weight_multiplier = 0.9 # 10% range reduction
-        
+
         return (altitude_boost, self.wind_speed_mph * 0.5, weight_multiplier)
 
     def get_visibility_penalty(self) -> float:
@@ -77,10 +82,10 @@ class WeatherSys(Component):
         penalty = 0.0
         if self.is_snowing:
             penalty += self.precipitation_intensity * 0.4
-        
+
         if self.fog_density > 0.0:
             penalty += self.fog_density * 0.5 # Fog is dense
-            
+
         return min(0.9, penalty)
 
     def get_sun_glare_vector(self, time_of_day: str, stadium_orientation: float) -> float:

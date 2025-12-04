@@ -7,11 +7,13 @@ from app.models.gm import GM, GMDecision
 from app.core.mcp_registry import registry
 from app.core.mcp_cache import mcp_cache
 import random
+from app.core.random_utils import DeterministicRNG
 
 class GMAgent:
-    def __init__(self, db: Session, team_id: int):
+    def __init__(self, db: Session, team_id: int, seed: int = None):
         self.db = db
         self.team_id = team_id
+        self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
         self.team = db.get(Team, team_id)
         self.gm = self.team.gm if self.team else None
 
@@ -124,7 +126,7 @@ class GMAgent:
         if not candidates:
             return {"error": "No suitable trade targets found."}
 
-        target_player = random.choice(candidates)
+        target_player = self.rng.choice(candidates)
 
         # Determine what to offer (picks or players)
         # Simple logic: Offer a draft pick of roughly equal value
@@ -156,7 +158,7 @@ class GMAgent:
         counter_offer = demand * skill_factor
 
         # Random variance
-        variance = random.uniform(0.95, 1.05)
+        variance = self.rng.uniform(0.95, 1.05)
         counter_offer *= variance
 
         accepted = counter_offer >= (demand * 0.9) # Player accepts if within 10% of demand

@@ -8,7 +8,7 @@ from app.models.stats import PlayerGameStats
 from app.models.player import Player
 from app.orchestrator.match_context import MatchContext
 from app.orchestrator.kernels.cortex_kernel import GameSituation
-import random
+from app.core.random_utils import DeterministicRNG
 
 from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
@@ -24,8 +24,11 @@ class SimulationOrchestrator:
     Orchestrates the setup and execution of a simulation.
     """
     def __init__(self) -> None:
-        self.play_resolver = PlayResolver()
-        self.play_caller = PlayCaller(aggression=0.5) # Default balanced coach
+        # Initialize with a default seed for startup/testing
+        self.rng = DeterministicRNG("initial_boot_seed")
+
+        self.play_resolver = PlayResolver(self.rng)
+        self.play_caller = PlayCaller(self.rng, aggression=0.5) # Default balanced coach
         self.history: List[PlayResult] = []
 
         # Game State
@@ -73,6 +76,12 @@ class SimulationOrchestrator:
             await self.db_session.commit()
             await self.db_session.refresh(new_game)
             self.current_game_id = new_game.id
+
+            # Initialize Deterministic RNG with Game ID
+            self.rng = DeterministicRNG(new_game.id)
+            # Update components with new RNG
+            self.play_resolver.rng = self.rng
+            self.play_caller.rng = self.rng
 
             # Hydrate Match Context
             logger.info("Hydrating match context", extra={"game_id": new_game.id})
@@ -482,13 +491,13 @@ class SimulationOrchestrator:
         elif decision.startswith("PASS"):
             depth = "deep" if "DEEP" in decision else "short"
             # Randomly mix in "mid" for variety if "short" is selected
-            if depth == "short" and random.random() < 0.3:
+            if depth == "short" and self.rng.random() < 0.3:
                 depth = "mid"
             return PassPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, depth=depth)
 
         elif decision == "RUN":
             # Random direction for now
-            direction = random.choice(["left", "middle", "right"])
+            direction = self.rng.choice(["left", "middle", "right"])
             return RunPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, run_direction=direction)
 
         else:

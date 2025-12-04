@@ -11,6 +11,8 @@ def test_orchestrator_uses_cortex():
 
     # Mock MatchContext and Cortex
     orch.match_context = MagicMock(spec=MatchContext)
+    orch.match_context.home_team_id = 1
+    orch.match_context.away_team_id = 2
     orch.match_context.cortex = MagicMock(spec=CortexKernel)
     orch.match_context.weather_config = {"temperature": 70}
 
@@ -51,6 +53,8 @@ def test_orchestrator_uses_cortex():
 def test_orchestrator_cortex_punt():
     orch = SimulationOrchestrator()
     orch.match_context = MagicMock(spec=MatchContext)
+    orch.match_context.home_team_id = 1
+    orch.match_context.away_team_id = 2
     orch.match_context.cortex = MagicMock(spec=CortexKernel)
     orch.match_context.weather_config = {"temperature": 70}
 

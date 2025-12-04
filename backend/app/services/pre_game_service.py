@@ -5,6 +5,7 @@ from app.models.player import Player
 from app.models.game import Game
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.match_context import MatchContext
+from app.services.enhanced_chemistry_service import EnhancedChemistryService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,16 +13,29 @@ logger = logging.getLogger(__name__)
 class PreGameService:
     def __init__(self, db: AsyncSession):
         self.db = db
+        self.enhanced_chemistry = EnhancedChemistryService(db) # Added initialization
 
     async def apply_chemistry_boosts(self, match_context: MatchContext):
         """
-        Check for offensive line unit chemistry and apply boosts.
+        ENHANCED: Use new scaling chemistry service
         """
-        # Check Home Team
-        await self._check_and_apply_team_chemistry(match_context.home_team_id, match_context.home_roster)
+        # Use enhanced service instead of old logic
+        home_chem, away_chem = await self.enhanced_chemistry.apply_chemistry_to_match_context(
+            match_context
+        )
 
-        # Check Away Team
-        await self._check_and_apply_team_chemistry(match_context.away_team_id, match_context.away_roster)
+        # Log results
+        if home_chem and home_chem.chemistry_level > 0:
+            logger.info(
+                f"Home OL Chemistry Active: {home_chem.chemistry_level:.2f} "
+                f"({home_chem.consecutive_games} games)"
+            )
+
+        if away_chem and away_chem.chemistry_level > 0:
+            logger.info(
+                f"Away OL Chemistry Active: {away_chem.chemistry_level:.2f} "
+                f"({away_chem.consecutive_games} games)"
+            )
 
     async def _check_and_apply_team_chemistry(self, team_id: int, roster: dict[int, Player]):
         # 1. Identify current starters

@@ -1,6 +1,7 @@
 import random
 from sqlalchemy.orm import Session
 from app.models.player import Player, Position
+from app.core.random_utils import DeterministicRNG
 
 FIRST_NAMES = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Anthony", "Donald", "Mark", "Paul", "Steven", "Andrew", "Kenneth", "Joshua", "Kevin", "Brian", "George", "Edward", "Ronald", "Timothy", "Jason", "Jeffrey", "Ryan", "Jacob", "Gary", "Nicholas", "Eric", "Jonathan", "Stephen", "Larry", "Justin", "Scott", "Brandon", "Benjamin", "Samuel", "Frank", "Gregory", "Raymond", "Alexander", "Patrick", "Jack", "Dennis", "Jerry"]
 LAST_NAMES = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts"]
@@ -14,8 +15,10 @@ POSITION_WEIGHTS = {
 }
 
 class RookieGenerator:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, seed: int = None):
         self.db = db
+        # Use provided seed or a random one if not provided, but encapsulated in DeterministicRNG
+        self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
 
     async def generate_draft_class(self, season_id: int, count: int = 256):
         """Generates a class of rookie players."""
@@ -42,7 +45,7 @@ class RookieGenerator:
 
         for _ in range(count):
             # Pick a position
-            r = random.uniform(0, total_weight)
+            r = self.rng.uniform(0, total_weight)
             upto = 0
             selected_pos = Position.QB
             for pos, weight in POSITION_WEIGHTS.items():
@@ -59,19 +62,19 @@ class RookieGenerator:
         return players
 
     def _create_rookie(self, position: Position, stats_context: dict = None) -> Player:
-        first = random.choice(FIRST_NAMES)
-        last = random.choice(LAST_NAMES)
+        first = self.rng.choice(FIRST_NAMES)
+        last = self.rng.choice(LAST_NAMES)
 
         # Base attributes
-        age = random.randint(21, 23)
-        height = random.randint(68, 80) # 5'8" to 6'8"
-        weight = random.randint(180, 350)
+        age = self.rng.randint(21, 23)
+        height = self.rng.randint(68, 80) # 5'8" to 6'8"
+        weight = self.rng.randint(180, 350)
 
         # Adjust height/weight by position (simplified)
         if position in [Position.OT, Position.OG, Position.C, Position.DT]:
-            weight = random.randint(280, 350)
+            weight = self.rng.randint(280, 350)
         elif position in [Position.WR, Position.CB, Position.S]:
-            weight = random.randint(180, 220)
+            weight = self.rng.randint(180, 220)
 
         # Generate Ratings (Bell curve centered around 65-70 for rookies)
         mean_rating = 68
@@ -81,7 +84,7 @@ class RookieGenerator:
              if "passing_yards" in stats_context and stats_context["passing_yards"] > 3000:
                  mean_rating += 2
 
-        overall = int(random.gauss(mean_rating, 8))
+        overall = int(self.rng.gauss(mean_rating, 8))
         overall = max(50, min(99, overall))
 
         # Create Player
@@ -93,7 +96,7 @@ class RookieGenerator:
             weight=weight,
             age=age,
             experience=0,
-            jersey_number=random.randint(1, 99),
+            jersey_number=self.rng.randint(1, 99),
             overall_rating=overall,
             is_rookie=True,
             team_id=None, # Free agent / Draft pool

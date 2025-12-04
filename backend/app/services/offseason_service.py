@@ -13,12 +13,14 @@ from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerPr
 from app.models.hall_of_fame import HallOfFame
 from app.models.stats import PlayerGameStats
 from sqlalchemy import func, select
+from app.core.random_utils import DeterministicRNG
 
 class OffseasonService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, seed: int = None):
         self.db = db
         self.standings_calculator = StandingsCalculator(db)
-        self.rookie_generator = RookieGenerator(db)
+        self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
+        self.rookie_generator = RookieGenerator(db, seed=self.rng.randint(0, 1000000))
 
     async def start_offseason(self, season_id: int) -> dict:
         """Transition from Super Bowl to Offseason."""
@@ -67,28 +69,28 @@ class OffseasonService:
             age_change = 0
             if player.age <= 24:
                 # Young players: +1 to +3
-                age_change = random.randint(1, 3)
+                age_change = self.rng.randint(1, 3)
             elif player.age <= 28:
                 # Peak years: -1 to +2
-                age_change = random.randint(-1, 2)
+                age_change = self.rng.randint(-1, 2)
             elif player.age <= 32:
                 # Gradual decline: -2 to +1
-                age_change = random.randint(-2, 1)
+                age_change = self.rng.randint(-2, 1)
             else:
                 # Significant decline: -3 to -1
-                age_change = random.randint(-3, -1)
+                age_change = self.rng.randint(-3, -1)
 
             # Experience factor adjustment
             exp_modifier = 0
             if player.experience <= 2:
                 # Young players more likely to improve
-                exp_modifier = random.randint(0, 2)
+                exp_modifier = self.rng.randint(0, 2)
             elif player.experience >= 8:
                 # Veterans more likely to decline
-                exp_modifier = random.randint(-2, 0)
+                exp_modifier = self.rng.randint(-2, 0)
 
             # Random variance
-            variance = random.randint(-1, 1)
+            variance = self.rng.randint(-1, 1)
 
             # Dev Trait Modifier
             dev_trait_mod = 0
@@ -430,12 +432,12 @@ class OffseasonService:
             elif player.age >= 35:
                 # High chance if rating is low
                 if player.overall_rating < 75:
-                    should_retire = random.random() < 0.5
+                    should_retire = self.rng.random() < 0.5
                 else:
-                    should_retire = random.random() < 0.1
+                    should_retire = self.rng.random() < 0.1
             elif player.age >= 30:
                 if player.overall_rating < 65:
-                    should_retire = random.random() < 0.2
+                    should_retire = self.rng.random() < 0.2
 
             if should_retire:
                 player.is_retired = True

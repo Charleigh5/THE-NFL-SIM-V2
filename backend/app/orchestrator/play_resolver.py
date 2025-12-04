@@ -1,6 +1,5 @@
 from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
 from app.schemas.play import PlayResult
-import random
 from app.orchestrator.kernels_interface import KernelInterface
 from app.engine.probability_engine import ProbabilityEngine, OutcomeType
 from app.engine.blocking import BlockingEngine, BlockingResult
@@ -12,7 +11,8 @@ class PlayResolver:
     """
     Resolves a PlayCommand by orchestrating the various simulation kernels.
     """
-    def __init__(self, kernels: Optional[KernelInterface] = None) -> None:
+    def __init__(self, rng: Any, kernels: Optional[KernelInterface] = None) -> None:
+        self.rng = rng
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
         self.offensive_line_ai = OffensiveLineAI()
@@ -55,7 +55,7 @@ class PlayResolver:
             result = self._resolve_run_play(command)
         else:
             # Add resolvers for other command types here
-            result = command.execute({})
+            result = command.execute({}, rng=self.rng)
 
         # Decrement debuffs after every play
         self.offensive_line_ai.decrement_debuffs()
@@ -110,7 +110,7 @@ class PlayResolver:
             ol_rating += modifier
 
             # Resolve block
-            result = BlockingEngine.resolve_pass_block(ol_rating, dl_rating)
+            result = BlockingEngine.resolve_pass_block(self.rng, ol_rating, dl_rating)
 
             results.append(result)
             if result == BlockingResult.LOSS or result == BlockingResult.PANCAKE:
@@ -181,7 +181,7 @@ class PlayResolver:
             # Apply mitigation
             adjusted_sack_chance = base_sack_chance * (1 - sack_reduction_factor)
 
-            if ProbabilityEngine.resolve_outcome(adjusted_sack_chance):
+            if ProbabilityEngine.resolve_outcome(self.rng, adjusted_sack_chance):
                 is_sack = True
                 if sackers:
                     sacker = sackers[0]
@@ -189,7 +189,7 @@ class PlayResolver:
 
         if is_sack:
             # SACK!
-            loss_yards = random.randint(5, 10)
+            loss_yards = self.rng.randint(5, 10)
 
             # Publish Event
             if sacker and beaten_ol:
@@ -271,7 +271,7 @@ class PlayResolver:
         )
 
         # G. Resolve Outcome
-        is_complete = ProbabilityEngine.resolve_outcome(success_chance)
+        is_complete = ProbabilityEngine.resolve_outcome(self.rng, success_chance)
 
         if is_complete:
             # Calculate Yards Gained
@@ -291,6 +291,7 @@ class PlayResolver:
                 yac_bonus = speed_diff * 50.0 # e.g. 0.10 diff * 50 = 5 yards
 
             yards_gained = int(ProbabilityEngine.calculate_variable_outcome(
+                self.rng,
                 base_value=base_yards,
                 variance=variance,
                 modifiers=yac_bonus
@@ -301,7 +302,7 @@ class PlayResolver:
             is_touchdown = False
             if yards_gained > 80:
                 is_touchdown = True
-            elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(0.1):
+            elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(self.rng, 0.1):
                 is_touchdown = True
 
             # 4. Empire Kernel: XP Awards
@@ -336,7 +337,7 @@ class PlayResolver:
         """
         # 1. Identify key players
         if not command.offense or not command.defense:
-            return PlayResult(yards_gained=random.randint(1, 5), description="Run play (Legacy)")
+            return PlayResult(yards_gained=self.rng.randint(1, 5), description="Run play (Legacy)")
 
         rb = self._get_player_by_position(command.offense, "RB") or command.offense[0]
 
@@ -384,6 +385,7 @@ class PlayResolver:
 
         # Calculate Total Yards using Normal Distribution
         yards_gained = ProbabilityEngine.calculate_normal_outcome(
+            self.rng,
             mean=base_yards - fatigue_penalty,
             std_dev=std_dev,
             min_val=-5.0, # Can lose yards
@@ -395,7 +397,7 @@ class PlayResolver:
         breakaway_chance = 0.05 + speed_diff + power_diff
 
         # Use tiered outcome for the "Breakaway" check
-        breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(breakaway_chance, critical_threshold=0.20)
+        breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(self.rng, breakaway_chance, critical_threshold=0.20)
 
         headline = None
         is_highlight_worthy = False
@@ -406,7 +408,7 @@ class PlayResolver:
              headline = f"Nice run by {rb.last_name}."
         elif breakaway_outcome == OutcomeType.CRITICAL_SUCCESS:
              # HUGE run
-             bonus = ProbabilityEngine.calculate_normal_outcome(25.0, 10.0)
+             bonus = ProbabilityEngine.calculate_normal_outcome(self.rng, 25.0, 10.0)
              yards_gained += bonus
              headline = f"BREAKAWAY! {rb.last_name} is loose!"
              is_highlight_worthy = True
@@ -425,7 +427,7 @@ class PlayResolver:
         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
 
         # Use resolve_outcome for simple binary check
-        is_fumble = ProbabilityEngine.resolve_outcome(fumble_chance)
+        is_fumble = ProbabilityEngine.resolve_outcome(self.rng, fumble_chance)
         is_turnover = is_fumble
 
         is_touchdown = False
@@ -457,11 +459,11 @@ class PlayResolver:
     def _resolve_legacy_random_pass(self, command: PassPlayCommand) -> PlayResult:
         """Fallback for when no player data is available."""
         success_chance = 0.60
-        is_complete = random.random() < success_chance
+        is_complete = self.rng.random() < success_chance
 
         if is_complete:
-            yards_gained = random.randint(5, 25)
-            is_touchdown = (yards_gained > 20) and (random.random() < 0.2)
+            yards_gained = self.rng.randint(5, 25)
+            is_touchdown = (yards_gained > 20) and (self.rng.random() < 0.2)
             return PlayResult(
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,

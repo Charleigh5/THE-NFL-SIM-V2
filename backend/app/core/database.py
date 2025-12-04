@@ -30,7 +30,11 @@ engine = create_engine(settings.DATABASE_URL, **engine_args)
 # Create async engine
 async_engine = create_async_engine(
     settings.async_database_url,
-    **engine_args,
+    echo=False, # Overriding settings.DEBUG for async engine
+    pool_size=20,  # Increased from default 5
+    max_overflow=10,  # Allow temporary connections
+    pool_pre_ping=True,  # Verify connections before use
+    pool_recycle=3600,  # Recycle connections every hour
 )
 
 # Enable SQLite foreign keys

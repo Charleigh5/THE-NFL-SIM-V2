@@ -17,8 +17,10 @@ class CortexKernel:
     Facade for the Cortex (AI/Strategy) Engine.
     Manages decision making and play calling based on game situation and coach philosophy.
     """
-    def __init__(self):
+    def __init__(self, seed: Any = None):
+        from app.core.random_utils import DeterministicRNG
         self.strategy = StrategyEngine()
+        self.rng = DeterministicRNG(seed if seed is not None else 0)
 
     def call_play(self, situation: GameSituation, coach_philosophy: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -72,9 +74,8 @@ class CortexKernel:
         if situation.field_position > 80:
             pass_chance -= 0.10
 
-        import random
-        if random.random() < pass_chance:
-            return "PASS_DEEP" if random.random() < 0.3 else "PASS_SHORT"
+        if self.rng.random() < pass_chance:
+            return "PASS_DEEP" if self.rng.random() < 0.3 else "PASS_SHORT"
         else:
             return "RUN"
 
