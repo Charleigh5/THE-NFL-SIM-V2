@@ -10,6 +10,7 @@ import { PlayoffBracket } from "../components/season/PlayoffBracket";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { LeagueLeaders } from "../components/season/LeagueLeaders";
 import { SeasonSummaryCard } from "../components/season/SeasonSummaryCard";
+import { NewsFeed } from "../components/season/NewsFeed";
 import type { LeagueLeaders as LeagueLeadersType } from "../types/stats";
 import "./SeasonDashboard.css";
 
@@ -522,6 +523,11 @@ const SeasonDashboard: React.FC = () => {
               ) : (
                 <LoadingSpinner />
               )}
+            </div>
+
+            <div className="overview-section" data-testid="news-feed-section">
+              <h3>League News</h3>
+              <NewsFeed maxItems={5} compact={false} refreshInterval={60} />
             </div>
           </div>
         )}

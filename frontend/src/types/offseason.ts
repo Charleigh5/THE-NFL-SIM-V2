@@ -14,9 +14,20 @@ export interface TeamNeed {
 
 export interface Prospect {
   id: number;
-  name: string;
+  name: string; // This might need to be split or handled if backend sends first/last
+  first_name: string;
+  last_name: string;
   position: string;
+  college?: string;
   overall_rating: number;
+  height: number;
+  weight: number;
+  age: number;
+  speed: number;
+  acceleration: number;
+  strength: number;
+  agility: number;
+  projected_round?: number;
 }
 
 export interface DraftPickSummary {

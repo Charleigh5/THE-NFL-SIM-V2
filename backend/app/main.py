@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.endpoints import system, simulation, data, websocket, teams, players, season, genesis, feedback, draft, settings as settings_endpoint, traits
+from app.api.endpoints import system, simulation, data, websocket, teams, players, season, genesis, feedback, draft, settings as settings_endpoint, traits, news
 
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -99,7 +99,7 @@ app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
 app.include_router(draft.router)
 app.include_router(settings_endpoint.router)
 app.include_router(traits.router, prefix="/api", tags=["traits"])
-
+app.include_router(news.router, prefix="/api", tags=["news"])
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Stellar Sagan NFL Simulation Engine"}

@@ -11,6 +11,7 @@ import OffseasonDashboard from "./pages/OffseasonDashboard";
 import { FrontOffice } from "./pages/FrontOffice";
 import { DepthChart } from "./pages/DepthChart";
 import { DraftRoom } from "./pages/DraftRoom";
+import TradeCenterPage from "./pages/TradeCenterPage";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
 import NotFound from "./components/NotFound.tsx";
@@ -250,6 +251,11 @@ export const router = createBrowserRouter([
         path: "empire/depth-chart",
         element: <DepthChart />,
         loader: depthChartLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "empire/trade-center",
+        element: <TradeCenterPage />,
         errorElement: <RouteErrorBoundary />,
       },
       {

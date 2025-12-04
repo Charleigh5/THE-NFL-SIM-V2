@@ -15473,3 +15473,34 @@ WHERE player.id = ?]
 {"time":"2025-12-04 01:58:05,683","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
 {"time":"2025-12-04 01:58:05,723","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: LB LBPlayer"}
 {"time":"2025-12-04 01:58:05,879","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 07:02:44,731","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-04 07:02:44,738","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-04 07:02:44,739","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-04 07:02:44,741","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-04 07:03:32,863","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-04 07:03:32,869","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-04 07:03:32,869","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-04 07:03:32,871","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-04 07:03:33,529","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:03:33,529","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-04 07:04:04,592","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-04 07:04:04,599","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-04 07:04:04,599","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-04 07:04:04,601","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-04 07:04:05,249","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:04:05,249","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-04 07:04:05,250","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:05:03,184","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-04 07:05:03,193","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
+{"time":"2025-12-04 07:05:03,194","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-04 07:05:03,196","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-04 07:05:03,835","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:05:03,835","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-04 07:05:03,835","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:05:52,063","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-04 07:05:52,070","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 9999 not found"}
+{"time":"2025-12-04 07:05:52,070","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-04 07:05:52,072","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-04 07:05:52,691","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-04 07:05:52,691","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-04 07:05:52,691","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}

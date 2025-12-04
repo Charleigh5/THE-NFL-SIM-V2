@@ -6,12 +6,33 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_async_db
 from app.services.draft_assistant import DraftAssistant
-from app.schemas.draft import DraftSuggestionRequest, DraftSuggestionResponse
+from app.schemas.draft import DraftSuggestionRequest, DraftSuggestionResponse, DraftProspect
+from app.models.player import Player
+from sqlalchemy import select
+from typing import List
 import logging
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/draft", tags=["draft"])
+
+
+@router.get("/board", response_model=List[DraftProspect])
+async def get_draft_board(
+    db: AsyncSession = Depends(get_async_db)
+):
+    """
+    Get the current draft board (available prospects).
+    Returns all rookie players who are not assigned to a team.
+    """
+    result = await db.execute(
+        select(Player)
+        .where(Player.is_rookie == True)
+        .where(Player.team_id == None)
+        .order_by(Player.overall_rating.desc())
+    )
+    prospects = result.scalars().all()
+    return prospects
 
 
 @router.post("/suggest-pick", response_model=DraftSuggestionResponse)

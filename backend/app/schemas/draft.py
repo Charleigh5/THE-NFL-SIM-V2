@@ -75,3 +75,27 @@ class DraftSuggestionResponse(BaseModel):
         default=False,
         description="Whether MCP historical data was available"
     )
+
+class DraftProspect(BaseModel):
+    """Draft prospect details."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    first_name: str
+    last_name: str
+    position: str
+    college: Optional[str] = None
+    height: int
+    weight: int
+    age: int
+    overall_rating: int
+
+    # Physical attributes
+    speed: int
+    acceleration: int
+    strength: int
+    agility: int
+
+    # Status
+    is_rookie: bool
+    projected_round: Optional[int] = None

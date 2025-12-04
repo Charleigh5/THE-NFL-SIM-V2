@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { seasonApi } from "../services/season";
+import { draftService } from "../services/draft";
 import { DraftBoard } from "../components/offseason/DraftBoard";
 import { DraftTicker } from "../components/offseason/DraftTicker";
 import { TradeModal } from "../components/offseason/TradeModal";
@@ -22,7 +23,7 @@ export const DraftRoom: React.FC = () => {
     try {
       const [pick, topProspects] = await Promise.all([
         seasonApi.getCurrentPick(sid),
-        seasonApi.getTopProspects(sid, 100),
+        draftService.getDraftBoard(),
       ]);
       setCurrentPick(pick);
       setProspects(topProspects);
@@ -130,7 +131,13 @@ export const DraftRoom: React.FC = () => {
         <div className="draft-sidebar">
           {seasonId && currentPick && (
             <div className="assistant-panel">
-              <DraftAssistant seasonId={seasonId} teamId={currentPick.team_id} />
+              <DraftAssistant
+                seasonId={seasonId}
+                teamId={currentPick.team_id}
+                pickNumber={currentPick.pick_number}
+                availablePlayers={prospects.map((p) => p.id)}
+                onPlayerSelect={handlePick}
+              />
             </div>
           )}
 

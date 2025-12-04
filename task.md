@@ -446,14 +446,14 @@ See `PHASE_7_COMPLETION.md` for details.
 
 ### **8.1: Draft Experience**
 
-- [ ] **Task 8.1.1: Draft Board UI**
-  - [ ] Design and build a dynamic Draft Board component
-  - [ ] Integrate `GET /api/draft/board`
-  - [ ] Implement real-time updates during the draft
-- [ ] **Task 8.1.2: Draft Assistant Integration**
-  - [ ] Build "War Room" UI for the user's pick
-  - [ ] Display AI recommendations from `POST /api/draft/suggest-pick`
-  - [ ] Show historical comparisons and prospect analysis
+- [x] **Task 8.1.1: Draft Board UI**
+  - [x] Design and build a dynamic Draft Board component
+  - [x] Integrate `GET /api/draft/board`
+  - [x] Implement real-time updates during the draft
+- [x] **Task 8.1.2: Draft Assistant Integration**
+  - [x] Build "War Room" UI for the user's pick
+  - [x] Display AI recommendations from `POST /api/draft/suggest-pick`
+  - [x] Show historical comparisons and prospect analysis
 
 ### **8.2: Trade Center**
 

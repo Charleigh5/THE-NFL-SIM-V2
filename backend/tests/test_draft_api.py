@@ -33,7 +33,7 @@ async def test_suggest_draft_pick_success(async_client: AsyncClient, async_db_se
 
     # Make request
     response = await async_client.post(
-        "/api/season/draft/suggest-pick",
+        "/api/draft/suggest-pick",
         json={
             "team_id": team.id,
             "pick_number": 1,
@@ -59,9 +59,9 @@ async def test_suggest_draft_pick_success(async_client: AsyncClient, async_db_se
 
 @pytest.mark.asyncio
 async def test_suggest_draft_pick_invalid_team(async_client: AsyncClient):
-    """Test draft suggestion with invalid team ID returns 500 error."""
+    """Test draft suggestion with invalid team ID returns 400 error."""
     response = await async_client.post(
-        "/api/season/draft/suggest-pick",
+        "/api/draft/suggest-pick",
         json={
             "team_id": 9999,
             "pick_number": 1,
@@ -70,7 +70,7 @@ async def test_suggest_draft_pick_invalid_team(async_client: AsyncClient):
     )
 
     # Should fail due to team not found
-    assert response.status_code == 500
+    assert response.status_code == 400
 
 
 @pytest.mark.asyncio
@@ -83,7 +83,7 @@ async def test_suggest_draft_pick_no_players(async_client: AsyncClient, async_db
     await async_db_session.commit()
 
     response = await async_client.post(
-        "/api/season/draft/suggest-pick",
+        "/api/draft/suggest-pick",
         json={
             "team_id": team.id,
             "pick_number": 1,
@@ -91,4 +91,4 @@ async def test_suggest_draft_pick_no_players(async_client: AsyncClient, async_db
         }
     )
 
-    assert response.status_code == 500
+    assert response.status_code == 400

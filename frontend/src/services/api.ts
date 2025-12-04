@@ -132,4 +132,116 @@ export const api = {
     const response = await apiClient.get(`/api/teams/${teamId}/chemistry`);
     return response.data;
   },
+
+  // Enhanced Player Profile (Task 8.3.2)
+  getPlayerProfile: async (playerId: number): Promise<EnhancedPlayerProfile> => {
+    const response = await apiClient.get<EnhancedPlayerProfile>(`/api/players/${playerId}/profile`);
+    return response.data;
+  },
+
+  // News Feed (Task 8.3.1)
+  getLeagueNews: async (limit: number = 10, category?: string): Promise<NewsResponse> => {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    if (category) params.append("category", category);
+    const response = await apiClient.get<NewsResponse>(`/api/news/league?${params}`);
+    return response.data;
+  },
+
+  getTeamNews: async (teamName: string, limit: number = 5): Promise<NewsResponse> => {
+    const response = await apiClient.get<NewsResponse>(
+      `/api/news/team/${encodeURIComponent(teamName)}?limit=${limit}`
+    );
+    return response.data;
+  },
+
+  getPlayerNews: async (playerName: string, limit: number = 5): Promise<NewsResponse> => {
+    const response = await apiClient.get<NewsResponse>(
+      `/api/news/player/${encodeURIComponent(playerName)}?limit=${limit}`
+    );
+    return response.data;
+  },
+
+  getInjuryReports: async (week: number): Promise<InjuryReportResponse> => {
+    const response = await apiClient.get<InjuryReportResponse>(`/api/news/injuries/week/${week}`);
+    return response.data;
+  },
 };
+
+// ============================================================================
+// ENHANCED PLAYER PROFILE TYPES (Task 8.3.2)
+// ============================================================================
+
+export interface TraitInfo {
+  name: string;
+  description: string;
+  tier: string;
+}
+
+export interface PersonalityInfo {
+  morale: number;
+  morale_status: string;
+  development_trait: string;
+  archetype?: string;
+}
+
+export interface EnhancedPlayerProfile {
+  id: number;
+  first_name: string;
+  last_name: string;
+  position: string;
+  jersey_number: number;
+  overall_rating: number;
+  age: number;
+  experience: number;
+  college?: string;
+  height?: number;
+  weight?: number;
+  team_id?: number;
+  speed: number;
+  acceleration: number;
+  strength: number;
+  agility: number;
+  awareness: number;
+  stamina: number;
+  injury_resistance: number;
+  position_attributes: Record<string, number>;
+  personality: PersonalityInfo;
+  traits: TraitInfo[];
+  career_stats: Record<string, number>;
+  contract_years: number;
+  contract_salary: number;
+  is_rookie: boolean;
+}
+
+// ============================================================================
+// NEWS FEED TYPES (Task 8.3.1)
+// ============================================================================
+
+export interface NewsItem {
+  headline: string;
+  source: string;
+  date: string;
+  category: string;
+  team_id?: number;
+  player_id?: number;
+  is_breaking: boolean;
+}
+
+export interface NewsResponse {
+  items: NewsItem[];
+  total: number;
+  last_updated: string;
+}
+
+export interface InjuryReport {
+  team_abbreviation: string;
+  player_name: string;
+  status: string;
+  injury_type: string;
+}
+
+export interface InjuryReportResponse {
+  week: number;
+  reports: Record<string, InjuryReport[]>;
+  last_updated: string;
+}

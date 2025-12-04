@@ -1,43 +1,39 @@
 import React, { useState } from "react";
-import "./DraftAssistant.css";
+import { draftService, type DraftSuggestionResponse } from "../../services/draft";
 import { FeedbackCollector } from "./FeedbackCollector";
+import type { Prospect } from "../../types/offseason";
+import "./DraftAssistant.css";
 
 interface DraftAssistantProps {
   seasonId: number;
   teamId: number;
-  onPlayerSelect?: (playerId: number) => void;
-}
-
-interface Suggestion {
-  player_id: number | null;
-  reasoning: string;
-  alternatives: Record<string, unknown>[];
-  external_data?: Record<string, unknown>;
+  pickNumber: number;
+  availablePlayers: number[];
+  onPlayerSelect?: (prospect: Prospect) => void;
 }
 
 export const DraftAssistant: React.FC<DraftAssistantProps> = ({
   seasonId,
   teamId,
+  pickNumber,
+  availablePlayers,
   onPlayerSelect,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
+  const [suggestion, setSuggestion] = useState<DraftSuggestionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleGetRecommendation = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/season/${seasonId}/draft/suggest-pick?team_id=${teamId}`, {
-        method: "POST",
+      const result = await draftService.getDraftSuggestion({
+        team_id: teamId,
+        pick_number: pickNumber,
+        available_players: availablePlayers,
+        include_historical_data: true,
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch recommendation");
-      }
-
-      const data = await response.json();
-      setSuggestion(data);
+      setSuggestion(result);
     } catch (err) {
       setError("Could not get recommendation. Please try again.");
       console.error(err);
@@ -46,22 +42,46 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
     }
   };
 
+  // Helper to construct a minimal Prospect object for the callback
+  const handleSelect = (id: number, name: string, position: string, rating: number) => {
+    if (onPlayerSelect) {
+      // We construct a partial prospect here. In a real app, we might want to find the full prospect object
+      // from the availablePlayers list if possible, but for now this suffices for the callback
+      onPlayerSelect({
+        id,
+        name,
+        position,
+        overall_rating: rating,
+        // Default values for required fields that might be missing in suggestion
+        first_name: name.split(" ")[0],
+        last_name: name.split(" ").slice(1).join(" "),
+        height: 0,
+        weight: 0,
+        age: 0,
+        speed: 0,
+        acceleration: 0,
+        strength: 0,
+        agility: 0,
+      });
+    }
+  };
+
   return (
     <div className="draft-assistant">
       <div className="assistant-header">
-        <h3>AI Draft Assistant</h3>
-        <span className="beta-tag">BETA</span>
+        <h3>War Room</h3>
+        <span className="beta-tag">AI POWERED</span>
       </div>
 
       <div className="assistant-content">
         {!suggestion && !loading && (
           <div className="assistant-intro">
             <p>
-              Need help making a pick? Our AI analyzes team needs, historical data, and player value
-              to suggest the best fit.
+              Analyze the board and get a recommendation based on team needs, value, and historical
+              data.
             </p>
             <button className="recommend-btn" onClick={handleGetRecommendation}>
-              Get Recommendation
+              Analyze Pick #{pickNumber}
             </button>
           </div>
         )}
@@ -69,7 +89,9 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
         {loading && (
           <div className="assistant-loading">
             <div className="spinner"></div>
-            <p>Analyzing roster gaps and prospect value...</p>
+            <p>Crunching numbers...</p>
+            <span className="loading-detail">Analyzing roster gaps...</span>
+            <span className="loading-detail">Comparing historical data...</span>
           </div>
         )}
 
@@ -84,42 +106,120 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
 
         {suggestion && (
           <div className="suggestion-card">
-            <h4>Recommended Pick</h4>
-            <div className="suggestion-details">
-              {suggestion.player_id ? (
-                <div className="suggested-player">
-                  <span className="player-id-ref">Player #{suggestion.player_id}</span>
-                  {/* In a real app we'd look up the player name from a context or prop */}
-                  {onPlayerSelect && (
-                    <button
-                      className="select-player-btn"
-                      onClick={() => onPlayerSelect(suggestion.player_id!)}
-                    >
-                      Draft Player
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <p>No suitable player found.</p>
-              )}
-
-              <div className="reasoning">
-                <h5>Analysis</h5>
-                <p>{suggestion.reasoning}</p>
+            <div className="recommendation-header">
+              <span className="label">RECOMMENDED PICK</span>
+              <div className="confidence-meter">
+                <div className="confidence-fill" data-confidence={suggestion.confidence_score} />
+                <span>{Math.round(suggestion.confidence_score * 100)}% Confidence</span>
               </div>
-
-              {suggestion.external_data && (
-                <div className="external-data">
-                  <h5>League Context</h5>
-                  <pre>{JSON.stringify(suggestion.external_data, null, 2)}</pre>
-                </div>
-              )}
             </div>
 
-            <FeedbackCollector
-              contextId={`draft-${seasonId}-${teamId}-${suggestion.player_id}`}
-              contextType="draft"
-            />
+            <div className="suggested-player-card">
+              <div className="player-info">
+                <div className="player-main">
+                  <span className="pos-badge">{suggestion.position}</span>
+                  <span className="player-name">{suggestion.player_name}</span>
+                </div>
+                <span className="player-rating">{suggestion.overall_rating} OVR</span>
+              </div>
+
+              <button
+                className="select-player-btn"
+                onClick={() =>
+                  handleSelect(
+                    suggestion.recommended_player_id,
+                    suggestion.player_name,
+                    suggestion.position,
+                    suggestion.overall_rating
+                  )
+                }
+              >
+                Draft Player
+              </button>
+            </div>
+
+            <div className="analysis-section">
+              <h5>Analysis</h5>
+              <p className="reasoning-text">{suggestion.reasoning}</p>
+            </div>
+
+            {suggestion.historical_comparison && (
+              <div className="historical-comp">
+                <h5>Historical Comparison</h5>
+                <div className="comp-card">
+                  <div className="comp-header">
+                    <span className="comp-name">
+                      {suggestion.historical_comparison.comparable_player_name}
+                    </span>
+                    <span className="comp-years">
+                      {suggestion.historical_comparison.seasons_active}
+                    </span>
+                  </div>
+                  <p className="comp-highlights">
+                    {suggestion.historical_comparison.career_highlights}
+                  </p>
+                  <div className="similarity-bar">
+                    <span>Similarity</span>
+                    <progress value={suggestion.historical_comparison.similarity_score} max={1} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {suggestion.roster_gap_analysis && suggestion.roster_gap_analysis.length > 0 && (
+              <div className="gap-analysis">
+                <h5>Roster Impact</h5>
+                {suggestion.roster_gap_analysis.map((gap, idx) => (
+                  <div key={idx} className="gap-item">
+                    <div className="gap-header">
+                      <span>{gap.position}</span>
+                      <span className={`priority ${gap.priority_level.toLowerCase()}`}>
+                        {gap.priority_level}
+                      </span>
+                    </div>
+                    <div className="gap-stats">
+                      <span>Current: {gap.current_count}</span>
+                      <span>Target: {gap.target_count}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {suggestion.alternative_picks.length > 0 && (
+              <div className="alternatives-section">
+                <h5>Alternatives</h5>
+                <div className="alternatives-list">
+                  {suggestion.alternative_picks.map((alt) => (
+                    <div
+                      key={alt.player_id}
+                      className="alt-item"
+                      onClick={() =>
+                        handleSelect(
+                          alt.player_id,
+                          alt.player_name,
+                          alt.position,
+                          alt.overall_rating
+                        )
+                      }
+                    >
+                      <div className="alt-info">
+                        <span className="alt-pos">{alt.position}</span>
+                        <span className="alt-name">{alt.player_name}</span>
+                      </div>
+                      <span className="alt-rating">{alt.overall_rating}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="feedback-section">
+              <FeedbackCollector
+                contextId={`draft-${seasonId}-${teamId}-${suggestion.recommended_player_id}`}
+                contextType="draft"
+              />
+            </div>
 
             <button className="reset-btn" onClick={() => setSuggestion(null)}>
               New Analysis

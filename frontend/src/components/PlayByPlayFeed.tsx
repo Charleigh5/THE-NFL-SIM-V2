@@ -29,9 +29,7 @@ export const PlayByPlayFeed = () => {
               Waiting for kickoff...
             </div>
           ) : (
-            playLog.map((play, index) => (
-              <PlayItem key={index} play={play} />
-            ))
+            playLog.map((play, index) => <PlayItem key={index} play={play} />)
           )}
         </AnimatePresence>
       </div>
@@ -40,7 +38,7 @@ export const PlayByPlayFeed = () => {
 };
 
 import { useState } from "react";
-import { PlayResult } from "../types/simulation";
+import type { PlayResult } from "../types/simulation";
 import InteractionTimeline from "./game/InteractionTimeline";
 
 const PlayItem = ({ play }: { play: PlayResult }) => {
@@ -52,7 +50,7 @@ const PlayItem = ({ play }: { play: PlayResult }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className={`flex flex-col gap-1 text-sm ${hasInteractions ? 'cursor-pointer hover:bg-white/5 rounded p-1 -m-1' : ''}`}
+      className={`flex flex-col gap-1 text-sm ${hasInteractions ? "cursor-pointer hover:bg-white/5 rounded p-1 -m-1" : ""}`}
       onClick={() => hasInteractions && setExpanded(!expanded)}
     >
       <div className="flex gap-3">
@@ -82,11 +80,5 @@ const PlayItem = ({ play }: { play: PlayResult }) => {
         )}
       </AnimatePresence>
     </motion.div>
-  );
-};
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
   );
 };

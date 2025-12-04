@@ -127,7 +127,7 @@ class DraftAssistant:
             # Enhanced scoring considering pick value
             talent_score = p['overall_rating'] / 100.0
             value_score = talent_score * draft_value_multiplier
-            combined_score = (talent_score * 0.5) + (need_score * 0.3) + (value_score * 0.2)
+            combined_score = min(1.0, (talent_score * 0.5) + (need_score * 0.3) + (value_score * 0.2))
 
             scored_players.append((p, combined_score))
 
