@@ -1,0 +1,85 @@
+.chemistry-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background-color: #6b7280; /* Default gray */
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.chemistry-badge.none {
+  background-color: #9ca3af;
+  color: #f3f4f6;
+}
+
+.chemistry-badge.developing {
+  background-color: #f59e0b; /* Amber */
+  color: #fffbeb;
+}
+
+.chemistry-badge.strong {
+  background-color: #10b981; /* Emerald */
+  color: #ecfdf5;
+}
+
+.chemistry-badge.elite {
+  background-color: #3b82f6; /* Blue */
+  color: #eff6ff;
+}
+
+.chemistry-badge.maximum {
+  background-color: #8b5cf6; /* Violet */
+  color: #f5f3ff;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+}
+
+.chemistry-badge:hover {
+  transform: scale(1.05);
+}
+
+.chemistry-tooltip {
+  position: absolute;
+  z-index: 50;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 12px;
+  width: 250px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  color: #f3f4f6;
+  font-size: 0.875rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+}
+
+.chemistry-badge:hover .chemistry-tooltip {
+  opacity: 1;
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 4px;
+}
+
+.tooltip-stat {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+}
+
+.tooltip-stat.bonus {
+  color: #34d399;
+}

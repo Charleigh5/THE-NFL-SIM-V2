@@ -23,7 +23,9 @@ from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerPr
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.schemas import draft as draft_schemas
 from app.models.stats import PlayerGameStats
+from app.models.stats import PlayerGameStats
 from app.models.player import Player
+from app.schemas.weather import GameWeatherSchema
 from sqlalchemy import func, desc
 
 
@@ -64,6 +66,7 @@ class GameResponse(BaseModel):
     is_played: bool
     is_playoff: bool = False
     date: datetime
+    weather_info: Optional[GameWeatherSchema] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -441,7 +444,8 @@ async def get_schedule(
     # Build query with eager loading to prevent N+1 queries
     stmt = select(Game).options(
         joinedload(Game.home_team),
-        joinedload(Game.away_team)
+        joinedload(Game.away_team),
+        joinedload(Game.weather_info)
     ).where(Game.season_id == season_id)
 
     if week is not None:

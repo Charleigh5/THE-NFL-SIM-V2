@@ -27,21 +27,21 @@ def upgrade() -> None:
 
     op.create_index(
         'idx_pgs_team_game',
-        'player_game_start',
+        'player_game_starts',
         ['team_id', 'game_id'],
         unique=False
     )
 
     op.create_index(
         'idx_pgs_team_position',
-        'player_game_start',
+        'player_game_starts',
         ['team_id', 'position', 'week'],
         unique=False
     )
 
     op.create_index(
         'idx_pgs_game_position',
-        'player_game_start',
+        'player_game_starts',
         ['game_id', 'position'],
         unique=False
     )
@@ -56,7 +56,7 @@ def upgrade() -> None:
 
     op.create_index(
         'idx_pgs_ol_only',
-        'player_game_start',
+        'player_game_starts',
         ['team_id', 'game_id', 'position'],
         unique=False
         # postgresql_where=sa.text("position IN ('LT', 'LG', 'C', 'RG', 'RT')")
@@ -65,7 +65,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Remove optimization indexes."""
-    op.drop_index('idx_pgs_ol_only', table_name='player_game_start')
-    op.drop_index('idx_pgs_game_position', table_name='player_game_start')
-    op.drop_index('idx_pgs_team_position', table_name='player_game_start')
-    op.drop_index('idx_pgs_team_game', table_name='player_game_start')
+    op.drop_index('idx_pgs_ol_only', table_name='player_game_starts')
+    op.drop_index('idx_pgs_game_position', table_name='player_game_starts')
+    op.drop_index('idx_pgs_team_position', table_name='player_game_starts')
+    op.drop_index('idx_pgs_team_game', table_name='player_game_starts')

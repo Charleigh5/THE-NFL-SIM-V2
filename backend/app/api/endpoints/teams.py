@@ -10,6 +10,8 @@ from app.core.error_decorators import handle_errors
 from app.models.team import Team
 from app.models.player import Player
 from app.schemas.pagination import PaginatedResponse
+from app.services.enhanced_chemistry_service import EnhancedChemistryService
+from app.services.depth_chart_service import DepthChartService
 from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
@@ -119,3 +121,33 @@ async def update_depth_chart(
 
     await db.commit()
     return {"message": "Depth chart updated successfully"}
+
+@router.get("/{team_id}/chemistry")
+@handle_errors
+async def get_team_chemistry(team_id: int, db: AsyncSession = Depends(get_async_db)):
+    """
+    Get detailed OL chemistry analysis for a team.
+    """
+    # 1. Get roster
+    stmt = select(Player).where(Player.team_id == team_id)
+    result = await db.execute(stmt)
+    players = list(result.scalars().all())
+
+    if not players:
+        raise HTTPException(status_code=404, detail="Team not found or empty roster")
+
+    # 2. Determine current starters
+    starters_map = DepthChartService.get_starting_offense(players, "standard")
+
+    # 3. Extract OL
+    ol_positions = ["LT", "LG", "C", "RG", "RT"]
+    current_ol = {}
+    for pos in ol_positions:
+        if pos in starters_map:
+            current_ol[pos] = starters_map[pos].id
+
+    # 4. Calculate chemistry
+    service = EnhancedChemistryService(db)
+    metadata = await service.get_team_chemistry_metadata(team_id, current_ol)
+
+    return metadata.to_dict()

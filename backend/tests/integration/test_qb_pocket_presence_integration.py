@@ -7,6 +7,7 @@ from app.orchestrator.play_resolver import PlayResolver
 from app.orchestrator.play_commands import PassPlayCommand
 from app.models.player import Player, Position
 from app.engine.blocking import BlockingResult
+from app.core.randomness import DeterministicRNG
 from unittest.mock import MagicMock, patch
 
 
@@ -43,7 +44,8 @@ def test_qb_pocket_presence_reduces_sacks():
     Integration test: QB with high pocket presence should be sacked less often
     than QB with low pocket presence when OL loses blocks
     """
-    resolver = PlayResolver()
+    rng = DeterministicRNG(seed=12345)
+    resolver = PlayResolver(rng)
 
     # Simulate 50 plays with LOW pocket presence QB
     low_pp_qb = create_test_player('QB', pocket_presence=10)
@@ -111,7 +113,8 @@ def test_qb_pocket_presence_reduces_sacks():
 
 def test_pancake_ignores_pocket_presence():
     """Pancake blocks should result in sacks even with max pocket presence"""
-    resolver = PlayResolver()
+    rng = DeterministicRNG(seed=67890)
+    resolver = PlayResolver(rng)
 
     max_pp_qb = create_test_player('QB', pocket_presence=100)
     offense = [max_pp_qb, create_test_player('WR')]

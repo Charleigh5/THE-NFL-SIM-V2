@@ -14861,3 +14861,615 @@ StopAsyncIteration
 {"time":"2025-12-02 21:48:30,296","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Request - Server: nfl_stats_error, Tool: non_existent_tool, Args: {}"}
 {"time":"2025-12-02 21:48:30,299","name":"app.core.mcp_client","level":"INFO","message":"MCP Tool Call Response - Server: nfl_stats_error, Tool: non_existent_tool, Duration: 0.0033s, Result: meta=None content=[TextContent(type='text', text='Unknown tool: non_existent_tool', annotations=None, meta=None)] structuredContent=None isError=True"}
 {"time":"2025-12-02 21:48:30,357","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats_error"}
+{"time":"2025-12-03 20:31:16,811","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,826","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 1: Player 1 (QB)"}
+{"time":"2025-12-03 20:31:16,827","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,829","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:16,854","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,858","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 2 pick 1: Top QB (QB)"}
+{"time":"2025-12-03 20:31:16,859","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,859","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:16,884","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,889","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 1: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:31:16,889","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,890","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:16,891","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,895","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 224: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:31:16,895","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,896","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:16,915","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,917","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-03 20:31:16,918","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,918","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:31:16,921","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,924","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: No available players"}
+{"time":"2025-12-03 20:31:16,925","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,925","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:31:16,949","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:16,953","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 5 pick 10: Best Player (QB)"}
+{"time":"2025-12-03 20:31:16,953","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:16,954","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:37,975","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:37,987","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-03 20:31:37,988","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-03 20:31:37,988","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-03 20:31:37,988","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:37,990","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:38,016","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:38,022","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-03 20:31:38,022","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:38,023","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:52,871","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:52,883","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for WR"}
+{"time":"2025-12-03 20:31:52,883","name":"app.services.draft_assistant","level":"INFO","message":"Retrieved historical comparison via MCP for QB"}
+{"time":"2025-12-03 20:31:52,883","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-03 20:31:52,884","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:52,886","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:52,913","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:52,918","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)"}
+{"time":"2025-12-03 20:31:52,919","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:52,919","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:52,942","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:52,946","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 1: Player 1 (QB)"}
+{"time":"2025-12-03 20:31:52,947","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:52,947","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:52,971","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:52,976","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 2 pick 1: Top QB (QB)"}
+{"time":"2025-12-03 20:31:52,976","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:52,977","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:53,000","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:53,005","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 1: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:31:53,005","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:53,006","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:53,006","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:53,010","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 224: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:31:53,011","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:53,011","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:53,031","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:53,033","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-03 20:31:53,034","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:53,034","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:31:53,038","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:53,041","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: No available players"}
+{"time":"2025-12-03 20:31:53,042","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:53,042","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:31:53,067","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:53,073","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 5 pick 10: Best Player (QB)"}
+{"time":"2025-12-03 20:31:53,074","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:53,074","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:31:53,179","name":"test_mcp_health","level":"INFO","message":"Testing health of MCP server: nfl_stats"}
+{"time":"2025-12-03 20:31:53,296","name":"app.core.mcp_client","level":"ERROR","message":"Failed to connect to MCP server nfl_stats: Connection closed"}
+{"time":"2025-12-03 20:31:53,296","name":"test_mcp_health","level":"ERROR","message":"Health check failed for nfl_stats: Connection closed"}
+{"time":"2025-12-03 20:31:53,297","name":"app.core.mcp_client","level":"INFO","message":"Disconnected from MCP server: nfl_stats"}
+{"time":"2025-12-03 20:31:53,938","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-03 20:31:53,942","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-03 20:31:53,942","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-03 20:31:53,944","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 165, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-03 20:31:53,977","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Hydrating match context"}
+{"time":"2025-12-03 20:31:53,982","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Pre-game services executed"}
+{"time":"2025-12-03 20:31:53,982","name":"app.orchestrator.simulation_orchestrator","level":"INFO","message":"Match context hydrated"}
+{"time":"2025-12-03 20:31:53,986","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 138, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-03 20:31:53,987","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error saving game progress"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 138, in _save_progress
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-03 20:31:53,989","name":"app.orchestrator.simulation_orchestrator","level":"ERROR","message":"Error finalizing game"}
+Traceback (most recent call last):
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2324, in _execute_mock_call
+    result = next(effect)
+StopIteration
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 165, in save_game_result
+    result = await self.db_session.execute(stmt)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\Lib\unittest\mock.py", line 2328, in _execute_mock_call
+    raise StopAsyncIteration
+StopAsyncIteration
+{"time":"2025-12-03 20:31:54,143","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:54,157","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in evaluate_trade"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: player.pocket_presence
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 889, in evaluate_trade
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 51, in evaluate_trade
+    offered_players = [self.db.get(Player, pid) for pid in offered_players_ids]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3680, in get
+    return self._get_impl(
+           ~~~~~~~~~~~~~~^
+        entity,
+        ^^^^^^^
+    ...<7 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3859, in _get_impl
+    return db_load_fn(
+        self,
+    ...<5 lines>...
+        bind_arguments=bind_arguments,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\loading.py", line 695, in load_on_pk_identity
+    session.execute(
+    ~~~~~~~~~~~~~~~^
+        q,
+        ^^
+    ...<2 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: player.pocket_presence
+[SQL: SELECT player.id AS player_id, player.first_name AS player_first_name, player.last_name AS player_last_name, player.position AS player_position, player.college AS player_college, player.height AS player_height, player.weight AS player_weight, player.age AS player_age, player.experience AS player_experience, player.jersey_number AS player_jersey_number, player.overall_rating AS player_overall_rating, player.depth_chart_rank AS player_depth_chart_rank, player.team_id AS player_team_id, player.speed AS player_speed, player.acceleration AS player_acceleration, player.strength AS player_strength, player.agility AS player_agility, player.awareness AS player_awareness, player.stamina AS player_stamina, player.injury_resistance AS player_injury_resistance, player.throw_power AS player_throw_power, player.throw_accuracy_short AS player_throw_accuracy_short, player.throw_accuracy_mid AS player_throw_accuracy_mid, player.throw_accuracy_deep AS player_throw_accuracy_deep, player.catching AS player_catching, player.route_running AS player_route_running, player.pass_block AS player_pass_block, player.run_block AS player_run_block, player.tackle AS player_tackle, player.hit_power AS player_hit_power, player.block_shed AS player_block_shed, player.man_coverage AS player_man_coverage, player.zone_coverage AS player_zone_coverage, player.pass_rush_power AS player_pass_rush_power, player.pass_rush_finesse AS player_pass_rush_finesse, player.play_recognition AS player_play_recognition, player.kick_power AS player_kick_power, player.kick_accuracy AS player_kick_accuracy, player.pocket_presence AS player_pocket_presence, player.quick_release AS player_quick_release, player.scramble_willingness AS player_scramble_willingness, player.throw_on_run AS player_throw_on_run, player.patience AS player_patience, player.pass_pro_rating AS player_pass_pro_rating, player.juke_efficiency AS player_juke_efficiency, player.release AS player_release, player.blocking_tenacity AS player_blocking_tenacity, player.pull_speed AS player_pull_speed, player.anchor AS player_anchor, player.discipline AS player_discipline, player.first_step AS player_first_step, player.gap_integrity AS player_gap_integrity, player.coverage_disguise AS player_coverage_disguise, player.blitz_timing AS player_blitz_timing, player.run_fit AS player_run_fit, player.press AS player_press, player.ball_tracking AS player_ball_tracking, player.run_support AS player_run_support, player.hang_time AS player_hang_time, player.coffin_corner AS player_coffin_corner, player.return_vision AS player_return_vision, player.arm_slot AS player_arm_slot, player.release_point_height AS player_release_point_height, player.vision_cone_angle AS player_vision_cone_angle, player.break_tackle_threshold AS player_break_tackle_threshold, player.xp AS player_xp, player.level AS player_level, player.skill_points AS player_skill_points, player.development_trait AS player_development_trait, player.morale AS player_morale, player.injury_status AS player_injury_status, player.injury_type AS player_injury_type, player.weeks_to_recovery AS player_weeks_to_recovery, player.image_url AS player_image_url, player.nano_id AS player_nano_id, player.contract_years AS player_contract_years, player.contract_salary AS player_contract_salary, player.is_rookie AS player_is_rookie, player.is_retired AS player_is_retired, player.retirement_year AS player_retirement_year, player.legacy_score AS player_legacy_score 
+FROM player 
+WHERE player.id = ?]
+[parameters: (101,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-12-03 20:31:54,251","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:54,252","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-12-03 20:31:54,275","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:54,278","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in evaluate_trade"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: player.pocket_presence
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 889, in evaluate_trade
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 51, in evaluate_trade
+    offered_players = [self.db.get(Player, pid) for pid in offered_players_ids]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3680, in get
+    return self._get_impl(
+           ~~~~~~~~~~~~~~^
+        entity,
+        ^^^^^^^
+    ...<7 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3859, in _get_impl
+    return db_load_fn(
+        self,
+    ...<5 lines>...
+        bind_arguments=bind_arguments,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\loading.py", line 695, in load_on_pk_identity
+    session.execute(
+    ~~~~~~~~~~~~~~~^
+        q,
+        ^^
+    ...<2 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: player.pocket_presence
+[SQL: SELECT player.id AS player_id, player.first_name AS player_first_name, player.last_name AS player_last_name, player.position AS player_position, player.college AS player_college, player.height AS player_height, player.weight AS player_weight, player.age AS player_age, player.experience AS player_experience, player.jersey_number AS player_jersey_number, player.overall_rating AS player_overall_rating, player.depth_chart_rank AS player_depth_chart_rank, player.team_id AS player_team_id, player.speed AS player_speed, player.acceleration AS player_acceleration, player.strength AS player_strength, player.agility AS player_agility, player.awareness AS player_awareness, player.stamina AS player_stamina, player.injury_resistance AS player_injury_resistance, player.throw_power AS player_throw_power, player.throw_accuracy_short AS player_throw_accuracy_short, player.throw_accuracy_mid AS player_throw_accuracy_mid, player.throw_accuracy_deep AS player_throw_accuracy_deep, player.catching AS player_catching, player.route_running AS player_route_running, player.pass_block AS player_pass_block, player.run_block AS player_run_block, player.tackle AS player_tackle, player.hit_power AS player_hit_power, player.block_shed AS player_block_shed, player.man_coverage AS player_man_coverage, player.zone_coverage AS player_zone_coverage, player.pass_rush_power AS player_pass_rush_power, player.pass_rush_finesse AS player_pass_rush_finesse, player.play_recognition AS player_play_recognition, player.kick_power AS player_kick_power, player.kick_accuracy AS player_kick_accuracy, player.pocket_presence AS player_pocket_presence, player.quick_release AS player_quick_release, player.scramble_willingness AS player_scramble_willingness, player.throw_on_run AS player_throw_on_run, player.patience AS player_patience, player.pass_pro_rating AS player_pass_pro_rating, player.juke_efficiency AS player_juke_efficiency, player.release AS player_release, player.blocking_tenacity AS player_blocking_tenacity, player.pull_speed AS player_pull_speed, player.anchor AS player_anchor, player.discipline AS player_discipline, player.first_step AS player_first_step, player.gap_integrity AS player_gap_integrity, player.coverage_disguise AS player_coverage_disguise, player.blitz_timing AS player_blitz_timing, player.run_fit AS player_run_fit, player.press AS player_press, player.ball_tracking AS player_ball_tracking, player.run_support AS player_run_support, player.hang_time AS player_hang_time, player.coffin_corner AS player_coffin_corner, player.return_vision AS player_return_vision, player.arm_slot AS player_arm_slot, player.release_point_height AS player_release_point_height, player.vision_cone_angle AS player_vision_cone_angle, player.break_tackle_threshold AS player_break_tackle_threshold, player.xp AS player_xp, player.level AS player_level, player.skill_points AS player_skill_points, player.development_trait AS player_development_trait, player.morale AS player_morale, player.injury_status AS player_injury_status, player.injury_type AS player_injury_type, player.weeks_to_recovery AS player_weeks_to_recovery, player.image_url AS player_image_url, player.nano_id AS player_nano_id, player.contract_years AS player_contract_years, player.contract_salary AS player_contract_salary, player.is_rookie AS player_is_rookie, player.is_retired AS player_is_retired, player.retirement_year AS player_retirement_year, player.legacy_score AS player_legacy_score 
+FROM player 
+WHERE player.id = ?]
+[parameters: (101,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-12-03 20:31:54,281","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:54,283","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-12-03 20:31:54,305","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:31:54,308","name":"app.core.error_decorators","level":"ERROR","message":"Database operational error in evaluate_trade"}
+Traceback (most recent call last):
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: player.pocket_presence
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 889, in evaluate_trade
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 51, in evaluate_trade
+    offered_players = [self.db.get(Player, pid) for pid in offered_players_ids]
+                       ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3680, in get
+    return self._get_impl(
+           ~~~~~~~~~~~~~~^
+        entity,
+        ^^^^^^^
+    ...<7 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 3859, in _get_impl
+    return db_load_fn(
+        self,
+    ...<5 lines>...
+        bind_arguments=bind_arguments,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\loading.py", line 695, in load_on_pk_identity
+    session.execute(
+    ~~~~~~~~~~~~~~~^
+        q,
+        ^^
+    ...<2 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\cweir\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: player.pocket_presence
+[SQL: SELECT player.id AS player_id, player.first_name AS player_first_name, player.last_name AS player_last_name, player.position AS player_position, player.college AS player_college, player.height AS player_height, player.weight AS player_weight, player.age AS player_age, player.experience AS player_experience, player.jersey_number AS player_jersey_number, player.overall_rating AS player_overall_rating, player.depth_chart_rank AS player_depth_chart_rank, player.team_id AS player_team_id, player.speed AS player_speed, player.acceleration AS player_acceleration, player.strength AS player_strength, player.agility AS player_agility, player.awareness AS player_awareness, player.stamina AS player_stamina, player.injury_resistance AS player_injury_resistance, player.throw_power AS player_throw_power, player.throw_accuracy_short AS player_throw_accuracy_short, player.throw_accuracy_mid AS player_throw_accuracy_mid, player.throw_accuracy_deep AS player_throw_accuracy_deep, player.catching AS player_catching, player.route_running AS player_route_running, player.pass_block AS player_pass_block, player.run_block AS player_run_block, player.tackle AS player_tackle, player.hit_power AS player_hit_power, player.block_shed AS player_block_shed, player.man_coverage AS player_man_coverage, player.zone_coverage AS player_zone_coverage, player.pass_rush_power AS player_pass_rush_power, player.pass_rush_finesse AS player_pass_rush_finesse, player.play_recognition AS player_play_recognition, player.kick_power AS player_kick_power, player.kick_accuracy AS player_kick_accuracy, player.pocket_presence AS player_pocket_presence, player.quick_release AS player_quick_release, player.scramble_willingness AS player_scramble_willingness, player.throw_on_run AS player_throw_on_run, player.patience AS player_patience, player.pass_pro_rating AS player_pass_pro_rating, player.juke_efficiency AS player_juke_efficiency, player.release AS player_release, player.blocking_tenacity AS player_blocking_tenacity, player.pull_speed AS player_pull_speed, player.anchor AS player_anchor, player.discipline AS player_discipline, player.first_step AS player_first_step, player.gap_integrity AS player_gap_integrity, player.coverage_disguise AS player_coverage_disguise, player.blitz_timing AS player_blitz_timing, player.run_fit AS player_run_fit, player.press AS player_press, player.ball_tracking AS player_ball_tracking, player.run_support AS player_run_support, player.hang_time AS player_hang_time, player.coffin_corner AS player_coffin_corner, player.return_vision AS player_return_vision, player.arm_slot AS player_arm_slot, player.release_point_height AS player_release_point_height, player.vision_cone_angle AS player_vision_cone_angle, player.break_tackle_threshold AS player_break_tackle_threshold, player.xp AS player_xp, player.level AS player_level, player.skill_points AS player_skill_points, player.development_trait AS player_development_trait, player.morale AS player_morale, player.injury_status AS player_injury_status, player.injury_type AS player_injury_type, player.weeks_to_recovery AS player_weeks_to_recovery, player.image_url AS player_image_url, player.nano_id AS player_nano_id, player.contract_years AS player_contract_years, player.contract_salary AS player_contract_salary, player.is_rookie AS player_is_rookie, player.is_retired AS player_is_retired, player.retirement_year AS player_retirement_year, player.legacy_score AS player_legacy_score 
+FROM player 
+WHERE player.id = ?]
+[parameters: (101,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+{"time":"2025-12-03 20:31:54,313","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:31:54,315","name":"httpx","level":"INFO","message":"HTTP Request: POST http://testserver/api/season/2024/gm/evaluate-trade "HTTP/1.1 503 Service Unavailable""}
+{"time":"2025-12-03 20:34:37,289","name":"app.services.enhanced_chemistry_service","level":"INFO","message":"Applying OL Chemistry to Team 1"}
+{"time":"2025-12-03 20:34:37,289","name":"app.services.pre_game_service","level":"INFO","message":"Home OL Chemistry Active: 0.60 (5 games)"}
+{"time":"2025-12-03 20:38:03,098","name":"app.services.enhanced_chemistry_service","level":"INFO","message":"Applying OL Chemistry to Team 1"}
+{"time":"2025-12-03 20:38:03,099","name":"app.services.pre_game_service","level":"INFO","message":"Home OL Chemistry Active: 0.60 (5 games)"}
+{"time":"2025-12-03 20:38:03,340","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,351","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 1 pick 1: Player 1 (QB)"}
+{"time":"2025-12-03 20:38:03,351","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,353","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:38:03,392","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,397","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 2 pick 1: Top QB (QB)"}
+{"time":"2025-12-03 20:38:03,398","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,399","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:38:03,429","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,434","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 1: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:38:03,434","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,435","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:38:03,435","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,439","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 3 pick 224: Elite Prospect (WR)"}
+{"time":"2025-12-03 20:38:03,440","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,440","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 20:38:03,458","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,460","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: Team 999 not found"}
+{"time":"2025-12-03 20:38:03,461","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,461","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:38:03,464","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,467","name":"app.api.endpoints.draft","level":"WARNING","message":"Draft suggestion validation error: No available players"}
+{"time":"2025-12-03 20:38:03,467","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,468","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 20:38:03,491","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-03 20:38:03,496","name":"app.api.endpoints.draft","level":"INFO","message":"Draft suggestion for team 5 pick 10: Best Player (QB)"}
+{"time":"2025-12-03 20:38:03,497","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-03 20:38:03,497","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/draft/suggest-pick "HTTP/1.1 200 OK""}
+{"time":"2025-12-03 21:54:06,579","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:54:06,598","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:54:06,676","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:54:06,691","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:54:06,691","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-03 21:57:13,858","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:57:13,899","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:57:13,966","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:57:13,980","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:57:13,980","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-03 21:58:16,947","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:58:16,964","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:58:17,015","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:58:17,027","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:58:17,028","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-03 21:58:29,065","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:58:29,104","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:58:29,167","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:58:29,179","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:58:29,179","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-03 21:59:03,801","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:59:03,819","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:59:03,885","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:59:03,901","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:59:03,901","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-03 21:59:36,370","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks"}
+{"time":"2025-12-03 21:59:36,401","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks"}
+{"time":"2025-12-03 21:59:36,494","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered a setback in rehab. Added 2 weeks."}
+{"time":"2025-12-03 21:59:36,511","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 suffered permanent attribute degradation."}
+{"time":"2025-12-03 21:59:36,511","name":"app.rpg.injury_system","level":"INFO","message":"Player 1 recovered from injury."}
+{"time":"2025-12-04 01:30:36,278","name":"app.services.enhanced_chemistry_service","level":"INFO","message":"Applying OL Chemistry to Team 1"}
+{"time":"2025-12-04 01:30:36,279","name":"app.services.pre_game_service","level":"INFO","message":"Home OL Chemistry Active: 0.60 (5 games)"}
+{"time":"2025-12-04 01:50:32,685","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:50:32,715","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: LB LBPlayer"}
+{"time":"2025-12-04 01:50:32,969","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:51:13,318","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:51:13,359","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: LB LBPlayer"}
+{"time":"2025-12-04 01:51:13,611","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:51:41,837","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:51:41,867","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: LB LBPlayer"}
+{"time":"2025-12-04 01:51:41,960","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:58:05,683","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}
+{"time":"2025-12-04 01:58:05,723","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: LB LBPlayer"}
+{"time":"2025-12-04 01:58:05,879","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: QB QBPlayer"}

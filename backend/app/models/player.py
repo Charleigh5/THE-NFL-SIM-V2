@@ -146,6 +146,8 @@ class Player(Base):
     injury_status = Column(String, default=InjuryStatus.ACTIVE)
     injury_type = Column(String, nullable=True) # e.g. "ACL Tear", "Sprained Ankle"
     weeks_to_recovery = Column(Integer, default=0)
+    injury_severity = Column(Integer, default=0) # 1-10 scale
+    injury_recurrence_risk = Column(Float, default=0.0)
 
     # Nano Banana
     image_url = Column(String, nullable=True)

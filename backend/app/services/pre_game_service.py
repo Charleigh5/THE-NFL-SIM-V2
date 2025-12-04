@@ -6,6 +6,7 @@ from app.models.game import Game
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.match_context import MatchContext
 from app.services.enhanced_chemistry_service import EnhancedChemistryService
+from app.services.trait_service import TraitService, TRAIT_CATALOG
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,7 +14,8 @@ logger = logging.getLogger(__name__)
 class PreGameService:
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.enhanced_chemistry = EnhancedChemistryService(db) # Added initialization
+        self.enhanced_chemistry = EnhancedChemistryService(db)
+        self.trait_service = TraitService(db)  # NEW: Trait service
 
     async def apply_chemistry_boosts(self, match_context: MatchContext):
         """
@@ -36,6 +38,83 @@ class PreGameService:
                 f"Away OL Chemistry Active: {away_chem.chemistry_level:.2f} "
                 f"({away_chem.consecutive_games} games)"
             )
+
+    async def apply_trait_effects(self, match_context: MatchContext):
+        """
+        Load and apply all player traits before game starts.
+        Handles both individual and team-wide trait effects.
+        """
+        await self._apply_team_traits(match_context.home_team_id, match_context.home_roster)
+        await self._apply_team_traits(match_context.away_team_id, match_context.away_roster)
+
+    async def _apply_team_traits(self, team_id: int, roster: dict[int, Player]):
+        """Apply traits for a single team"""
+        field_general_active = False
+        green_dot_active = False
+
+        # Load traits for all players
+        for player_id, player in roster.items():
+            # Get player's traits
+            trait_defs = await self.trait_service.get_player_traits(player_id)
+
+            if not trait_defs:
+                continue
+
+            # Initialize trait storage on player
+            if not hasattr(player, "active_traits"):
+                player.active_traits = []
+            if not hasattr(player, "trait_effects"):
+                player.trait_effects = {}
+
+            # Apply each trait
+            for trait_def in trait_defs:
+                player.active_traits.append(trait_def.name)
+
+                # Check if trait is active (simplified - assume ON_FIELD traits are active)
+                if "ON_FIELD" in trait_def.activation_triggers:
+                    # Apply individual effects
+                    for effect_key, effect_value in trait_def.effects.items():
+                        player.trait_effects[effect_key] = effect_value
+
+                    # Track team-wide traits
+                    if trait_def.name == "Field General" and player.position == "QB":
+                        field_general_active = True
+                        logger.info(f"Field General active for Team {team_id}: {player.first_name} {player.last_name}")
+
+                    if trait_def.name == "Green Dot (Defensive Captain)" and player.position == "LB":
+                        green_dot_active = True
+                        logger.info(f"Green Dot active for Team {team_id}: {player.first_name} {player.last_name}")
+
+        # Apply team-wide boosts
+        if field_general_active:
+            self._apply_field_general_boost(roster, offense=True)
+
+        if green_dot_active:
+            self._apply_green_dot_boost(roster)
+
+    def _apply_field_general_boost(self, roster: dict[int, Player], offense: bool = True):
+        """Apply Field General team-wide awareness boost to offensive players"""
+        for player in roster.values():
+            # Apply to offensive positions
+            if player.position in ["QB", "RB", "WR", "TE", "LT", "LG", "C", "RG", "RT"]:
+                if not hasattr(player, "active_modifiers"):
+                    player.active_modifiers = {}
+
+                # +5 awareness to all offensive players
+                player.active_modifiers["awareness"] = player.active_modifiers.get("awareness", 0) + 5
+                logger.debug(f"Field General boost applied to {player.last_name} ({player.position})")
+
+    def _apply_green_dot_boost(self, roster: dict[int, Player]):
+        """Apply Green Dot team-wide boost to defensive players"""
+        for player in roster.values():
+            # Apply to defensive positions
+            if player.position in ["DE", "DT", "LB", "CB", "S"]:
+                if not hasattr(player, "active_modifiers"):
+                    player.active_modifiers = {}
+
+                # +5 play recognition to all defenders
+                player.active_modifiers["play_recognition"] = player.active_modifiers.get("play_recognition", 0) + 5
+                logger.debug(f"Green Dot boost applied to {player.last_name} ({player.position})")
 
     async def _check_and_apply_team_chemistry(self, team_id: int, roster: dict[int, Player]):
         # 1. Identify current starters

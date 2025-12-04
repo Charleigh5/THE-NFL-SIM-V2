@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Reorder } from "framer-motion";
 import { api } from "../services/api";
-import type { Player } from "../services/api";
+import type { Player, ChemistryMetadata } from "../services/api";
+import { ChemistryBadge } from "../components/ui/ChemistryBadge";
 
 export const DepthChart = () => {
   const [roster, setRoster] = useState<Player[]>([]);
@@ -9,6 +10,7 @@ export const DepthChart = () => {
   const [positionPlayers, setPositionPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
 
   useEffect(() => {
     loadRoster();
@@ -28,6 +30,13 @@ export const DepthChart = () => {
     try {
       const data = await api.getTeamRoster(1); // Hardcoded team 1 for demo
       setRoster(data);
+
+      try {
+        const chemData = await api.getTeamChemistry(1);
+        setChemistry(chemData);
+      } catch (e) {
+        console.error("Failed to load chemistry", e);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -123,6 +132,20 @@ export const DepthChart = () => {
                 {saving ? "Saving..." : "Save Changes"}
               </button>
             </div>
+
+            {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) && chemistry && (
+              <div className="mb-6 flex items-center gap-4 bg-white/5 p-4 rounded-lg border border-white/10">
+                <div className="text-gray-300 text-sm font-bold uppercase tracking-wider">
+                  Unit Chemistry:
+                </div>
+                <ChemistryBadge
+                  level={chemistry.chemistry_level}
+                  consecutiveGames={chemistry.consecutive_games}
+                  status={chemistry.status}
+                  bonuses={chemistry.bonuses}
+                />
+              </div>
+            )}
 
             <Reorder.Group
               axis="y"

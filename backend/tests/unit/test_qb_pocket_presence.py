@@ -4,6 +4,7 @@ from app.orchestrator.play_resolver import PlayResolver
 from app.orchestrator.play_commands import PassPlayCommand
 from app.models.player import Player, Position
 from app.engine.blocking import BlockingResult
+from app.core.random_utils import DeterministicRNG
 
 
 class TestQBPocketPresence:
@@ -12,7 +13,7 @@ class TestQBPocketPresence:
     def create_mock_player(self, position: str, **attributes):
         """Helper to create a mock player with attributes"""
         player = MagicMock(spec=Player)
-        player.id = f"{position}_test"
+        player.id = hash(f"{position}_test") % 100000  # Generate integer ID
         player.position = position
         player.last_name = f"{position}Player"
 
@@ -33,7 +34,8 @@ class TestQBPocketPresence:
 
     def test_pocket_presence_reduces_sack_probability(self):
         """QB with high pocket presence should avoid more sacks"""
-        resolver = PlayResolver()
+        rng = DeterministicRNG("test_seed")
+        resolver = PlayResolver(rng)
 
         # Create QB with high pocket presence
         elite_qb = self.create_mock_player('QB', pocket_presence=90)
@@ -73,19 +75,27 @@ class TestQBPocketPresence:
                 reduction_factor = pocket_presence_90 / 200.0  # 0.45
                 expected_sack_chance = base_sack_chance * (1 - reduction_factor)  # 0.20 * 0.55 = 0.11 (11%)
 
-                # Mock to return True 11% of the time (adjusted sack rate)
-                def mock_outcome(probability):
-                    # This is the adjusted sack chance passed to resolve_outcome
-                    assert abs(probability - expected_sack_chance) < 0.01, \
-                        f"Expected sack chance {expected_sack_chance}, got {probability}"
-                    return False  # No sack for testing purpose
+                # Track which call we're on
+                call_count = [0]
+
+                # Mock to validate the FIRST call (sack check) and pass through others
+                def mock_outcome(rng, probability):
+                    call_count[0] += 1
+                    if call_count[0] == 1:
+                        # This is the sack check - validate it
+                        assert abs(probability - expected_sack_chance) < 0.01, \
+                            f"Expected sack chance {expected_sack_chance}, got {probability}"
+                        return False  # No sack
+                    else:
+                        # This is the completion check - return True for completion
+                        return True
 
                 mock_resolve.side_effect = mock_outcome
 
                 result = resolver._resolve_pass_play(command)
 
-                # Verify the correct adjusted sack chance was calculated
-                mock_resolve.assert_called_once()
+                # Verify the sack check was called
+                assert call_count[0] >= 1, "resolve_outcome should have been called at least once"
 
     def test_pocket_presence_scaling(self):
         """Test sack reduction scales correctly with pocket presence"""
@@ -97,7 +107,8 @@ class TestQBPocketPresence:
         ]
 
         for pocket_presence, expected_sack_chance, description in test_cases:
-            resolver = PlayResolver()
+            rng = DeterministicRNG(f"test_seed_{pocket_presence}")
+            resolver = PlayResolver(rng)
 
             qb = self.create_mock_player('QB', pocket_presence=pocket_presence)
             offense = [qb, self.create_mock_player('WR')]
@@ -113,17 +124,24 @@ class TestQBPocketPresence:
                 )
 
                 with patch('app.orchestrator.play_resolver.ProbabilityEngine.resolve_outcome') as mock_resolve:
-                    def verify_sack_chance(probability):
-                        assert abs(probability - expected_sack_chance) < 0.01, \
-                            f"{description}: Expected {expected_sack_chance}, got {probability}"
-                        return False
+                    call_count = [0]
+
+                    def verify_sack_chance(rng, probability):
+                        call_count[0] += 1
+                        if call_count[0] == 1:
+                            assert abs(probability - expected_sack_chance) < 0.01, \
+                                f"{description}: Expected {expected_sack_chance}, got {probability}"
+                            return False  # No sack
+                        return True  # Pass completion
 
                     mock_resolve.side_effect = verify_sack_chance
                     resolver._resolve_pass_play(command)
+                    assert call_count[0] >= 1
 
     def test_multiple_losses_with_pocket_presence(self):
         """Test pocket presence with multiple OL losses"""
-        resolver = PlayResolver()
+        rng = DeterministicRNG("test_seed_multiple")
+        resolver = PlayResolver(rng)
 
         qb = self.create_mock_player('QB', pocket_presence=80)
         offense = [qb, self.create_mock_player('WR')]
@@ -144,16 +162,23 @@ class TestQBPocketPresence:
                 reduction_factor = 80 / 200.0  # 0.40
                 expected_sack_chance = base_sack_chance * (1 - reduction_factor)  # 0.40 * 0.60 = 0.24 (24%)
 
-                def verify_sack_chance(probability):
-                    assert abs(probability - expected_sack_chance) < 0.01
-                    return False
+                call_count = [0]
+
+                def verify_sack_chance(rng, probability):
+                    call_count[0] += 1
+                    if call_count[0] == 1:
+                        assert abs(probability - expected_sack_chance) < 0.01
+                        return False  # No sack
+                    return True  # Pass completion
 
                 mock_resolve.side_effect = verify_sack_chance
                 resolver._resolve_pass_play(command)
+                assert call_count[0] >= 1
 
     def test_pocket_presence_no_effect_on_pancake(self):
         """Pancake blocks should still result in automatic sack regardless of pocket presence"""
-        resolver = PlayResolver()
+        rng = DeterministicRNG("test_seed_pancake")
+        resolver = PlayResolver(rng)
 
         qb = self.create_mock_player('QB', pocket_presence=100)  # Max pocket presence
         offense = [qb, self.create_mock_player('WR')]

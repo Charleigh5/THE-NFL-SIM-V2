@@ -192,11 +192,17 @@
 
 .game-card-compact {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 0.5rem;
   background-color: #333;
   border-radius: 4px;
+}
+
+.game-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .team-row {
@@ -274,4 +280,20 @@
   font-size: 0.8rem;
   color: #00aaff;
   margin: 0.2rem 0 0 0;
+}
+
+.game-weather-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  justify-content: center;
+}
+
+.game-weather-compact span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }

@@ -55,6 +55,23 @@ export interface PlayerStats {
   receiving_tds: number;
 }
 
+export interface ChemistryMetadata {
+  chemistry_level: number;
+  consecutive_games: number;
+  status: string;
+  bonuses: {
+    pass_block: number;
+    run_block: number;
+    awareness: number;
+  };
+  advanced_effects: {
+    stunt_pickup_bonus: number;
+    penalty_reduction: number;
+    communication_boost: number;
+    blitz_pickup_improvement: number;
+  };
+}
+
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -108,6 +125,11 @@ export const api = {
 
   getPlayerStats: async (playerId: number): Promise<PlayerStats> => {
     const response = await apiClient.get<PlayerStats>(`/api/players/${playerId}/stats`);
+    return response.data;
+  },
+
+  getTeamChemistry: async (teamId: number): Promise<ChemistryMetadata> => {
+    const response = await apiClient.get(`/api/teams/${teamId}/chemistry`);
     return response.data;
   },
 };

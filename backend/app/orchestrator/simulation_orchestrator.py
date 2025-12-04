@@ -101,7 +101,10 @@ class SimulationOrchestrator:
                 # 1. Apply Unit Chemistry Boosts
                 await pre_game_service.apply_chemistry_boosts(self.match_context)
 
-                # 2. Record Starters (for future chemistry)
+                # 2. Apply Player Trait Effects (NEW)
+                await pre_game_service.apply_trait_effects(self.match_context)
+
+                # 3. Record Starters (for future chemistry)
                 await pre_game_service.record_starters(new_game.id, home_team_id, away_team_id)
 
                 logger.info("Pre-game services executed", extra={"game_id": new_game.id})

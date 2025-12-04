@@ -16,6 +16,11 @@ class TeamBase(BaseModel):
     established_year: Optional[int] = None
     stadium_id: Optional[int] = None
 
+    # Medical & Staff
+    medical_rating: int = 50
+    training_staff_quality: int = 50
+    medical_budget: float = 10.0
+
 class TeamCreate(TeamBase):
     pass
 

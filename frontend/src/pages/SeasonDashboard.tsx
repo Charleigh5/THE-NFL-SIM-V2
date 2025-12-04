@@ -269,7 +269,11 @@ const SeasonDashboard: React.FC = () => {
         <div className="no-season-state" data-testid="no-season-state">
           <h2>No Active Season</h2>
           <p>Start a new franchise mode season to begin your journey to the Super Bowl.</p>
-          <button className="action-button" onClick={handleInitializeSeason} data-testid="initialize-season-button">
+          <button
+            className="action-button"
+            onClick={handleInitializeSeason}
+            data-testid="initialize-season-button"
+          >
             Initialize New Season
           </button>
         </div>
@@ -379,15 +383,37 @@ const SeasonDashboard: React.FC = () => {
                   .filter((g) => !g.is_played)
                   .slice(0, 5)
                   .map((game) => (
-                    <div key={game.id} className="game-card-compact" data-testid={`upcoming-game-${game.id}`}>
-                      <div className="team-row">
-                        <span className="team-name">{game.away_team?.name}</span>
-                        <span className="team-record">vs</span>
-                        <span className="team-name">{game.home_team?.name}</span>
+                    <div
+                      key={game.id}
+                      className="game-card-compact"
+                      data-testid={`upcoming-game-${game.id}`}
+                    >
+                      <div className="game-info-row">
+                        <div className="team-row">
+                          <span className="team-name">{game.away_team?.name}</span>
+                          <span className="team-record">vs</span>
+                          <span className="team-name">{game.home_team?.name}</span>
+                        </div>
+                        <div className="game-date">
+                          {new Date(game.scheduled_date).toLocaleDateString()}
+                        </div>
                       </div>
-                      <div className="game-date">
-                        {new Date(game.scheduled_date).toLocaleDateString()}
-                      </div>
+                      {game.weather_info && (
+                        <div className="game-weather-compact">
+                          <span
+                            title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
+                          >
+                            {Math.round(game.weather_info.temperature)}°{" "}
+                            {game.weather_info.precipitation_type?.includes("Rain")
+                              ? "🌧️"
+                              : game.weather_info.precipitation_type?.includes("Snow")
+                                ? "❄️"
+                                : game.weather_info.precipitation_type?.includes("Cloud")
+                                  ? "☁️"
+                                  : "☀️"}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 {games.filter((g) => !g.is_played).length === 0 && (
@@ -403,16 +429,38 @@ const SeasonDashboard: React.FC = () => {
                   .filter((g) => g.is_played)
                   .slice(0, 5)
                   .map((game) => (
-                    <div key={game.id} className="game-card-compact" data-testid={`recent-game-${game.id}`}>
-                      <div className="team-row">
-                        <span className="team-name">{game.away_team?.name}</span>
-                        <span className="score">{game.away_score}</span>
+                    <div
+                      key={game.id}
+                      className="game-card-compact"
+                      data-testid={`recent-game-${game.id}`}
+                    >
+                      <div className="game-info-row">
+                        <div className="team-row">
+                          <span className="team-name">{game.away_team?.name}</span>
+                          <span className="score">{game.away_score}</span>
+                        </div>
+                        <span className="vs">@</span>
+                        <div className="team-row">
+                          <span className="score">{game.home_score}</span>
+                          <span className="team-name">{game.home_team?.name}</span>
+                        </div>
                       </div>
-                      <span className="vs">@</span>
-                      <div className="team-row">
-                        <span className="score">{game.home_score}</span>
-                        <span className="team-name">{game.home_team?.name}</span>
-                      </div>
+                      {game.weather_info && (
+                        <div className="game-weather-compact">
+                          <span
+                            title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
+                          >
+                            {Math.round(game.weather_info.temperature)}°{" "}
+                            {game.weather_info.precipitation_type?.includes("Rain")
+                              ? "🌧️"
+                              : game.weather_info.precipitation_type?.includes("Snow")
+                                ? "❄️"
+                                : game.weather_info.precipitation_type?.includes("Cloud")
+                                  ? "☁️"
+                                  : "☀️"}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 {games.filter((g) => g.is_played).length === 0 && (

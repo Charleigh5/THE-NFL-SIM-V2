@@ -10,7 +10,7 @@ import { WeatherWidget } from "../components/game/WeatherWidget";
 import { Play, Pause, FastForward } from "lucide-react";
 
 export const LiveSim = () => {
-  const { isLive, setLiveStatus } = useSimulationStore();
+  const { isLive, setLiveStatus, engineData } = useSimulationStore();
   const [isLoading, setIsLoading] = useState(false);
 
   // Connect to WebSocket
@@ -65,9 +65,33 @@ export const LiveSim = () => {
             {/* Weather Overlay */}
             <div className="absolute top-4 right-4 z-10">
               <WeatherWidget
-                temperature={35}
-                condition="Snow"
-                windSpeed={12}
+                weather={{
+                  temperature:
+                    typeof engineData.hive.weather === "object" &&
+                    engineData.hive.weather !== null &&
+                    "temperature_f" in engineData.hive.weather
+                      ? (engineData.hive.weather.temperature_f as number)
+                      : 70,
+                  wind_speed:
+                    typeof engineData.hive.weather === "object" &&
+                    engineData.hive.weather !== null &&
+                    "wind_speed_mph" in engineData.hive.weather
+                      ? (engineData.hive.weather.wind_speed_mph as number)
+                      : 0,
+                  precipitation_type:
+                    typeof engineData.hive.weather === "object" &&
+                    engineData.hive.weather !== null &&
+                    "forecast" in engineData.hive.weather
+                      ? (engineData.hive.weather.forecast as string)
+                      : "Clear",
+                  precipitation_intensity:
+                    typeof engineData.hive.weather === "object" &&
+                    engineData.hive.weather !== null &&
+                    "precipitation_intensity" in engineData.hive.weather
+                      ? (engineData.hive.weather.precipitation_intensity as number)
+                      : 0,
+                  field_condition: "Dry", // TODO: Map from field state
+                }}
                 location="Lambeau Field"
               />
             </div>

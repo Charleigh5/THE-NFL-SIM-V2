@@ -5241,3 +5241,43 @@ FROM team) AS anon_1]
 {"time":"2025-12-02 01:02:41,408","name":"app.core.error_decorators","level":"WARNING","message":"Value error in suggest_draft_pick: Team 9999 not found"}
 {"time":"2025-12-02 01:02:41,409","name":"api.access","level":"INFO","message":"Request completed"}
 {"time":"2025-12-02 01:02:41,412","name":"httpx","level":"INFO","message":"HTTP Request: POST http://test/api/season/draft/suggest-pick "HTTP/1.1 400 Bad Request""}
+{"time":"2025-12-03 23:45:30,600","name":"app.services.enhanced_chemistry_service","level":"INFO","message":"Applying OL Chemistry to Team 1"}
+{"time":"2025-12-03 23:45:30,601","name":"app.services.pre_game_service","level":"INFO","message":"Home OL Chemistry Active: 0.60 (5 games)"}
+{"time":"2025-12-03 23:46:12,725","name":"app.services.enhanced_chemistry_service","level":"INFO","message":"Applying OL Chemistry to Team 1"}
+{"time":"2025-12-03 23:46:12,726","name":"app.services.pre_game_service","level":"INFO","message":"Home OL Chemistry Active: 0.60 (5 games)"}
+{"time":"2025-12-04 00:48:50,722","name":"app.services.pre_game_service","level":"INFO","message":"Field General active for Team 1: Tom Brady"}
+{"time":"2025-12-04 00:48:50,904","name":"app.services.pre_game_service","level":"INFO","message":"Green Dot active for Team 1: Ray Lewis"}
+{"time":"2025-12-04 02:20:29,328","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,345","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,359","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,376","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,392","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,408","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,425","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,444","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,460","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,477","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,492","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,509","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,524","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,569","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,604","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,636","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,653","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,670","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,696","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,714","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,730","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,748","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,764","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,779","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,798","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,818","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,857","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,894","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,928","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,929","name":"app.engine.attribute_interaction","level":"WARNING","message":"Unknown interaction: fake_interaction_name"}
+{"time":"2025-12-04 02:20:29,951","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,968","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:29,984","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-04 02:20:30,001","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}

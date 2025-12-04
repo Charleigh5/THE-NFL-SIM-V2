@@ -29,6 +29,11 @@ class Team(Base):
     salary_cap_space = Column(Float, default=0.0)
     fan_support = Column(Integer, default=50)
 
+    # Medical & Staff
+    medical_rating = Column(Integer, default=50) # 0-100, affects recovery speed
+    training_staff_quality = Column(Integer, default=50) # 0-100, affects injury prevention
+    medical_budget = Column(Float, default=10.0) # In millions, affects ratings dynamically
+
     # Nano Banana
     logo_url = Column(String, nullable=True)
     primary_color = Column(String, default="#000000")

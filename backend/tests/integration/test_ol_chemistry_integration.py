@@ -43,15 +43,24 @@ async def setup_teams(test_db):
     test_db.add(team2)
 
     # Create OL players for team 1
-    ol_positions = ["LT", "LG", "C", "RG", "RT"]
+    # Map specific slots to generic positions and ranks
+    ol_setup = [
+        ("LT", "OT", 1),
+        ("LG", "OG", 1),
+        ("C", "C", 1),
+        ("RG", "OG", 2),
+        ("RT", "OT", 2)
+    ]
+
     ol_players = []
 
-    for i, pos in enumerate(ol_positions):
+    for i, (slot, generic_pos, rank) in enumerate(ol_setup):
         player = Player(
             id=i + 1,
             first_name=f"Player",
-            last_name=f"{pos}",
-            position=pos,
+            last_name=f"{slot}",
+            position=generic_pos,
+            depth_chart_rank=rank,
             team_id=1,
             overall_rating=75,
             pass_block=70,
@@ -128,7 +137,7 @@ async def test_ol_chemistry_bonus_after_5_games(test_db, setup_teams):
     match_context = MatchContext(
         home_team_id=1,
         away_team_id=2,
-        db_session=test_db
+        db=test_db
     )
 
     # Load rosters
@@ -150,13 +159,13 @@ async def test_ol_chemistry_bonus_after_5_games(test_db, setup_teams):
         assert 'run_block' in player.active_modifiers, "Should have run_block modifier"
         assert 'awareness' in player.active_modifiers, "Should have awareness modifier"
 
-        # Verify bonus values (+5 for 5 games)
-        assert player.active_modifiers['pass_block'] == 5, f"Expected +5 pass_block, got {player.active_modifiers['pass_block']}"
-        assert player.active_modifiers['run_block'] == 5, f"Expected +5 run_block, got {player.active_modifiers['run_block']}"
-        assert player.active_modifiers['awareness'] == 5, f"Expected +5 awareness, got {player.active_modifiers['awareness']}"
+        # Verify bonus values (Scaled: 0.6 * 5.0 = 3.0 for 5 games)
+        assert player.active_modifiers['pass_block'] == 3.0, f"Expected +3.0 pass_block, got {player.active_modifiers['pass_block']}"
+        assert player.active_modifiers['run_block'] == 3.0, f"Expected +3.0 run_block, got {player.active_modifiers['run_block']}"
+        assert player.active_modifiers['awareness'] == 3.0, f"Expected +3.0 awareness, got {player.active_modifiers['awareness']}"
 
     print("\n✅ OL Chemistry Test PASSED")
-    print(f"   All 5 OL players received +5 blocking bonus after 5 consecutive starts")
+    print(f"   All 5 OL players received +3.0 blocking bonus after 5 consecutive starts")
 
 
 @pytest.mark.asyncio
@@ -179,7 +188,7 @@ async def test_chemistry_resets_when_lineup_changes(test_db, setup_teams):
     match_context = MatchContext(
         home_team_id=1,
         away_team_id=2,
-        db_session=test_db
+        db=test_db
     )
     await match_context.load_rosters()
 
@@ -212,7 +221,7 @@ async def test_no_chemistry_with_less_than_5_games(test_db, setup_teams):
     match_context = MatchContext(
         home_team_id=1,
         away_team_id=2,
-        db_session=test_db
+        db=test_db
     )
     await match_context.load_rosters()
 

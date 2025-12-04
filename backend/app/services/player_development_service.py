@@ -7,6 +7,7 @@ from app.models.coach import Coach
 import random
 from typing import List, Dict
 from app.core.random_utils import DeterministicRNG
+from app.rpg.injury_system import InjurySystem
 
 class TrainingFocus(str):
     GENERAL = "GENERAL"
@@ -18,6 +19,7 @@ class PlayerDevelopmentService:
     def __init__(self, db: AsyncSession, seed: int = None):
         self.db = db
         self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
+        self.injury_system = InjurySystem(seed=seed)
 
     async def process_weekly_development(self, season_id: int, week: int):
         """
@@ -35,8 +37,26 @@ class PlayerDevelopmentService:
             self._apply_team_training(team)
             self._process_team_injuries(team)
             self._update_team_morale(team)
+            self._process_financials(team)
 
         await self.db.commit()
+
+    def _process_financials(self, team: Team):
+        """
+        Update team ratings based on budget allocations.
+        Simplified model: Budget (M) * 5 = Rating (capped at 99).
+        """
+        # Medical Budget affects Medical Rating and Training Staff Quality
+        # We assume the budget is split or applies to the department as a whole
+        # Base rating from budget
+        budget_impact = int(team.medical_budget * 5)
+
+        # Add some variance or "staff skill" factor?
+        # For now, direct correlation.
+        new_rating = min(99, max(1, budget_impact))
+
+        team.medical_rating = new_rating
+        team.training_staff_quality = new_rating
 
     def _apply_team_training(self, team: Team):
         """Apply weekly training XP to all players on the team."""
@@ -124,14 +144,7 @@ class PlayerDevelopmentService:
     def _process_team_injuries(self, team: Team):
         """Update recovery time for injured players."""
         for player in team.players:
-            if player.injury_status != InjuryStatus.ACTIVE:
-                if player.weeks_to_recovery > 0:
-                    player.weeks_to_recovery -= 1
-
-                if player.weeks_to_recovery <= 0:
-                    player.injury_status = InjuryStatus.ACTIVE
-                    player.injury_type = None
-                    # Reset injury? Or keep history?
+            self.injury_system.process_recovery_step(player, medical_rating=team.medical_rating)
 
     def _update_team_morale(self, team: Team):
         """Update morale based on team performance and playing time."""
@@ -162,18 +175,14 @@ class PlayerDevelopmentService:
         Called when an injury event occurs (e.g. during game simulation).
         severity_roll: 0-100 scale of impact.
         """
-        if severity_roll < 50:
-            # Minor
-            player.injury_type = "Minor Sprain"
-            player.weeks_to_recovery = self.rng.randint(1, 2)
-            player.injury_status = InjuryStatus.QUESTIONABLE
-        elif severity_roll < 80:
-            # Moderate
-            player.injury_type = "Muscle Tear"
-            player.weeks_to_recovery = self.rng.randint(3, 6)
-            player.injury_status = InjuryStatus.OUT
-        else:
-            # Severe
-            player.injury_type = "Major Fracture"
-            player.weeks_to_recovery = self.rng.randint(8, 52)
-            player.injury_status = InjuryStatus.IR
+        medical_rating = 50
+        if player.team:
+            medical_rating = player.team.medical_rating
+
+        self.injury_system.apply_injury(player, severity_roll, medical_rating=medical_rating)
+
+    def get_injury_risk_multiplier(self, team: Team) -> float:
+        """
+        Get the injury risk multiplier based on the team's training staff quality.
+        """
+        return self.injury_system.calculate_injury_risk_multiplier(team.training_staff_quality)

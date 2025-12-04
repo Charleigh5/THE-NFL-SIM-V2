@@ -5,7 +5,12 @@ from app.engine.probability_engine import ProbabilityEngine, OutcomeType
 from app.engine.blocking import BlockingEngine, BlockingResult
 from app.engine.event_bus import EventBus, EventType
 from app.engine.offensive_line_ai import OffensiveLineAI
+from app.engine.weather_effects import WeatherEffects
+from app.models.weather import GameWeather
 from typing import Optional, Any, List, Tuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PlayResolver:
     """
@@ -78,6 +83,20 @@ class PlayResolver:
         if self.current_match_context and self.current_match_context.weather_config:
             return self.current_match_context.weather_config.get("temperature", 75.0)
         return 75.0
+
+    def _get_weather_effects(self) -> Optional[WeatherEffects]:
+        if not self.current_match_context or not self.current_match_context.weather_config:
+            return None
+
+        config = self.current_match_context.weather_config
+        weather = GameWeather(
+            temperature=config.get("temperature", 75.0),
+            wind_speed=config.get("wind_speed", 0.0),
+            precipitation_type=config.get("precipitation_type", "None"),
+            field_condition=config.get("field_condition", "Dry"),
+            humidity=config.get("humidity", 0.0)
+        )
+        return WeatherEffects(weather)
 
     def _resolve_line_battle(self, offense: List[Any], defense: List[Any]) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
         """
@@ -240,9 +259,23 @@ class PlayResolver:
         )
 
         # C. Weather Impact
-        weather_penalty = 0
-        if temp < 32: weather_penalty = 0.05
-        elif temp > 90: weather_penalty = 0.02
+        weather_effects = self._get_weather_effects()
+        weather_penalty = 0.0
+
+        if weather_effects:
+            acc_mod, dist_mod = weather_effects.get_passing_modifiers()
+            # Apply accuracy modifier to base probability
+            # e.g. 0.9 multiplier means 10% reduction in success chance
+            # We'll apply it as a penalty to the context modifiers
+            # If base is 0.5, 0.5 * 0.9 = 0.45. Diff is 0.05.
+            # But here we are adding to context_modifiers.
+            # Let's just adjust base_prob directly below.
+            base_prob = (throw_accuracy / 100.0) * acc_mod
+        else:
+             # Fallback legacy logic
+             if temp < 32: weather_penalty = 0.05
+             elif temp > 90: weather_penalty = 0.02
+             base_prob = throw_accuracy / 100.0
 
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 0.10
@@ -258,14 +291,24 @@ class PlayResolver:
 
         # F. Final Probability Calculation
         # Normalize throw accuracy (0-100) to 0.0-1.0 base probability
-        base_prob = throw_accuracy / 100.0
+        # base_prob is already calculated above with weather modifiers
 
         # Modifiers are already in float format (-0.2 to 0.2)
         attr_modifiers = speed_diff + matchup_factor
 
+        # TRAIT EFFECT: Possession Receiver (WR/TE)
+        # Bonus for contested catches (when defensive coverage is strong)
+        trait_bonus = 0.0
+        if hasattr(target, "trait_effects") and "contested_catch_bonus" in target.trait_effects:
+            # Contested situation: defender is close (low speed diff or strong coverage)
+            if speed_diff < 0.05 or matchup_factor < 0:
+                contested_catch_bonus = target.trait_effects["contested_catch_bonus"]  # +15
+                trait_bonus = contested_catch_bonus / 100.0  # Convert to 0.0-1.0
+                logger.debug(f"Possession Receiver bonus: +{contested_catch_bonus} for {target.last_name}")
+
         success_chance = ProbabilityEngine.calculate_success_chance(
             base_probability=base_prob,
-            attribute_modifiers=attr_modifiers,
+            attribute_modifiers=attr_modifiers + trait_bonus,
             context_modifiers=-weather_penalty - pressure_penalty,
             fatigue_penalty=fatigue_penalty
         )
@@ -308,10 +351,20 @@ class PlayResolver:
             # 4. Empire Kernel: XP Awards
             xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
 
+            # Weather narrative
+            weather_note = ""
+            if weather_effects:
+                if weather_effects.weather.precipitation_type == "Snow":
+                    weather_note = " through the falling snow"
+                elif weather_effects.weather.precipitation_type == "Rain":
+                    weather_note = " in the rain"
+                elif weather_effects.weather.wind_speed > 15:
+                    weather_note = " fighting the wind"
+
             return PlayResult(
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,
-                description=f"Pass complete to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)",
+                description=f"Pass complete{weather_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)",
                 headline=f"Big play! {qb.last_name} connects with {target.last_name}!" if yards_gained > 20 else None,
                 is_highlight_worthy=is_touchdown or yards_gained > 20,
                 injuries=injuries,
@@ -425,6 +478,12 @@ class PlayResolver:
         hit_power = getattr(defender, "hit_power", None) or 50
         if hit_power > 85: fumble_chance += 0.01
         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
+
+        # Weather Fumble Modifier
+        weather_effects = self._get_weather_effects()
+        if weather_effects:
+            fumble_mod = weather_effects.get_fumble_probability_modifier()
+            fumble_chance *= fumble_mod
 
         # Use resolve_outcome for simple binary check
         is_fumble = ProbabilityEngine.resolve_outcome(self.rng, fumble_chance)
