@@ -199,10 +199,6 @@ jobs:
     needs: [backend-tests, frontend-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -213,8 +209,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
+          username: cweir45
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push backend image
         uses: docker/build-push-action@v5
@@ -223,10 +219,10 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKER_USERNAME }}/nfl-sim-backend:latest
-            ${{ env.DOCKER_USERNAME }}/nfl-sim-backend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ env.DOCKER_USERNAME }}/nfl-sim-backend:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_USERNAME }}/nfl-sim-backend:buildcache,mode=max
+            cweir45/nfl-sim-backend:latest
+            cweir45/nfl-sim-backend:${{ github.sha }}
+          cache-from: type=registry,ref=cweir45/nfl-sim-backend:buildcache
+          cache-to: type=registry,ref=cweir45/nfl-sim-backend:buildcache,mode=max
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
@@ -235,10 +231,10 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKER_USERNAME }}/nfl-sim-frontend:latest
-            ${{ env.DOCKER_USERNAME }}/nfl-sim-frontend:${{ github.sha }}
-          cache-from: type=registry,ref=${{ env.DOCKER_USERNAME }}/nfl-sim-frontend:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_USERNAME }}/nfl-sim-frontend:buildcache,mode=max
+            cweir45/nfl-sim-frontend:latest
+            cweir45/nfl-sim-frontend:${{ github.sha }}
+          cache-from: type=registry,ref=cweir45/nfl-sim-frontend:buildcache
+          cache-to: type=registry,ref=cweir45/nfl-sim-frontend:buildcache,mode=max
 
   # Deployment (placeholder - customize for your deployment target)
   deploy:
