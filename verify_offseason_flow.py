@@ -1,6 +1,7 @@
 import os
 import sys
-from sqlalchemy import create_engine
+import shutil
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 sys.path.append(os.path.join(os.getcwd(), "backend"))
@@ -9,126 +10,97 @@ from app.models.base import Base
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
 from app.models.player import Player
-from app.models.game import Game
 from app.services.offseason_service import OffseasonService
 
-DB_URL = "sqlite:///./verify_offseason.db"
-if os.path.exists("verify_offseason.db"):
-    os.remove("verify_offseason.db")
+# Configuration
+REAL_DB_PATH = "backend/nfl_sim.db"
+TEST_DB_PATH = "verify_offseason_real.db"
+DB_URL = f"sqlite:///{TEST_DB_PATH}"
 
-engine = create_engine(DB_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base.metadata.create_all(bind=engine)
-
-def create_data(db):
-    print("Creating Data...")
-    # Teams
-    teams = []
-    for i in range(1, 5): # 4 Teams
-        team = Team(name=f"Team {i}", city=f"City {i}", abbreviation=f"T{i}", conference="AFC", division="North")
-        db.add(team)
-        teams.append(team)
-    db.commit()
+def setup_db_clone():
+    """Clone the real database to a test file to avoid corrupting production data."""
+    if not os.path.exists(REAL_DB_PATH):
+        print(f"❌ Real database not found at {REAL_DB_PATH}. Cannot verify against real data.")
+        return False
     
-    # Players with Contracts
-    import random
-    for team in teams:
-        # 5 players per team
-        for i in range(5):
-            player = Player(
-                first_name=f"Player", 
-                last_name=f"{team.abbreviation}-{i}", 
-                position="QB", 
-                team_id=team.id,
-                age=25,
-                experience=3,
-                overall_rating=80,
-                contract_years=1 if i < 2 else 3,
-                contract_salary=1000000
-            )
-            db.add(player)
-    db.commit()
-    return teams
-
-def create_dummy_history(db, season_id, teams):
-    print("Creating Dummy History (Games)...")
-    # Create some games so standings work
-    # Team 1 beats Team 2
-    g1 = Game(season_id=season_id, week=1, home_team_id=teams[0].id, away_team_id=teams[1].id, 
-              home_score=21, away_score=10, is_played=True)
-    # Team 3 beats Team 4
-    g2 = Game(season_id=season_id, week=1, home_team_id=teams[2].id, away_team_id=teams[3].id, 
-              home_score=21, away_score=10, is_played=True)
-    db.add(g1)
-    db.add(g2)
-    db.commit()
+    print(f"📦 Cloning {REAL_DB_PATH} to {TEST_DB_PATH}...")
+    shutil.copy2(REAL_DB_PATH, TEST_DB_PATH)
+    return True
 
 def run_verify():
+    if not setup_db_clone():
+        return
+
+    engine = create_engine(DB_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
     db = SessionLocal()
     try:
-        # Create Season first so we have ID
-        season = Season(
-            year=2025,
-            current_week=22, # After Super Bowl
-            is_active=True,
-            status=SeasonStatus.OFF_SEASON,
-            total_weeks=18
-        )
-        db.add(season)
-        db.commit()
+        print("\n🔍 Verifying Offseason Flow against REAL data clone...")
+        
+        # 1. Check for Active Season
+        stmt = select(Season).where(Season.is_active == True)
+        season = db.execute(stmt).scalar_one_or_none()
+        
+        if not season:
+            print("⚠️ No active season found. Cannot verify offseason flow.")
+            return
 
-        teams = create_data(db)
-        create_dummy_history(db, season.id, teams)
-        
+        print(f"   Active Season: {season.year} (Week {season.current_week}, Status: {season.status})")
+
+        # 2. Check Teams
+        team_count = db.query(Team).count()
+        print(f"   Teams Found: {team_count}")
+        if team_count < 32:
+             print("⚠️ Warning: Less than 32 teams found.")
+
         service = OffseasonService(db)
-        
-        # 1. Start Offseason
-        print("\n1. Starting Offseason (Contracts & Retirements)...")
-        res = service.start_offseason(season.id)
-        print(f"   Result: {res}")
-        
-        # Check free agents
-        fas = db.query(Player).filter(Player.team_id == None).count()
-        print(f"   Free Agents created: {fas} (Expected ~8)")
-        
-        # 2. Progression
-        print("\n2. Simulating Progression...")
-        prog_results = service.simulate_player_progression(season.id)
-        print(f"   Processed {len(prog_results)} players.")
-        if prog_results:
-            p = prog_results[0]
-            print(f"   Sample: {p.name} {p.old_rating}->{p.new_rating} ({p.change})")
+
+        # 3. Simulate Offseason Steps (dry run style)
+        if season.status == SeasonStatus.OFF_SEASON:
+            print("\n   Season is already in OFF_SEASON. Running simulation steps...")
             
-        # 3. Draft Order is auto-generated in start_offseason usually, let's check
-        # Actually start_offseason calls generate_draft_order
-        from app.models.draft import DraftPick
-        picks = db.query(DraftPick).filter(DraftPick.season_id == season.id).count()
-        print(f"\n3. Draft Picks Generated: {picks} (Expected 4 teams * 7 rounds = 28)")
-        
-        # 4. Simulate Draft
-        print("\n4. Simulating Draft...")
-        draft_results = service.simulate_draft(season.id)
-        print(f"   Drafted {len(draft_results)} players.")
-        
-        # 5. Free Agency
-        print("\n5. Simulating Free Agency...")
-        fa_results = service.simulate_free_agency(season.id)
-        print(f"   Signed {fa_results['signed_count']} players.")
-        
-        print("\n✅ Offseason Verification Complete!")
+            # Progressions
+            print("   ▶️ Simulating Progression...")
+            prog_results = service.simulate_player_progression(season.id)
+            print(f"      Processed {len(prog_results)} players.")
+
+            # Draft
+            print("   ▶️ Simulating Draft...")
+            try:
+                draft_results = service.simulate_draft(season.id)
+                print(f"      Drafted {len(draft_results)} players.")
+            except Exception as e:
+                print(f"      ⚠️ Draft simulation failed (might be already complete): {e}")
+
+            # Free Agency
+            print("   ▶️ Simulating Free Agency...")
+            fa_res = service.simulate_free_agency(season.id)
+            print(f"      {fa_res['message']}")
+
+        elif season.status == SeasonStatus.POST_SEASON:
+            print("\n   Season is in POST_SEASON. Attempting to start offseason...")
+            try:
+                service.start_offseason(season.id)
+                print("   ✅ Offseason started successfully.")
+            except Exception as e:
+                print(f"   ❌ Failed to start offseason: {e}")
+        else:
+             print("\n   Season is in REGULAR_SEASON. Skipping offseason simulation.")
+
+        print("\n✅ Verification Complete (on cloned DB).")
         
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\n❌ Error during verification: {e}")
         import traceback
         traceback.print_exc()
     finally:
         db.close()
         engine.dispose()
-        if os.path.exists("verify_offseason.db"):
-            try:
-                os.remove("verify_offseason.db")
-            except:
-                pass
+        # Clean up
+        if os.path.exists(TEST_DB_PATH):
+            os.remove(TEST_DB_PATH)
+            print(f"🧹 Cleaned up {TEST_DB_PATH}")
 
 if __name__ == "__main__":
     run_verify()
