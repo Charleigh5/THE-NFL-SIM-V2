@@ -505,8 +505,8 @@ See `implementation_plan.md` for full details.
   - [x] Create ADR template
   - [x] ADR-001: Database ORM Choice (SQLAlchemy)
   - [x] ADR-002: MCP Integration Architecture
-  - [ ] ADR-003: Trait System Design
-  - [ ] ADR-004: Attribute Interaction Model
+  - [x] ADR-003: Trait System Design
+  - [x] ADR-004: Attribute Interaction Model
   - [ ] Create 6+ additional ADRs for major decisions
 
 ### **8.5.2: Reverse-Engineer Existing Features**
