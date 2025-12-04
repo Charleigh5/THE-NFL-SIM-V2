@@ -68,7 +68,7 @@ const PlayItem = ({ play }: { play: PlayResult }) => {
           )}
         </div>
       </div>
-      
+
       <AnimatePresence>
         {expanded && hasInteractions && (
           <motion.div
