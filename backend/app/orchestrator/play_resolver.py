@@ -6,6 +6,7 @@ from app.engine.blocking import BlockingEngine, BlockingResult
 from app.engine.event_bus import EventBus, EventType
 from app.engine.offensive_line_ai import OffensiveLineAI
 from app.engine.weather_effects import WeatherEffects
+from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
 from app.models.weather import GameWeather
 from typing import Optional, Any, List, Tuple
 import logging
@@ -21,6 +22,7 @@ class PlayResolver:
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
         self.offensive_line_ai = OffensiveLineAI()
+        self.interaction_engine = AttributeInteractionEngine(rng=rng)
 
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
@@ -138,6 +140,67 @@ class PlayResolver:
 
         return results, winning_defenders, beaten_linemen
 
+    def _apply_pass_play_interactions(
+        self,
+        qb: Any,
+        target: Any,
+        defender: Any,
+        command: Any
+    ) -> dict:
+        """
+        Calculate all attribute interactions for a pass play.
+
+        Returns:
+            Dictionary with aggregate modifiers and narratives
+        """
+        context = {}
+
+        # Build game context for interactions
+        # Note: command may not have all these attributes, so we use getattr with defaults
+        if self.current_match_context:
+            context = {
+                "HOME": getattr(command, "is_home_team", False),
+                "AWAY": not getattr(command, "is_home_team", False),
+                "3RD_DOWN": getattr(command, "down", 0) == 3,
+                "RED_ZONE": getattr(command, "field_position", 50) >= 80,
+            }
+
+            # Add weather context
+            if self.current_match_context.weather_config:
+                weather = self.current_match_context.weather_config
+                precip_type = weather.get("precipitation_type") if isinstance(weather, dict) else getattr(weather, "precipitation_type", None)
+                wind_speed = weather.get("wind_speed", 0) if isinstance(weather, dict) else getattr(weather, "wind_speed", 0)
+
+                if precip_type == "Rain":
+                    context["RAIN"] = True
+                elif precip_type == "Snow":
+                    context["SNOW"] = True
+
+                if wind_speed and wind_speed > 15:
+                    context["WIND"] = True
+
+        # Define interaction matchups for this play
+        matchups = []
+
+        # 1. WR Release vs CB Press (Line of Scrimmage)
+        if target and defender:
+            matchups.append(("wr_release_vs_cb_press", target, defender))
+
+        # 2. Route Running vs Man Coverage (Post-Snap)
+        if target and defender:
+            matchups.append(("route_running_vs_man_coverage", target, defender))
+
+        # 3. Ball Tracking vs Throw Placement
+        if qb and defender:
+            matchups.append(("ball_tracking_vs_throw_placement", qb, defender))
+
+        # Apply all interactions
+        return apply_interaction_to_play(
+            self.interaction_engine,
+            context,
+            matchups
+        )
+
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
         Resolves a pass play using Kernel logic with attribute-based calculations.
@@ -238,6 +301,23 @@ class PlayResolver:
 
         # 4. Attribute-Based Core Logic via ProbabilityEngine
 
+        # ** ATTRIBUTE INTERACTIONS ** (Set 3/Set 4 Integration)
+        # Calculate cross-attribute effects
+        interaction_results = self._apply_pass_play_interactions(qb, target, defender, command)
+
+        # Safety check: ensure results are valid
+        if interaction_results is None or not isinstance(interaction_results, dict):
+            interaction_results = {
+                "total_offense_boost": 0.0,
+                "total_defense_boost": 0.0,
+                "narratives": []
+            }
+
+        interaction_modifier = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 100.0
+        interaction_narratives = interaction_results.get("narratives", [])
+
+        logger.debug(f"Interaction modifier: {interaction_modifier:.3f}, Offense boost: {interaction_results.get('total_offense_boost', 0.0):.1f}, Defense boost: {interaction_results.get('total_defense_boost', 0.0):.1f}")
+
         # A. Throw Accuracy vs Depth
         throw_accuracy = 50 # Default base
         if command.depth == "short":
@@ -294,7 +374,7 @@ class PlayResolver:
         # base_prob is already calculated above with weather modifiers
 
         # Modifiers are already in float format (-0.2 to 0.2)
-        attr_modifiers = speed_diff + matchup_factor
+        attr_modifiers = speed_diff + matchup_factor + interaction_modifier
 
         # TRAIT EFFECT: Possession Receiver (WR/TE)
         # Bonus for contested catches (when defensive coverage is strong)
@@ -361,10 +441,18 @@ class PlayResolver:
                 elif weather_effects.weather.wind_speed > 15:
                     weather_note = " fighting the wind"
 
+            # Build full description with interactions
+            base_desc = f"Pass complete{weather_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)"
+
+            # Add key interaction narrative if present
+            if interaction_narratives and len(interaction_narratives) > 0:
+                # Add the most impactful interaction narrative
+                base_desc += f" {interaction_narratives[0]}"
+
             return PlayResult(
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,
-                description=f"Pass complete{weather_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)",
+                description=base_desc,
                 headline=f"Big play! {qb.last_name} connects with {target.last_name}!" if yards_gained > 20 else None,
                 is_highlight_worthy=is_touchdown or yards_gained > 20,
                 injuries=injuries,
