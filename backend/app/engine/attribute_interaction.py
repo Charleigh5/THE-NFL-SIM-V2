@@ -787,7 +787,8 @@ def apply_interaction_to_play(
         "total_offense_boost": 0.0,
         "total_defense_boost": 0.0,
         "narratives": [],
-        "dominant_events": []
+        "dominant_events": [],
+        "all_events": []
     }
 
     for result in results:
@@ -799,6 +800,7 @@ def apply_interaction_to_play(
             aggregate["total_defense_boost"] += result.loser_penalty
 
         aggregate["narratives"].append(result.narrative)
+        aggregate["all_events"].append(result.to_dict())
 
         if result.outcome in [InteractionOutcome.DOMINANT_WIN, InteractionOutcome.DOMINANT_LOSS]:
             aggregate["dominant_events"].append(result.to_dict())

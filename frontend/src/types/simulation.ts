@@ -1,3 +1,5 @@
+import type { InteractionResult } from "./interaction";
+
 export interface PlayResult {
   yards_gained: number;
   is_touchdown: boolean;
@@ -18,4 +20,5 @@ export interface PlayResult {
   xp_awards: Record<number, number>;
   headline?: string;
   is_highlight_worthy: boolean;
+  interaction_events: InteractionResult[];
 }

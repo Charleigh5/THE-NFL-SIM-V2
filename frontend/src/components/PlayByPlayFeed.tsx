@@ -30,19 +30,60 @@ export const PlayByPlayFeed = () => {
             </div>
           ) : (
             playLog.map((play, index) => (
-              <motion.div
-                key={index} // Ideally use a unique ID if available
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-                className="flex gap-3 text-sm"
-              >
-                <span className="text-cyan-400 font-mono text-xs mt-1 opacity-70">
-                  {play.yards_gained >= 0 ? `+${play.yards_gained}` : play.yards_gained}
-                </span>
-                <p className="text-gray-300 leading-snug">{play.description}</p>
-              </motion.div>
+              <PlayItem key={index} play={play} />
             ))
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+import { useState } from "react";
+import { PlayResult } from "../types/simulation";
+import InteractionTimeline from "./game/InteractionTimeline";
+
+const PlayItem = ({ play }: { play: PlayResult }) => {
+  const [expanded, setExpanded] = useState(false);
+  const hasInteractions = play.interaction_events && play.interaction_events.length > 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`flex flex-col gap-1 text-sm ${hasInteractions ? 'cursor-pointer hover:bg-white/5 rounded p-1 -m-1' : ''}`}
+      onClick={() => hasInteractions && setExpanded(!expanded)}
+    >
+      <div className="flex gap-3">
+        <span className="text-cyan-400 font-mono text-xs mt-1 opacity-70 min-w-[24px]">
+          {play.yards_gained >= 0 ? `+${play.yards_gained}` : play.yards_gained}
+        </span>
+        <div className="flex-1">
+          <p className="text-gray-300 leading-snug">{play.description}</p>
+          {hasInteractions && !expanded && (
+            <div className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">
+              {play.interaction_events.length} Interactions (Click to view)
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <AnimatePresence>
+        {expanded && hasInteractions && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden pl-9"
+          >
+            <InteractionTimeline interactions={play.interaction_events} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
           )}
         </AnimatePresence>
       </div>

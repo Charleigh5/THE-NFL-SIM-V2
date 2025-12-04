@@ -458,7 +458,8 @@ class PlayResolver:
                 injuries=injuries,
                 xp_awards=xp_result.get("xp_awards", {}),
                 passer_id=qb.id,
-                receiver_id=target.id
+                receiver_id=target.id,
+                interaction_events=interaction_results.get("all_events", [])
             )
         else:
             # Normal Incomplete

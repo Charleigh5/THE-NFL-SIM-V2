@@ -1,0 +1,49 @@
+.interaction-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.interaction-badge.dominant-win {
+  background-color: #ffd700;
+  color: #333;
+  border: 1px solid #e6c200;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.interaction-badge.win {
+  background-color: #4caf50;
+  color: white;
+}
+
+.interaction-badge.slight-win {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.interaction-badge.neutral {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.interaction-badge.slight-loss {
+  background-color: #ff9800;
+  color: white;
+}
+
+.interaction-badge.loss {
+  background-color: #f44336;
+  color: white;
+}
+
+.interaction-badge.dominant-loss {
+  background-color: #b71c1c;
+  color: white;
+  border: 1px solid #8b0000;
+}

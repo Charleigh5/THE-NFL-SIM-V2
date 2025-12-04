@@ -17,7 +17,7 @@ Integrate the `AttributeInteractionEngine` (Set 3) into the actual gameplay reso
 
 **File**: `backend/app/orchestrator/play_resolver.py`
 
-#### Changes Made:
+#### Changes Made
 
 1. **Imported Interaction Engine**
 
@@ -57,6 +57,7 @@ Integrate the `AttributeInteractionEngine` (Set 3) into the actual gameplay reso
    ```
 
 5. **Added Narratives to Descriptions**
+
    ```python
    # Build full description with interactions
    base_desc = f"Pass complete{weather_note} to {target.last_name} for {yards_gained} yards..."
@@ -70,7 +71,7 @@ Integrate the `AttributeInteractionEngine` (Set 3) into the actual gameplay reso
 
 ### Interaction Flow
 
-```
+```text
 Pass Play Command
     ↓
 Identify Key Players (QB, WR/TE, CB/S)

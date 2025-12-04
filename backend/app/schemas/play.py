@@ -33,4 +33,7 @@ class PlayResult(BaseModel):
     headline: Optional[str] = None
     is_highlight_worthy: bool = False
 
+    # Attribute Interactions (Set 5)
+    interaction_events: List[Dict[str, Any]] = []
+
     model_config = ConfigDict(from_attributes=True)
