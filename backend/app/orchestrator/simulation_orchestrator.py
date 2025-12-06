@@ -554,6 +554,14 @@ class SimulationOrchestrator:
 
     def get_game_state(self) -> dict:
         """Get current game state as a dictionary for broadcasting."""
+        # Collect fatigue data if match context exists
+        fatigue_data = {}
+        if self.match_context and self.match_context.genesis:
+            # We can't send all players every frame, let's send active players or just key players
+            # For now, let's send all since roster is small (~100 players max)
+            for pid, state in self.match_context.genesis.player_states.items():
+                fatigue_data[str(pid)] = state["fatigue"].lactic_acid
+
         return {
             "homeScore": self.home_score,
             "awayScore": self.away_score,
@@ -562,7 +570,8 @@ class SimulationOrchestrator:
             "possession": self.possession,
             "down": self.down,
             "distance": self.distance,
-            "yardLine": self.yard_line
+            "yardLine": self.yard_line,
+            "playerFatigue": fatigue_data
         }
 
     def get_history(self) -> List[PlayResult]:
