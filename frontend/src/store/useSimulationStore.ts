@@ -10,6 +10,7 @@ interface GameState {
   down: number;
   distance: number;
   yardLine: number; // 0-100
+  playerFatigue?: Record<string, number>;
 }
 
 interface SimulationStore {

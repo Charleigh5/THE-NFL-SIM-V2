@@ -7,10 +7,12 @@ import { GameClock } from "../components/GameClock";
 import { FieldView } from "../components/FieldView";
 import { PlayByPlayFeed } from "../components/PlayByPlayFeed";
 import { WeatherWidget } from "../components/game/WeatherWidget";
+import { FatigueIndicator } from "../components/game/FatigueIndicator";
+import { MatchupStats } from "../components/game/MatchupStats";
 import { Play, Pause, FastForward } from "lucide-react";
 
 export const LiveSim = () => {
-  const { isLive, setLiveStatus } = useSimulationStore();
+  const { isLive, setLiveStatus, gameState, playLog } = useSimulationStore();
   const [isLoading, setIsLoading] = useState(false);
 
   // Connect to WebSocket
@@ -107,8 +109,45 @@ export const LiveSim = () => {
         </div>
 
         {/* Play Feed (Takes up 1 column) */}
-        <div className="lg:col-span-1 h-full min-h-0">
+        <div className="lg:col-span-1 h-full min-h-0 flex flex-col gap-4">
           <PlayByPlayFeed />
+
+          {/* Key Matchup (Mock Data for now until backend sends specific matchup data) */}
+          <MatchupStats
+             attacker={{ name: "D. Hopkins", statName: "Route Running", statValue: 92 }}
+             defender={{ name: "J. Ramsey", statName: "Man Coverage", statValue: 94 }}
+          />
+
+          {/* Key Player Fatigue (Dynamic based on last play) */}
+          {playLog.length > 0 && gameState.playerFatigue && (
+            <div className="bg-black/20 backdrop-blur-sm border border-white/5 rounded-xl p-4">
+               <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Player Energy</h3>
+               <div className="flex flex-col gap-2">
+                 {/* Try to show players from the last play */}
+                 {(() => {
+                    const lastPlay = playLog[0];
+                    const playersToShow = [];
+
+                    if (lastPlay.passer_id) playersToShow.push({ id: lastPlay.passer_id, role: "QB" });
+                    if (lastPlay.rusher_id) playersToShow.push({ id: lastPlay.rusher_id, role: "RB" });
+                    if (lastPlay.receiver_id) playersToShow.push({ id: lastPlay.receiver_id, role: "WR" });
+
+                    // Limit to 3
+                    return playersToShow.slice(0, 3).map(p => {
+                       const fatigue = gameState.playerFatigue?.[String(p.id)] ?? 0;
+                       return (
+                         <FatigueIndicator
+                           key={p.id}
+                           playerName={`Player ${p.id}`} // We'd need a roster lookup here for real names
+                           position={p.role}
+                           fatigueLevel={fatigue}
+                         />
+                       );
+                    });
+                 })()}
+               </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
