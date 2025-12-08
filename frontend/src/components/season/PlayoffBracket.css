@@ -93,3 +93,7 @@
   border-top: 2px solid gold;
   padding-top: 20px;
 }
+
+.super-bowl-section .bracket-rounds {
+  justify-content: center;
+}

@@ -234,6 +234,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               className="filter-select"
               value={conferenceFilter}
               onChange={(e) => setConferenceFilter(e.target.value)}
+              title="Filter by conference"
               data-testid="conference-filter"
             >
               <option value="ALL">All Conferences</option>
@@ -245,6 +246,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               className="filter-select"
               value={divisionFilter}
               onChange={(e) => setDivisionFilter(e.target.value)}
+              title="Filter by division"
               data-testid="division-filter"
             >
               <option value="ALL">All Divisions</option>

@@ -38,7 +38,11 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
     const awayWinner = m.winner_id && m.winner_id === m.away_team_id;
 
     return (
-      <div key={m.id} className={`matchup-card ${m.winner_id ? "winner-decided" : ""}`} data-testid={`matchup-card-${m.id}`}>
+      <div
+        key={m.id}
+        className={`matchup-card ${m.winner_id ? "winner-decided" : ""}`}
+        data-testid={`matchup-card-${m.id}`}
+      >
         <div className={`matchup-team ${homeWinner ? "winner" : ""} ${awayWinner ? "loser" : ""}`}>
           <span className="seed">{m.home_team_seed || "-"}</span>
           <span className="team-name">
@@ -94,9 +98,7 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
       {sbMatchup && (
         <div className="super-bowl-section" data-testid="super-bowl-section">
           <div className="conference-title">Super Bowl</div>
-          <div className="bracket-rounds" style={{ justifyContent: "center" }}>
-            {renderMatchup(sbMatchup)}
-          </div>
+          <div className="bracket-rounds">{renderMatchup(sbMatchup)}</div>
         </div>
       )}
     </div>
