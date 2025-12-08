@@ -11,6 +11,7 @@ import OffseasonDashboard from "./pages/OffseasonDashboard";
 import { FrontOffice } from "./pages/FrontOffice";
 import { DepthChart } from "./pages/DepthChart";
 import { DraftRoom } from "./pages/DraftRoom";
+import { TrainingCenter } from "./pages/TrainingCenter";
 import TradeCenterPage from "./pages/TradeCenterPage";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
@@ -279,6 +280,11 @@ export const router = createBrowserRouter([
       {
         path: "empire/trade-center",
         element: <TradeCenterPage />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "training",
+        element: <TrainingCenter />,
         errorElement: <RouteErrorBoundary />,
       },
       {

@@ -13,6 +13,7 @@ const Navigation = () => {
     { path: "/empire/front-office", label: "Roster", icon: "👥" },
     { path: "/empire/depth-chart", label: "Depth Chart", icon: "📋" },
     { path: "/empire/trade-center", label: "Trade Center", icon: "🔄" },
+    { path: "/training", label: "Training", icon: "🏋️" },
     { path: "/team-selection", label: "My Team", icon: "⭐" },
     { path: "/settings", label: "Settings", icon: "⚙️" },
   ];

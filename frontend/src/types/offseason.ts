@@ -1,3 +1,5 @@
+import type { CombineResult } from "./combine";
+
 export interface TeamNeed {
   position: string;
   current_count: number;
@@ -28,6 +30,8 @@ export interface Prospect {
   strength: number;
   agility: number;
   projected_round?: number;
+  combine?: CombineResult;
+  genesis_revealed?: boolean;
 }
 
 export interface DraftPickSummary {

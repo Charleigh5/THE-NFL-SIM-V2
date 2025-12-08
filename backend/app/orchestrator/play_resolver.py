@@ -23,6 +23,8 @@ class PlayResolver:
         self.current_match_context = None
         self.offensive_line_ai = OffensiveLineAI()
         self.interaction_engine = AttributeInteractionEngine(rng=rng)
+        # B-006: Momentum engine reference (set by orchestrator)
+        self.momentum_engine = None
 
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
@@ -386,9 +388,22 @@ class PlayResolver:
                 trait_bonus = contested_catch_bonus / 100.0  # Convert to 0.0-1.0
                 logger.debug(f"Possession Receiver bonus: +{contested_catch_bonus} for {target.last_name}")
 
+        # B-007: Apply momentum modifier to success chance
+        momentum_modifier = 0.0
+        if self.momentum_engine and self.current_match_context:
+            # Determine offense team ID
+            offense_team_id = str(getattr(self.current_match_context, 'home_team_id', 'home'))
+            if hasattr(command, 'is_home_team') and not command.is_home_team:
+                offense_team_id = str(getattr(self.current_match_context, 'away_team_id', 'away'))
+            # Get modifier (1.0 = neutral, 0.9-1.1 range)
+            raw_modifier = self.momentum_engine.get_performance_modifier(offense_team_id)
+            # Convert to additive: 1.1 -> +0.1, 0.9 -> -0.1
+            momentum_modifier = raw_modifier - 1.0
+            logger.debug(f"Momentum modifier for team {offense_team_id}: {momentum_modifier:.3f}")
+
         success_chance = ProbabilityEngine.calculate_success_chance(
             base_probability=base_prob,
-            attribute_modifiers=attr_modifiers + trait_bonus,
+            attribute_modifiers=attr_modifiers + trait_bonus + momentum_modifier,
             context_modifiers=-weather_penalty - pressure_penalty,
             fatigue_penalty=fatigue_penalty
         )
@@ -525,10 +540,19 @@ class PlayResolver:
             base_yards = 2.5 + (speed_diff * 20.0) # +/- 4 yards based on speed
             std_dev = 3.0
 
+        # B-008: Apply momentum modifier to run play
+        momentum_yards_bonus = 0.0
+        if self.momentum_engine and self.current_match_context:
+            offense_team_id = str(getattr(self.current_match_context, 'home_team_id', 'home'))
+            raw_modifier = self.momentum_engine.get_performance_modifier(offense_team_id)
+            # Convert to yards bonus: 1.1 -> +0.5 yards, 0.9 -> -0.5 yards
+            momentum_yards_bonus = (raw_modifier - 1.0) * 5.0
+            logger.debug(f"Momentum yards bonus for run: {momentum_yards_bonus:.2f}")
+
         # Calculate Total Yards using Normal Distribution
         yards_gained = ProbabilityEngine.calculate_normal_outcome(
             self.rng,
-            mean=base_yards - fatigue_penalty,
+            mean=base_yards - fatigue_penalty + momentum_yards_bonus,
             std_dev=std_dev,
             min_val=-5.0, # Can lose yards
             max_val=99.0

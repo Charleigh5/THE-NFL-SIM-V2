@@ -9,6 +9,7 @@ from app.models.player import Player
 from app.orchestrator.match_context import MatchContext
 from app.orchestrator.kernels.cortex_kernel import GameSituation
 from app.core.random_utils import DeterministicRNG
+from app.services.society.momentum import MomentumEngine, MomentumEvent
 
 from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
@@ -56,6 +57,9 @@ class SimulationOrchestrator:
         # Configuration
         self.play_delay_seconds = 5.0  # Delay between plays for animation
         self.game_config = {}
+
+        # Momentum Engine (Phase 4 Integration)
+        self.momentum_engine = MomentumEngine()
 
     async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Initialize a new game session in the database."""
@@ -114,6 +118,8 @@ class SimulationOrchestrator:
 
             # Register players with Kernels
             self.play_resolver.register_players(self.match_context)
+            # B-006: Wire momentum engine to play resolver
+            self.play_resolver.momentum_engine = self.momentum_engine
 
             logger.info(
                 "Match context hydrated",
@@ -551,10 +557,20 @@ class SimulationOrchestrator:
 
         # Check for touchdown
         if result.is_touchdown or self.yard_line >= 100 or self.yard_line <= 0:
+            # Determine team ID for momentum tracking
+            if self.match_context:
+                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+            else:
+                offense_team_id = "home" if self.possession == "home" else "away"
+
             if self.possession == "home":
                 self.home_score += 7
             else:
                 self.away_score += 7
+
+            # B-003: Momentum - Touchdown event
+            self.momentum_engine.process_event(offense_team_id, MomentumEvent.TOUCHDOWN)
+            logger.debug(f"Momentum: TOUCHDOWN for team {offense_team_id}")
 
             # Reset to kickoff
             self.yard_line = 25
@@ -564,6 +580,14 @@ class SimulationOrchestrator:
 
         # Check for turnover
         elif result.is_turnover:
+            # B-004: Momentum - Turnover event (negative for offense)
+            if self.match_context:
+                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+            else:
+                offense_team_id = "home" if self.possession == "home" else "away"
+            self.momentum_engine.process_event(offense_team_id, MomentumEvent.TURNOVER)
+            logger.debug(f"Momentum: TURNOVER by team {offense_team_id}")
+
             self.possession = "away" if self.possession == "home" else "home"
             self.yard_line = 100 - self.yard_line
             self.down = 1
@@ -571,6 +595,22 @@ class SimulationOrchestrator:
 
         # Normal down progression
         else:
+            # B-005: Check for sack (negative yards on pass play)
+            if self.match_context:
+                defense_team_id = str(self.match_context.away_team_id if self.possession == "home" else self.match_context.home_team_id)
+                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+            else:
+                defense_team_id = "away" if self.possession == "home" else "home"
+                offense_team_id = "home" if self.possession == "home" else "away"
+
+            if result.yards_gained < 0 and result.passer_id:
+                self.momentum_engine.process_event(defense_team_id, MomentumEvent.SACK)
+                logger.debug(f"Momentum: SACK by defense {defense_team_id}")
+            # Big play check (20+ yards)
+            elif result.yards_gained >= 20:
+                self.momentum_engine.process_event(offense_team_id, MomentumEvent.BIG_PLAY_OFFENSE)
+                logger.debug(f"Momentum: BIG_PLAY_OFFENSE for team {offense_team_id}")
+
             if result.yards_gained >= self.distance:
                 # First down!
                 self.down = 1
@@ -578,6 +618,11 @@ class SimulationOrchestrator:
             else:
                 self.down += 1
                 self.distance -= result.yards_gained
+
+                # Third down stop for defense
+                if self.down == 4:
+                    self.momentum_engine.process_event(defense_team_id, MomentumEvent.THRD_DOWN_STOP)
+                    logger.debug(f"Momentum: THRD_DOWN_STOP for defense {defense_team_id}")
 
                 # Turnover on downs
                 if self.down > 4:

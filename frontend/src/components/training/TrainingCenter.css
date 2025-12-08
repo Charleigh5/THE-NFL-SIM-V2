@@ -1,0 +1,5 @@
+/* TrainingCenter.css */
+.training-center-container {
+  /* currently using utility classes, this file is reserve for custom animations or complex layouts */
+  display: block;
+}

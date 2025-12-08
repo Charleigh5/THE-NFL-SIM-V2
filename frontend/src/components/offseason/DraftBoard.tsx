@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from "react";
 import type { Prospect, TeamNeed } from "../../types/offseason";
+import { GenesisReveal } from "../draft/GenesisReveal";
+import { GpsSpeedViz } from "../draft/GpsSpeedViz";
+import { Eye, Dumbbell } from "lucide-react";
 import "./DraftBoard.css";
 
 interface DraftBoardProps {
@@ -17,6 +20,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 }) => {
   const [filterPos, setFilterPos] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("rank");
+  const [revealingProspect, setRevealingProspect] = useState<Prospect | null>(null);
 
   // Helper to determine grade based on rating
   const getGrade = (rating: number): string => {
@@ -76,6 +80,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
             onChange={(e) => setFilterPos(e.target.value)}
             className="filter-select"
             data-testid="draft-filter-position"
+            aria-label="Filter by Position"
           >
             {positions.map((pos) => (
               <option key={pos} value={pos}>
@@ -88,6 +93,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
             onChange={(e) => setSortBy(e.target.value as SortOption)}
             className="sort-select"
             data-testid="draft-sort-by"
+            aria-label="Sort Draft Board"
           >
             <option value="rank">Rank</option>
             <option value="rating">Rating</option>
@@ -123,6 +129,24 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                   <div className="prospect-details">
                     <span className={`grade-badge grade-${grade.charAt(0)}`}>{grade}</span>
                     <span className="rating-text">{p.overall_rating} OVR</span>
+                    {p.genesis_revealed && (
+                      <span className="ml-2 text-[10px] text-cyan-400 font-bold border border-cyan-400 px-1 rounded">
+                        GENESIS
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick Reveal Button */}
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRevealingProspect(p);
+                      }}
+                      className="text-[10px] flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300 transition-colors"
+                    >
+                      <Eye className="w-3 h-3" /> Reveal
+                    </button>
                   </div>
                 </div>
 
@@ -144,6 +168,21 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                     {needLevel !== "low" && (
                       <div className="need-match">Team Need Match: {needLevel.toUpperCase()}</div>
                     )}
+
+                    {/* Combine Highlights */}
+                    {p.combine && (
+                      <div className="mt-2 pt-2 border-t border-white/10 flex flex-col gap-1">
+                        {p.combine.gps_speed_max && (
+                          <GpsSpeedViz speedMph={p.combine.gps_speed_max} />
+                        )}
+                        {p.combine.power_clean_max && (
+                          <div className="flex items-center gap-1 text-[10px] text-gray-300">
+                            <Dumbbell className="w-3 h-3 text-amber-400" />
+                            <span>Clean: {p.combine.power_clean_max} lbs</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -151,6 +190,20 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
           })
         )}
       </div>
+
+      {revealingProspect && revealingProspect.combine && (
+        <GenesisReveal
+          prospectName={revealingProspect.name}
+          data={revealingProspect.combine}
+          isRevealed={!!revealingProspect.genesis_revealed}
+          onClose={() => setRevealingProspect(null)}
+          onReveal={() => {
+            // Create updated prospect with genesis_revealed = true
+            // In a real app, this would also call an API
+            setRevealingProspect({ ...revealingProspect, genesis_revealed: true });
+          }}
+        />
+      )}
     </div>
   );
 };

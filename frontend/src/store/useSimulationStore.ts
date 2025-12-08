@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { PlayResult } from "../types/simulation";
+import { MomentumState } from "../types/momentum";
 
 interface GameState {
   homeScore: number;
@@ -10,6 +11,8 @@ interface GameState {
   down: number;
   distance: number;
   yardLine: number; // 0-100
+  homeMomentum: MomentumState;
+  awayMomentum: MomentumState;
 }
 
 interface SimulationStore {
@@ -49,6 +52,8 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
     down: 1,
     distance: 10,
     yardLine: 25,
+    homeMomentum: MomentumState.NEUTRAL,
+    awayMomentum: MomentumState.NEUTRAL,
   },
   playLog: [],
   isLive: false,
@@ -86,6 +91,8 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
         down: 1,
         distance: 10,
         yardLine: 25,
+        homeMomentum: MomentumState.NEUTRAL,
+        awayMomentum: MomentumState.NEUTRAL,
       },
       playLog: [],
       isLive: false,

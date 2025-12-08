@@ -56,6 +56,20 @@ export const draftService = {
     return response.data.map((p) => ({
       ...p,
       name: `${p.first_name} ${p.last_name}`,
+      // Mock Combine Data for Phase 2 UI Development
+      combine: {
+        forty_yard_dash: 4.45,
+        bench_press: 15,
+        vertical_jump: 34.5,
+        broad_jump: 121,
+        three_cone_drill: 7.05,
+        twenty_yard_shuttle: 4.25,
+        power_clean_max: 285 + Math.floor(Math.random() * 60), // Mock data
+        gps_speed_max: 18 + Math.random() * 5, // Mock data (18-23 mph)
+        s2_cognition_score: 60 + Math.floor(Math.random() * 39), // Mock data (60-99)
+        medical_flags: Math.random() > 0.85 ? ["Grade 1 MCL Sprain (2023)"] : [],
+      },
+      genesis_revealed: false,
     }));
   },
 

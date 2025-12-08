@@ -1,4 +1,5 @@
 import { useSimulationStore } from "../store/useSimulationStore";
+import { MomentumIndicator } from "./game/MomentumIndicator";
 
 export const ScoreBoard = () => {
   const { gameState } = useSimulationStore();
@@ -8,7 +9,8 @@ export const ScoreBoard = () => {
       {/* Home Team */}
       <div className="flex flex-col items-center w-1/3">
         <div className="text-3xl font-bold text-white">{gameState.homeScore}</div>
-        <div className="text-sm text-gray-400 uppercase tracking-wider">Empire</div>
+        <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Empire</div>
+        <MomentumIndicator state={gameState.homeMomentum} size="sm" />
         {gameState.possession === "home" && (
           <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 animate-pulse" />
         )}
@@ -32,7 +34,8 @@ export const ScoreBoard = () => {
       {/* Away Team */}
       <div className="flex flex-col items-center w-1/3">
         <div className="text-3xl font-bold text-white">{gameState.awayScore}</div>
-        <div className="text-sm text-gray-400 uppercase tracking-wider">Genesis</div>
+        <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Genesis</div>
+        <MomentumIndicator state={gameState.awayMomentum} size="sm" />
         {gameState.possession === "away" && (
           <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 animate-pulse" />
         )}

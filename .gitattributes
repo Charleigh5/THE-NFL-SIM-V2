@@ -22,3 +22,6 @@
 *.ico binary
 *.woff binary
 *.woff2 binary
+
+# Archive - excluded from compilation/export
+_archive/ export-ignore
