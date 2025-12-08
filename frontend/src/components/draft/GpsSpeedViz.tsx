@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { Zap } from "lucide-react";
 import "./GpsSpeedViz.css";
 
@@ -6,6 +7,8 @@ interface GpsSpeedVizProps {
 }
 
 export const GpsSpeedViz = ({ speedMph }: GpsSpeedVizProps) => {
+  const fillRef = useRef<HTMLDivElement>(null);
+
   // Simple normalization logic (simplified for MVP)
   // Max expected speed usually around 23mph (Tyreek Hill), min around 15mph (Lineman)
   const minSpeed = 15;
@@ -22,6 +25,12 @@ export const GpsSpeedViz = ({ speedMph }: GpsSpeedVizProps) => {
   else if (percentage > 40) colorClass = "bg-yellow-500";
   else if (percentage > 20) colorClass = "bg-green-500";
 
+  useEffect(() => {
+    if (fillRef.current) {
+      fillRef.current.style.width = `${percentage}%`;
+    }
+  }, [percentage]);
+
   return (
     <div className="flex flex-col gap-1 w-full max-w-[120px]">
       <div className="flex justify-between items-end text-xs">
@@ -31,10 +40,7 @@ export const GpsSpeedViz = ({ speedMph }: GpsSpeedVizProps) => {
         </span>
       </div>
       <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-        <div
-          className={`gps-speed-fill ${colorClass}`}
-          style={{ "--gps-width": `${percentage}%` } as React.CSSProperties}
-        />
+        <div ref={fillRef} className={`gps-speed-fill ${colorClass}`} />
       </div>
       {percentage > 90 && (
         <div className="flex items-center gap-1 text-[9px] text-red-400 font-bold animate-pulse mt-0.5">
