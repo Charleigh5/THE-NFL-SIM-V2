@@ -206,13 +206,13 @@ class TrainingCampEngine:
         schedule.append(CampDay(DrillType.INDIVIDUAL, DrillType.SEVEN_ON_SEVEN, TrainingIntensity.STANDARD))
 
         # Day 2: Install
-        schedule.append(CampDay(DrillType.WALKTHROUGH, DrillType.INDIVIDUAL, TrainingIntensity.STANDARD))
+        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.INDIVIDUAL, TrainingIntensity.STANDARD))
 
         # Day 3: PADS
         schedule.append(CampDay(DrillType.OKLAHOMA, DrillType.SCRIMMAGE, TrainingIntensity.FULL_PADS))
 
         # Day 4: Recovery/Film
-        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.WALKTHROUGH, TrainingIntensity.WALKTHROUGH))
+        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.FILM_STUDY, TrainingIntensity.WALKTHROUGH))
 
         # Day 5: Specifics
         if "stamina" in team_needs or "speed" in team_needs:

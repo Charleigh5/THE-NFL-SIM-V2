@@ -116,12 +116,15 @@ class TestProgressionEngine:
             dev_trait=DevTrait.NORMAL, xp_to_next_level=1000
         )
 
-        # Give enough XP to level twice
+        # Give enough XP to level once (Base 1000, next threshold ~1770)
+        # 2500 XP:
+        # - 1000 (Level 75->76) -> Remainder 1500
+        # - Next need ~1771. So 1500 is not enough for 76->77
         new_state, levels = engine.apply_xp(state, 2500)
 
-        assert levels == 2
-        assert new_state.level == 77
-        assert new_state.current_xp == 500
+        assert levels == 1
+        assert new_state.level == 76
+        assert new_state.current_xp == 1500
 
     def test_regression(self, engine):
         """Decline phase loses attributes."""
