@@ -223,10 +223,10 @@ class TestCognitionEngine:
     def test_stress_affects_state(self, engine):
         """Test stress updates cognitive state."""
         engine.profile.add_stress(50)
-        assert engine.profile.state == CognitiveState.FOCUSED
+        assert engine.profile.state == CognitiveState.STRESSED
 
         engine.profile.add_stress(30)
-        assert engine.profile.state in [CognitiveState.STRESSED, CognitiveState.PANICKED]
+        assert engine.profile.state == CognitiveState.PANICKED
 
 
 # ============================================================================
