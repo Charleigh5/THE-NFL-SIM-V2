@@ -475,7 +475,7 @@ class TestPhase3Integration:
         # Simulate rush building pressure
         qb_state = QBState()
         for _ in range(90):  # 1.5 seconds
-            qb_state = qb.update_pocket_state(qb_state, 16.67, defenders_nearby=1)
+            qb_state = qb.update_pocket_state(qb_state, 16.67, defenders_in_pocket=1)
 
         # Throw under pressure
         throw = qb.calculate_throw_trajectory(
