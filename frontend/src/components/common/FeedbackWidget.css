@@ -1,0 +1,315 @@
+/* ============================================
+   FEEDBACK WIDGET STYLES
+   Stellar Sagan Theme: Glassmorphism + Neon
+   ============================================ */
+
+.feedback-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* Floating Action Button */
+.feedback-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(46, 204, 113, 0.6);
+  background: rgba(20, 20, 30, 0.85);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #2ecc71;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 20px rgba(46, 204, 113, 0.3),
+    0 0 40px rgba(46, 204, 113, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-fab:hover {
+  transform: scale(1.1);
+  box-shadow:
+    0 6px 30px rgba(46, 204, 113, 0.5),
+    0 0 60px rgba(46, 204, 113, 0.2);
+}
+
+.feedback-fab.active {
+  background: rgba(46, 204, 113, 0.2);
+  transform: rotate(45deg);
+}
+
+.feedback-fab.design-active {
+  background: #2ecc71;
+  color: #000;
+  border-color: #fff;
+  transform: scale(1.1);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+  }
+}
+
+/* Expanded Panel */
+.feedback-panel {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 340px;
+  background: rgba(15, 15, 25, 0.95);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(46, 204, 113, 0.15);
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.feedback-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.feedback-page {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(46, 204, 113, 0.15);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+/* Stats */
+.feedback-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2ecc71;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+/* Action Grid */
+.feedback-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 100px;
+}
+
+.action-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(46, 204, 113, 0.5);
+  transform: translateY(-2px);
+}
+
+.action-card .icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.action-card .label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Batch Actions */
+.batch-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+}
+
+.batch-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.batch-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clear-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.clear-link:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Clickable Stat Item */
+.stat-item.clickable {
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: all 0.2s;
+  padding: 8px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.stat-item.clickable:hover {
+  background: rgba(46, 204, 113, 0.1);
+}
+
+/* Success Panel */
+.success-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.success-panel h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+.success-details {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 20px;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.generate-plan-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+}
+
+.generate-plan-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+}
+
+.generate-plan-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.dismiss-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}

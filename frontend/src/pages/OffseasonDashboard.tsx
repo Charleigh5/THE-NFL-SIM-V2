@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useSettingsStore } from "../store/useSettingsStore";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
@@ -20,8 +20,35 @@ import { PlayerProgression } from "../components/offseason/PlayerProgression";
 import { SalaryCapWidget } from "../components/offseason/SalaryCapWidget";
 import "./OffseasonDashboard.css";
 
+// Loader data type
+interface OffseasonLoaderData {
+  teams: Team[];
+  season: Season | null;
+  isOffseason: boolean;
+  noSeason: boolean;
+}
+
 const OffseasonDashboard: React.FC = () => {
-  const [season, setSeason] = useState<Season | null>(null);
+  // Get loader data
+  const loaderData = useLoaderData() as OffseasonLoaderData | undefined;
+
+  // Handle no season state from loader
+  if (loaderData?.noSeason) {
+    return (
+      <div className="offseason-dashboard" data-testid="no-season-state">
+        <div className="empty-state">
+          <div className="empty-state-icon">🏈</div>
+          <h1>No Active Season</h1>
+          <p>Start a new season from the Season Dashboard to access the Offseason features.</p>
+          <a href="/season" className="action-button">
+            Go to Season Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  const [season, setSeason] = useState<Season | null>(loaderData?.season ?? null);
   const [loading, setLoading] = useState<boolean>(true);
   const [processing, setProcessing] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -258,7 +285,12 @@ const OffseasonDashboard: React.FC = () => {
             <div className="action-card">
               <h3>Phase 3: The Draft</h3>
               <p>Simulate NFL Draft.</p>
-              <button className="action-button" onClick={handleSimulateDraft} disabled={processing} data-testid="simulate-draft-button">
+              <button
+                className="action-button"
+                onClick={handleSimulateDraft}
+                disabled={processing}
+                data-testid="simulate-draft-button"
+              >
                 Simulate Draft
               </button>
             </div>
@@ -287,7 +319,11 @@ const OffseasonDashboard: React.FC = () => {
                 {draftSummary
                   .filter((p) => team && p.team_id === team.id)
                   .map((pick) => (
-                    <div key={pick.pick_number} className="draft-pick-item" data-testid={`draft-pick-item-${pick.pick_number}`}>
+                    <div
+                      key={pick.pick_number}
+                      className="draft-pick-item"
+                      data-testid={`draft-pick-item-${pick.pick_number}`}
+                    >
                       <span className="pick-round">
                         Rd {pick.round} Pick {pick.pick_number}
                       </span>

@@ -1,0 +1,101 @@
+/* RegionSelector Overlay Styles */
+
+.region-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  cursor: crosshair;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.region-selector-instructions {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(0, 255, 200, 0.5);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10001;
+  box-shadow: 0 4px 20px rgba(0, 255, 200, 0.2);
+}
+
+.region-selector-box {
+  position: fixed;
+  left: var(--box-left, 0);
+  top: var(--box-top, 0);
+  width: var(--box-width, 0);
+  height: var(--box-height, 0);
+  border: 2px dashed #00ffc8;
+  background: rgba(0, 255, 200, 0.1);
+  pointer-events: none;
+  z-index: 10001;
+  box-shadow:
+    inset 0 0 20px rgba(0, 255, 200, 0.2),
+    0 0 0 9999px rgba(0, 0, 0, 0.5);
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+.region-selector-dimensions {
+  position: absolute;
+  bottom: -28px;
+  right: 0;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(0, 255, 200, 0.5);
+  border-radius: 4px;
+  color: #00ffc8;
+  font-size: 12px;
+  font-family: monospace;
+  white-space: nowrap;
+}
+
+/* Corner handles for visual feedback */
+.region-selector-box::before,
+.region-selector-box::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #00ffc8;
+}
+
+.region-selector-box::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.region-selector-box::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: #00ffc8;
+  }
+  50% {
+    border-color: #00a884;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .region-selector-overlay {
+    background: rgba(0, 0, 0, 0.4);
+  }
+}

@@ -5342,3 +5342,407 @@ FROM team) AS anon_1]
 {"time":"2025-12-04 03:01:05,550","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
 {"time":"2025-12-04 03:01:05,551","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
 {"time":"2025-12-04 03:01:05,660","name":"app.engine.attribute_interaction","level":"INFO","message":"AttributeInteractionEngine initialized with 13 interactions"}
+{"time":"2025-12-07 22:47:03,412","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 22:47:03,413","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 22:47:03,845","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 22:47:03,922","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 22:47:31,900","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 22:47:31,901","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 22:47:31,902","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 22:47:31,903","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 22:47:31,980","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 22:47:31,983","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 22:47:31,984","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 22:47:31,988","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:20:20,079","name":"app.services.issue_logger","level":"INFO","message":"Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmpx1yy8plo.md"}
+{"time":"2025-12-07 23:20:20,080","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Test..."}
+{"time":"2025-12-07 23:20:20,098","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: First issue..."}
+{"time":"2025-12-07 23:20:20,098","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Second issue..."}
+{"time":"2025-12-07 23:20:20,122","name":"app.services.issue_logger","level":"INFO","message":"Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmps_e5oc_3.md"}
+{"time":"2025-12-07 23:20:20,123","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Test..."}
+{"time":"2025-12-07 23:20:20,146","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Async test..."}
+{"time":"2025-12-07 23:26:32,524","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:32,525","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:32,525","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 23:26:32,527","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:26:32,566","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:26:32,568","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:32,569","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 23:26:32,571","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:26:42,643","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:42,644","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:26:42,647","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:42,647","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 23:26:42,651","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:26:42,653","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:26:42,653","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-07 23:26:42,657","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-07 23:40:34,606","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-07 23:40:34,609","name":"app.api.endpoints.feedback","level":"INFO","message":"Received issue report from Mission Control: Test issue from PowerShell..."}
+{"time":"2025-12-07 23:40:34,611","name":"app.services.issue_logger","level":"INFO","message":"Created issue log file: C:\Users\cweir\Documents\GitHub\THE NFL SIM\ISSUES.md"}
+{"time":"2025-12-07 23:40:34,612","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Test issue from PowerShell..."}
+{"time":"2025-12-07 23:40:34,613","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 00:28:41,176","name":"app.services.issue_logger","level":"INFO","message":"Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmphhhq2j8c.md"}
+{"time":"2025-12-08 00:28:41,177","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Test..."}
+{"time":"2025-12-08 00:28:41,195","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: First issue..."}
+{"time":"2025-12-08 00:28:41,195","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Second issue..."}
+{"time":"2025-12-08 00:28:41,215","name":"app.services.issue_logger","level":"INFO","message":"Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmpppmuol9v.md"}
+{"time":"2025-12-08 00:28:41,216","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Test..."}
+{"time":"2025-12-08 00:28:41,239","name":"app.services.issue_logger","level":"INFO","message":"Logged issue: Async test..."}
+{"time":"2025-12-08 00:36:32,748","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 00:36:32,749","name":"app.api.endpoints.feedback","level":"INFO","message":"Researching task: Add hover animation to submit button..."}
+{"time":"2025-12-08 00:36:32,749","name":"app.services.ai_research_service","level":"INFO","message":"Researching task: Add hover animation to submit button..."}
+{"time":"2025-12-08 00:36:32,750","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:16,805","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:16,806","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:16,807","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:10:16,808","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:16,848","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:16,850","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:16,850","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:10:16,854","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:58,543","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:58,544","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:58,546","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:58,547","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:10:58,549","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:10:58,552","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:10:58,552","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:10:58,555","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:19:56,837","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:19:56,839","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:19:56,839","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:19:56,841","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:19:56,846","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:19:56,848","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:19:56,848","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:19:56,851","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,207","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,209","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,211","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,214","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:22:11,223","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,243","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,244","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,245","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,245","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,248","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,256","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:22:11,258","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:22:11,259","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:31,191","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:31,192","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:31,196","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:31,203","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:50,893","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:50,894","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:50,905","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:50,906","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:24:50,915","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:50,919","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:50,920","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:24:50,923","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:53,827","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:53,828","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:53,830","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:24:53,831","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:53,836","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:53,838","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:53,839","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:24:53,843","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,579","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,580","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,588","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,589","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:24:54,595","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,599","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,599","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:24:54,602","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,612","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,613","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,614","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,615","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,617","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,617","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:24:54,621","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,624","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,624","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:24:54,626","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,626","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:24:54,632","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,635","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:54,637","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:54,638","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:24:54,642","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:55,959","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:55,960","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:55,973","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:55,973","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:24:55,979","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:24:55,982","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:24:55,983","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:24:55,988","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,386","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,387","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,389","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,389","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:25:33,392","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,395","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,395","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:25:33,398","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,406","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,407","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,408","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,409","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,410","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,411","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:25:33,414","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,415","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,416","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:25:33,419","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,420","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,421","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:25:33,423","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:25:33,425","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:25:33,425","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:25:33,427","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:45:47,902","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:45:47,904","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:45:47,905","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:45:47,905","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:45:47,908","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:45:47,910","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:45:47,911","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:45:47,914","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,595","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,596","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,603","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,604","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:46:19,608","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,614","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,615","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:46:19,618","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,636","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,637","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,639","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,639","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,641","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,642","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:46:19,646","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,648","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,649","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:46:19,653","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,655","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,655","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:46:19,658","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:19,661","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:19,662","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 01:46:19,664","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:33,126","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:33,127","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:33,133","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:33,134","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:46:33,138","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:33,143","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:33,144","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:46:33,146","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:47,711","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:47,712","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:47,718","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:47,719","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:46:47,730","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:46:47,734","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:46:47,735","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:46:47,738","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,233","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,234","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,242","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,243","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:47:02,247","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,256","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,257","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,263","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,264","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:47:02,269","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,315","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,316","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,318","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,319","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,331","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,334","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:02,336","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:02,338","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:16,554","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:16,555","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:16,559","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:16,560","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:47:16,565","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:16,570","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:16,571","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:16,581","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:16,582","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:47:16,586","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,943","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,944","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,944","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,944","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:47:31,947","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching team 1"}
+{"time":"2025-12-08 01:47:31,948","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,950","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,952","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,955","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,958","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,960","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,962","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,962","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,965","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,966","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 01:47:31,967","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:31,968","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching team 1"}
+{"time":"2025-12-08 01:47:31,969","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,974","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:31,975","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,640","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,640","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,647","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,648","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 01:47:46,651","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,673","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,674","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,676","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,678","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,684","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,687","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:47:46,689","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:47:46,691","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:48:28,823","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:48:28,823","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:48:28,825","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:48:28,826","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:48:28,827","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:48:28,829","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 01:48:28,831","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 01:48:28,833","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:17,645","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:17,647","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:17,655","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:17,656","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:01:17,666","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:17,673","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:17,674","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:01:17,680","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:38,804","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:38,804","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:38,807","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:38,808","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:01:38,817","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:01:38,835","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:01:38,836","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:01:38,841","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:36,621","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:36,622","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:36,624","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:36,624","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:03:36,627","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:36,630","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:36,631","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:03:36,634","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:42,160","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:42,161","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:42,168","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:42,169","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:03:42,172","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:42,176","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:42,177","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:03:42,179","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:56,870","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:56,871","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:56,874","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:56,875","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:03:56,877","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:03:56,881","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:03:56,882","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:03:56,883","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,463","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,464","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,466","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,467","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,468","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,469","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:09:43,474","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,476","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,477","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,479","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,480","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:09:43,485","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,487","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,487","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:09:43,490","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,493","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,493","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:09:43,499","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,502","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,502","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:09:43,506","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,508","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,509","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:09:43,512","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,533","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,534","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,536","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,537","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,539","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,540","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:09:43,546","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,548","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,548","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:09:43,553","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,555","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,556","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:09:43,559","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:09:43,561","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:09:43,562","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:09:43,564","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:13:11,022","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:13:11,023","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:13:11,023","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:13:11,025","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:13:11,033","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:13:11,035","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:13:11,035","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:13:11,039","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:46,356","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:46,357","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:46,359","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:46,359","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:20:46,363","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:46,366","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:46,367","name":"app.api.endpoints.season","level":"INFO","message":"Fetching current active season"}
+{"time":"2025-12-08 02:20:46,368","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,051","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,052","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,066","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,067","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:20:51,072","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,076","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,076","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:20:51,079","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,088","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,089","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,091","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,092","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,092","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,093","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:20:51,099","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,100","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,101","name":"app.api.endpoints.teams","level":"INFO","message":"Fetching teams (page=1, page_size=100)"}
+{"time":"2025-12-08 02:20:51,102","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,103","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:20:51,107","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,110","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:51,114","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:51,115","name":"app.api.endpoints.season","level":"INFO","message":"Fetching enhanced season summary"}
+{"time":"2025-12-08 02:20:51,118","name":"api.access","level":"INFO","message":"Request completed"}
+{"time":"2025-12-08 02:20:52,258","name":"api.access","level":"INFO","message":"Request started"}
+{"time":"2025-12-08 02:20:52,267","name":"app.api.endpoints.season","level":"INFO","message":"Initializing season 2025"}
+{"time":"2025-12-08 02:20:52,274","name":"api.access","level":"INFO","message":"Request completed"}

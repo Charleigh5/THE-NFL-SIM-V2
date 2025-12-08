@@ -1,0 +1,91 @@
+/* ==================================================
+   ELEMENT INSPECTOR STYLES
+   Design Mode Overlay for UI Annotation
+   ================================================== */
+
+/* Design Mode Toast Indicator */
+.design-mode-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  padding: 12px 24px;
+  background: rgba(15, 15, 25, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(46, 204, 113, 0.6);
+  border-radius: 12px;
+  color: #2ecc71;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(46, 204, 113, 0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Element Highlight Overlay */
+.element-highlight {
+  position: absolute;
+  top: var(--highlight-top);
+  left: var(--highlight-left);
+  width: var(--highlight-width);
+  height: var(--highlight-height);
+  z-index: 99998;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 2px solid #2ecc71;
+  background: rgba(46, 204, 113, 0.1);
+  border-radius: 4px;
+  animation: highlightPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes highlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(46, 204, 113, 0);
+  }
+}
+
+/* Element Label Tag */
+.element-label {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  padding: 4px 8px;
+  background: #2ecc71;
+  color: #0a0a0a;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "JetBrains Mono", monospace;
+  border-radius: 4px;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Body class when design mode is active */
+body.design-mode-active {
+  cursor: crosshair !important;
+}
+
+body.design-mode-active * {
+  cursor: crosshair !important;
+}

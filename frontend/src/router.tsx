@@ -90,6 +90,7 @@ export async function offseasonDashboardLoader() {
           teams,
           season,
           isOffseason: true,
+          noSeason: false,
         };
       }
 
@@ -97,12 +98,20 @@ export async function offseasonDashboardLoader() {
         teams,
         season,
         isOffseason: false,
+        noSeason: false,
       };
     } catch {
-      // Redirect to season dashboard if no season exists
-      throw redirect("/season");
+      // No season exists - return empty state for UI to handle gracefully
+      return {
+        teams,
+        season: null,
+        isOffseason: false,
+        noSeason: true,
+      };
     }
   } catch (error) {
+    // Only network/API failures should throw 500
+    if (error instanceof Response) throw error;
     console.error("Failed to load offseason data:", error);
     throw new Response("Failed to load offseason data", { status: 500 });
   }
@@ -112,22 +121,36 @@ export async function offseasonDashboardLoader() {
 export async function draftRoomLoader() {
   try {
     const teams = await api.getTeams();
-    const season = await seasonApi.getCurrentSeason();
 
-    // Fetch current draft pick if available
-    let currentPick = null;
     try {
-      currentPick = await seasonApi.getCurrentPick(season.id);
-    } catch {
-      // No current pick available
-    }
+      const season = await seasonApi.getCurrentSeason();
 
-    return {
-      teams,
-      season,
-      currentPick,
-    };
+      // Fetch current draft pick if available
+      let currentPick = null;
+      try {
+        currentPick = await seasonApi.getCurrentPick(season.id);
+      } catch {
+        // No current pick available
+      }
+
+      return {
+        teams,
+        season,
+        currentPick,
+        noSeason: false,
+      };
+    } catch {
+      // No season exists - return empty state for UI to handle
+      return {
+        teams,
+        season: null,
+        currentPick: null,
+        noSeason: true,
+      };
+    }
   } catch (error) {
+    // Only network/API failures should throw 500
+    if (error instanceof Response) throw error;
     console.error("Failed to load draft room data:", error);
     throw new Response("Failed to load draft room data", { status: 500 });
   }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useLoaderData } from "react-router-dom";
 import { seasonApi } from "../services/season";
 import { draftService } from "../services/draft";
 import { DraftBoard } from "../components/offseason/DraftBoard";
@@ -6,10 +7,23 @@ import { DraftTicker } from "../components/offseason/DraftTicker";
 import { TradeModal } from "../components/offseason/TradeModal";
 import { DraftAssistant } from "../components/draft/DraftAssistant";
 import type { Prospect, DraftPickDetail, DraftPickSummary, TeamNeed } from "../types/offseason";
+import type { Team } from "../services/api";
+import type { Season } from "../types/season";
 import "./DraftRoom.css";
 
+// Loader data type
+interface DraftRoomLoaderData {
+  teams: Team[];
+  season: Season | null;
+  currentPick: DraftPickDetail | null;
+  noSeason: boolean;
+}
+
 export const DraftRoom: React.FC = () => {
-  const [seasonId, setSeasonId] = useState<number | null>(null);
+  // Get loader data
+  const loaderData = useLoaderData() as DraftRoomLoaderData | undefined;
+
+  const [seasonId, setSeasonId] = useState<number | null>(loaderData?.season?.id ?? null);
   const [currentPick, setCurrentPick] = useState<DraftPickDetail | null>(null);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [recentPicks, setRecentPicks] = useState<DraftPickSummary[]>([]);
@@ -38,6 +52,8 @@ export const DraftRoom: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (loaderData?.noSeason) return;
+
     const init = async () => {
       try {
         const season = await seasonApi.getCurrentSeason();
@@ -50,7 +66,7 @@ export const DraftRoom: React.FC = () => {
       }
     };
     init();
-  }, [fetchDraftState]);
+  }, [fetchDraftState, loaderData?.noSeason]);
 
   const handlePick = async (prospect: Prospect) => {
     if (!seasonId || !currentPick) return;
@@ -103,6 +119,22 @@ export const DraftRoom: React.FC = () => {
       console.error("Error trading pick:", err);
     }
   };
+
+  // Handle no season state from loader
+  if (loaderData?.noSeason) {
+    return (
+      <div className="draft-room" data-testid="no-season-state">
+        <div className="empty-state">
+          <div className="empty-state-icon">🏈</div>
+          <h1>No Active Season</h1>
+          <p>Start a new season from the Season Dashboard to access the Draft Room.</p>
+          <a href="/season" className="action-button">
+            Go to Season Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="loading">Loading Draft Room...</div>;
 
