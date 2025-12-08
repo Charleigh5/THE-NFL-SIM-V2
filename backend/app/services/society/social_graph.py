@@ -210,9 +210,12 @@ class SocialGraph:
                 if leader and leader.entity_id != enemy_rel.target_id:
                     # Leader mediates
                     enemy_rel.strength *= 0.8 # Conflict reduces
+
+                    status = "squashed" if enemy_rel.strength < 0.2 else "mediated"
                     if enemy_rel.strength < 0.2:
                         enemy_rel.type = RelationshipType.NEUTRAL
-                        resolutions.append(f"Leader {leader.entity_id} squashed beef between {pid} and {enemy_rel.target_id}")
+
+                    resolutions.append(f"Leader {leader.entity_id} {status} beef between {pid} and {enemy_rel.target_id}")
         return resolutions
 
     def _find_influential_leader(self, target_pid: str) -> Optional[SocialNode]:
