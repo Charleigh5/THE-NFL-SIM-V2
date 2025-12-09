@@ -1,0 +1,61 @@
+.container {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.errorMessage {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+.columnsContainer {
+  display: flex;
+  gap: 2rem;
+}
+
+.column {
+  flex: 1;
+}
+
+.traitList {
+  list-style: none;
+  padding: 0;
+}
+
+.traitItem {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+.traitDetails {
+  font-size: 0.8rem;
+}
+
+.assignRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.selectTrait {
+  padding: 0.5rem;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.assignButton {
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.assignButton:disabled {
+  opacity: 0.6;
+}

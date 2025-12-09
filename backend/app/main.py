@@ -98,7 +98,7 @@ app.include_router(genesis.router)
 app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
 app.include_router(draft.router)
 app.include_router(settings_endpoint.router)
-app.include_router(traits.router, prefix="/api", tags=["traits"])
+app.include_router(traits.router, prefix="/api/traits", tags=["traits"])
 app.include_router(news.router, prefix="/api", tags=["news"])
 app.include_router(agent_tasks.router, prefix="/api/agent", tags=["agent"])
 
