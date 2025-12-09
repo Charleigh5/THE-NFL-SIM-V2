@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from dataclasses import dataclass, field
+from typing import List, Optional, Tuple, Dict, Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -11,10 +12,459 @@ from app.models.player import Player
 
 logger = get_logger(__name__)
 
+
+# ============================================================================
+# TRAIT DEFINITION DATACLASS
+# ============================================================================
+
+@dataclass
+class TraitDefinition:
+    """
+    Defines a trait's properties, requirements, and effects.
+    Used for the in-memory catalog and eligibility checking.
+    """
+    name: str
+    description: str
+    position_requirements: List[str]
+    acquisition_method: str  # AUTO_UNLOCK, STAT_THRESHOLD, COACHING_UNLOCK, TEAM_DESIGNATION, PROGRESSION
+    activation_triggers: List[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, etc.
+    effects: Dict[str, float]
+    tier: str  # COMMON, SILVER, GOLD, ELITE
+
+    # Optional eligibility requirements
+    min_awareness: Optional[int] = None
+    min_experience: Optional[int] = None
+    min_stat_threshold: Optional[Dict[str, int]] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for API responses."""
+        return {
+            "name": self.name,
+            "description": self.description,
+            "position_requirements": self.position_requirements,
+            "acquisition_method": self.acquisition_method,
+            "activation_triggers": self.activation_triggers,
+            "effects": self.effects,
+            "tier": self.tier,
+        }
+
+
+# ============================================================================
+# TRAIT CATALOG - 25 TRAITS
+# ============================================================================
+
+TRAIT_CATALOG: Dict[str, TraitDefinition] = {
+    # -------------------------------------------------------------------------
+    # QB TRAITS (3)
+    # -------------------------------------------------------------------------
+    "field_general": TraitDefinition(
+        name="Field General",
+        description="Elite QB leadership that elevates the entire offense. +5 awareness to all offensive players, -15% penalty rate.",
+        position_requirements=["QB"],
+        acquisition_method="AUTO_UNLOCK",
+        activation_triggers=["ON_FIELD"],
+        effects={
+            "team_awareness_boost": 5,
+            "team_penalty_reduction": 0.15,
+            "audible_effectiveness": 0.20,
+            "pre_snap_adjustment_bonus": 1.0,
+        },
+        tier="ELITE",
+        min_awareness=90,
+        min_experience=3,
+    ),
+    "gunslinger": TraitDefinition(
+        name="Gunslinger",
+        description="Faster release and increased throw power, but slightly higher interception risk.",
+        position_requirements=["QB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["PASS_PLAY"],
+        effects={
+            "throw_power_boost": 5,
+            "release_time_reduction": 0.10,
+            "interception_risk_increase": 0.05,
+        },
+        tier="GOLD",
+    ),
+    "escape_artist": TraitDefinition(
+        name="Escape Artist",
+        description="Elite agility and speed when scrambling behind the line of scrimmage.",
+        position_requirements=["QB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["SCRAMBLE"],
+        effects={
+            "scramble_speed_boost": 10,
+            "agility_boost": 10,
+            "sack_break_chance": 0.15,
+        },
+        tier="GOLD",
+    ),
+
+    # -------------------------------------------------------------------------
+    # RB TRAITS (3)
+    # -------------------------------------------------------------------------
+    "chip_block_specialist": TraitDefinition(
+        name="Chip Block Specialist",
+        description="Dual-threat backs become better pass protectors with improved chip blocking.",
+        position_requirements=["RB"],
+        acquisition_method="COACHING_UNLOCK",
+        activation_triggers=["PASS_PLAY", "BLITZ_DETECTED"],
+        effects={
+            "chip_block_success_rate": 0.40,
+            "pass_protection_boost": 10,
+            "route_timing_after_chip": 0.15,
+            "blitz_awareness_boost": 5,
+        },
+        tier="SILVER",
+    ),
+    "bruiser": TraitDefinition(
+        name="Bruiser",
+        description="Power runner who excels at trucking and stiff arms.",
+        position_requirements=["RB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["RUN_PLAY", "CONTACT"],
+        effects={
+            "trucking_boost": 10,
+            "stiff_arm_boost": 10,
+            "fall_forward_chance": 0.25,
+        },
+        tier="GOLD",
+    ),
+    "satellite": TraitDefinition(
+        name="Satellite",
+        description="Elite receiving back with receiver-like route running skills.",
+        position_requirements=["RB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["PASS_PLAY", "ROUTE_RUNNING"],
+        effects={
+            "route_running_boost": 10,
+            "catching_boost": 5,
+            "mismatch_bonus_vs_lb": 0.15,
+        },
+        tier="SILVER",
+    ),
+
+    # -------------------------------------------------------------------------
+    # WR/TE TRAITS (5)
+    # -------------------------------------------------------------------------
+    "possession_receiver": TraitDefinition(
+        name="Possession Receiver",
+        description="Reliable third-down target, clutch performer in traffic.",
+        position_requirements=["WR", "TE"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["CONTESTED_CATCH", "TRAFFIC"],
+        effects={
+            "catching_in_traffic_boost": 15,
+            "drop_rate_reduction": 0.30,
+            "fumble_after_catch_reduction": 0.25,
+            "catch_awareness_boost": 10,
+        },
+        tier="GOLD",
+        min_stat_threshold={"receptions": 100, "drop_rate_max": 0.05},
+    ),
+    "deep_threat": TraitDefinition(
+        name="Deep Threat",
+        description="Specializes in deep routes and beating coverage over the top.",
+        position_requirements=["WR"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["DEEP_ROUTE"],
+        effects={
+            "deep_route_speed_boost": 5,
+            "deep_ball_tracking_boost": 10,
+            "deep_route_separation_bonus": 0.10,
+        },
+        tier="GOLD",
+    ),
+    "route_technician": TraitDefinition(
+        name="Route Technician",
+        description="Elite footwork creates separation on sharp cuts.",
+        position_requirements=["WR", "TE"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["CUT_MOVE"],
+        effects={
+            "route_running_boost": 10,
+            "cut_separation_bonus": 0.15,
+            "release_boost": 5,
+        },
+        tier="GOLD",
+    ),
+    "yac_monster": TraitDefinition(
+        name="YAC Monster",
+        description="Dangerous with the ball in hands, hard to tackle after catch.",
+        position_requirements=["WR", "TE", "RB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["AFTER_CATCH"],
+        effects={
+            "break_tackle_boost": 10,
+            "elusiveness_boost": 10,
+            "juke_move_boost": 5,
+        },
+        tier="SILVER",
+    ),
+    "red_zone_threat": TraitDefinition(
+        name="Red Zone Threat",
+        description="Dominant inside the 20 yard line.",
+        position_requirements=["WR", "TE"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["RED_ZONE"],
+        effects={
+            "red_zone_catching_boost": 10,
+            "red_zone_contested_catch_boost": 10,
+            "endzone_awareness_boost": 10,
+        },
+        tier="GOLD",
+    ),
+
+    # -------------------------------------------------------------------------
+    # OL TRAITS (2)
+    # -------------------------------------------------------------------------
+    "anchor": TraitDefinition(
+        name="Anchor",
+        description="Stout pass protector who rarely gives ground to bull rushes.",
+        position_requirements=["OT", "OG", "C"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["PASS_BLOCK", "VS_BULL_RUSH"],
+        effects={
+            "strength_blocking_boost": 10,
+            "balance_boost": 10,
+            "pancake_resistance": 0.50,
+        },
+        tier="GOLD",
+    ),
+    "pull_specialist": TraitDefinition(
+        name="Pull Specialist",
+        description="Agile lineman who excels at pulling and blocking in space.",
+        position_requirements=["OG", "C"],
+        acquisition_method="COACHING_UNLOCK",
+        activation_triggers=["PULL_BLOCK", "RUN_PLAY"],
+        effects={
+            "pull_speed_boost": 10,
+            "blocking_in_space_boost": 10,
+            "pull_awareness_boost": 5,
+        },
+        tier="SILVER",
+    ),
+
+    # -------------------------------------------------------------------------
+    # DL TRAITS (2)
+    # -------------------------------------------------------------------------
+    "edge_threat": TraitDefinition(
+        name="Edge Threat",
+        description="Explosive first step off the edge.",
+        position_requirements=["DE"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["PASS_RUSH", "EDGE_RUSH"],
+        effects={
+            "acceleration_boost": 10,
+            "finesse_move_boost": 5,
+            "pressure_chance_boost": 0.15,
+        },
+        tier="GOLD",
+    ),
+    "run_stuffer": TraitDefinition(
+        name="Run Stuffer",
+        description="Impossible to move in the run game, sheds blocks easily.",
+        position_requirements=["DT", "DE"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["RUN_DEFENSE"],
+        effects={
+            "block_shedding_vs_run_boost": 10,
+            "run_strength_boost": 5,
+            "run_tackle_bonus": 5,
+        },
+        tier="GOLD",
+    ),
+
+    # -------------------------------------------------------------------------
+    # LB TRAITS (3)
+    # -------------------------------------------------------------------------
+    "green_dot": TraitDefinition(
+        name="Green Dot (Defensive Captain)",
+        description="Defensive quarterback that coordinates the entire unit. +5 play recognition to all defenders.",
+        position_requirements=["LB"],
+        acquisition_method="TEAM_DESIGNATION",
+        activation_triggers=["ON_FIELD"],
+        effects={
+            "team_play_recognition_boost": 5,
+            "blown_assignment_reduction": 0.20,
+            "blitz_effectiveness_boost": 0.15,
+            "team_coverage_boost": 5,
+        },
+        tier="ELITE",
+    ),
+    "coverage_linebacker": TraitDefinition(
+        name="Coverage Linebacker",
+        description="Linebacker with safety-like coverage skills.",
+        position_requirements=["LB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["COVERAGE"],
+        effects={
+            "zone_coverage_boost": 10,
+            "man_coverage_boost": 5,
+            "reaction_time_reduction": 0.10,
+        },
+        tier="GOLD",
+    ),
+    "enforcer": TraitDefinition(
+        name="Enforcer",
+        description="Heavy hitter who causes more fumbles and fatigue.",
+        position_requirements=["LB", "S"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["TACKLE", "HIT_STICK"],
+        effects={
+            "hit_power_boost": 10,
+            "forced_fumble_chance_boost": 0.15,
+            "fatigue_damage_to_carrier": 0.20,
+        },
+        tier="SILVER",
+    ),
+
+    # -------------------------------------------------------------------------
+    # DB TRAITS (3)
+    # -------------------------------------------------------------------------
+    "pick_artist": TraitDefinition(
+        name="Pick Artist",
+        description="Game-changing ball hawk who creates turnovers.",
+        position_requirements=["CB", "S"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["BALL_IN_AIR", "IN_COVERAGE"],
+        effects={
+            "interception_rate_multiplier": 1.50,
+            "interception_catch_radius_boost": 0.30,
+            "ball_tracking_boost": 15,
+            "ball_reaction_speed_boost": 0.20,
+        },
+        tier="GOLD",
+        min_stat_threshold={"interceptions": 5},
+    ),
+    "shutdown_corner": TraitDefinition(
+        name="Shutdown Corner",
+        description="Elite man coverage specialist who erases receivers.",
+        position_requirements=["CB"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["MAN_COVERAGE"],
+        effects={
+            "man_coverage_boost": 10,
+            "press_coverage_boost": 10,
+            "receiver_separation_reduction": 0.20,
+        },
+        tier="ELITE",
+    ),
+    "zone_hawk": TraitDefinition(
+        name="Zone Hawk",
+        description="Elite zone coverage instincts and break-on-ball speed.",
+        position_requirements=["CB", "S"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["ZONE_COVERAGE"],
+        effects={
+            "zone_coverage_boost": 10,
+            "zone_reaction_time_reduction": 0.15,
+            "zone_interception_chance_boost": 0.10,
+        },
+        tier="GOLD",
+    ),
+
+    # -------------------------------------------------------------------------
+    # SPECIAL TEAMS TRAITS (2)
+    # -------------------------------------------------------------------------
+    "clutch_kicker": TraitDefinition(
+        name="Clutch Kicker",
+        description="Immune to pressure in critical game-winning situations.",
+        position_requirements=["K"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["CLUTCH_MOMENT", "FIELD_GOAL"],
+        effects={
+            "clutch_accuracy_boost": 15,
+            "ice_the_kicker_immunity": 1.0,
+            "clutch_kick_power_boost": 5,
+        },
+        tier="SILVER",
+    ),
+    "coffin_corner": TraitDefinition(
+        name="Coffin Corner",
+        description="Elite precision punting inside the 20.",
+        position_requirements=["P"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["PUNT_INSIDE_50"],
+        effects={
+            "punt_accuracy_boost": 15,
+            "backspin_chance": 0.30,
+            "touchback_reduction": 0.20,
+        },
+        tier="SILVER",
+    ),
+
+    # -------------------------------------------------------------------------
+    # GENERAL TRAITS (2)
+    # -------------------------------------------------------------------------
+    "iron_man": TraitDefinition(
+        name="Iron Man",
+        description="Superior conditioning and durability.",
+        position_requirements=["ALL"],
+        acquisition_method="PROGRESSION",
+        activation_triggers=["ALWAYS"],
+        effects={
+            "fatigue_recovery_boost": 0.20,
+            "injury_resistance_boost": 0.15,
+            "stamina_drain_reduction": 0.10,
+        },
+        tier="SILVER",
+    ),
+    "mentor": TraitDefinition(
+        name="Mentor",
+        description="Veteran presence that accelerates development of younger players.",
+        position_requirements=["ALL"],
+        acquisition_method="PROGRESSION",
+        activation_triggers=["WEEKLY_TRAINING"],
+        effects={
+            "position_group_xp_boost": 0.10,
+            "regression_delay": 1.0,
+        },
+        tier="SILVER",
+        min_experience=8,
+    ),
+}
+
+
+# ============================================================================
+# TRAIT SERVICE CLASS
+# ============================================================================
+
 class TraitService:
     """
     Service for managing Player Traits (X-Factors, Passive Boosts).
+    Supports both database-backed traits and in-memory catalog lookups.
     """
+
+    def __init__(self, db: Session = None):
+        """Initialize with optional database session for async operations."""
+        self.db = db
+
+    # -------------------------------------------------------------------------
+    # CATALOG METHODS (In-Memory)
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def get_catalog() -> Dict[str, TraitDefinition]:
+        """Return the full trait catalog."""
+        return TRAIT_CATALOG
+
+    @staticmethod
+    def get_trait_definition(trait_key: str) -> Optional[TraitDefinition]:
+        """Get a specific trait definition by key."""
+        return TRAIT_CATALOG.get(trait_key)
+
+    @staticmethod
+    def get_trait_by_name(name: str) -> Optional[TraitDefinition]:
+        """Get a trait definition by its display name."""
+        for trait_def in TRAIT_CATALOG.values():
+            if trait_def.name == name:
+                return trait_def
+        return None
+
+    # -------------------------------------------------------------------------
+    # DATABASE METHODS (Persistence)
+    # -------------------------------------------------------------------------
 
     @staticmethod
     def get_all_traits(db: Session) -> List[Trait]:
@@ -22,14 +472,38 @@ class TraitService:
         return db.scalars(select(Trait)).all()
 
     @staticmethod
-    def get_player_traits(db: Session, player_id: int) -> List[Trait]:
-        """Get all traits assigned to a specific player."""
-        # Query Traits joined with PlayerTrait
-        return db.scalars(
+    def get_player_traits(db: Session, player_id: int) -> List[TraitDefinition]:
+        """
+        Get all traits assigned to a specific player.
+        Returns TraitDefinition objects from the catalog for full effect data.
+        """
+        # Query trait names from DB
+        db_traits = db.scalars(
             select(Trait)
             .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
             .where(PlayerTrait.player_id == player_id)
         ).all()
+
+        # Map DB traits to catalog definitions for full data
+        trait_defs = []
+        for db_trait in db_traits:
+            # Try to find matching catalog trait
+            catalog_def = TraitService.get_trait_by_name(db_trait.name)
+            if catalog_def:
+                trait_defs.append(catalog_def)
+            else:
+                # Fallback: create minimal TraitDefinition from DB data
+                trait_defs.append(TraitDefinition(
+                    name=db_trait.name,
+                    description=db_trait.description or "",
+                    position_requirements=[],
+                    acquisition_method="UNKNOWN",
+                    activation_triggers=["ON_FIELD"],
+                    effects={},
+                    tier="COMMON",
+                ))
+
+        return trait_defs
 
     @staticmethod
     def assign_trait(
@@ -38,9 +512,7 @@ class TraitService:
         trait_id: int,
         source: TraitSource = TraitSource.DEVELOPMENT
     ) -> Optional[PlayerTrait]:
-        """
-        Assign a trait to a player.
-        """
+        """Assign a trait to a player."""
         try:
             # Check if already assigned
             existing = db.scalar(
@@ -57,10 +529,6 @@ class TraitService:
 
             if not player or not trait:
                 raise ValueError("Player or Trait not found")
-
-            # Check position compatibility if enforced
-            # if trait.position_groups and player.position not in trait.position_groups:
-            #     raise ValueError(f"Trait incompatible with position {player.position}")
 
             new_assignment = PlayerTrait(
                 player_id=player_id,
@@ -85,15 +553,151 @@ class TraitService:
             log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
             raise
 
+    # -------------------------------------------------------------------------
+    # ASYNC INSTANCE METHOD WRAPPERS (for services that pass db in constructor)
+    # -------------------------------------------------------------------------
+
+    async def get_player_traits(self, player_id: int) -> List[TraitDefinition]:
+        """
+        Async instance method wrapper for get_player_traits.
+        Uses self.db passed in constructor.
+        """
+        if self.db is None:
+            raise ValueError("TraitService requires db session for this operation")
+
+        # For async sessions, we need to use await
+        from sqlalchemy import select as sa_select
+        from sqlalchemy.ext.asyncio import AsyncSession
+
+        if isinstance(self.db, AsyncSession):
+            result = await self.db.execute(
+                sa_select(Trait)
+                .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
+                .where(PlayerTrait.player_id == player_id)
+            )
+            db_traits = result.scalars().all()
+        else:
+            # Sync session fallback
+            db_traits = self.db.scalars(
+                sa_select(Trait)
+                .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
+                .where(PlayerTrait.player_id == player_id)
+            ).all()
+
+        # Map DB traits to catalog definitions for full data
+        trait_defs = []
+        for db_trait in db_traits:
+            catalog_def = self.get_trait_by_name(db_trait.name)
+            if catalog_def:
+                trait_defs.append(catalog_def)
+            else:
+                trait_defs.append(TraitDefinition(
+                    name=db_trait.name,
+                    description=db_trait.description or "",
+                    position_requirements=[],
+                    acquisition_method="UNKNOWN",
+                    activation_triggers=["ON_FIELD"],
+                    effects={},
+                    tier="COMMON",
+                ))
+
+        return trait_defs
+
+    # -------------------------------------------------------------------------
+    # ELIGIBILITY & ACTIVATION METHODS
+    # -------------------------------------------------------------------------
+
+    async def check_trait_eligibility(
+        self,
+        player: Player,
+        trait_name: str
+    ) -> Tuple[bool, str]:
+        """
+        Check if a player is eligible for a specific trait.
+        Returns (is_eligible, reason_string).
+        """
+        trait_def = self.get_trait_by_name(trait_name)
+
+        if not trait_def:
+            return False, f"Unknown trait: {trait_name}"
+
+        # Check position requirements
+        if "ALL" not in trait_def.position_requirements:
+            if player.position not in trait_def.position_requirements:
+                return False, f"Position {player.position} not eligible for {trait_name}"
+
+        # Check awareness requirement
+        if trait_def.min_awareness:
+            player_awareness = getattr(player, "awareness", 0)
+            if player_awareness < trait_def.min_awareness:
+                return False, f"Requires {trait_def.min_awareness}+ awareness (player has {player_awareness})"
+
+        # Check experience requirement
+        if trait_def.min_experience:
+            player_experience = getattr(player, "experience", 0) or getattr(player, "years_pro", 0)
+            if player_experience < trait_def.min_experience:
+                return False, f"Requires {trait_def.min_experience}+ years experience (player has {player_experience})"
+
+        # Check stat thresholds
+        if trait_def.min_stat_threshold:
+            for stat_name, min_value in trait_def.min_stat_threshold.items():
+                player_stat = getattr(player, stat_name, 0)
+                if player_stat < min_value:
+                    return False, f"Requires {min_value}+ {stat_name} (player has {player_stat})"
+
+        return True, "Eligible"
+
     @staticmethod
     def check_trait_activation(
-        db: Session,
-        player_id: int,
-        trait_name: cls_name, # or ID
-        context: dict
+        trait_def: TraitDefinition,
+        context: Dict[str, Any]
     ) -> bool:
         """
-        Check if a situational trait is active given the game context.
+        Check if a trait is active given the game context.
+        Context should contain keys like 'triggers': ['PASS_PLAY', 'RED_ZONE'], etc.
         """
-        # TODO: Implement situational logic based on context (e.g., "3rd Down", "Red Zone")
+        if not trait_def or not trait_def.activation_triggers:
+            return False
+
+        # Always-active traits
+        if "ALWAYS" in trait_def.activation_triggers or "ON_FIELD" in trait_def.activation_triggers:
+            return True
+
+        # Check if any context triggers match trait triggers
+        context_triggers = context.get("triggers", [])
+        for trigger in trait_def.activation_triggers:
+            if trigger in context_triggers:
+                return True
+
         return False
+
+    @staticmethod
+    def apply_trait_effects(
+        player: Player,
+        trait_def: TraitDefinition,
+        context: Dict[str, Any] = None
+    ) -> Dict[str, float]:
+        """
+        Apply trait effects to a player's attributes.
+        Returns the effects that were applied.
+        """
+        if not trait_def:
+            return {}
+
+        # Initialize player modifiers if needed
+        if not hasattr(player, "active_modifiers"):
+            player.active_modifiers = {}
+        if not hasattr(player, "active_traits"):
+            player.active_traits = []
+
+        # Track active trait
+        if trait_def.name not in player.active_traits:
+            player.active_traits.append(trait_def.name)
+
+        # Apply each effect
+        for effect_key, effect_value in trait_def.effects.items():
+            # Accumulate effects (don't overwrite)
+            current = player.active_modifiers.get(effect_key, 0)
+            player.active_modifiers[effect_key] = current + effect_value
+
+        return trait_def.effects
