@@ -511,11 +511,11 @@ See `implementation_plan.md` for full details.
 
 ### **8.5.2: Reverse-Engineer Existing Features**
 
-- [ ] **Core Game Engine Specs**
+- [x] **Core Game Engine Specs**
 
-  - [ ] `docs/game-engine/play-resolution.md`
-  - [ ] `docs/game-engine/ai-decision-making.md`
-  - [ ] `docs/game-engine/match-context.md` (enhance existing)
+  - [x] `docs/game-engine/play-resolution.md`
+  - [x] `docs/game-engine/ai-decision-making.md`
+  - [x] `docs/game-engine/match-context.md` (enhance existing)
 
 - [ ] **Player & Franchise Specs**
 
