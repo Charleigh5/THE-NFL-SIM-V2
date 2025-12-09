@@ -246,7 +246,7 @@ def configure_logging(
     logging.getLogger("httpcore").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
-    # Build processor chain
+    # Build processor chain - core processors shared between modes
     shared_processors: list[structlog.types.Processor] = [
         structlog.contextvars.merge_contextvars,
         structlog.processors.add_log_level,
@@ -254,14 +254,15 @@ def configure_logging(
         add_request_context,
         add_service_context,
         structlog.processors.StackInfoRenderer(),
-        format_exception,
     ]
 
     if json_format:
-        # Production: JSON output
+        # Production: JSON output with our custom exception formatter
+        shared_processors.append(format_exception)
         shared_processors.append(structlog.processors.JSONRenderer())
     else:
-        # Development: Pretty console output
+        # Development: Pretty console output with structlog's built-in exception handling
+        # Note: Don't use format_exception here - it conflicts with dev.set_exc_info
         shared_processors.extend([
             structlog.dev.set_exc_info,
             structlog.dev.ConsoleRenderer(

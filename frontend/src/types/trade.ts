@@ -99,3 +99,38 @@ export interface TradeHistoryItem {
   grade_a?: string; // e.g., "A-", "B+", etc.
   grade_b?: string;
 }
+
+// Alias for consistency with implementation plan naming
+export type TradeEvaluationResult = TradeEvaluation;
+export type TradeDecision = TradeEvaluation["decision"];
+
+/**
+ * Helper to create a unique asset ID for drag-and-drop.
+ */
+export function createAssetId(
+  type: "player" | "pick",
+  id: number,
+  extra?: { year?: number; round?: number }
+): string {
+  if (type === "player") {
+    return `player-${id}`;
+  } else {
+    return `pick-${extra?.year ?? 2025}-${extra?.round ?? 1}-${id}`;
+  }
+}
+
+/**
+ * Helper to parse asset ID back to components.
+ */
+export function parseAssetId(assetId: string): {
+  type: "player" | "pick";
+  id: number;
+} {
+  const parts = assetId.split("-");
+  if (parts[0] === "player") {
+    return { type: "player", id: parseInt(parts[1], 10) };
+  } else {
+    // pick-year-round-id format
+    return { type: "pick", id: parseInt(parts[3] || parts[1], 10) };
+  }
+}

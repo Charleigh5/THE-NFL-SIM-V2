@@ -43,3 +43,5 @@ class Game(Base):
 
     weather_info = relationship("GameWeather", uselist=False, back_populates="game")
 
+    # Player game starts tracking for chemistry calculations
+    player_starts = relationship("PlayerGameStarts", back_populates="game")

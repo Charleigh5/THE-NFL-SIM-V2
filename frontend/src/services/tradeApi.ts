@@ -4,7 +4,6 @@
  */
 import type {
   TradePlayer,
-  TradePick,
   TradeProposal,
   TradeEvaluation,
   IncomingTradeOffer,
@@ -86,8 +85,33 @@ export const tradeApi = {
 
   /**
    * Evaluate a trade proposal using the GM Agent
+   * Uses the new /api/trades/evaluate endpoint
    */
   evaluateTrade: async (
+    targetTeamId: number,
+    offeredPlayerIds: number[],
+    requestedPlayerIds: number[],
+    offeredPicks?: { round: number; year: number }[],
+    requestedPicks?: { round: number; year: number }[]
+  ): Promise<TradeEvaluation> => {
+    const response = await fetchJson<TradeEvaluation>(`/api/trades/evaluate`, {
+      method: "POST",
+      body: JSON.stringify({
+        offered_player_ids: offeredPlayerIds,
+        requested_player_ids: requestedPlayerIds,
+        target_team_id: targetTeamId,
+        offered_picks: offeredPicks || null,
+        requested_picks: requestedPicks || null,
+      }),
+    });
+    return response;
+  },
+
+  /**
+   * Legacy evaluate trade method for backward compatibility
+   * @deprecated Use evaluateTrade with targetTeamId instead
+   */
+  evaluateTradeLegacy: async (
     seasonId: number,
     teamId: number,
     offeredPlayerIds: number[],
@@ -129,6 +153,7 @@ export const tradeApi = {
    */
   getTradeBlock: async (teamId: number): Promise<TradeBlockPlayer[]> => {
     // Mock implementation - would be real endpoint
+    console.log("Getting trade block for:", teamId);
     return [];
   },
 
@@ -169,6 +194,7 @@ export const tradeApi = {
     counterOffer?: Partial<TradeProposal>
   ): Promise<{ success: boolean; message: string }> => {
     // Mock implementation
+    console.log("Mock response to offer:", offerId, counterOffer);
     return {
       success: true,
       message:
@@ -185,6 +211,7 @@ export const tradeApi = {
    */
   getTradeHistory: async (seasonId: number, limit: number = 10): Promise<TradeHistoryItem[]> => {
     // Mock implementation
+    console.log("Getting trade history:", seasonId, limit);
     return [];
   },
 };
@@ -217,5 +244,6 @@ function calculateTradeValue(overall: number, age: number): number {
  */
 function generateMockIncomingOffers(teamId: number): IncomingTradeOffer[] {
   // Return empty for now - can be populated with test data later
+  console.log("Generating offers for:", teamId);
   return [];
 }

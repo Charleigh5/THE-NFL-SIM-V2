@@ -15,15 +15,34 @@ class TestQBPocketPresence:
         player = MagicMock(spec=Player)
         player.id = hash(f"{position}_test") % 100000  # Generate integer ID
         player.position = position
+        player.first_name = "Test"
         player.last_name = f"{position}Player"
 
-        # Set default attributes
+        # Set default attributes - comprehensive list for all engine calculations
         defaults = {
+            # Core physical attributes
             'pocket_presence': 50,
             'throw_accuracy_short': 70,
             'speed': 60,
+            'acceleration': 60,
+            'agility': 60,
+            'strength': 60,
+            # WR/DB attributes for AttributeInteractionEngine
             'route_running': 70,
-            'man_coverage': 70
+            'man_coverage': 70,
+            'release': 70,
+            'press': 70,
+            'catching': 70,
+            'ball_tracking': 70,
+            'throw_accuracy_mid': 70,
+            # Experience and awareness (used by InteractionEngine)
+            'experience': 3,
+            'awareness': 70,
+            'discipline': 70,
+            'play_recognition': 70,
+            # Pass rush/block
+            'pass_rush': 70,
+            'pass_block': 70,
         }
         defaults.update(attributes)
 

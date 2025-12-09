@@ -160,11 +160,12 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
     setError(null);
 
     try {
+      // Use the new /api/trades/evaluate endpoint
+      // From the target team's perspective: they give up requestedPlayers and receive offeredPlayers
       const result = await tradeApi.evaluateTrade(
-        seasonId,
-        selectedPartner.id, // Evaluate from partner's perspective
-        requestedPlayers.map((p) => p.id), // What they're giving up
-        offeredPlayers.map((p) => p.id) // What they're receiving
+        selectedPartner.id, // target team evaluates the trade
+        requestedPlayers.map((p) => p.id), // what they're giving up (offered TO them from their POV)
+        offeredPlayers.map((p) => p.id) // what they're receiving (requested FROM them from their POV)
       );
       setEvaluation(result);
     } catch (err) {
