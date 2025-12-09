@@ -40,3 +40,22 @@ AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Request started
+Evaluating trade for team 2
+Request completed
+Request started
+Evaluating trade for team 99999
+Request completed
+Request started
+Evaluating trade for team 1
+Request completed
+Request started
+Evaluating trade for team 1
+Request completed
+Request started
+Trade offer submitted to team 1
+Request completed
+Request started
+Request completed
