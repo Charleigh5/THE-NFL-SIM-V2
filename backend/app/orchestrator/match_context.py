@@ -1,11 +1,14 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.player import Player
 from app.models.team import Team
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
-# from app.engine.kernels.cortex import CortexSystem # To be implemented/imported
+from app.core.logging_config import get_logger
+from app.services.weather_service import WeatherService
+
+logger = get_logger(__name__)
 
 class MatchContext:
     """
@@ -14,6 +17,7 @@ class MatchContext:
     - Active Systems (Genesis, Cortex)
     - Fatigue States
     - Game Context (Score, Time, etc.)
+    - Weather & Chemistry Context
     """
 
     def __init__(self, home_team_id: int, away_team_id: int, db: AsyncSession, weather_config: Dict = None):
@@ -21,7 +25,15 @@ class MatchContext:
         self.away_team_id = away_team_id
         self.db = db
         self.weather_config = weather_config or {}
-        # DepthChartService is static, no instance needed
+
+        # New Context Fields
+        # Populate using WeatherService
+        stadium_id = self.weather_config.get("stadium_id", 0)
+        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+
+        self.weather_conditions: Dict[str, float] = WeatherService.get_weather_modifiers(stadium_id, game_time)
+        self.home_ol_chemistry: int = 0
+        self.away_ol_chemistry: int = 0
 
         # Rosters: player_id -> Player object
         self.home_roster: Dict[int, Player] = {}
@@ -33,6 +45,8 @@ class MatchContext:
         # Systems
         self.genesis: Optional[GenesisKernel] = None
         # self.cortex: Optional[CortexSystem] = None
+
+        logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
 
     async def load_rosters(self):
         """Loads full rosters for both teams from the database."""
@@ -72,16 +86,9 @@ class MatchContext:
                 "anatomy": {}
             })
 
-        # self.cortex = CortexSystem(self.db)
-
     def get_fielded_players(self, team_id: int, formation: str, side: str) -> List[Player]:
         """
         Returns the 11 players on the field for a given team and formation.
-
-        Args:
-            team_id: The ID of the team.
-            formation: The formation name (e.g., "I_FORM", "SHOTGUN", "4_3", "NICKEL").
-            side: "OFFENSE" or "DEFENSE".
         """
         # Get the correct roster list
         if team_id == self.home_team_id:
@@ -95,14 +102,11 @@ class MatchContext:
             starters = DepthChartService.get_starting_defense(roster_list, formation)
 
         # Convert dict of positions to list of players
-        # Filter out None values if a position is missing in depth chart
         players = [p for p in starters.values() if p is not None]
 
-        # If we are short players (e.g. missing depth chart), fill with best available from roster
-        # This is a fallback mechanism
+        # Fallback mechanism
         if len(players) < 11:
             needed = 11 - len(players)
-            # Simple fallback: grab random players not already fielded
             current_ids = {p.id for p in players}
 
             for player in roster_list:
@@ -118,8 +122,6 @@ class MatchContext:
         for pid in player_ids:
             if self.genesis:
                 # Genesis uses 0-100 scale, MatchContext used 0.0-1.0
-                # We assume fatigue_delta passed here is 0.0-1.0 (e.g. 0.05)
-                # So we multiply by 100
                 self.genesis.update_fatigue(pid, fatigue_delta * 100.0)
             else:
                 if pid in self.fatigue_state:
@@ -127,6 +129,5 @@ class MatchContext:
 
     def get_player_fatigue(self, player_id: int) -> float:
         if self.genesis:
-            # Genesis returns 0-100, we convert back to 0.0-1.0 for compatibility
             return self.genesis.get_current_fatigue(player_id) / 100.0
         return self.fatigue_state.get(player_id, 0.0)

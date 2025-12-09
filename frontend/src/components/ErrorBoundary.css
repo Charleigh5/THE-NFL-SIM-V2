@@ -1,63 +1,326 @@
+/**
+ * Error Boundary Styles
+ * =====================
+ *
+ * Modern CSS with:
+ * - CSS custom properties for theming
+ * - Responsive design with clamp()
+ * - Accessible focus states
+ * - Smooth animations
+ * - Dark mode default
+ */
+
+/* ==============================================================================
+   CSS CUSTOM PROPERTIES
+   ============================================================================== */
+
+.error-boundary {
+  --eb-bg-primary: #1a1a2e;
+  --eb-bg-secondary: #16213e;
+  --eb-bg-tertiary: #0f0f1a;
+  --eb-text-primary: #ffffff;
+  --eb-text-secondary: #a0a0a0;
+  --eb-text-muted: #6b6b6b;
+  --eb-color-error: #ff6b6b;
+  --eb-color-warning: #feca57;
+  --eb-color-primary: #4a9eff;
+  --eb-color-primary-hover: #3a8eef;
+  --eb-border-radius: 12px;
+  --eb-transition: 0.2s ease;
+}
+
+/* ==============================================================================
+   MAIN CONTAINER
+   ============================================================================== */
+
 .error-boundary {
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: 400px;
-  padding: 2rem;
+  align-items: center;
+  min-height: 300px;
+  padding: clamp(1rem, 4vw, 2rem);
+  background: linear-gradient(135deg, var(--eb-bg-primary) 0%, var(--eb-bg-secondary) 100%);
+  border-radius: var(--eb-border-radius);
+  margin: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.error-boundary-content {
-  max-width: 600px;
+.error-boundary__content {
   text-align: center;
-  background: rgba(239, 68, 68, 0.1);
-  border: 2px solid rgba(239, 68, 68, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
+  max-width: min(500px, 90vw);
+  animation: fadeInUp 0.3s ease-out;
 }
 
-.error-boundary-content h1 {
-  color: #ef4444;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================================================
+   ICON
+   ============================================================================== */
+
+.error-boundary__icon {
+  font-size: clamp(3rem, 8vw, 4rem);
   margin-bottom: 1rem;
-  font-size: 1.5rem;
+  animation: shake 0.5s ease-out;
 }
 
-.error-message {
-  color: #dc2626;
-  margin-bottom: 1.5rem;
-  font-family: monospace;
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
 }
 
-.error-boundary-button {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
+/* ==============================================================================
+   TEXT CONTENT
+   ============================================================================== */
 
-.error-boundary-button:hover {
-  background: #dc2626;
-}
-
-.error-details {
-  margin-top: 1.5rem;
-  text-align: left;
-  background: rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  border-radius: 6px;
-}
-
-.error-details summary {
-  cursor: pointer;
+.error-boundary__title {
+  color: var(--eb-color-error);
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.error-boundary__message {
+  color: var(--eb-text-secondary);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.error-boundary__max-retries {
+  color: var(--eb-color-warning);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: rgba(254, 202, 87, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(254, 202, 87, 0.3);
+}
+
+/* ==============================================================================
+   ERROR DETAILS
+   ============================================================================== */
+
+.error-boundary__details {
+  text-align: left;
+  background-color: var(--eb-bg-tertiary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  max-height: 250px;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.error-boundary__details summary {
+  cursor: pointer;
+  color: var(--eb-text-primary);
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color var(--eb-transition);
+}
+
+.error-boundary__details summary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.error-boundary__details summary:focus {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 2px;
+}
+
+.error-boundary__error-info {
+  font-size: 0.875rem;
+  color: var(--eb-text-secondary);
+}
+
+.error-boundary__error-info p {
   margin-bottom: 0.5rem;
 }
 
-.error-details pre {
-  overflow-x: auto;
-  font-size: 0.875rem;
-  color: #666;
+.error-boundary__error-info strong {
+  color: var(--eb-text-primary);
+}
+
+.error-boundary__stack {
+  font-family: "SF Mono", "Monaco", "Consolas", monospace;
+  font-size: 0.75rem;
+  color: var(--eb-text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  max-height: 150px;
+  overflow: auto;
+}
+
+/* ==============================================================================
+   BUTTONS
+   ============================================================================== */
+
+.error-boundary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.error-boundary__retry-button,
+.error-boundary__reload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--eb-transition);
+  border: none;
+  min-width: 120px;
+}
+
+.error-boundary__retry-button {
+  background-color: var(--eb-color-primary);
+  color: white;
+}
+
+.error-boundary__retry-button:hover:not(:disabled) {
+  background-color: var(--eb-color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
+.error-boundary__retry-button:focus {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 2px;
+}
+
+.error-boundary__retry-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-boundary__reload-button {
+  background-color: transparent;
+  color: var(--eb-text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.error-boundary__reload-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--eb-text-primary);
+}
+
+.error-boundary__reload-button:focus {
+  outline: 2px solid var(--eb-color-primary);
+  outline-offset: 2px;
+}
+
+/* ==============================================================================
+   SPINNER
+   ============================================================================== */
+
+.error-boundary__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==============================================================================
+   SCROLLBAR
+   ============================================================================== */
+
+.error-boundary__details::-webkit-scrollbar,
+.error-boundary__stack::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.error-boundary__details::-webkit-scrollbar-track,
+.error-boundary__stack::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.error-boundary__details::-webkit-scrollbar-thumb,
+.error-boundary__stack::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.error-boundary__details::-webkit-scrollbar-thumb:hover,
+.error-boundary__stack::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ==============================================================================
+   RESPONSIVE
+   ============================================================================== */
+
+@media (max-width: 480px) {
+  .error-boundary {
+    margin: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .error-boundary__actions {
+    flex-direction: column;
+  }
+
+  .error-boundary__retry-button,
+  .error-boundary__reload-button {
+    width: 100%;
+  }
+}
+
+/* ==============================================================================
+   REDUCED MOTION
+   ============================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .error-boundary__content,
+  .error-boundary__icon,
+  .error-boundary__spinner {
+    animation: none;
+  }
+
+  .error-boundary__retry-button:hover:not(:disabled) {
+    transform: none;
+  }
 }

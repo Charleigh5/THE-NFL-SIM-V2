@@ -99,3 +99,18 @@ class DraftProspect(BaseModel):
     # Status
     is_rookie: bool
     projected_round: Optional[int] = None
+
+    # --- NFL Combine Metrics ---
+    forty_yard_dash: Optional[float] = None
+    bench_press: Optional[int] = None
+    vertical_jump: Optional[float] = None
+    broad_jump: Optional[int] = None
+    three_cone_drill: Optional[float] = None
+    twenty_yard_shuttle: Optional[float] = None
+
+    # --- Genesis Data (Advanced Biometrics) ---
+    power_clean_max: Optional[int] = None      # lbs
+    gps_speed_max: Optional[float] = None      # mph
+    s2_cognition_score: Optional[int] = None   # 0-99
+    medical_flags: Optional[List[str]] = None
+    genesis_revealed: bool = False

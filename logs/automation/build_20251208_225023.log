@@ -1,0 +1,125 @@
+2025-12-08 22:50:23,907 | INFO     | ============================================================
+2025-12-08 22:50:23,908 | INFO     | NFL SIM ENGINE - BUILD AUTOMATION
+2025-12-08 22:50:23,908 | INFO     | ============================================================
+2025-12-08 22:50:23,908 | INFO     | Project Root: C:\Users\cweir\Documents\GitHub\THE NFL SIM
+2025-12-08 22:50:23,908 | INFO     | Log File: C:\Users\cweir\Documents\GitHub\THE NFL SIM\logs\automation\build_20251208_225023.log
+2025-12-08 22:50:23,909 | INFO     | Auto-Approve: True
+2025-12-08 22:50:23,909 | INFO     | Dry Run: True
+2025-12-08 22:50:23,909 | INFO     | Starting Batch: 1
+2025-12-08 22:50:23,909 | INFO     | Skip Tests: False
+2025-12-08 22:50:23,909 | INFO     | Max Workers: 4
+2025-12-08 22:50:23,909 | INFO     | ============================================================
+2025-12-08 22:50:23,910 | INFO     | ============================================================
+2025-12-08 22:50:23,910 | INFO     | BATCH 1: Starting (2 parallel tasks)
+2025-12-08 22:50:23,910 | INFO     | ============================================================
+2025-12-08 22:50:23,910 | INFO     |   Backend tasks:  1
+2025-12-08 22:50:23,911 | INFO     |   Frontend tasks: 1
+2025-12-08 22:50:23,911 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,911 | INFO     | [DRY-RUN] Starting task: B1-BE-01 - Structured Logging Setup
+2025-12-08 22:50:23,911 | INFO     | [DRY-RUN] Starting task: B1-FE-01 - Error Boundary Setup
+2025-12-08 22:50:23,912 | INFO     |   Target file: backend/app/core/logging_config.py
+2025-12-08 22:50:23,912 | INFO     |   Target file: frontend/src/components/ErrorBoundary.tsx
+2025-12-08 22:50:23,912 | INFO     |   Subtasks: 6
+2025-12-08 22:50:23,912 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,916 | INFO     | ============================================================
+2025-12-08 22:50:23,916 | INFO     | BATCH 2: Starting (3 parallel tasks)
+2025-12-08 22:50:23,916 | INFO     | ============================================================
+2025-12-08 22:50:23,917 | INFO     |   Backend tasks:  3
+2025-12-08 22:50:23,917 | INFO     |   Frontend tasks: 0
+2025-12-08 22:50:23,917 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,917 | INFO     | [DRY-RUN] Starting task: B2-BE-01 - Player Model Enhancement
+2025-12-08 22:50:23,918 | INFO     | [DRY-RUN] Starting task: B2-BE-02 - OL Chemistry Model
+2025-12-08 22:50:23,918 | INFO     | [DRY-RUN] Starting task: B2-BE-03 - Trait System Models
+2025-12-08 22:50:23,918 | INFO     |   Target file: backend/app/models/player.py
+2025-12-08 22:50:23,918 | INFO     |   Target file: backend/app/models/player_game_starts.py
+2025-12-08 22:50:23,918 | INFO     |   Target file: backend/app/models/trait.py
+2025-12-08 22:50:23,919 | INFO     |   Subtasks: 4
+2025-12-08 22:50:23,919 | INFO     |   Subtasks: 3
+2025-12-08 22:50:23,919 | INFO     |   Subtasks: 3
+2025-12-08 22:50:23,922 | INFO     | ============================================================
+2025-12-08 22:50:23,922 | INFO     | BATCH 3: Starting (1 parallel tasks)
+2025-12-08 22:50:23,922 | INFO     | ============================================================
+2025-12-08 22:50:23,923 | INFO     |   Backend tasks:  1
+2025-12-08 22:50:23,923 | INFO     |   Frontend tasks: 0
+2025-12-08 22:50:23,923 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,924 | INFO     | [DRY-RUN] Starting task: B3-BE-01 - Alembic Migration
+2025-12-08 22:50:23,924 | INFO     |   Target file: backend/alembic/versions/
+2025-12-08 22:50:23,924 | INFO     |   Subtasks: 8
+2025-12-08 22:50:23,927 | INFO     | ============================================================
+2025-12-08 22:50:23,927 | INFO     | BATCH 4: Starting (4 parallel tasks)
+2025-12-08 22:50:23,927 | INFO     | ============================================================
+2025-12-08 22:50:23,927 | INFO     |   Backend tasks:  4
+2025-12-08 22:50:23,927 | INFO     |   Frontend tasks: 0
+2025-12-08 22:50:23,927 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,928 | INFO     | [DRY-RUN] Starting task: B4-BE-01 - Chemistry Service
+2025-12-08 22:50:23,928 | INFO     | [DRY-RUN] Starting task: B4-BE-02 - Sack Calculator
+2025-12-08 22:50:23,928 | INFO     |   Target file: backend/app/services/chemistry_service.py
+2025-12-08 22:50:23,928 | INFO     | [DRY-RUN] Starting task: B4-BE-03 - Trait Service
+2025-12-08 22:50:23,928 | INFO     |   Target file: backend/app/engine/sack_calculator.py
+2025-12-08 22:50:23,929 | INFO     | [DRY-RUN] Starting task: B4-BE-04 - Weather Integration
+2025-12-08 22:50:23,929 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,929 | INFO     |   Target file: backend/app/services/trait_service.py
+2025-12-08 22:50:23,929 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,929 | INFO     |   Target file: backend/app/services/weather_service.py
+2025-12-08 22:50:23,930 | INFO     |   Subtasks: 8
+2025-12-08 22:50:23,930 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,933 | INFO     | ============================================================
+2025-12-08 22:50:23,934 | INFO     | BATCH 5: Starting (3 parallel tasks)
+2025-12-08 22:50:23,934 | INFO     | ============================================================
+2025-12-08 22:50:23,934 | INFO     |   Backend tasks:  3
+2025-12-08 22:50:23,934 | INFO     |   Frontend tasks: 0
+2025-12-08 22:50:23,935 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,935 | INFO     | [DRY-RUN] Starting task: B5-BE-01 - Trait API Endpoints
+2025-12-08 22:50:23,935 | INFO     | [DRY-RUN] Starting task: B5-BE-02 - Play Resolver Integration
+2025-12-08 22:50:23,935 | INFO     |   Target file: backend/app/api/endpoints/traits.py
+2025-12-08 22:50:23,935 | INFO     | [DRY-RUN] Starting task: B5-BE-03 - Match Context Enhancement
+2025-12-08 22:50:23,936 | INFO     |   Target file: backend/app/engine/play_resolver.py
+2025-12-08 22:50:23,936 | INFO     |   Subtasks: 7
+2025-12-08 22:50:23,936 | INFO     |   Target file: backend/app/engine/match_context.py
+2025-12-08 22:50:23,936 | INFO     |   Subtasks: 6
+2025-12-08 22:50:23,936 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,939 | INFO     | ============================================================
+2025-12-08 22:50:23,939 | INFO     | BATCH 6: Starting (4 parallel tasks)
+2025-12-08 22:50:23,939 | INFO     | ============================================================
+2025-12-08 22:50:23,940 | INFO     |   Backend tasks:  0
+2025-12-08 22:50:23,940 | INFO     |   Frontend tasks: 4
+2025-12-08 22:50:23,940 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,940 | INFO     | [DRY-RUN] Starting task: B6-FE-01 - Trade Negotiation UI
+2025-12-08 22:50:23,941 | INFO     | [DRY-RUN] Starting task: B6-FE-02 - Trade Block Component
+2025-12-08 22:50:23,941 | INFO     | [DRY-RUN] Starting task: B6-FE-03 - Trait Display Component
+2025-12-08 22:50:23,941 | INFO     |   Target file: frontend/src/components/trades/TradeNegotiation.tsx
+2025-12-08 22:50:23,941 | INFO     | [DRY-RUN] Starting task: B6-FE-04 - Enhanced Weather Widget
+2025-12-08 22:50:23,941 | INFO     |   Target file: frontend/src/components/trades/TradeBlock.tsx
+2025-12-08 22:50:23,942 | INFO     |   Target file: frontend/src/components/player/PlayerTraits.tsx
+2025-12-08 22:50:23,942 | INFO     |   Subtasks: 9
+2025-12-08 22:50:23,942 | INFO     |   Target file: frontend/src/components/game/WeatherWidget.tsx
+2025-12-08 22:50:23,942 | INFO     |   Subtasks: 6
+2025-12-08 22:50:23,942 | INFO     |   Subtasks: 6
+2025-12-08 22:50:23,943 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,946 | INFO     | ============================================================
+2025-12-08 22:50:23,946 | INFO     | BATCH 7: Starting (2 parallel tasks)
+2025-12-08 22:50:23,947 | INFO     | ============================================================
+2025-12-08 22:50:23,947 | INFO     |   Backend tasks:  0
+2025-12-08 22:50:23,947 | INFO     |   Frontend tasks: 2
+2025-12-08 22:50:23,947 | INFO     |   Other tasks:    0
+2025-12-08 22:50:23,947 | INFO     | [DRY-RUN] Starting task: B7-FE-01 - Trades API Service
+2025-12-08 22:50:23,948 | INFO     |   Target file: frontend/src/services/tradesApi.ts
+2025-12-08 22:50:23,948 | INFO     |   Subtasks: 6
+2025-12-08 22:50:23,948 | INFO     | [DRY-RUN] Starting task: B7-FE-02 - Traits API Service
+2025-12-08 22:50:23,948 | INFO     |   Target file: frontend/src/services/traitsApi.ts
+2025-12-08 22:50:23,948 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,951 | INFO     | ============================================================
+2025-12-08 22:50:23,951 | INFO     | BATCH 8: Starting (3 parallel tasks)
+2025-12-08 22:50:23,952 | INFO     | ============================================================
+2025-12-08 22:50:23,952 | INFO     |   Backend tasks:  1
+2025-12-08 22:50:23,952 | INFO     |   Frontend tasks: 1
+2025-12-08 22:50:23,952 | INFO     |   Other tasks:    1
+2025-12-08 22:50:23,952 | INFO     | [DRY-RUN] Starting task: B8-BE-01 - Integration Tests
+2025-12-08 22:50:23,953 | INFO     | [DRY-RUN] Starting task: B8-FE-01 - E2E Tests
+2025-12-08 22:50:23,953 | INFO     |   Target file: backend/tests/integration/test_gameplay_features.py
+2025-12-08 22:50:23,953 | INFO     | [DRY-RUN] Starting task: B8-DOC-01 - Architecture Decision Records
+2025-12-08 22:50:23,953 | INFO     |   Target file: frontend/e2e/trade-flow.spec.ts
+2025-12-08 22:50:23,953 | INFO     |   Subtasks: 5
+2025-12-08 22:50:23,953 | INFO     |   Target file: docs/adr/
+2025-12-08 22:50:23,953 | INFO     |   Subtasks: 4
+2025-12-08 22:50:23,954 | INFO     |   Subtasks: 6

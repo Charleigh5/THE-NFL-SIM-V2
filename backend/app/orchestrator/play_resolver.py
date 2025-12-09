@@ -8,6 +8,9 @@ from app.engine.offensive_line_ai import OffensiveLineAI
 from app.engine.weather_effects import WeatherEffects
 from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
 from app.models.weather import GameWeather
+from app.engine.sack_calculator import SackCalculator
+from app.services.chemistry_service import ChemistryService
+from app.services.weather_service import WeatherService
 from typing import Optional, Any, List, Tuple
 import logging
 
@@ -253,23 +256,34 @@ class PlayResolver:
         elif BlockingResult.LOSS in block_results:
             # Chance increases with number of losses
             loss_count = block_results.count(BlockingResult.LOSS)
-            base_sack_chance = 0.20 * loss_count
 
-            # QB POCKET PRESENCE MITIGATION (INT-001)
-            # QB's ability to sense pressure reduces sack probability
-            pocket_presence = getattr(qb, 'pocket_presence', 50) if qb else 50
+            # Determine pressure level (0.0 to 1.0)
+            # 1 loss = 0.3, 2 losses = 0.6, 3+ losses = 0.9
+            pressure_level = min(0.9, loss_count * 0.3)
 
-            # Scale reduction: 0% at PP=0, up to 50% at PP=100
-            sack_reduction_factor = (pocket_presence / 200.0)  # Max 0.5 reduction
+            # Get OL Chemistry Bonus
+            # Assuming match_context has these populated
+            chem_bonus = 0
+            if self.current_match_context:
+                 if getattr(command, "is_home_team", True):
+                     chem_bonus = getattr(self.current_match_context, "home_ol_chemistry", 0)
+                 else:
+                     chem_bonus = getattr(self.current_match_context, "away_ol_chemistry", 0)
 
-            # Apply mitigation
-            adjusted_sack_chance = base_sack_chance * (1 - sack_reduction_factor)
+            # Calculate Probability with SackCalculator
+            sack_prob = SackCalculator.calculate_sack_probability(qb, pressure_level, chem_bonus)
 
-            if ProbabilityEngine.resolve_outcome(self.rng, adjusted_sack_chance):
+            # Resolve
+            outcome = SackCalculator.resolve_sack_outcome(qb, sack_prob)
+
+            if outcome == "SACK":
                 is_sack = True
                 if sackers:
                     sacker = sackers[0]
                     beaten_ol = beaten_ols[0]
+            elif outcome == "PRESSURE_AVOIDED":
+                 # Maybe Log "Pressure Avoided" narrative?
+                 logger.debug(f"Pressure avoided by {qb.last_name}")
 
         if is_sack:
             # SACK!

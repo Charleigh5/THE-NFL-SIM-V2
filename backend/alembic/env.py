@@ -23,6 +23,8 @@ from app.models.gm import GM
 from app.models.game import Game
 from app.models.stats import PlayerGameStats
 from app.models.feedback import UserFeedback
+from app.models.trait import Trait, PlayerTrait
+from app.models.player_game_starts import PlayerGameStarts
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

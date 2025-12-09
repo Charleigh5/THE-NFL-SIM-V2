@@ -109,7 +109,22 @@ class RookieGenerator:
             awareness=overall - 10, # Rookies have lower awareness
 
             contract_years=4, # Standard rookie deal
-            contract_salary=500000 + (overall * 10000) # Salary based on rating
+            contract_salary=500000 + (overall * 10000), # Salary based on rating
+
+            # --- NFL Combine Metrics ---
+            forty_yard_dash=round(self.rng.gauss(4.6, 0.2), 2),      # ~4.2 to 5.0 range
+            bench_press=self.rng.randint(15, 35),
+            vertical_jump=round(self.rng.gauss(32.0, 4.0), 1),       # ~28 to 40 inches
+            broad_jump=self.rng.randint(108, 132),                    # ~9' to 11'
+            three_cone_drill=round(self.rng.gauss(7.1, 0.25), 2),
+            twenty_yard_shuttle=round(self.rng.gauss(4.3, 0.15), 2),
+
+            # --- Genesis Data (Advanced Biometrics) ---
+            power_clean_max=self.rng.randint(285, 385),               # lbs
+            gps_speed_max=round(self.rng.uniform(18.0, 23.5), 1),     # mph
+            s2_cognition_score=self.rng.randint(45, 99),              # 0-99
+            medical_flags=["Prior ACL (2022)"] if self.rng.random() < 0.1 else [],
+            genesis_revealed=False,
         )
 
         return player

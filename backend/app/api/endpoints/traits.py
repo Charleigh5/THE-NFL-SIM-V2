@@ -1,222 +1,88 @@
-"""
-Trait System API Endpoints
+from typing import List, Any
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
-Provides REST API for managing player traits.
-"""
+from app.api import deps
+from app.schemas import trait as schemas
+from app.services.trait_service import TraitService
+from app.core.logging_config import get_logger, log_error, ErrorCategory
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, ConfigDict
-from typing import List, Dict, Any
-from app.core.database import get_db
-from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.models.player import Player
-from sqlalchemy import select
+router = APIRouter()
+logger = get_logger(__name__)
 
-router = APIRouter(prefix="/traits", tags=["traits"])
-
-
-# ============================================================================
-# SCHEMAS
-# ============================================================================
-
-class TraitInfo(BaseModel):
-    """Trait information schema"""
-    model_config = ConfigDict(from_attributes=True)
-
-    name: str
-    description: str
-    position_requirements: List[str]
-    acquisition_method: str
-    activation_triggers: List[str]
-    effects: Dict[str, Any]
-    tier: str
-
-
-class PlayerTraitResponse(BaseModel):
-    """Player's trait list response"""
-    player_id: int
-    player_name: str
-    position: str
-    traits: List[TraitInfo]
-
-
-class GrantTraitRequest(BaseModel):
-    """Request to grant a trait"""
-    player_id: int
-    trait_name: str
-
-
-class TraitEligibilityResponse(BaseModel):
-    """Trait eligibility check response"""
-    is_eligible: bool
-    reason: str
-
-
-# ============================================================================
-# ENDPOINTS
-# ============================================================================
-
-@router.get("/catalog", response_model=List[TraitInfo])
-async def get_trait_catalog():
+@router.get("/", response_model=List[schemas.Trait])
+async def read_traits(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(deps.get_db)
+) -> Any:
     """
-    Get the full trait catalog with all available traits.
-
-    Returns complete metadata for all traits including:
-    - Description
-    - Position requirements
-    - Acquisition methods
-    - Effects
+    Retrieve all available traits.
     """
-    return [trait_def.to_dict() for trait_def in TRAIT_CATALOG.values()]
+    try:
+        traits = TraitService.get_all_traits(db)
+        return traits
+    except Exception as e:
+        log_error(logger, ErrorCategory.API_ERROR, "Failed to retrieve traits", exc_info=e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-
-@router.get("/player/{player_id}", response_model=PlayerTraitResponse)
-async def get_player_traits(
+@router.get("/players/{player_id}", response_model=List[schemas.Trait])
+async def read_player_traits(
     player_id: int,
-    db: AsyncSession = Depends(get_db)
-):
+    db: Session = Depends(deps.get_db)
+) -> Any:
     """
-    Get all traits for a specific player.
-
-    Args:
-        player_id: Player ID
-
-    Returns:
-        Player info with all active traits
+    Retrieve traits assigned to a specific player.
     """
-    # Get player
-    stmt = select(Player).filter(Player.id == player_id)
-    result = await db.execute(stmt)
-    player = result.scalar_one_or_none()
+    try:
+        # Note: Service returns `Trait` objects (scalars).
+        # But the schema expects `PlayerTrait` association objects to show `acquired_date` etc?
+        # Wait, `get_player_traits` in Service returned `Trait` list.
+        # Ideally, we want the association data too.
+        # I should update the Service to return `PlayerTrait` objects if we want metadata.
+        # Let's check `trait_service.py` implementation:
+        # return db.scalars(select(Trait).join(PlayerTrait...)) -> Returns Traits.
 
-    if not player:
-        raise HTTPException(status_code=404, detail="Player not found")
+        # If schema is `List[schemas.Trait]`, it works.
+        # But `response_model=List[schemas.PlayerTrait]` expects the association.
 
-    # Get traits
-    service = TraitService(db)
-    trait_defs = await service.get_player_traits(player_id)
+        # I will update to return Traits for now to match Service, or update Service.
+        # Since I just wrote the Service to return `Trait`, I'll update response_model to `List[schemas.Trait]`.
+        # However, metadata like "source" is useful.
 
-    return PlayerTraitResponse(
-        player_id=player.id,
-        player_name=f"{player.first_name} {player.last_name}",
-        position=player.position,
-        traits=[trait_def.to_dict() for trait_def in trait_defs]
-    )
+        # Let's stick to returning simple Traits for this endpoint version
+        # OR update the service to return the association.
+        # User requirement: "Get player traits". Usually implies seeing the traits.
 
+        # I'll update Service to return associations? No, I'll stick to Traits for now.
+        pass # placeholder logic
 
-@router.post("/grant")
-async def grant_trait(
-    request: GrantTraitRequest,
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Grant a trait to a player.
+        traits = TraitService.get_player_traits(db, player_id)
+        return traits # This matches List[schemas.Trait]
 
-    Args:
-        request: Grant trait request with player_id and trait_name
+    except Exception as e:
+        log_error(logger, ErrorCategory.API_ERROR, "Failed to retrieve player traits", exc_info=e, player_id=player_id)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-    Returns:
-        Success message
-    """
-    service = TraitService(db)
-
-    # Check eligibility first
-    stmt = select(Player).filter(Player.id == request.player_id)
-    result = await db.execute(stmt)
-    player = result.scalar_one_or_none()
-
-    if not player:
-        raise HTTPException(status_code=404, detail="Player not found")
-
-    is_eligible, reason = await service.check_trait_eligibility(player, request.trait_name)
-
-    if not is_eligible:
-        raise HTTPException(status_code=400, detail=f"Player not eligible: {reason}")
-
-    # Grant trait
-    success = await service.grant_trait_to_player(request.player_id, request.trait_name)
-
-    if not success:
-        raise HTTPException(status_code=400, detail="Failed to grant trait (may already have it)")
-
-    return {
-        "message": f"Successfully granted '{request.trait_name}' to player {request.player_id}",
-        "player_id": request.player_id,
-        "trait_name": request.trait_name
-    }
-
-
-@router.delete("/remove")
-async def remove_trait(
-    request: GrantTraitRequest,
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Remove a trait from a player.
-
-    Args:
-        request: Remove trait request with player_id and trait_name
-
-    Returns:
-        Success message
-    """
-    service = TraitService(db)
-    success = await service.remove_trait_from_player(request.player_id, request.trait_name)
-
-    if not success:
-        raise HTTPException(status_code=404, detail="Trait not found on player")
-
-    return {
-        "message": f"Successfully removed '{request.trait_name}' from player {request.player_id}"
-    }
-
-
-@router.get("/eligibility/{player_id}/{trait_name}", response_model=TraitEligibilityResponse)
-async def check_trait_eligibility(
+@router.post("/players/{player_id}", response_model=schemas.PlayerTrait)
+async def assign_trait_to_player(
     player_id: int,
-    trait_name: str,
-    db: AsyncSession = Depends(get_db)
-):
+    assignment: schemas.TraitAssignment,
+    db: Session = Depends(deps.get_db)
+) -> Any:
     """
-    Check if a player is eligible for a specific trait.
-
-    Args:
-        player_id: Player ID
-        trait_name: Trait name to check
-
-    Returns:
-        Eligibility status and reason
+    Assign a trait to a player.
     """
-    stmt = select(Player).filter(Player.id == player_id)
-    result = await db.execute(stmt)
-    player = result.scalar_one_or_none()
-
-    if not player:
-        raise HTTPException(status_code=404, detail="Player not found")
-
-    service = TraitService(db)
-    is_eligible, reason = await service.check_trait_eligibility(player, trait_name)
-
-    return TraitEligibilityResponse(
-        is_eligible=is_eligible,
-        reason=reason
-    )
-
-
-@router.post("/initialize")
-async def initialize_traits(db: AsyncSession = Depends(get_db)):
-    """
-    Initialize all traits in the database.
-    Should be run once during setup.
-
-    Returns:
-        Success message with count of initialized traits
-    """
-    service = TraitService(db)
-    await service.initialize_trait_catalog()
-
-    return {
-        "message": "Trait catalog initialized",
-        "trait_count": len(TRAIT_CATALOG)
-    }
+    try:
+        player_trait = TraitService.assign_trait(
+            db,
+            player_id=player_id,
+            trait_id=assignment.trait_id,
+            source=assignment.source
+        )
+        return player_trait
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
+        raise HTTPException(status_code=500, detail="Internal server error")

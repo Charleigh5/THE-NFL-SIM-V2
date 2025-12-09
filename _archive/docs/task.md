@@ -472,7 +472,7 @@ See `PHASE_7_COMPLETION.md` for details.
   - [ ] Integrate `sports_news` MCP content
 - [ ] **Task 8.3.2: Player Profiles**
   - [ ] Enhance player pages with career stats (from `nfl_stats` MCP)
-  - [ ] Display personality traits and morale
+  - [ ] Display personality traits and morale updates
 
 ### **8.4: Final Polish**
 
