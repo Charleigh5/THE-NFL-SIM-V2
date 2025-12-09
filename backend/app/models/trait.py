@@ -4,7 +4,7 @@ from datetime import date
 from enum import Enum
 from typing import List, Optional
 
-from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, String, Text, UniqueConstraint, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -27,7 +27,7 @@ class Trait(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     effect_type: Mapped[TraitEffectType] = mapped_column(default=TraitEffectType.PASSIVE)
     effect_value: Mapped[float] = mapped_column(default=0.0)
-    position_groups: Mapped[Optional[dict]] = mapped_column(nullable=True) # JSON list of positions
+    position_groups = mapped_column(JSON, nullable=True)  # JSON list of positions
 
     # Relationships
     players: Mapped[List["PlayerTrait"]] = relationship(back_populates="trait")

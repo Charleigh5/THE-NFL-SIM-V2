@@ -29,6 +29,7 @@ class PlayerGameStarts(Base):
 
     __table_args__ = (
         Index('idx_player_game', 'player_id', 'game_id', unique=True),
+        {'extend_existing': True}
     )
 
     def __repr__(self) -> str:

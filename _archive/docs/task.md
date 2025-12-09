@@ -517,15 +517,15 @@ See `implementation_plan.md` for full details.
   - [x] `docs/game-engine/ai-decision-making.md`
   - [x] `docs/game-engine/match-context.md` (enhance existing)
 
-- [ ] **Player & Franchise Specs**
+- [x] **Player & Franchise Specs**
 
-  - [ ] `docs/franchise/contract-system.md`
-  - [ ] `docs/franchise/draft-system.md`
-  - [ ] `docs/player-system/progression-curves.md`
+  - [x] `docs/franchise/contract-system.md`
+  - [x] `docs/franchise/draft-system.md`
+  - [x] `docs/player-system/progression-curves.md`
 
-- [ ] **MCP & AI Specs**
-  - [ ] `docs/ai/draft-assistant-algorithm.md`
-  - [ ] `docs/ai/trade-evaluation.md`
+- [x] **MCP & AI Specs**
+  - [x] `docs/ai/draft-assistant-algorithm.md`
+  - [x] `docs/ai/trade-evaluation.md`
 
 ### **8.5.3: Specifications for Proposed Features**
 
