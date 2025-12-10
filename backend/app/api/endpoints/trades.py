@@ -328,11 +328,14 @@ async def respond_to_offer(
         async def evaluate_auto():
             with SessionLocal() as sync_db:
                 gm_agent = GMAgent(db=sync_db, team_id=offer.receiving_team_id)
+                # Pass stored pick data from the offer
+                offered_picks = offer.offered_picks if offer.offered_picks else []
+                requested_picks = offer.requested_picks if offer.requested_picks else []
                 return await gm_agent.evaluate_trade(
                     offered_players_ids=offer.offered_player_ids or [],
                     requested_players_ids=offer.requested_player_ids or [],
-                    offered_picks=[],  # TODO: Add pick support
-                    requested_picks=[]
+                    offered_picks=offered_picks,
+                    requested_picks=requested_picks
                 )
 
         evaluation = await evaluate_auto()
