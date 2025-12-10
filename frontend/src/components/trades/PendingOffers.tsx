@@ -36,7 +36,7 @@ export const PendingOffers: React.FC<PendingOffersProps> = ({ teamId, onCounter 
       await tradeApi.respondToOffer(offerId, action);
       // Remove from list
       setIncomingOffers((prev) => prev.filter((o) => o.id !== offerId));
-    } catch (error) {
+    } catch {
       alert("Failed to process offer");
     }
   };
