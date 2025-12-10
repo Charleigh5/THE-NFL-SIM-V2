@@ -14,3 +14,5 @@ from app.models.history import SeasonHistory, PlayerSeasonStats, TeamSeasonStats
 from app.models.depth_chart import DepthChart
 from app.models.feedback import UserFeedback
 from app.models.weather import GameWeather, StadiumClimate
+from app.models.trade_offer import TradeOffer, TradeOfferStatus
+

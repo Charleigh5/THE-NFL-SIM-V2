@@ -85,8 +85,8 @@ class TestTradeOfferEndpoint:
     """Tests for POST /api/trades/offer endpoint."""
 
     @pytest.mark.asyncio
-    async def test_submit_offer_stub(self, async_client, sample_players):
-        """Test that offer endpoint returns stub response."""
+    async def test_submit_offer_success(self, async_client, sample_players):
+        """Test that offer endpoint creates a trade offer."""
         response = await async_client.post(
             "/api/trades/offer",
             json={
@@ -98,7 +98,7 @@ class TestTradeOfferEndpoint:
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "PENDING"
-        assert data["offer_id"] == 0
+        assert data["offer_id"] > 0  # Now returns real ID
 
 
 class TestTradePendingEndpoint:

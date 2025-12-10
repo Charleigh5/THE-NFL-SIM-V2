@@ -119,3 +119,59 @@ class PlayerTradeInfo(BaseModel):
     age: int
     salary: int
     contract_years: int
+
+
+class TradeOfferStatus(str, Enum):
+    """Status of a trade offer."""
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    COUNTERED = "COUNTERED"
+    EXPIRED = "EXPIRED"
+    WITHDRAWN = "WITHDRAWN"
+
+
+class TradeAssetRead(BaseModel):
+    """Simplified asset info for reading offers."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    type: str = Field(description="'player' or 'pick'")
+    name: str
+    value: int
+    team_id: int
+    position: Optional[str] = None
+
+
+class TradeOfferRead(BaseModel):
+    """Schema for reading a trade offer from the database."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    offering_team_id: int
+    receiving_team_id: int
+    offered_assets: List[TradeAssetRead] = Field(default_factory=list)
+    requested_assets: List[TradeAssetRead] = Field(default_factory=list)
+    status: TradeOfferStatus
+    message: Optional[str] = None
+    gm_response: Optional[str] = None
+    created_at: str
+    expires_at: Optional[str] = None
+    parent_offer_id: Optional[int] = None
+
+
+class PendingOffersResponse(BaseModel):
+    """Response for pending offers endpoint."""
+    model_config = ConfigDict(from_attributes=True)
+
+    incoming: List[TradeOfferRead] = Field(default_factory=list)
+    outgoing: List[TradeOfferRead] = Field(default_factory=list)
+
+
+class TradeRespondRequest(BaseModel):
+    """Request to respond to a trade offer."""
+    model_config = ConfigDict(from_attributes=True)
+
+    action: str = Field(description="'accept' or 'reject'")
+    message: Optional[str] = Field(default=None, max_length=500)
+
