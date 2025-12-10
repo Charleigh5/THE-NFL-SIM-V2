@@ -7,6 +7,7 @@ import type { Team } from "../../services/api";
 import type { TradePlayer, TradeEvaluation } from "../../types/trade";
 import { tradeApi } from "../../services/tradeApi";
 import { FeedbackCollector } from "../draft/FeedbackCollector";
+import { PendingOffers } from "./PendingOffers";
 import "./TradeCenter.css";
 
 interface TradeCenterProps {
@@ -239,6 +240,9 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
     requestedPlayers.map((p) => p.id)
   );
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState<"negotiate" | "offers">("negotiate");
+
   if (loading) {
     return (
       <div className="trade-center" data-testid="trade-center-loading">
@@ -256,168 +260,47 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
       <div className="trade-center-header">
         <h2>Trade Center</h2>
         <div className="trade-phase-indicator">
-          <span className="phase-badge active">Negotiate</span>
-          <span className="phase-badge inactive">Evaluate</span>
-          <span className="phase-badge inactive">Execute</span>
+          <button
+            className={`phase-badge ${activeTab === "negotiate" ? "active" : "inactive"}`}
+            onClick={() => setActiveTab("negotiate")}
+          >
+            Negotiate
+          </button>
+          <button
+            className={`phase-badge ${activeTab === "offers" ? "active" : "inactive"}`}
+            onClick={() => setActiveTab("offers")}
+          >
+            Offers
+          </button>
         </div>
       </div>
 
-      {/* User Team Panel (Offering) */}
-      <div className="trade-panel" data-testid="user-trade-panel">
-        <div className="trade-panel-header">
-          <h3>Your Assets</h3>
-          <div className="team-badge">
-            {userTeam.abbreviation} • {userTeam.city} {userTeam.name}
-          </div>
-        </div>
-        <div className="trade-panel-content">
-          {/* Offered Players Drop Zone */}
-          <div className="trade-drop-zone" data-testid="offered-drop-zone">
-            {offeredPlayers.length === 0 ? (
-              <div className="trade-drop-zone-placeholder">
-                <span className="icon">➕</span>
-                <p>Click players below to add them to the trade</p>
+      {activeTab === "offers" ? (
+        <PendingOffers teamId={userTeamId} />
+      ) : (
+        <>
+          {/* User Team Panel (Offering) */}
+          <div className="trade-panel" data-testid="user-trade-panel">
+            <div className="trade-panel-header">
+              <h3>Your Assets</h3>
+              <div className="team-badge">
+                {userTeam.abbreviation} • {userTeam.city} {userTeam.name}
               </div>
-            ) : (
-              offeredPlayers.map((player) => (
-                <div
-                  key={player.id}
-                  className="trade-player-card selected"
-                  data-testid={`offered-player-${player.id}`}
-                >
-                  <div className="position-badge">{player.position}</div>
-                  <div className="player-info">
-                    <div className="player-name">
-                      {player.first_name} {player.last_name}
-                    </div>
-                    <div className="player-details">
-                      <span>Age {player.age}</span>
-                    </div>
-                  </div>
-                  <span className={`overall-badge ${getOverallClass(player.overall_rating)}`}>
-                    {player.overall_rating}
-                  </span>
-                  <div className="trade-value">
-                    <span className="value-label">Value</span>
-                    <span className="value-number">{player.trade_value}</span>
-                  </div>
-                  <button
-                    className="remove-btn"
-                    onClick={() => handleRemoveFromOffer(player.id)}
-                    aria-label="Remove player"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Search and Filter */}
-          <div className="player-search">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search players..."
-              value={userSearchTerm}
-              onChange={(e) => setUserSearchTerm(e.target.value)}
-              data-testid="user-player-search"
-            />
-          </div>
-
-          <div className="position-filters">
-            {positions.map((pos) => (
-              <button
-                key={pos}
-                className={`position-filter-btn ${userPositionFilter === pos ? "active" : ""}`}
-                onClick={() => setUserPositionFilter(pos)}
-              >
-                {pos}
-              </button>
-            ))}
-          </div>
-
-          {/* Available Players */}
-          <div className="available-players" data-testid="user-available-players">
-            {availableUserPlayers.slice(0, 10).map((player) => (
-              <div
-                key={player.id}
-                className="trade-player-card"
-                onClick={() => handleAddToOffer(player)}
-                data-testid={`user-player-${player.id}`}
-              >
-                <div className="position-badge">{player.position}</div>
-                <div className="player-info">
-                  <div className="player-name">
-                    {player.first_name} {player.last_name}
-                  </div>
-                  <div className="player-details">
-                    <span>Age {player.age}</span>
-                  </div>
-                </div>
-                <span className={`overall-badge ${getOverallClass(player.overall_rating)}`}>
-                  {player.overall_rating}
-                </span>
-                <div className="trade-value">
-                  <span className="value-label">Value</span>
-                  <span className="value-number">{player.trade_value}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Trade Partner Panel (Requesting) */}
-      <div className="trade-panel" data-testid="partner-trade-panel">
-        <div className="trade-panel-header">
-          <h3>Their Assets</h3>
-          {selectedPartner && (
-            <div className="team-badge">
-              {selectedPartner.abbreviation} • {selectedPartner.city} {selectedPartner.name}
             </div>
-          )}
-        </div>
-        <div className="trade-panel-content">
-          {/* Team Selector */}
-          <div className="team-selector">
-            <label className="team-selector-label">Select Trade Partner</label>
-            <select
-              className="team-selector-dropdown"
-              value={selectedPartner?.id || ""}
-              onChange={(e) => {
-                const partner = tradePartners.find((t) => t.id === Number(e.target.value));
-                setSelectedPartner(partner || null);
-                setRequestedPlayers([]);
-                setEvaluation(null);
-              }}
-              data-testid="trade-partner-select"
-              aria-label="Select trade partner team"
-            >
-              <option value="">Choose a team...</option>
-              {tradePartners.map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.city} {team.name} ({team.wins}-{team.losses})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {selectedPartner && (
-            <>
-              {/* Requested Players Drop Zone */}
-              <div className="trade-drop-zone" data-testid="requested-drop-zone">
-                {requestedPlayers.length === 0 ? (
+            <div className="trade-panel-content">
+              {/* Offered Players Drop Zone */}
+              <div className="trade-drop-zone" data-testid="offered-drop-zone">
+                {offeredPlayers.length === 0 ? (
                   <div className="trade-drop-zone-placeholder">
                     <span className="icon">➕</span>
-                    <p>Click players below to request them</p>
+                    <p>Click players below to add them to the trade</p>
                   </div>
                 ) : (
-                  requestedPlayers.map((player) => (
+                  offeredPlayers.map((player) => (
                     <div
                       key={player.id}
                       className="trade-player-card selected"
-                      data-testid={`requested-player-${player.id}`}
+                      data-testid={`offered-player-${player.id}`}
                     >
                       <div className="position-badge">{player.position}</div>
                       <div className="player-info">
@@ -437,7 +320,7 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
                       </div>
                       <button
                         className="remove-btn"
-                        onClick={() => handleRemoveFromRequest(player.id)}
+                        onClick={() => handleRemoveFromOffer(player.id)}
                         aria-label="Remove player"
                       >
                         ✕
@@ -453,9 +336,9 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
                 <input
                   type="text"
                   placeholder="Search players..."
-                  value={partnerSearchTerm}
-                  onChange={(e) => setPartnerSearchTerm(e.target.value)}
-                  data-testid="partner-player-search"
+                  value={userSearchTerm}
+                  onChange={(e) => setUserSearchTerm(e.target.value)}
+                  data-testid="user-player-search"
                 />
               </div>
 
@@ -463,144 +346,288 @@ export const TradeCenter: React.FC<TradeCenterProps> = ({ seasonId, userTeamId, 
                 {positions.map((pos) => (
                   <button
                     key={pos}
-                    className={`position-filter-btn ${partnerPositionFilter === pos ? "active" : ""}`}
-                    onClick={() => setPartnerPositionFilter(pos)}
+                    className={`position-filter-btn ${userPositionFilter === pos ? "active" : ""}`}
+                    onClick={() => setUserPositionFilter(pos)}
                   >
                     {pos}
                   </button>
                 ))}
               </div>
 
-              {/* Partner's Available Players */}
-              {loadingPartnerRoster ? (
-                <div className="trade-loading">
-                  <div className="spinner"></div>
-                  <p>Loading roster...</p>
-                </div>
-              ) : (
-                <div className="available-players" data-testid="partner-available-players">
-                  {availablePartnerPlayers.slice(0, 10).map((player) => (
-                    <div
-                      key={player.id}
-                      className="trade-player-card"
-                      onClick={() => handleAddToRequest(player)}
-                      data-testid={`partner-player-${player.id}`}
-                    >
-                      <div className="position-badge">{player.position}</div>
-                      <div className="player-info">
-                        <div className="player-name">
-                          {player.first_name} {player.last_name}
-                        </div>
-                        <div className="player-details">
-                          <span>Age {player.age}</span>
-                        </div>
+              {/* Available Players */}
+              <div className="available-players" data-testid="user-available-players">
+                {availableUserPlayers.slice(0, 10).map((player) => (
+                  <div
+                    key={player.id}
+                    className="trade-player-card"
+                    onClick={() => handleAddToOffer(player)}
+                    data-testid={`user-player-${player.id}`}
+                  >
+                    <div className="position-badge">{player.position}</div>
+                    <div className="player-info">
+                      <div className="player-name">
+                        {player.first_name} {player.last_name}
                       </div>
-                      <span className={`overall-badge ${getOverallClass(player.overall_rating)}`}>
-                        {player.overall_rating}
-                      </span>
-                      <div className="trade-value">
-                        <span className="value-label">Value</span>
-                        <span className="value-number">{player.trade_value}</span>
+                      <div className="player-details">
+                        <span>Age {player.age}</span>
                       </div>
                     </div>
-                  ))}
+                    <span className={`overall-badge ${getOverallClass(player.overall_rating)}`}>
+                      {player.overall_rating}
+                    </span>
+                    <div className="trade-value">
+                      <span className="value-label">Value</span>
+                      <span className="value-number">{player.trade_value}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Trade Partner Panel (Requesting) */}
+          <div className="trade-panel" data-testid="partner-trade-panel">
+            <div className="trade-panel-header">
+              <h3>Their Assets</h3>
+              {selectedPartner && (
+                <div className="team-badge">
+                  {selectedPartner.abbreviation} • {selectedPartner.city} {selectedPartner.name}
                 </div>
               )}
-            </>
-          )}
-
-          {!selectedPartner && (
-            <div className="trade-drop-zone-placeholder">
-              <span className="icon">🏈</span>
-              <p>Select a team above to view their roster</p>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Trade Summary */}
-      <div className="trade-summary" data-testid="trade-summary">
-        <div className="trade-summary-header">
-          <h3>Trade Summary</h3>
-          <div className="trade-value-comparison">
-            <div className="value-side offering">
-              <div className="label">You Offer</div>
-              <div className="value">{offeredValue}</div>
-            </div>
-            <div
-              className={`value-difference ${
-                valueDifference > 0 ? "favor-offer" : valueDifference < 0 ? "favor-receive" : "even"
-              }`}
-            >
-              <div className="arrow">⇄</div>
-              <div className="diff">
-                {valueDifference > 0 ? `+${valueDifference}` : valueDifference}
+            <div className="trade-panel-content">
+              {/* Team Selector */}
+              <div className="team-selector">
+                <label className="team-selector-label">Select Trade Partner</label>
+                <select
+                  className="team-selector-dropdown"
+                  value={selectedPartner?.id || ""}
+                  onChange={(e) => {
+                    const partner = tradePartners.find((t) => t.id === Number(e.target.value));
+                    setSelectedPartner(partner || null);
+                    setRequestedPlayers([]);
+                    setEvaluation(null);
+                  }}
+                  data-testid="trade-partner-select"
+                  aria-label="Select trade partner team"
+                >
+                  <option value="">Choose a team...</option>
+                  {tradePartners.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.city} {team.name} ({team.wins}-{team.losses})
+                    </option>
+                  ))}
+                </select>
               </div>
-            </div>
-            <div className="value-side receiving">
-              <div className="label">You Receive</div>
-              <div className="value">{requestedValue}</div>
+
+              {selectedPartner && (
+                <>
+                  {/* Requested Players Drop Zone */}
+                  <div className="trade-drop-zone" data-testid="requested-drop-zone">
+                    {requestedPlayers.length === 0 ? (
+                      <div className="trade-drop-zone-placeholder">
+                        <span className="icon">➕</span>
+                        <p>Click players below to request them</p>
+                      </div>
+                    ) : (
+                      requestedPlayers.map((player) => (
+                        <div
+                          key={player.id}
+                          className="trade-player-card selected"
+                          data-testid={`requested-player-${player.id}`}
+                        >
+                          <div className="position-badge">{player.position}</div>
+                          <div className="player-info">
+                            <div className="player-name">
+                              {player.first_name} {player.last_name}
+                            </div>
+                            <div className="player-details">
+                              <span>Age {player.age}</span>
+                            </div>
+                          </div>
+                          <span
+                            className={`overall-badge ${getOverallClass(player.overall_rating)}`}
+                          >
+                            {player.overall_rating}
+                          </span>
+                          <div className="trade-value">
+                            <span className="value-label">Value</span>
+                            <span className="value-number">{player.trade_value}</span>
+                          </div>
+                          <button
+                            className="remove-btn"
+                            onClick={() => handleRemoveFromRequest(player.id)}
+                            aria-label="Remove player"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Search and Filter */}
+                  <div className="player-search">
+                    <span className="search-icon">🔍</span>
+                    <input
+                      type="text"
+                      placeholder="Search players..."
+                      value={partnerSearchTerm}
+                      onChange={(e) => setPartnerSearchTerm(e.target.value)}
+                      data-testid="partner-player-search"
+                    />
+                  </div>
+
+                  <div className="position-filters">
+                    {positions.map((pos) => (
+                      <button
+                        key={pos}
+                        className={`position-filter-btn ${partnerPositionFilter === pos ? "active" : ""}`}
+                        onClick={() => setPartnerPositionFilter(pos)}
+                      >
+                        {pos}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Partner's Available Players */}
+                  {loadingPartnerRoster ? (
+                    <div className="trade-loading">
+                      <div className="spinner"></div>
+                      <p>Loading roster...</p>
+                    </div>
+                  ) : (
+                    <div className="available-players" data-testid="partner-available-players">
+                      {availablePartnerPlayers.slice(0, 10).map((player) => (
+                        <div
+                          key={player.id}
+                          className="trade-player-card"
+                          onClick={() => handleAddToRequest(player)}
+                          data-testid={`partner-player-${player.id}`}
+                        >
+                          <div className="position-badge">{player.position}</div>
+                          <div className="player-info">
+                            <div className="player-name">
+                              {player.first_name} {player.last_name}
+                            </div>
+                            <div className="player-details">
+                              <span>Age {player.age}</span>
+                            </div>
+                          </div>
+                          <span
+                            className={`overall-badge ${getOverallClass(player.overall_rating)}`}
+                          >
+                            {player.overall_rating}
+                          </span>
+                          <div className="trade-value">
+                            <span className="value-label">Value</span>
+                            <span className="value-number">{player.trade_value}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {!selectedPartner && (
+                <div className="trade-drop-zone-placeholder">
+                  <span className="icon">🏈</span>
+                  <p>Select a team above to view their roster</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
 
-        <div className="trade-actions">
-          <button
-            className="trade-btn secondary"
-            onClick={handleClearTrade}
-            disabled={offeredPlayers.length === 0 && requestedPlayers.length === 0}
-          >
-            Clear Trade
-          </button>
-          <button
-            className="trade-btn primary"
-            onClick={handleEvaluateTrade}
-            disabled={
-              !selectedPartner ||
-              (offeredPlayers.length === 0 && requestedPlayers.length === 0) ||
-              isEvaluating
-            }
-            data-testid="evaluate-trade-btn"
-          >
-            {isEvaluating ? "Analyzing..." : "Get GM Response"}
-          </button>
-          {evaluation && evaluation.decision === "ACCEPT" && (
-            <button
-              className="trade-btn primary"
-              onClick={handleExecuteTrade}
-              data-testid="execute-trade-btn"
-            >
-              Execute Trade
-            </button>
-          )}
-        </div>
-
-        {error && <div className="analyzer-error trade-error-centered">{error}</div>}
-
-        {/* GM Response */}
-        {evaluation && (
-          <div
-            className={`gm-response ${evaluation.decision.toLowerCase()}`}
-            data-testid="gm-response"
-          >
-            <div className="gm-response-header">
-              <div className="gm-avatar">👔</div>
-              <div className="gm-info">
-                <h4>
-                  {selectedPartner?.city} {selectedPartner?.name} GM
-                </h4>
-                <span className="gm-verdict">{evaluation.decision}</span>
+          {/* Trade Summary */}
+          <div className="trade-summary" data-testid="trade-summary">
+            <div className="trade-summary-header">
+              <h3>Trade Summary</h3>
+              <div className="trade-value-comparison">
+                <div className="value-side offering">
+                  <div className="label">You Offer</div>
+                  <div className="value">{offeredValue}</div>
+                </div>
+                <div
+                  className={`value-difference ${
+                    valueDifference > 0
+                      ? "favor-offer"
+                      : valueDifference < 0
+                        ? "favor-receive"
+                        : "even"
+                  }`}
+                >
+                  <div className="arrow">⇄</div>
+                  <div className="diff">
+                    {valueDifference > 0 ? `+${valueDifference}` : valueDifference}
+                  </div>
+                </div>
+                <div className="value-side receiving">
+                  <div className="label">You Receive</div>
+                  <div className="value">{requestedValue}</div>
+                </div>
               </div>
             </div>
-            <p>"{evaluation.reasoning}"</p>
 
-            <FeedbackCollector
-              contextId={`trade-${seasonId}-${userTeamId}-${selectedPartner?.id}-${Date.now()}`}
-              contextType="trade"
-            />
+            <div className="trade-actions">
+              <button
+                className="trade-btn secondary"
+                onClick={handleClearTrade}
+                disabled={offeredPlayers.length === 0 && requestedPlayers.length === 0}
+              >
+                Clear Trade
+              </button>
+              <button
+                className="trade-btn primary"
+                onClick={handleEvaluateTrade}
+                disabled={
+                  !selectedPartner ||
+                  (offeredPlayers.length === 0 && requestedPlayers.length === 0) ||
+                  isEvaluating
+                }
+                data-testid="evaluate-trade-btn"
+              >
+                {isEvaluating ? "Analyzing..." : "Get GM Response"}
+              </button>
+              {evaluation && evaluation.decision === "ACCEPT" && (
+                <button
+                  className="trade-btn primary"
+                  onClick={handleExecuteTrade}
+                  data-testid="execute-trade-btn"
+                >
+                  Execute Trade
+                </button>
+              )}
+            </div>
+
+            {error && <div className="analyzer-error trade-error-centered">{error}</div>}
+
+            {/* GM Response */}
+            {evaluation && (
+              <div
+                className={`gm-response ${evaluation.decision.toLowerCase()}`}
+                data-testid="gm-response"
+              >
+                <div className="gm-response-header">
+                  <div className="gm-avatar">👔</div>
+                  <div className="gm-info">
+                    <h4>
+                      {selectedPartner?.city} {selectedPartner?.name} GM
+                    </h4>
+                    <span className="gm-verdict">{evaluation.decision}</span>
+                  </div>
+                </div>
+                <p>"{evaluation.reasoning}"</p>
+
+                <FeedbackCollector
+                  contextId={`trade-${seasonId}-${userTeamId}-${selectedPartner?.id}-${Date.now()}`}
+                  contextType="trade"
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };

@@ -1,0 +1,36 @@
+DEBUG EXCEPTION: AttributeError: 'Player' object has no attribute 'salary'
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\trades.py", line 129, in evaluate_trade
+    evaluation = await evaluate_sync()
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\trades.py", line 120, in evaluate_sync
+    return await gm_agent.evaluate_trade(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 60, in evaluate_trade
+    incoming_salary = sum([p.salary for p in offered_players])
+                           ^^^^^^^^
+AttributeError: 'Player' object has no attribute 'salary'
+DEBUG EXCEPTION: AttributeError: 'Player' object has no attribute 'salary'
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\trades.py", line 129, in evaluate_trade
+    evaluation = await evaluate_sync()
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\trades.py", line 120, in evaluate_sync
+    return await gm_agent.evaluate_trade(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 60, in evaluate_trade
+    incoming_salary = sum([p.salary for p in offered_players])
+                           ^^^^^^^^
+AttributeError: 'Player' object has no attribute 'salary'

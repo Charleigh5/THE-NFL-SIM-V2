@@ -7,20 +7,25 @@ import { useNavigate } from "react-router-dom";
 import { useSettingsStore } from "../store/useSettingsStore";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
+import { tradeApi } from "../services/tradeApi"; // Import tradeApi
 import type { Season } from "../types/season";
 import type { Team } from "../services/api";
-import { TradeCenter } from "../components/trades/TradeCenter";
+import type { TradeOffer } from "../types/trade"; // Import TradeOffer
+import { TradeNegotiator } from "../components/trades/TradeNegotiator"; // Use TradeNegotiator
 import { TradeBlock } from "../components/trades/TradeBlock";
+import { PendingOffers } from "../components/trades/PendingOffers";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import "./TradeCenterPage.css";
 
-type TradeTab = "negotiate" | "trade-block";
+type TradeTab = "negotiate" | "offers" | "trade-block"; // Added offers tab
 
 const TradeCenterPage: React.FC = () => {
   const [season, setSeason] = useState<Season | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TradeTab>("negotiate");
+  const [pendingOffersCount, setPendingOffersCount] = useState(0); // State for badge
+  const [counterOffer, setCounterOffer] = useState<TradeOffer | null>(null); // State for counter offer
 
   const { userTeamId, fetchSettings, isLoading: settingsLoading } = useSettingsStore();
   const navigate = useNavigate();
@@ -59,6 +64,34 @@ const TradeCenterPage: React.FC = () => {
 
     fetchData();
   }, [userTeamId]);
+
+  // Fetch pending offers count for badge
+  useEffect(() => {
+    const fetchOffersCount = async () => {
+      if (!userTeamId) return;
+      try {
+        const { incoming } = await tradeApi.getPendingOffers(userTeamId);
+        // Count only pending incoming offers
+        const count = incoming.filter((o) => o.status === "PENDING").length;
+        setPendingOffersCount(count);
+      } catch (error) {
+        console.error("Failed to fetch pending offers count", error);
+      }
+    };
+
+    if (userTeamId) {
+      fetchOffersCount();
+      // Poll every 30 seconds for updates
+      const interval = setInterval(fetchOffersCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [userTeamId]);
+
+  // Handle counter offer action from PendingOffers
+  const handleCounter = (offer: TradeOffer) => {
+    setCounterOffer(offer);
+    setActiveTab("negotiate");
+  };
 
   if (loading || settingsLoading) {
     return (
@@ -117,15 +150,28 @@ const TradeCenterPage: React.FC = () => {
             data-testid="tab-negotiate"
           >
             <span className="tab-icon">🔄</span>
-            <span className="tab-label">Negotiate Trade</span>
+            <span className="tab-label">Negotiate</span>
           </button>
+
+          <button
+            className={`tab-btn ${activeTab === "offers" ? "active" : ""}`}
+            onClick={() => setActiveTab("offers")}
+            data-testid="tab-offers"
+          >
+            <span className="tab-icon">📫</span>
+            <span className="tab-label">Offers</span>
+            {pendingOffersCount > 0 && (
+              <span className="notification-badge">{pendingOffersCount}</span>
+            )}
+          </button>
+
           <button
             className={`tab-btn ${activeTab === "trade-block" ? "active" : ""}`}
             onClick={() => setActiveTab("trade-block")}
             data-testid="tab-trade-block"
           >
             <span className="tab-icon">📋</span>
-            <span className="tab-label">Trade Block & Offers</span>
+            <span className="tab-label">Trade Block</span>
           </button>
         </nav>
       </header>
@@ -133,8 +179,13 @@ const TradeCenterPage: React.FC = () => {
       {/* Tab Content */}
       <main className="trade-content">
         {activeTab === "negotiate" && (
-          <TradeCenter seasonId={season.id} userTeamId={userTeamId} userTeam={team} />
+          <TradeNegotiator
+            seasonId={season.id}
+            userTeamId={userTeamId}
+            initialOffer={counterOffer}
+          />
         )}
+        {activeTab === "offers" && <PendingOffers teamId={userTeamId} onCounter={handleCounter} />}
         {activeTab === "trade-block" && <TradeBlock seasonId={season.id} userTeamId={userTeamId} />}
       </main>
     </div>

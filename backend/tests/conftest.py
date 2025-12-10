@@ -160,3 +160,95 @@ async def clear_tables(async_db_session):
 
     await async_db_session.execute(text("PRAGMA foreign_keys=ON"))
     await async_db_session.commit()
+
+@pytest.fixture(scope="function")
+async def sample_teams(async_db_session):
+    """Create sample teams for testing."""
+    from app.models.team import Team
+
+    teams = [
+        Team(
+            id=1,
+            name="Chiefs",
+            city="Kansas City",
+            abbreviation="KC",
+            conference="AFC",
+            division="West",
+            salary_cap_space=55000000.0,
+        ),
+        Team(
+            id=2,
+            name="Bills",
+            city="Buffalo",
+            abbreviation="BUF",
+            conference="AFC",
+            division="East",
+            salary_cap_space=65000000.0,
+        )
+    ]
+    async_db_session.add_all(teams)
+    await async_db_session.commit()
+    return teams
+
+@pytest.fixture(scope="function")
+async def sample_players(async_db_session, sample_teams):
+    """Create sample players for testing."""
+    from app.models.player import Player
+
+    players = [
+        Player(
+            id=1,
+            team_id=1,
+            first_name="Patrick",
+            last_name="Mahomes",
+            position="QB",
+            age=28,
+            height=75,  # 6'3"
+            weight=225,
+            overall_rating=99,
+            contract_salary=50000000,
+            contract_years=5,
+            injury_status="ACTIVE"
+        ),
+        Player(
+            id=2,
+            team_id=1,
+            first_name="Travis",
+            last_name="Kelce",
+            position="TE",
+            age=34,
+            height=77,  # 6'5"
+            weight=250,
+            overall_rating=92,
+            contract_salary=15000000,
+            contract_years=2,
+            injury_status="ACTIVE"
+        ),
+        Player(
+            id=3,
+            team_id=2,
+            first_name="Josh",
+            last_name="Allen",
+            position="QB",
+            age=27,
+            height=77,  # 6'5"
+            weight=237,
+            overall_rating=98,
+            contract_salary=45000000,
+            contract_years=4,
+            injury_status="ACTIVE"
+        )
+    ]
+    async_db_session.add_all(players)
+    await async_db_session.commit()
+    return players
+
+@pytest.fixture(autouse=True)
+def override_session_local(monkeypatch):
+    """Override SessionLocal to use test database globally."""
+    # Patch the SessionLocal in the database module which is imported by others
+    monkeypatch.setattr("app.core.database.SessionLocal", TestingSessionLocal)
+
+    # Also patch where it might have been imported directly (if needed)
+    monkeypatch.setattr("app.api.endpoints.trades.SessionLocal", TestingSessionLocal)
+

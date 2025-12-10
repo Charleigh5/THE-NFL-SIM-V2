@@ -103,6 +103,26 @@ export interface TradeHistoryItem {
 // Alias for consistency with implementation plan naming
 export type TradeEvaluationResult = TradeEvaluation;
 export type TradeDecision = TradeEvaluation["decision"];
+export type TradeOfferStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "COUNTERED" | "EXPIRED";
+
+export interface TradeOffer {
+  id: number;
+  offering_team_id: number;
+  receiving_team_id: number;
+  offered_assets: TradeAsset[];
+  requested_assets: TradeAsset[];
+  status: TradeOfferStatus;
+  created_at: string;
+  expires_at?: string;
+  gm_response?: string; // Message from GM/User
+}
+
+// Extended interface for UI convenience
+export interface TradeOfferDetails extends TradeOffer {
+  offering_team_name: string;
+  receiving_team_name: string;
+  urgency?: "low" | "medium" | "high";
+}
 
 /**
  * Helper to create a unique asset ID for drag-and-drop.

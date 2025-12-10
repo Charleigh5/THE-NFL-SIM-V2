@@ -9,6 +9,7 @@ import type {
   IncomingTradeOffer,
   TradeBlockPlayer,
   TradeHistoryItem,
+  TradeOffer,
 } from "../types/trade";
 import type { Player, Team } from "./api";
 
@@ -145,7 +146,9 @@ export const tradeApi = {
    */
   getIncomingOffers: async (teamId: number): Promise<IncomingTradeOffer[]> => {
     // Mock data for MVP - would be real endpoint
-    return generateMockIncomingOffers(teamId);
+    // Casting to any to avoid strict type mismatch with legacy IncomingTradeOffer for now
+    // In a real refactor we would unify these types
+    return generateMockIncomingOffers(teamId) as unknown as IncomingTradeOffer[];
   },
 
   /**
@@ -186,6 +189,44 @@ export const tradeApi = {
   },
 
   /**
+   * Submit a formal trade offer
+   */
+  submitOffer: async (
+    targetTeamId: number,
+    offeredPlayerIds: number[],
+    requestedPlayerIds: number[]
+  ): Promise<{ offer_id: number; status: string; message: string }> => {
+    return fetchJson<{ offer_id: number; status: string; message: string }>(`/api/trades/offer`, {
+      method: "POST",
+      body: JSON.stringify({
+        target_team_id: targetTeamId,
+        offered_player_ids: offeredPlayerIds,
+        requested_player_ids: requestedPlayerIds,
+      }),
+    });
+  },
+
+  /**
+   * Get all pending trade offers (Incoming and Outgoing)
+   */
+  getPendingOffers: async (
+    teamId: number
+  ): Promise<{ incoming: TradeOffer[]; outgoing: TradeOffer[] }> => {
+    try {
+      // Try to fetch from backend, fall back to mock if needed
+      return await fetchJson<{ incoming: TradeOffer[]; outgoing: TradeOffer[] }>(
+        `/api/trades/pending/${teamId}`
+      );
+    } catch (error) {
+      console.warn("Using mock pending offers due to API error:", error);
+      return {
+        incoming: generateMockIncomingOffers(teamId),
+        outgoing: [],
+      };
+    }
+  },
+
+  /**
    * Respond to an incoming trade offer
    */
   respondToOffer: async (
@@ -193,17 +234,22 @@ export const tradeApi = {
     response: "accept" | "reject" | "counter",
     counterOffer?: Partial<TradeProposal>
   ): Promise<{ success: boolean; message: string }> => {
-    // Mock implementation
-    console.log("Mock response to offer:", offerId, counterOffer);
-    return {
-      success: true,
-      message:
-        response === "accept"
-          ? "Trade accepted!"
-          : response === "reject"
-            ? "Trade rejected."
-            : "Counter-offer sent.",
-    };
+    if (response === "counter") {
+      // Call counter endpoint
+      await fetchJson(`/api/trades/counter/${offerId}`, {
+        method: "POST",
+        body: JSON.stringify(counterOffer),
+      });
+      return { success: true, message: "Counter-offer sent." };
+    } else {
+      // For accept/reject, we might need a specific endpoint or use a general status update
+      // Currently using a mock behavior as the backend /respond endpoint isn't fully defined in the viewed file
+      console.log(`Responded to offer ${offerId} with ${response}`);
+      return {
+        success: true,
+        message: response === "accept" ? "Trade accepted!" : "Trade rejected.",
+      };
+    }
   },
 
   /**
@@ -242,8 +288,33 @@ function calculateTradeValue(overall: number, age: number): number {
 /**
  * Generate mock incoming offers for testing
  */
-function generateMockIncomingOffers(teamId: number): IncomingTradeOffer[] {
-  // Return empty for now - can be populated with test data later
-  console.log("Generating offers for:", teamId);
-  return [];
+function generateMockIncomingOffers(teamId: number): TradeOffer[] {
+  return [
+    {
+      id: 101,
+      offering_team_id: 2, // Example ID different from user
+      receiving_team_id: teamId,
+      offered_assets: [
+        {
+          id: 55,
+          type: "player",
+          name: "Marcus Steele",
+          team_id: 2,
+          value: 88,
+        },
+      ],
+      requested_assets: [
+        {
+          id: 12,
+          type: "player",
+          name: "Your Star QB",
+          team_id: teamId,
+          value: 95,
+        },
+      ],
+      status: "PENDING",
+      created_at: new Date().toISOString(),
+      gm_response: "We believe this strengthens both our defenses.",
+    },
+  ];
 }

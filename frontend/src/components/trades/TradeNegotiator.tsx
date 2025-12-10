@@ -15,7 +15,7 @@ import {
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import type { Team } from "../../services/api";
-import type { TradePlayer, TradeEvaluation } from "../../types/trade";
+import type { TradePlayer, TradeEvaluation, TradeOffer } from "../../types/trade";
 import { tradeApi } from "../../services/tradeApi";
 import { DraggableAsset } from "./DraggableAsset";
 import { DroppableZone } from "./DroppableZone";
@@ -25,9 +25,14 @@ import "./TradeNegotiator.css";
 interface TradeNegotiatorProps {
   seasonId: number;
   userTeamId: number;
+  initialOffer?: TradeOffer | null; // Support for counter-offers
 }
 
-export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({ seasonId, userTeamId }) => {
+export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
+  seasonId,
+  userTeamId,
+  initialOffer,
+}) => {
   // State for teams and players
   const [tradePartners, setTradePartners] = useState<Team[]>([]);
   const [selectedPartner, setSelectedPartner] = useState<Team | null>(null);
@@ -84,6 +89,60 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({ seasonId, user
     fetchData();
   }, [userTeamId]);
 
+  // Handle Initial Offer (Counter-Offer Scenario)
+  useEffect(() => {
+    if (initialOffer && tradePartners.length > 0 && userPlayers.length > 0) {
+      // 1. Set Trade Partner
+      const partner = tradePartners.find((t) => t.id === initialOffer.offering_team_id);
+      if (partner) {
+        setSelectedPartner(partner);
+      }
+
+      // 2. Set Offered/Requested Players
+
+      const mapAssetsToPlayers = (
+        assets: {
+          id: number;
+          type: string;
+          name: string;
+          value: number;
+          team_id: number;
+          position?: string;
+        }[],
+        pool: TradePlayer[]
+      ) => {
+        return assets
+          .filter((a) => a.type === "player")
+          .map((a) => {
+            // Try to find full player in pool
+            const existing = pool.find((p) => p.id === a.id);
+            if (existing) return existing;
+
+            // Fallback to partial player object if not found in pool
+            return {
+              id: a.id,
+              first_name: a.name.split(" ")[0],
+              last_name: a.name.split(" ").slice(1).join(" "),
+              position: a.position || "?",
+              overall_rating: a.value || 0, // Fallback
+              age: 0,
+              salary: 0,
+              years_remaining: 0,
+              team_id: a.team_id,
+              trade_value: a.value,
+              is_on_trade_block: false,
+            } as TradePlayer;
+          });
+      };
+
+      const myPlayers = mapAssetsToPlayers(initialOffer.requested_assets, userPlayers); // What I give
+      const theirPlayers = mapAssetsToPlayers(initialOffer.offered_assets, []); // What I get (don't have partner pool yet)
+
+      setOfferedPlayers(myPlayers);
+      setRequestedPlayers(theirPlayers);
+    }
+  }, [initialOffer, tradePartners, userPlayers]); // Run when dependencies load
+
   // Fetch partner players when partner is selected
   useEffect(() => {
     if (selectedPartner) {
@@ -92,6 +151,12 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({ seasonId, user
         try {
           const players = await tradeApi.getTradeablePlayers(selectedPartner.id);
           setPartnerPlayers(players);
+
+          // Refine request players with full data now that we have it
+          if (requestedPlayers.length > 0 && requestedPlayers[0].age === 0) {
+            const refined = requestedPlayers.map((rp) => players.find((p) => p.id === rp.id) || rp);
+            setRequestedPlayers(refined);
+          }
         } catch (err) {
           console.error("Failed to load partner roster:", err);
         } finally {
@@ -102,7 +167,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({ seasonId, user
     } else {
       setPartnerPlayers([]);
     }
-  }, [selectedPartner]);
+  }, [selectedPartner, requestedPlayers]);
 
   // Handle drag start
   const handleDragStart = (event: DragStartEvent) => {
@@ -377,6 +442,28 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({ seasonId, user
               data-testid="evaluate-trade-btn"
             >
               {isEvaluating ? "Analyzing..." : "Get GM Response"}
+            </button>
+            <button
+              className="trade-btn success"
+              disabled={
+                !selectedPartner || (offeredPlayers.length === 0 && requestedPlayers.length === 0)
+              }
+              onClick={async () => {
+                if (!selectedPartner) return;
+                try {
+                  const result = await tradeApi.submitOffer(
+                    selectedPartner.id,
+                    offeredPlayers.map((p) => p.id),
+                    requestedPlayers.map((p) => p.id)
+                  );
+                  alert(result.message); // Replace with nice toast later
+                  handleClearTrade();
+                } catch {
+                  alert("Failed to submit offer"); // Replace with nice toast later
+                }
+              }}
+            >
+              Submit Formal Offer
             </button>
           </div>
 
