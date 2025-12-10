@@ -171,7 +171,7 @@ DraftSuggestionResponse(
 
 ## 8. Reasoning Template
 
-```
+```text
 **Draft Analysis: {player_name}**
 *Position: {position} | Overall: {overall_rating}*
 

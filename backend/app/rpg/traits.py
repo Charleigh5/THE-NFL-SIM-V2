@@ -1,4 +1,23 @@
+"""
+DEPRECATED: This module is deprecated and will be removed in a future release.
+
+Use the new trait system instead:
+    from app.services.trait_service import TraitService, TRAIT_CATALOG, TraitDefinition
+
+The new system provides:
+    - 25 traits (vs 4 in this legacy module)
+    - Database-backed persistence
+    - Eligibility checking
+    - Gameplay integration
+"""
+import warnings
+
+
 class TraitSystem:
+    """
+    DEPRECATED: Legacy trait system with 4 hardcoded traits.
+    Use TraitService from app.services.trait_service instead.
+    """
     TRAITS = {
         "DeepBall": {
             "description": "Increases deep ball accuracy and reduces drag on long throws.",
@@ -17,7 +36,20 @@ class TraitSystem:
             "effect": {"catch_in_traffic": 10, "interception_rate": 1.2}
         }
     }
-    
+
+    def __init__(self):
+        warnings.warn(
+            "TraitSystem is deprecated. Use TraitService from app.services.trait_service instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+
     @staticmethod
     def get_trait_effect(trait_name: str) -> dict:
+        warnings.warn(
+            "TraitSystem.get_trait_effect is deprecated. Use TraitService.get_trait_by_name instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         return TraitSystem.TRAITS.get(trait_name, {}).get("effect", {})
+

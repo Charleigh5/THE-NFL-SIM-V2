@@ -57,8 +57,8 @@ class GMAgent:
 
         # 2. Financial & Roster Check
         # Calculate incoming salary
-        incoming_salary = sum([p.salary for p in offered_players])
-        outgoing_salary = sum([p.salary for p in requested_players])
+        incoming_salary = sum([p.contract_salary for p in offered_players])
+        outgoing_salary = sum([p.contract_salary for p in requested_players])
         net_salary_change = incoming_salary - outgoing_salary
 
         if self.team.salary_cap_space < net_salary_change:
@@ -178,10 +178,10 @@ class GMAgent:
 
         for player in players:
             # Base value from overall rating
-            if player.overall < 50:
+            if player.overall_rating < 50:
                 val = 1.0
             else:
-                val = ((player.overall - 50) ** 1.6) / 2.0
+                val = ((player.overall_rating - 50) ** 1.6) / 2.0
 
             # Age modifier
             if player.age < 24:
@@ -190,7 +190,7 @@ class GMAgent:
                 val *= 0.7 # Age decline penalty
 
             # Contract modifier (simplified)
-            if is_acquiring and player.salary > 20000000 and player.overall < 85:
+            if is_acquiring and player.contract_salary > 20000000 and player.overall_rating < 85:
                 val *= 0.8
 
             # Positional Need Modifier (if acquiring)
@@ -224,7 +224,7 @@ class GMAgent:
         if not players_at_pos:
             return 2.0 # Critical need
 
-        avg_rating = sum(p.overall for p in players_at_pos) / count
+        avg_rating = sum(p.overall_rating for p in players_at_pos) / count
 
         multiplier = 1.0
 
@@ -261,7 +261,7 @@ class GMAgent:
         modifier = 0
         reasoning = ""
 
-        stars_offered = [p for p in offered if p.overall > 90]
+        stars_offered = [p for p in offered if p.overall_rating > 90]
         if stars_offered:
             modifier += 5
             reasoning = f"AI Analyst: Acquiring a superstar like {stars_offered[0].last_name} is a franchise-altering move."

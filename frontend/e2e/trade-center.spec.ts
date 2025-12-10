@@ -61,7 +61,48 @@ test.describe.serial("Trade System E2E", () => {
   test.beforeEach(async ({ page }) => {
     tradePage = new TradePage(page);
 
-    // Mock Teams
+    // Mock User Settings (required for userTeamId)
+    await page.route("**/api/settings", async (route) => {
+      await route.fulfill({
+        json: { user_team_id: USER_TEAM_ID },
+      });
+    });
+
+    // Mock Current Season
+    await page.route("**/api/seasons/current", async (route) => {
+      await route.fulfill({
+        json: {
+          id: 1,
+          year: 2024,
+          current_week: 5,
+          phase: "regular_season",
+        },
+      });
+    });
+
+    // Mock Individual Team Data
+    await page.route(`**/api/teams/${USER_TEAM_ID}`, async (route) => {
+      await route.fulfill({
+        json: {
+          id: USER_TEAM_ID,
+          city: "Arizona",
+          name: "Cardinals",
+          abbreviation: "ARI",
+          wins: 5,
+          losses: 3,
+          salary_cap_space: 25000000,
+        },
+      });
+    });
+
+    // Mock Pending Offers
+    await page.route(`**/api/trades/pending/${USER_TEAM_ID}`, async (route) => {
+      await route.fulfill({
+        json: { incoming: [], outgoing: [] },
+      });
+    });
+
+    // Mock Teams List
     await page.route("**/api/teams?page=1&page_size=100", async (route) => {
       await route.fulfill({
         json: {
@@ -117,6 +158,12 @@ test.describe.serial("Trade System E2E", () => {
       await route.fulfill({
         json: { success: true, message: "Offer submitted successfully", offer_id: 999 },
       });
+    });
+
+    // DEBUG: Log any unmocked API requests
+    await page.route("**/api/**", async (route) => {
+      console.log(`[UNMOCKED API] ${route.request().method()} ${route.request().url()}`);
+      await route.abort();
     });
 
     await tradePage.goto();

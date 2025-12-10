@@ -526,35 +526,38 @@ for player in all_players:
 - [x] Router registration
 - [x] Unit tests (9/9 passing)
 
-### Phase 2: Gameplay Integration (Next)
+### Phase 2: Gameplay Integration ✅ (COMPLETE)
 
-- [ ] Integrate trait effects into PlayResolver
-- [ ] Add trait checks in pre-game setup
-- [ ] Implement Field General team boosts
-- [ ] Implement Possession Receiver catch bonus
-- [ ] Implement Green Dot defensive coordination
+- [x] Integrate trait effects into PlayResolver
+- [x] Add trait checks in pre-game setup (`PreGameService.apply_trait_effects`)
+- [x] Implement Field General team boosts (`_apply_field_general_boost`)
+- [x] Implement Possession Receiver catch bonus (via `apply_trait_effects`)
+- [x] Implement Green Dot defensive coordination (`_apply_green_dot_boost`)
+- [x] Add `check_trait_eligibility()` method
+- [x] Add async instance method wrappers for `TraitService`
 
 ### Phase 3: UI Integration
 
 - [ ] Create `TraitBadge` component
 - [ ] Create `TraitTooltip` component
-- [ ] Add traits to player cards
+- [x] Add traits to player cards (via `TraitManager.tsx`)
 - [ ] Add trait notifications
 
 ### Phase 4: Acquisition Mechanics
 
+- [x] Eligibility checking (`check_trait_eligibility`)
 - [ ] Post-season trait grant logic
-- [ ] Eligibility checking in offseason
 - [ ] Coaching unlock interface
 
 ---
 
 ## Files Created
 
-1. `backend/app/services/trait_service.py` (350 lines)
-2. `backend/app/api/endpoints/traits.py` (200 lines)
-3. `backend/tests/unit/test_trait_service.py` (150 lines)
+1. `backend/app/services/trait_service.py` (704 lines - includes 25-trait catalog)
+2. `backend/app/api/endpoints/traits.py` (89 lines)
+3. `backend/tests/unit/test_trait_service.py` (162 lines)
 4. `docs/specs/trait_system_spec.md` (this file)
+5. `frontend/src/components/dev/TraitManager.tsx` (UI component)
 
 ## Files Modified
 
@@ -612,11 +615,18 @@ for player in all_players:
 - Tests: 100% (33/33 passing)
 - Documentation: Complete
 
-🔄 **Next: Set 4 - Gameplay Integration**
+✅ **Set 4 - COMPLETE** (Gameplay Integration)
 
-- Integrate traits with AttributeInteractionEngine
-- Wire interactions into PlayResolver
-- UI display of trait/interaction effects
+- PreGameService integration: 100%
+- Field General & Green Dot team boosts: 100%
+- check_trait_eligibility method: 100%
+- Async instance wrappers: 100%
+- Legacy `rpg/traits.py` deprecated
+
+🔄 **Next: Phase 3 - UI Integration**
+
+- Create TraitBadge and TraitTooltip components
+- Add trait notifications
 
 ---
 

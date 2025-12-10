@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from starlette.concurrency import run_in_threadpool
 import logging
 
@@ -93,8 +93,8 @@ async def evaluate_trade(
     """
     logger.info(f"Evaluating trade for team {request.target_team_id}")
 
-    # Validate target team exists
-    stmt = select(Team).where(Team.id == request.target_team_id)
+    # Validate target team exists (eager load GM relationship)
+    stmt = select(Team).options(selectinload(Team.gm)).where(Team.id == request.target_team_id)
     result = await db.execute(stmt)
     target_team = result.scalar_one_or_none()
     if not target_team:
@@ -183,7 +183,7 @@ async def evaluate_trade(
         decision=TradeDecision(evaluation["decision"]),
         score=evaluation["score"],
         reasoning=evaluation["reasoning"],
-        gm_philosophy=target_team.gm.philosophy if target_team.gm else None
+        gm_philosophy=target_team.gm.philosophy if target_team and target_team.gm else None
     )
 
 
@@ -303,10 +303,11 @@ async def respond_to_offer(
     db: AsyncSession = Depends(get_async_db)
 ):
     """
-    Respond to a trade offer (accept or reject).
+    Respond to a trade offer (accept, reject, or auto).
 
     For accept: Updates offer status and swaps player team assignments.
     For reject: Updates offer status only.
+    For auto: Uses GMAgent to evaluate and automatically accept/reject.
     """
     # Fetch the offer
     stmt = select(TradeOffer).where(TradeOffer.id == offer_id)
@@ -319,7 +320,27 @@ async def respond_to_offer(
     if offer.status != DBTradeOfferStatus.PENDING:
         raise HTTPException(status_code=400, detail=f"Trade offer is not pending (status: {offer.status.value})")
 
-    if request.action == "accept":
+    action = request.action
+    gm_reasoning = None
+
+    # Auto-response: Use GMAgent to decide
+    if request.action == "auto":
+        async def evaluate_auto():
+            with SessionLocal() as sync_db:
+                gm_agent = GMAgent(db=sync_db, team_id=offer.receiving_team_id)
+                return await gm_agent.evaluate_trade(
+                    offered_players_ids=offer.offered_player_ids or [],
+                    requested_players_ids=offer.requested_player_ids or [],
+                    offered_picks=[],  # TODO: Add pick support
+                    requested_picks=[]
+                )
+
+        evaluation = await evaluate_auto()
+        action = "accept" if evaluation["decision"] == "ACCEPT" else "reject"
+        gm_reasoning = evaluation.get("reasoning", "")
+        logger.info(f"GMAgent auto-response for offer {offer_id}: {action} (score: {evaluation['score']:.1f})")
+
+    if action == "accept":
         # Execute the trade: swap player team IDs
         # Move offered players to receiving team
         for pid in offer.offered_player_ids or []:
@@ -338,20 +359,20 @@ async def respond_to_offer(
                 player.team_id = offer.offering_team_id
 
         offer.status = DBTradeOfferStatus.ACCEPTED
-        offer.gm_response = request.message or "Trade accepted!"
+        offer.gm_response = gm_reasoning or request.message or "Trade accepted!"
         logger.info(f"Trade offer {offer_id} ACCEPTED")
 
-    elif request.action == "reject":
+    elif action == "reject":
         offer.status = DBTradeOfferStatus.REJECTED
-        offer.gm_response = request.message or "Trade rejected."
+        offer.gm_response = gm_reasoning or request.message or "Trade rejected."
         logger.info(f"Trade offer {offer_id} REJECTED")
 
     else:
-        raise HTTPException(status_code=400, detail="Invalid action. Use 'accept' or 'reject'.")
+        raise HTTPException(status_code=400, detail="Invalid action. Use 'accept', 'reject', or 'auto'.")
 
     await db.commit()
 
-    return {"success": True, "message": f"Trade offer {request.action}ed successfully"}
+    return {"success": True, "message": f"Trade offer {action}ed successfully", "gm_reasoning": gm_reasoning}
 
 
 @router.post("/counter/{offer_id}", response_model=TradeOfferResponse)

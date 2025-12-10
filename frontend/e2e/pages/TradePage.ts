@@ -13,22 +13,22 @@ export class TradePage {
   constructor(page: Page) {
     this.page = page;
     this.partnerSelect = page.getByRole("combobox").first(); // Adjust selector if needed
-    this.negotiateTab = page.getByRole("tab", { name: "Negotiate" });
-    this.offersTab = page.getByRole("tab", { name: "Offers" });
-    this.tradeBlockTab = page.getByRole("tab", { name: "Trade Block" });
+    this.negotiateTab = page.getByTestId("tab-negotiate");
+    this.offersTab = page.getByTestId("tab-offers");
+    this.tradeBlockTab = page.getByTestId("tab-trade-block");
     this.evaluateBtn = page.getByRole("button", { name: "Get GM Response" });
     this.submitOfferBtn = page.getByRole("button", { name: "Submit Formal Offer" });
     this.clearTradeBtn = page.getByRole("button", { name: "Clear Trade" });
   }
 
   async goto() {
-    await this.page.goto("/empire/trades");
+    await this.page.goto("/empire/trade-center");
     try {
       await this.negotiateTab.waitFor({ state: "visible", timeout: 10000 });
     } catch {
       // Retry navigation if first load fails (dev server quirks)
       console.log("Retrying navigation to Trade Center...");
-      await this.page.goto("/empire/trades");
+      await this.page.goto("/empire/trade-center");
       await this.negotiateTab.waitFor({ state: "visible" });
     }
   }
