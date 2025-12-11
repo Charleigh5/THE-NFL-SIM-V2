@@ -1,0 +1,418 @@
+[
+  {
+    "id": "ARI",
+    "name": "Arizona Cardinals",
+    "abbreviation": "ARI",
+    "conference": "NFC",
+    "division": "West",
+    "colors": {
+      "primary": "#97233F",
+      "secondary": "#000000",
+      "accent": "#FFB612"
+    },
+    "established": 1898
+  },
+  {
+    "id": "ATL",
+    "name": "Atlanta Falcons",
+    "abbreviation": "ATL",
+    "conference": "NFC",
+    "division": "South",
+    "colors": {
+      "primary": "#A71930",
+      "secondary": "#000000",
+      "accent": "#A5ACAF"
+    },
+    "established": 1966
+  },
+  {
+    "id": "BAL",
+    "name": "Baltimore Ravens",
+    "abbreviation": "BAL",
+    "conference": "AFC",
+    "division": "North",
+    "colors": {
+      "primary": "#241773",
+      "secondary": "#000000",
+      "accent": "#9E7C0C"
+    },
+    "established": 1996
+  },
+  {
+    "id": "BUF",
+    "name": "Buffalo Bills",
+    "abbreviation": "BUF",
+    "conference": "AFC",
+    "division": "East",
+    "colors": {
+      "primary": "#00338D",
+      "secondary": "#C60C30",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "CAR",
+    "name": "Carolina Panthers",
+    "abbreviation": "CAR",
+    "conference": "NFC",
+    "division": "South",
+    "colors": {
+      "primary": "#0085CA",
+      "secondary": "#101820",
+      "accent": "#BFC0BF"
+    },
+    "established": 1995
+  },
+  {
+    "id": "CHI",
+    "name": "Chicago Bears",
+    "abbreviation": "CHI",
+    "conference": "NFC",
+    "division": "North",
+    "colors": {
+      "primary": "#0B162A",
+      "secondary": "#C83803",
+      "accent": "#FFFFFF"
+    },
+    "established": 1920
+  },
+  {
+    "id": "CIN",
+    "name": "Cincinnati Bengals",
+    "abbreviation": "CIN",
+    "conference": "AFC",
+    "division": "North",
+    "colors": {
+      "primary": "#FB4F14",
+      "secondary": "#000000",
+      "accent": "#FFFFFF"
+    },
+    "established": 1968
+  },
+  {
+    "id": "CLE",
+    "name": "Cleveland Browns",
+    "abbreviation": "CLE",
+    "conference": "AFC",
+    "division": "North",
+    "colors": {
+      "primary": "#311D00",
+      "secondary": "#FF3C00",
+      "accent": "#FFFFFF"
+    },
+    "established": 1946
+  },
+  {
+    "id": "DAL",
+    "name": "Dallas Cowboys",
+    "abbreviation": "DAL",
+    "conference": "NFC",
+    "division": "East",
+    "colors": {
+      "primary": "#003594",
+      "secondary": "#041E42",
+      "accent": "#869397"
+    },
+    "established": 1960
+  },
+  {
+    "id": "DEN",
+    "name": "Denver Broncos",
+    "abbreviation": "DEN",
+    "conference": "AFC",
+    "division": "West",
+    "colors": {
+      "primary": "#FB4F14",
+      "secondary": "#002244",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "DET",
+    "name": "Detroit Lions",
+    "abbreviation": "DET",
+    "conference": "NFC",
+    "division": "North",
+    "colors": {
+      "primary": "#0076B6",
+      "secondary": "#B0B7BC",
+      "accent": "#000000"
+    },
+    "established": 1930
+  },
+  {
+    "id": "GB",
+    "name": "Green Bay Packers",
+    "abbreviation": "GB",
+    "conference": "NFC",
+    "division": "North",
+    "colors": {
+      "primary": "#203731",
+      "secondary": "#FFB612",
+      "accent": "#FFFFFF"
+    },
+    "established": 1921
+  },
+  {
+    "id": "HOU",
+    "name": "Houston Texans",
+    "abbreviation": "HOU",
+    "conference": "AFC",
+    "division": "South",
+    "colors": {
+      "primary": "#03202F",
+      "secondary": "#A71930",
+      "accent": "#FFFFFF"
+    },
+    "established": 2002
+  },
+  {
+    "id": "IND",
+    "name": "Indianapolis Colts",
+    "abbreviation": "IND",
+    "conference": "AFC",
+    "division": "South",
+    "colors": {
+      "primary": "#002C5F",
+      "secondary": "#A2AAAD",
+      "accent": "#FFFFFF"
+    },
+    "established": 1953
+  },
+  {
+    "id": "JAX",
+    "name": "Jacksonville Jaguars",
+    "abbreviation": "JAX",
+    "conference": "AFC",
+    "division": "South",
+    "colors": {
+      "primary": "#006778",
+      "secondary": "#9F792C",
+      "accent": "#000000"
+    },
+    "established": 1995
+  },
+  {
+    "id": "KC",
+    "name": "Kansas City Chiefs",
+    "abbreviation": "KC",
+    "conference": "AFC",
+    "division": "West",
+    "colors": {
+      "primary": "#E31837",
+      "secondary": "#FFB81C",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "LV",
+    "name": "Las Vegas Raiders",
+    "abbreviation": "LV",
+    "conference": "AFC",
+    "division": "West",
+    "colors": {
+      "primary": "#000000",
+      "secondary": "#A5ACAF",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "LAC",
+    "name": "Los Angeles Chargers",
+    "abbreviation": "LAC",
+    "conference": "AFC",
+    "division": "West",
+    "colors": {
+      "primary": "#0080C6",
+      "secondary": "#FFC20E",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "LAR",
+    "name": "Los Angeles Rams",
+    "abbreviation": "LAR",
+    "conference": "NFC",
+    "division": "West",
+    "colors": {
+      "primary": "#003594",
+      "secondary": "#FFA300",
+      "accent": "#FFFFFF"
+    },
+    "established": 1937
+  },
+  {
+    "id": "MIA",
+    "name": "Miami Dolphins",
+    "abbreviation": "MIA",
+    "conference": "AFC",
+    "division": "East",
+    "colors": {
+      "primary": "#008E97",
+      "secondary": "#FC4C02",
+      "accent": "#005778"
+    },
+    "established": 1966
+  },
+  {
+    "id": "MIN",
+    "name": "Minnesota Vikings",
+    "abbreviation": "MIN",
+    "conference": "NFC",
+    "division": "North",
+    "colors": {
+      "primary": "#4F2683",
+      "secondary": "#FFC62F",
+      "accent": "#FFFFFF"
+    },
+    "established": 1961
+  },
+  {
+    "id": "NE",
+    "name": "New England Patriots",
+    "abbreviation": "NE",
+    "conference": "AFC",
+    "division": "East",
+    "colors": {
+      "primary": "#002244",
+      "secondary": "#C60C30",
+      "accent": "#B0B7BC"
+    },
+    "established": 1960
+  },
+  {
+    "id": "NO",
+    "name": "New Orleans Saints",
+    "abbreviation": "NO",
+    "conference": "NFC",
+    "division": "South",
+    "colors": {
+      "primary": "#D3BC8D",
+      "secondary": "#101820",
+      "accent": "#FFFFFF"
+    },
+    "established": 1967
+  },
+  {
+    "id": "NYG",
+    "name": "New York Giants",
+    "abbreviation": "NYG",
+    "conference": "NFC",
+    "division": "East",
+    "colors": {
+      "primary": "#0B2265",
+      "secondary": "#A71930",
+      "accent": "#A5ACAF"
+    },
+    "established": 1925
+  },
+  {
+    "id": "NYJ",
+    "name": "New York Jets",
+    "abbreviation": "NYJ",
+    "conference": "AFC",
+    "division": "East",
+    "colors": {
+      "primary": "#125740",
+      "secondary": "#000000",
+      "accent": "#FFFFFF"
+    },
+    "established": 1960
+  },
+  {
+    "id": "PHI",
+    "name": "Philadelphia Eagles",
+    "abbreviation": "PHI",
+    "conference": "NFC",
+    "division": "East",
+    "colors": {
+      "primary": "#004C54",
+      "secondary": "#A5ACAF",
+      "accent": "#ACC0C6"
+    },
+    "established": 1933
+  },
+  {
+    "id": "PIT",
+    "name": "Pittsburgh Steelers",
+    "abbreviation": "PIT",
+    "conference": "AFC",
+    "division": "North",
+    "colors": {
+      "primary": "#FFB612",
+      "secondary": "#101820",
+      "accent": "#FFFFFF"
+    },
+    "established": 1933
+  },
+  {
+    "id": "SF",
+    "name": "San Francisco 49ers",
+    "abbreviation": "SF",
+    "conference": "NFC",
+    "division": "West",
+    "colors": {
+      "primary": "#AA0000",
+      "secondary": "#B3995D",
+      "accent": "#000000"
+    },
+    "established": 1946
+  },
+  {
+    "id": "SEA",
+    "name": "Seattle Seahawks",
+    "abbreviation": "SEA",
+    "conference": "NFC",
+    "division": "West",
+    "colors": {
+      "primary": "#002244",
+      "secondary": "#69BE28",
+      "accent": "#A5ACAF"
+    },
+    "established": 1976
+  },
+  {
+    "id": "TB",
+    "name": "Tampa Bay Buccaneers",
+    "abbreviation": "TB",
+    "conference": "NFC",
+    "division": "South",
+    "colors": {
+      "primary": "#D50A0A",
+      "secondary": "#FF7900",
+      "accent": "#0A0A08"
+    },
+    "established": 1976
+  },
+  {
+    "id": "TEN",
+    "name": "Tennessee Titans",
+    "abbreviation": "TEN",
+    "conference": "AFC",
+    "division": "South",
+    "colors": {
+      "primary": "#0C2340",
+      "secondary": "#4B92DB",
+      "accent": "#C8102E"
+    },
+    "established": 1960
+  },
+  {
+    "id": "WAS",
+    "name": "Washington Commanders",
+    "abbreviation": "WAS",
+    "conference": "NFC",
+    "division": "East",
+    "colors": {
+      "primary": "#5A1414",
+      "secondary": "#FFB612",
+      "accent": "#FFFFFF"
+    },
+    "established": 1932
+  }
+]

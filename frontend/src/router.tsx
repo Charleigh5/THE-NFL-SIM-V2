@@ -13,6 +13,7 @@ import { DepthChart } from "./pages/DepthChart";
 import { DraftRoom } from "./pages/DraftRoom";
 import { TrainingCenter } from "./pages/TrainingCenter";
 import TradeCenterPage from "./pages/TradeCenterPage";
+import TrophyRoom from "./pages/TrophyRoom";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
 import NotFound from "./components/NotFound.tsx";
@@ -280,6 +281,11 @@ export const router = createBrowserRouter([
       {
         path: "empire/trade-center",
         element: <TradeCenterPage />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "empire/trophy-room",
+        element: <TrophyRoom />,
         errorElement: <RouteErrorBoundary />,
       },
       {

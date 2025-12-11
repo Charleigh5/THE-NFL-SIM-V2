@@ -1,0 +1,18 @@
+.player-card {
+  border-color: var(--theme-secondary);
+  box-shadow: 0 4px 20px -5px var(--glass-tint);
+}
+
+.player-card__header {
+  background: linear-gradient(to bottom, var(--theme-primary), transparent);
+}
+
+.player-card__avatar-icon {
+  color: var(--theme-accent);
+  opacity: 0.8;
+}
+
+.player-card__rating-badge {
+  color: var(--theme-secondary);
+  border-color: var(--theme-secondary);
+}

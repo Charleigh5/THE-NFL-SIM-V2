@@ -1,7 +1,13 @@
 :root {
+  /* Dynamic Theme Variables (Defaults: GB) */
+  --theme-primary: #203731;
+  --theme-secondary: #ffb612;
+  --theme-accent: #ffffff;
+  --glass-tint: rgba(32, 55, 49, 0.2);
+
   /* Palette: Deep Space & Neon */
   --color-bg-deep: #050510;
-  --color-bg-panel: rgba(20, 20, 35, 0.6);
+  --color-bg-panel: rgba(20, 20, 35, 0.6); /* Fallback */
   --color-glass-surface: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.1);
 
@@ -45,10 +51,12 @@
 
 body {
   background-color: var(--color-bg-deep);
+  background-image: radial-gradient(circle at 50% 50%, var(--glass-tint), transparent 70%);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   overflow: hidden; /* Prevent scroll, app-like feel */
   -webkit-font-smoothing: antialiased;
+  transition: background-image 1s ease;
 }
 
 #root {
@@ -60,11 +68,13 @@ body {
 
 /* Utility: Glassmorphism */
 .glass-panel {
-  background: var(--color-bg-panel);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(20, 20, 35, 0.7), var(--glass-tint));
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--color-glass-border);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--theme-secondary); /* Border glows with team secondary color */
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.2),
+    0 0 15px var(--glass-tint);
 }
 
 /* Utility: Full Screen Canvas */

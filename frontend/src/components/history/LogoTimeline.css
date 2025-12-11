@@ -1,0 +1,84 @@
+.logo-timeline {
+  overflow: hidden;
+  padding: 2rem 0;
+}
+
+.logo-timeline__title {
+  color: var(--theme-accent);
+  margin-bottom: 1rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--theme-secondary);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.logo-timeline__scroll-container {
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.logo-timeline__track {
+  display: flex;
+  gap: 2rem;
+}
+
+.logo-timeline__era-card {
+  min-width: 300px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--theme-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-timeline__scanline-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size:
+    100% 2px,
+    3px 100%;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.logo-timeline__year {
+  color: var(--theme-secondary);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px var(--theme-secondary);
+}
+
+.logo-timeline__logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background: var(--theme-primary);
+  -webkit-mask-image: url("/react.svg");
+  mask-image: url("/react.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.logo-timeline__label {
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-size: 0.9rem;
+}

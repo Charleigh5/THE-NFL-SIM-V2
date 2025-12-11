@@ -1,0 +1,39 @@
+.trophy-room {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: var(--color-bg-deep);
+}
+
+.trophy-room__ui-layer {
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.trophy-room__header {
+  text-align: center;
+  pointer-events: none;
+}
+
+.trophy-room__title {
+  font-size: 4rem;
+  font-family: var(--font-heading, var(--font-sans));
+  color: transparent;
+  -webkit-text-stroke: 2px var(--theme-secondary);
+  text-shadow: 0 0 20px var(--theme-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.trophy-room__subtitle {
+  color: var(--theme-accent);
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
+.trophy-room__footer {
+  margin-top: auto;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
