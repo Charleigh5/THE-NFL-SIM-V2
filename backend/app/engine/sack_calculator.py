@@ -36,7 +36,8 @@ class SackCalculator:
         try:
             # 1. Pocket Presence Effect (0.0 to 0.495 reduction)
             # Higher presence = lower sack chance
-            presence_factor = qb.pocket_presence * 0.005
+            pocket_presence = getattr(qb, 'pocket_presence', None) or 50
+            presence_factor = pocket_presence * 0.005
 
             # 2. Chemistry Effect (0.0 to 0.1 reduction)
             # Each point of chemistry reduces sack chance by 2%
@@ -44,8 +45,11 @@ class SackCalculator:
 
             # 3. Mobility Factor (Escape)
             # If pressure implies a sack, QB can scramble
-            # Combine speed/agility/acceleration
-            mobility_score = (qb.speed + qb.acceleration + qb.agility) / 300.0 # 0.0-1.0
+            # Combine speed/agility/acceleration with safe defaults
+            qb_speed = getattr(qb, 'speed', None) or 50
+            qb_accel = getattr(qb, 'acceleration', None) or 50
+            qb_agility = getattr(qb, 'agility', None) or 50
+            mobility_score = (qb_speed + qb_accel + qb_agility) / 300.0 # 0.0-1.0
             escape_factor = mobility_score * 0.3 # Up to 30% reduction for elite mobility
 
             # Combine reduction factors (multiplicative for diminishing returns)
@@ -71,7 +75,7 @@ class SackCalculator:
                 "sack_calc",
                 qb=f"{qb.first_name} {qb.last_name}",
                 pressure=pressure_level,
-                presence_val=qb.pocket_presence,
+                presence_val=pocket_presence,
                 presence_mod=presence_factor,
                 chem_mod=chemistry_factor,
                 escape_mod=escape_factor,

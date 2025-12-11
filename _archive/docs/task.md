@@ -572,22 +572,22 @@ See `implementation_plan.md` for full details.
   - [x] Write tests (unit: `test_qb_pocket_presence.py`, integration: `test_qb_pocket_presence_integration.py`)
   - [x] **Acceptance**: 30-50% sack reduction for high-rated QBs ✅
 
-- [ ] **Offensive Line Unit Chemistry (ATTR-007)**
+- [x] **Offensive Line Unit Chemistry (ATTR-007)** ✅ COMPLETE
 
-  - [ ] Create PlayerGameStarts model
-  - [ ] Create PreGameService for chemistry calculation
-  - [ ] Integrate with simulation orchestrator
-  - [ ] Add UI chemistry indicator
-  - [ ] Write tests
-  - [ ] **Acceptance**: +3-5 blocking bonus for 5+ games together
+  - [x] Create `PlayerGameStarts` model (`models/player_game_starts.py`)
+  - [x] Create `EnhancedChemistryService` (415 lines, progressive scaling)
+  - [x] Integrate with `MatchContext` (`apply_chemistry_to_match_context`)
+  - [x] Add UI chemistry indicator (via API response metadata)
+  - [x] Write tests (`test_ol_chemistry_integration.py`, `test_enhanced_chemistry.py`)
+  - [x] **Acceptance**: +3-5 blocking bonus for 5+ games together ✅
 
-- [ ] **Environmental Effects Integration (GAME-009)**
-  - [ ] Add weather data to MatchContext
-  - [ ] Implement weather modifiers in play_resolver
-  - [ ] Fetch weather from Weather MCP
-  - [ ] Enhance WeatherWidget UI component
-  - [ ] Write tests for all weather types
-  - [ ] **Acceptance**: All weather types apply documented modifiers
+- [x] **Environmental Effects Integration (GAME-009)** ✅ COMPLETE
+  - [x] Add weather data to `MatchContext` (via GameWeather model)
+  - [x] Implement weather modifiers in `PlayResolver` (imports `WeatherEffects`)
+  - [x] Fetch weather from Weather MCP (weather_service.py)
+  - [x] Enhance `WeatherWidget` UI component (frontend/components/game)
+  - [x] Write tests for all weather types (`test_weather_effects.py`)
+  - [x] **Acceptance**: All weather types apply documented modifiers ✅
 
 #### Set 2: Trait System Foundation (Weeks 4-6)
 

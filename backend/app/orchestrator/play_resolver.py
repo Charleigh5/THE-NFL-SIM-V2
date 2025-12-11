@@ -206,6 +206,58 @@ class PlayResolver:
             matchups
         )
 
+    def _apply_run_play_interactions(
+        self,
+        rb: Any,
+        defender: Any,
+        command: Any
+    ) -> dict:
+        """
+        Calculate all attribute interactions for a run play.
+
+        Returns:
+            Dictionary with aggregate modifiers and narratives
+        """
+        context = {}
+
+        # Build game context for interactions
+        if self.current_match_context:
+            context = {
+                "HOME": getattr(command, "is_home_team", False),
+                "AWAY": not getattr(command, "is_home_team", False),
+                "GOAL_LINE": getattr(command, "field_position", 50) >= 95,
+                "4TH_QUARTER": getattr(command, "quarter", 1) == 4,
+            }
+
+            # Add weather context
+            if self.current_match_context.weather_config:
+                weather = self.current_match_context.weather_config
+                precip_type = weather.get("precipitation_type") if isinstance(weather, dict) else getattr(weather, "precipitation_type", None)
+
+                if precip_type == "Rain":
+                    context["RAIN"] = True
+                    context["MUDDY"] = True
+                elif precip_type == "Snow":
+                    context["SNOW"] = True
+
+        # Define interaction matchups for run plays
+        matchups = []
+
+        # 1. RB Patience vs LB Run Fit
+        if rb and defender:
+            matchups.append(("rb_patience_vs_lb_run_fit", rb, defender))
+
+        # 2. Juke Efficiency vs Open Field Tackle (post-contact)
+        if rb and defender:
+            matchups.append(("juke_vs_tackle", rb, defender))
+
+        # Apply all interactions
+        return apply_interaction_to_play(
+            self.interaction_engine,
+            context,
+            matchups
+        )
+
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
         Resolves a pass play using Kernel logic with attribute-based calculations.
@@ -527,6 +579,23 @@ class PlayResolver:
 
         # 3. Attribute Logic via ProbabilityEngine
 
+        # ** ATTRIBUTE INTERACTIONS ** (Set 3/Set 4 Integration)
+        # Calculate cross-attribute effects for run plays
+        interaction_results = self._apply_run_play_interactions(rb, defender, command)
+
+        # Safety check: ensure results are valid
+        if interaction_results is None or not isinstance(interaction_results, dict):
+            interaction_results = {
+                "total_offense_boost": 0.0,
+                "total_defense_boost": 0.0,
+                "narratives": []
+            }
+
+        interaction_yards_bonus = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 10.0
+        interaction_narratives = interaction_results.get("narratives", [])
+
+        logger.debug(f"Run interaction yards bonus: {interaction_yards_bonus:.2f}")
+
         # Power Run (Strength vs Tackle)
         power_diff = ProbabilityEngine.compare_strength(
             getattr(rb, "strength", None) or 50,
@@ -566,7 +635,7 @@ class PlayResolver:
         # Calculate Total Yards using Normal Distribution
         yards_gained = ProbabilityEngine.calculate_normal_outcome(
             self.rng,
-            mean=base_yards - fatigue_penalty + momentum_yards_bonus,
+            mean=base_yards - fatigue_penalty + momentum_yards_bonus + interaction_yards_bonus,
             std_dev=std_dev,
             min_val=-5.0, # Can lose yards
             max_val=99.0

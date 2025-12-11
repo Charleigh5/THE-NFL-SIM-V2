@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.team import Team
 from app.models.player import Player
+from app.models.coach import Coach
+from app.data.coaches import COACHES_DB
 import random
 
 # Configure logging
@@ -71,7 +73,7 @@ def seed_teams(db: Session):
             losses=0
         )
         teams.append(team)
-    
+
     db.add_all(teams)
     db.commit()
     logger.info("Teams seeded successfully.")
@@ -96,24 +98,73 @@ def seed_players(db: Session):
 
     logger.info("Seeding rosters for all teams...")
     teams = db.query(Team).all()
-    
+
     all_players = []
     for team in teams:
         for pos, count in POSITIONS.items():
             for _ in range(count):
                 player = generate_player(pos, team.id)
                 all_players.append(player)
-    
+
     # Batch insert for performance
     db.add_all(all_players)
     db.commit()
     logger.info(f"Seeded {len(all_players)} players successfully.")
+
+def seed_coaches(db: Session):
+    """Seed 2025 NFL coaching staff for all 32 teams."""
+    existing_coaches = db.query(Coach).count()
+    if existing_coaches > 0:
+        logger.info(f"Coaches already seeded ({existing_coaches} found). Skipping.")
+        return
+
+    logger.info("Seeding 2025 NFL coaching staff...")
+    coaches_created = 0
+
+    for team_abbr, staff_data in COACHES_DB.items():
+        team = db.query(Team).filter(Team.abbreviation == team_abbr).first()
+        if not team:
+            logger.warning(f"Team {team_abbr} not found. Skipping...")
+            continue
+
+        roles = [
+            ("Head Coach", staff_data.head_coach, staff_data.playbook_offense.value, staff_data.playbook_defense.value),
+            ("Offensive Coordinator", staff_data.offensive_coordinator, staff_data.playbook_offense.value, None),
+            ("Defensive Coordinator", staff_data.defensive_coordinator, None, staff_data.playbook_defense.value),
+        ]
+
+        philosophy_dict = {
+            "run_pass_ratio": staff_data.philosophy.run_pass_ratio,
+            "blitz_frequency": staff_data.philosophy.blitz_frequency,
+            "aggressiveness": staff_data.philosophy.aggressiveness,
+            "tempo": staff_data.philosophy.tempo,
+        }
+
+        for role, coach_data, off_scheme, def_scheme in roles:
+            coach = Coach(
+                first_name=coach_data.first_name,
+                last_name=coach_data.last_name,
+                role=role,
+                team_id=team.id,
+                playbook_offense=off_scheme,
+                playbook_defense=def_scheme,
+                philosophy=philosophy_dict if role == "Head Coach" else {},
+                offense_rating=70 if role in ["Head Coach", "Offensive Coordinator"] else 50,
+                defense_rating=70 if role in ["Head Coach", "Defensive Coordinator"] else 50,
+                development_rating=65,
+            )
+            db.add(coach)
+            coaches_created += 1
+
+    db.commit()
+    logger.info(f"Seeded {coaches_created} coaches successfully.")
 
 def main():
     db = SessionLocal()
     try:
         seed_teams(db)
         seed_players(db)
+        seed_coaches(db)
     except Exception as e:
         logger.error(f"Error seeding database: {e}")
         db.rollback()

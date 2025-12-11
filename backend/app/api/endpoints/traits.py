@@ -86,3 +86,25 @@ async def assign_trait_to_player(
     except Exception as e:
         log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
         raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.post("/players/{player_id}/unlock", response_model=bool)
+async def unlock_coaching_trait(
+    player_id: int,
+    request: schemas.TraitUnlockRequest,
+    db: Session = Depends(deps.get_db)
+) -> Any:
+    """
+    Unlock a coaching trait for a player.
+    """
+    try:
+        from app.services.trait_acquisition_service import TraitAcquisitionService
+        success = TraitAcquisitionService.unlock_coaching_trait(db, player_id, request.trait_name)
+        if not success:
+             raise HTTPException(status_code=400, detail="Failed to unlock trait. Requirements not met or player not found.")
+        return success
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to unlock coaching trait", exc_info=e, player_id=player_id)
+        raise HTTPException(status_code=500, detail="Internal server error")

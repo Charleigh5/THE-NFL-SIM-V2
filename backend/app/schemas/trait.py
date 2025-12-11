@@ -31,3 +31,7 @@ class PlayerTrait(PlayerTraitBase):
 class TraitAssignment(BaseModel):
     trait_id: int
     source: TraitSource = TraitSource.DEVELOPMENT
+
+class TraitUnlockRequest(BaseModel):
+    trait_name: str
+

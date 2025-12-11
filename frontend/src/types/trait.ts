@@ -22,6 +22,7 @@ export interface Trait {
   description?: string;
   effect_type: TraitEffectType;
   effect_value: number;
+  tier?: "COMMON" | "SILVER" | "GOLD" | "ELITE"; // Updated to match backend
   position_groups?: Record<string, unknown>; // JSON
 }
 
