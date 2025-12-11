@@ -714,3 +714,7 @@ AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.

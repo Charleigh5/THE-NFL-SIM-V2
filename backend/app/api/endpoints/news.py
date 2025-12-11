@@ -151,6 +151,47 @@ def _generate_mock_player_news(player_name: str) -> List[NewsItem]:
     ]
 
 
+def generate_rivalry_headline(
+    team_a: str,
+    team_b: str,
+    score_diff: int,
+    is_renewal: bool = True
+) -> NewsItem:
+    """
+    NFL Identity Blueprint: Generate rivalry headlines for close games.
+
+    Args:
+        team_a: First team name
+        team_b: Second team name
+        score_diff: Absolute score difference
+        is_renewal: Whether this is renewing an existing rivalry
+
+    Returns:
+        NewsItem with rivalry headline
+    """
+    if score_diff == 0:
+        headline = f"INSTANT CLASSIC: {team_a} and {team_b} battle to OT thriller!"
+    elif score_diff == 1:
+        headline = f"ONE-POINT HEARTBREAKER: {team_a} edges {team_b} in nail-biter!"
+    elif score_diff == 2:
+        headline = f"SAFETY MARGIN: {team_a} holds off {team_b} by just 2 points!"
+    elif score_diff == 3:
+        headline = f"FIELD GOAL DECIDES IT: {team_a} survives {team_b} thriller!"
+    else:
+        headline = f"RIVALRY RENEWED: {team_a} vs {team_b} delivers another classic!"
+
+    if is_renewal:
+        headline = "RIVALRY RENEWED: " + headline.replace("RIVALRY RENEWED: ", "")
+
+    return NewsItem(
+        headline=headline,
+        source="NFL Network",
+        date=datetime.now().strftime("%Y-%m-%d"),
+        category="rivalry",
+        is_breaking=True
+    )
+
+
 # ============================================================================
 # ENDPOINTS
 # ============================================================================

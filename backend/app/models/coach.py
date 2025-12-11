@@ -7,22 +7,23 @@ class Coach(Base):
     first_name = Column(String)
     last_name = Column(String)
     role = Column(String) # Head Coach, OC, DC, ST
-    
+
     team_id = Column(Integer, ForeignKey("team.id"), nullable=True)
     team = relationship("Team", back_populates="coaches")
-    
+
     # RPG Attributes
     offense_rating = Column(Integer, default=50)
     defense_rating = Column(Integer, default=50)
     development_rating = Column(Integer, default=50)
-    
+    intelligence = Column(Integer, default=70)  # NFL Identity Blueprint: Coordinator IQ
+
     # Skill Tree
     # e.g. {"WestCoastOffense": 5, "ZoneBlitz": 3}
     skills = Column(JSON, default=dict)
-    
+
     # Traits
     traits = Column(JSON, default=list)
-    
+
     xp = Column(Integer, default=0)
     level = Column(Integer, default=1)
 

@@ -9,6 +9,7 @@ from app.engine.weather_effects import WeatherEffects
 from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
 from app.models.weather import GameWeather
 from app.engine.sack_calculator import SackCalculator
+from app.engine.rb_tribes import RBTribeClassifier, get_tribe_modifiers
 from app.services.chemistry_service import ChemistryService
 from app.services.weather_service import WeatherService
 from typing import Optional, Any, List, Tuple
@@ -613,15 +614,24 @@ class PlayResolver:
         # Fatigue Penalty
         fatigue_penalty = (current_fatigue / 100.0) * 2.0 # Yards penalty
 
-        # Calculate Base Yards
+        # NFL Identity Blueprint: RB "Three Tribes" variance system
+        tribe_mods = get_tribe_modifiers(rb)
+        tribe_base_yards = tribe_mods["base_yards"]
+        tribe_std_dev = tribe_mods["std_dev"]
+        tribe_breakaway_mult = tribe_mods["breakaway_mult"]
+        tribe_fumble_mult = tribe_mods["fumble_mult"]
+
+        logger.debug(f"RB Tribe: {tribe_mods['tribe']} - Base: {tribe_base_yards}, StdDev: {tribe_std_dev}")
+
+        # Calculate Base Yards with tribe adjustments
         # Middle run: consistent but lower ceiling
         # Outside run: higher variance
         if command.run_direction == "middle":
-            base_yards = 3.5 + (power_diff * 10.0) # +/- 2 yards based on strength
-            std_dev = 1.5
+            base_yards = tribe_base_yards + (power_diff * 10.0) # +/- 2 yards based on strength
+            std_dev = tribe_std_dev
         else:
-            base_yards = 2.5 + (speed_diff * 20.0) # +/- 4 yards based on speed
-            std_dev = 3.0
+            base_yards = (tribe_base_yards - 1.0) + (speed_diff * 20.0) # +/- 4 yards based on speed
+            std_dev = tribe_std_dev * 1.5  # Outside runs have higher variance
 
         # B-008: Apply momentum modifier to run play
         momentum_yards_bonus = 0.0
@@ -643,7 +653,8 @@ class PlayResolver:
 
         # Breakaway / Big Play Check
         # If RB is much faster or stronger, chance to break free
-        breakaway_chance = 0.05 + speed_diff + power_diff
+        # Apply tribe-specific breakaway multiplier
+        breakaway_chance = (0.05 + speed_diff + power_diff) * tribe_breakaway_mult
 
         # Use tiered outcome for the "Breakaway" check
         breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(self.rng, breakaway_chance, critical_threshold=0.20)
@@ -665,12 +676,10 @@ class PlayResolver:
         yards_gained = int(yards_gained)
 
         # Fumble Check
-        # Base fumble rate 1%
+        # Base fumble rate 1%, modified by tribe
         # Increased by fatigue and big hits (high defender strength)
-        fumble_chance = 0.01
+        fumble_chance = 0.01 * tribe_fumble_mult
         if current_fatigue > 70: fumble_chance += 0.02
-        # Fumble Chance
-        fumble_chance = 0.01
         hit_power = getattr(defender, "hit_power", None) or 50
         if hit_power > 85: fumble_chance += 0.01
         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01

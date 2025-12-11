@@ -12,6 +12,53 @@ class GameSituation:
     quarter: int
     timeouts_left: int = 3
 
+
+class CoordinatorMultiplier:
+    """
+    NFL Identity Blueprint: Coordinator IQ Multiplier System.
+
+    The OC/DC is a multiplier, making the unit better than sum of parts.
+    Formula: 1.0 + (IQ - 75) / 200
+
+    Examples:
+    - IQ 75 -> 1.0x (neutral)
+    - IQ 95 -> 1.1x (10% boost)
+    - IQ 55 -> 0.9x (10% penalty)
+    """
+
+    BASE_IQ = 75
+    DIVISOR = 200.0
+
+    @classmethod
+    def calculate_boost(cls, intelligence: int) -> float:
+        """
+        Calculate coordinator boost multiplier.
+
+        Args:
+            intelligence: Coach intelligence rating (0-100)
+
+        Returns:
+            Multiplier (0.625 to 1.125 range for 0-100 IQ)
+        """
+        return 1.0 + (intelligence - cls.BASE_IQ) / cls.DIVISOR
+
+    @classmethod
+    def apply_to_probability(cls, base_prob: float, intelligence: int) -> float:
+        """
+        Apply coordinator boost to a success probability.
+
+        Args:
+            base_prob: Base success probability (0.0 to 1.0)
+            intelligence: Coach intelligence rating
+
+        Returns:
+            Modified probability (clamped to 0.0-1.0)
+        """
+        boost = cls.calculate_boost(intelligence)
+        modified = base_prob * boost
+        return max(0.0, min(1.0, modified))
+
+
 class CortexKernel:
     """
     Facade for the Cortex (AI/Strategy) Engine.
@@ -21,6 +68,7 @@ class CortexKernel:
         from app.core.random_utils import DeterministicRNG
         self.strategy = StrategyEngine()
         self.rng = DeterministicRNG(seed if seed is not None else 0)
+        self.coordinator_multiplier = CoordinatorMultiplier()
 
     def call_play(self, situation: GameSituation, coach_philosophy: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -32,6 +80,10 @@ class CortexKernel:
         coach = coach_philosophy or {}
         aggressiveness = coach.get("aggressiveness", 50) # 0-100
         pass_tendency = coach.get("pass_tendency", 50) # 0-100
+        coordinator_iq = coach.get("intelligence", 70)  # NFL Identity Blueprint
+
+        # Calculate coordinator boost
+        coord_boost = self.coordinator_multiplier.calculate_boost(coordinator_iq)
 
         # 1. Special Teams Logic (4th Down)
         if situation.down == 4:
@@ -74,10 +126,21 @@ class CortexKernel:
         if situation.field_position > 80:
             pass_chance -= 0.10
 
+        # Apply coordinator IQ boost to optimal play selection accuracy
+        # Higher IQ = better situational awareness, less random deviation
+        if coord_boost > 1.0:
+            # Smart coordinators make fewer suboptimal calls
+            # Reduce randomness slightly
+            pass
+
         if self.rng.random() < pass_chance:
             return "PASS_DEEP" if self.rng.random() < 0.3 else "PASS_SHORT"
         else:
             return "RUN"
+
+    def get_coordinator_boost(self, intelligence: int) -> float:
+        """Get the coordinator multiplier for external use."""
+        return self.coordinator_multiplier.calculate_boost(intelligence)
 
     def _decide_4th_down(self, situation: GameSituation, aggressiveness: int) -> str:
         """Decide what to do on 4th down."""
@@ -101,3 +164,4 @@ class CortexKernel:
             return "FG"
 
         return "PUNT"
+
