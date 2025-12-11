@@ -314,4 +314,50 @@ test.describe.serial("Trade System E2E", () => {
     await expect(page.locator('[data-testid="offered-zone"]')).toContainText("Conner");
     await expect(page.locator('[data-testid="requested-zone"]')).toContainText("Kelce");
   });
+
+  test("should analyze trade fairness via widget", async ({ page }) => {
+    // 1. Navigate to Trade Center
+    // Already handled by beforeEach
+
+    // 2. Verify Widget Initial State
+    const widget = page.getByTestId("trade-analyzer-widget");
+    const analyzeBtn = page.getByTestId("analyze-btn");
+    await expect(widget).toBeVisible();
+    await expect(analyzeBtn).toBeDisabled(); // Disabled when empty
+
+    // 3. Drag assets to enable analysis
+    await tradePage.selectPartner(PARTNER_TEAM_ID.toString());
+    await tradePage.dragPlayerToOffer(101); // Kyler Murray
+    await tradePage.dragPlayerToRequest(202); // Travis Kelce (ACCEPT scenario)
+
+    await expect(analyzeBtn).toBeEnabled();
+
+    // 4. Analyze (Loading State)
+    const pendingAnalysis = page.waitForResponse("**/api/trades/evaluate");
+    await analyzeBtn.click();
+
+    // Wait for response first to ensure state change
+    await pendingAnalysis;
+
+    // 5. Verify Result (ACCEPT)
+    await expect(page.getByTestId("evaluation-result")).toHaveClass(/accept/i);
+    await expect(page.getByTestId("decision-badge")).toHaveText("ACCEPT");
+    await expect(page.getByTestId("fairness-score")).toHaveText("+5");
+    await expect(page.getByTestId("gm-reasoning")).toContainText("Fair value");
+
+    // 6. Test Re-evaluate (Change assets)
+    await page.getByTestId("re-analyze-btn").click();
+    // Drag untradable asset (Mahomes 201)
+    await tradePage.dragPlayerToRequest(201);
+
+    // Mock REJECT response logic handled in beforeEach (if gettingMahomes)
+
+    await analyzeBtn.click();
+
+    // 7. Verify Result (REJECT)
+    await expect(page.getByTestId("evaluation-result")).toHaveClass(/reject/i);
+    await expect(page.getByTestId("decision-badge")).toHaveText("REJECT");
+    await expect(page.getByTestId("fairness-score")).toHaveText("-25");
+    await expect(page.getByTestId("gm-reasoning")).toContainText("untouchable");
+  });
 });

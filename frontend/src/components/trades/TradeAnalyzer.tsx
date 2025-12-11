@@ -56,7 +56,7 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
   };
 
   return (
-    <div className="trade-analyzer">
+    <div className="trade-analyzer" data-testid="trade-analyzer-widget">
       <div className="analyzer-header">
         <h4>AI Trade Analysis</h4>
       </div>
@@ -65,6 +65,7 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
         <button
           className="analyze-btn"
           onClick={handleAnalyze}
+          data-testid="analyze-btn"
           disabled={offeredAssets.length === 0 && requestedAssets.length === 0}
         >
           Analyze Fairness
@@ -72,7 +73,7 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
       )}
 
       {loading && (
-        <div className="analyzer-loading">
+        <div className="analyzer-loading" data-testid="analyzer-loading">
           <div className="mini-spinner"></div>
           <span>Consulting GM...</span>
         </div>
@@ -81,16 +82,24 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
       {error && <div className="analyzer-error">{error}</div>}
 
       {evaluation && (
-        <div className={`evaluation-result ${evaluation.decision.toLowerCase()}`}>
-          <div className="decision-badge">{evaluation.decision}</div>
+        <div
+          className={`evaluation-result ${evaluation.decision.toLowerCase()}`}
+          data-testid="evaluation-result"
+        >
+          <div className="decision-badge" data-testid="decision-badge">
+            {evaluation.decision}
+          </div>
           <div className="fairness-score">
             <span className="label">Fairness Score:</span>
-            <span className={`score ${evaluation.score >= 0 ? "positive" : "negative"}`}>
+            <span
+              className={`score ${evaluation.score >= 0 ? "positive" : "negative"}`}
+              data-testid="fairness-score"
+            >
               {evaluation.score > 0 ? "+" : ""}
               {evaluation.score}
             </span>
           </div>
-          <div className="gm-reasoning">
+          <div className="gm-reasoning" data-testid="gm-reasoning">
             <p>"{evaluation.reasoning}"</p>
           </div>
 
@@ -99,7 +108,7 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
             contextType="trade"
           />
 
-          <button className="re-analyze-btn" onClick={handleAnalyze}>
+          <button className="re-analyze-btn" onClick={handleAnalyze} data-testid="re-analyze-btn">
             Re-evaluate
           </button>
         </div>

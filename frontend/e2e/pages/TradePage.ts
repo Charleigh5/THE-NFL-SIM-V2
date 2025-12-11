@@ -16,7 +16,7 @@ export class TradePage {
     this.negotiateTab = page.getByTestId("tab-negotiate");
     this.offersTab = page.getByTestId("tab-offers");
     this.tradeBlockTab = page.getByTestId("tab-trade-block");
-    this.evaluateBtn = page.getByRole("button", { name: "Get GM Response" });
+    this.evaluateBtn = page.getByTestId("analyze-btn"); // Updated to use test-id
     this.submitOfferBtn = page.getByRole("button", { name: "Submit Formal Offer" });
     this.clearTradeBtn = page.getByRole("button", { name: "Clear Trade" });
   }

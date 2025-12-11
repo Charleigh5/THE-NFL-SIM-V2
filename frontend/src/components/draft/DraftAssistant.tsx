@@ -67,7 +67,7 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
   };
 
   return (
-    <div className="draft-assistant">
+    <div className="draft-assistant" data-testid="draft-assistant-widget">
       <div className="assistant-header">
         <h3>War Room</h3>
         <span className="beta-tag">AI POWERED</span>
@@ -80,14 +80,18 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
               Analyze the board and get a recommendation based on team needs, value, and historical
               data.
             </p>
-            <button className="recommend-btn" onClick={handleGetRecommendation}>
+            <button
+              className="recommend-btn"
+              onClick={handleGetRecommendation}
+              data-testid="analyze-pick-btn"
+            >
               Analyze Pick #{pickNumber}
             </button>
           </div>
         )}
 
         {loading && (
-          <div className="assistant-loading">
+          <div className="assistant-loading" data-testid="assistant-loading">
             <div className="spinner"></div>
             <p>Crunching numbers...</p>
             <span className="loading-detail">Analyzing roster gaps...</span>
@@ -105,10 +109,10 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
         )}
 
         {suggestion && (
-          <div className="suggestion-card">
+          <div className="suggestion-card" data-testid="suggestion-card">
             <div className="recommendation-header">
               <span className="label">RECOMMENDED PICK</span>
-              <div className="confidence-meter">
+              <div className="confidence-meter" data-testid="confidence-score">
                 <div className="confidence-fill" data-confidence={suggestion.confidence_score} />
                 <span>{Math.round(suggestion.confidence_score * 100)}% Confidence</span>
               </div>
@@ -221,7 +225,11 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
               />
             </div>
 
-            <button className="reset-btn" onClick={() => setSuggestion(null)}>
+            <button
+              className="reset-btn"
+              onClick={() => setSuggestion(null)}
+              data-testid="new-analysis-btn"
+            >
               New Analysis
             </button>
           </div>

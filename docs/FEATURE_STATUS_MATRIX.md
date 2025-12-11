@@ -165,8 +165,8 @@
 | **UI-004** | Player Profile Pages         | ✅ IMPLEMENTED | ❌       | ✅ E2E     | P0       | Working                   |
 | **UI-005** | Roster Management UI         | ✅ IMPLEMENTED | ❌       | ✅ E2E     | P0       | Working                   |
 | **UI-006** | Draft Room UI                | ✅ IMPLEMENTED | ❌       | ✅ E2E     | P1       | Working                   |
-| **UI-007** | Draft Assistant Widget       | ✅ IMPLEMENTED | ❌       | ❌ 0%      | P1       | Needs E2E tests           |
-| **UI-008** | Trade Analyzer Widget        | ✅ IMPLEMENTED | ❌       | ❌ 0%      | P1       | Needs E2E tests           |
+| **UI-007** | Draft Assistant Widget       | ✅ IMPLEMENTED | ❌       | ✅ E2E     | P1       | Working                   |
+| **UI-008** | Trade Analyzer Widget        | ✅ IMPLEMENTED | ❌       | ✅ E2E     | P1       | Working                   |
 | **UI-009** | Weather Widget               | ✅ IMPLEMENTED | ❌       | ❌ 0%      | P2       | Exists but unused         |
 | **UI-010** | Live Game Simulation View    | ✅ IMPLEMENTED | ❌       | ⚠️ Partial | P1       | Basic stats display       |
 | **UI-011** | Play-by-Play Animation       | 🔵 PROPOSED    | ❌       | ❌ 0%      | P2       | Enhanced visualization    |
