@@ -1,28 +1,45 @@
 import { Link, useLocation } from "react-router-dom";
 import { Badge } from "./ui/Badge";
+import {
+  LayoutDashboard,
+  Trophy,
+  Users,
+  ClipboardList,
+  ArrowLeftRight,
+  Dumbbell,
+  Settings as SettingsIcon,
+  Star,
+  CalendarDays,
+  Sparkles,
+} from "lucide-react";
 import "./Navigation.css";
 
 const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: "🎮" },
-    { path: "/season", label: "Season", icon: "🏆" },
-    { path: "/offseason", label: "Offseason", icon: "🌟" },
-    { path: "/offseason/draft", label: "Draft Room", icon: "🏈" },
-    { path: "/empire/front-office", label: "Roster", icon: "👥" },
-    { path: "/empire/depth-chart", label: "Depth Chart", icon: "📋" },
-    { path: "/empire/trade-center", label: "Trade Center", icon: "🔄" },
-    { path: "/training", label: "Training", icon: "🏋️" },
-    { path: "/team-selection", label: "My Team", icon: "⭐" },
-    { path: "/settings", label: "Settings", icon: "⚙️" },
+    { path: "/", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/season", label: "Season", icon: CalendarDays },
+    { path: "/offseason", label: "Offseason", icon: Sparkles },
+    { path: "/offseason/draft", label: "Draft Room", icon: Trophy },
+    { path: "/empire/front-office", label: "Roster", icon: Users },
+    { path: "/empire/depth-chart", label: "Depth Chart", icon: ClipboardList },
+    { path: "/empire/trade-center", label: "Trade Center", icon: ArrowLeftRight },
+    { path: "/training", label: "Training", icon: Dumbbell },
+    { path: "/team-selection", label: "My Team", icon: Star },
+    { path: "/settings", label: "Settings", icon: SettingsIcon },
   ];
 
   return (
     <nav className="navigation">
       <div className="nav-header">
-        <h1 className="nav-title">⚡ Stellar Sagan</h1>
-        <p className="nav-subtitle">NFL Simulation Engine</p>
+        <div className="nav-mark" aria-hidden="true">
+          <span className="nav-mark__dot" />
+          <span className="nav-mark__dot" />
+          <span className="nav-mark__dot" />
+        </div>
+        <h1 className="nav-title">THE NFL SIM</h1>
+        <p className="nav-subtitle">Night Game Franchise</p>
       </div>
 
       <ul className="nav-list">
@@ -32,7 +49,9 @@ const Navigation = () => {
               to={item.path}
               className={`nav-link ${location.pathname === item.path ? "active" : ""}`}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon" aria-hidden="true">
+                <item.icon size={18} />
+              </span>
               <span className="nav-label">{item.label}</span>
             </Link>
           </li>

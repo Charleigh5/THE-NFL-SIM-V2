@@ -73,12 +73,22 @@ test.describe("Router Navigation", () => {
     await page.route("**/api/season/1/awards/projected", async (route) =>
       route.fulfill({ json: {} })
     );
+
+    await page.route("**/api/system/health", async (route) => {
+      await route.fulfill({ json: { status: "healthy" } });
+    });
   });
 
   test("should navigate to Dashboard", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveURL("/");
     // Add assertion for dashboard content if known
+  });
+
+  test("should support /dashboard alias route", async ({ page }) => {
+    await page.goto("/dashboard");
+    await expect(page).toHaveURL("/dashboard");
+    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible();
   });
 
   test("should navigate to Team Selection", async ({ page }) => {

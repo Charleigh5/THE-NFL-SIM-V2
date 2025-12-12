@@ -12,7 +12,11 @@ import { LeagueLeaders } from "../components/season/LeagueLeaders";
 import { SeasonSummaryCard } from "../components/season/SeasonSummaryCard";
 import { NewsFeed } from "../components/season/NewsFeed";
 import type { LeagueLeaders as LeagueLeadersType } from "../types/stats";
-import "./SeasonDashboard.css";
+import { ParallaxScene } from "../components/immersive/ParallaxScene";
+import { RibbonTicker } from "../components/immersive/RibbonTicker";
+import { BroadcastPanel } from "../components/immersive/BroadcastPanel";
+import stylesModule from "./SeasonDashboard.module.css";
+// import "./SeasonDashboard.css"; // Disabling old CSS to prefer module
 
 const SeasonDashboard: React.FC = () => {
   const [season, setSeason] = useState<Season | null>(null);
@@ -310,248 +314,257 @@ const SeasonDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="season-dashboard" data-testid="season-dashboard-page">
-      {simulating && (
-        <div className="loading-overlay">
-          <LoadingSpinner text={`Simulating...`} size="large" color="white" />
-        </div>
-      )}
+    <ParallaxScene>
+      <div className={stylesModule.topContainer} data-testid="season-dashboard-page">
+        <RibbonTicker items={["Season Live", "Broadcast Network", "League Wire"]} speedSec={24} />
 
-      <div className="dashboard-header" data-testid="dashboard-header">
-        <SeasonSummaryCard
-          season={season}
-          progress={seasonProgress}
-          actions={actions}
-          champion={championName}
-        />
-        <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
-      </div>
-
-      <div className="dashboard-tabs" data-testid="dashboard-tabs">
-        <button
-          className={`tab-button ${activeTab === "overview" ? "active" : ""}`}
-          onClick={() => setActiveTab("overview")}
-          title="Season Overview"
-          data-testid="tab-overview"
-        >
-          Overview
-        </button>
-        <button
-          className={`tab-button ${activeTab === "standings" ? "active" : ""}`}
-          onClick={() => setActiveTab("standings")}
-          title="View current season standings"
-          data-testid="tab-standings"
-        >
-          Standings
-        </button>
-        <button
-          className={`tab-button ${activeTab === "schedule" ? "active" : ""}`}
-          onClick={() => setActiveTab("schedule")}
-          title="View season schedule and results"
-          data-testid="tab-schedule"
-        >
-          Schedule
-        </button>
-        {(season.status === "POST_SEASON" || season.status === "OFF_SEASON") && (
-          <button
-            className={`tab-button ${activeTab === "playoffs" ? "active" : ""}`}
-            onClick={() => setActiveTab("playoffs")}
-            title="View playoff bracket"
-            data-testid="tab-playoffs"
-          >
-            Playoffs
-          </button>
-        )}
-        <button
-          className={`tab-button ${activeTab === "leaders" ? "active" : ""}`}
-          onClick={() => setActiveTab("leaders")}
-          title="View league statistical leaders"
-          data-testid="tab-leaders"
-        >
-          Leaders
-        </button>
-      </div>
-
-      <div className="dashboard-content" data-testid="dashboard-content">
-        {error && <div className="error-message">{error}</div>}
-
-        {activeTab === "overview" && (
-          <div className="overview-grid" data-testid="overview-grid">
-            <div className="overview-section" data-testid="upcoming-games-section">
-              <h3>Upcoming Games (Week {season.current_week})</h3>
-              <div className="games-list-compact">
-                {games
-                  .filter((g) => !g.is_played)
-                  .slice(0, 5)
-                  .map((game) => (
-                    <div
-                      key={game.id}
-                      className="game-card-compact"
-                      data-testid={`upcoming-game-${game.id}`}
-                    >
-                      <div className="game-info-row">
-                        <div className="team-row">
-                          <span className="team-name">{game.away_team?.name}</span>
-                          <span className="team-record">vs</span>
-                          <span className="team-name">{game.home_team?.name}</span>
-                        </div>
-                        <div className="game-date">
-                          {new Date(game.scheduled_date).toLocaleDateString()}
-                        </div>
-                      </div>
-                      {game.weather_info && (
-                        <div className="game-weather-compact">
-                          <span
-                            title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
-                          >
-                            {Math.round(game.weather_info.temperature)}°{" "}
-                            {game.weather_info.precipitation_type?.includes("Rain")
-                              ? "🌧️"
-                              : game.weather_info.precipitation_type?.includes("Snow")
-                                ? "❄️"
-                                : game.weather_info.precipitation_type?.includes("Cloud")
-                                  ? "☁️"
-                                  : "☀️"}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                {games.filter((g) => !g.is_played).length === 0 && (
-                  <p>No upcoming games this week.</p>
-                )}
-              </div>
-            </div>
-
-            <div className="overview-section" data-testid="recent-results-section">
-              <h3>Recent Results</h3>
-              <div className="games-list-compact">
-                {games
-                  .filter((g) => g.is_played)
-                  .slice(0, 5)
-                  .map((game) => (
-                    <div
-                      key={game.id}
-                      className="game-card-compact"
-                      data-testid={`recent-game-${game.id}`}
-                    >
-                      <div className="game-info-row">
-                        <div className="team-row">
-                          <span className="team-name">{game.away_team?.name}</span>
-                          <span className="score">{game.away_score}</span>
-                        </div>
-                        <span className="vs">@</span>
-                        <div className="team-row">
-                          <span className="score">{game.home_score}</span>
-                          <span className="team-name">{game.home_team?.name}</span>
-                        </div>
-                      </div>
-                      {game.weather_info && (
-                        <div className="game-weather-compact">
-                          <span
-                            title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
-                          >
-                            {Math.round(game.weather_info.temperature)}°{" "}
-                            {game.weather_info.precipitation_type?.includes("Rain")
-                              ? "🌧️"
-                              : game.weather_info.precipitation_type?.includes("Snow")
-                                ? "❄️"
-                                : game.weather_info.precipitation_type?.includes("Cloud")
-                                  ? "☁️"
-                                  : "☀️"}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                {games.filter((g) => g.is_played).length === 0 && (
-                  <p>No games played this week yet.</p>
-                )}
-              </div>
-            </div>
-
-            <div className="overview-section" data-testid="standings-overview-section">
-              <h3>Standings Overview</h3>
-              <StandingsTable standings={standings} compact={true} />
-            </div>
-
-            <div className="overview-section" data-testid="awards-race-section">
-              <h3>Season Awards Race</h3>
-              {awards ? (
-                <div className="awards-race">
-                  <div className="award-item">
-                    <h4>MVP</h4>
-                    {awards.mvp[0] ? (
-                      <div className="award-leader">
-                        <p className="leader-name">{awards.mvp[0].name}</p>
-                        <p className="leader-team">
-                          {awards.mvp[0].team} • {awards.mvp[0].position}
-                        </p>
-                        <p className="leader-stats">Score: {awards.mvp[0].score.toFixed(1)}</p>
-                      </div>
-                    ) : (
-                      <p>No candidates</p>
-                    )}
-                  </div>
-                  <div className="award-item">
-                    <h4>OPOY</h4>
-                    {awards.opoy[0] ? (
-                      <div className="award-leader">
-                        <p className="leader-name">{awards.opoy[0].name}</p>
-                        <p className="leader-team">
-                          {awards.opoy[0].team} • {awards.opoy[0].position}
-                        </p>
-                      </div>
-                    ) : (
-                      <p>No candidates</p>
-                    )}
-                  </div>
-                  <div className="award-item">
-                    <h4>DPOY</h4>
-                    {awards.dpoy[0] ? (
-                      <div className="award-leader">
-                        <p className="leader-name">{awards.dpoy[0].name}</p>
-                        <p className="leader-team">
-                          {awards.dpoy[0].team} • {awards.dpoy[0].position}
-                        </p>
-                      </div>
-                    ) : (
-                      <p>No candidates</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <LoadingSpinner />
-              )}
-            </div>
-
-            <div className="overview-section" data-testid="news-feed-section">
-              <h3>League News</h3>
-              <NewsFeed maxItems={5} compact={false} refreshInterval={60} />
-            </div>
+        {simulating && (
+          <div className={stylesModule.loadingOverlay}>
+            <LoadingSpinner text={`Simulating...`} size="large" color="white" />
           </div>
         )}
 
-        {activeTab === "standings" && <StandingsTable standings={standings} />}
-
-        {activeTab === "schedule" && (
-          <ScheduleView
-            games={games}
-            teams={teams}
-            currentWeek={season.current_week}
-            totalWeeks={season.total_weeks + 4} // Approx playoff weeks
-            onWeekChange={handleWeekChange}
-            onSimulateGame={handleSimulateGame}
+        <div className={stylesModule.header} data-testid="dashboard-header">
+          <SeasonSummaryCard
+            season={season}
+            progress={seasonProgress}
+            actions={actions}
+            champion={championName}
           />
-        )}
+        </div>
 
-        {activeTab === "playoffs" && <PlayoffBracket matchups={playoffBracket} />}
+        {/* Broadcast Switcher (Tabs) */}
+        <div className={stylesModule.switcherRow} data-testid="dashboard-tabs">
+          {[
+            { id: "overview", label: "Overview", icon: "📺" },
+            { id: "standings", label: "Standings", icon: "📊" },
+            { id: "schedule", label: "Schedule", icon: "📅" },
+            { id: "playoffs", label: "Playoffs", icon: "🏟️" },
+            { id: "leaders", label: "Leaders", icon: "⭐" },
+          ].map((tab) => {
+            if (
+              tab.id === "playoffs" &&
+              season.status !== "POST_SEASON" &&
+              season.status !== "OFF_SEASON"
+            )
+              return null;
 
-        {activeTab === "leaders" && (
-          <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
-        )}
+            return (
+              <button
+                key={tab.id}
+                className={`${stylesModule.switcherBtn} ${activeTab === tab.id ? stylesModule.active : ""}`}
+                onClick={() => setActiveTab(tab.id as any)}
+                data-testid={`tab-${tab.id}`}
+              >
+                {activeTab === tab.id && <span className={stylesModule.activeDot} />}
+                <span>
+                  {tab.icon} {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className={stylesModule.primaryContent} data-testid="dashboard-content">
+          <div className={stylesModule.mainPanel}>
+            {error && <div className="error-message">{error}</div>}
+
+            <BroadcastPanel
+              title={activeTab === "overview" ? "Live Feed" : activeTab}
+              isLive={activeTab === "overview"}
+            >
+              {activeTab === "overview" && (
+                <div className="overview-grid" data-testid="overview-grid">
+                  <div className="overview-section" data-testid="upcoming-games-section">
+                    <h3>Upcoming Games (Week {season.current_week})</h3>
+                    <div className="games-list-compact">
+                      {games
+                        .filter((g) => !g.is_played)
+                        .slice(0, 5)
+                        .map((game) => (
+                          <div
+                            key={game.id}
+                            className="game-card-compact"
+                            data-testid={`upcoming-game-${game.id}`}
+                          >
+                            <div className="game-info-row">
+                              <div className="team-row">
+                                <span className="team-name">{game.away_team?.name}</span>
+                                <span className="team-record">vs</span>
+                                <span className="team-name">{game.home_team?.name}</span>
+                              </div>
+                              <div className="game-date">
+                                {new Date(game.scheduled_date).toLocaleDateString()}
+                              </div>
+                            </div>
+                            {game.weather_info && (
+                              <div className="game-weather-compact">
+                                <span
+                                  title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
+                                >
+                                  {Math.round(game.weather_info.temperature)}°{" "}
+                                  {game.weather_info.precipitation_type?.includes("Rain")
+                                    ? "🌧️"
+                                    : game.weather_info.precipitation_type?.includes("Snow")
+                                      ? "❄️"
+                                      : game.weather_info.precipitation_type?.includes("Cloud")
+                                        ? "☁️"
+                                        : "☀️"}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      {games.filter((g) => !g.is_played).length === 0 && (
+                        <p>No upcoming games this week.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="overview-section" data-testid="recent-results-section">
+                    <h3>Recent Results</h3>
+                    <div className="games-list-compact">
+                      {games
+                        .filter((g) => g.is_played)
+                        .slice(0, 5)
+                        .map((game) => (
+                          <div
+                            key={game.id}
+                            className="game-card-compact"
+                            data-testid={`recent-game-${game.id}`}
+                          >
+                            <div className="game-info-row">
+                              <div className="team-row">
+                                <span className="team-name">{game.away_team?.name}</span>
+                                <span className="score">{game.away_score}</span>
+                              </div>
+                              <span className="vs">@</span>
+                              <div className="team-row">
+                                <span className="score">{game.home_score}</span>
+                                <span className="team-name">{game.home_team?.name}</span>
+                              </div>
+                            </div>
+                            {game.weather_info && (
+                              <div className="game-weather-compact">
+                                <span
+                                  title={`${game.weather_info.temperature}°F, ${game.weather_info.precipitation_type || "Clear"}`}
+                                >
+                                  {Math.round(game.weather_info.temperature)}°{" "}
+                                  {game.weather_info.precipitation_type?.includes("Rain")
+                                    ? "🌧️"
+                                    : game.weather_info.precipitation_type?.includes("Snow")
+                                      ? "❄️"
+                                      : game.weather_info.precipitation_type?.includes("Cloud")
+                                        ? "☁️"
+                                        : "☀️"}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      {games.filter((g) => g.is_played).length === 0 && (
+                        <p>No games played this week yet.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="overview-section" data-testid="standings-overview-section">
+                    <h3>Standings Overview</h3>
+                    <StandingsTable standings={standings} compact={true} />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "standings" && <StandingsTable standings={standings} />}
+
+              {activeTab === "schedule" && (
+                <ScheduleView
+                  games={games}
+                  teams={teams}
+                  currentWeek={season.current_week}
+                  totalWeeks={season.total_weeks + 4} // Approx playoff weeks
+                  onWeekChange={handleWeekChange}
+                  onSimulateGame={handleSimulateGame}
+                />
+              )}
+
+              {activeTab === "playoffs" && <PlayoffBracket matchups={playoffBracket} />}
+
+              {activeTab === "leaders" && (
+                <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
+              )}
+            </BroadcastPanel>
+          </div>
+
+          <div className={stylesModule.sideRail}>
+            {activeTab === "overview" && (
+              <>
+                <BroadcastPanel title="Awards Race">
+                  {awards ? (
+                    <div className="awards-race">
+                      <div className="award-item">
+                        <h4>MVP</h4>
+                        {awards.mvp[0] ? (
+                          <div className="award-leader">
+                            <p className="leader-name">{awards.mvp[0].name}</p>
+                            <p className="leader-team">
+                              {awards.mvp[0].team} • {awards.mvp[0].position}
+                            </p>
+                            <p className="leader-stats">Score: {awards.mvp[0].score.toFixed(1)}</p>
+                          </div>
+                        ) : (
+                          <p>No candidates</p>
+                        )}
+                      </div>
+                      <div className="award-item">
+                        <h4>OPOY</h4>
+                        {awards.opoy[0] ? (
+                          <div className="award-leader">
+                            <p className="leader-name">{awards.opoy[0].name}</p>
+                            <p className="leader-team">
+                              {awards.opoy[0].team} • {awards.opoy[0].position}
+                            </p>
+                          </div>
+                        ) : (
+                          <p>No candidates</p>
+                        )}
+                      </div>
+                      <div className="award-item">
+                        <h4>DPOY</h4>
+                        {awards.dpoy[0] ? (
+                          <div className="award-leader">
+                            <p className="leader-name">{awards.dpoy[0].name}</p>
+                            <p className="leader-team">
+                              {awards.dpoy[0].team} • {awards.dpoy[0].position}
+                            </p>
+                          </div>
+                        ) : (
+                          <p>No candidates</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </BroadcastPanel>
+
+                <BroadcastPanel title="League Wire">
+                  <NewsFeed maxItems={5} compact={false} refreshInterval={60} />
+                </BroadcastPanel>
+              </>
+            )}
+            {/* If not overview, we could show different side widgets or leave empty */}
+            {activeTab !== "overview" && (
+              <BroadcastPanel title="Season Status">
+                <div style={{ padding: "1rem", opacity: 0.7 }}>
+                  Week {season.current_week} of {season.total_weeks}
+                </div>
+              </BroadcastPanel>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </ParallaxScene>
   );
 };
 

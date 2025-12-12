@@ -31,7 +31,9 @@ test.describe("Dashboard Flow", () => {
 
     // Verify header
     await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible();
-    await expect(page.locator("p", { hasText: "Omniscient System Overview" })).toBeVisible();
+    await expect(
+      page.locator("p", { hasText: "War Room overview under the stadium lights." })
+    ).toBeVisible();
 
     // Verify system health
     await expect(page.locator(".system-status .badge")).toContainText("All Systems Online");
@@ -103,12 +105,19 @@ test.describe("Dashboard Flow", () => {
     await expect(page.locator("text=Quick Actions")).toBeVisible();
 
     // Verify all quick action links exist
-    await expect(page.locator("text=Roster")).toBeVisible();
-    await expect(page.locator("text=Depth Chart")).toBeVisible();
-    await expect(page.locator("text=Trade Center")).toBeVisible();
-    await expect(page.locator("text=Season")).toBeVisible();
-    await expect(page.locator("text=Training")).toBeVisible();
-    await expect(page.locator("text=Draft Room")).toBeVisible();
+    const quickActions = page.locator(".quick-actions-section");
+    await expect(quickActions.locator(".quick-action-card", { hasText: "Roster" })).toBeVisible();
+    await expect(
+      quickActions.locator(".quick-action-card", { hasText: "Depth Chart" })
+    ).toBeVisible();
+    await expect(
+      quickActions.locator(".quick-action-card", { hasText: "Trade Center" })
+    ).toBeVisible();
+    await expect(quickActions.locator(".quick-action-card", { hasText: "Season" })).toBeVisible();
+    await expect(quickActions.locator(".quick-action-card", { hasText: "Training" })).toBeVisible();
+    await expect(
+      quickActions.locator(".quick-action-card", { hasText: "Draft Room" })
+    ).toBeVisible();
   });
 
   test("should navigate to Roster via Quick Actions", async ({ page }) => {
@@ -124,6 +133,10 @@ test.describe("Dashboard Flow", () => {
     });
     await page.route("**/api/players**", async (route) => {
       await route.fulfill({ json: [] });
+    });
+
+    await page.addInitScript(() => {
+      localStorage.setItem("selectedTeamId", "1");
     });
 
     await page.goto("/dashboard");
@@ -145,7 +158,7 @@ test.describe("Dashboard Flow", () => {
     });
     // Mock trade center APIs
     await page.route("**/api/settings**", async (route) => {
-      await route.fulfill({ json: { team_id: 1 } });
+      await route.fulfill({ json: { user_team_id: 1, difficulty_level: "All-Pro" } });
     });
     await page.route("**/api/trades/**", async (route) => {
       await route.fulfill({ json: { incoming: [], outgoing: [] } });

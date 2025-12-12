@@ -1,89 +1,100 @@
 .team-selection-container {
-  padding: 2rem;
-  max-width: 1200px;
+  --fx-rain-opacity: 0.22;
+  padding: 1.5rem;
+  max-width: 1240px;
   margin: 0 auto;
-  color: #e0e0e0;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .team-selection-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin: 1.75rem 0 2rem;
 }
 
 .team-selection-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    color-mix(in srgb, var(--theme-secondary) 55%, rgba(255, 255, 255, 0.65)) 45%,
+    rgba(255, 255, 255, 0.78) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+.team-selection-header p {
+  color: rgba(255, 255, 255, 0.62);
+  max-width: 56ch;
+  margin: 0 auto;
+}
+
 .teams-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.5rem;
+  gap: 1.1rem;
+  margin-top: 1.25rem;
 }
 
 .team-card {
-  background: rgba(30, 30, 40, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 2rem;
+  padding: 1.35rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-.team-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.team-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-
-.team-card:hover::before {
-  opacity: 1;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .team-card.selected {
-  border-color: #4facfe;
-  background: rgba(79, 172, 254, 0.1);
-  box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+  outline: 2px solid color-mix(in srgb, var(--theme-secondary) 55%, transparent);
+  outline-offset: 2px;
 }
 
 .team-logo-placeholder {
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  width: 100%;
+  height: 92px;
+  margin-bottom: 1rem;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.team-logo {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 26px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 14px rgba(255, 255, 255, 0.1));
+}
+
+.team-abbrev {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .team-name {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+  color: rgba(255, 255, 255, 0.96);
+  letter-spacing: -0.01em;
 }
 
 .team-info {
-  font-size: 0.9rem;
-  color: #888;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.14em;
 }

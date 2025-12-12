@@ -5,6 +5,11 @@ import { api } from "../services/api";
 import { seasonApi } from "../services/season";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
+import { motion } from "framer-motion";
+import { ParallaxScene } from "../components/immersive/ParallaxScene";
+import { RibbonTicker } from "../components/immersive/RibbonTicker";
+import { SpotlightButton } from "../components/immersive/SpotlightButton";
+import { TiltCard } from "../components/immersive/TiltCard";
 import type { Season } from "../types/season";
 import "./Dashboard.css";
 
@@ -93,99 +98,132 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">Mission Control</h1>
-          <p className="dashboard-subtitle">Omniscient System Overview</p>
-        </div>
-        <div className="header-actions">
-          {!loadingSeason && (
-            <button className="start-season-btn" onClick={handleStartSeason}>
-              {currentSeason ? "Start Next Season" : "Start Season"}
-            </button>
-          )}
-          <div className="system-status">
-            {isLoading ? (
-              <Badge variant="neutral">Checking...</Badge>
-            ) : health?.status === "healthy" ? (
-              <Badge variant="success">All Systems Online</Badge>
-            ) : (
-              <Badge variant="danger">System Offline</Badge>
+    <ParallaxScene>
+      <div className="dashboard">
+        <RibbonTicker
+          items={["Mission Control", "Storm Lights", "Franchise Systems", "Broadcast Night"]}
+          speedSec={22}
+        />
+
+        <header className="dashboard-header">
+          <div>
+            <motion.h1
+              className="dashboard-title"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Mission Control
+            </motion.h1>
+            <p className="dashboard-subtitle">War Room overview under the stadium lights.</p>
+          </div>
+          <div className="header-actions">
+            {!loadingSeason && (
+              <SpotlightButton
+                className="start-season-btn"
+                onClick={handleStartSeason}
+                variant="primary"
+              >
+                {currentSeason ? "Start Next Season" : "Start Season"}
+              </SpotlightButton>
             )}
+            <div className="system-status">
+              {isLoading ? (
+                <Badge variant="neutral">Checking...</Badge>
+              ) : health?.status === "healthy" ? (
+                <Badge variant="success">All Systems Online</Badge>
+              ) : (
+                <Badge variant="danger">System Offline</Badge>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Quick Actions Section */}
+        <div className="quick-actions-section">
+          <h2 className="section-title">Quick Actions</h2>
+          <div className="quick-actions-grid">
+            <Link to="/empire/front-office" className="quick-action-card">
+              <span className="quick-action-icon">👥</span>
+              <span className="quick-action-label">Roster</span>
+            </Link>
+            <Link to="/empire/depth-chart" className="quick-action-card">
+              <span className="quick-action-icon">📋</span>
+              <span className="quick-action-label">Depth Chart</span>
+            </Link>
+            <Link to="/empire/trade-center" className="quick-action-card">
+              <span className="quick-action-icon">🔄</span>
+              <span className="quick-action-label">Trade Center</span>
+            </Link>
+            <Link to="/season" className="quick-action-card">
+              <span className="quick-action-icon">🏆</span>
+              <span className="quick-action-label">Season</span>
+            </Link>
+            <Link to="/training" className="quick-action-card">
+              <span className="quick-action-icon">🏋️</span>
+              <span className="quick-action-label">Training</span>
+            </Link>
+            <Link to="/offseason/draft" className="quick-action-card">
+              <span className="quick-action-icon">🏈</span>
+              <span className="quick-action-label">Draft Room</span>
+            </Link>
           </div>
         </div>
-      </header>
 
-      {/* Quick Actions Section */}
-      <div className="quick-actions-section">
-        <h2 className="section-title">Quick Actions</h2>
-        <div className="quick-actions-grid">
-          <Link to="/empire/front-office" className="quick-action-card">
-            <span className="quick-action-icon">👥</span>
-            <span className="quick-action-label">Roster</span>
-          </Link>
-          <Link to="/empire/depth-chart" className="quick-action-card">
-            <span className="quick-action-icon">📋</span>
-            <span className="quick-action-label">Depth Chart</span>
-          </Link>
-          <Link to="/empire/trade-center" className="quick-action-card">
-            <span className="quick-action-icon">🔄</span>
-            <span className="quick-action-label">Trade Center</span>
-          </Link>
-          <Link to="/season" className="quick-action-card">
-            <span className="quick-action-icon">🏆</span>
-            <span className="quick-action-label">Season</span>
-          </Link>
-          <Link to="/training" className="quick-action-card">
-            <span className="quick-action-icon">🏋️</span>
-            <span className="quick-action-label">Training</span>
-          </Link>
-          <Link to="/offseason/draft" className="quick-action-card">
-            <span className="quick-action-icon">🏈</span>
-            <span className="quick-action-label">Draft Room</span>
-          </Link>
+        {/* Season Status Card */}
+        {currentSeason && (
+          <div className="season-status-section">
+            <TiltCard className="season-status-tilt">
+              <Card variant="glass" className="season-status-card">
+                <CardHeader>
+                  <CardTitle>Current Season</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="season-info">
+                    <span className="season-year">{currentSeason.year}</span>
+                    <span className="season-week">Week {currentSeason.current_week}</span>
+                    <Badge variant={currentSeason.status === "PRE_SEASON" ? "warning" : "success"}>
+                      {currentSeason.status?.replace("_", " ")}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </TiltCard>
+          </div>
+        )}
+
+        <h2 className="section-title">Simulation Engines</h2>
+        <div className="engines-grid">
+          {engines.map((engine, idx) => (
+            <motion.div
+              key={engine.name}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: Math.min(0.06 + idx * 0.02, 0.25),
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <TiltCard>
+                <Card key={engine.name} variant="interactive" className="engine-card">
+                  <CardHeader>
+                    <span className={`engine-icon-wrapper engine-icon-${engine.slug}`}>
+                      {engine.icon}
+                    </span>
+                    <CardTitle>{engine.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>{engine.description}</CardContent>
+                  <CardFooter>
+                    <Badge variant="success">Operational</Badge>
+                  </CardFooter>
+                </Card>
+              </TiltCard>
+            </motion.div>
+          ))}
         </div>
       </div>
-
-      {/* Season Status Card */}
-      {currentSeason && (
-        <div className="season-status-section">
-          <Card variant="glass" className="season-status-card">
-            <CardHeader>
-              <CardTitle>Current Season</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="season-info">
-                <span className="season-year">{currentSeason.year}</span>
-                <span className="season-week">Week {currentSeason.current_week}</span>
-                <Badge variant={currentSeason.status === "PRE_SEASON" ? "warning" : "success"}>
-                  {currentSeason.status?.replace("_", " ")}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      <h2 className="section-title">Simulation Engines</h2>
-      <div className="engines-grid">
-        {engines.map((engine) => (
-          <Card key={engine.name} variant="interactive" className="engine-card">
-            <CardHeader>
-              <span className={`engine-icon-wrapper engine-icon-${engine.slug}`}>
-                {engine.icon}
-              </span>
-              <CardTitle>{engine.name}</CardTitle>
-            </CardHeader>
-            <CardContent>{engine.description}</CardContent>
-            <CardFooter>
-              <Badge variant="success">Operational</Badge>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    </div>
+    </ParallaxScene>
   );
 };
 

@@ -1,20 +1,24 @@
 .dashboard {
-  padding: 2rem;
-  height: 100%;
-  overflow-y: auto;
+  padding: 0.5rem 0;
+  min-height: 100%;
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 2.5rem;
+  margin: 1.25rem 0 2rem;
 }
 
 .dashboard-title {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #fff 0%, #a0a0b0 100%);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 800;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    color-mix(in srgb, var(--theme-secondary) 55%, rgba(255, 255, 255, 0.68)) 45%,
+    rgba(255, 255, 255, 0.75) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -22,8 +26,9 @@
 }
 
 .dashboard-subtitle {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.95rem;
+  max-width: 60ch;
 }
 
 .header-actions {
@@ -33,26 +38,7 @@
 }
 
 .start-season-btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
   font-size: 0.95rem;
-}
-
-.start-season-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 12px -1px rgba(59, 130, 246, 0.6);
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-}
-
-.start-season-btn:active {
-  transform: translateY(0);
 }
 
 .engines-grid {
@@ -137,8 +123,8 @@
   align-items: center;
   justify-content: center;
   padding: 1.25rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   text-decoration: none;
   color: var(--color-text-primary);
@@ -147,10 +133,10 @@
 }
 
 .quick-action-card:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(59, 130, 246, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translate3d(0, -1px, 0);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .quick-action-icon {
@@ -171,6 +157,10 @@
 
 .season-status-card {
   max-width: 400px;
+}
+
+.season-status-tilt {
+  max-width: 420px;
 }
 
 .season-info {

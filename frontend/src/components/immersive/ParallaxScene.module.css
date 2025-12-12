@@ -1,0 +1,66 @@
+.scene {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  isolation: isolate;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 650px at 50% 10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(900px 550px at 10% 20%, rgba(0, 200, 255, 0.08), transparent 55%),
+    radial-gradient(900px 550px at 90% 20%, rgba(255, 220, 0, 0.06), transparent 55%),
+    radial-gradient(1200px 700px at 50% 90%, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.95));
+  filter: saturate(1.05) contrast(1.08);
+}
+
+.grain {
+  position: absolute;
+  inset: -40%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15) 0px, transparent 18%),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.08) 0px, transparent 22%),
+    radial-gradient(circle at 45% 80%, rgba(255, 255, 255, 0.1) 0px, transparent 24%);
+  mix-blend-mode: overlay;
+  transform: translate3d(var(--px, 0px), var(--py, 0px), 0) rotate(0.001deg);
+}
+
+.rain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: var(--fx-rain-opacity);
+  background-image: linear-gradient(115deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 20%, black 0%, transparent 70%);
+  animation: rainDrift 2.8s linear infinite;
+}
+
+@keyframes rainDrift {
+  0% {
+    transform: translate3d(-10%, -12%, 0);
+  }
+  100% {
+    transform: translate3d(10%, 12%, 0);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rain {
+    animation: none !important;
+  }
+}

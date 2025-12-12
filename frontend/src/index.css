@@ -35,12 +35,32 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "Fira Code", monospace;
 
+  /* Cinematic Night Game (global FX tokens) */
+  --fx-vignette:
+    radial-gradient(1200px 800px at 50% 40%, rgba(255, 255, 255, 0.06), transparent 55%),
+    radial-gradient(900px 700px at 10% 10%, rgba(0, 200, 255, 0.08), transparent 45%),
+    radial-gradient(900px 700px at 90% 20%, rgba(255, 200, 0, 0.06), transparent 45%),
+    radial-gradient(1400px 900px at 50% 80%, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.95));
+  --fx-noise-opacity: 0.05;
+  --fx-scan-opacity: 0.08;
+  --fx-rain-opacity: 0; /* page-level scenes can raise */
+
+  /* Motion tokens */
+  --motion-fast: 160ms;
+  --motion-med: 320ms;
+  --motion-slow: 900ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
   /* Z-Index Layers */
   --z-scene: 0;
   --z-ui: 10;
   --z-interaction: 20;
   --z-modal: 50;
   --z-tooltip: 100;
+
+  /* Layout tokens */
+  --nav-width: 88px;
 }
 
 * {
@@ -51,12 +71,72 @@
 
 body {
   background-color: var(--color-bg-deep);
-  background-image: radial-gradient(circle at 50% 50%, var(--glass-tint), transparent 70%);
+  background-image:
+    var(--fx-vignette), radial-gradient(circle at 50% 50%, var(--glass-tint), transparent 70%);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   overflow: hidden; /* Prevent scroll, app-like feel */
   -webkit-font-smoothing: antialiased;
   transition: background-image 1s ease;
+}
+
+/* Global atmospheric layers */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--fx-noise-opacity);
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.07) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
+    rgba(0, 0, 0, 0) 3px,
+    rgba(0, 0, 0, 0) 6px
+  );
+  mix-blend-mode: overlay;
+  animation: scanlineDrift 7s linear infinite;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20% -10%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--fx-scan-opacity);
+  background: radial-gradient(closest-side at 50% 50%, rgba(255, 255, 255, 0.08), transparent 60%);
+  transform: translate3d(0, 0, 0);
+  animation: spotlightBreathe 6s var(--ease-in-out) infinite;
+}
+
+@keyframes spotlightBreathe {
+  0%,
+  100% {
+    opacity: calc(var(--fx-scan-opacity) * 0.75);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: var(--fx-scan-opacity);
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+}
+
+@keyframes scanlineDrift {
+  0% {
+    transform: translate3d(0, -2%, 0);
+  }
+  100% {
+    transform: translate3d(0, 2%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none !important;
+  }
 }
 
 #root {

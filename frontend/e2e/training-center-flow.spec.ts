@@ -82,7 +82,7 @@ test.describe("Training Center Flow", () => {
     await page.goto("/training");
 
     // Verify page loaded
-    await expect(page.locator("h1")).toContainText("Training Center");
+    await expect(page.getByRole("heading", { name: "Training Center" })).toBeVisible();
 
     // Verify main sections exist
     await expect(page.locator("text=Head Coach")).toBeVisible();
@@ -95,7 +95,7 @@ test.describe("Training Center Flow", () => {
 
     // Verify coach card shows coach info
     await expect(page.locator("text=Andy Reid")).toBeVisible();
-    await expect(page.locator("text=Head Coach")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Head Coach" })).toBeVisible();
   });
 
   test("should display drill cards from API", async ({ page }) => {

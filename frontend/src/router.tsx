@@ -14,6 +14,9 @@ import { DraftRoom } from "./pages/DraftRoom";
 import { TrainingCenter } from "./pages/TrainingCenter";
 import TradeCenterPage from "./pages/TradeCenterPage";
 import TrophyRoom from "./pages/TrophyRoom";
+import { LiveSim } from "./pages/LiveSim";
+import { MedicalCenter } from "./pages/MedicalCenter";
+import { Playbook } from "./pages/Playbook";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
 import NotFound from "./components/NotFound.tsx";
@@ -249,6 +252,11 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        // Back-compat alias (Playwright + older deep links)
+        path: "dashboard",
+        element: <Dashboard />,
+      },
+      {
         path: "season",
         element: <SeasonDashboard />,
         loader: seasonDashboardLoader,
@@ -279,6 +287,13 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorBoundary />,
       },
       {
+        // Back-compat alias
+        path: "depth-chart",
+        element: <DepthChart />,
+        loader: depthChartLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: "empire/trade-center",
         element: <TradeCenterPage />,
         errorElement: <RouteErrorBoundary />,
@@ -286,6 +301,27 @@ export const router = createBrowserRouter([
       {
         path: "empire/trophy-room",
         element: <TrophyRoom />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        // Back-compat alias
+        path: "trophy-room",
+        element: <TrophyRoom />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "live-sim",
+        element: <LiveSim />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "medical-center",
+        element: <MedicalCenter />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "playbook",
+        element: <Playbook />,
         errorElement: <RouteErrorBoundary />,
       },
       {
