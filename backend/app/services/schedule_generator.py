@@ -1,12 +1,15 @@
 from typing import List, Dict, Tuple
 from app.models.team import Team
-from app.models.game import Game
+from app.models.game import Game, GameType
 from app.models.season import Season
 from sqlalchemy.orm import Session
 import random
 from datetime import datetime, timedelta
 from app.core.random_utils import DeterministicRNG
 
+# Thanksgiving Day game constants
+THANKSGIVING_HOSTS = ["DET", "DAL"]  # Traditional hosts (Lions early, Cowboys late)
+THANKSGIVING_WEEK = 12  # Typically Week 12 of NFL season
 
 class ScheduleGenerator:
     """
@@ -198,6 +201,7 @@ class ScheduleGenerator:
         Assign matchups to specific weeks and create Game objects.
 
         Shuffles matchups to randomize the schedule, then distributes them across weeks.
+        Flags Thanksgiving games for Lions and Cowboys in Week 12.
 
         Args:
             matchups: List of (Home, Away) tuples.
@@ -220,6 +224,14 @@ class ScheduleGenerator:
                 week += 1
                 current_date += timedelta(days=7)
 
+            # Determine game type
+            game_type = GameType.REGULAR
+
+            # Check for Thanksgiving games (Week 12, traditional hosts)
+            if week == THANKSGIVING_WEEK:
+                if hasattr(home_team, 'abbreviation') and home_team.abbreviation in THANKSGIVING_HOSTS:
+                    game_type = GameType.THANKSGIVING
+
             game = Game(
                 season_id=season_id,
                 season=start_date.year,  # Legacy field
@@ -227,7 +239,8 @@ class ScheduleGenerator:
                 home_team_id=home_team.id,
                 away_team_id=away_team.id,
                 date=current_date,
-                is_played=False
+                is_played=False,
+                game_type=game_type
             )
             games.append(game)
 

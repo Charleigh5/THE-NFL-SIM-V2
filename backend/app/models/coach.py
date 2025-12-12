@@ -1,12 +1,24 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from app.models.base import Base
+from enum import Enum
+
+class CoachTier(str, Enum):
+    """Coach tier based on combined ratings and experience."""
+    LEGEND = "LEGEND"       # 270+ combined, 1.50x development
+    ELITE = "ELITE"         # 230-269, 1.30x development
+    VETERAN = "VETERAN"     # 180-229, 1.10x development
+    DEVELOPING = "DEVELOPING" # 140-179, 1.00x development
+    ROOKIE = "ROOKIE"       # <140, 0.90x development
 
 class Coach(Base):
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String)
     last_name = Column(String)
     role = Column(String) # Head Coach, OC, DC, ST
+
+    # Tier system
+    tier = Column(SQLEnum(CoachTier), default=CoachTier.DEVELOPING, nullable=False)
 
     team_id = Column(Integer, ForeignKey("team.id"), nullable=True)
     team = relationship("Team", back_populates="coaches")

@@ -1,7 +1,16 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, JSON, Index
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, JSON, Index, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from app.models.base import Base
 import datetime
+from enum import Enum
+
+class GameType(str, Enum):
+    """Type of game for special scheduling and presentation."""
+    REGULAR = "REGULAR"
+    THANKSGIVING = "THANKSGIVING"
+    PRIMETIME = "PRIMETIME"
+    PLAYOFF = "PLAYOFF"
+    SUPER_BOWL = "SUPER_BOWL"
 
 class Game(Base):
     __tablename__ = "game"
@@ -20,6 +29,7 @@ class Game(Base):
     week = Column(Integer, index=True)
     date = Column(DateTime, default=datetime.datetime.utcnow)
     is_playoff = Column(Boolean, default=False)
+    game_type = Column(SQLEnum(GameType), default=GameType.REGULAR, nullable=False)
 
     # Teams
     home_team_id = Column(Integer, ForeignKey("team.id"))
