@@ -28,6 +28,16 @@ export interface GameWeather {
   field_condition?: string;
 }
 
+export const GameType = {
+  REGULAR: "REGULAR",
+  THANKSGIVING: "THANKSGIVING",
+  PRIMETIME: "PRIMETIME",
+  PLAYOFF: "PLAYOFF",
+  SUPER_BOWL: "SUPER_BOWL",
+} as const;
+
+export type GameType = (typeof GameType)[keyof typeof GameType];
+
 export interface Game {
   id: number;
   season_id: number;
@@ -37,6 +47,7 @@ export interface Game {
   scheduled_date: string;
   date: string;
   is_played: boolean;
+  game_type?: GameType | string;
   is_playoff?: boolean;
   home_score?: number;
   away_score?: number;

@@ -138,6 +138,44 @@
   cursor: pointer;
 }
 
+/* New Fog of War Styles */
+.fog-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.fog-badge--low {
+  border-color: #ef5350;
+  color: #ef5350;
+}
+
+.fog-badge--partial {
+  border-color: #ffa726;
+  color: #ffa726;
+}
+
+.fog-badge--exact {
+  border-color: #66bb6a;
+  color: #66bb6a;
+}
+
+.attribute-display.uncertain .attr-value {
+  color: #ffb74d; /* Warning color for uncertainty */
+  font-style: italic;
+}
+
+.attribute-display.exact .attr-value {
+  color: #4caf50; /* Success color for exact intel */
+}
+
 /* Suggestion Card */
 .suggestion-card {
   display: flex;

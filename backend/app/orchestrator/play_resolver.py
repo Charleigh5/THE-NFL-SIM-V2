@@ -571,6 +571,36 @@ class PlayResolver:
                 interaction_events=interaction_results.get("all_events", [])
             )
         else:
+            # Incomplete Pass - Check for Interception
+            base_int_chance = 0.08  # Base 8% interception chance on incomplete
+
+            # Pick Artist trait check
+            pick_artist_bonus = 0.0
+            pick_artist_effects = TraitEffectResolver.apply_pick_artist_effects(defender, ball_in_air=True)
+            if pick_artist_effects:
+                pick_artist_bonus = 0.04  # Extra 4% from 50% boost factor
+                logger.debug(f"Pick Artist bonus applied for {defender.last_name}")
+
+            int_chance = base_int_chance + pick_artist_bonus
+
+            # Worse throws (low success chance) = higher INT chance
+            if success_chance < 0.3:
+                int_chance += 0.05  # Bad throw = +5%
+
+            is_interception = ProbabilityEngine.resolve_outcome(self.rng, int_chance)
+
+            if is_interception:
+                return PlayResult(
+                    yards_gained=0,
+                    is_turnover=True,
+                    description=f"INTERCEPTED! {defender.last_name} picks off {qb.last_name}!",
+                    headline=f"Turnover! {defender.last_name} with the pick!",
+                    is_highlight_worthy=True,
+                    injuries=injuries,
+                    passer_id=qb.id,
+                    defender_id=defender.id
+                )
+
             # Normal Incomplete
             return PlayResult(
                 yards_gained=0,

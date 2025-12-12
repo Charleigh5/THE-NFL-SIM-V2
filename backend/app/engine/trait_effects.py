@@ -60,8 +60,71 @@ class TraitEffectResolver:
         return results
 
     @staticmethod
+    def apply_green_dot_effects(defense: List[Player]) -> Dict[str, float]:
+        """
+        Apply Green Dot (Defensive Captain) boost.
+        Boosts Play Recognition for all defenders.
+        """
+        results = {}
+        # Locate the captain (usually MLB/LB with the trait)
+        captain = next((p for p in defense if "Green Dot" in (getattr(p, "active_traits", []) or [])), None)
+
+        if captain:
+            for player in defense:
+                if player.id != captain.id:
+                    current_pr = getattr(player, "play_recognition", 50)
+                    setattr(player, "play_recognition_boosted", current_pr + 5)
+
+            results["team_play_recognition_boost"] = 5.0
+            results["blown_coverage_reduction"] = 0.20
+
+        return results
+
+    @staticmethod
+    def apply_pick_artist_effects(defender: Player, ball_in_air: bool = False) -> Dict[str, float]:
+        """
+        Apply Pick Artist effects during interception opportunities.
+        """
+        results = {}
+        if "Pick Artist" in (getattr(defender, "active_traits", []) or []):
+            if ball_in_air:
+                results["interception_chance_multiplier"] = 1.50
+                results["catch_radius_boost"] = 0.30
+                # Reduce drop chance for INTs
+                results["int_drop_chance_reduction"] = 0.50
+        return results
+
+    @staticmethod
+    def apply_chip_block_effects(rb: Player, is_blocking: bool = False) -> Dict[str, float]:
+        """
+        Apply Chip Block Specialist effects for RBs in pass protection.
+        """
+        results = {}
+        if "Chip Block Specialist" in (getattr(rb, "active_traits", []) or []) and is_blocking:
+            results["pass_block_boost"] = 10.0
+            results["edge_rusher_slow_effect"] = 0.15 # 15% slower edge rush acceleration
+        return results
+
+    @staticmethod
+    def apply_possession_receiver_effects(receiver: Player, down: int, yards_to_go: int) -> Dict[str, float]:
+        """
+        Apply Possession Receiver effects on 3rd/4th down or critical situations.
+        """
+        results = {}
+        is_critical_down = down >= 3
+
+        if "Possession Receiver" in (getattr(receiver, "active_traits", []) or []) and is_critical_down:
+            results["catch_in_traffic_boost"] = 15.0
+            results["drop_chance_reduction"] = 0.30
+            results["contest_catch_win_rate"] = 0.25
+
+        return results
+
+    @staticmethod
     def cleanup_boosts(players: List[Player]):
         """Remove temporary boosts."""
         for player in players:
             if hasattr(player, "awareness_boosted"):
                 delattr(player, "awareness_boosted")
+            if hasattr(player, "play_recognition_boosted"):
+                delattr(player, "play_recognition_boosted")

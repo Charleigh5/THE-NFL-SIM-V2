@@ -44,7 +44,7 @@ export const createPressHoldHandlers = (
   onPressEnd?: () => void,
   duration: number = 500
 ): PressHoldHandlers => {
-  let pressTimer: number | null = null;
+  let pressTimer: ReturnType<typeof setTimeout> | null = null;
 
   const handlePressStart = () => {
     pressTimer = setTimeout(() => {

@@ -279,8 +279,6 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
 
 @router.post("/init", response_model=SeasonResponse)
 @handle_errors
-@router.post("/init", response_model=SeasonResponse)
-@handle_errors
 async def initialize_season(
     season_data: SeasonCreate,
     db: AsyncSession = Depends(get_async_db)
@@ -296,10 +294,21 @@ async def initialize_season(
     result = await db.execute(stmt)
     existing = result.scalar_one_or_none()
     if existing:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Season {season_data.year} already exists"
-        )
+        # Season already exists - activate it and return it
+        logger.info(f"Season {season_data.year} already exists (id={existing.id}), activating it")
+
+        # Deactivate all other seasons
+        from sqlalchemy import update
+        stmt = update(Season).values(is_active=False)
+        await db.execute(stmt)
+
+        # Activate this season
+        existing.is_active = True
+        await db.commit()
+        await db.refresh(existing)
+
+        logger.info(f"Season {existing.id} activated")
+        return existing
 
     # Deactivate all other seasons
     # In async, we can't use query().update(). We use update() stmt or iterate.
@@ -393,8 +402,6 @@ async def initialize_season(
 
 @router.get("/current", response_model=SeasonResponse)
 @handle_errors
-@router.get("/current", response_model=SeasonResponse)
-@handle_errors
 async def get_current_season(db: AsyncSession = Depends(get_async_db)):
     """Get the currently active season."""
     logger.info("Fetching current active season")
@@ -406,8 +413,6 @@ async def get_current_season(db: AsyncSession = Depends(get_async_db)):
     return season
 
 
-@router.get("/{season_id}", response_model=SeasonResponse)
-@handle_errors
 @router.get("/{season_id}", response_model=SeasonResponse)
 @handle_errors
 async def get_season(season_id: int, db: AsyncSession = Depends(get_async_db)):

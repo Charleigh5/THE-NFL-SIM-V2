@@ -418,3 +418,26 @@ Traceback (most recent call last):
     if self.team.salary_cap_space < net_salary_change:
        ^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'salary_cap_space'
+DEBUG EXCEPTION: TypeError: unsupported operand type(s) for /: 'NoneType' and 'float'
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 572, in simulate_week
+    results = await simulator.simulate_week(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\week_simulator.py", line 173, in simulate_week
+    await self.player_development_service.process_weekly_development(season_id, week)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\player_development_service.py", line 38, in process_weekly_development
+    self._process_team_injuries(team)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\player_development_service.py", line 147, in _process_team_injuries
+    self.injury_system.process_recovery_step(player, medical_rating=team.medical_rating)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\rpg\injury_system.py", line 103, in process_recovery_step
+    risk_modifier = 1.0 - (medical_rating / 200.0)
+                           ~~~~~~~~~~~~~~~^~~~~~~
+TypeError: unsupported operand type(s) for /: 'NoneType' and 'float'

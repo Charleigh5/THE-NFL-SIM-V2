@@ -12,6 +12,38 @@ interface DraftAssistantProps {
   onPlayerSelect?: (prospect: Prospect) => void;
 }
 
+// Helper component for attributes
+const AttributeDisplay: React.FC<{ value: number | string; label?: string }> = ({
+  value,
+  label,
+}) => {
+  const isRange = typeof value === "string" && value.includes("-");
+
+  return (
+    <div className={`attribute-display ${isRange ? "uncertain" : "exact"}`}>
+      {label && <span className="attr-label">{label}</span>}
+      <span className="attr-value">{value}</span>
+    </div>
+  );
+};
+
+const FogOfWarBadge: React.FC<{ confidence: number }> = ({ confidence }) => {
+  let tier = "LOW";
+
+  if (confidence > 0.8) {
+    tier = "EXACT";
+  } else if (confidence > 0.5) {
+    tier = "PARTIAL";
+  }
+
+  return (
+    <div className={`fog-badge fog-badge--${tier.toLowerCase()}`} data-tier={tier}>
+      <span className="scout-icon">👁️</span>
+      <span className="scout-tier">{tier} INTEL</span>
+    </div>
+  );
+};
+
 export const DraftAssistant: React.FC<DraftAssistantProps> = ({
   seasonId,
   teamId,
@@ -45,14 +77,11 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
   // Helper to construct a minimal Prospect object for the callback
   const handleSelect = (id: number, name: string, position: string, rating: number) => {
     if (onPlayerSelect) {
-      // We construct a partial prospect here. In a real app, we might want to find the full prospect object
-      // from the availablePlayers list if possible, but for now this suffices for the callback
       onPlayerSelect({
         id,
         name,
         position,
         overall_rating: rating,
-        // Default values for required fields that might be missing in suggestion
         first_name: name.split(" ")[0],
         last_name: name.split(" ").slice(1).join(" "),
         height: 0,
@@ -112,10 +141,7 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
           <div className="suggestion-card" data-testid="suggestion-card">
             <div className="recommendation-header">
               <span className="label">RECOMMENDED PICK</span>
-              <div className="confidence-meter" data-testid="confidence-score">
-                <div className="confidence-fill" data-confidence={suggestion.confidence_score} />
-                <span>{Math.round(suggestion.confidence_score * 100)}% Confidence</span>
-              </div>
+              <FogOfWarBadge confidence={suggestion.confidence_score} />
             </div>
 
             <div className="suggested-player-card">
@@ -124,7 +150,14 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
                   <span className="pos-badge">{suggestion.position}</span>
                   <span className="player-name">{suggestion.player_name}</span>
                 </div>
-                <span className="player-rating">{suggestion.overall_rating} OVR</span>
+                {/* Logic to show range if confidence is low */}
+                <AttributeDisplay
+                  value={
+                    suggestion.confidence_score > 0.8
+                      ? `${suggestion.overall_rating} OVR`
+                      : `${Math.max(0, suggestion.overall_rating - 5)}-${Math.min(99, suggestion.overall_rating + 5)} OVR`
+                  }
+                />
               </div>
 
               <button
@@ -211,7 +244,12 @@ export const DraftAssistant: React.FC<DraftAssistantProps> = ({
                         <span className="alt-pos">{alt.position}</span>
                         <span className="alt-name">{alt.player_name}</span>
                       </div>
-                      <span className="alt-rating">{alt.overall_rating}</span>
+                      {/* Show range for alternatives too */}
+                      <span className="alt-rating">
+                        {suggestion.confidence_score > 0.8
+                          ? alt.overall_rating
+                          : `${Math.max(0, alt.overall_rating - 5)}-${Math.min(99, alt.overall_rating + 5)}`}
+                      </span>
                     </div>
                   ))}
                 </div>

@@ -4,6 +4,7 @@ import { CoachingStyleType } from "../types/training";
 import { trainingService } from "../services/trainingApi";
 import { DrillCard } from "../components/training/DrillCard";
 import { CoachingStylePicker } from "../components/training/CoachingStylePicker";
+import { CoachCard } from "../components/coaching/CoachCard";
 import { Loader2 } from "lucide-react";
 import "../components/training/TrainingCenter.css";
 
@@ -12,6 +13,16 @@ export const TrainingCenter = () => {
   const [drills, setDrills] = useState<Drill[]>([]);
   const [currentStyle, setCurrentStyle] = useState<CoachingStyleType>(CoachingStyleType.SMART);
   const [selectedDrills, setSelectedDrills] = useState<string[]>([]);
+
+  // Mock coach data - in production, fetch from API
+  const headCoach = {
+    name: "Andy Reid",
+    role: "Head Coach",
+    tier: "LEGEND",
+    archetype: "QB_GURU",
+    playbookOffense: "West Coast",
+    experience: 26,
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,6 +83,15 @@ export const TrainingCenter = () => {
           Execute Week
         </button>
       </header>
+
+      {/* Coaching Staff */}
+      <section>
+        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span className="w-1 h-6 bg-purple-400 rounded-full" />
+          Head Coach
+        </h2>
+        <CoachCard {...headCoach} />
+      </section>
 
       {/* Coaching Philosophy */}
       <section>

@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { Annotation } from "../../hooks/useAnnotationList";
+import type { Annotation } from "../../hooks/useAnnotationList";
 import "./TaskListPanel.css";
 
 interface TaskListPanelProps {

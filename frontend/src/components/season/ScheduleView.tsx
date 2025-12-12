@@ -157,13 +157,25 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             // Determine display date (prefer 'date' over 'scheduled_date')
             const displayDate = game.date || game.scheduled_date;
 
+            const isThanksgiving = game.game_type === "THANKSGIVING";
+            const isPlayoff =
+              game.is_playoff || game.game_type === "PLAYOFF" || game.game_type === "SUPER_BOWL";
+
             return (
               <div
                 key={game.id}
-                className={`game-card ${game.is_playoff ? "playoff-game" : ""}`}
+                className={`game-card ${isPlayoff ? "playoff-game" : ""} ${isThanksgiving ? "thanksgiving-game" : ""}`}
                 data-testid={`game-card-${game.id}`}
               >
-                {game.is_playoff && <div className="playoff-badge">Playoff Game</div>}
+                {isPlayoff && <div className="playoff-badge">Playoff Game</div>}
+                {isThanksgiving && (
+                  <div className="thanksgiving-badge">
+                    <span role="img" aria-label="turkey">
+                      🦃
+                    </span>{" "}
+                    Thanksgiving Special
+                  </div>
+                )}
                 <div className="game-header">
                   <span className="game-date">{formatDate(displayDate)}</span>
                   <span className={`game-status ${isFinal ? "status-final" : "status-scheduled"}`}>

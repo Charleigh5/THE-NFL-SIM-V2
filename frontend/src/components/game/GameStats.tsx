@@ -15,7 +15,7 @@ interface TeamStats {
 }
 
 export const GameStats = () => {
-  const { playLog, gameState } = useSimulationStore();
+  const { playLog } = useSimulationStore();
 
   const stats = useMemo(() => {
     // Initialize stats

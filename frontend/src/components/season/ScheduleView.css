@@ -68,6 +68,28 @@
   border-color: #666;
 }
 
+/* Thanksgiving Special */
+.thanksgiving-game {
+  border: 1px solid #d97706; /* Amber-600 */
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(180, 83, 9, 0.05) 100%);
+}
+
+.thanksgiving-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #d97706;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
