@@ -1004,3 +1004,10 @@ PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
 PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
 PYTEST DEBUG: app.__file__=None
 PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
