@@ -1,6 +1,7 @@
 
 import sys
 import os
+import random
 from typing import List, Any
 from dataclasses import dataclass
 
@@ -12,6 +13,10 @@ from app.orchestrator.play_commands import (
     PlayCommand, PassPlayCommand, RunPlayCommand,
     PuntCommand, FieldGoalCommand
 )
+
+def get_rng(seed: int = 42) -> random.Random:
+    """Get a seeded RNG for deterministic testing."""
+    return random.Random(seed)
 
 def get_context(down: int, distance: int, dist_to_goal: int, time_left: int, score_diff: int) -> PlayCallingContext:
     """
@@ -42,7 +47,7 @@ def test_situation_1_conservative_punt():
     Rationale: Too deep in own territory to risk going for it
     """
     print("\n--- Test Situation 1: Conservative Punt Decision ---")
-    caller = PlayCaller(aggression=0.5)
+    caller = PlayCaller(rng=get_rng(), aggression=0.5)
 
     # Own 20 means 80 yards to goal
     context = get_context(down=4, distance=10, dist_to_goal=80, time_left=900, score_diff=0)
@@ -63,7 +68,7 @@ def test_situation_2_aggressive_goal_line():
     Rationale: Must score TD to tie, FG insufficient
     """
     print("\n--- Test Situation 2: Aggressive Goal Line Attempt ---")
-    caller = PlayCaller(aggression=0.5)
+    caller = PlayCaller(rng=get_rng(), aggression=0.5)
 
     # Opponent 5 means 5 yards to goal. Down 4 points (-4). 60 seconds left.
     context = get_context(down=4, distance=1, dist_to_goal=5, time_left=60, score_diff=-4)
@@ -86,7 +91,7 @@ def test_situation_3_field_goal_range():
     Rationale: Within FG range (~47 yards), conservative call in tie game
     """
     print("\n--- Test Situation 3: Field Goal Range ---")
-    caller = PlayCaller(aggression=0.5)
+    caller = PlayCaller(rng=get_rng(), aggression=0.5)
 
     # Opponent 30 means 30 yards to goal. Tied (0). 900 seconds left (start of Q3 is 30:00 left in game, but let's say 15:00 left in Q3 means 30 mins total?
     # Actually Q3 starts at 30:00 remaining. 15:00 left in Q3 means 30:00 - 15:00 = 15 mins elapsed in half?
@@ -109,7 +114,7 @@ def test_situation_4_passing_3rd_long():
     Rationale: 3rd & long strongly favors pass plays
     """
     print("\n--- Test Situation 4: Passing on 3rd & Long ---")
-    caller = PlayCaller(aggression=0.5)
+    caller = PlayCaller(rng=get_rng(), aggression=0.5)
 
     # Own 40 means 60 yards to goal.
     context = get_context(down=3, distance=15, dist_to_goal=60, time_left=1200, score_diff=0)
@@ -137,7 +142,7 @@ def test_situation_5_running_short_yardage():
     Rationale: Short yardage favors power running
     """
     print("\n--- Test Situation 5: Running on Short Yardage ---")
-    caller = PlayCaller(aggression=0.5)
+    caller = PlayCaller(rng=get_rng(), aggression=0.5)
 
     # Midfield means 50 yards to goal.
     context = get_context(down=3, distance=1, dist_to_goal=50, time_left=1080, score_diff=0)
@@ -175,7 +180,7 @@ def test_situation_6_advanced_coach_personality():
     from app.orchestrator.play_caller import PlayCaller
 
     # West Coast coach - pass-heavy
-    west_coast_caller = PlayCaller(aggression=0.6, run_pass_ratio=0.3)
+    west_coast_caller = PlayCaller(rng=get_rng(), aggression=0.6, run_pass_ratio=0.3)
 
     context = get_context(down=2, distance=8, dist_to_goal=50, time_left=900, score_diff=0)
 
@@ -202,7 +207,7 @@ def test_situation_7_situational_awareness():
     Rationale: Should favor aggressive passing to catch up
     """
     print("\n--- Test Situation 7: Situational Awareness ---")
-    caller = PlayCaller(aggression=0.7)
+    caller = PlayCaller(rng=get_rng(), aggression=0.7)
 
     # Late game, down by 7, 2 minutes left
     context = get_context(down=2, distance=10, dist_to_goal=50, time_left=120, score_diff=-7)
@@ -230,7 +235,7 @@ def test_situation_8_adaptive_strategy():
     Rationale: Should favor running to burn clock
     """
     print("\n--- Test Situation 8: Adaptive Strategy ---")
-    conservative_caller = PlayCaller(aggression=0.3)
+    conservative_caller = PlayCaller(rng=get_rng(), aggression=0.3)
 
     # Leading by 7, 3 minutes left - should run to burn clock
     context = get_context(down=2, distance=6, dist_to_goal=50, time_left=180, score_diff=7)

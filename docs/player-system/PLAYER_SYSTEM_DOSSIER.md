@@ -84,7 +84,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 
 **Primary Role:** Decision maker, passer
 
-#### Key Attributes
+#### QB Key Attributes
 
 | Attribute              | Usage in Code         | Linked File                 |
 | ---------------------- | --------------------- | --------------------------- |
@@ -97,7 +97,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 | `scramble_willingness` | Run vs stay tendency  | Proposed                    |
 | `throw_on_run`         | Accuracy while moving | Drills target               |
 
-#### Play Triggers
+#### QB Play Triggers
 
 ```python
 # From play_resolver.py L262-369
@@ -117,7 +117,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 | Passing Yards | +0.5/yard |
 | Interception  | -20       |
 
-#### Training Drills
+#### QB Training Drills
 
 | Drill                 | Target Stat        | XP Mult | Injury Risk |
 | --------------------- | ------------------ | ------- | ----------- |
@@ -134,7 +134,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 
 **Primary Role:** Ball carrier, pass blocker
 
-#### Key Attributes
+#### RB Key Attributes
 
 | Attribute                | Usage                 | Linked File            |
 | ------------------------ | --------------------- | ---------------------- |
@@ -168,7 +168,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 8. Fumble check (base 1%, modified by tribe, fatigue, hit_power)
 ```
 
-#### Training Drills
+#### RB Training Drills
 
 | Drill                  | Target Stat         | XP Mult |
 | ---------------------- | ------------------- | ------- |
@@ -184,7 +184,7 @@ This is the **single source of truth** for all player mechanics in the NFL SIM E
 
 **Primary Role:** Pass catching, blocking (TE)
 
-#### Key Attributes
+#### WR/TE Key Attributes
 
 | Attribute                  | Usage                    | Linked File                 |
 | -------------------------- | ------------------------ | --------------------------- |
@@ -214,7 +214,7 @@ if "contested_catch_bonus" in target.trait_effects:
         trait_bonus = contested_catch_bonus / 100.0
 ```
 
-#### Training Drills
+#### WR/TE Training Drills
 
 | Drill                  | Target Stat        | XP Mult |
 | ---------------------- | ------------------ | ------- |
@@ -230,7 +230,7 @@ if "contested_catch_bonus" in target.trait_effects:
 
 **Primary Role:** Protection, run blocking
 
-#### Key Attributes
+#### OL Key Attributes
 
 | Attribute    | Usage                | Linked File                            |
 | ------------ | -------------------- | -------------------------------------- |
@@ -261,7 +261,7 @@ for ol_pos, dl_pos in matchups:
     # Results: WIN, STALEMATE, LOSS, PANCAKE
 ```
 
-#### Training Drills
+#### OL Training Drills
 
 | Drill                | Target Stat       | XP Mult | Injury Risk |
 | -------------------- | ----------------- | ------- | ----------- |
@@ -279,7 +279,7 @@ for ol_pos, dl_pos in matchups:
 
 **Primary Role:** Pass rush, run stuffing
 
-#### Key Attributes
+#### DL Key Attributes
 
 | Attribute           | Usage                | Linked File              |
 | ------------------- | -------------------- | ------------------------ |
@@ -308,7 +308,7 @@ for trait in sacker.traits:
 | Sack  | +100    |
 | TFL   | +30     |
 
-#### Training Drills
+#### DL Training Drills
 
 | Drill           | Target Stat    | XP Mult | Injury Risk |
 | --------------- | -------------- | ------- | ----------- |
@@ -323,7 +323,7 @@ for trait in sacker.traits:
 
 **Primary Role:** Hybrid run/pass defense
 
-#### Key Attributes
+#### LB Key Attributes
 
 | Attribute           | Usage               | Linked File              |
 | ------------------- | ------------------- | ------------------------ |
@@ -346,7 +346,7 @@ for trait in sacker.traits:
 # - Prevents blown coverage TDs
 ```
 
-#### Training Drills
+#### LB Training Drills
 
 | Drill             | Target Stat      | XP Mult |
 | ----------------- | ---------------- | ------- |
@@ -362,7 +362,7 @@ for trait in sacker.traits:
 
 **Primary Role:** Pass coverage, run support
 
-#### Key Attributes
+#### DB Key Attributes
 
 | Attribute       | Usage                     | Linked File              |
 | --------------- | ------------------------- | ------------------------ |
@@ -382,7 +382,7 @@ matchup_factor = compare_skill(target.route_running, defender.man_coverage)
 # Negative matchup_factor = defender wins
 ```
 
-#### Training Drills
+#### DB Training Drills
 
 | Drill               | Target Stat   | XP Mult |
 | ------------------- | ------------- | ------- |
@@ -398,7 +398,7 @@ matchup_factor = compare_skill(target.route_running, defender.man_coverage)
 
 ### Kicker (K) / Punter (P)
 
-#### Key Attributes
+#### K/P Key Attributes
 
 | Attribute       | Usage                       | Linked File        |
 | --------------- | --------------------------- | ------------------ |
@@ -414,7 +414,7 @@ matchup_factor = compare_skill(target.route_running, defender.man_coverage)
 | Ice in Veins  | Negates "icing the kicker" mechanic |
 | Clutch Kicker | Accuracy zone unchanged in 4Q/OT    |
 
-#### Training Drills
+#### K/P Training Drills
 
 | Drill             | Target Stat   | XP Mult |
 | ----------------- | ------------- | ------- |
@@ -813,4 +813,4 @@ graph TD
 
 ---
 
-**END OF DOSSIER**
+### END OF DOSSIER

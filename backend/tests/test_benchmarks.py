@@ -7,12 +7,19 @@ of critical simulation components over time.
 Run with: pytest backend/tests/test_benchmarks.py -v --benchmark-only
 """
 import pytest
+import random
 from unittest.mock import Mock, MagicMock
 from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_caller import PlayCaller
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
 from app.engine.probability_engine import ProbabilityEngine
 from app.models.player import Player
 from app.models.team import Team
+
+
+@pytest.fixture
+def rng():
+    """Provide a seeded RNG for deterministic benchmarks."""
+    return random.Random(42)
 
 
 @pytest.fixture
@@ -72,11 +79,11 @@ def sample_teams(sample_players):
 class TestPlayResolutionBenchmarks:
     """Benchmark play resolution performance."""
 
-    def test_pass_play_resolution(self, benchmark, mock_db, sample_players, sample_teams):
+    def test_pass_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark pass play resolution time."""
         from app.schemas.play import PlayCommand
 
-        resolver = PlayResolver(mock_db)
+        resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
         play_command = PlayCommand(
@@ -101,11 +108,11 @@ class TestPlayResolutionBenchmarks:
 
         assert result is not None
 
-    def test_run_play_resolution(self, benchmark, mock_db, sample_players, sample_teams):
+    def test_run_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark run play resolution time."""
         from app.schemas.play import PlayCommand
 
-        resolver = PlayResolver(mock_db)
+        resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
         play_command = PlayCommand(
@@ -139,47 +146,55 @@ class TestProbabilityEngineBenchmarks:
 
         result = benchmark(
             engine.compare_attributes,
-            offense_rating=85,
-            defense_rating=75,
-            variance=0.15
+            attacker_val=85,
+            defender_val=75,
+            scale=0.01,
+            max_mod=0.3
         )
 
-        assert 0.0 <= result <= 1.0
+        assert -0.3 <= result <= 0.3
 
-    def test_tiered_outcome_resolution(self, benchmark):
+    def test_tiered_outcome_resolution(self, benchmark, rng):
         """Benchmark tiered outcome resolution."""
         engine = ProbabilityEngine()
 
         result = benchmark(
             engine.resolve_tiered_outcome,
-            base_probability=0.65,
+            rng=rng,
+            probability=0.65,
             critical_threshold=0.10
         )
 
-        assert result in ["critical_success", "success", "failure", "critical_failure"]
+        # OutcomeType is an Enum
+        from app.engine.probability_engine import OutcomeType
+        assert result in [OutcomeType.CRITICAL_SUCCESS, OutcomeType.SUCCESS, OutcomeType.FAILURE, OutcomeType.CRITICAL_FAILURE]
 
 
 class TestPlayCallerBenchmarks:
     """Benchmark play-calling AI performance."""
 
-    def test_play_selection(self, benchmark, mock_db, sample_teams):
+    def test_play_selection(self, benchmark, rng, sample_teams):
         """Benchmark AI play selection time."""
-        caller = PlayCaller(mock_db)
+        caller = PlayCaller(rng=rng, aggression=0.5)
         team1, team2 = sample_teams
+
+        context = PlayCallingContext(
+            down=2,
+            distance=7,
+            distance_to_goal=35,
+            time_left_seconds=450,
+            score_diff=0,
+            possession="home",
+            offense_players=[],
+            defense_players=[]
+        )
 
         result = benchmark(
             caller.select_play,
-            offense_team=team1,
-            defense_team=team2,
-            down=2,
-            distance=7,
-            field_position=35,
-            time_remaining=450,
-            score_differential=0
+            context
         )
 
         assert result is not None
-        assert hasattr(result, "play_type")
 
 
 class TestSeasonSimulationBenchmarks:

@@ -6,25 +6,27 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - uses: actions/setup-python@v4
-      
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+
       - name: Install backend dependencies
         run: cd backend && pip install -r requirements.txt
-      
+
       - name: Start backend
         run: cd backend && uvicorn app.main:app &
-      
+
       - name: Install frontend dependencies
         run: cd frontend && npm ci
-      
+
       - name: Install Playwright
         run: cd frontend && npx playwright install --with-deps
-      
+
       - name: Run E2E tests
         run: cd frontend && npm run test:e2e
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3

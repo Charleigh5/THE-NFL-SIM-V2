@@ -65,12 +65,14 @@ async def setup_teams(test_db):
             overall_rating=75,
             pass_block=70,
             run_block=70,
-            awareness=65
+            awareness=65,
+            height=77,  # 6'5" - typical OL height
+            weight=310  # typical OL weight
         )
         ol_players.append(player)
         test_db.add(player)
 
-    # Create some other players for team 2
+    # Create some other players for team 2 (opponents with required fields)
     for i in range(5):
         player = Player(
             id=i + 10,
@@ -78,7 +80,9 @@ async def setup_teams(test_db):
             last_name=f"{i}",
             position="DE",
             team_id=2,
-            overall_rating=70
+            overall_rating=70,
+            height=76,  # 6'4" - typical DE height
+            weight=265  # typical DE weight
         )
         test_db.add(player)
 

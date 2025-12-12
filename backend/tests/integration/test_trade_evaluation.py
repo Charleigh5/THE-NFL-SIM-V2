@@ -17,9 +17,27 @@ def setup_trade_data(db_session):
     team = Team(id=1, name="Cardinals", city="Arizona", abbreviation="ARI", conference="NFC", division="West")
     db_session.add(team)
 
-    # Create Players
-    p1 = Player(id=101, first_name="Kyler", last_name="Murray", position=Position.QB, overall_rating=90, team_id=1)
-    p2 = Player(id=201, first_name="Patrick", last_name="Mahomes", position=Position.QB, overall_rating=99, team_id=2)
+    # Create Players with all required fields (best practice: always include NOT NULL fields)
+    p1 = Player(
+        id=101,
+        first_name="Kyler",
+        last_name="Murray",
+        position=Position.QB,
+        overall_rating=90,
+        team_id=1,
+        height=70,  # 5'10"
+        weight=207
+    )
+    p2 = Player(
+        id=201,
+        first_name="Patrick",
+        last_name="Mahomes",
+        position=Position.QB,
+        overall_rating=99,
+        team_id=2,
+        height=75,  # 6'3"
+        weight=230
+    )
 
     db_session.add(p1)
     db_session.add(p2)

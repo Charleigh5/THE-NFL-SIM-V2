@@ -89,7 +89,7 @@ CRITICAL_SUCCESS = "critical_success"  # Top 10% of success range
 
 **Formula:**
 
-```
+```python
 initial_prob = 0.15 * pressure_level
 presence_factor = qb.pocket_presence * 0.005  # 99 PP → 49.5% reduction
 chemistry_factor = ol_chemistry_bonus * 0.3

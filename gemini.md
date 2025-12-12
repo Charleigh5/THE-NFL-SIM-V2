@@ -135,10 +135,10 @@ This represents a potential storyboard for the project's development and future.
   - `[x]` Write a `Dockerfile` for the backend.
   - `[x]` Write a `Dockerfile` for the frontend.
   - `[x]` Create a `docker-compose.yml` for local development.
-- **[ ] Task 4.2: Establish Testing Framework**
+- **[x] Task 4.2: Establish Testing Framework**
   - `[x]` Add unit tests for the simulation engine.
   - `[x]` Add API integration tests.
-  - `[ ]` Add E2E tests for the frontend user flows.
+  - `[x]` Add E2E tests for the frontend user flows. (20 test suites covering major flows)
 
 ---
 

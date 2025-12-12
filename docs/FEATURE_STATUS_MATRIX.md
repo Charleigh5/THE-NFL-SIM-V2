@@ -30,39 +30,39 @@
 
 ## 1. Core Game Engine Features
 
-| ID           | Feature Name                  | Status              | Spec Doc                           | Tests  | Priority | Notes                                                          |
-| ------------ | ----------------------------- | ------------------- | ---------------------------------- | ------ | -------- | -------------------------------------------------------------- |
-| **GAME-001** | Play Resolution System        | 🟡 SPEC_NEEDED      | ❌                                 | 🧪 85% | P0       | Core play logic exists, needs full spec                        |
-| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                                               |
-| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                                               |
-| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ❌                                 | 🧪 60% | P0       | Basic kicks/punts work                                         |
-| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`  | 🧪 90% | P0       | Well documented                                                |
-| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md` | 🧪 85% | P0       | Good docs exist                                                |
-| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                         | 🧪 75% | P1       | Integrated with match context                                  |
-| **GAME-008** | QB Pocket Presence            | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P1       | `sack_calculator.py` active                                    |
-| **GAME-009** | Environmental Weather Effects | ✅ IMPLEMENTED      | ❌                                 | 🧪 60% | P1       | Fully integrated: Pass wind penalties, mud speed, kick impacts |
-| **GAME-010** | Venue-Specific Effects        | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Home field advantage, dome vs outdoor                          |
-| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                 | 🧪 70% | P0       | Works but undocumented                                         |
-| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                 | 🧪 50% | P1       | Basic implementation                                           |
-| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                 | 🧪 40% | P2       | Needs testing                                                  |
-| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.                            |
+| ID           | Feature Name                  | Status              | Spec Doc                                 | Tests  | Priority | Notes                                                          |
+| ------------ | ----------------------------- | ------------------- | ---------------------------------------- | ------ | -------- | -------------------------------------------------------------- |
+| **GAME-001** | Play Resolution System        | 🟢 SPEC_COMPLETE    | ✅ `OFFENSIVE/DEFENSIVE_FUNDAMENTALS.md` | 🧪 85% | P0       | Full spec created 2025-12-12                                   |
+| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P0       | Part of GAME-001                                               |
+| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P0       | Part of GAME-001                                               |
+| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P0       | Basic kicks/punts work                                         |
+| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`        | 🧪 90% | P0       | Well documented                                                |
+| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md`       | 🧪 85% | P0       | Good docs exist                                                |
+| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                               | 🧪 75% | P1       | Integrated with match context                                  |
+| **GAME-008** | QB Pocket Presence            | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P1       | `sack_calculator.py` active                                    |
+| **GAME-009** | Environmental Weather Effects | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P1       | Fully integrated: Pass wind penalties, mud speed, kick impacts |
+| **GAME-010** | Venue-Specific Effects        | 🔵 PROPOSED         | ❌                                       | ❌ 0%  | P2       | Home field advantage, dome vs outdoor                          |
+| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                       | 🧪 70% | P0       | Works but undocumented                                         |
+| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                       | 🧪 50% | P1       | Basic implementation                                           |
+| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                       | 🧪 40% | P2       | Needs testing                                                  |
+| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                       | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.                            |
 
 ---
 
 ## 2. AI & Decision Making
 
-| ID         | Feature Name                  | Status         | Spec Doc | Tests  | Priority | Notes                            |
-| ---------- | ----------------------------- | -------------- | -------- | ------ | -------- | -------------------------------- |
-| **AI-001** | Play Calling AI               | 🟡 SPEC_NEEDED | ❌       | 🧪 70% | P0       | `play_caller.py` exists          |
-| **AI-002** | Player AI State Machines      | 🟡 SPEC_NEEDED | ❌       | 🧪 65% | P0       | `ai.py` exists, needs docs       |
-| **AI-003** | Coaching AI Personality       | 🔵 PROPOSED    | ❌       | ❌ 0%  | P1       | Conservative/Aggressive/Adaptive |
-| **AI-004** | 4th Down Decision AI          | 🟡 SPEC_NEEDED | ❌       | 🧪 60% | P1       | Exists in play_caller            |
-| **AI-005** | 2-Minute Drill AI             | 🔵 PROPOSED    | ❌       | ❌ 0%  | P1       | Clock management                 |
-| **AI-006** | Timeout Management            | 🔵 PROPOSED    | ❌       | ❌ 0%  | P2       | Strategic timeout usage          |
-| **AI-007** | Challenge Flag Decisions      | 🔵 PROPOSED    | ❌       | ❌ 0%  | P3       | Replay system                    |
-| **AI-008** | Defensive Formation Selection | ✅ IMPLEMENTED | ❌       | 🧪 50% | P1       | Basic implementation             |
-| **AI-009** | Offensive Line AI             | ✅ IMPLEMENTED | ❌       | 🧪 60% | P0       | `offensive_line_ai.py`           |
-| **AI-010** | Blocking AI                   | ✅ IMPLEMENTED | ❌       | 🧪 60% | P0       | `blocking.py`                    |
+| ID         | Feature Name                  | Status           | Spec Doc                     | Tests  | Priority | Notes                            |
+| ---------- | ----------------------------- | ---------------- | ---------------------------- | ------ | -------- | -------------------------------- |
+| **AI-001** | Play Calling AI               | 🟢 SPEC_COMPLETE | ✅ `PLAY_CALLING_AI_SPEC.md` | 🧪 70% | P0       | Full spec created 2025-12-12     |
+| **AI-002** | Player AI State Machines      | 🟡 SPEC_NEEDED   | ❌                           | 🧪 65% | P0       | `ai.py` exists, needs docs       |
+| **AI-003** | Coaching AI Personality       | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P1       | Conservative/Aggressive/Adaptive |
+| **AI-004** | 4th Down Decision AI          | 🟡 SPEC_NEEDED   | ❌                           | 🧪 60% | P1       | Exists in play_caller            |
+| **AI-005** | 2-Minute Drill AI             | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P1       | Clock management                 |
+| **AI-006** | Timeout Management            | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P2       | Strategic timeout usage          |
+| **AI-007** | Challenge Flag Decisions      | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P3       | Replay system                    |
+| **AI-008** | Defensive Formation Selection | ✅ IMPLEMENTED   | ❌                           | 🧪 50% | P1       | Basic implementation             |
+| **AI-009** | Offensive Line AI             | ✅ IMPLEMENTED   | ❌                           | 🧪 60% | P0       | `offensive_line_ai.py`           |
+| **AI-010** | Blocking AI                   | ✅ IMPLEMENTED   | ❌                           | 🧪 60% | P0       | `blocking.py`                    |
 
 ---
 
@@ -88,7 +88,7 @@
 | ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                          |
 | ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | ------------------------------ |
 | **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                   |
-| **RPG-002** | Attribute Progression          | ✅ IMPLEMENTED   | ⚠️ Partial                            | 🧪 80% | P0       | Service exists                 |
+| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12   |
 | **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster      |
 | **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late     |
 | **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines) |
