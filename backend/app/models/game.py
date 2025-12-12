@@ -29,6 +29,7 @@ class Game(Base):
     week = Column(Integer, index=True)
     date = Column(DateTime, default=datetime.datetime.utcnow)
     is_playoff = Column(Boolean, default=False)
+    is_preseason = Column(Boolean, default=False)  # Flag for preseason games
     game_type = Column(SQLEnum(GameType), default=GameType.REGULAR, nullable=False)
 
     # Teams

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { seasonApi } from "../services/season";
@@ -49,44 +50,44 @@ const Dashboard = () => {
   const engines = [
     {
       name: "Genesis Engine",
+      slug: "genesis",
       description: "Biological simulation: Bio-metrics, Neuro-cognition, Trauma/Injury, Recruiting",
       icon: "🧬",
-      color: "#10b981",
       status: "operational",
     },
     {
       name: "Empire Engine",
+      slug: "empire",
       description: "Franchise management: Financials, Owner personality, Stadium management",
       icon: "💰",
-      color: "#f59e0b",
       status: "operational",
     },
     {
       name: "Hive Engine",
+      slug: "hive",
       description: "Physics and environment: Weather, Ballistics, Field conditions",
       icon: "🌦️",
-      color: "#3b82f6",
       status: "operational",
     },
     {
       name: "Society Engine",
+      slug: "society",
       description: "Narrative and relationships: Media narratives, Player morale, Rivalries",
       icon: "📰",
-      color: "#8b5cf6",
       status: "operational",
     },
     {
       name: "Core Engine",
+      slug: "core",
       description: "Central simulation loop: Time stepping, AI decision making",
       icon: "⚙️",
-      color: "#ef4444",
       status: "operational",
     },
     {
       name: "RPG Engine",
+      slug: "rpg",
       description: "Progression system: XP generation, Skill trees, Training results",
       icon: "📊",
-      color: "#06b6d4",
       status: "operational",
     },
   ];
@@ -116,18 +117,63 @@ const Dashboard = () => {
         </div>
       </header>
 
+      {/* Quick Actions Section */}
+      <div className="quick-actions-section">
+        <h2 className="section-title">Quick Actions</h2>
+        <div className="quick-actions-grid">
+          <Link to="/empire/front-office" className="quick-action-card">
+            <span className="quick-action-icon">👥</span>
+            <span className="quick-action-label">Roster</span>
+          </Link>
+          <Link to="/empire/depth-chart" className="quick-action-card">
+            <span className="quick-action-icon">📋</span>
+            <span className="quick-action-label">Depth Chart</span>
+          </Link>
+          <Link to="/empire/trade-center" className="quick-action-card">
+            <span className="quick-action-icon">🔄</span>
+            <span className="quick-action-label">Trade Center</span>
+          </Link>
+          <Link to="/season" className="quick-action-card">
+            <span className="quick-action-icon">🏆</span>
+            <span className="quick-action-label">Season</span>
+          </Link>
+          <Link to="/training" className="quick-action-card">
+            <span className="quick-action-icon">🏋️</span>
+            <span className="quick-action-label">Training</span>
+          </Link>
+          <Link to="/offseason/draft" className="quick-action-card">
+            <span className="quick-action-icon">🏈</span>
+            <span className="quick-action-label">Draft Room</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Season Status Card */}
+      {currentSeason && (
+        <div className="season-status-section">
+          <Card variant="glass" className="season-status-card">
+            <CardHeader>
+              <CardTitle>Current Season</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="season-info">
+                <span className="season-year">{currentSeason.year}</span>
+                <span className="season-week">Week {currentSeason.current_week}</span>
+                <Badge variant={currentSeason.status === "PRE_SEASON" ? "warning" : "success"}>
+                  {currentSeason.status?.replace("_", " ")}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <h2 className="section-title">Simulation Engines</h2>
       <div className="engines-grid">
         {engines.map((engine) => (
           <Card key={engine.name} variant="interactive" className="engine-card">
             <CardHeader>
-              <span
-                className="engine-icon-wrapper"
-                style={{
-                  backgroundColor: `${engine.color}20`,
-                  color: engine.color,
-                  border: `1px solid ${engine.color}40`,
-                }}
-              >
+              <span className={`engine-icon-wrapper engine-icon-${engine.slug}`}>
                 {engine.icon}
               </span>
               <CardTitle>{engine.name}</CardTitle>

@@ -45,64 +45,89 @@ class GMAgent:
         """
         Evaluate a trade proposal based on value, team needs, and GM personality.
         """
-        reasoning = []
+        try:
+            reasoning = []
 
-        # 1. Fetch Objects
-        offered_players = [self.db.get(Player, pid) for pid in offered_players_ids]
-        requested_players = [self.db.get(Player, pid) for pid in requested_players_ids]
+            # Check if team exists
+            if not self.team:
+                return {
+                    "decision": "REJECT",
+                    "score": 0,
+                    "reasoning": "Team not found in database."
+                }
 
-        # Filter out None in case of bad IDs
-        offered_players = [p for p in offered_players if p]
-        requested_players = [p for p in requested_players if p]
+            # 1. Fetch Objects
+            offered_players = [self.db.get(Player, pid) for pid in offered_players_ids]
+            requested_players = [self.db.get(Player, pid) for pid in requested_players_ids]
 
-        # 2. Financial & Roster Check
-        # Calculate incoming salary
-        incoming_salary = sum([p.contract_salary for p in offered_players])
-        outgoing_salary = sum([p.contract_salary for p in requested_players])
-        net_salary_change = incoming_salary - outgoing_salary
+            # Filter out None in case of bad IDs
+            offered_players = [p for p in offered_players if p]
+            requested_players = [p for p in requested_players if p]
 
-        if self.team.salary_cap_space < net_salary_change:
+            # 2. Financial & Roster Check
+            # Calculate incoming salary
+            incoming_salary = sum([getattr(p, 'contract_salary', 0) or 0 for p in offered_players])
+            outgoing_salary = sum([getattr(p, 'contract_salary', 0) or 0 for p in requested_players])
+            net_salary_change = incoming_salary - outgoing_salary
+
+            # Get salary cap space (default to large value if not set)
+            salary_cap_space = getattr(self.team, 'salary_cap_space', 50000000) or 50000000
+
+            if salary_cap_space < net_salary_change:
+                result = {
+                    "decision": "REJECT",
+                    "score": -100,
+                    "reasoning": f"Cannot afford trade. Net change: ${net_salary_change/1000000:.2f}M, Cap Space: ${salary_cap_space/1000000:.2f}M"
+                }
+                self._log_decision("TRADE_EVALUATION", "REJECT", result)
+                return result
+
+            # 3. Value Calculation
+            offered_value = self._calculate_package_value(offered_players, offered_picks, is_acquiring=True)
+            requested_value = self._calculate_package_value(requested_players, requested_picks, is_acquiring=False)
+
+            # Base score is the difference in value
+            raw_score = offered_value - requested_value
+
+            # 4. Apply GM Personality Modifiers
+            modified_score = self._apply_gm_traits(raw_score, offered_players, requested_players, offered_picks, requested_picks)
+
+            # 5. MCP/LLM Context (Mocked for now, but structured for integration)
+            try:
+                llm_adjustment = await self._get_llm_trade_opinion(offered_players, requested_players)
+                modified_score += llm_adjustment.get("score_modifier", 0)
+                if llm_adjustment.get("reasoning"):
+                    reasoning.append(llm_adjustment["reasoning"])
+            except Exception:
+                pass  # Ignore LLM errors
+
+            # 6. Final Decision
+            # Aggression lowers the threshold to accept
+            acceptance_threshold = 0 - (self.gm_traits["aggression"] - 50) * 0.5
+
+            decision = "ACCEPT" if modified_score >= acceptance_threshold else "REJECT"
+
+            reasoning.append(f"Base Value Diff: {raw_score:.1f}")
+            reasoning.append(f"GM Adjusted Score: {modified_score:.1f}")
+
             result = {
-                "decision": "REJECT",
-                "score": -100,
-                "reasoning": f"Cannot afford trade. Net change: ${net_salary_change/1000000:.2f}M, Cap Space: ${self.team.salary_cap_space/1000000:.2f}M"
+                "decision": decision,
+                "score": modified_score,
+                "reasoning": "; ".join(reasoning)
             }
-            self._log_decision("TRADE_EVALUATION", "REJECT", result)
+
+            self._log_decision("TRADE_EVALUATION", decision, result)
             return result
 
-        # 3. Value Calculation
-        offered_value = self._calculate_package_value(offered_players, offered_picks, is_acquiring=True)
-        requested_value = self._calculate_package_value(requested_players, requested_picks, is_acquiring=False)
-
-        # Base score is the difference in value
-        raw_score = offered_value - requested_value
-
-        # 4. Apply GM Personality Modifiers
-        modified_score = self._apply_gm_traits(raw_score, offered_players, requested_players, offered_picks, requested_picks)
-
-        # 5. MCP/LLM Context (Mocked for now, but structured for integration)
-        llm_adjustment = await self._get_llm_trade_opinion(offered_players, requested_players)
-        modified_score += llm_adjustment.get("score_modifier", 0)
-        if llm_adjustment.get("reasoning"):
-            reasoning.append(llm_adjustment["reasoning"])
-
-        # 6. Final Decision
-        # Aggression lowers the threshold to accept
-        acceptance_threshold = 0 - (self.gm_traits["aggression"] - 50) * 0.5
-
-        decision = "ACCEPT" if modified_score >= acceptance_threshold else "REJECT"
-
-        reasoning.append(f"Base Value Diff: {raw_score:.1f}")
-        reasoning.append(f"GM Adjusted Score: {modified_score:.1f}")
-
-        result = {
-            "decision": decision,
-            "score": modified_score,
-            "reasoning": "; ".join(reasoning)
-        }
-
-        self._log_decision("TRADE_EVALUATION", decision, result)
-        return result
+        except Exception as e:
+            # Fallback for any unexpected errors
+            import logging
+            logging.getLogger(__name__).error(f"GMAgent.evaluate_trade error: {e}")
+            return {
+                "decision": "REJECT",
+                "score": 0,
+                "reasoning": f"Trade evaluation failed: {str(e)}"
+            }
 
     def generate_trade_proposal(self, target_position: str = None) -> Dict[str, Any]:
         """

@@ -246,6 +246,111 @@ class ScheduleGenerator:
 
         return games
 
+    def generate_preseason_schedule(
+        self,
+        season_id: int,
+        teams: List[Team],
+        start_date: datetime,
+        weeks: int = 3
+    ) -> List[Game]:
+        """
+        Generate a preseason schedule.
+
+        Args:
+            season_id: Season ID
+            teams: List of teams
+            start_date: Start date of preseason
+            weeks: Number of weeks (default 3)
+
+        Returns:
+            List of Game objects (is_preseason=True)
+        """
+        games = []
+        current_date = start_date
+
+        # Simple round-robin-ish generation for 3 weeks
+        # Avoid division matchups for preseason if possible
+
+        # Shuffle teams initially
+        shuffled_teams = teams.copy()
+        self.rng.shuffle(shuffled_teams)
+
+        for week in range(1, weeks + 1):
+            weekly_matchups = []
+
+            # Simple pairing for this week
+            # Rotate list to get new matchups
+            # Implementation: Pair index i with i + len/2 (offset)
+            offset = week
+
+            used_teams = set()
+
+            # Try to start Thursday, mostly Sunday
+            # Week 1 starts Thursday (Hall of Fame week usually earlier but simplification)
+            # We'll just spread them Thursday-Sunday
+
+            for i in range(len(shuffled_teams)):
+                team1 = shuffled_teams[i]
+                if team1.id in used_teams:
+                    continue
+
+                # Find opponent
+                # Simple logic: just take the next available team
+                # In real schedule, this is complex optimization
+                # We'll use a rotated offset to ensure different opponents each week
+                opponent_idx = (i + offset) % len(shuffled_teams)
+                team2 = shuffled_teams[opponent_idx]
+
+                # If self or used, scan for next
+                while team2.id == team1.id or team2.id in used_teams:
+                    opponent_idx = (opponent_idx + 1) % len(shuffled_teams)
+                    team2 = shuffled_teams[opponent_idx]
+
+                used_teams.add(team1.id)
+                used_teams.add(team2.id)
+
+                # Randomize home/away
+                if self.rng.random() > 0.5:
+                    weekly_matchups.append((team1, team2))
+                else:
+                    weekly_matchups.append((team2, team1))
+
+            # Create Game objects
+            # Dates: Thursday (1 game), Friday (2), Saturday (3), Rest Sunday
+            # Simplified: Just put them on the weekend
+            game_date = current_date
+
+            for i, (home, away) in enumerate(weekly_matchups):
+                # Spread games over Thu/Fri/Sat/Sun
+                # 0-1: Thu, 2-3: Fri, 4-6: Sat, Rest: Sun
+                if i < 1:
+                    day_offset = 0  # Thu (assuming start_date is Thu)
+                elif i < 3:
+                    day_offset = 1  # Fri
+                elif i < 7:
+                    day_offset = 2  # Sat
+                else:
+                    day_offset = 3  # Sun (if start_date is Thu)
+
+                specific_date = game_date + timedelta(days=day_offset)
+
+                games.append(Game(
+                    season_id=season_id,
+                    season=start_date.year,
+                    week=week,
+                    home_team_id=home.id,
+                    away_team_id=away.id,
+                    date=specific_date,
+                    is_played=False,
+                    is_preseason=True,
+                    game_type=GameType.REGULAR
+                ))
+
+            # Advance to next week's Thursday
+            current_date += timedelta(days=7)
+
+        return games
+
     def _get_next_sunday(self) -> datetime:
         """
         Get the next Sunday from today at 1:00 PM.

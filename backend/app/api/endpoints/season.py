@@ -323,7 +323,7 @@ async def initialize_season(
     new_season = Season(
         year=season_data.year,
         is_active=True,
-        status=SeasonStatus.REGULAR_SEASON,
+        status=SeasonStatus.PRE_SEASON,  # Start in preseason
         total_weeks=season_data.total_weeks,
         playoff_weeks=season_data.playoff_weeks,
         current_week=1
@@ -345,35 +345,61 @@ async def initialize_season(
 
     # Generate schedule
     # Use sync session for ScheduleGenerator
-    def generate_schedule_sync(season_id, teams_list, start_date_val):
+    def generate_schedule_sync(season_id, teams_list, start_date_val, preseason_weeks_count):
         with SessionLocal() as sync_db:
             generator = ScheduleGenerator(sync_db)
-            # We need to attach teams to this session or re-query them?
-            # ScheduleGenerator likely uses team IDs or objects.
-            # If it uses objects, they are detached from async session.
-            # Ideally we pass IDs, but if it takes objects, we might need to merge them.
-            # Let's assume it handles detached objects or we re-query.
-            # Actually, let's just re-query teams inside the sync function to be safe.
             teams_sync = sync_db.query(Team).all()
-            return generator.generate_schedule(
+
+            all_games = []
+
+            # 1. Generate Preseason Schedule
+            preseason_games = generator.generate_preseason_schedule(
                 season_id=season_id,
                 teams=teams_sync,
-                start_date=start_date_val
+                start_date=start_date_val,
+                weeks=preseason_weeks_count
             )
+            all_games.extend(preseason_games)
+
+            # 2. Calculate Regular Season Start Date
+            # Add weeks * 7 days
+            regular_start_date = start_date_val + timedelta(weeks=preseason_weeks_count)
+
+            # 3. Generate Regular Season Schedule
+            regular_games = generator.generate_schedule(
+                season_id=season_id,
+                teams=teams_sync,
+                start_date=regular_start_date
+            )
+
+            # Ensure regular games are not marked as preseason
+            for game in regular_games:
+                game.is_preseason = False
+
+            all_games.extend(regular_games)
+
+            return all_games
 
     start_date = None
     if season_data.start_date:
         start_date = datetime.fromisoformat(season_data.start_date)
+    else:
+        # Default start date (next Sunday or close to it)
+        today = datetime.now()
+        days_until_sunday = (6 - today.weekday()) % 7
+        if days_until_sunday == 0:
+            days_until_sunday = 7
+        start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)
 
     # We need to commit new_season so it's visible to sync session?
     # Yes, we flushed, but didn't commit. Sync session won't see it unless we commit.
     await db.commit()
 
-    # But if we commit, we can't rollback if schedule generation fails?
-    # That's a trade-off.
-
     # Pass empty list for teams to avoid async object access in sync thread
-    games = await run_in_threadpool(generate_schedule_sync, new_season_id, [], start_date)
+    # Get preseason weeks config
+    preseason_weeks_val = getattr(new_season, 'preseason_weeks', 3)
+
+    games = await run_in_threadpool(generate_schedule_sync, new_season_id, [], start_date, preseason_weeks_val)
 
     # Add games to database (async session)
     # games are detached objects from sync session.
@@ -512,7 +538,18 @@ async def advance_week(season_id: int, db: AsyncSession = Depends(get_async_db))
     if not season:
         raise HTTPException(status_code=404, detail="Season not found")
 
-    if season.current_week >= season.total_weeks:
+    # Preseason handling
+    preseason_weeks = getattr(season, 'preseason_weeks', 3) or 3
+
+    if season.status == SeasonStatus.PRE_SEASON:
+        if season.current_week >= preseason_weeks:
+            # Transition from preseason to regular season
+            season.status = SeasonStatus.REGULAR_SEASON
+            season.current_week = 1
+            logger.info(f"Season {season_id} transitioning from preseason to regular season")
+        else:
+            season.current_week += 1
+    elif season.current_week >= season.total_weeks:
         # Move to playoffs or offseason
         if season.status == SeasonStatus.REGULAR_SEASON:
             season.status = SeasonStatus.POST_SEASON

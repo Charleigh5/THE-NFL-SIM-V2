@@ -4702,3 +4702,105 @@ Request completed
 Request started
 Fetching league news (limit=5, category=None)
 Request completed
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Request started
+Request completed
+Request started
+Fetching teams (page=1, page_size=100)
+Request completed
+Request started
+Fetching enhanced season summary
+League leaders included in summary
+Standings included in summary: 2 conferences
+Enhanced season summary retrieved: 1
+Request completed
+Request started
+Calculating standings for season 1
+Standings calculated: 32 teams
+Request completed
+Request started
+Fetching schedule for season 1, week 3
+Retrieved 16 games
+Request completed
+Request started
+Fetching league leaders for season 1, limit 5
+League leaders retrieved: 5 per category
+Request completed
+Request started
+Calculating projected awards for season 1
+Request completed
+Request started
+Request completed
+Request started
+Request completed
+Request started
+Fetching teams (page=1, page_size=100)
+Request completed
+Request started
+Fetching teams (page=1, page_size=100)
+Request started
+Fetching enhanced season summary
+Request completed
+League leaders included in summary
+Standings included in summary: 2 conferences
+Enhanced season summary retrieved: 1
+Request completed
+Request started
+Fetching enhanced season summary
+Request started
+Calculating standings for season 1
+Standings calculated: 32 teams
+Request completed
+League leaders included in summary
+Request started
+Fetching schedule for season 1, week 3
+Standings included in summary: 2 conferences
+Enhanced season summary retrieved: 1
+Request completed
+Retrieved 16 games
+Request started
+Fetching league leaders for season 1, limit 5
+League leaders retrieved: 5 per category
+Request completed
+Request completed
+Request started
+Request started
+Fetching league news (limit=5, category=None)
+Calculating projected awards for season 1
+Request completed
+Request started
+Request completed
+Calculating standings for season 1
+Request started
+Fetching schedule for season 1, week 3
+Request started
+Request started
+Request started
+Fetching league news (limit=5, category=None)
+Request completed
+Fetching league leaders for season 1, limit 5
+League leaders retrieved: 5 per category
+Calculating projected awards for season 1
+Standings calculated: 32 teams
+Retrieved 16 games
+Request completed
+Request completed
+Request completed
+Request completed

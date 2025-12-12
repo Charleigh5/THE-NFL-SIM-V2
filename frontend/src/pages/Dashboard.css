@@ -69,4 +69,123 @@
   justify-content: center;
   border-radius: 8px;
   font-size: 1.25rem;
+  background-color: rgba(136, 136, 136, 0.12);
+  color: #888;
+  border: 1px solid rgba(136, 136, 136, 0.25);
+}
+
+/* Engine-specific colors */
+.engine-icon-genesis {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.engine-icon-empire {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.engine-icon-hive {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.engine-icon-society {
+  background-color: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+.engine-icon-core {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.engine-icon-rpg {
+  background-color: rgba(6, 182, 212, 0.12);
+  color: #06b6d4;
+  border-color: rgba(6, 182, 212, 0.25);
+}
+
+/* Section titles */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 1rem 0;
+}
+
+/* Quick Actions Section */
+.quick-actions-section {
+  margin-bottom: 2rem;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  max-width: 800px;
+}
+
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.quick-action-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.quick-action-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.quick-action-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Season Status Section */
+.season-status-section {
+  margin-bottom: 2rem;
+}
+
+.season-status-card {
+  max-width: 400px;
+}
+
+.season-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.season-year {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.season-week {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
 }
