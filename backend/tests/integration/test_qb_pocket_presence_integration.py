@@ -7,7 +7,7 @@ from app.orchestrator.play_resolver import PlayResolver
 from app.orchestrator.play_commands import PassPlayCommand
 from app.models.player import Player, Position
 from app.engine.blocking import BlockingResult
-from app.core.randomness import DeterministicRNG
+from app.core.random_utils import DeterministicRNG
 from unittest.mock import MagicMock, patch
 
 

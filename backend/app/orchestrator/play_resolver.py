@@ -12,7 +12,8 @@ from app.engine.sack_calculator import SackCalculator
 from app.engine.rb_tribes import RBTribeClassifier, get_tribe_modifiers
 from app.services.chemistry_service import ChemistryService
 from app.services.weather_service import WeatherService
-from typing import Optional, Any, List, Tuple
+from app.engine.trait_effects import TraitEffectResolver
+from typing import Optional, Any, List, Tuple, Dict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -68,7 +69,10 @@ class PlayResolver:
             result = self._resolve_run_play(command)
         else:
             # Add resolvers for other command types here
-            result = command.execute({}, rng=self.rng)
+            context = {}
+            if self.current_match_context and self.current_match_context.weather_config:
+                context["weather"] = self.current_match_context.weather_config
+            result = command.execute(context, rng=self.rng)
 
         # Decrement debuffs after every play
         self.offensive_line_ai.decrement_debuffs()
@@ -106,7 +110,8 @@ class PlayResolver:
         )
         return WeatherEffects(weather)
 
-    def _resolve_line_battle(self, offense: List[Any], defense: List[Any]) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
+
+    def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Dict[str, float] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
         """
         Simulate the battle between OL and DL.
         Returns (results, winning_defenders, beaten_linemen)
@@ -133,6 +138,12 @@ class PlayResolver:
             # Get attributes
             ol_rating = getattr(ol, "pass_block", None) or 70
             dl_rating = getattr(dl, "pass_rush", None) or 70 # Assuming pass_rush attribute exists, else use power/finessef
+
+            # Apply Trait Bonuses (Field General Team Awareness)
+            if trait_modifiers and "team_awareness_boost" in trait_modifiers:
+                # Awareness boost helps OL blocking partially (50% effectiveness)
+                ol_rating += trait_modifiers["team_awareness_boost"] * 0.5
+
             modifier = self.offensive_line_ai.get_player_modifier(ol.id)
             ol_rating += modifier
 
@@ -286,8 +297,20 @@ class PlayResolver:
         injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
         injuries = [injury_check] if injury_check["is_injured"] else []
 
-        # 3. Line Battle & Sack Check
-        block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense)
+        # 3. Resolve Traits (e.g. Field General)
+        trait_modifiers = {}
+        # Check if QB has Field General trait
+        # In a real scenario, traits would be loaded on the player object
+        if hasattr(qb, "active_traits") and "Field General" in qb.active_traits:
+             trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
+             logger.debug(f"Applied Field General boost from {qb.last_name}")
+        # Fallback check if active_traits missing but traits list exists
+        elif hasattr(qb, "traits") and "Field General" in getattr(qb, "traits", []):
+             trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
+             logger.debug(f"Applied Field General boost from {qb.last_name}")
+
+        # 4. Line Battle & Sack Check
+        block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense, trait_modifiers)
 
         # Determine if Sack occurred
         is_sack = False
@@ -413,13 +436,17 @@ class PlayResolver:
 
         if weather_effects:
             acc_mod, dist_mod = weather_effects.get_passing_modifiers()
+
             # Apply accuracy modifier to base probability
-            # e.g. 0.9 multiplier means 10% reduction in success chance
-            # We'll apply it as a penalty to the context modifiers
-            # If base is 0.5, 0.5 * 0.9 = 0.45. Diff is 0.05.
-            # But here we are adding to context_modifiers.
-            # Let's just adjust base_prob directly below.
             base_prob = (throw_accuracy / 100.0) * acc_mod
+
+            # Reduce deep pass effectiveness in bad weather (wind/snow)
+            if command.depth == "deep" and dist_mod < 1.0:
+                # Penalty to deep pass success chance based on distance modifier
+                # e.g. dist_mod 0.9 -> reduce prob by 10%
+                base_prob *= dist_mod
+                logger.debug(f"Deep pass penalty applied: prob reduced by {1.0 - dist_mod:.2f}")
+
         else:
              # Fallback legacy logic
              if temp < 32: weather_penalty = 0.05
@@ -611,6 +638,13 @@ class PlayResolver:
                 getattr(defender, "speed", None) or 50
             )
 
+            # Weather Speed Penalty (Mud/Snow slows outside runs)
+            weather_effects = self._get_weather_effects()
+            if weather_effects and weather_effects.weather.field_condition in ["Muddy", "Snowy"]:
+                # Reduce effective speed advantage on bad fields
+                speed_diff *= 0.8
+                logger.debug("Weather speed penalty applied to outside run")
+
         # Fatigue Penalty
         fatigue_penalty = (current_fatigue / 100.0) * 2.0 # Yards penalty
 
@@ -689,6 +723,8 @@ class PlayResolver:
         if weather_effects:
             fumble_mod = weather_effects.get_fumble_probability_modifier()
             fumble_chance *= fumble_mod
+            if fumble_mod > 1.0:
+                 logger.debug(f"Weather increased fumble chance by {(fumble_mod-1.0)*100:.0f}%")
 
         # Use resolve_outcome for simple binary check
         is_fumble = ProbabilityEngine.resolve_outcome(self.rng, fumble_chance)

@@ -90,6 +90,31 @@ def generate_player(position: str, team_id: int) -> Player:
         experience=random.randint(0, 15)
     )
 
+from app.services.trait_service import TraitService, TRAIT_CATALOG
+from app.models.trait import Trait, TraitSource
+
+def seed_traits(db: Session):
+    """Seed traits from the catalog into the database."""
+    existing_traits = db.query(Trait).count()
+    if existing_traits > 0:
+        logger.info(f"Traits already seeded ({existing_traits} found). Skipping.")
+        return
+
+    logger.info("Seeding Traits from Catalog...")
+    traits_to_add = []
+    for key, definition in TRAIT_CATALOG.items():
+        trait = Trait(
+            name=definition.name,
+            description=definition.description,
+            tier=definition.tier,
+            icon_url=f"/assets/traits/{key}.png" # Placeholder
+        )
+        traits_to_add.append(trait)
+
+    db.add_all(traits_to_add)
+    db.commit()
+    logger.info(f"Seeded {len(traits_to_add)} traits successfully.")
+
 def seed_players(db: Session):
     existing_players = db.query(Player).count()
     if existing_players > 0:
@@ -100,16 +125,33 @@ def seed_players(db: Session):
     teams = db.query(Team).all()
 
     all_players = []
+    elite_qbs = []
+
     for team in teams:
         for pos, count in POSITIONS.items():
             for _ in range(count):
                 player = generate_player(pos, team.id)
                 all_players.append(player)
 
+                # Track elite QBs for trait assignment
+                if pos == "QB" and player.overall_rating >= 90:
+                    elite_qbs.append(player)
+
     # Batch insert for performance
     db.add_all(all_players)
     db.commit()
     logger.info(f"Seeded {len(all_players)} players successfully.")
+
+    # Assign Field General to elite QBs
+    # We need to refresh/get trait ID first
+    field_general = db.query(Trait).filter(Trait.name == "Field General").first()
+    if field_general and elite_qbs:
+        logger.info(f"Assigning Field General to {len(elite_qbs)} elite QBs...")
+        for qb in elite_qbs:
+            # Need to refresh qb to get ID if not eager loaded
+            db.refresh(qb)
+            TraitService.assign_trait(db, qb.id, field_general.id, TraitSource.DEVELOPMENT)
+        logger.info("Trait assignment complete.")
 
 def seed_coaches(db: Session):
     """Seed 2025 NFL coaching staff for all 32 teams."""
@@ -163,6 +205,7 @@ def main():
     db = SessionLocal()
     try:
         seed_teams(db)
+        seed_traits(db) # Seed traits before players so we can assign them
         seed_players(db)
         seed_coaches(db)
     except Exception as e:

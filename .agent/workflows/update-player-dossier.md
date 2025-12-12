@@ -66,6 +66,7 @@ If you added a new attribute `pocket_awareness` to QBs:
 1. Update Section 2 → Quarterback → Key Attributes table
 2. Add to Section 1 if it's a global attribute
 3. Update Section 13 Changelog:
+
    ```markdown
    | 2025-12-15 | Added pocket_awareness attribute for QBs | player.py, play_resolver.py |
    ```

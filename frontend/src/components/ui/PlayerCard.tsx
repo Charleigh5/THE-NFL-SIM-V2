@@ -8,6 +8,7 @@ interface PlayerCardProps {
   rating: number;
   team: string;
   className?: string;
+  traits?: string[];
 }
 
 export const PlayerCard = ({
@@ -18,6 +19,7 @@ export const PlayerCard = ({
   className,
   onClick,
   testId,
+  traits,
 }: PlayerCardProps & { onClick?: () => void; testId?: string }) => {
   return (
     <div
@@ -25,10 +27,17 @@ export const PlayerCard = ({
       data-testid={testId || "player-card"}
       className={clsx(
         "player-card w-64 bg-black/60 backdrop-blur-md border rounded-xl overflow-hidden shadow-lg",
-        "transition-colors duration-300",
+        "transition-colors duration-300 relative", // Added relative
         className
       )}
     >
+      {/* Traits Badges */}
+      {traits && traits.includes("Field General") && (
+        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-500 to-amber-600 text-black px-2 py-0.5 rounded-sm text-[10px] font-bold border border-yellow-300 shadow-lg flex items-center gap-1">
+          <span>★</span> GEN
+        </div>
+      )}
+
       {/* Header / Portrait Placeholder */}
       <div className="player-card__header h-32 flex items-center justify-center relative">
         <User size={48} className="player-card__avatar-icon" />

@@ -406,3 +406,15 @@ Traceback (most recent call last):
     ...<2 lines>...
     )
 sqlalchemy.exc.MissingGreenlet: greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an unexpected place? (Background on this error at: https://sqlalche.me/e/20/xd2s)
+DEBUG EXCEPTION: AttributeError: 'NoneType' object has no attribute 'salary_cap_space'
+Traceback (most recent call last):
+  File "c:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 893, in evaluate_trade
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\gm_agent.py", line 64, in evaluate_trade
+    if self.team.salary_cap_space < net_salary_change:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'salary_cap_space'

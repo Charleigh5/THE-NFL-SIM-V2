@@ -1,6 +1,6 @@
 # Feature Status Matrix
 
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-11
 **Purpose:** Central tracking document for all features in the NFL SIM application
 
 ---
@@ -30,22 +30,22 @@
 
 ## 1. Core Game Engine Features
 
-| ID           | Feature Name                  | Status              | Spec Doc                           | Tests  | Priority | Notes                                   |
-| ------------ | ----------------------------- | ------------------- | ---------------------------------- | ------ | -------- | --------------------------------------- |
-| **GAME-001** | Play Resolution System        | 🟡 SPEC_NEEDED      | ❌                                 | 🧪 85% | P0       | Core play logic exists, needs full spec |
-| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                        |
-| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                        |
-| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ❌                                 | 🧪 60% | P0       | Basic kicks/punts work                  |
-| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`  | 🧪 90% | P0       | Well documented                         |
-| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md` | 🧪 85% | P0       | Good docs exist                         |
-| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                         | 🧪 75% | P1       | Integrated with match context           |
-| **GAME-008** | QB Pocket Presence            | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P1       | **HIGH PRIORITY TO IMPLEMENT**          |
-| **GAME-009** | Environmental Weather Effects | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P1       | Weather MCP exists, needs integration   |
-| **GAME-010** | Venue-Specific Effects        | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Home field advantage, dome vs outdoor   |
-| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                 | 🧪 70% | P0       | Works but undocumented                  |
-| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                 | 🧪 50% | P1       | Basic implementation                    |
-| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                 | 🧪 40% | P2       | Needs testing                           |
-| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.     |
+| ID           | Feature Name                  | Status              | Spec Doc                           | Tests  | Priority | Notes                                                          |
+| ------------ | ----------------------------- | ------------------- | ---------------------------------- | ------ | -------- | -------------------------------------------------------------- |
+| **GAME-001** | Play Resolution System        | 🟡 SPEC_NEEDED      | ❌                                 | 🧪 85% | P0       | Core play logic exists, needs full spec                        |
+| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                                               |
+| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P0       | Part of GAME-001                                               |
+| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ❌                                 | 🧪 60% | P0       | Basic kicks/punts work                                         |
+| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`  | 🧪 90% | P0       | Well documented                                                |
+| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md` | 🧪 85% | P0       | Good docs exist                                                |
+| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                         | 🧪 75% | P1       | Integrated with match context                                  |
+| **GAME-008** | QB Pocket Presence            | ✅ IMPLEMENTED      | ❌                                 | 🧪 80% | P1       | `sack_calculator.py` active                                    |
+| **GAME-009** | Environmental Weather Effects | ✅ IMPLEMENTED      | ❌                                 | 🧪 60% | P1       | Fully integrated: Pass wind penalties, mud speed, kick impacts |
+| **GAME-010** | Venue-Specific Effects        | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Home field advantage, dome vs outdoor                          |
+| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                 | 🧪 70% | P0       | Works but undocumented                                         |
+| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                 | 🧪 50% | P1       | Basic implementation                                           |
+| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                 | 🧪 40% | P2       | Needs testing                                                  |
+| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                 | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.                            |
 
 ---
 
@@ -76,30 +76,30 @@
 | **ATTR-004** | Special Teams Attributes                  | 🟢 SPEC_COMPLETE | ✅ `player-system/special-teams.md`       | 🧪 70% | P1       | ST documented                  |
 | **ATTR-005** | Attribute Interactions (Inter-Positional) | 🔵 PROPOSED      | ⚠️ Proposed only                          | ❌ 0%  | P1       | **HIGH PRIORITY TO IMPLEMENT** |
 | **ATTR-006** | QB Field General → WR/OL Boost            | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P1       | Part of ATTR-005               |
-| **ATTR-007** | OL Unit Chemistry                         | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P1       | **HIGH PRIORITY TO IMPLEMENT** |
+| **ATTR-007** | OL Unit Chemistry                         | ✅ IMPLEMENTED   | ⚠️ In proposed features                   | 🧪 70% | P1       | `chemistry_service.py` active  |
 | **ATTR-008** | RB Patience → OL Timing                   | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P2       | Part of ATTR-005               |
 | **ATTR-009** | QB Quick Release                          | ✅ IMPLEMENTED   | ❌                                        | 🧪 50% | P1       | Exists as attribute            |
-| **ATTR-010** | QB Pocket Presence                        | 🔵 PROPOSED      | ❌                                        | ❌ 0%  | P1       | Same as GAME-008               |
+| **ATTR-010** | QB Pocket Presence                        | ✅ IMPLEMENTED   | ❌                                        | 🧪 80% | P1       | Same as GAME-008               |
 
 ---
 
 ## 4. RPG & Progression Systems
 
-| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                      |
-| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | -------------------------- |
-| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well               |
-| **RPG-002** | Attribute Progression          | ✅ IMPLEMENTED   | ⚠️ Partial                            | 🧪 80% | P0       | Service exists             |
-| **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster  |
-| **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late |
-| **RPG-005** | Trait System (Database)        | 🟢 SPEC_COMPLETE | ⚠️ DB models exist                    | ❌ 0%  | P1       | **READY TO IMPLEMENT**     |
-| **RPG-006** | Trait: QB Field General        | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | First trait to implement   |
-| **RPG-007** | Trait: WR Possession Receiver  | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Second trait               |
-| **RPG-008** | Trait: RB Chip Block           | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P2       | Third trait                |
-| **RPG-009** | Trait: LB Green Dot            | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Defensive leader           |
-| **RPG-010** | Trait: DB Pick Artist          | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | INT specialist             |
-| **RPG-011** | Trait Acquisition System       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | How players gain traits    |
-| **RPG-012** | Training Programs              | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Offseason development      |
-| **RPG-013** | Coaching Staff Influence       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Coach affects development  |
+| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                          |
+| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | ------------------------------ |
+| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                   |
+| **RPG-002** | Attribute Progression          | ✅ IMPLEMENTED   | ⚠️ Partial                            | 🧪 80% | P0       | Service exists                 |
+| **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster      |
+| **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late     |
+| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines) |
+| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested            |
+| **RPG-007** | Trait: WR Possession Receiver  | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Second trait                   |
+| **RPG-008** | Trait: RB Chip Block           | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P2       | Third trait                    |
+| **RPG-009** | Trait: LB Green Dot            | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Defensive leader               |
+| **RPG-010** | Trait: DB Pick Artist          | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | INT specialist                 |
+| **RPG-011** | Trait Acquisition System       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | How players gain traits        |
+| **RPG-012** | Training Programs              | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Offseason development          |
+| **RPG-013** | Coaching Staff Influence       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Coach affects development      |
 
 ---
 

@@ -1,13 +1,23 @@
-import pytest
-import os
 import asyncio
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+import os
+import sys
+
+# Ensure the repo root is on sys.path so imports like `backend.*` resolve when running tests
+# from the `backend/` directory (pytest rootdir).
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if _PROJECT_ROOT not in sys.path:
+    # Keep CWD (`backend/`) as the first entry so `import app.*` resolves to `backend/app/*`.
+    sys.path.insert(1, _PROJECT_ROOT)
+
+import pytest
 from fastapi.testclient import TestClient
-from app.models.base import Base
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.core.database import get_async_db, get_db
 from app.main import app
-from app.core.database import get_db, get_async_db
+from app.models.base import Base
 
 # Use a file-based SQLite database for testing to allow sharing between sync and async
 TEST_DB_FILE = "test.db"
@@ -20,6 +30,22 @@ import logging
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _debug_import_paths():
+    """Temporary diagnostics: show how `app` resolves + the leading sys.path entries."""
+    logger.info("PYTEST DEBUG: sys.executable=%s", sys.executable)
+    logger.info("PYTEST DEBUG: cwd=%s", os.getcwd())
+    logger.info("PYTEST DEBUG: sys.path[:8]=%s", sys.path[:8])
+    try:
+        import app as app_pkg  # noqa: F401
+
+        logger.info("PYTEST DEBUG: app.__file__=%s", getattr(app_pkg, "__file__", None))
+        logger.info("PYTEST DEBUG: app.__package__=%s", getattr(app_pkg, "__package__", None))
+    except Exception:
+        logger.exception("PYTEST DEBUG: failed to import `app` during conftest diagnostics")
+    yield
 
 # Create engines
 engine = create_engine(

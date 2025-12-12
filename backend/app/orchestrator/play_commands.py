@@ -86,11 +86,21 @@ class KickoffCommand(PlayCommand):
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a kickoff"""
-        return_yards = rng.randint(15, 30)
+        base_yards = rng.randint(15, 30)
+
+        # Weather impact
+        weather = context.get("weather", {})
+        if weather:
+             # Wind affects kick distance (and thus return starting point)
+             # Higher wind speed could lead to shorter kicks (better returns) or touchbacks
+             wind_speed = weather.get("wind_speed", 0)
+             if wind_speed > 15:
+                 # High wind: variability increased
+                 base_yards += rng.randint(-5, 5)
 
         return PlayResult(
-            yards_gained=return_yards,
-            description=f"Kickoff returned to the {return_yards} yard line"
+            yards_gained=base_yards,
+            description=f"Kickoff returned to the {base_yards} yard line"
         )
 
 
@@ -107,6 +117,20 @@ class PuntCommand(PlayCommand):
         """Execute a punt"""
         punt_distance = rng.randint(35, 55)
         return_yards = rng.randint(0, 15)
+
+        # Weather impact
+        weather = context.get("weather", {})
+        if weather:
+             wind_speed = weather.get("wind_speed", 0)
+             temp = weather.get("temperature", 75)
+
+             # Wind affects punt distance
+             if wind_speed > 10:
+                 punt_distance -= int((wind_speed - 10) * 0.5)
+
+             # Cold air reduces distance
+             if temp < 40:
+                 punt_distance -= int((40 - temp) * 0.2)
 
         net_yards = -(punt_distance - return_yards)
 
@@ -131,19 +155,42 @@ class FieldGoalCommand(PlayCommand):
 
         # Simple success calculation based on distance
         base_success = max(0, 100 - (self.distance - 20) * 2)
+
+        # Weather impact
+        weather = context.get("weather", {})
+        weather_desc = ""
+        if weather:
+             wind_speed = weather.get("wind_speed", 0)
+             temp = weather.get("temperature", 75)
+             precip = weather.get("precipitation_type", "None")
+
+             # Wind penalty
+             if wind_speed > 10:
+                 penalty = (wind_speed - 10) * 1.5
+                 base_success -= penalty
+                 if penalty > 10: weather_desc = " battling strong winds"
+
+             # Cold penalty
+             if temp < 32:
+                 base_success -= 5
+
+             # Precip penalty
+             if precip in ["Rain", "Snow"]:
+                 base_success -= 5
+
         is_good = rng.randint(0, 100) < base_success
 
         if is_good:
             return PlayResult(
                 yards_gained=0,
-                description=f"{self.distance}-yard field goal GOOD!",
+                description=f"{self.distance}-yard field goal GOOD!{weather_desc}",
                 is_highlight_worthy=self.distance > 50
             )
         else:
             return PlayResult(
                 yards_gained=0,
                 is_turnover=True,
-                description=f"{self.distance}-yard field goal NO GOOD"
+                description=f"{self.distance}-yard field goal NO GOOD{weather_desc}"
             )
 
 
