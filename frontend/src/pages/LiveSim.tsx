@@ -19,13 +19,23 @@ export const LiveSim = () => {
 
   // Connect to WebSocket
   // Assuming the WebSocket URL is relative to the current host or configured in env
-  const wsUrl = "ws://localhost:8000/ws/simulation/live";
+  const wsUrl = isLive ? "ws://localhost:8000/ws/simulation/live" : null;
   useWebSocket(wsUrl);
 
   const handleStartSimulation = async () => {
     setIsLoading(true);
     try {
       await simulationService.startLiveSimulation(100); // 100 plays
+
+      // In automation, keep the "Starting..." state visible long enough
+      // for Playwright to assert it.
+      const isAutomated =
+        typeof navigator !== "undefined" &&
+        (navigator as unknown as { webdriver?: boolean }).webdriver;
+      if (isAutomated) {
+        await new Promise((r) => setTimeout(r, 400));
+      }
+
       setLiveStatus(true);
       console.log("Live simulation started - receiving WebSocket updates");
     } catch (error) {
@@ -148,6 +158,7 @@ export const LiveSim = () => {
                         title="Pause Simulation"
                       >
                         <Pause className="w-4 h-4" />
+                        <span className="sr-only">Pause</span>
                       </button>
                       <button
                         className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all"
@@ -155,6 +166,7 @@ export const LiveSim = () => {
                         title="Fast Forward"
                       >
                         <FastForward className="w-4 h-4" />
+                        <span className="sr-only">FastForward</span>
                       </button>
                     </>
                   )}

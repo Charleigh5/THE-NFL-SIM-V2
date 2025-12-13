@@ -31,22 +31,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     if (!activeTeam) return;
 
-    // Animate Primary Color
-    animate("var(--color-bg-deep)", activeTeam.colors.primary, {
-      duration: 1.5,
-      onUpdate: (latest) => {
-        // Darken the primary color significantly for the background
-        // We can't easily manipulate hex in a string interpolation here without a helper
-        // So we simply animate to the primary color but rely on CSS to perhaps blend it
-        // OR: We overwrite distinct vars: --theme-primary, --theme-secondary
-        document.documentElement.style.setProperty("--theme-primary", latest as string);
-      },
-    });
-
-    // We will interpolate generic variables that our CSS uses
-    // Let's create specific theme variables: --theme-primary, --theme-secondary
-    // And animate them.
-
     const controls = [
       animate(document.documentElement, { "--theme-primary": activeTeam.colors.primary } as any, {
         duration: 1.2,

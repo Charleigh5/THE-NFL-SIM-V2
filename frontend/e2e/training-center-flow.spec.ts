@@ -85,9 +85,9 @@ test.describe("Training Center Flow", () => {
     await expect(page.getByRole("heading", { name: "Training Center" })).toBeVisible();
 
     // Verify main sections exist
-    await expect(page.locator("text=Head Coach")).toBeVisible();
-    await expect(page.locator("text=Coaching Philosophy")).toBeVisible();
-    await expect(page.locator("text=Drill Catalog")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Head Coach" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Coaching Philosophy" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Drill Catalog" })).toBeVisible();
   });
 
   test("should display coach card component", async ({ page }) => {
@@ -100,6 +100,8 @@ test.describe("Training Center Flow", () => {
 
   test("should display drill cards from API", async ({ page }) => {
     await page.goto("/training");
+
+    await page.waitForResponse("**/api/training/drills**");
 
     // Wait for drills to load
     await expect(page.locator("text=40-Yard Dash")).toBeVisible();

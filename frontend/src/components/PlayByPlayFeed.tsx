@@ -14,7 +14,10 @@ export const PlayByPlayFeed = () => {
   }, [playLog]);
 
   return (
-    <div className="flex flex-col h-full bg-black/20 backdrop-blur-sm border border-white/5 rounded-xl overflow-hidden">
+    <div
+      className="flex flex-col h-full bg-black/20 backdrop-blur-sm border border-white/5 rounded-xl overflow-hidden"
+      data-testid="play-by-play-feed"
+    >
       <div className="p-3 border-b border-white/5 bg-white/5">
         <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Play Feed</h3>
       </div>

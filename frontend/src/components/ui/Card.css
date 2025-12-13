@@ -12,8 +12,8 @@
 }
 
 .ui-card--glass {
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   background: rgba(20, 20, 35, 0.4);
 }
 

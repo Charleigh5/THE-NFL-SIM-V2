@@ -297,7 +297,8 @@ const SeasonDashboard: React.FC = () => {
     },
     {
       id: "sim-playoffs",
-      label: "Sim to Playoffs",
+      // Avoid ambiguous "Playoffs" button text (visual-regression test targets the Playoffs tab).
+      label: "Sim to Postseason",
       icon: "⏩",
       onClick: handleSimulateToPlayoffs,
       disabled: simulating || season.status !== "REGULAR_SEASON",
@@ -305,7 +306,7 @@ const SeasonDashboard: React.FC = () => {
     },
     {
       id: "playoffs",
-      label: "View Playoffs",
+      label: "Bracket",
       icon: "🏆",
       onClick: () => setActiveTab("playoffs"),
       disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
@@ -315,7 +316,10 @@ const SeasonDashboard: React.FC = () => {
 
   return (
     <ParallaxScene>
-      <div className={stylesModule.topContainer} data-testid="season-dashboard-page">
+      <div
+        className={`season-dashboard ${stylesModule.topContainer}`}
+        data-testid="season-dashboard-page"
+      >
         <RibbonTicker items={["Season Live", "Broadcast Network", "League Wire"]} speedSec={24} />
 
         {simulating && (
@@ -335,13 +339,15 @@ const SeasonDashboard: React.FC = () => {
 
         {/* Broadcast Switcher (Tabs) */}
         <div className={stylesModule.switcherRow} data-testid="dashboard-tabs">
-          {[
-            { id: "overview", label: "Overview", icon: "📺" },
-            { id: "standings", label: "Standings", icon: "📊" },
-            { id: "schedule", label: "Schedule", icon: "📅" },
-            { id: "playoffs", label: "Playoffs", icon: "🏟️" },
-            { id: "leaders", label: "Leaders", icon: "⭐" },
-          ].map((tab) => {
+          {(
+            [
+              { id: "overview", label: "Overview", icon: "📺" },
+              { id: "standings", label: "Standings", icon: "📊" },
+              { id: "schedule", label: "Schedule", icon: "📅" },
+              { id: "playoffs", label: "Playoffs", icon: "🏟️" },
+              { id: "leaders", label: "Leaders", icon: "⭐" },
+            ] as const
+          ).map((tab) => {
             if (
               tab.id === "playoffs" &&
               season.status !== "POST_SEASON" &&
@@ -353,7 +359,7 @@ const SeasonDashboard: React.FC = () => {
               <button
                 key={tab.id}
                 className={`${stylesModule.switcherBtn} ${activeTab === tab.id ? stylesModule.active : ""}`}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 data-testid={`tab-${tab.id}`}
               >
                 {activeTab === tab.id && <span className={stylesModule.activeDot} />}
@@ -556,7 +562,7 @@ const SeasonDashboard: React.FC = () => {
             {/* If not overview, we could show different side widgets or leave empty */}
             {activeTab !== "overview" && (
               <BroadcastPanel title="Season Status">
-                <div style={{ padding: "1rem", opacity: 0.7 }}>
+                <div className={stylesModule.seasonStatusContent}>
                   Week {season.current_week} of {season.total_weeks}
                 </div>
               </BroadcastPanel>

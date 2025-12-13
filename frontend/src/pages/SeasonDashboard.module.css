@@ -83,7 +83,13 @@
   align-items: center;
   justify-content: center;
   z-index: 50;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
+}
+
+.seasonStatusContent {
+  padding: 1rem;
+  opacity: 0.7;
 }
 
 @media (max-width: 1024px) {

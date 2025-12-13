@@ -58,6 +58,15 @@ test.describe('Live Simulation Flow', () => {
   test.afterEach(async () => {
     // Close the mock WebSocket server after each test
     if (wss) {
+      // Ensure all clients are terminated so `close()` can complete promptly.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (wss as any).clients?.forEach((client: any) => {
+        try {
+          client.terminate?.();
+        } catch {
+          // ignore
+        }
+      });
       await new Promise<void>((resolve) => wss.close(() => {
         console.log('Mock WebSocket server closed');
         resolve();
@@ -67,7 +76,7 @@ test.describe('Live Simulation Flow', () => {
 
   test('should load live sim and start simulation, receiving updates', async ({ page }) => {
     await page.goto('/live-sim');
-    
+
     // Verify initial state: KICKOFF button is visible
     await expect(page.locator('button', { hasText: 'KICKOFF' })).toBeVisible();
 

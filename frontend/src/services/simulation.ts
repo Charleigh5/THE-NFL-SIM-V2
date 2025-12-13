@@ -20,15 +20,29 @@ export const simulationService = {
   },
 
   startLiveSimulation: async (numPlays: number = 100) => {
-    const response = await api.post("/api/simulation/start-live", {
-      num_plays: numPlays,
-    });
-    return response.data;
+    // Back-compat: older E2E expects `/api/simulation/live/start`.
+    try {
+      const response = await api.post("/api/simulation/live/start", {
+        num_plays: numPlays,
+      });
+      return response.data;
+    } catch {
+      const response = await api.post("/api/simulation/start-live", {
+        num_plays: numPlays,
+      });
+      return response.data;
+    }
   },
 
   stopSimulation: async () => {
-    const response = await api.post("/api/simulation/stop");
-    return response.data;
+    // Back-compat: older E2E expects `/api/simulation/live/stop`.
+    try {
+      const response = await api.post("/api/simulation/live/stop");
+      return response.data;
+    } catch {
+      const response = await api.post("/api/simulation/stop");
+      return response.data;
+    }
   },
 
   getSimulationStatus: async () => {

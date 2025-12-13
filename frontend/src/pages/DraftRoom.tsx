@@ -3,13 +3,17 @@ import { useLoaderData } from "react-router-dom";
 import { seasonApi } from "../services/season";
 import { draftService } from "../services/draft";
 import { DraftBoard } from "../components/offseason/DraftBoard";
-import { DraftTicker } from "../components/offseason/DraftTicker";
+// import { DraftTicker } from "../components/offseason/DraftTicker";
 import { TradeModal } from "../components/offseason/TradeModal";
 import { DraftAssistant } from "../components/draft/DraftAssistant";
 import type { Prospect, DraftPickDetail, DraftPickSummary, TeamNeed } from "../types/offseason";
 import type { Team } from "../services/api";
 import type { Season } from "../types/season";
-import "./DraftRoom.css";
+// import "./DraftRoom.css";
+import { ParallaxScene } from "../components/immersive/ParallaxScene";
+import { RibbonTicker } from "../components/immersive/RibbonTicker";
+import { BroadcastPanel } from "../components/immersive/BroadcastPanel";
+import styles from "./DraftRoom.module.css";
 
 // Loader data type
 interface DraftRoomLoaderData {
@@ -139,89 +143,107 @@ export const DraftRoom: React.FC = () => {
   if (loading) return <div className="loading">Loading Draft Room...</div>;
 
   return (
-    <div className="draft-room">
-      <div className="draft-header-bar">
-        <h1>NFL Draft Room</h1>
-        {currentPick && (
-          <div className="current-pick-info">
-            <span className="pick-label">ON THE CLOCK:</span>
-            <span className="pick-team">Team {currentPick.team_id}</span>
-            <span className="pick-round">
-              Round {currentPick.round} • Pick {currentPick.pick_number}
-            </span>
+    <ParallaxScene>
+      <div className={`draft-room ${styles.container}`} data-testid="draft-room-page">
+        {loading && <div className="loading-overlay">Loading...</div>}
+
+        <div className={styles.headerBar}>
+          <div>
+            <h1 className={styles.headerTitle}>Draft Room</h1>
+            <div className={styles.headerSubtitle}>Draft Theater • Live War Room Broadcast</div>
           </div>
-        )}
-      </div>
-
-      <DraftTicker recentPicks={recentPicks} />
-
-      <div className="draft-content">
-        <div className="draft-main">
-          <DraftBoard prospects={prospects} teamNeeds={teamNeeds} onProspectSelect={handlePick} />
-        </div>
-
-        <div className="draft-sidebar">
-          {seasonId && currentPick && (
-            <div className="assistant-panel">
-              <DraftAssistant
-                seasonId={seasonId}
-                teamId={currentPick.team_id}
-                pickNumber={currentPick.pick_number}
-                availablePlayers={prospects.map((p) => p.id)}
-                onPlayerSelect={handlePick}
-              />
+          {currentPick && (
+            <div className={styles.onTheClock}>
+              <span className={styles.clockLabel}>On The Clock</span>
+              <span className={styles.clockTeam}>Team {currentPick.team_id}</span>
+              <span className={styles.clockRound}>
+                Round {currentPick.round} • Pick {currentPick.pick_number}
+              </span>
             </div>
           )}
+        </div>
 
-          <div className="team-needs-panel">
-            <h3>Team Needs</h3>
-            <div className="needs-list">
-              {teamNeeds.map((need) => (
-                <div key={need.position} className="need-item">
-                  <div className="need-info">
-                    <span className="need-pos">{need.position}</span>
-                    <progress className="need-progress" value={need.need_score} max={5} />
+        <RibbonTicker
+          items={
+            recentPicks.length > 0
+              ? recentPicks.map(
+                  (p) =>
+                    `Rd ${p.round} #${p.pick_number}: ${p.player_position} ${p.player_name} (${p.player_overall})`
+                )
+              : ["Draft Night Live", "War Room Active", "Make Your Selection"]
+          }
+          speedSec={30}
+        />
+
+        <div className={styles.draftContent}>
+          <div className={styles.mainBoard}>
+            <BroadcastPanel title="Big Board - Live Feed" isLive={true}>
+              <DraftBoard
+                prospects={prospects}
+                teamNeeds={teamNeeds}
+                onProspectSelect={handlePick}
+              />
+            </BroadcastPanel>
+          </div>
+
+          <div className={styles.sidebar}>
+            {seasonId && currentPick && (
+              <BroadcastPanel title="AI Analyst">
+                <DraftAssistant
+                  seasonId={seasonId}
+                  teamId={currentPick.team_id}
+                  pickNumber={currentPick.pick_number}
+                  availablePlayers={prospects.map((p) => p.id)}
+                  onPlayerSelect={handlePick}
+                />
+              </BroadcastPanel>
+            )}
+
+            <BroadcastPanel title="Team Needs">
+              <div className={styles.needsList}>
+                {teamNeeds.map((need) => (
+                  <div key={need.position} className={styles.needItem}>
+                    <div className={styles.needInfo}>
+                      <span className={styles.needPos}>{need.position}</span>
+                      <progress className={styles.needProgress} value={need.need_score} max={5} />
+                    </div>
+                    <span className={styles.needScore}>{need.need_score.toFixed(1)}</span>
                   </div>
-                  <span className="need-score">{need.need_score.toFixed(1)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </div>
+            </BroadcastPanel>
 
-          {/* Mock Draft Simulator Placeholder */}
-          <div className="mock-sim-panel">
-            <h3>Draft Simulator</h3>
-            <p>Simulate the remainder of the draft automatically.</p>
-            <button
-              className="mock-btn"
-              onClick={handleSimulateDraft}
-              disabled={simulating || !currentPick}
-            >
-              Simulate Rest of Draft
-            </button>
-          </div>
+            <BroadcastPanel title="War Room Controls">
+              <div className={styles.controlsContainer}>
+                <button
+                  className={styles.actionButton}
+                  onClick={handleSimulateDraft}
+                  disabled={simulating || !currentPick}
+                >
+                  {simulating ? "Simulating..." : "Auto-Sim Draft"}
+                </button>
 
-          <div className="trade-panel">
-            <h3>Trade Options</h3>
-            <button
-              className="trade-btn"
-              onClick={() => setShowTradeModal(true)}
-              disabled={!currentPick}
-            >
-              Trade Current Pick
-            </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => setShowTradeModal(true)}
+                  disabled={!currentPick}
+                >
+                  Propose Trade
+                </button>
+              </div>
+            </BroadcastPanel>
           </div>
         </div>
-      </div>
 
-      {showTradeModal && currentPick && seasonId && (
-        <TradeModal
-          seasonId={seasonId}
-          currentTeamId={currentPick.team_id}
-          onClose={() => setShowTradeModal(false)}
-          onTrade={handleTrade}
-        />
-      )}
-    </div>
+        {showTradeModal && currentPick && seasonId && (
+          <TradeModal
+            seasonId={seasonId}
+            currentTeamId={currentPick.team_id}
+            onClose={() => setShowTradeModal(false)}
+            onTrade={handleTrade}
+          />
+        )}
+      </div>
+    </ParallaxScene>
   );
 };

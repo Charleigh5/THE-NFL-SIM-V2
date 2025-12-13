@@ -20,7 +20,10 @@ export function TiltCard({
   onClick,
   "data-testid": testId,
 }: TiltCardProps) {
-  const reduceMotion = useReducedMotion();
+  const isAutomated =
+    typeof navigator !== "undefined" &&
+    (navigator as unknown as { webdriver?: boolean }).webdriver;
+  const reduceMotion = useReducedMotion() || isAutomated;
 
   const rotateX = useMotionValue(0);
   const rotateY = useMotionValue(0);

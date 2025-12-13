@@ -13,6 +13,9 @@ type RibbonTickerProps = {
  */
 export function RibbonTicker({ items, speedSec = 18, "data-testid": testId }: RibbonTickerProps) {
   const reduceMotion = useReducedMotion();
+  const isAutomated =
+    typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
+  const shouldAnimate = !reduceMotion && !isAutomated;
   const content = items.length
     ? items
     : ["League Update", "Night Game Atmosphere", "Franchise Mode"]; // safe fallback
@@ -21,22 +24,22 @@ export function RibbonTicker({ items, speedSec = 18, "data-testid": testId }: Ri
     <div className={styles.wrap} data-testid={testId}>
       <motion.div
         className={styles.row}
-        aria-hidden={reduceMotion ? undefined : true}
+        aria-hidden={shouldAnimate ? true : undefined}
         animate={
-          reduceMotion
-            ? undefined
-            : {
+          shouldAnimate
+            ? {
                 x: [0, -50 * content.length],
               }
+            : undefined
         }
         transition={
-          reduceMotion
-            ? undefined
-            : {
+          shouldAnimate
+            ? {
                 duration: speedSec,
                 ease: "linear",
                 repeat: Infinity,
               }
+            : undefined
         }
       >
         {content.concat(content).map((t, i) => (

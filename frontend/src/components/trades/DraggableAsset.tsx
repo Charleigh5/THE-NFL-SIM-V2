@@ -46,6 +46,7 @@ export const DraggableAsset: React.FC<DraggableAssetProps> = ({
     .join(" ");
 
   return (
+    // eslint-disable-next-line
     <div
       ref={setNodeRef}
       style={dragTransform ? { transform: dragTransform } : undefined}

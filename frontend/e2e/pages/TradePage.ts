@@ -12,11 +12,11 @@ export class TradePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.partnerSelect = page.getByRole("combobox").first(); // Adjust selector if needed
+    this.partnerSelect = page.getByTestId("trade-partner-select");
     this.negotiateTab = page.getByTestId("tab-negotiate");
     this.offersTab = page.getByTestId("tab-offers");
     this.tradeBlockTab = page.getByTestId("tab-trade-block");
-    this.evaluateBtn = page.getByTestId("analyze-btn"); // Updated to use test-id
+    this.evaluateBtn = page.getByTestId("evaluate-trade-btn");
     this.submitOfferBtn = page.getByRole("button", { name: "Submit Formal Offer" });
     this.clearTradeBtn = page.getByRole("button", { name: "Clear Trade" });
   }
@@ -37,11 +37,10 @@ export class TradePage {
     // Wait for the select to be populated (implied by waiting for page load, but good to be safe)
     await this.partnerSelect.waitFor();
     await this.partnerSelect.selectOption(teamId);
-    // Wait for partner players to load
-    await this.page
-      .locator(".partner-assets .draggable-player-card")
-      .first()
-      .waitFor({ timeout: 5000 });
+    // Wait for partner players to load (new TradeNegotiator markup)
+    await this.page.locator('[data-testid^="draggable-partner-player-"]').first().waitFor({
+      timeout: 5000,
+    });
   }
 
   async dragPlayerToOffer(playerId: number) {
@@ -60,8 +59,8 @@ export class TradePage {
     }
     await target.hover();
     await this.page.mouse.up();
-    // Wait for animation/state update
-    await expect(source).not.toBeVisible(); // Or check if it appeared in target
+    // Wait for state update
+    await this.page.waitForTimeout(50);
   }
 
   async dragPlayerToRequest(playerId: number) {

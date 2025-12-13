@@ -61,6 +61,32 @@ test.describe.serial("Trade System E2E", () => {
   test.beforeEach(async ({ page }) => {
     tradePage = new TradePage(page);
 
+    // Catch-all guard: allow only known API calls for this suite.
+    // Playwright applies the most recently added route first, so we use
+    // `route.fallback()` for allowed URLs so the specific mocks below can fulfill.
+    await page.route("**/api/**", async (route) => {
+      const url = route.request().url();
+      const allowed = [
+        /\/api\/settings$/,
+        /\/api\/(season|seasons)\/current$/,
+        /\/api\/teams\?page=1&page_size=100$/,
+        /\/api\/teams\/(\d+)$/,
+        /\/api\/teams\/(\d+)\/roster$/,
+        /\/api\/trades\/pending\/(\d+)$/,
+        /\/api\/trades\/evaluate$/,
+        /\/api\/trades\/offer$/,
+        /\/api\/trades\/(respond|counter)\/(\d+)$/,
+      ];
+
+      if (allowed.some((re) => re.test(url))) {
+        await route.fallback();
+        return;
+      }
+
+      console.log(`[UNMOCKED API] ${route.request().method()} ${url}`);
+      await route.abort();
+    });
+
     // Mock User Settings (required for userTeamId)
     await page.route("**/api/settings", async (route) => {
       await route.fulfill({
@@ -68,14 +94,24 @@ test.describe.serial("Trade System E2E", () => {
       });
     });
 
-    // Mock Current Season
+    // Mock Current Season (support both legacy and newer endpoint shapes)
+    await page.route("**/api/season/current", async (route) => {
+      await route.fulfill({
+        json: {
+          id: 1,
+          year: 2024,
+          current_week: 5,
+          status: "REGULAR_SEASON",
+        },
+      });
+    });
     await page.route("**/api/seasons/current", async (route) => {
       await route.fulfill({
         json: {
           id: 1,
           year: 2024,
           current_week: 5,
-          phase: "regular_season",
+          status: "REGULAR_SEASON",
         },
       });
     });
@@ -129,12 +165,36 @@ test.describe.serial("Trade System E2E", () => {
     });
 
     // Mock Rosters
-    await page.route(`**/api/trades/players/${USER_TEAM_ID}`, async (route) => {
-      await route.fulfill({ json: MOCK_USER_PLAYERS });
+    await page.route(`**/api/teams/${USER_TEAM_ID}/roster`, async (route) => {
+      await route.fulfill({
+        json: MOCK_USER_PLAYERS.map((p) => ({
+          id: p.id,
+          first_name: p.first_name,
+          last_name: p.last_name,
+          position: p.position,
+          jersey_number: 1,
+          overall_rating: p.overall_rating,
+          age: p.age,
+          experience: 3,
+          team_id: USER_TEAM_ID,
+        })),
+      });
     });
 
-    await page.route(`**/api/trades/players/${PARTNER_TEAM_ID}`, async (route) => {
-      await route.fulfill({ json: MOCK_PARTNER_PLAYERS });
+    await page.route(`**/api/teams/${PARTNER_TEAM_ID}/roster`, async (route) => {
+      await route.fulfill({
+        json: MOCK_PARTNER_PLAYERS.map((p) => ({
+          id: p.id,
+          first_name: p.first_name,
+          last_name: p.last_name,
+          position: p.position,
+          jersey_number: 1,
+          overall_rating: p.overall_rating,
+          age: p.age,
+          experience: 3,
+          team_id: PARTNER_TEAM_ID,
+        })),
+      });
     });
 
     // Mock Evaluation
@@ -158,12 +218,6 @@ test.describe.serial("Trade System E2E", () => {
       await route.fulfill({
         json: { success: true, message: "Offer submitted successfully", offer_id: 999 },
       });
-    });
-
-    // DEBUG: Log any unmocked API requests
-    await page.route("**/api/**", async (route) => {
-      console.log(`[UNMOCKED API] ${route.request().method()} ${route.request().url()}`);
-      await route.abort();
     });
 
     await tradePage.goto();
@@ -227,7 +281,7 @@ test.describe.serial("Trade System E2E", () => {
     ];
 
     await page.route(`**/api/trades/pending/${USER_TEAM_ID}`, async (route) => {
-      await route.fulfill({ json: mockPendingOffers });
+      await route.fulfill({ json: { incoming: mockPendingOffers, outgoing: [] } });
     });
 
     // Mock Respond (Accept)
@@ -291,7 +345,7 @@ test.describe.serial("Trade System E2E", () => {
     ];
 
     await page.route(`**/api/trades/pending/${USER_TEAM_ID}`, async (route) => {
-      await route.fulfill({ json: mockPendingOffers });
+      await route.fulfill({ json: { incoming: mockPendingOffers, outgoing: [] } });
     });
 
     // Mock Counter

@@ -53,7 +53,7 @@ export const PendingOffers: React.FC<PendingOffersProps> = ({ teamId, onCounter 
     offer,
     type,
   }) => (
-    <div className="offer-card">
+    <div className="offer-card" data-testid={`offer-${offer.id}`}>
       <div className="offer-header">
         <span className="offer-id">Offer #{offer.id}</span>
         <span className={`offer-status ${offer.status.toLowerCase()}`}>{offer.status}</span>

@@ -26,21 +26,29 @@ const TradeCenterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TradeTab>("negotiate");
   const [pendingOffersCount, setPendingOffersCount] = useState(0); // State for badge
   const [counterOffer, setCounterOffer] = useState<TradeOffer | null>(null); // State for counter offer
+  const [settingsAttempted, setSettingsAttempted] = useState(false);
 
   const { userTeamId, fetchSettings, isLoading: settingsLoading } = useSettingsStore();
   const navigate = useNavigate();
 
   // Fetch settings on mount
   useEffect(() => {
-    fetchSettings();
+    (async () => {
+      try {
+        await fetchSettings();
+      } finally {
+        setSettingsAttempted(true);
+      }
+    })();
   }, [fetchSettings]);
 
   // Redirect if no team selected
   useEffect(() => {
-    if (!settingsLoading && userTeamId === null) {
+    // Avoid redirecting on first paint before settings fetch flips loading.
+    if (settingsAttempted && !settingsLoading && userTeamId === null) {
       navigate("/team-selection");
     }
-  }, [settingsLoading, userTeamId, navigate]);
+  }, [settingsAttempted, settingsLoading, userTeamId, navigate]);
 
   // Fetch season and team data
   useEffect(() => {
@@ -143,11 +151,14 @@ const TradeCenterPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
-        <nav className="trade-tabs">
+        <nav className="trade-tabs" role="tablist" aria-label="Trade Center Tabs">
           <button
             className={`tab-btn ${activeTab === "negotiate" ? "active" : ""}`}
             onClick={() => setActiveTab("negotiate")}
             data-testid="tab-negotiate"
+            role="tab"
+            aria-selected={activeTab === "negotiate" ? "true" : "false"}
+            aria-controls="trade-tabpanel-negotiate"
           >
             <span className="tab-icon">🔄</span>
             <span className="tab-label">Negotiate</span>
@@ -157,6 +168,9 @@ const TradeCenterPage: React.FC = () => {
             className={`tab-btn ${activeTab === "offers" ? "active" : ""}`}
             onClick={() => setActiveTab("offers")}
             data-testid="tab-offers"
+            role="tab"
+            aria-selected={activeTab === "offers" ? "true" : "false"}
+            aria-controls="trade-tabpanel-offers"
           >
             <span className="tab-icon">📫</span>
             <span className="tab-label">Offers</span>
@@ -169,6 +183,9 @@ const TradeCenterPage: React.FC = () => {
             className={`tab-btn ${activeTab === "trade-block" ? "active" : ""}`}
             onClick={() => setActiveTab("trade-block")}
             data-testid="tab-trade-block"
+            role="tab"
+            aria-selected={activeTab === "trade-block" ? "true" : "false"}
+            aria-controls="trade-tabpanel-trade-block"
           >
             <span className="tab-icon">📋</span>
             <span className="tab-label">Trade Block</span>
@@ -179,14 +196,24 @@ const TradeCenterPage: React.FC = () => {
       {/* Tab Content */}
       <main className="trade-content">
         {activeTab === "negotiate" && (
-          <TradeNegotiator
-            seasonId={season.id}
-            userTeamId={userTeamId}
-            initialOffer={counterOffer}
-          />
+          <section id="trade-tabpanel-negotiate" role="tabpanel" aria-label="Negotiate">
+            <TradeNegotiator
+              seasonId={season.id}
+              userTeamId={userTeamId}
+              initialOffer={counterOffer}
+            />
+          </section>
         )}
-        {activeTab === "offers" && <PendingOffers teamId={userTeamId} onCounter={handleCounter} />}
-        {activeTab === "trade-block" && <TradeBlock seasonId={season.id} userTeamId={userTeamId} />}
+        {activeTab === "offers" && (
+          <section id="trade-tabpanel-offers" role="tabpanel" aria-label="Offers">
+            <PendingOffers teamId={userTeamId} onCounter={handleCounter} />
+          </section>
+        )}
+        {activeTab === "trade-block" && (
+          <section id="trade-tabpanel-trade-block" role="tabpanel" aria-label="Trade Block">
+            <TradeBlock seasonId={season.id} userTeamId={userTeamId} />
+          </section>
+        )}
       </main>
     </div>
   );

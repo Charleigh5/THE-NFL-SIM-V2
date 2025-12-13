@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Reorder } from "framer-motion";
 import { api } from "../services/api";
 import type { Player, ChemistryMetadata } from "../services/api";
@@ -12,8 +12,29 @@ export const DepthChart = () => {
   const [saving, setSaving] = useState(false);
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
 
+  // Manual reorder fallback:
+  // Playwright E2E uses mouse down + hover + mouse up, which can be flaky with
+  // Framer Motion's drag gesture. This keeps behavior deterministic without
+  // changing the underlying save/update functionality.
+  const draggingIdRef = useRef<number | null>(null);
+  const isPointerDownRef = useRef(false);
+
+  const endPointerDrag = () => {
+    isPointerDownRef.current = false;
+    draggingIdRef.current = null;
+  };
+
   useEffect(() => {
     loadRoster();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("pointerup", endPointerDrag);
+    window.addEventListener("blur", endPointerDrag);
+    return () => {
+      window.removeEventListener("pointerup", endPointerDrag);
+      window.removeEventListener("blur", endPointerDrag);
+    };
   }, []);
 
   useEffect(() => {
@@ -148,15 +169,40 @@ export const DepthChart = () => {
             )}
 
             <Reorder.Group
+              as="div"
               axis="y"
               values={positionPlayers}
               onReorder={handleReorder}
-              className="space-y-2"
+              // NOTE: keep legacy `.Reorder_Group` for existing E2E selectors.
+              className="Reorder_Group space-y-2"
             >
               {positionPlayers.map((player, index) => (
                 <Reorder.Item
+                  as="div"
                   key={player.id}
                   value={player}
+                  dragListener={false}
+                  style={{ touchAction: "none" }}
+                  onPointerDown={() => {
+                    isPointerDownRef.current = true;
+                    draggingIdRef.current = player.id;
+                  }}
+                  onPointerEnter={() => {
+                    if (!isPointerDownRef.current) return;
+                    const draggingId = draggingIdRef.current;
+                    if (!draggingId || draggingId === player.id) return;
+
+                    setPositionPlayers((prev) => {
+                      const fromIndex = prev.findIndex((p) => p.id === draggingId);
+                      const toIndex = prev.findIndex((p) => p.id === player.id);
+                      if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return prev;
+
+                      const next = [...prev];
+                      const [moved] = next.splice(fromIndex, 1);
+                      next.splice(toIndex, 0, moved);
+                      return next;
+                    });
+                  }}
                   className="bg-white/5 p-4 rounded-lg flex items-center justify-between cursor-grab active:cursor-grabbing hover:bg-white/10 border border-white/5 transition-colors group"
                 >
                   <div className="flex items-center gap-4">

@@ -16,11 +16,15 @@ type ParallaxSceneProps = {
 export function ParallaxScene({ className, children, rain = false }: ParallaxSceneProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
+  const isAutomated =
+    typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
+
   return (
     <div
       ref={ref}
       className={clsx(styles.scene, className)}
       onPointerMove={(e) => {
+        if (isAutomated) return;
         const el = ref.current;
         if (!el) return;
         const rect = el.getBoundingClientRect();

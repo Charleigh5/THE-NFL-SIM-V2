@@ -73,6 +73,47 @@ test.describe("Depth Chart Flow", () => {
       localStorage.setItem("selectedTeamId", "1");
     });
 
+    await page.route("**/api/teams?page=1&page_size=100", async (route) => {
+      await route.fulfill({
+        json: {
+          items: [
+            {
+              id: 1,
+              city: "Arizona",
+              name: "Cardinals",
+              abbreviation: "ARI",
+              conference: "NFC",
+              division: "West",
+              wins: 0,
+              losses: 0,
+              salary_cap_space: 0,
+            },
+          ],
+          total: 1,
+          page: 1,
+          page_size: 100,
+          total_pages: 1,
+        },
+      });
+    });
+
+    await page.route("**/api/teams/1/chemistry", async (route) => {
+      await route.fulfill({
+        json: {
+          chemistry_level: 2,
+          consecutive_games: 3,
+          status: "BUILDING",
+          bonuses: { pass_block: 1, run_block: 1, awareness: 1 },
+          advanced_effects: {
+            stunt_pickup_bonus: 0.05,
+            penalty_reduction: 0.02,
+            communication_boost: 0.03,
+            blitz_pickup_improvement: 0.04,
+          },
+        },
+      });
+    });
+
     // Mock team roster fetch
     await page.route("**/api/teams/1/roster", async (route) => {
       await route.fulfill({ json: mockRoster });

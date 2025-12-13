@@ -8,7 +8,9 @@ export const ScoreBoard = () => {
     <div className="flex items-center justify-between bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-4 w-full max-w-2xl mx-auto">
       {/* Home Team */}
       <div className="flex flex-col items-center w-1/3">
-        <div className="text-3xl font-bold text-white">{gameState.homeScore}</div>
+        <div className="text-3xl font-bold text-white" data-testid="scoreboard-home-score">
+          {gameState.homeScore}
+        </div>
         <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Empire</div>
         <MomentumIndicator state={gameState.homeMomentum} size="sm" />
         {gameState.possession === "home" && (
@@ -18,7 +20,9 @@ export const ScoreBoard = () => {
 
       {/* Game Info */}
       <div className="flex flex-col items-center w-1/3 border-x border-white/10">
-        <div className="text-xl font-mono text-cyan-400 font-bold">Q{gameState.quarter}</div>
+        <div className="text-xl font-mono text-cyan-400 font-bold" data-testid="game-clock-quarter">
+          Q{gameState.quarter}
+        </div>
         <div className="text-xs text-gray-500 mt-1">
           {gameState.down === 1
             ? "1st"
@@ -33,7 +37,9 @@ export const ScoreBoard = () => {
 
       {/* Away Team */}
       <div className="flex flex-col items-center w-1/3">
-        <div className="text-3xl font-bold text-white">{gameState.awayScore}</div>
+        <div className="text-3xl font-bold text-white" data-testid="scoreboard-away-score">
+          {gameState.awayScore}
+        </div>
         <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Genesis</div>
         <MomentumIndicator state={gameState.awayMomentum} size="sm" />
         {gameState.possession === "away" && (

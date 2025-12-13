@@ -1,0 +1,176 @@
+.offseasonContainer {
+  position: relative;
+  min-height: 100vh;
+  padding: 1.5rem;
+  color: #fff;
+}
+
+.header {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.header h1 {
+  font-family: var(--font-header, sans-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.05em;
+  margin: 0;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.statusBadge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Desk Objects (Phase Cards) */
+.deskObjectsRow {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  perspective: 1000px;
+}
+
+.phaseCard {
+  flex: 1;
+  min-width: 220px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 1.25rem;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+
+  /* Physical feel */
+  transform-style: preserve-3d;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.phaseCard::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.phaseCard:hover {
+  transform: translateY(-4px) rotateX(2deg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  border-color: rgba(255, 255, 255, 0.3);
+  z-index: 10;
+}
+
+.phaseCard h3 {
+  font-family: var(--font-header, sans-serif);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.phaseCard p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.actionButton {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10b981;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+/* Loading Overlay */
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+}

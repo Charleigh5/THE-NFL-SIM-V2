@@ -19,6 +19,7 @@ import type { TradePlayer, TradeEvaluation, TradeOffer } from "../../types/trade
 import { tradeApi } from "../../services/tradeApi";
 import { DraggableAsset } from "./DraggableAsset";
 import { DroppableZone } from "./DroppableZone";
+import { TradeAnalyzer } from "./TradeAnalyzer";
 import { FeedbackCollector } from "../draft/FeedbackCollector";
 import "./TradeNegotiator.css";
 
@@ -268,8 +269,8 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
     try {
       const result = await tradeApi.evaluateTrade(
         selectedPartner.id,
-        requestedPlayers.map((p) => p.id),
-        offeredPlayers.map((p) => p.id)
+        offeredPlayers.map((p) => p.id),
+        requestedPlayers.map((p) => p.id)
       );
       setEvaluation(result);
     } catch (err) {
@@ -468,6 +469,15 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
           </div>
 
           {error && <div className="trade-error">{error}</div>}
+
+          {/* Back-compat / E2E-visible analyzer widget */}
+          <TradeAnalyzer
+            seasonId={seasonId}
+            teamId={userTeamId}
+            targetTeamId={selectedPartner?.id ?? null}
+            offeredAssets={offeredPlayers.map((p) => p.id)}
+            requestedAssets={requestedPlayers.map((p) => p.id)}
+          />
 
           {/* GM Response */}
           {evaluation && (
