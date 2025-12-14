@@ -30,7 +30,10 @@ async def test_draft_suggest_pick_endpoint(async_client: AsyncClient, async_db_s
             speed=90,
             strength=75,
             agility=80,
-            team_id=None
+            team_id=None,
+            height=73,
+            weight=215,
+            age=22
         )
         for i in range(1, 6)
     ]
@@ -82,8 +85,8 @@ async def test_draft_assistant_roster_gap_analysis(async_client: AsyncClient, as
 
     # Create roster with gaps (no QBs, few WRs)
     existing_players = [
-        Player(id=10, first_name="RB", last_name="One", position="RB", overall_rating=80, team_id=2),
-        Player(id=11, first_name="RB", last_name="Two", position="RB", overall_rating=75, team_id=2),
+        Player(id=10, first_name="RB", last_name="One", position="RB", overall_rating=80, team_id=2, height=71, weight=215, age=25),
+        Player(id=11, first_name="RB", last_name="Two", position="RB", overall_rating=75, team_id=2, height=70, weight=210, age=24),
     ]
 
     for player in existing_players:
@@ -91,8 +94,8 @@ async def test_draft_assistant_roster_gap_analysis(async_client: AsyncClient, as
 
     # Available draft prospects
     prospects = [
-        Player(id=20, first_name="Top", last_name="QB", position="QB", overall_rating=90, team_id=None),
-        Player(id=21, first_name="Top", last_name="WR", position="WR", overall_rating=85, team_id=None),
+        Player(id=20, first_name="Top", last_name="QB", position="QB", overall_rating=90, team_id=None, height=75, weight=220, age=22),
+        Player(id=21, first_name="Top", last_name="WR", position="WR", overall_rating=85, team_id=None, height=73, weight=195, age=21),
     ]
 
     for player in prospects:
@@ -145,7 +148,10 @@ async def test_draft_value_score_calculation(async_client: AsyncClient, async_db
         speed=95,
         strength=80,
         agility=90,
-        team_id=None
+        team_id=None,
+        height=74,
+        weight=200,
+        age=21
     )
     db.add(player)
     await db.commit()
@@ -229,10 +235,10 @@ async def test_alternative_picks_quality(async_client: AsyncClient, async_db_ses
 
     # Create players with different ratings
     players = [
-        Player(id=40, first_name="Best", last_name="Player", position="QB", overall_rating=90, team_id=None),
-        Player(id=41, first_name="Second", last_name="Player", position="RB", overall_rating=85, team_id=None),
-        Player(id=42, first_name="Third", last_name="Player", position="WR", overall_rating=82, team_id=None),
-        Player(id=43, first_name="Fourth", last_name="Player", position="TE", overall_rating=80, team_id=None),
+        Player(id=40, first_name="Best", last_name="Player", position="QB", overall_rating=90, team_id=None, height=75, weight=220, age=22),
+        Player(id=41, first_name="Second", last_name="Player", position="RB", overall_rating=85, team_id=None, height=70, weight=215, age=21),
+        Player(id=42, first_name="Third", last_name="Player", position="WR", overall_rating=82, team_id=None, height=72, weight=195, age=23),
+        Player(id=43, first_name="Fourth", last_name="Player", position="TE", overall_rating=80, team_id=None, height=77, weight=250, age=22),
     ]
 
     for player in players:

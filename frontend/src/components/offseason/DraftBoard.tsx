@@ -2,7 +2,8 @@ import React, { useState, useMemo } from "react";
 import type { Prospect, TeamNeed } from "../../types/offseason";
 import { GenesisReveal } from "../draft/GenesisReveal";
 import { GpsSpeedViz } from "../draft/GpsSpeedViz";
-import { Eye, Dumbbell } from "lucide-react";
+import { Eye, Dumbbell, FileText } from "lucide-react";
+import { ScoutingReportModal } from "../scouting/ScoutingReportModal";
 import "./DraftBoard.css";
 
 interface DraftBoardProps {
@@ -21,6 +22,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
   const [filterPos, setFilterPos] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("rank");
   const [revealingProspect, setRevealingProspect] = useState<Prospect | null>(null);
+  const [scoutingReportProspect, setScoutingReportProspect] = useState<Prospect | null>(null);
 
   // Helper to determine grade based on rating
   const getGrade = (rating: number): string => {
@@ -147,6 +149,16 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                     >
                       <Eye className="w-3 h-3" /> Reveal
                     </button>
+                    {/* Scouting Report Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setScoutingReportProspect(p);
+                      }}
+                      className="text-[10px] flex items-center gap-1 bg-cyan-900/40 hover:bg-cyan-900/60 border border-cyan-800/50 px-2 py-1 rounded text-cyan-200 transition-colors"
+                    >
+                      <FileText className="w-3 h-3" /> Report
+                    </button>
                   </div>
                 </div>
 
@@ -202,6 +214,16 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
             // In a real app, this would also call an API
             setRevealingProspect({ ...revealingProspect, genesis_revealed: true });
           }}
+        />
+      )}
+
+      {scoutingReportProspect && (
+        <ScoutingReportModal
+          playerId={String(scoutingReportProspect.id)} // Assuming prospect.id is number, mock service expects string
+          playerName={scoutingReportProspect.name}
+          position={scoutingReportProspect.position}
+          isOpen={!!scoutingReportProspect}
+          onClose={() => setScoutingReportProspect(null)}
         />
       )}
     </div>

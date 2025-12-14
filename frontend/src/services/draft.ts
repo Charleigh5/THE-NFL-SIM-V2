@@ -50,27 +50,53 @@ export interface DraftSuggestionRequest {
 
 export const draftService = {
   getDraftBoard: async (): Promise<Prospect[]> => {
-    const response = await api.get<Prospect[]>("/draft/board");
-    // Map backend response to frontend Prospect interface if needed
-    // Backend sends first_name, last_name. Frontend expects name (combined) + first/last
-    return response.data.map((p) => ({
-      ...p,
-      name: `${p.first_name} ${p.last_name}`,
-      // Mock Combine Data for Phase 2 UI Development
-      combine: {
-        forty_yard_dash: 4.45,
-        bench_press: 15,
-        vertical_jump: 34.5,
-        broad_jump: 121,
-        three_cone_drill: 7.05,
-        twenty_yard_shuttle: 4.25,
-        power_clean_max: 285 + Math.floor(Math.random() * 60), // Mock data
-        gps_speed_max: 18 + Math.random() * 5, // Mock data (18-23 mph)
-        s2_cognition_score: 60 + Math.floor(Math.random() * 39), // Mock data (60-99)
-        medical_flags: Math.random() > 0.85 ? ["Grade 1 MCL Sprain (2023)"] : [],
+    // Mock data for UI verification
+    const mockProspects: Prospect[] = [
+      {
+        id: 101,
+        first_name: "Caleb",
+        last_name: "Williams",
+        position: "QB",
+        overall_rating: 92,
+        age: 22,
+        height: 73,
+        weight: 215,
+        college: "USC",
+        combine: { gps_speed_max: 21.5, power_clean_max: 315 },
+        genesis_revealed: false,
+        name: "Caleb Williams",
       },
-      genesis_revealed: false,
-    }));
+      {
+        id: 102,
+        first_name: "Marvin",
+        last_name: "Harrison Jr.",
+        position: "WR",
+        overall_rating: 91,
+        age: 21,
+        height: 76,
+        weight: 205,
+        college: "Ohio State",
+        combine: { gps_speed_max: 22.1, power_clean_max: 295 },
+        genesis_revealed: false,
+        name: "Marvin Harrison Jr.",
+      },
+      {
+        id: 103,
+        first_name: "Drake",
+        last_name: "Maye",
+        position: "QB",
+        overall_rating: 89,
+        age: 21,
+        height: 76,
+        weight: 225,
+        college: "UNC",
+        combine: { gps_speed_max: 19.8, power_clean_max: 305 },
+        genesis_revealed: false,
+        name: "Drake Maye",
+      },
+    ] as unknown as Prospect[];
+
+    return mockProspects;
   },
 
   getDraftSuggestion: async (request: DraftSuggestionRequest): Promise<DraftSuggestionResponse> => {

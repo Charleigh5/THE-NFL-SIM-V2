@@ -67,7 +67,8 @@ async def setup_teams(test_db):
             run_block=70,
             awareness=65,
             height=77,  # 6'5" - typical OL height
-            weight=310  # typical OL weight
+            weight=310,  # typical OL weight
+            age=27
         )
         ol_players.append(player)
         test_db.add(player)
@@ -82,7 +83,8 @@ async def setup_teams(test_db):
             team_id=2,
             overall_rating=70,
             height=76,  # 6'4" - typical DE height
-            weight=265  # typical DE weight
+            weight=265,  # typical DE weight
+            age=26
         )
         test_db.add(player)
 

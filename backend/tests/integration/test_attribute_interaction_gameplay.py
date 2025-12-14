@@ -53,7 +53,10 @@ class TestAttributeInteractionIntegration:
             release=95,  # Excellent release
             route_running=92,
             speed=91,
-            catching=90
+            catching=90,
+            height=73,
+            weight=200,
+            age=26
         )
 
         average_cb = Player(
@@ -64,7 +67,10 @@ class TestAttributeInteractionIntegration:
             press=70,  # Average press
             man_coverage=72,
             speed=75,
-            ball_tracking=70
+            ball_tracking=70,
+            height=71,
+            weight=190,
+            age=25
         )
 
         qb = Player(
@@ -73,7 +79,10 @@ class TestAttributeInteractionIntegration:
             last_name="QB",
             position="QB",
             throw_accuracy_mid=80,
-            awareness=85
+            awareness=85,
+            height=75,
+            weight=220,
+            age=28
         )
 
         # Mock the Genesis kernel to avoid fatigue calculation issues
@@ -117,7 +126,10 @@ class TestAttributeInteractionIntegration:
             release=99,
             route_running=99,
             speed=99,
-            catching=99
+            catching=99,
+            height=73,
+            weight=200,
+            age=26
         )
 
         weak_cb = Player(
@@ -128,7 +140,10 @@ class TestAttributeInteractionIntegration:
             press=40,
             man_coverage=40,
             speed=45,
-            ball_tracking=40
+            ball_tracking=40,
+            height=70,
+            weight=180,
+            age=23
         )
 
         qb = Player(
@@ -139,7 +154,10 @@ class TestAttributeInteractionIntegration:
             throw_accuracy_mid=95,
             throw_accuracy_short=95,
             throw_accuracy_deep=95,
-            awareness=99
+            awareness=99,
+            height=76,
+            weight=225,
+            age=29
         )
 
         # Mock Genesis
@@ -174,26 +192,31 @@ class TestAttributeInteractionIntegration:
         # Good matchup: Elite WR vs Weak CB
         elite_wr = Player(
             id=1, first_name="Elite", last_name="WR", position="WR",
-            release=95, route_running=95, speed=95, catching=95
+            release=95, route_running=95, speed=95, catching=95,
+            height=73, weight=200, age=26
         )
         weak_cb = Player(
             id=2, first_name="Weak", last_name="CB", position="CB",
-            press=50, man_coverage=50, speed=50, ball_tracking=50
+            press=50, man_coverage=50, speed=50, ball_tracking=50,
+            height=70, weight=180, age=24
         )
 
         # Bad matchup: Weak WR vs Elite CB
         weak_wr = Player(
             id=3, first_name="Weak", last_name="WR2", position="WR",
-            release=50, route_running=50, speed=50, catching=50
+            release=50, route_running=50, speed=50, catching=50,
+            height=72, weight=195, age=25
         )
         elite_cb = Player(
             id=4, first_name="Elite", last_name="CB2", position="CB",
-            press=95, man_coverage=95, speed=95, ball_tracking=95
+            press=95, man_coverage=95, speed=95, ball_tracking=95,
+            height=71, weight=190, age=27
         )
 
         qb = Player(
             id=5, first_name="QB", last_name="Test", position="QB",
-            throw_accuracy_mid=75, awareness=75
+            throw_accuracy_mid=75, awareness=75,
+            height=75, weight=220, age=28
         )
 
         # Mock Genesis for both
@@ -255,15 +278,18 @@ class TestAttributeInteractionIntegration:
 
         wr = Player(
             id=1, first_name="WR", last_name="Test", position="WR",
-            release=85, route_running=85, speed=85, catching=85
+            release=85, route_running=85, speed=85, catching=85,
+            height=73, weight=195, age=26
         )
         cb = Player(
             id=2, first_name="CB", last_name="Test", position="CB",
-            press=80, man_coverage=80, speed=80, ball_tracking=80
+            press=80, man_coverage=80, speed=80, ball_tracking=80,
+            height=71, weight=185, age=25
         )
         qb = Player(
             id=3, first_name="QB", last_name="Test", position="QB",
-            throw_accuracy_mid=80, awareness=80
+            throw_accuracy_mid=80, awareness=80,
+            height=75, weight=220, age=28
         )
 
         command = PassPlayCommand(

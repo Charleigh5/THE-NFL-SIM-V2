@@ -26,7 +26,8 @@ def setup_trade_data(db_session):
         overall_rating=90,
         team_id=1,
         height=70,  # 5'10"
-        weight=207
+        weight=207,
+        age=27
     )
     p2 = Player(
         id=201,
@@ -36,7 +37,8 @@ def setup_trade_data(db_session):
         overall_rating=99,
         team_id=2,
         height=75,  # 6'3"
-        weight=230
+        weight=230,
+        age=29
     )
 
     db_session.add(p1)

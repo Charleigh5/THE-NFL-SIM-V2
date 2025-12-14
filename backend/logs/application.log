@@ -5869,3 +5869,388 @@ Request started
 Fetching salary cap for team 999
 Value error in get_team_salary_cap: Team 999 not found
 Request completed
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\mcp', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Retrieved historical comparison via MCP for WR
+Retrieved historical comparison via MCP for QB
+Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)
+Request completed
+Request started
+Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)
+Request completed
+Request started
+Draft suggestion validation error: Team 999 not found
+Request completed
+Request started
+Draft suggestion validation error: No available players
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+MCP config file not found at backend/mcp_config.json
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Hydrating match context
+Error executing pre-game services
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 109, in start_new_game_session
+    await pre_game_service.apply_trait_effects(self.match_context)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 47, in apply_trait_effects
+    await self._apply_team_traits(match_context.home_team_id, match_context.home_roster)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 58, in _apply_team_traits
+    trait_defs = await self.trait_service.get_player_traits(player_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\trait_service.py", line 585, in get_player_traits
+    ).all()
+      ^^^
+AttributeError: 'coroutine' object has no attribute 'all'
+Match context hydrated
+AttributeInteractionEngine initialized with 13 interactions
+Hydrating match context
+Error executing pre-game services
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 109, in start_new_game_session
+    await pre_game_service.apply_trait_effects(self.match_context)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 47, in apply_trait_effects
+    await self._apply_team_traits(match_context.home_team_id, match_context.home_roster)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 58, in _apply_team_traits
+    trait_defs = await self.trait_service.get_player_traits(player_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\trait_service.py", line 585, in get_player_traits
+    ).all()
+      ^^^
+AttributeError: 'coroutine' object has no attribute 'all'
+Match context hydrated
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Request completed
+Field General active for Team 1: Tom Brady
+AttributeInteractionEngine initialized with 13 interactions
+Green Dot active for Team 1: Ray Lewis
+Field General active for Team 1: QB QBPlayer
+Green Dot active for Team 1: LB LBPlayer
+AttributeInteractionEngine initialized with 13 interactions
+Field General active for Team 1: QB QBPlayer
+Connected to MCP server: nfl_stats_test
+Discovered 3 tools for server nfl_stats_test
+MCP Tool Call Request - Server: nfl_stats_test, Tool: get_player_career_stats, Args: {'player_name': 'Test Player'}
+MCP Tool Call Response - Server: nfl_stats_test, Tool: get_player_career_stats, Duration: 0.0037s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_test
+Connected to MCP server: nfl_stats_concurrent
+Discovered 3 tools for server nfl_stats_concurrent
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 0'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 1'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 2'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 3'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 4'}
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0089s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0120s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0134s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0136s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0136s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_concurrent
+Connected to MCP server: nfl_stats_error
+Discovered 3 tools for server nfl_stats_error
+MCP Tool Call Request - Server: nfl_stats_error, Tool: non_existent_tool, Args: {}
+MCP Tool Call Response - Server: nfl_stats_error, Tool: non_existent_tool, Duration: 0.0045s, Result: meta=None content=[TextContent(type='text', text='Unknown tool: non_existent_tool', annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_error
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Initializing season 2030
+Initializing new season for year 2030
+Unexpected error in initialize_season
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 392, in initialize_season
+    start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)
+                          ^^^^^^^^^
+NameError: name 'timedelta' is not defined
+Request completed
+Request started
+Fetching current active season
+Request completed
+Request started
+Fetching season 9999
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Draft suggestion validation error: Team 9999 not found
+Request completed
+Retrieved historical comparison via MCP for QB
+Retrieved historical comparison via MCP for WR
+Retrieved historical comparison via MCP for QB
+Request started
+Fetching season 999999
+Request completed
+Request started
+Generating playoff bracket for season 1
+Value error in generate_playoffs: Test Value Error
+Request completed
+GMAgent.evaluate_trade error: '<' not supported between instances of 'float' and 'MagicMock'
+GMAgent.evaluate_trade error: '<' not supported between instances of 'int' and 'MagicMock'
+Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmp53mdwi4z.md
+Logged issue: Test...
+Logged issue: First issue...
+Logged issue: Second issue...
+Created issue log file: C:\Users\cweir\AppData\Local\Temp\tmp13axqkn5.md
+Logged issue: Test...
+Logged issue: Async test...
+Failed to connect to MCP server test_server: Unsupported transport type: invalid
+Failed to connect to MCP server test_server: Command is required for stdio transport
+Failed to connect to MCP server test_server: URL is required for SSE transport
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Fetching salary cap for team 1
+Request completed
+Request started
+Fetching enhanced season summary
+Request completed
+Request started
+Evaluating trade for team 2
+Trade evaluation complete: ACCEPT (score: 38.5)
+Request completed
+Request started
+Evaluating trade for team 99999
+Request completed
+Request started
+Evaluating trade for team 2
+Request completed
+Request started
+Evaluating trade for team 2
+Request completed
+Request started
+Evaluating trade for team 2
+Request completed
+Request started
+Trade offer submitted to team 2
+Trade offer 1 created successfully
+Request completed
+Request started
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Unknown interaction: fake_interaction_name
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Player 1 injured: Minor Sprain (Severity 2), Out for 4 weeks
+Player 1 injured: Major Fracture (Severity 9), Out for 41 weeks
+Player 1 suffered a setback in rehab. Added 2 weeks.
+Player 1 suffered permanent attribute degradation.
+Player 1 recovered from injury.
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Generating playoff bracket for season 999
+Value error in generate_playoffs: Season not found
+Request completed
+Request started
+Starting offseason for season 999
+Value error in start_offseason: Season not found
+Request completed
+Request started
+Fetching salary cap for team 999
+Value error in get_team_salary_cap: Team 999 not found
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\mcp', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Retrieved historical comparison via MCP for WR
+Retrieved historical comparison via MCP for QB
+Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)
+Request completed
+Request started
+Draft suggestion for team 1 pick 4: Marvin Harrison Jr (WR)
+Request completed
+Request started
+Draft suggestion validation error: Team 999 not found
+Request completed
+Request started
+Draft suggestion validation error: No available players
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+MCP config file not found at backend/mcp_config.json
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Hydrating match context
+Error executing pre-game services
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 109, in start_new_game_session
+    await pre_game_service.apply_trait_effects(self.match_context)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 47, in apply_trait_effects
+    await self._apply_team_traits(match_context.home_team_id, match_context.home_roster)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 58, in _apply_team_traits
+    trait_defs = await self.trait_service.get_player_traits(player_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\trait_service.py", line 585, in get_player_traits
+    ).all()
+      ^^^
+AttributeError: 'coroutine' object has no attribute 'all'
+Match context hydrated
+AttributeInteractionEngine initialized with 13 interactions
+Hydrating match context
+Error executing pre-game services
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\orchestrator\simulation_orchestrator.py", line 109, in start_new_game_session
+    await pre_game_service.apply_trait_effects(self.match_context)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 47, in apply_trait_effects
+    await self._apply_team_traits(match_context.home_team_id, match_context.home_roster)
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\pre_game_service.py", line 58, in _apply_team_traits
+    trait_defs = await self.trait_service.get_player_traits(player_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\services\trait_service.py", line 585, in get_player_traits
+    ).all()
+      ^^^
+AttributeError: 'coroutine' object has no attribute 'all'
+Match context hydrated
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Request completed
+Field General active for Team 1: Tom Brady
+AttributeInteractionEngine initialized with 13 interactions
+Green Dot active for Team 1: Ray Lewis
+Field General active for Team 1: QB QBPlayer
+Green Dot active for Team 1: LB LBPlayer
+AttributeInteractionEngine initialized with 13 interactions
+Field General active for Team 1: QB QBPlayer
+Connected to MCP server: nfl_stats_test
+Discovered 3 tools for server nfl_stats_test
+MCP Tool Call Request - Server: nfl_stats_test, Tool: get_player_career_stats, Args: {'player_name': 'Test Player'}
+MCP Tool Call Response - Server: nfl_stats_test, Tool: get_player_career_stats, Duration: 0.0037s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_test
+Connected to MCP server: nfl_stats_concurrent
+Discovered 3 tools for server nfl_stats_concurrent
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 0'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 1'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 2'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 3'}
+MCP Tool Call Request - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Args: {'player_name': 'Player 4'}
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0066s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0106s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0110s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0113s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+MCP Tool Call Response - Server: nfl_stats_concurrent, Tool: get_player_career_stats, Duration: 0.0114s, Result: meta=None content=[TextContent(type='text', text="Error executing tool get_player_career_stats: 1 validation error for get_player_career_statsOutput\nresult.stats\n  Input should be a valid string [type=string_type, input_value={'games_played': 17, 'pas...etion_percentage': 67.5}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/string_type", annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_concurrent
+Connected to MCP server: nfl_stats_error
+Discovered 3 tools for server nfl_stats_error
+MCP Tool Call Request - Server: nfl_stats_error, Tool: non_existent_tool, Args: {}
+MCP Tool Call Response - Server: nfl_stats_error, Tool: non_existent_tool, Duration: 0.0062s, Result: meta=None content=[TextContent(type='text', text='Unknown tool: non_existent_tool', annotations=None, meta=None)] structuredContent=None isError=True
+Disconnected from MCP server: nfl_stats_error
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Request started
+Initializing season 2030
+Initializing new season for year 2030
+Unexpected error in initialize_season
+Traceback (most recent call last):
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\core\error_decorators.py", line 33, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend\app\api\endpoints\season.py", line 392, in initialize_season
+    start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)
+                          ^^^^^^^^^
+NameError: name 'timedelta' is not defined
+Request completed
+Request started
+Fetching current active season
+Request completed
+Request started
+Fetching season 9999
+Request completed
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
