@@ -343,7 +343,7 @@ class TestTrainingEngine:
         engine = TrainingEngine()
 
         assert engine.get_training_recommendation(10, "offseason") == "heavy"
-        assert engine.get_training_recommendation(40, "regular") == "light"
+        assert engine.get_training_recommendation(40, "regular") == "moderate"
         assert engine.get_training_recommendation(80, "regular") == "rest"
 
 

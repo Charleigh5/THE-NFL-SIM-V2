@@ -55,7 +55,7 @@ class TestRPGTraitEffects:
 
         # Blocking
         results = TraitEffectResolver.apply_chip_block_effects(rb, is_blocking=True)
-        assert results["pass_block_boost"] == 10.0
+        assert results["pass_pro_rating_boost"] == 10.0
         assert results["edge_rusher_slow_effect"] == 0.15
 
     def test_possession_receiver_effects(self):

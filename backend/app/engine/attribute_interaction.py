@@ -511,6 +511,10 @@ class AttributeInteractionEngine:
             attacker_val = getattr(attacker, attr, 50)
             defender_val = getattr(defender, attr, 50)
 
+            # Safety: handle None values
+            attacker_val = attacker_val if attacker_val is not None else 50
+            defender_val = defender_val if defender_val is not None else 50
+
             attacker_secondary_bonus += (attacker_val - 50) * 0.25
             defender_secondary_bonus += (defender_val - 50) * 0.25
 
@@ -526,6 +530,11 @@ class AttributeInteractionEngine:
         # Step 4: Experience modifier (veterans have edge in complex interactions)
         attacker_exp = getattr(attacker, 'experience', 0)
         defender_exp = getattr(defender, 'experience', 0)
+
+        # Safety: handle None and non-numeric values
+        attacker_exp = attacker_exp if (attacker_exp is not None and isinstance(attacker_exp, (int, float))) else 0
+        defender_exp = defender_exp if (defender_exp is not None and isinstance(defender_exp, (int, float))) else 0
+
         experience_modifier = (attacker_exp - defender_exp) * 0.5
         experience_modifier = max(-5, min(5, experience_modifier))
 
