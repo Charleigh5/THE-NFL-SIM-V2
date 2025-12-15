@@ -32,6 +32,35 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
+def create_player(
+    id: int = 1,
+    first_name: str = "Test",
+    last_name: str = "Player",
+    position: str = "QB",
+    overall_rating: int = 75,
+    height: int = 74,  # 6'2" default
+    weight: int = 215,
+    team_id: int = 1,
+    **kwargs
+):
+    """
+    Factory function for creating Player instances with all required NOT NULL fields.
+    Best practice: Use this instead of direct Player() to ensure consistency.
+    """
+    from app.models.player import Player
+    return Player(
+        id=id,
+        first_name=first_name,
+        last_name=last_name,
+        position=position,
+        overall_rating=overall_rating,
+        height=height,
+        weight=weight,
+        team_id=team_id,
+        **kwargs
+    )
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _debug_import_paths():
     """Temporary diagnostics: show how `app` resolves + the leading sys.path entries."""
@@ -70,7 +99,8 @@ def set_sqlite_pragma_async(dbapi_connection, connection_record):
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 AsyncTestingSessionLocal = sessionmaker(
-    class_=AsyncSession, autocommit=False, autoflush=False, bind=async_engine
+    class_=AsyncSession, autocommit=False, autoflush=False, bind=async_engine,
+    expire_on_commit=False  # Prevent MissingGreenlet on relationship access after commit
 )
 
 @pytest.fixture(scope="session")
@@ -130,8 +160,12 @@ def db_session():
 
 @pytest.fixture(scope="function")
 async def async_db_session():
+    """Function-scoped async session with proper isolation."""
     async with AsyncTestingSessionLocal() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            await session.rollback()  # Ensure clean state after each test
 
 @pytest.fixture(scope="function")
 def client(db_session):

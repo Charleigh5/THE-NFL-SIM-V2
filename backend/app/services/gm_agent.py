@@ -8,6 +8,7 @@ from app.core.mcp_registry import registry
 from app.core.mcp_cache import mcp_cache
 import random
 from app.core.random_utils import DeterministicRNG
+from app.core.trade_config import trade_config  # Fix import to get instance
 
 class GMAgent:
     def __init__(self, db: Session, team_id: int, seed: int = None):
@@ -198,43 +199,151 @@ class GMAgent:
         self._log_decision("CONTRACT_NEGOTIATION", "ACCEPTED" if accepted else "REJECTED", result)
         return result
 
+    def _evaluate_contract_value(self, player: Player) -> float:
+        """
+        Assess contract efficiency relative to production.
+        Returns a multiplier for trade value (1.0 = neutral/fair).
+        """
+        years_remaining = getattr(player, 'contract_years', 1)
+        contract_salary = getattr(player, 'contract_salary', 0) or 0
+        cap_hit_pct = contract_salary / 250_000_000  # Assume 250M cap for now
+
+        # Rookie deals are premium assets
+        if years_remaining >= 3 and player.age < 26:
+             # Basic check for rookie wage scale (low salary for age)
+             if contract_salary < 10_000_000:
+                return 1.25
+
+        # Check for expiring contracts (rentals)
+        if years_remaining == 1:
+            # If acquiring team is contender, rental is fine (1.0)
+            # But generally, 1 year of control is worth less than long term control
+            return 0.9
+
+        # Calculate expected salary based on rating (simple heuristic)
+        # Elite (90+): $25M+
+        # Good (80+): $15M+
+        # Starter (75+): $5M+
+        expected_salary = 0
+        if player.overall_rating >= 90: expected_salary = 25_000_000
+        elif player.overall_rating >= 80: expected_salary = 15_000_000
+        elif player.overall_rating >= 75: expected_salary = 5_000_000
+        else: expected_salary = 1_000_000
+
+        # Ratio of Actual / Expected
+        # If paying 20M for 5M player -> Ratio 4.0 (Bad)
+        # If paying 5M for 20M player -> Ratio 0.25 (Good)
+        if expected_salary == 0: ratio = 10.0 # avoid div/0
+        else: ratio = contract_salary / expected_salary
+
+        if ratio < 0.5: return 1.20  # Steal (Team Friendly)
+        if ratio < 0.9: return 1.10  # Good Value
+        if ratio < 1.1: return 1.00  # Fair Market
+        if ratio < 1.5: return 0.85  # Overpaid
+        return 0.60                  # Albatross
+
+    def _is_contract_dump_candidate(self, player: Player) -> bool:
+        """
+        Determine if a player is a candidate for a salary dump.
+        (High salary, low production, expiring or long term bad deal)
+        """
+        contract_salary = getattr(player, 'contract_salary', 0) or 0
+        if contract_salary < 10_000_000:
+            return False # Too cheap to be a "dump" usually
+
+        # Check rating vs salary
+        # Dump if we are paying Elite money for non-Elite play
+        startable_rating = 80
+        if player.position == "QB": startable_rating = 85
+
+        if player.overall_rating < startable_rating and contract_salary > 15_000_000:
+            return True
+
+        return False
+
+    def _calculate_flight_risk_discount(self, player: Player) -> float:
+        """
+        Calculate discount factor for players likely to leave in free agency.
+        """
+        years_remaining = getattr(player, 'contract_years', 1)
+        if years_remaining > 1:
+            return 1.0 # Under contract
+
+        # Expiring deal logic
+        # If team is bad (not contender), likely to leave testing market
+        # Simple heuristic for now:
+        return 0.85 # Rental discount
+
     def _calculate_package_value(self, players: List[Player], picks: List[dict], is_acquiring: bool) -> float:
         total_value = 0.0
 
         for player in players:
-            # Base value from overall rating
+            # 1. Base Value (Exponential Curve)
             if player.overall_rating < 50:
-                val = 1.0
+                base_val = 1.0
             else:
-                val = ((player.overall_rating - 50) ** 1.6) / 2.0
+                base_val = ((player.overall_rating - 50) ** 1.6) / 2.0
 
-            # Age modifier
+            # 2. Age Modifier (Young Talent Premium / Veteran Decline)
+            age_mult = 1.0
             if player.age < 24:
-                val *= 1.3 # Young talent premium
-            elif player.age > 32:
-                val *= 0.7 # Age decline penalty
+                age_mult = 1.3
+            elif player.age > 30:
+                # Gradual decline: 0.95 at 31, 0.9 at 32, etc.
+                age_mult = max(0.5, 1.0 - ((player.age - 30) * 0.05))
 
-            # Contract modifier (simplified)
-            if is_acquiring and player.contract_salary > 20000000 and player.overall_rating < 85:
-                val *= 0.8
+            # 3. Positional Value Tier
+            pos_mult = trade_config.get_position_multiplier(player.position)
 
-            # Positional Need Modifier (if acquiring)
+            # 4. Contract Efficiency (New)
+            contract_mult = self._evaluate_contract_value(player)
+
+            # 5. Flight Risk (New)
+            risk_mult = self._calculate_flight_risk_discount(player)
+
+            # 6. Dump Logic (New)
+            # If player is a dump candidate, their value is severely penalized
+            dump_penalty = 1.0
+            if self._is_contract_dump_candidate(player):
+                dump_penalty = 0.5 # 50% value reduction (or even negative in future)
+
+            # Calculate Player Value
+            player_val = base_val * age_mult * pos_mult * contract_mult * risk_mult * dump_penalty
+
+            # 7. Positional Need Modifier (Only if acquiring)
             if is_acquiring:
                 need_multiplier = self._get_position_need(player.position)
-                val *= need_multiplier
+                player_val *= need_multiplier
 
-            total_value += val
+            total_value += player_val
+
+        # Draft Pick Valuation
+        # Using simplified Jimmy Johnson / Fitzgerald-Spielberger hybrid for now
+        # Ideally should delegate to draft_value_chart.py if fully integrated
+        # For this sprint, we keep logic internal or simple delegate?
+        # Plan says "Draft Chart" is Sprint 1 task 1.3 (done)
+        # So we should USE it.
+        from app.data.draft_value_chart import DraftValueChart # lazy import to avoid circle
 
         for pick in picks:
             round_num = pick.get("round", 1)
-            pick_val = 3000 * (0.5 ** (round_num - 1))
+            pick_year = pick.get("year", 2025)
+            years_out = pick_year - 2025
 
-            year_offset = pick.get("year", 2025) - 2025
-            if year_offset > 0:
-                discount_rate = 0.8 + (self.gm_traits["patience"] / 500)
-                pick_val *= (discount_rate ** year_offset)
+            # Use new Chart Service
+            try:
+                if years_out == 0:
+                    # Estimate pick number (mid-round)
+                    pick_num = ((round_num - 1) * 32) + 16
+                    pick_val = DraftValueChart.get_pick_value(pick_num)
+                else:
+                    pick_val = DraftValueChart.get_future_pick_value(round_num, years_out)
 
-            total_value += (pick_val / 30.0)
+                # Normalize to player value scale (approx /30 to match player ratings curve)
+                total_value += (pick_val / 30.0)
+            except Exception:
+                # Fallback
+                total_value += (10 / 30.0)
 
         return total_value
 
