@@ -31,20 +31,22 @@ def gm_agent(mock_db, mock_team):
 
 @pytest.mark.asyncio
 async def test_evaluate_trade_accept(gm_agent, mock_db):
-    # Setup players
+    # Setup players with correct attribute names matching gm_agent.py
     p1 = MagicMock(spec=Player)
     p1.id = 101
-    p1.overall = 85
+    p1.overall_rating = 85
     p1.age = 26
-    p1.salary = 10000000
+    p1.contract_salary = 10000000
+    p1.contract_years = 3
     p1.position = "WR"
     p1.last_name = "StarReceiver"
 
     p2 = MagicMock(spec=Player)
     p2.id = 201
-    p2.overall = 80
+    p2.overall_rating = 80
     p2.age = 28
-    p2.salary = 8000000
+    p2.contract_salary = 8000000
+    p2.contract_years = 2
     p2.position = "CB"
     p2.last_name = "SolidCorner"
 
@@ -74,11 +76,19 @@ async def test_evaluate_trade_reject_financial(gm_agent, mock_db, mock_team):
 
     p1 = MagicMock(spec=Player)
     p1.id = 101
-    p1.salary = 20000000 # Expensive
+    p1.contract_salary = 20000000 # Expensive
+    p1.overall_rating = 75
+    p1.age = 28
+    p1.contract_years = 2
+    p1.position = "WR"
 
     p2 = MagicMock(spec=Player)
     p2.id = 201
-    p2.salary = 5000000 # Cheap
+    p2.contract_salary = 5000000 # Cheap
+    p2.overall_rating = 70
+    p2.age = 27
+    p2.contract_years = 1
+    p2.position = "CB"
 
     mock_db.get.side_effect = lambda model, id: p1 if id == 101 else (p2 if id == 201 else None)
 
@@ -111,14 +121,15 @@ def test_negotiate_contract(gm_agent, mock_db):
     assert call_args.decision_type == "CONTRACT_NEGOTIATION"
 
 def test_generate_trade_proposal(gm_agent, mock_db):
-    # Mock finding a player
+    # Mock finding a player with correct attribute names
     target_player = MagicMock(spec=Player)
     target_player.id = 301
     target_player.team_id = 2
     target_player.position = "QB"
-    target_player.overall = 75
+    target_player.overall_rating = 75
     target_player.age = 25
-    target_player.salary = 5000000
+    target_player.contract_salary = 5000000
+    target_player.contract_years = 3
 
     # Mock DB execute result
     mock_result = MagicMock()

@@ -16,8 +16,8 @@ def test_get_league_leaders(db_session):
     db_session.add(team)
     db_session.commit()
 
-    p1 = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id)
-    p2 = Player(first_name="QB", last_name="Two", position=Position.QB, team_id=team.id)
+    p1 = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, height=75, weight=220, age=27)
+    p2 = Player(first_name="QB", last_name="Two", position=Position.QB, team_id=team.id, height=74, weight=215, age=26)
     db_session.add_all([p1, p2])
     db_session.commit()
 
