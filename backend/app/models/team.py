@@ -24,6 +24,9 @@ class Team(Base):
     losses = Column(Integer, default=0)
     ties = Column(Integer, default=0)
 
+    # Power Ranking (Elo Rating System)
+    elo_rating = Column(Float, default=1500.0)  # Standard starting Elo
+
     # RPG/Franchise
     prestige = Column(Integer, default=50)
     salary_cap_space = Column(Float, default=0.0)

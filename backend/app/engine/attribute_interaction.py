@@ -499,9 +499,13 @@ class AttributeInteractionEngine:
         definition = self.INTERACTION_CATALOG[interaction_name]
         context = context or {}
 
-        # Step 1: Get primary attributes
+        # Step 1: Get primary attributes (with None-safety)
         attacker_primary = getattr(attacker, definition.attacker_attr, 50)
         defender_primary = getattr(defender, definition.defender_attr, 50)
+
+        # Safety: handle None values for primary attributes
+        attacker_primary = attacker_primary if attacker_primary is not None else 50
+        defender_primary = defender_primary if defender_primary is not None else 50
 
         # Step 2: Calculate secondary attribute contributions (25% weight each, max 2)
         attacker_secondary_bonus = 0.0

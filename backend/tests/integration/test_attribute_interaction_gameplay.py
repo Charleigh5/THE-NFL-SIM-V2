@@ -27,6 +27,18 @@ class MockRNG:
     def randint(self, a: int, b: int) -> int:
         return (a + b) // 2
 
+    def uniform(self, a: float, b: float) -> float:
+        """Return deterministic value between a and b."""
+        return a + (b - a) * self.value
+
+    def gauss(self, mu: float, sigma: float) -> float:
+        """Return deterministic gaussian value."""
+        return mu
+
+    def choice(self, seq):
+        """Return first element of sequence."""
+        return seq[0] if seq else None
+
 
 class TestAttributeInteractionIntegration:
     """Integration tests for attribute interactions in gameplay."""

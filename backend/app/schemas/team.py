@@ -10,6 +10,7 @@ class TeamBase(BaseModel):
     wins: int = 0
     losses: int = 0
     ties: int = 0
+    elo_rating: float = 1500.0  # Power Ranking
     logo_url: Optional[str] = None
     primary_color: Optional[str] = None
     secondary_color: Optional[str] = None

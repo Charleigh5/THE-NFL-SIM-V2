@@ -189,6 +189,9 @@ class SimulationOrchestrator:
                 await self._save_player_stats()
                 await self._save_progress() # Ensure final state is saved
 
+                # Update Team Elo Ratings (BE-1.4)
+                await self._update_elo_ratings(game)
+
                 logger.info("Finalized game result", extra={"game_id": self.current_game_id})
         except Exception as e:
             logger.exception("Error finalizing game", extra={"game_id": self.current_game_id})
@@ -200,6 +203,73 @@ class SimulationOrchestrator:
                 # We don't close the session here as it's injected
                 self.db_session = None
             self.current_game_id = None
+
+    async def _update_elo_ratings(self, game: Game) -> None:
+        """Update Elo ratings for both teams after a game."""
+        from app.services.elo_service import EloService
+        from app.models.team import Team
+
+        try:
+            # Fetch both teams
+            home_stmt = select(Team).where(Team.id == game.home_team_id)
+            away_stmt = select(Team).where(Team.id == game.away_team_id)
+
+            home_result = await self.db_session.execute(home_stmt)
+            away_result = await self.db_session.execute(away_stmt)
+
+            home_team = home_result.scalar_one_or_none()
+            away_team = away_result.scalar_one_or_none()
+
+            if not home_team or not away_team:
+                logger.warning("Could not find teams for Elo update", extra={"game_id": game.id})
+                return
+
+            # Determine winner/loser
+            home_score = game.home_score or self.home_score
+            away_score = game.away_score or self.away_score
+            point_diff = abs(home_score - away_score)
+            is_tie = home_score == away_score
+
+            if is_tie:
+                # For ties, update both with tie logic
+                new_home_elo, new_away_elo = EloService.update_ratings(
+                    home_team.elo_rating or 1500.0,
+                    away_team.elo_rating or 1500.0,
+                    point_diff=0,
+                    is_tie=True
+                )
+            elif home_score > away_score:
+                new_home_elo, new_away_elo = EloService.update_ratings(
+                    home_team.elo_rating or 1500.0,
+                    away_team.elo_rating or 1500.0,
+                    point_diff=point_diff
+                )
+            else:
+                # Away team won
+                new_away_elo, new_home_elo = EloService.update_ratings(
+                    away_team.elo_rating or 1500.0,
+                    home_team.elo_rating or 1500.0,
+                    point_diff=point_diff
+                )
+
+            # Update team objects
+            home_team.elo_rating = new_home_elo
+            away_team.elo_rating = new_away_elo
+
+            await self.db_session.commit()
+
+            logger.info(
+                "Elo ratings updated",
+                extra={
+                    "game_id": game.id,
+                    "home_team": home_team.abbreviation,
+                    "home_elo": new_home_elo,
+                    "away_team": away_team.abbreviation,
+                    "away_elo": new_away_elo,
+                }
+            )
+        except Exception as e:
+            logger.exception("Error updating Elo ratings", extra={"game_id": game.id})
 
     async def _save_player_stats(self, game: Game = None) -> None:
         """Aggregate and save player stats from game history."""

@@ -81,12 +81,12 @@ class TestPlayResolutionBenchmarks:
 
     def test_pass_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark pass play resolution time."""
-        from app.schemas.play import PlayCommand
+        from app.orchestrator.play_commands import PlayCommand, PassPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
-        play_command = PlayCommand(
+        play_command = PassPlayCommand(
             play_type="pass",
             formation="shotgun",
             route_concept="slant",
@@ -98,27 +98,22 @@ class TestPlayResolutionBenchmarks:
         # Benchmark the resolution
         result = benchmark(
             resolver.resolve_play,
-            play_command=play_command,
-            offense_team=team1,
-            defense_team=team2,
-            down=1,
-            distance=10,
-            field_position=25
+            command=play_command
         )
 
         assert result is not None
 
     def test_run_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark run play resolution time."""
-        from app.schemas.play import PlayCommand
+        from app.orchestrator.play_commands import PlayCommand, RunPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
-        play_command = PlayCommand(
+        play_command = RunPlayCommand(
             play_type="run",
             formation="i_form",
-            play_direction="middle",
+            run_direction="middle",
             gap="a",
             offense_players=[sample_players["RB"]],
             defense_players=[]
@@ -126,12 +121,7 @@ class TestPlayResolutionBenchmarks:
 
         result = benchmark(
             resolver.resolve_play,
-            play_command=play_command,
-            offense_team=team1,
-            defense_team=team2,
-            down=1,
-            distance=10,
-            field_position=25
+            command=play_command
         )
 
         assert result is not None
