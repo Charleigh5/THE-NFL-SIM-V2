@@ -33,36 +33,14 @@ export const seasonApi = {
 
   // Get current active season
   getCurrentSeason: async (): Promise<Season> => {
-    return {
-      id: 1,
-      year: 2024,
-      current_week: 1,
-      status: "OFF_SEASON",
-      total_weeks: 18,
-      playoff_weeks: 4,
-      is_active: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+    const response = await api.get("/api/season/current");
+    return response.data;
   },
 
   // Get season summary
   getSeasonSummary: async (): Promise<SeasonSummary> => {
-    return {
-      season: {
-        id: 1,
-        year: 2024,
-        current_week: 1,
-        status: "OFF_SEASON",
-        total_weeks: 18,
-        playoff_weeks: 4,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      completion_percentage: 0,
-      current_phase: "OFF_SEASON",
-    };
+    const response = await api.get("/api/season/summary");
+    return response.data;
   },
 
   // Get specific season

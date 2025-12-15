@@ -328,14 +328,17 @@ const SeasonDashboard: React.FC = () => {
           </div>
         )}
 
-        <div className={stylesModule.header} data-testid="dashboard-header">
+        <header className={stylesModule.header} data-testid="season-dashboard-header">
+          <span className={stylesModule.headerText}>
+            {season.year} Season - Week {season.current_week}
+          </span>
           <SeasonSummaryCard
             season={season}
             progress={seasonProgress}
             actions={actions}
             champion={championName}
           />
-        </div>
+        </header>
 
         {/* Broadcast Switcher (Tabs) */}
         <div className={stylesModule.switcherRow} data-testid="dashboard-tabs">

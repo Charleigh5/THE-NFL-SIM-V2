@@ -164,6 +164,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               <th onClick={() => handleSort("strength_of_schedule")} title="Strength of Schedule">
                 SOS
               </th>
+              <th title="Power Ranking (Elo Rating)">PWR</th>
             </>
           )}
         </tr>
@@ -215,6 +216,12 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                       {team.point_differential}
                     </td>
                     <td className="stat-cell">{team.strength_of_schedule.toFixed(3)}</td>
+                    <td
+                      className="stat-cell stat-power-rank"
+                      title={`Elo: ${team.elo_rating?.toFixed(0) ?? 1500}`}
+                    >
+                      {team.elo_rating ? Math.round(team.elo_rating) : 1500}
+                    </td>
                   </>
                 )}
               </tr>

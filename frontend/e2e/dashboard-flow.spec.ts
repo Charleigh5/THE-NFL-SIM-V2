@@ -45,6 +45,7 @@ test.describe("Dashboard Flow", () => {
     await expect(page.locator(".engine-card", { hasText: "Genesis Engine" })).toBeVisible();
   });
 
+  // This test verifies dashboard behavior when no active season exists
   test("should display dashboard with no active season and allow starting a new one", async ({
     page,
   }) => {
@@ -56,7 +57,7 @@ test.describe("Dashboard Flow", () => {
     });
 
     await page.route("**/api/season/current", async (route) => {
-      await route.fulfill({ json: currentSeasonMock });
+      await route.fulfill({ json: currentSeasonMock, status: currentSeasonMock ? 200 : 404 });
     });
 
     // Mock season initialization

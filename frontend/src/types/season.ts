@@ -85,6 +85,7 @@ export interface TeamStanding {
   clinched_seed?: number;
   tiebreaker_reason?: string;
   seed?: number;
+  elo_rating?: number; // Power Ranking (Elo system)
 }
 
 export interface WeekSimulationResult {

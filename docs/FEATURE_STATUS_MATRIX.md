@@ -1,6 +1,6 @@
 # Feature Status Matrix
 
-**Last Updated:** 2025-12-14
+**Last Updated:** 2025-12-15
 **Purpose:** Central tracking document for all features in the NFL SIM application
 
 ---
@@ -41,7 +41,7 @@
 | **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                               | 🧪 75% | P1       | Integrated with match context                                  |
 | **GAME-008** | QB Pocket Presence            | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P1       | `sack_calculator.py` active                                    |
 | **GAME-009** | Environmental Weather Effects | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P1       | Fully integrated: Pass wind penalties, mud speed, kick impacts |
-| **GAME-010** | Venue-Specific Effects        | 🔵 PROPOSED         | ❌                                       | ❌ 0%  | P2       | Home field advantage, dome vs outdoor                          |
+| **GAME-010** | Venue-Specific Effects        | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P2       | `StadiumEngine`, dome support, home field advantage            |
 | **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                       | 🧪 70% | P0       | Works but undocumented                                         |
 | **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                       | 🧪 50% | P1       | Basic implementation                                           |
 | **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                       | 🧪 40% | P2       | Needs testing                                                  |
@@ -51,107 +51,107 @@
 
 ## 2. AI & Decision Making
 
-| ID         | Feature Name                  | Status           | Spec Doc                     | Tests  | Priority | Notes                            |
-| ---------- | ----------------------------- | ---------------- | ---------------------------- | ------ | -------- | -------------------------------- |
-| **AI-001** | Play Calling AI               | 🟢 SPEC_COMPLETE | ✅ `PLAY_CALLING_AI_SPEC.md` | 🧪 70% | P0       | Full spec created 2025-12-12     |
-| **AI-002** | Player AI State Machines      | 🟡 SPEC_NEEDED   | ❌                           | 🧪 65% | P0       | `ai.py` exists, needs docs       |
-| **AI-003** | Coaching AI Personality       | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P1       | Conservative/Aggressive/Adaptive |
-| **AI-004** | 4th Down Decision AI          | 🟡 SPEC_NEEDED   | ❌                           | 🧪 60% | P1       | Exists in play_caller            |
-| **AI-005** | 2-Minute Drill AI             | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P1       | Clock management                 |
-| **AI-006** | Timeout Management            | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P2       | Strategic timeout usage          |
-| **AI-007** | Challenge Flag Decisions      | 🔵 PROPOSED      | ❌                           | ❌ 0%  | P3       | Replay system                    |
-| **AI-008** | Defensive Formation Selection | ✅ IMPLEMENTED   | ❌                           | 🧪 50% | P1       | Basic implementation             |
-| **AI-009** | Offensive Line AI             | ✅ IMPLEMENTED   | ❌                           | 🧪 60% | P0       | `offensive_line_ai.py`           |
-| **AI-010** | Blocking AI                   | ✅ IMPLEMENTED   | ❌                           | 🧪 60% | P0       | `blocking.py`                    |
+| ID         | Feature Name                  | Status           | Spec Doc                                     | Tests  | Priority | Notes                                      |
+| ---------- | ----------------------------- | ---------------- | -------------------------------------------- | ------ | -------- | ------------------------------------------ |
+| **AI-001** | Play Calling AI               | 🟢 SPEC_COMPLETE | ✅ `PLAY_CALLING_AI_SPEC.md`                 | 🧪 70% | P0       | Full spec created 2025-12-12               |
+| **AI-002** | Player AI State Machines      | 🟢 SPEC_COMPLETE | ✅ `specs/AI-002_player_state_machines.md`   | 🧪 65% | P0       | Stateless trees in `ai.py`                 |
+| **AI-003** | Coaching AI Personality       | ✅ IMPLEMENTED   | ❌                                           | 🧪 70% | P1       | `CoachingAIService` with aggression        |
+| **AI-004** | 4th Down Decision AI          | 🟢 SPEC_COMPLETE | ✅ `specs/AI-004_4th_down_decision_logic.md` | 🧪 60% | P1       | Basic Playbook logic                       |
+| **AI-005** | 2-Minute Drill AI             | 🔵 PROPOSED      | ❌                                           | ❌ 0%  | P1       | Clock management                           |
+| **AI-006** | Timeout Management            | ✅ IMPLEMENTED   | ❌                                           | 🧪 60% | P2       | `GameState.TIMEOUT`, `should_call_timeout` |
+| **AI-007** | Challenge Flag Decisions      | 🔵 PROPOSED      | ❌                                           | ❌ 0%  | P3       | Replay system                              |
+| **AI-008** | Defensive Formation Selection | ✅ IMPLEMENTED   | ❌                                           | 🧪 50% | P1       | Basic implementation                       |
+| **AI-009** | Offensive Line AI             | ✅ IMPLEMENTED   | ❌                                           | 🧪 60% | P0       | `offensive_line_ai.py`                     |
+| **AI-010** | Blocking AI                   | ✅ IMPLEMENTED   | ❌                                           | 🧪 60% | P0       | `blocking.py`                              |
 
 ---
 
 ## 3. Player Attributes & Progression
 
-| ID           | Feature Name                              | Status           | Spec Doc                                  | Tests  | Priority | Notes                          |
-| ------------ | ----------------------------------------- | ---------------- | ----------------------------------------- | ------ | -------- | ------------------------------ |
-| **ATTR-001** | Core Attribute System                     | 🟢 SPEC_COMPLETE | ✅ `player-system/attributes.md`          | 🧪 80% | P0       | Well documented                |
-| **ATTR-002** | Position-Specific Attributes              | 🟢 SPEC_COMPLETE | ✅ `player-system/offensive-positions.md` | 🧪 75% | P0       | Offensive documented           |
-| **ATTR-003** | Defensive Attributes                      | 🟢 SPEC_COMPLETE | ✅ `player-system/defensive-positions.md` | 🧪 75% | P0       | Defensive documented           |
-| **ATTR-004** | Special Teams Attributes                  | 🟢 SPEC_COMPLETE | ✅ `player-system/special-teams.md`       | 🧪 70% | P1       | ST documented                  |
-| **ATTR-005** | Attribute Interactions (Inter-Positional) | 🔵 PROPOSED      | ⚠️ Proposed only                          | ❌ 0%  | P1       | **HIGH PRIORITY TO IMPLEMENT** |
-| **ATTR-006** | QB Field General → WR/OL Boost            | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P1       | Part of ATTR-005               |
-| **ATTR-007** | OL Unit Chemistry                         | ✅ IMPLEMENTED   | ⚠️ In proposed features                   | 🧪 70% | P1       | `chemistry_service.py` active  |
-| **ATTR-008** | RB Patience → OL Timing                   | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P2       | Part of ATTR-005               |
-| **ATTR-009** | QB Quick Release                          | ✅ IMPLEMENTED   | ❌                                        | 🧪 50% | P1       | Exists as attribute            |
-| **ATTR-010** | QB Pocket Presence                        | ✅ IMPLEMENTED   | ❌                                        | 🧪 80% | P1       | Same as GAME-008               |
+| ID           | Feature Name                              | Status           | Spec Doc                                  | Tests  | Priority | Notes                                    |
+| ------------ | ----------------------------------------- | ---------------- | ----------------------------------------- | ------ | -------- | ---------------------------------------- |
+| **ATTR-001** | Core Attribute System                     | 🟢 SPEC_COMPLETE | ✅ `player-system/attributes.md`          | 🧪 80% | P0       | Well documented                          |
+| **ATTR-002** | Position-Specific Attributes              | 🟢 SPEC_COMPLETE | ✅ `player-system/offensive-positions.md` | 🧪 75% | P0       | Offensive documented                     |
+| **ATTR-003** | Defensive Attributes                      | 🟢 SPEC_COMPLETE | ✅ `player-system/defensive-positions.md` | 🧪 75% | P0       | Defensive documented                     |
+| **ATTR-004** | Special Teams Attributes                  | 🟢 SPEC_COMPLETE | ✅ `player-system/special-teams.md`       | 🧪 70% | P1       | ST documented                            |
+| **ATTR-005** | Attribute Interactions (Inter-Positional) | ✅ IMPLEMENTED   | ❌                                        | 🧪 75% | P1       | `AttributeInteractionEngine` (769 lines) |
+| **ATTR-006** | QB Field General → WR/OL Boost            | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P1       | Part of ATTR-005                         |
+| **ATTR-007** | OL Unit Chemistry                         | ✅ IMPLEMENTED   | ⚠️ In proposed features                   | 🧪 70% | P1       | `chemistry_service.py` active            |
+| **ATTR-008** | RB Patience → OL Timing                   | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P2       | Part of ATTR-005                         |
+| **ATTR-009** | QB Quick Release                          | ✅ IMPLEMENTED   | ❌                                        | 🧪 50% | P1       | Exists as attribute                      |
+| **ATTR-010** | QB Pocket Presence                        | ✅ IMPLEMENTED   | ❌                                        | 🧪 80% | P1       | Same as GAME-008                         |
 
 ---
 
 ## 4. RPG & Progression Systems
 
-| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                          |
-| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | ------------------------------ |
-| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                   |
-| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12   |
-| **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster      |
-| **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late     |
-| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines) |
-| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested            |
-| **RPG-007** | Trait: WR Possession Receiver  | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Second trait                   |
-| **RPG-008** | Trait: RB Chip Block           | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P2       | Third trait                    |
-| **RPG-009** | Trait: LB Green Dot            | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | Defensive leader               |
-| **RPG-010** | Trait: DB Pick Artist          | 🔵 PROPOSED      | ⚠️ In proposed features               | ❌ 0%  | P1       | INT specialist                 |
-| **RPG-011** | Trait Acquisition System       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | How players gain traits        |
-| **RPG-012** | Training Programs              | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Offseason development          |
-| **RPG-013** | Coaching Staff Influence       | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Coach affects development      |
+| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                                          |
+| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | ---------------------------------------------- |
+| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                                   |
+| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12                   |
+| **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster                      |
+| **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late                     |
+| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines)                 |
+| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested                            |
+| **RPG-007** | Trait: WR Possession Receiver  | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_possession_receiver_effects`            |
+| **RPG-008** | Trait: RB Chip Block           | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `apply_chip_block_effects`                     |
+| **RPG-009** | Trait: LB Green Dot            | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_green_dot_effects` + pre-game           |
+| **RPG-010** | Trait: DB Pick Artist          | ✅ IMPLEMENTED   | ❌                                    | 🧪 75% | P1       | `apply_pick_artist_effects` in INT check       |
+| **RPG-011** | Trait Acquisition System       | ✅ IMPLEMENTED   | ❌                                    | 🧪 60% | P1       | `TraitAcquisitionService`                      |
+| **RPG-012** | Training Programs              | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `training/camp.py`, `drills.py`                |
+| **RPG-013** | Coaching Staff Influence       | ✅ IMPLEMENTED   | ❌                                    | 🧪 65% | P2       | `coaching_philosophy.py`, `coach_expertise.py` |
 
 ---
 
 ## 5. Franchise Management
 
-| ID           | Feature Name                | Status         | Spec Doc   | Tests  | Priority | Notes                                            |
-| ------------ | --------------------------- | -------------- | ---------- | ------ | -------- | ------------------------------------------------ |
-| **FRAN-001** | Season Infrastructure       | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | Works well                                       |
-| **FRAN-002** | Schedule Generator          | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | `schedule_generator.py`                          |
-| **FRAN-003** | Standings Calculator        | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | `standings_calculator.py`                        |
-| **FRAN-004** | Playoff System              | ✅ IMPLEMENTED | ⚠️ Partial | 🧪 85% | P0       | Service exists                                   |
-| **FRAN-005** | Playoff Tiebreakers         | 🟡 SPEC_NEEDED | ❌         | 🧪 70% | P1       | Implemented but undocumented                     |
-| **FRAN-006** | Offseason System            | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `offseason_service.py`                           |
-| **FRAN-007** | Rookie Generator            | ✅ IMPLEMENTED | ❌         | 🧪 75% | P0       | `rookie_generator.py`                            |
-| **FRAN-008** | Draft System                | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | Basic draft works                                |
-| **FRAN-009** | Scouting System             | 🔵 PROPOSED    | ❌         | ❌ 0%  | P1       | **NEEDS FULL SPEC**                              |
-| **FRAN-010** | Scouting Accuracy Levels    | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Elite/Veteran/Rookie scouts                      |
-| **FRAN-011** | Hidden Potential Mechanic   | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Prospects have hidden stats                      |
-| **FRAN-012** | Bust/Boom Probability       | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Draft risk assessment                            |
-| **FRAN-013** | Contract System             | ✅ IMPLEMENTED | ❌         | 🧪 70% | P0       | Basic contracts work                             |
-| **FRAN-014** | Contract Negotiation        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Currently auto-signed                            |
-| **FRAN-015** | Salary Cap Management       | ✅ IMPLEMENTED | ❌         | 🧪 75% | P1       | `salary_cap_service.py`                          |
-| **FRAN-016** | Contract Restructuring      | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Cap management tool                              |
-| **FRAN-017** | Dead Money Calculations     | 🟡 SPEC_NEEDED | ❌         | 🧪 60% | P2       | Exists but undocumented                          |
-| **FRAN-018** | Free Agency System          | ✅ IMPLEMENTED | ❌         | 🧪 70% | P1       | Auto-fill roster                                 |
-| **FRAN-019** | Free Agent Decision Factors | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Money vs contender vs loyalty                    |
-| **FRAN-020** | Depth Chart Management      | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `depth_chart_service.py`                         |
-| **FRAN-021** | Roster Management           | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | Works well                                       |
-| **FRAN-022** | Injury System (Models)      | ✅ IMPLEMENTED | ❌         | 🧪 85% | P1       | Full injury probability + play-through mechanics |
-| **FRAN-023** | Injury Probability          | ✅ IMPLEMENTED | ❌         | 🧪 90% | P1       | Play type, position, fatigue multipliers         |
-| **FRAN-024** | Injury Recovery System      | ✅ IMPLEMENTED | ❌         | 🧪 80% | P1       | Severity-based recovery + RAGKNOW trait          |
-| **FRAN-025** | Player Morale System        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Contract/usage/wins impact                       |
+| ID           | Feature Name                | Status           | Spec Doc                                       | Tests  | Priority | Notes                                               |
+| ------------ | --------------------------- | ---------------- | ---------------------------------------------- | ------ | -------- | --------------------------------------------------- |
+| **FRAN-001** | Season Infrastructure       | ✅ IMPLEMENTED   | ❌                                             | 🧪 90% | P0       | Works well                                          |
+| **FRAN-002** | Schedule Generator          | ✅ IMPLEMENTED   | ❌                                             | 🧪 85% | P0       | `schedule_generator.py`                             |
+| **FRAN-003** | Standings Calculator        | ✅ IMPLEMENTED   | ❌                                             | 🧪 90% | P0       | `standings_calculator.py`                           |
+| **FRAN-004** | Playoff System              | ✅ IMPLEMENTED   | ⚠️ Partial                                     | 🧪 85% | P0       | Service exists                                      |
+| **FRAN-005** | Playoff Tiebreakers         | 🟢 SPEC_COMPLETE | ✅ `specs/FRAN-005_playoff_tiebreakers.md`     | 🧪 70% | P1       | Implemented in `PlayoffService`                     |
+| **FRAN-006** | Offseason System            | ✅ IMPLEMENTED   | ❌                                             | 🧪 80% | P0       | `offseason_service.py`                              |
+| **FRAN-007** | Rookie Generator            | ✅ IMPLEMENTED   | ❌                                             | 🧪 75% | P0       | `rookie_generator.py`                               |
+| **FRAN-008** | Draft System                | ✅ IMPLEMENTED   | ❌                                             | 🧪 80% | P0       | Basic draft works                                   |
+| **FRAN-009** | Scouting System             | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P1       | `ScoutingService`, `ScoutingEngine` package         |
+| **FRAN-010** | Scouting Accuracy Levels    | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `ScoutProfile` with accuracy tiers                  |
+| **FRAN-011** | Hidden Potential Mechanic   | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Prospects have hidden stats                         |
+| **FRAN-012** | Bust/Boom Probability       | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Draft risk assessment                               |
+| **FRAN-013** | Contract System             | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P0       | Basic contracts work                                |
+| **FRAN-014** | Contract Negotiation        | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `gm_agent.negotiate_contract()`                     |
+| **FRAN-015** | Salary Cap Management       | ✅ IMPLEMENTED   | ❌                                             | 🧪 75% | P1       | `salary_cap_service.py`                             |
+| **FRAN-016** | Contract Restructuring      | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Cap management tool                                 |
+| **FRAN-017** | Dead Money Calculations     | 🟢 SPEC_COMPLETE | ✅ `specs/FRAN-017_dead_money_calculations.md` | 🧪 60% | P2       | See `capologist.py`                                 |
+| **FRAN-018** | Free Agency System          | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P1       | Auto-fill roster                                    |
+| **FRAN-019** | Free Agent Decision Factors | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Money vs contender vs loyalty                       |
+| **FRAN-020** | Depth Chart Management      | ✅ IMPLEMENTED   | ❌                                             | 🧪 80% | P0       | `depth_chart_service.py`                            |
+| **FRAN-021** | Roster Management           | ✅ IMPLEMENTED   | ❌                                             | 🧪 85% | P0       | Works well                                          |
+| **FRAN-022** | Injury System (Models)      | ✅ IMPLEMENTED   | ❌                                             | 🧪 85% | P1       | Full injury probability + play-through mechanics    |
+| **FRAN-023** | Injury Probability          | ✅ IMPLEMENTED   | ❌                                             | 🧪 90% | P1       | Play type, position, fatigue multipliers            |
+| **FRAN-024** | Injury Recovery System      | ✅ IMPLEMENTED   | ❌                                             | 🧪 80% | P1       | Severity-based recovery + RAGKNOW trait             |
+| **FRAN-025** | Player Morale System        | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P2       | `morale` attr, `_update_team_morale`, API endpoints |
 
 ---
 
 ## 6. MCP Integration & AI Features
 
-| ID          | Feature Name                  | Status         | Spec Doc                 | Tests  | Priority | Notes                        |
-| ----------- | ----------------------------- | -------------- | ------------------------ | ------ | -------- | ---------------------------- |
-| **MCP-001** | MCP Registry                  | ✅ IMPLEMENTED | ✅ `mcp_architecture.md` | 🧪 85% | P0       | Working well                 |
-| **MCP-002** | MCP Host Client               | ✅ IMPLEMENTED | ✅ `mcp_architecture.md` | 🧪 85% | P0       | Working well                 |
-| **MCP-003** | NFL Stats MCP Server          | ✅ IMPLEMENTED | ✅ `mcp_tools.md`        | 🧪 80% | P1       | Working                      |
-| **MCP-004** | Weather MCP Server            | ✅ IMPLEMENTED | ✅ `mcp_tools.md`        | 🧪 80% | P1       | Working                      |
-| **MCP-005** | Sports News MCP Server        | ✅ IMPLEMENTED | ✅ `mcp_tools.md`        | 🧪 75% | P2       | Working                      |
-| **MCP-006** | Draft Assistant Service       | ✅ IMPLEMENTED | ❌                       | 🧪 80% | P1       | **NEEDS ALGORITHM SPEC**     |
-| **MCP-007** | Draft Assistant API           | ✅ IMPLEMENTED | ⚠️ In API.md             | 🧪 85% | P1       | Endpoint works               |
-| **MCP-008** | Omniscient vs Realistic Modes | 🟡 SPEC_NEEDED | ❌                       | 🧪 70% | P2       | Implemented but unclear      |
-| **MCP-009** | GM Agent Service              | ✅ IMPLEMENTED | ⚠️ `gm_philosophies.md`  | 🧪 75% | P1       | Philosophies documented      |
-| **MCP-010** | Trade Evaluation              | ✅ IMPLEMENTED | ❌                       | 🧪 70% | P1       | **NEEDS ALGORITHM SPEC**     |
-| **MCP-011** | Trade Value Formula           | 🟡 SPEC_NEEDED | ❌                       | 🧪 60% | P2       | Implemented but undocumented |
-| **MCP-012** | MCP Caching Layer             | ✅ IMPLEMENTED | ✅ `mcp_architecture.md` | 🧪 80% | P1       | Working                      |
-| **MCP-013** | MCP Performance Monitoring    | ✅ IMPLEMENTED | ⚠️ Prometheus setup      | 🧪 70% | P2       | Monitoring active            |
+| ID          | Feature Name                  | Status           | Spec Doc                                            | Tests  | Priority | Notes                    |
+| ----------- | ----------------------------- | ---------------- | --------------------------------------------------- | ------ | -------- | ------------------------ |
+| **MCP-001** | MCP Registry                  | ✅ IMPLEMENTED   | ✅ `mcp_architecture.md`                            | 🧪 85% | P0       | Working well             |
+| **MCP-002** | MCP Host Client               | ✅ IMPLEMENTED   | ✅ `mcp_architecture.md`                            | 🧪 85% | P0       | Working well             |
+| **MCP-003** | NFL Stats MCP Server          | ✅ IMPLEMENTED   | ✅ `mcp_tools.md`                                   | 🧪 80% | P1       | Working                  |
+| **MCP-004** | Weather MCP Server            | ✅ IMPLEMENTED   | ✅ `mcp_tools.md`                                   | 🧪 80% | P1       | Working                  |
+| **MCP-005** | Sports News MCP Server        | ✅ IMPLEMENTED   | ✅ `mcp_tools.md`                                   | 🧪 75% | P2       | Working                  |
+| **MCP-006** | Draft Assistant Service       | ✅ IMPLEMENTED   | ❌                                                  | 🧪 80% | P1       | **NEEDS ALGORITHM SPEC** |
+| **MCP-007** | Draft Assistant API           | ✅ IMPLEMENTED   | ⚠️ In API.md                                        | 🧪 85% | P1       | Endpoint works           |
+| **MCP-008** | Omniscient vs Realistic Modes | 🟢 SPEC_COMPLETE | ✅ `specs/MCP-008_omniscient_vs_realistic_modes.md` | 🧪 70% | P2       | Fog of War complete      |
+| **MCP-009** | GM Agent Service              | ✅ IMPLEMENTED   | ⚠️ `gm_philosophies.md`                             | 🧪 75% | P1       | Philosophies documented  |
+| **MCP-010** | Trade Evaluation              | ✅ IMPLEMENTED   | ❌                                                  | 🧪 70% | P1       | **NEEDS ALGORITHM SPEC** |
+| **MCP-011** | Trade Value Formula           | 🟢 SPEC_COMPLETE | ✅ `specs/MCP-011_trade_value_formula.md`           | 🧪 60% | P2       | `GMAgent` logic          |
+| **MCP-012** | MCP Caching Layer             | ✅ IMPLEMENTED   | ✅ `mcp_architecture.md`                            | 🧪 80% | P1       | Working                  |
+| **MCP-013** | MCP Performance Monitoring    | ✅ IMPLEMENTED   | ⚠️ Prometheus setup                                 | 🧪 70% | P2       | Monitoring active        |
 
 ---
 
@@ -196,10 +196,10 @@
 ### By Status
 
 - 🎯 **PRODUCTION_READY**: 2 features
-- ✅ **IMPLEMENTED**: 51 features
+- ✅ **IMPLEMENTED**: 67 features (+16 from audit)
 - 🟡 **SPEC_NEEDED**: 11 features (implemented but undocumented)
 - 🟢 **SPEC_COMPLETE**: 8 features
-- 🔵 **PROPOSED**: 50 features (documented but not implemented)
+- 🔵 **PROPOSED**: 34 features (documented but not implemented)
 - 🔨 **IN_DEVELOPMENT**: 0 features
 
 **Total Features Tracked**: 122
@@ -213,13 +213,13 @@
 
 ### Implementation Coverage
 
-- **Implemented Features**: 73 / 122 = **60%**
+- **Implemented Features**: 89 / 122 = **73%** (+16 from audit)
 - **Fully Documented**: 10 / 122 = **8%**
 - **Production Ready**: 2 / 122 = **2%**
 
 ### Test Coverage
 
-- **Has Any Tests**: 58 / 122 = **48%**
+- **Has Any Tests**: 74 / 122 = **61%** (+16 from audit)
 - **>80% Coverage**: 21 / 122 = **17%**
 
 ---

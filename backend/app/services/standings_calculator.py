@@ -30,6 +30,7 @@ class TeamStanding(BaseModel):
     clinched_division: bool = False
     clinched_seed: Optional[int] = None
     tiebreaker_reason: Optional[str] = None
+    elo_rating: Optional[float] = 1500.0  # Power Ranking (Elo system)
 
 
 class StandingsCalculator:
@@ -82,7 +83,8 @@ class StandingsCalculator:
                 'conference_wins': 0,
                 'conference_losses': 0,
                 'conference_ties': 0,
-                'head_to_head': {} # Map of opponent_id -> wins against them
+                'head_to_head': {}, # Map of opponent_id -> wins against them
+                'elo_rating': team.elo_rating or 1500.0,  # Power Ranking
             }
             for team in teams
         }

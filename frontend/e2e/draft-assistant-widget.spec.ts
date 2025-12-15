@@ -48,9 +48,9 @@ test.describe("Draft Room Page", () => {
       .catch(() => false);
 
     if (!noSeasonMessage) {
-      // When season exists, check for draft room elements
+      // When season exists, check for draft room elements (new UI uses data-testid)
       const draftContent = await page
-        .locator(".draft-board, [class*='draft']")
+        .locator("[data-testid='draft-room-page'], .draft-room, [class*='draft']")
         .first()
         .isVisible()
         .catch(() => false);
