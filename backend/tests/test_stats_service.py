@@ -23,9 +23,9 @@ def test_get_league_leaders_passing(db_session):
     db_session.add_all([team1, team2])
     db_session.commit()
 
-    # Create Players with required height/weight fields
-    qb1 = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team1.id, overall_rating=90, height=75, weight=220)
-    qb2 = Player(first_name="QB", last_name="Two", position=Position.QB, team_id=team2.id, overall_rating=85, height=74, weight=215)
+    # Create Players with required height/weight/age fields
+    qb1 = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team1.id, overall_rating=90, height=75, weight=220, age=27)
+    qb2 = Player(first_name="QB", last_name="Two", position=Position.QB, team_id=team2.id, overall_rating=85, height=74, weight=215, age=26)
     db_session.add_all([qb1, qb2])
     db_session.commit()
 
@@ -71,7 +71,7 @@ def test_get_league_leaders_passing_tds(db_session):
     db_session.add(team)
     db_session.commit()
 
-    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220)
+    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220, age=27)
     db_session.add(qb)
     db_session.commit()
 
@@ -101,8 +101,8 @@ def test_get_league_leaders_rushing(db_session):
     db_session.add(team)
     db_session.commit()
 
-    rb1 = Player(first_name="RB", last_name="One", position=Position.RB, team_id=team.id, overall_rating=88, height=70, weight=210)
-    rb2 = Player(first_name="RB", last_name="Two", position=Position.RB, team_id=team.id, overall_rating=82, height=69, weight=205)
+    rb1 = Player(first_name="RB", last_name="One", position=Position.RB, team_id=team.id, overall_rating=88, height=70, weight=210, age=25)
+    rb2 = Player(first_name="RB", last_name="Two", position=Position.RB, team_id=team.id, overall_rating=82, height=69, weight=205, age=24)
     db_session.add_all([rb1, rb2])
     db_session.commit()
 
@@ -134,7 +134,7 @@ def test_get_league_leaders_receiving(db_session):
     db_session.add(team)
     db_session.commit()
 
-    wr = Player(first_name="WR", last_name="One", position=Position.WR, team_id=team.id, overall_rating=91, height=73, weight=195)
+    wr = Player(first_name="WR", last_name="One", position=Position.WR, team_id=team.id, overall_rating=91, height=73, weight=195, age=26)
     db_session.add(wr)
     db_session.commit()
 
@@ -170,7 +170,7 @@ def test_get_league_leaders_limit(db_session):
     # Create 3 players with required fields
     players = []
     for i in range(3):
-        p = Player(first_name=f"P{i}", last_name="L", position=Position.RB, team_id=team.id, overall_rating=80, height=70, weight=210)
+        p = Player(first_name=f"P{i}", last_name="L", position=Position.RB, team_id=team.id, overall_rating=80, height=70, weight=210, age=25)
         db_session.add(p)
         players.append(p)
     db_session.commit()
@@ -213,7 +213,7 @@ def test_get_league_leaders_multiple_games(db_session):
     db_session.add(team)
     db_session.commit()
 
-    qb = Player(first_name="Aaron", last_name="Rodgers", position=Position.QB, team_id=team.id, overall_rating=92, height=74, weight=225)
+    qb = Player(first_name="Aaron", last_name="Rodgers", position=Position.QB, team_id=team.id, overall_rating=92, height=74, weight=225, age=40)
     db_session.add(qb)
     db_session.commit()
 
@@ -251,7 +251,7 @@ def test_get_league_leaders_different_seasons(db_session):
     db_session.add(team)
     db_session.commit()
 
-    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220)
+    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220, age=27)
     db_session.add(qb)
     db_session.commit()
 
@@ -294,9 +294,9 @@ def test_get_league_leaders_all_stat_types(db_session):
     db_session.add(team)
     db_session.commit()
 
-    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220)
-    rb = Player(first_name="RB", last_name="One", position=Position.RB, team_id=team.id, overall_rating=85, height=70, weight=210)
-    wr = Player(first_name="WR", last_name="One", position=Position.WR, team_id=team.id, overall_rating=88, height=73, weight=195)
+    qb = Player(first_name="QB", last_name="One", position=Position.QB, team_id=team.id, overall_rating=90, height=75, weight=220, age=27)
+    rb = Player(first_name="RB", last_name="One", position=Position.RB, team_id=team.id, overall_rating=85, height=70, weight=210, age=25)
+    wr = Player(first_name="WR", last_name="One", position=Position.WR, team_id=team.id, overall_rating=88, height=73, weight=195, age=26)
     db_session.add_all([qb, rb, wr])
     db_session.commit()
 

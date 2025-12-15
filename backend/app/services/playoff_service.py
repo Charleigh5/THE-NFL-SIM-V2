@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
@@ -207,7 +207,11 @@ class PlayoffService:
         Returns:
             List[PlayoffMatchup]: All playoff matchups for the season.
         """
-        stmt = select(PlayoffMatchup).where(PlayoffMatchup.season_id == season_id)
+        stmt = select(PlayoffMatchup).options(
+            joinedload(PlayoffMatchup.home_team),
+            joinedload(PlayoffMatchup.away_team),
+            joinedload(PlayoffMatchup.winner)
+        ).where(PlayoffMatchup.season_id == season_id)
         return list(self.db.execute(stmt).scalars().all())
 
     def advance_round(self, season_id: int):

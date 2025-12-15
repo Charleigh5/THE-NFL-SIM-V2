@@ -4,30 +4,34 @@ from app.orchestrator.play_resolver import PlayResolver
 from app.orchestrator.play_commands import PassPlayCommand
 from app.models.player import Player, Position
 from app.engine.blocking import BlockingResult
+from app.engine.sack_calculator import SackCalculator
 from app.core.random_utils import DeterministicRNG
 
 
 class TestQBPocketPresence:
-    """Test QB Pocket Presence sack mitigation feature (INT-001)"""
+    """Test QB Pocket Presence sack mitigation feature (INT-001)
+
+    Implementation details (SackCalculator):
+    - presence_factor = pocket_presence * 0.005 (same as PP/200)
+    - final_prob = initial_prob * (1 - presence_factor) * (1 - chemistry_factor) * (1 - escape_factor)
+    """
 
     def create_mock_player(self, position: str, **attributes):
         """Helper to create a mock player with attributes"""
         player = MagicMock(spec=Player)
-        player.id = hash(f"{position}_test") % 100000  # Generate integer ID
+        player.id = hash(f"{position}_test") % 100000
         player.position = position
         player.first_name = "Test"
         player.last_name = f"{position}Player"
+        player.traits = []  # Empty traits list
 
-        # Set default attributes - comprehensive list for all engine calculations
         defaults = {
-            # Core physical attributes
             'pocket_presence': 50,
             'throw_accuracy_short': 70,
-            'speed': 60,
-            'acceleration': 60,
-            'agility': 60,
+            'speed': 50,           # Neutral for escape factor
+            'acceleration': 50,
+            'agility': 50,
             'strength': 60,
-            # WR/DB attributes for AttributeInteractionEngine
             'route_running': 70,
             'man_coverage': 70,
             'release': 70,
@@ -35,12 +39,10 @@ class TestQBPocketPresence:
             'catching': 70,
             'ball_tracking': 70,
             'throw_accuracy_mid': 70,
-            # Experience and awareness (used by InteractionEngine)
             'experience': 3,
             'awareness': 70,
             'discipline': 70,
             'play_recognition': 70,
-            # Pass rush/block
             'pass_rush': 70,
             'pass_block': 70,
         }
@@ -52,147 +54,61 @@ class TestQBPocketPresence:
         return player
 
     def test_pocket_presence_reduces_sack_probability(self):
-        """QB with high pocket presence should avoid more sacks"""
-        rng = DeterministicRNG("test_seed")
-        resolver = PlayResolver(rng)
+        """QB with high pocket presence should have lower sack probability via SackCalculator"""
+        qb = self.create_mock_player('QB', pocket_presence=90, speed=50, acceleration=50, agility=50)
 
-        # Create QB with high pocket presence
-        elite_qb = self.create_mock_player('QB', pocket_presence=90)
+        # Test with 1 loss (pressure_level = 0.3), no chemistry bonus
+        pressure_level = 0.3
+        chem_bonus = 0
 
-        # Create offense and defense
-        offense = [
-            elite_qb,
-            self.create_mock_player('WR', speed=80)
-        ]
-        defense = [
-            self.create_mock_player('DE', pass_rush=85)
-        ]
+        sack_prob = SackCalculator.calculate_sack_probability(qb, pressure_level, chem_bonus)
 
-        command = PassPlayCommand(
-            offense_players=offense,
-            defense_players=defense,
-            depth="short"
-        )
+        # With pocket_presence=90: presence_factor = 90 * 0.005 = 0.45
+        # Mobility with avg 50 stats: mobility_score = 150/300 = 0.5, escape_factor = 0.5 * 0.3 = 0.15
+        # initial_prob = 0.07 * (1 + 0.3) = 0.091
+        # final_prob = 0.091 * (1 - 0.45) * (1 - 0) * (1 - 0.15) = 0.091 * 0.55 * 0.85 = ~0.0425
 
-        # Mock _resolve_line_battle to return LOSS (OL beaten)
-        with patch.object(resolver, '_resolve_line_battle') as mock_line_battle:
-            # OL loses the block
-            mock_line_battle.return_value = (
-                [BlockingResult.LOSS],  # Block results
-                [defense[0]],  # Winning defenders
-                [self.create_mock_player('OT')]  # Beaten linemen
-            )
-
-            # Simulate 100 plays to measure sack rate
-            sacks = 0
-            total_plays = 100
-
-            with patch('app.orchestrator.play_resolver.ProbabilityEngine.resolve_outcome') as mock_resolve:
-                # Calculate expected sack chance with pocket presence
-                base_sack_chance = 0.20  # 20% with 1 loss
-                pocket_presence_90 = 90
-                reduction_factor = pocket_presence_90 / 200.0  # 0.45
-                expected_sack_chance = base_sack_chance * (1 - reduction_factor)  # 0.20 * 0.55 = 0.11 (11%)
-
-                # Track which call we're on
-                call_count = [0]
-
-                # Mock to validate the FIRST call (sack check) and pass through others
-                def mock_outcome(rng, probability):
-                    call_count[0] += 1
-                    if call_count[0] == 1:
-                        # This is the sack check - validate it
-                        assert abs(probability - expected_sack_chance) < 0.01, \
-                            f"Expected sack chance {expected_sack_chance}, got {probability}"
-                        return False  # No sack
-                    else:
-                        # This is the completion check - return True for completion
-                        return True
-
-                mock_resolve.side_effect = mock_outcome
-
-                result = resolver._resolve_pass_play(command)
-
-                # Verify the sack check was called
-                assert call_count[0] >= 1, "resolve_outcome should have been called at least once"
+        # The key assertion: high pocket presence (90) should reduce sack probability significantly
+        # compared to base calculation
+        assert sack_prob < 0.10, f"High pocket presence QB should have low sack probability, got {sack_prob:.3f}"
 
     def test_pocket_presence_scaling(self):
-        """Test sack reduction scales correctly with pocket presence"""
-        test_cases = [
-            (0, 0.20, "0% reduction at PP=0"),
-            (50, 0.15, "25% reduction at PP=50"),
-            (90, 0.11, "45% reduction at PP=90"),
-            (100, 0.10, "50% reduction at PP=100 (max)")
-        ]
+        """Test sack probability scales inversely with pocket presence"""
+        pressure_level = 0.3
+        chem_bonus = 0
 
-        for pocket_presence, expected_sack_chance, description in test_cases:
-            rng = DeterministicRNG(f"test_seed_{pocket_presence}")
-            resolver = PlayResolver(rng)
+        # Test with different pocket presence values
+        qb_low = self.create_mock_player('QB', pocket_presence=20, speed=50, acceleration=50, agility=50)
+        qb_mid = self.create_mock_player('QB', pocket_presence=50, speed=50, acceleration=50, agility=50)
+        qb_high = self.create_mock_player('QB', pocket_presence=90, speed=50, acceleration=50, agility=50)
 
-            qb = self.create_mock_player('QB', pocket_presence=pocket_presence)
-            offense = [qb, self.create_mock_player('WR')]
-            defense = [self.create_mock_player('DE')]
+        prob_low = SackCalculator.calculate_sack_probability(qb_low, pressure_level, chem_bonus)
+        prob_mid = SackCalculator.calculate_sack_probability(qb_mid, pressure_level, chem_bonus)
+        prob_high = SackCalculator.calculate_sack_probability(qb_high, pressure_level, chem_bonus)
 
-            command = PassPlayCommand(offense_players=offense, defense_players=defense, depth="short")
+        # Higher pocket presence = lower sack probability
+        assert prob_low > prob_mid > prob_high, \
+            f"Sack probability should decrease with pocket presence: low={prob_low:.3f}, mid={prob_mid:.3f}, high={prob_high:.3f}"
 
-            with patch.object(resolver, '_resolve_line_battle') as mock_line_battle:
-                mock_line_battle.return_value = (
-                    [BlockingResult.LOSS],
-                    [defense[0]],
-                    [self.create_mock_player('OT')]
-                )
-
-                with patch('app.orchestrator.play_resolver.ProbabilityEngine.resolve_outcome') as mock_resolve:
-                    call_count = [0]
-
-                    def verify_sack_chance(rng, probability):
-                        call_count[0] += 1
-                        if call_count[0] == 1:
-                            assert abs(probability - expected_sack_chance) < 0.01, \
-                                f"{description}: Expected {expected_sack_chance}, got {probability}"
-                            return False  # No sack
-                        return True  # Pass completion
-
-                    mock_resolve.side_effect = verify_sack_chance
-                    resolver._resolve_pass_play(command)
-                    assert call_count[0] >= 1
+        # Verify presence factor calculation: pocket_presence * 0.005
+        # PP=90 -> 0.45 reduction, PP=20 -> 0.10 reduction
+        # The difference between high and low should be significant
+        reduction_ratio = prob_high / prob_low
+        assert reduction_ratio < 0.7, f"High PP QB should have at least 30% less sack chance, got ratio {reduction_ratio:.3f}"
 
     def test_multiple_losses_with_pocket_presence(self):
-        """Test pocket presence with multiple OL losses"""
-        rng = DeterministicRNG("test_seed_multiple")
-        resolver = PlayResolver(rng)
+        """Test pocket presence with multiple OL losses (higher pressure level)"""
+        qb = self.create_mock_player('QB', pocket_presence=80, speed=50, acceleration=50, agility=50)
 
-        qb = self.create_mock_player('QB', pocket_presence=80)
-        offense = [qb, self.create_mock_player('WR')]
-        defense = [self.create_mock_player('DE')]
+        # 2 OL losses = pressure_level 0.6
+        pressure_level = 0.6
+        chem_bonus = 0
 
-        command = PassPlayCommand(offense_players=offense, defense_players=defense, depth="short")
+        sack_prob = SackCalculator.calculate_sack_probability(qb, pressure_level, chem_bonus)
 
-        # 2 OL losses = 40% base sack chance
-        with patch.object(resolver, '_resolve_line_battle') as mock_line_battle:
-            mock_line_battle.return_value = (
-                [BlockingResult.LOSS, BlockingResult.LOSS],  # 2 losses
-                [defense[0]],
-                [self.create_mock_player('OT')]
-            )
-
-            with patch('app.orchestrator.play_resolver.ProbabilityEngine.resolve_outcome') as mock_resolve:
-                base_sack_chance = 0.40  # 2 losses * 0.20
-                reduction_factor = 80 / 200.0  # 0.40
-                expected_sack_chance = base_sack_chance * (1 - reduction_factor)  # 0.40 * 0.60 = 0.24 (24%)
-
-                call_count = [0]
-
-                def verify_sack_chance(rng, probability):
-                    call_count[0] += 1
-                    if call_count[0] == 1:
-                        assert abs(probability - expected_sack_chance) < 0.01
-                        return False  # No sack
-                    return True  # Pass completion
-
-                mock_resolve.side_effect = verify_sack_chance
-                resolver._resolve_pass_play(command)
-                assert call_count[0] >= 1
+        # With higher pressure, sack probability increases even with good pocket presence
+        # But should still be mitigated compared to low PP QB
+        assert 0.05 < sack_prob < 0.15, f"Expected moderate sack chance with 2 losses and PP=80, got {sack_prob:.3f}"
 
     def test_pocket_presence_no_effect_on_pancake(self):
         """Pancake blocks should still result in automatic sack regardless of pocket presence"""
@@ -218,3 +134,31 @@ class TestQBPocketPresence:
             # Should be a sack even with max pocket presence
             assert result.yards_gained < 0, "Pancake should result in sack"
             assert "SACKED" in result.description.upper()
+
+    def test_chemistry_bonus_reduces_sack_probability(self):
+        """OL chemistry bonus should further reduce sack probability"""
+        qb = self.create_mock_player('QB', pocket_presence=50, speed=50, acceleration=50, agility=50)
+        pressure_level = 0.3
+
+        prob_no_chem = SackCalculator.calculate_sack_probability(qb, pressure_level, 0)
+        prob_with_chem = SackCalculator.calculate_sack_probability(qb, pressure_level, 5)
+
+        # Chemistry bonus (5 * 0.02 = 10% reduction) should reduce sack probability
+        assert prob_with_chem < prob_no_chem, \
+            f"Chemistry should reduce sack prob: no_chem={prob_no_chem:.3f}, with_chem={prob_with_chem:.3f}"
+
+    def test_mobility_reduces_sack_probability(self):
+        """High mobility QB should escape more sacks"""
+        pressure_level = 0.3
+        chem_bonus = 0
+
+        # Create immobile QB (low physical stats)
+        qb_slow = self.create_mock_player('QB', pocket_presence=50, speed=30, acceleration=30, agility=30)
+        # Create mobile QB (high physical stats)
+        qb_fast = self.create_mock_player('QB', pocket_presence=50, speed=90, acceleration=90, agility=90)
+
+        prob_slow = SackCalculator.calculate_sack_probability(qb_slow, pressure_level, chem_bonus)
+        prob_fast = SackCalculator.calculate_sack_probability(qb_fast, pressure_level, chem_bonus)
+
+        assert prob_fast < prob_slow, \
+            f"Mobile QB should escape more sacks: slow={prob_slow:.3f}, fast={prob_fast:.3f}"

@@ -40,6 +40,7 @@ def create_player(
     overall_rating: int = 75,
     height: int = 74,  # 6'2" default
     weight: int = 215,
+    age: int = 27,  # Default age
     team_id: int = 1,
     **kwargs
 ):
@@ -56,6 +57,7 @@ def create_player(
         overall_rating=overall_rating,
         height=height,
         weight=weight,
+        age=age,
         team_id=team_id,
         **kwargs
     )
@@ -311,4 +313,5 @@ def override_session_local(monkeypatch):
 
     # Also patch where it might have been imported directly (if needed)
     monkeypatch.setattr("app.api.endpoints.trades.SessionLocal", TestingSessionLocal)
+    monkeypatch.setattr("app.api.endpoints.season.SessionLocal", TestingSessionLocal)
 

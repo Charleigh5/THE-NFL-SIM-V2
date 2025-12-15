@@ -383,14 +383,20 @@ async def test_season_summary_league_leaders_integration(async_client, async_db_
         last_name="Brady",
         position=Position.QB,
         team_id=teams[0].id,
-        overall_rating=95
+        overall_rating=95,
+        height=76,
+        weight=225,
+        age=45
     )
     rb = Player(
         first_name="Adrian",
         last_name="Peterson",
         position=Position.RB,
         team_id=teams[1].id,
-        overall_rating=90
+        overall_rating=90,
+        height=73,
+        weight=220,
+        age=28
     )
     async_db_session.add_all([qb, rb])
     await async_db_session.commit()
