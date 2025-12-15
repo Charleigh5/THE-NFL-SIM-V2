@@ -18,47 +18,14 @@ import random
 from .playbook import Play, Playbook, PlayType, Concept
 
 
+from app.data.coaches import CoachingPhilosophy
+from app.services.playbook.coaching_ai import CoachingAIService
+
 # ============================================================================
 # ENUMS
 # ============================================================================
 
-class AggressionLevel(str, Enum):
-    """Offensive coordinator aggression."""
-    CONSERVATIVE = "CONSERVATIVE"
-    BALANCED = "BALANCED"
-    AGGRESSIVE = "AGGRESSIVE"
-
-
-class GameScript(str, Enum):
-    """Game flow state."""
-    TRAILING = "TRAILING"
-    CLOSE = "CLOSE"
-    LEADING = "LEADING"
-    BLOWOUT = "BLOWOUT"
-
-
-# ============================================================================
-# DATA CLASSES
-# ============================================================================
-
-@dataclass
-class GameSituation:
-    """Current game context."""
-    quarter: int
-    time_remaining: int  # seconds
-    down: int
-    distance: int
-    field_position: int  # 0-100 (own goal to opponent goal)
-    score_diff: int     # Positive = winning
-
-
-@dataclass
-class PlayCallResult:
-    """Output from AI decision."""
-    selected_play: Play
-    confidence: float  # 0.0-1.0
-    reasoning: str
-
+from .types import AggressionLevel, GameScript, GameSituation, PlayCallResult
 
 # ============================================================================
 # PLAY CALLER AI
@@ -69,10 +36,20 @@ class PlayCallerAI:
     Offensive Coordinator AI.
     """
 
-    def __init__(self, playbook: Playbook, aggression: AggressionLevel = AggressionLevel.BALANCED):
+    def __init__(self, playbook: Playbook, philosophy: Optional[CoachingPhilosophy] = None, aggression: AggressionLevel = AggressionLevel.BALANCED):
         self.playbook = playbook
-        self.aggression = aggression
         self.tendency_history: List[PlayType] = []
+
+        if philosophy:
+            self.philosophy = philosophy
+        else:
+            # Backward compatibility
+            val = 50
+            if aggression == AggressionLevel.AGGRESSIVE: val = 75
+            elif aggression == AggressionLevel.CONSERVATIVE: val = 25
+            self.philosophy = CoachingPhilosophy(aggressiveness=val)
+
+        self.coaching_service = CoachingAIService(self.philosophy)
 
     def call_play(self, situation: GameSituation) -> PlayCallResult:
         """
@@ -155,11 +132,28 @@ class PlayCallerAI:
             if play.play_type == PlayType.RUN:
                 score += 15
 
-        # Aggression
-        if self.aggression == AggressionLevel.AGGRESSIVE:
-            score += play.risk_level * 2
-        elif self.aggression == AggressionLevel.CONSERVATIVE:
-            score -= play.risk_level * 2
+        # Aggression (Dynamic)
+        aggression_val = self.coaching_service.get_adjusted_aggression(situation)
+        # 0 to 100. 50 is neutral.
+        # Risk level typically 1-10.
+        # If agg=80 (+30), risk_mod = 6. Score += play.risk * 6.
+        # If agg=20 (-30), risk_mod = -6. Score -= play.risk * 6.
+        risk_modifier = (aggression_val - 50) / 5.0
+        score += play.risk_level * risk_modifier
+
+        # Philosophy: Run/Pass Ratio
+        # 0 = All Pass, 100 = All Run
+        skew = self.philosophy.run_pass_ratio
+        if play.play_type == PlayType.RUN:
+            if skew > 50:
+                score += (skew - 50) * 0.5  # Boost up to +25
+            else:
+                score -= (50 - skew) * 0.5  # Penalize up to -25
+        elif play.play_type == PlayType.PASS:
+             if skew < 50:
+                 score += (50 - skew) * 0.5 # Boost up to +25
+             else:
+                 score -= (skew - 50) * 0.5 # Penalize up to -25
 
         # Tendency balance: Avoid being too predictable
         recent_passes = sum(1 for t in self.tendency_history[-5:] if t == PlayType.PASS)

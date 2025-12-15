@@ -1,6 +1,6 @@
 # Feature Status Matrix
 
-**Last Updated:** 2025-12-11
+**Last Updated:** 2025-12-14
 **Purpose:** Central tracking document for all features in the NFL SIM application
 
 ---
@@ -105,33 +105,33 @@
 
 ## 5. Franchise Management
 
-| ID           | Feature Name                | Status         | Spec Doc   | Tests  | Priority | Notes                         |
-| ------------ | --------------------------- | -------------- | ---------- | ------ | -------- | ----------------------------- |
-| **FRAN-001** | Season Infrastructure       | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | Works well                    |
-| **FRAN-002** | Schedule Generator          | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | `schedule_generator.py`       |
-| **FRAN-003** | Standings Calculator        | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | `standings_calculator.py`     |
-| **FRAN-004** | Playoff System              | ✅ IMPLEMENTED | ⚠️ Partial | 🧪 85% | P0       | Service exists                |
-| **FRAN-005** | Playoff Tiebreakers         | 🟡 SPEC_NEEDED | ❌         | 🧪 70% | P1       | Implemented but undocumented  |
-| **FRAN-006** | Offseason System            | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `offseason_service.py`        |
-| **FRAN-007** | Rookie Generator            | ✅ IMPLEMENTED | ❌         | 🧪 75% | P0       | `rookie_generator.py`         |
-| **FRAN-008** | Draft System                | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | Basic draft works             |
-| **FRAN-009** | Scouting System             | 🔵 PROPOSED    | ❌         | ❌ 0%  | P1       | **NEEDS FULL SPEC**           |
-| **FRAN-010** | Scouting Accuracy Levels    | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Elite/Veteran/Rookie scouts   |
-| **FRAN-011** | Hidden Potential Mechanic   | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Prospects have hidden stats   |
-| **FRAN-012** | Bust/Boom Probability       | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Draft risk assessment         |
-| **FRAN-013** | Contract System             | ✅ IMPLEMENTED | ❌         | 🧪 70% | P0       | Basic contracts work          |
-| **FRAN-014** | Contract Negotiation        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Currently auto-signed         |
-| **FRAN-015** | Salary Cap Management       | ✅ IMPLEMENTED | ❌         | 🧪 75% | P1       | `salary_cap_service.py`       |
-| **FRAN-016** | Contract Restructuring      | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Cap management tool           |
-| **FRAN-017** | Dead Money Calculations     | 🟡 SPEC_NEEDED | ❌         | 🧪 60% | P2       | Exists but undocumented       |
-| **FRAN-018** | Free Agency System          | ✅ IMPLEMENTED | ❌         | 🧪 70% | P1       | Auto-fill roster              |
-| **FRAN-019** | Free Agent Decision Factors | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Money vs contender vs loyalty |
-| **FRAN-020** | Depth Chart Management      | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `depth_chart_service.py`      |
-| **FRAN-021** | Roster Management           | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | Works well                    |
-| **FRAN-022** | Injury System (Models)      | 🟡 SPEC_NEEDED | ❌         | ❌ 0%  | P1       | DB models exist, no mechanics |
-| **FRAN-023** | Injury Probability          | 🔵 PROPOSED    | ❌         | ❌ 0%  | P1       | By play type and position     |
-| **FRAN-024** | Injury Recovery System      | 🔵 PROPOSED    | ❌         | ❌ 0%  | P1       | Timeline and attribute impact |
-| **FRAN-025** | Player Morale System        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Contract/usage/wins impact    |
+| ID           | Feature Name                | Status         | Spec Doc   | Tests  | Priority | Notes                                            |
+| ------------ | --------------------------- | -------------- | ---------- | ------ | -------- | ------------------------------------------------ |
+| **FRAN-001** | Season Infrastructure       | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | Works well                                       |
+| **FRAN-002** | Schedule Generator          | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | `schedule_generator.py`                          |
+| **FRAN-003** | Standings Calculator        | ✅ IMPLEMENTED | ❌         | 🧪 90% | P0       | `standings_calculator.py`                        |
+| **FRAN-004** | Playoff System              | ✅ IMPLEMENTED | ⚠️ Partial | 🧪 85% | P0       | Service exists                                   |
+| **FRAN-005** | Playoff Tiebreakers         | 🟡 SPEC_NEEDED | ❌         | 🧪 70% | P1       | Implemented but undocumented                     |
+| **FRAN-006** | Offseason System            | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `offseason_service.py`                           |
+| **FRAN-007** | Rookie Generator            | ✅ IMPLEMENTED | ❌         | 🧪 75% | P0       | `rookie_generator.py`                            |
+| **FRAN-008** | Draft System                | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | Basic draft works                                |
+| **FRAN-009** | Scouting System             | 🔵 PROPOSED    | ❌         | ❌ 0%  | P1       | **NEEDS FULL SPEC**                              |
+| **FRAN-010** | Scouting Accuracy Levels    | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Elite/Veteran/Rookie scouts                      |
+| **FRAN-011** | Hidden Potential Mechanic   | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Prospects have hidden stats                      |
+| **FRAN-012** | Bust/Boom Probability       | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Draft risk assessment                            |
+| **FRAN-013** | Contract System             | ✅ IMPLEMENTED | ❌         | 🧪 70% | P0       | Basic contracts work                             |
+| **FRAN-014** | Contract Negotiation        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Currently auto-signed                            |
+| **FRAN-015** | Salary Cap Management       | ✅ IMPLEMENTED | ❌         | 🧪 75% | P1       | `salary_cap_service.py`                          |
+| **FRAN-016** | Contract Restructuring      | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Cap management tool                              |
+| **FRAN-017** | Dead Money Calculations     | 🟡 SPEC_NEEDED | ❌         | 🧪 60% | P2       | Exists but undocumented                          |
+| **FRAN-018** | Free Agency System          | ✅ IMPLEMENTED | ❌         | 🧪 70% | P1       | Auto-fill roster                                 |
+| **FRAN-019** | Free Agent Decision Factors | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Money vs contender vs loyalty                    |
+| **FRAN-020** | Depth Chart Management      | ✅ IMPLEMENTED | ❌         | 🧪 80% | P0       | `depth_chart_service.py`                         |
+| **FRAN-021** | Roster Management           | ✅ IMPLEMENTED | ❌         | 🧪 85% | P0       | Works well                                       |
+| **FRAN-022** | Injury System (Models)      | ✅ IMPLEMENTED | ❌         | 🧪 85% | P1       | Full injury probability + play-through mechanics |
+| **FRAN-023** | Injury Probability          | ✅ IMPLEMENTED | ❌         | 🧪 90% | P1       | Play type, position, fatigue multipliers         |
+| **FRAN-024** | Injury Recovery System      | ✅ IMPLEMENTED | ❌         | 🧪 80% | P1       | Severity-based recovery + RAGKNOW trait          |
+| **FRAN-025** | Player Morale System        | 🔵 PROPOSED    | ❌         | ❌ 0%  | P2       | Contract/usage/wins impact                       |
 
 ---
 
@@ -196,10 +196,10 @@
 ### By Status
 
 - 🎯 **PRODUCTION_READY**: 2 features
-- ✅ **IMPLEMENTED**: 48 features
-- 🟡 **SPEC_NEEDED**: 12 features (implemented but undocumented)
+- ✅ **IMPLEMENTED**: 51 features
+- 🟡 **SPEC_NEEDED**: 11 features (implemented but undocumented)
 - 🟢 **SPEC_COMPLETE**: 8 features
-- 🔵 **PROPOSED**: 52 features (documented but not implemented)
+- 🔵 **PROPOSED**: 50 features (documented but not implemented)
 - 🔨 **IN_DEVELOPMENT**: 0 features
 
 **Total Features Tracked**: 122
@@ -213,14 +213,14 @@
 
 ### Implementation Coverage
 
-- **Implemented Features**: 70 / 122 = **57%**
+- **Implemented Features**: 73 / 122 = **60%**
 - **Fully Documented**: 10 / 122 = **8%**
 - **Production Ready**: 2 / 122 = **2%**
 
 ### Test Coverage
 
-- **Has Any Tests**: 55 / 122 = **45%**
-- **>80% Coverage**: 18 / 122 = **15%**
+- **Has Any Tests**: 58 / 122 = **48%**
+- **>80% Coverage**: 21 / 122 = **17%**
 
 ---
 
@@ -259,4 +259,4 @@
 
 ---
 
-**Next Review Date**: 2025-12-09
+**Next Review Date**: 2025-12-21

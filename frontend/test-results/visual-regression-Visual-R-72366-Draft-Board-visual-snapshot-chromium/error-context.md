@@ -1,0 +1,178 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23] [cursor=pointer]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e27]: Season
+      - listitem [ref=e28]:
+        - link "Offseason" [ref=e29] [cursor=pointer]:
+          - /url: /offseason
+          - img [ref=e31]
+          - generic [ref=e34]: Offseason
+      - listitem [ref=e35]:
+        - link "Draft Room" [ref=e36] [cursor=pointer]:
+          - /url: /offseason/draft
+          - img [ref=e38]
+          - generic [ref=e44]: Draft Room
+      - listitem [ref=e45]:
+        - link "Roster" [ref=e46] [cursor=pointer]:
+          - /url: /empire/front-office
+          - img [ref=e48]
+          - generic [ref=e53]: Roster
+      - listitem [ref=e54]:
+        - link "Depth Chart" [ref=e55] [cursor=pointer]:
+          - /url: /empire/depth-chart
+          - img [ref=e57]
+          - generic [ref=e60]: Depth Chart
+      - listitem [ref=e61]:
+        - link "Trade Center" [ref=e62] [cursor=pointer]:
+          - /url: /empire/trade-center
+          - img [ref=e64]
+          - generic [ref=e67]: Trade Center
+      - listitem [ref=e68]:
+        - link "Training" [ref=e69] [cursor=pointer]:
+          - /url: /training
+          - img [ref=e71]
+          - generic [ref=e77]: Training
+      - listitem [ref=e78]:
+        - link "My Team" [ref=e79] [cursor=pointer]:
+          - /url: /team-selection
+          - img [ref=e81]
+          - generic [ref=e83]: My Team
+      - listitem [ref=e84]:
+        - link "Settings" [ref=e85] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e87]
+          - generic [ref=e90]: Settings
+    - generic [ref=e92]: System Online
+  - main [ref=e94]:
+    - generic [ref=e98]:
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - heading "Draft Room" [level=1] [ref=e101]
+          - generic [ref=e102]: Draft Theater • Live War Room Broadcast
+        - generic [ref=e103]:
+          - generic [ref=e104]: On The Clock
+          - generic [ref=e105]: Team 1
+          - generic [ref=e106]: Round 1 • Pick 1
+      - generic [ref=e108]:
+        - generic [ref=e109]: Draft Night Live
+        - generic [ref=e111]: War Room Active
+        - generic [ref=e113]: Make Your Selection
+        - generic [ref=e115]: Draft Night Live
+        - generic [ref=e117]: War Room Active
+        - generic [ref=e119]: Make Your Selection
+      - generic [ref=e121]:
+        - generic [ref=e123]:
+          - generic [ref=e125]: Big Board - Live Feed
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading "Draft Board" [level=3] [ref=e130]
+              - generic [ref=e131]:
+                - combobox "Filter by Position" [ref=e132] [cursor=pointer]:
+                  - option "ALL" [selected]
+                  - option "QB"
+                  - option "RB"
+                  - option "WR"
+                  - option "TE"
+                  - option "OL"
+                  - option "DL"
+                  - option "LB"
+                  - option "DB"
+                  - option "ST"
+                - combobox "Sort Draft Board" [ref=e133] [cursor=pointer]:
+                  - option "Rank" [selected]
+                  - option "Rating"
+                  - option "Position"
+            - generic [ref=e134]:
+              - generic [ref=e135] [cursor=pointer]:
+                - generic [ref=e136]: "#1"
+                - generic [ref=e137]:
+                  - generic [ref=e138]:
+                    - generic [ref=e139]: QB
+                    - generic [ref=e140]: Caleb Williams
+                  - generic [ref=e141]:
+                    - generic [ref=e142]: A+
+                    - generic [ref=e143]: 92 OVR
+                  - generic [ref=e144]:
+                    - button "Reveal" [ref=e145]:
+                      - img [ref=e146]
+                      - text: Reveal
+                    - button "Report" [ref=e149]:
+                      - img [ref=e150]
+                      - text: Report
+              - generic [ref=e153] [cursor=pointer]:
+                - generic [ref=e154]: "#2"
+                - generic [ref=e155]:
+                  - generic [ref=e156]:
+                    - generic [ref=e157]: WR
+                    - generic [ref=e158]: Marvin Harrison Jr.
+                  - generic [ref=e159]:
+                    - generic [ref=e160]: A+
+                    - generic [ref=e161]: 91 OVR
+                  - generic [ref=e162]:
+                    - button "Reveal" [ref=e163]:
+                      - img [ref=e164]
+                      - text: Reveal
+                    - button "Report" [ref=e167]:
+                      - img [ref=e168]
+                      - text: Report
+              - generic [ref=e171] [cursor=pointer]:
+                - generic [ref=e172]: "#3"
+                - generic [ref=e173]:
+                  - generic [ref=e174]:
+                    - generic [ref=e175]: QB
+                    - generic [ref=e176]: Drake Maye
+                  - generic [ref=e177]:
+                    - generic [ref=e178]: A
+                    - generic [ref=e179]: 89 OVR
+                  - generic [ref=e180]:
+                    - button "Reveal" [ref=e181]:
+                      - img [ref=e182]
+                      - text: Reveal
+                    - button "Report" [ref=e185]:
+                      - img [ref=e186]
+                      - text: Report
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - generic [ref=e192]: AI Analyst
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - heading "War Room" [level=3] [ref=e196]
+                - generic [ref=e197]: AI POWERED
+              - generic [ref=e199]:
+                - paragraph [ref=e200]: Analyze the board and get a recommendation based on team needs, value, and historical data.
+                - 'button "Analyze Pick #1" [ref=e201] [cursor=pointer]'
+          - generic [ref=e202]:
+            - generic [ref=e204]: Team Needs
+            - generic [ref=e206]:
+              - generic [ref=e207]:
+                - generic [ref=e208]:
+                  - generic [ref=e209]: QB
+                  - progressbar [ref=e210]
+                - generic [ref=e211]: "4.5"
+              - generic [ref=e212]:
+                - generic [ref=e213]:
+                  - generic [ref=e214]: WR
+                  - progressbar [ref=e215]
+                - generic [ref=e216]: "3.8"
+          - generic [ref=e217]:
+            - generic [ref=e219]: War Room Controls
+            - generic [ref=e221]:
+              - button "Auto-Sim Draft" [ref=e222] [cursor=pointer]
+              - button "Propose Trade" [ref=e223] [cursor=pointer]
+  - button "Mission Control" [ref=e225] [cursor=pointer]: ⚡
+```

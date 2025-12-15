@@ -93,7 +93,8 @@ class Play:
     # Metadata
     risk_level: int = 5  # 1-10 (Higher = More risk)
     avg_yards: float = 5.0
-
+    hurry_up_compatible: bool = False
+    clock_saving: bool = False
 
 @dataclass
 class Playbook:
@@ -155,17 +156,20 @@ class PlaybookGenerator:
             Play(
                 "WC_SLANT_FLAT", "Slant-Flat Combo", PlayType.PASS,
                 Formation.SHOTGUN, Concept.WEST_COAST, personnel_11,
-                vs_man_coverage=70, vs_zone_coverage=60, avg_yards=6.5
+                vs_man_coverage=70, vs_zone_coverage=60, avg_yards=6.5,
+                hurry_up_compatible=True
             ),
             Play(
                 "INSIDE_ZONE", "Inside Zone", PlayType.RUN,
                 Formation.SHOTGUN, Concept.ZONE_RUN, personnel_11,
-                vs_man_coverage=50, vs_zone_coverage=55, avg_yards=4.2
+                vs_man_coverage=50, vs_zone_coverage=55, avg_yards=4.2,
+                hurry_up_compatible=True
             ),
             Play(
                 "MESH_CONCEPT", "Mesh Cross", PlayType.PASS,
                 Formation.SHOTGUN, Concept.WEST_COAST, personnel_11,
-                vs_man_coverage=80, vs_zone_coverage=50, avg_yards=7.0
+                vs_man_coverage=80, vs_zone_coverage=50, avg_yards=7.0,
+                hurry_up_compatible=True
             ),
         ]
 
@@ -185,7 +189,8 @@ class PlaybookGenerator:
             Play(
                 "FOUR_VERTS", "Four Verticals", PlayType.PASS,
                 Formation.SHOTGUN, Concept.AIR_RAID, personnel_10,
-                vs_man_coverage=65, vs_zone_coverage=85, avg_yards=12.0, risk_level=7
+                vs_man_coverage=65, vs_zone_coverage=85, avg_yards=12.0, risk_level=7,
+                hurry_up_compatible=True, clock_saving=True
             ),
             Play(
                 "SHALLOW_CROSS", "Shallow Cross", PlayType.PASS,

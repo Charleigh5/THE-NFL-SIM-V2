@@ -101,8 +101,8 @@ class TraitEffectResolver:
         """
         results = {}
         if "Chip Block Specialist" in (getattr(rb, "active_traits", []) or []) and is_blocking:
-            results["pass_block_boost"] = 10.0
-            results["edge_rusher_slow_effect"] = 0.15 # 15% slower edge rush acceleration
+            results["pass_pro_rating_boost"] = 10.0  # Aligned with attribute_interaction.py
+            results["edge_rusher_slow_effect"] = 0.15  # 15% slower edge rush acceleration
         return results
 
     @staticmethod

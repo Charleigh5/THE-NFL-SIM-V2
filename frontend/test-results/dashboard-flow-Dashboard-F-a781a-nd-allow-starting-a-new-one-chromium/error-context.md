@@ -1,0 +1,151 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23] [cursor=pointer]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e27]: Season
+      - listitem [ref=e28]:
+        - link "Offseason" [ref=e29] [cursor=pointer]:
+          - /url: /offseason
+          - img [ref=e31]
+          - generic [ref=e34]: Offseason
+      - listitem [ref=e35]:
+        - link "Draft Room" [ref=e36] [cursor=pointer]:
+          - /url: /offseason/draft
+          - img [ref=e38]
+          - generic [ref=e44]: Draft Room
+      - listitem [ref=e45]:
+        - link "Roster" [ref=e46] [cursor=pointer]:
+          - /url: /empire/front-office
+          - img [ref=e48]
+          - generic [ref=e53]: Roster
+      - listitem [ref=e54]:
+        - link "Depth Chart" [ref=e55] [cursor=pointer]:
+          - /url: /empire/depth-chart
+          - img [ref=e57]
+          - generic [ref=e60]: Depth Chart
+      - listitem [ref=e61]:
+        - link "Trade Center" [ref=e62] [cursor=pointer]:
+          - /url: /empire/trade-center
+          - img [ref=e64]
+          - generic [ref=e67]: Trade Center
+      - listitem [ref=e68]:
+        - link "Training" [ref=e69] [cursor=pointer]:
+          - /url: /training
+          - img [ref=e71]
+          - generic [ref=e77]: Training
+      - listitem [ref=e78]:
+        - link "My Team" [ref=e79] [cursor=pointer]:
+          - /url: /team-selection
+          - img [ref=e81]
+          - generic [ref=e83]: My Team
+      - listitem [ref=e84]:
+        - link "Settings" [ref=e85] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e87]
+          - generic [ref=e90]: Settings
+    - generic [ref=e92]: System Online
+  - main [ref=e94]:
+    - generic [ref=e98]:
+      - generic [ref=e100]:
+        - generic [ref=e101]: Mission Control
+        - generic [ref=e103]: Storm Lights
+        - generic [ref=e105]: Franchise Systems
+        - generic [ref=e107]: Broadcast Night
+        - generic [ref=e109]: Mission Control
+        - generic [ref=e111]: Storm Lights
+        - generic [ref=e113]: Franchise Systems
+        - generic [ref=e115]: Broadcast Night
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - heading "Mission Control" [level=1] [ref=e119]
+          - paragraph [ref=e120]: War Room overview under the stadium lights.
+        - generic [ref=e121]:
+          - button "Start Next Season" [ref=e122] [cursor=pointer]
+          - generic [ref=e124]: All Systems Online
+      - generic [ref=e126]:
+        - heading "Quick Actions" [level=2] [ref=e127]
+        - generic [ref=e128]:
+          - link "👥 Roster" [ref=e129] [cursor=pointer]:
+            - /url: /empire/front-office
+            - generic [ref=e130]: 👥
+            - generic [ref=e131]: Roster
+          - link "📋 Depth Chart" [ref=e132] [cursor=pointer]:
+            - /url: /empire/depth-chart
+            - generic [ref=e133]: 📋
+            - generic [ref=e134]: Depth Chart
+          - link "🔄 Trade Center" [ref=e135] [cursor=pointer]:
+            - /url: /empire/trade-center
+            - generic [ref=e136]: 🔄
+            - generic [ref=e137]: Trade Center
+          - link "🏆 Season" [ref=e138] [cursor=pointer]:
+            - /url: /season
+            - generic [ref=e139]: 🏆
+            - generic [ref=e140]: Season
+          - link "🏋️ Training" [ref=e141] [cursor=pointer]:
+            - /url: /training
+            - generic [ref=e142]: 🏋️
+            - generic [ref=e143]: Training
+          - link "🏈 Draft Room" [ref=e144] [cursor=pointer]:
+            - /url: /offseason/draft
+            - generic [ref=e145]: 🏈
+            - generic [ref=e146]: Draft Room
+      - generic [ref=e150]:
+        - heading "Current Season" [level=3] [ref=e152]
+        - generic [ref=e154]:
+          - generic [ref=e155]: "2024"
+          - generic [ref=e156]: Week 1
+          - generic [ref=e157]: OFF SEASON
+      - heading "Simulation Engines" [level=2] [ref=e159]
+      - generic [ref=e160]:
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - generic [ref=e166]: 🧬
+            - heading "Genesis Engine" [level=3] [ref=e167]
+          - generic [ref=e168]: "Biological simulation: Bio-metrics, Neuro-cognition, Trauma/Injury, Recruiting"
+          - generic [ref=e170]: Operational
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - generic [ref=e177]: 💰
+            - heading "Empire Engine" [level=3] [ref=e178]
+          - generic [ref=e179]: "Franchise management: Financials, Owner personality, Stadium management"
+          - generic [ref=e181]: Operational
+        - generic [ref=e186]:
+          - generic [ref=e187]:
+            - generic [ref=e188]: 🌦️
+            - heading "Hive Engine" [level=3] [ref=e189]
+          - generic [ref=e190]: "Physics and environment: Weather, Ballistics, Field conditions"
+          - generic [ref=e192]: Operational
+        - generic [ref=e197]:
+          - generic [ref=e198]:
+            - generic [ref=e199]: 📰
+            - heading "Society Engine" [level=3] [ref=e200]
+          - generic [ref=e201]: "Narrative and relationships: Media narratives, Player morale, Rivalries"
+          - generic [ref=e203]: Operational
+        - generic [ref=e208]:
+          - generic [ref=e209]:
+            - generic [ref=e210]: ⚙️
+            - heading "Core Engine" [level=3] [ref=e211]
+          - generic [ref=e212]: "Central simulation loop: Time stepping, AI decision making"
+          - generic [ref=e214]: Operational
+        - generic [ref=e219]:
+          - generic [ref=e220]:
+            - generic [ref=e221]: 📊
+            - heading "RPG Engine" [level=3] [ref=e222]
+          - generic [ref=e223]: "Progression system: XP generation, Skill trees, Training results"
+          - generic [ref=e225]: Operational
+  - button "Mission Control" [ref=e228] [cursor=pointer]: ⚡
+```

@@ -151,3 +151,66 @@ async def get_team_chemistry(team_id: int, db: AsyncSession = Depends(get_async_
     metadata = await service.get_team_chemistry_metadata(team_id, current_ol)
 
     return metadata.to_dict()
+
+class CoachSettingsUpdate(BaseModel):
+    aggressiveness: int | None = None
+    run_pass_ratio: int | None = None
+    tempo: int | None = None
+    fourth_down_aggression: int | None = None
+    clock_management_style: str | None = None
+    trick_play_frequency: int | None = None
+    two_pt_conversion_threshold: int | None = None
+    timeout_aggressiveness: int | None = None
+
+@router.get("/{team_id}/coach/settings")
+@handle_errors
+async def get_coach_settings(team_id: int, db: AsyncSession = Depends(get_async_db)):
+    """Get the head coach's philosophy/settings."""
+    from app.models.coach import Coach
+    stmt = select(Coach).where(Coach.team_id == team_id)
+    result = await db.execute(stmt)
+    coaches = result.scalars().all()
+    head_coach = next((c for c in coaches if c.role and "Head Coach" in c.role), None)
+
+    if not head_coach:
+        raise HTTPException(status_code=404, detail="Head Coach not found")
+
+    return head_coach.philosophy or {}
+
+@router.put("/{team_id}/coach/settings")
+@handle_errors
+async def update_coach_settings(
+    team_id: int,
+    settings: CoachSettingsUpdate,
+    db: AsyncSession = Depends(get_async_db)
+):
+    """
+    Update the head coach's philosophy/settings.
+    """
+    from app.models.coach import Coach
+
+    # Helper to find HC
+    # Try different role strings just in case
+    stmt = select(Coach).where(Coach.team_id == team_id)
+    result = await db.execute(stmt)
+    coaches = result.scalars().all()
+
+    # Find Head Coach manually to handle case sensitivity or variations
+    head_coach = next((c for c in coaches if c.role and "Head Coach" in c.role), None)
+
+    if not head_coach:
+        # Fallback: take the first coach if exists? No, safer to 404
+        raise HTTPException(status_code=404, detail="Head Coach not found for team")
+
+    # Update philosophy JSON
+    # Ensure it's a dict
+    current_philosophy = dict(head_coach.philosophy) if head_coach.philosophy else {}
+
+    update_data = settings.model_dump(exclude_unset=True)
+    current_philosophy.update(update_data)
+
+    # Explicit reassignment to ensure SQLAlchemy tracks change
+    head_coach.philosophy = current_philosophy
+
+    await db.commit()
+    return {"message": "Coach settings updated", "philosophy": current_philosophy}

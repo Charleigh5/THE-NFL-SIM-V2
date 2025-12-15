@@ -13,6 +13,9 @@ interface GameState {
   yardLine: number; // 0-100
   homeMomentum: MomentumState;
   awayMomentum: MomentumState;
+  clockStrategy?: string;
+  homeTimeouts: number;
+  awayTimeouts: number;
 }
 
 interface SimulationStore {
@@ -54,6 +57,8 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
     yardLine: 25,
     homeMomentum: MomentumState.NEUTRAL,
     awayMomentum: MomentumState.NEUTRAL,
+    homeTimeouts: 3,
+    awayTimeouts: 3,
   },
   playLog: [],
   isLive: false,
@@ -93,6 +98,8 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
         yardLine: 25,
         homeMomentum: MomentumState.NEUTRAL,
         awayMomentum: MomentumState.NEUTRAL,
+        homeTimeouts: 3,
+        awayTimeouts: 3,
       },
       playLog: [],
       isLive: false,

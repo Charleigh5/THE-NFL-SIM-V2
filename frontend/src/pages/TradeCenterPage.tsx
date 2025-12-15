@@ -151,13 +151,14 @@ const TradeCenterPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
+        {/* Tab Navigation */}
         <nav className="trade-tabs" role="tablist" aria-label="Trade Center Tabs">
           <button
             className={`tab-btn ${activeTab === "negotiate" ? "active" : ""}`}
             onClick={() => setActiveTab("negotiate")}
             data-testid="tab-negotiate"
             role="tab"
-            aria-selected={activeTab === "negotiate" ? "true" : "false"}
+            aria-selected={activeTab === "negotiate"}
             aria-controls="trade-tabpanel-negotiate"
           >
             <span className="tab-icon">🔄</span>
@@ -169,7 +170,7 @@ const TradeCenterPage: React.FC = () => {
             onClick={() => setActiveTab("offers")}
             data-testid="tab-offers"
             role="tab"
-            aria-selected={activeTab === "offers" ? "true" : "false"}
+            aria-selected={activeTab === "offers"}
             aria-controls="trade-tabpanel-offers"
           >
             <span className="tab-icon">📫</span>
@@ -184,7 +185,7 @@ const TradeCenterPage: React.FC = () => {
             onClick={() => setActiveTab("trade-block")}
             data-testid="tab-trade-block"
             role="tab"
-            aria-selected={activeTab === "trade-block" ? "true" : "false"}
+            aria-selected={activeTab === "trade-block"}
             aria-controls="trade-tabpanel-trade-block"
           >
             <span className="tab-icon">📋</span>

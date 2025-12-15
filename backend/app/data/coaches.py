@@ -40,8 +40,15 @@ class CoachingPhilosophy(BaseModel):
     """Team coaching philosophy traits."""
     run_pass_ratio: int = 50  # 0 = all pass, 100 = all run
     blitz_frequency: int = 30  # 0-100 scale
-    aggressiveness: int = 50  # 4th down, 2-pt conversions
+    aggressiveness: int = 50  # General aggressiveness
     tempo: int = 50  # 0 = slow, 100 = hurry-up
+
+    # New Phase 2 Personality Fields
+    fourth_down_aggression: int = 50 # Specific 4th down tendency (0-100)
+    clock_management_style: str = "BALANCED" # CONSERVATIVE, AGGRESSIVE
+    trick_play_frequency: int = 5 # 0-100 scale
+    two_pt_conversion_threshold: int = 50 # Multiplier for "chart" logic
+    timeout_aggressiveness: int = 50 # Willingness to use timeouts early
 
 
 class TeamCoachingStaff(BaseModel):
@@ -176,7 +183,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
         defensive_coordinator=CoachData(first_name="Steve", last_name="Spagnuolo"),
         playbook_offense=OffensiveScheme.WEST_COAST,
         playbook_defense=DefensiveScheme.FOUR_THREE,
-        philosophy=CoachingPhilosophy(run_pass_ratio=40, blitz_frequency=35, aggressiveness=70, tempo=60)
+        philosophy=CoachingPhilosophy(run_pass_ratio=40, blitz_frequency=35, aggressiveness=70, tempo=60, trick_play_frequency=30)
     ),
     "LV": TeamCoachingStaff(
         head_coach=CoachData(first_name="Pete", last_name="Carroll"),
@@ -244,7 +251,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
         defensive_coordinator=CoachData(first_name="Kelvin", last_name="Sheppard"),
         playbook_offense=OffensiveScheme.ZONE_RUN,
         playbook_defense=DefensiveScheme.FOUR_THREE,
-        philosophy=CoachingPhilosophy(run_pass_ratio=50, blitz_frequency=35, aggressiveness=80, tempo=60)
+        philosophy=CoachingPhilosophy(run_pass_ratio=50, blitz_frequency=35, aggressiveness=80, tempo=60, fourth_down_aggression=95, trick_play_frequency=25, two_pt_conversion_threshold=70)
     ),
     "GB": TeamCoachingStaff(
         head_coach=CoachData(first_name="Matt", last_name="LaFleur"),

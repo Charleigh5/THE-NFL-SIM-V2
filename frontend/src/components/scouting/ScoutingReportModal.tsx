@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, TrendingUp, TrendingDown, Target, Brain } from "lucide-react";
 import { scoutingService } from "../../services/scouting";
 import type { ScoutingReport } from "../../types/api/scouting";
@@ -20,26 +20,32 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
 }) => {
   const [report, setReport] = useState<ScoutingReport | null>(null);
   const [loading, setLoading] = useState(false);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     if (!isOpen || !playerId) return;
 
-    let mounted = true;
-    setLoading(true);
+    // Increment fetch ID to track the current request
+    const currentFetchId = ++fetchIdRef.current;
 
-    scoutingService
-      .getScoutingReport(playerId)
-      .then((data) => {
-        if (mounted) setReport(data);
-      })
-      .catch(console.error)
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
+    const fetchReport = async () => {
+      setLoading(true);
+      try {
+        const data = await scoutingService.getScoutingReport(playerId);
+        // Only update state if this is still the current request
+        if (fetchIdRef.current === currentFetchId) {
+          setReport(data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (fetchIdRef.current === currentFetchId) {
+          setLoading(false);
+        }
+      }
     };
+
+    fetchReport();
   }, [isOpen, playerId]);
 
   if (!isOpen) return null;

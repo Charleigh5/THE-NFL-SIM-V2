@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { DraggableCard } from "../components/ui/DraggableCard";
+import CoachSettings from "../components/coaching/CoachSettings";
 import { api } from "../services/api";
 import type { Player, Team } from "../services/api";
 
@@ -63,12 +64,11 @@ export const FrontOffice = () => {
             ))}
           </div>
         </div>
-        <div
-          className="glass-panel p-6 rounded-xl border border-white/5 min-h-[500px] flex items-center justify-center"
-          data-testid="transaction-log"
-        >
-          <span className="text-white/20 font-mono">TRANSACTION_LOG</span>
-        </div>
+        {team && (
+          <div className="lg:col-span-1">
+            <CoachSettings teamId={team.id} />
+          </div>
+        )}
       </div>
 
       {/* Player Detail Modal */}

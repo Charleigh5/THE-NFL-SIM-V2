@@ -15,6 +15,7 @@ class PlayCallingContext:
     possession: str # "home" or "away"
     offense_players: List[Any]
     defense_players: List[Any]
+    is_hurry_up: bool = False
 
 class PlayCaller:
     """
@@ -121,6 +122,9 @@ class PlayCaller:
             pass_prob += 0.3 # Throw to catch up
         elif context.score_diff > 8 and context.time_left_seconds < 600:
             pass_prob -= 0.3 # Run to kill clock
+
+        if context.is_hurry_up:
+            pass_prob += 0.25
 
         # Adjust for Aggression
         if self.aggression > 0.7:

@@ -166,7 +166,8 @@ export const seasonApi = {
     };
   },
 
-  tradeCurrentPick: async (seasonId: number, _targetTeamId: number): Promise<DraftPickDetail> => {
+  tradeCurrentPick: async (seasonId: number, targetTeamId: number): Promise<DraftPickDetail> => {
+    void targetTeamId; // Will be used when real API is integrated
     return {
       id: 1,
       season_id: seasonId,
@@ -178,15 +179,18 @@ export const seasonApi = {
     };
   },
 
-  simulateNextPick: async (_seasonId: number): Promise<DraftPickSummary | null> => {
+  simulateNextPick: async (seasonId: number): Promise<DraftPickSummary | null> => {
+    void seasonId; // Will be used when real API is integrated
     return null;
   },
 
-  simulateFreeAgency: async (_seasonId: number): Promise<void> => {
-    // no-op
+  simulateFreeAgency: async (seasonId: number): Promise<void> => {
+    void seasonId; // Will be used when real API is integrated
   },
 
-  getTeamNeeds: async (_seasonId: number, _teamId: number): Promise<TeamNeed[]> => {
+  getTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {
+    void seasonId; // Will be used when real API is integrated
+    void teamId;
     return [
       { position: "QB", current_count: 2, target_count: 3, need_score: 4.5 },
       { position: "WR", current_count: 4, target_count: 6, need_score: 3.8 },

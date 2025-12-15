@@ -113,9 +113,10 @@ export interface SingleGameResult {
 
 export interface SeasonSummary {
   season: Season;
-  total_games: number;
-  games_played: number;
+  total_games?: number;
+  games_played?: number;
   completion_percentage: number;
+  current_phase?: SeasonStatus;
 }
 
 export interface AwardCandidate {

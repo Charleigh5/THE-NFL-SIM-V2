@@ -1,7 +1,9 @@
 from typing import Dict, List, Optional, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload, joinedload
 from app.models.player import Player
+from app.models.trait import PlayerTrait
 from app.models.team import Team
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
@@ -49,18 +51,30 @@ class MatchContext:
         logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
 
     async def load_rosters(self):
-        """Loads full rosters for both teams from the database."""
-        # Load Home Team
-        stmt_home = select(Player).where(Player.team_id == self.home_team_id)
+        """Loads full rosters for both teams from the database, including traits."""
+        # Load Home Team with eager-loaded traits
+        stmt_home = (
+            select(Player)
+            .where(Player.team_id == self.home_team_id)
+            .options(selectinload(Player.player_traits).joinedload(PlayerTrait.trait))
+        )
         result_home = await self.db.execute(stmt_home)
         home_players = result_home.scalars().all()
         self.home_roster = {p.id: p for p in home_players}
 
-        # Load Away Team
-        stmt_away = select(Player).where(Player.team_id == self.away_team_id)
+        # Load Away Team with eager-loaded traits
+        stmt_away = (
+            select(Player)
+            .where(Player.team_id == self.away_team_id)
+            .options(selectinload(Player.player_traits).joinedload(PlayerTrait.trait))
+        )
         result_away = await self.db.execute(stmt_away)
         away_players = result_away.scalars().all()
         self.away_roster = {p.id: p for p in away_players}
+
+        # Flatten traits to active_traits list for efficient access during game loop
+        for p in list(self.home_roster.values()) + list(self.away_roster.values()):
+            p.active_traits = [pt.trait.name for pt in p.player_traits if pt.trait]
 
         # Initialize fatigue for all players
         for pid in self.home_roster:

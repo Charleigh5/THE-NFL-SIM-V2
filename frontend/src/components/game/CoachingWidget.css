@@ -1,0 +1,19 @@
+.coaching-widget-bar-outer {
+  height: 0.375rem; /* 1.5 (h-1.5) = 0.375rem */
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.coaching-widget-bar-aggression {
+  height: 100%;
+  /* Width set dynamically via ref */
+  background: linear-gradient(to right, #22c55e, #ef4444);
+}
+
+.coaching-widget-bar-tempo {
+  height: 100%;
+  /* Width set dynamically via ref */
+  background-color: #3b82f6;
+}

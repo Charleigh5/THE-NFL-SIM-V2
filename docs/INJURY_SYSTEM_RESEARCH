@@ -1,0 +1,104 @@
+# Injury System Research and Specification
+
+## 1. Overview and Design Philosophy
+
+This document outlines the design and implementation of a new, data-driven injury system for "THE NFL SIM V2". This enhancement is a direct implementation of the Cortex Engine's core principles, utilizing the GENESIS (Biology) layer to model player-specific physiological thresholds and the HIVE (Environment) layer to assess situational risk factors on a per-play basis. It treats player health not as a binary state, but as a constantly fluctuating probability influenced by the cumulative toll of the game.
+
+The project's primary goal is to create a fully backward-compatible, probabilistic injury model grounded in real-world NFL injury data. The model calculates injury risk on a per-play basis by layering multiple, independent risk factors. This approach evaluates the specific context of every play, including the play type, the player's position, and their individual physical attributes, to generate a granular and realistic probability of an injury event occurring.
+
+This methodology is inspired by the real-world NFL/AWS "Digital Athlete" platform, which uses advanced analytics to model the complex interplay of factors contributing to player injuries. The tangible success of this initiative, which led to "700 fewer missed games by athletes" in its first season, validates our simulation's commitment to realism and emergent outcomes by modeling these interconnected variables.
+
+Before detailing the new probability model, it is essential to document the existing mechanics for injury outcomes, which will be preserved to ensure system stability and continuity.
+
+## 2. Core Injury Mechanics (Existing System)
+
+Documenting the existing injury system is a critical first step, as the new probabilistic model is designed as an additive feature. All current mechanics for determining injury severity, calculating recovery time, and modeling long-term consequences will remain intact. This ensures 100% backward compatibility with existing test suites, specifically test_injury_system.py, and provides a stable foundation upon which the new risk calculation layer is built.
+
+### 2.1. Severity Tiers and Statuses
+
+When an injury event is triggered, its severity is determined by a random value, which maps to one of three established tiers. Each tier has a corresponding set of default game statuses that dictate the player's immediate availability.
+
+Severity Tier Severity Value Range Default Statuses
+Minor 1–3 QUESTIONABLE
+Moderate 4–7 OUT
+Severe 8–10 OUT or IR
+
+### 2.2. Recovery Modifiers
+
+The base recovery time (measured in weeks) is determined by the specific injury type and its severity value. This base duration is then adjusted by player-specific and team-specific factors, which are applied as multipliers. These values are designed as tunable game parameters to allow for future balancing.
+
+Table 2.2.1: Recovery Time Multipliers | Factor | Rating/Age Band | Recovery Time Multiplier | | :--- | :--- | :--- | | Age | 30-32 | 1.1x | | | 33+ | 1.25x | | Durability Rating | 90-99 | 0.85x | | | 80-89 | 0.95x | | Medical Staff Rating | 90-99 | 0.9x | | | 80-89 | 0.95x |
+
+### 2.3. Advanced Consequences
+
+Beyond immediate recovery, the system models two forms of advanced consequences to reflect the cumulative nature of physical damage in professional football.
+
+- Setbacks: During a player's recovery period, the system performs a conditional probability check each week. A failed check results in a setback, which can extend the recovery duration by a set amount or, in rare cases, increase the injury's overall severity value. This mechanic introduces realistic uncertainty into rehabilitation timelines.
+- Permanent Attribute Degradation: The simulation tracks a player's long-term "wear and tear." When a player crosses certain cumulative thresholds—such as total number of major injuries or years played—the system triggers minor, permanent reductions to key physical attributes (e.g., Speed, Agility). This reflects the lasting impact of a physically demanding career, grounded in real-world data indicating that by the end of their careers, players have, on average, "more than 1/3 of their body... permanently impaired."
+
+These existing mechanics determine the outcome of an injury once it occurs. The following section details the new model for determining the probability of that injury occurring in the first place.
+
+## 3. Proposed Injury Probability Model
+
+The proposed injury probability model is a multi-layered, multiplicative formula designed to produce realistic injury frequencies at the team and league level over the course of a season. It achieves this by evaluating risk at the most granular level possible: the individual player on a specific play. By compounding a series of independent risk factors, the model generates a final, context-specific probability that is checked against a random number generator to determine if an injury event occurs.
+
+### 3.1. Core Probability Formula
+
+The compute_play_injury_probability function will implement the following core formula, combining a baseline risk with a series of situational multipliers:
+
+Injury Probability = Base Play Probability × Play Type Multiplier × Positional Multiplier × Player Factor Multipliers
+
+- Base Play Probability: A foundational, league-wide risk value associated with any given play.
+- Play Type Multiplier: A scalar that adjusts risk based on the specific actions of the play (e.g., a sack vs. a non-contact cut).
+- Positional Multiplier: A scalar that adjusts risk based on the player's position group.
+- Player Factor Multipliers: A final product of several scalars (e.g., Age Multiplier × Durability Multiplier × Fatigue Multiplier) that personalize risk based on the individual player's current biological and conditional state.
+
+### 3.2. Base Probability & Play Type Multipliers
+
+Every play carries an inherent base risk, which is then scaled by the specific actions involved. These values are tunable defaults calibrated against real-world NFL data to ensure that simulated season-level injury totals align with observed reality.
+
+Table 3.2.1: Proposed Injury Probability by Play Type | Play Context/Type | Base Probability / Multiplier | Notes & Grounding | | :--- | :--- | :--- | | Ordinary Snap (Baseline) | ~0.001–0.002 | Default league-wide risk for a standard play. | | Non-Contact (Lower Extremity) | ~0.0004 (Baseline) | Baseline calibrated against non-contact ACL injury data from external epidemiological studies. [Source to be verified and cited]. Triggered by flags like NONCONTACT_CUT. | | High Impact (e.g., SACK) | 1.5x | Multiplier applied to the ordinary snap baseline for high-velocity collisions. | | High-Risk Tackle | ~20.0x | Grounded in NFL/AWS 'Digital Athlete' data, which identified hip-drop tackles as having a 20x higher injury rate than a standard play. This significant multiplier is intentional and reflects the league's player safety findings. |
+
+All probabilities and multipliers are tunable parameters centralized in configuration files for simulation balancing. They are not predictive medical tools.
+
+### 3.3. Positional Risk Multipliers
+
+Real-world data clearly indicates that injury risk is not evenly distributed across positions. Players in high-collision or high-velocity roles face a greater risk than those in more protected roles. Positional multipliers account for this variance.
+
+Table 3.3.1: Positional Risk Multipliers¹ | Position Group | Risk Multiplier | | :--- | :--- | | RB/CB/S | ≈1.3 | | WR/TE/LB | ≈1.2 | | OL | ≈1.15 | | DL/EDGE | ≈1.1 | | QB | ≈0.8 | | K/P | ≈0.7 |
+
+¹ Multiplier hierarchy is derived from injury incidence data presented in 'Decoding NFL Injuries' (which identifies WR, S, LB as high-frequency) and 'Epidemiology of Injuries Identified at the NFL Scouting Combine' (which highlights DBs as high-risk).
+
+### 3.4. Player-Specific Risk Factors
+
+After establishing the risk inherent to the play and the player's position, the final layer of personalization is applied based on the individual player's physical state. These factors, which influence injury risk, are distinct from the factors that modify injury recovery.
+
+Table 3.4.1: Player-Specific Risk Multipliers | Factor | Rating/Age Band | Injury Risk Multiplier | | :--- | :--- | :--- | | Age | 30-32 | 1.05x | | | 33+ | 1.15x | | Durability Rating | 90-99 | 0.9x | | | 80-89 | 0.95x | | Medical Staff Rating | 90-99 | 0.95x | | | 80-89 | 0.98x |
+
+Finally, a dynamic Fatigue/Wear multiplier will be included in the calculation. This value represents the cumulative physical toll on a player, increasing their injury risk as their energy level decreases throughout a game and over the course of a season, directly linking this system to the engine's overarching Wear and Tear System.
+
+This probabilistic model provides a robust framework for determining when injuries occur. The final section details how this system will be integrated into the simulation's core game loop.
+
+## 4. System Integration and Implementation
+
+A clean and deterministic integration strategy is paramount to maintaining the stability and replayability of the simulation engine. The new injury logic will be encapsulated within two new functions in injury_system.py and will be invoked by the main simulation orchestrator immediately after each play is fully resolved.
+
+### 4.1. Post-Play Evaluation
+
+The function evaluate_post_play_injuries(play_context, players_on_field) will serve as the sole entry point for the injury evaluation process within the game loop. Critically, this function is executed after a play's outcome has been finalized. This sequence is mandatory to ensure simulation determinism; an injury event must not influence the state of the play in which it is generated.
+
+The function's internal logic will proceed as follows:
+
+1. Iterate through all players who were on the field and involved in the play.
+2. For each player, call the compute_play_injury_probability function, passing the relevant play context and player data to calculate their specific injury chance for that play.
+3. Use the simulation's seeded Random Number Generator (RNG) to perform a check against the calculated probability.
+4. If an injury occurs, generate a severity value and pass it to the existing determine_injury_outcome(severity, player_profile) function, which will handle the assignment of injury type, body part, recovery timeline, and trigger checks for setbacks or permanent degradation.
+5. Return a list of any generated InjuryEvent objects, which will be applied to the player statuses before the simulation proceeds to the next play.
+
+### 4.2. Configuration and Testing
+
+All base probabilities and multipliers detailed in Section 3 will be centralized in configuration files. This allows for straightforward tuning and balancing without requiring code changes, facilitating rapid iteration based on simulation results.
+
+A critical requirement is that all tests must be deterministic. This will be achieved by injecting a seeded Random Number Generator (RNG) into the evaluate_post_play_injuries function during test runs. By providing a known seed, the outcome of the probability check becomes repeatable, allowing for consistent and reliable validation of the injury logic in the pytest environment.
+
+\*\*Additional Injury data for proper formula creation and matrix for the injury

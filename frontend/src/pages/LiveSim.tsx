@@ -8,6 +8,7 @@ import { FieldView } from "../components/FieldView";
 import { PlayByPlayFeed } from "../components/PlayByPlayFeed";
 import { WeatherWidget } from "../components/game/WeatherWidget";
 import { GameStats } from "../components/game/GameStats";
+import { CoachingWidget } from "../components/game/CoachingWidget";
 import { Play, Pause, FastForward, Activity, BarChart2 } from "lucide-react";
 
 type ViewMode = "field" | "stats";
@@ -136,6 +137,11 @@ export const LiveSim = () => {
                 {/* Weather Overlay */}
                 <div className="absolute top-4 right-4 z-10 transition-opacity hover:opacity-100 opacity-80">
                   <WeatherWidget weather={weather} location="Lambeau Field" />
+                </div>
+
+                {/* Coaching Overlay */}
+                <div className="absolute top-4 left-4 z-10 transition-opacity hover:opacity-100 opacity-80">
+                  <CoachingWidget teamId={1} />
                 </div>
 
                 {/* Simulation Controls Overlay */}

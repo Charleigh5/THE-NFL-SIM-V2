@@ -13,6 +13,18 @@ export const ScoreBoard = () => {
         </div>
         <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Empire</div>
         <MomentumIndicator state={gameState.homeMomentum} size="sm" />
+        <div className="flex gap-1 mt-2" aria-label={`Home Timeouts: ${gameState.homeTimeouts}`}>
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className={`w-3 h-1 rounded-full ${
+                i < gameState.homeTimeouts
+                  ? "bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"
+                  : "bg-white/10"
+              }`}
+            />
+          ))}
+        </div>
         {gameState.possession === "home" && (
           <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 animate-pulse" />
         )}
@@ -42,6 +54,18 @@ export const ScoreBoard = () => {
         </div>
         <div className="text-sm text-gray-400 uppercase tracking-wider mb-2">Genesis</div>
         <MomentumIndicator state={gameState.awayMomentum} size="sm" />
+        <div className="flex gap-1 mt-2" aria-label={`Away Timeouts: ${gameState.awayTimeouts}`}>
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className={`w-3 h-1 rounded-full ${
+                i < gameState.awayTimeouts
+                  ? "bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"
+                  : "bg-white/10"
+              }`}
+            />
+          ))}
+        </div>
         {gameState.possession === "away" && (
           <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 animate-pulse" />
         )}

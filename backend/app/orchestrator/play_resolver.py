@@ -13,6 +13,7 @@ from app.engine.rb_tribes import RBTribeClassifier, get_tribe_modifiers
 from app.services.chemistry_service import ChemistryService
 from app.services.weather_service import WeatherService
 from app.engine.trait_effects import TraitEffectResolver
+from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
 from typing import Optional, Any, List, Tuple, Dict
 import logging
 
@@ -74,6 +75,26 @@ class PlayResolver:
                 context["weather"] = self.current_match_context.weather_config
             result = command.execute(context, rng=self.rng)
 
+        # === POST-PLAY INJURY EVALUATION ===
+        # Called AFTER play outcome is finalized for determinism
+        if result and self.current_match_context:
+            play_context = self._build_injury_play_context(command, result)
+            players = (command.offense or []) + (command.defense or [])
+            if players:
+                new_injuries = evaluate_post_play_injuries(play_context, players, self.rng)
+                if new_injuries:
+                    # Convert InjuryEvents to the format expected by PlayResult.injuries
+                    for injury_event in new_injuries:
+                        result.injuries.append({
+                            "player_id": injury_event.player_id,
+                            "severity": injury_event.severity,
+                            "injury_type": injury_event.injury_type,
+                            "weeks_to_recovery": injury_event.weeks_to_recovery,
+                            "can_play_through": injury_event.can_play_through,
+                            "performance_penalties": injury_event.performance_penalties,
+                        })
+                        logger.info(f"Post-play injury: Player {injury_event.player_id} - {injury_event.injury_type}")
+
         # Decrement debuffs after every play
         self.offensive_line_ai.decrement_debuffs()
         return result
@@ -95,6 +116,49 @@ class PlayResolver:
         if self.current_match_context and self.current_match_context.weather_config:
             return self.current_match_context.weather_config.get("temperature", 75.0)
         return 75.0
+
+    def _build_injury_play_context(self, command: PlayCommand, result: PlayResult) -> PlayContext:
+        """
+        Build a PlayContext for injury evaluation from the command and result.
+        """
+        # Determine play type for injury multipliers
+        play_type = "STANDARD"
+        if isinstance(command, PassPlayCommand):
+            play_type = "PASS_PLAY"
+            result_desc = (result.description or "").upper()
+            # Check for sack first (higher priority - full tackle for loss)
+            if result.yards_gained and result.yards_gained < 0 and "SACK" in result_desc:
+                play_type = "SACK"
+            # Check for QB knockdown (pressured throw - hit while releasing ball)
+            elif "UNDER PRESSURE" in result_desc or "WHILE BEING HIT" in result_desc or "PRESSURE" in result_desc:
+                play_type = "QB_KNOCKDOWN"
+        elif isinstance(command, RunPlayCommand):
+            play_type = "RUN_PLAY"
+
+        # Get medical staff rating from match context
+        medical_rating = 50
+        if self.current_match_context:
+            medical_rating = getattr(self.current_match_context, "medical_staff_rating", 50)
+
+        # Get average fatigue from the players involved
+        avg_fatigue = 0.0
+        players = (command.offense or []) + (command.defense or [])
+        if players:
+            total_fatigue = 0.0
+            for p in players:
+                # Try to get fatigue from Genesis kernel
+                player_fatigue = self.kernels.genesis.get_current_fatigue(p.id)
+                total_fatigue += player_fatigue
+            avg_fatigue = total_fatigue / len(players)
+
+        return PlayContext(
+            play_type=play_type,
+            fatigue=avg_fatigue,
+            medical_staff_rating=medical_rating,
+            is_contact=True,  # Most football plays involve contact
+            season=getattr(self.current_match_context, "season", 0),
+            week=getattr(self.current_match_context, "week", 0),
+        )
 
     def _get_weather_effects(self) -> Optional[WeatherEffects]:
         if not self.current_match_context or not self.current_match_context.weather_config:
@@ -211,6 +275,12 @@ class PlayResolver:
         if qb and defender:
             matchups.append(("ball_tracking_vs_throw_placement", qb, defender))
 
+        # 4. RB Chip Block vs LB Blitz (if RB is blocking, not receiving)
+        rb = self._get_player_by_position(command.offense, "RB")
+        lb = self._get_player_by_position(command.defense, "LB")
+        if rb and target and rb.id != target.id and lb:
+            matchups.append(("rb_chip_vs_blitz_timing", lb, rb))
+
         # Apply all interactions
         return apply_interaction_to_play(
             self.interaction_engine,
@@ -241,6 +311,13 @@ class PlayResolver:
                 "4TH_QUARTER": getattr(command, "quarter", 1) == 4,
             }
 
+            # Add run direction context for situational modifiers
+            run_direction = getattr(command, "run_direction", "middle")
+            if run_direction == "middle":
+                context["INSIDE_RUN"] = True
+            else:
+                context["OUTSIDE_RUN"] = True
+
             # Add weather context
             if self.current_match_context.weather_config:
                 weather = self.current_match_context.weather_config
@@ -262,6 +339,14 @@ class PlayResolver:
         # 2. Juke Efficiency vs Open Field Tackle (post-contact)
         if rb and defender:
             matchups.append(("juke_vs_tackle", rb, defender))
+
+        # 3. OL Pull vs DL Gap Integrity (for outside/power runs)
+        run_direction = getattr(command, "run_direction", "middle")
+        if run_direction != "middle":
+            ol = self._get_player_by_position(command.offense, "OG")
+            dl = self._get_player_by_position(command.defense, "DE")
+            if ol and dl:
+                matchups.append(("ol_pull_vs_dl_gap_integrity", ol, dl))
 
         # Apply all interactions
         return apply_interaction_to_play(
@@ -308,6 +393,21 @@ class PlayResolver:
         elif hasattr(qb, "traits") and "Field General" in getattr(qb, "traits", []):
              trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
              logger.debug(f"Applied Field General boost from {qb.last_name}")
+
+        # 3b. Apply Green Dot (Defensive Captain) effects
+        green_dot_effects = TraitEffectResolver.apply_green_dot_effects(command.defense)
+        if green_dot_effects:
+            logger.debug(f"Applied Green Dot defensive boost: +{green_dot_effects.get('team_play_recognition_boost', 0)}")
+
+        # 3c. Apply Chip Block (RB Pass Protection) if RB is blocking
+        rb = self._get_player_by_position(command.offense, "RB")
+        if rb and rb != target:  # RB is blocking, not receiving
+            chip_effects = TraitEffectResolver.apply_chip_block_effects(rb, is_blocking=True)
+            if chip_effects and "pass_pro_rating_boost" in chip_effects:
+                # Temporarily boost RB's pass protection rating
+                current_ppr = getattr(rb, "pass_pro_rating", 50)
+                rb.pass_pro_rating = current_ppr + chip_effects["pass_pro_rating_boost"]
+                logger.debug(f"Applied Chip Block boost: +{chip_effects['pass_pro_rating_boost']} for {rb.last_name}")
 
         # 4. Line Battle & Sack Check
         block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense, trait_modifiers)
@@ -475,12 +575,14 @@ class PlayResolver:
         # TRAIT EFFECT: Possession Receiver (WR/TE)
         # Bonus for contested catches (when defensive coverage is strong)
         trait_bonus = 0.0
-        if hasattr(target, "trait_effects") and "contested_catch_bonus" in target.trait_effects:
+        down = getattr(command, "down", 1)
+        distance = getattr(command, "distance", 10)
+        pr_effects = TraitEffectResolver.apply_possession_receiver_effects(target, down, distance)
+        if pr_effects and "catch_in_traffic_boost" in pr_effects:
             # Contested situation: defender is close (low speed diff or strong coverage)
             if speed_diff < 0.05 or matchup_factor < 0:
-                contested_catch_bonus = target.trait_effects["contested_catch_bonus"]  # +15
-                trait_bonus = contested_catch_bonus / 100.0  # Convert to 0.0-1.0
-                logger.debug(f"Possession Receiver bonus: +{contested_catch_bonus} for {target.last_name}")
+                trait_bonus = pr_effects["catch_in_traffic_boost"] / 100.0  # Convert to 0.0-1.0
+                logger.debug(f"Possession Receiver bonus: +{pr_effects['catch_in_traffic_boost']} for {target.last_name}")
 
         # B-007: Apply momentum modifier to success chance
         momentum_modifier = 0.0
@@ -551,7 +653,12 @@ class PlayResolver:
                     weather_note = " fighting the wind"
 
             # Build full description with interactions
-            base_desc = f"Pass complete{weather_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)"
+            # Add pressure indicator if QB was under heavy pressure (for injury context)
+            pressure_note = ""
+            if BlockingResult.LOSS in block_results:
+                pressure_note = " under pressure"
+
+            base_desc = f"Pass complete{weather_note}{pressure_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)"
 
             # Add key interaction narrative if present
             if interaction_narratives and len(interaction_narratives) > 0:
@@ -601,10 +708,11 @@ class PlayResolver:
                     defender_id=defender.id
                 )
 
-            # Normal Incomplete
+            # Normal Incomplete - add pressure indicator if applicable
+            pressure_note = " under pressure" if BlockingResult.LOSS in block_results else ""
             return PlayResult(
                 yards_gained=0,
-                description=f"Incomplete pass intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
+                description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
                 headline=None,
                 injuries=injuries,
                 passer_id=qb.id,
@@ -634,6 +742,11 @@ class PlayResolver:
         # Use get_current_fatigue (read-only)
         current_fatigue = self.kernels.genesis.get_current_fatigue(rb.id)
         # print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
+
+        # 2b. Apply Green Dot (Defensive Captain) effects for run defense
+        green_dot_effects = TraitEffectResolver.apply_green_dot_effects(command.defense)
+        if green_dot_effects:
+            logger.debug(f"Applied Green Dot defensive boost to run D: +{green_dot_effects.get('team_play_recognition_boost', 0)}")
 
         # 3. Attribute Logic via ProbabilityEngine
 

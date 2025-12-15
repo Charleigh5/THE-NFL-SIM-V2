@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, BookOpen, Sparkles } from "lucide-react";
 import { scoutingService } from "../../services/scouting";
 import type { PlayerBackstory } from "../../types/api/scouting";
@@ -18,26 +18,32 @@ export const PlayerBackstoryModal: React.FC<PlayerBackstoryModalProps> = ({
 }) => {
   const [backstory, setBackstory] = useState<PlayerBackstory | null>(null);
   const [loading, setLoading] = useState(false);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     if (!isOpen || !playerId) return;
 
-    let mounted = true;
-    setLoading(true);
+    // Increment fetch ID to track the current request
+    const currentFetchId = ++fetchIdRef.current;
 
-    scoutingService
-      .getPlayerBackstory(playerId)
-      .then((data) => {
-        if (mounted) setBackstory(data);
-      })
-      .catch(console.error)
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
+    const fetchBackstory = async () => {
+      setLoading(true);
+      try {
+        const data = await scoutingService.getPlayerBackstory(playerId);
+        // Only update state if this is still the current request
+        if (fetchIdRef.current === currentFetchId) {
+          setBackstory(data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (fetchIdRef.current === currentFetchId) {
+          setLoading(false);
+        }
+      }
     };
+
+    fetchBackstory();
   }, [isOpen, playerId]);
 
   if (!isOpen) return null;

@@ -17,6 +17,28 @@ logger = get_logger(__name__)
 # TRAIT DEFINITION DATACLASS
 # ============================================================================
 
+# ============================================================================
+# TRAIT RARITY TIERS
+# ============================================================================
+# Controls how rare traits are in the league based on real-world distributions
+
+class TraitRarity:
+    """Rarity tiers for trait distribution."""
+    LEGENDARY = "LEGENDARY"  # 1-5 players league-wide (e.g., Ragknow, Rocket Arm)
+    RARE = "RARE"            # 5-15 players league-wide (e.g., Elite Speed)
+    UNCOMMON = "UNCOMMON"    # ~50-100 players (e.g., most Gold-tier traits)
+    COMMON = "COMMON"        # No cap (e.g., most Silver/Common traits)
+
+
+# Soft caps for legendary traits (approximate league-wide limits)
+LEGENDARY_TRAIT_CAPS = {
+    "ragknow": 3,           # ~3 players with legendary toughness
+    "rocket_arm": 5,        # ~5 QBs with truly elite arm strength
+    "elite_speed": 10,      # ~10 players with 4.3 speed or better
+    "generational": 2,      # ~2 truly generational talents at a time
+}
+
+
 @dataclass
 class TraitDefinition:
     """
@@ -26,8 +48,8 @@ class TraitDefinition:
     name: str
     description: str
     position_requirements: List[str]
-    acquisition_method: str  # AUTO_UNLOCK, STAT_THRESHOLD, COACHING_UNLOCK, TEAM_DESIGNATION, PROGRESSION
-    activation_triggers: List[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, etc.
+    acquisition_method: str  # AUTO_UNLOCK, STAT_THRESHOLD, COACHING_UNLOCK, TEAM_DESIGNATION, PROGRESSION, RPG_UNLOCK
+    activation_triggers: List[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, INJURY_ACTIVE, etc.
     effects: Dict[str, float]
     tier: str  # COMMON, SILVER, GOLD, ELITE
 
@@ -35,6 +57,10 @@ class TraitDefinition:
     min_awareness: Optional[int] = None
     min_experience: Optional[int] = None
     min_stat_threshold: Optional[Dict[str, int]] = None
+
+    # Rarity system
+    rarity_tier: str = TraitRarity.COMMON  # LEGENDARY, RARE, UNCOMMON, COMMON
+    max_league_count: Optional[int] = None  # Soft cap on total players with this trait
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for API responses."""
@@ -423,7 +449,117 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         tier="SILVER",
         min_experience=8,
     ),
+
+    # -------------------------------------------------------------------------
+    # LEGENDARY TRAITS (Rare, League-Wide Soft Caps)
+    # -------------------------------------------------------------------------
+    "ragknow": TraitDefinition(
+        name="Ragknow",
+        description="Legendary toughness that allows the player to ignore injury penalties and play through Minor/Moderate injuries (severity 1-7) without performance loss. Named after the legendary warriors who fought through any wound.",
+        position_requirements=["ALL"],
+        acquisition_method="RPG_UNLOCK",  # Rare trait from RPG events or draft
+        activation_triggers=["INJURY_ACTIVE", "ALWAYS"],
+        effects={
+            "ignore_injury_penalties": 1.0,       # Boolean flag (1.0 = true)
+            "max_playable_severity": 7,           # Can play through severity 1-7
+            "block_injury_degradation": 1.0,      # No permanent attribute loss while injured
+            "recovery_time_multiplier": 0.90,     # 10% faster recovery
+        },
+        tier="ELITE",
+        min_experience=5,  # Must be veteran to unlock through progression
+        rarity_tier=TraitRarity.LEGENDARY,
+        max_league_count=3,  # Only ~3 players in the entire league
+    ),
+    "rocket_arm": TraitDefinition(
+        name="Rocket Arm",
+        description="Truly elite arm strength that allows throws other QBs simply cannot make. Off-platform power, deep ball velocity, and tight-window velocity are all enhanced.",
+        position_requirements=["QB"],
+        acquisition_method="STAT_THRESHOLD",  # Born with it or develop through extreme training
+        activation_triggers=["PASS_PLAY", "DEEP_ROUTE"],
+        effects={
+            "throw_power_boost": 8,
+            "deep_throw_accuracy_boost": 5,
+            "off_platform_throw_boost": 0.20,
+            "tight_window_velocity_boost": 0.15,
+        },
+        tier="ELITE",
+        min_stat_threshold={"throw_power": 95},
+        rarity_tier=TraitRarity.LEGENDARY,
+        max_league_count=5,  # Only ~5 QBs with truly elite arms
+    ),
+    "elite_speed": TraitDefinition(
+        name="Elite Speed",
+        description="4.3 forty or better. This player is in the 99th percentile of human speed and can change games with pure athleticism.",
+        position_requirements=["WR", "CB", "RB", "S"],
+        acquisition_method="STAT_THRESHOLD",  # Born with it
+        activation_triggers=["ALWAYS"],
+        effects={
+            "speed_boost": 3,  # Additional boost on top of base speed
+            "breakaway_chance_boost": 0.15,
+            "closing_speed_boost": 0.20,
+        },
+        tier="ELITE",
+        min_stat_threshold={"speed": 96},
+        rarity_tier=TraitRarity.RARE,
+        max_league_count=10,  # ~10 players with 4.3 speed
+    ),
+    "generational": TraitDefinition(
+        name="Generational Talent",
+        description="A once-in-a-generation player who redefines their position. Everything they do is at an elite level.",
+        position_requirements=["ALL"],
+        acquisition_method="DRAFT",  # Only acquired at draft time
+        activation_triggers=["ALWAYS"],
+        effects={
+            "all_ratings_boost": 3,
+            "development_speed_boost": 0.25,
+            "clutch_performance_boost": 0.15,
+            "highlight_play_chance": 0.10,
+        },
+        tier="ELITE",
+        rarity_tier=TraitRarity.LEGENDARY,
+        max_league_count=2,  # Only ~2 truly generational talents at a time
+    ),
+
+    # -------------------------------------------------------------------------
+    # RARE TRAITS (5-15 players league-wide)
+    # -------------------------------------------------------------------------
+    "football_iq": TraitDefinition(
+        name="Football IQ",
+        description="Elite mental processing that allows the player to read plays before they develop and make adjustments on the fly.",
+        position_requirements=["QB", "LB", "S", "C"],
+        acquisition_method="PROGRESSION",
+        activation_triggers=["ALWAYS"],
+        effects={
+            "play_recognition_boost": 10,
+            "pre_snap_adjustment_boost": 0.20,
+            "audible_success_boost": 0.15,
+            "blown_assignment_reduction": 0.25,
+        },
+        tier="GOLD",
+        min_awareness=92,
+        min_experience=4,
+        rarity_tier=TraitRarity.RARE,
+        max_league_count=15,
+    ),
+    "freak_athlete": TraitDefinition(
+        name="Freak Athlete",
+        description="Combine numbers that defy belief. This player is built differently and can do things others physically cannot.",
+        position_requirements=["ALL"],
+        acquisition_method="STAT_THRESHOLD",
+        activation_triggers=["ALWAYS"],
+        effects={
+            "agility_boost": 4,
+            "acceleration_boost": 4,
+            "jumping_boost": 5,
+            "change_of_direction_boost": 0.15,
+        },
+        tier="GOLD",
+        min_stat_threshold={"agility": 94, "acceleration": 94},
+        rarity_tier=TraitRarity.RARE,
+        max_league_count=12,
+    ),
 }
+
 
 
 # ============================================================================

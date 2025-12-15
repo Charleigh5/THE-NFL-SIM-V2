@@ -18,6 +18,11 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from app.services.playbook.clock_management import ClockManagementAI, ClockStrategy
+from app.services.playbook.coaching_ai import CoachingAIService
+from app.data.coaches import CoachingPhilosophy
+from app.services.playbook.types import GameSituation as ClockGameSituation
+
 logger = logging.getLogger(__name__)
 
 class SimulationOrchestrator:
@@ -57,6 +62,10 @@ class SimulationOrchestrator:
         # Configuration
         self.play_delay_seconds = 5.0  # Delay between plays for animation
         self.game_config = {}
+
+        self.last_clock_strategy = "NORMAL"
+        self.home_timeouts = 3
+        self.away_timeouts = 3
 
         # Momentum Engine (Phase 4 Integration)
         self.momentum_engine = MomentumEngine()
@@ -429,6 +438,50 @@ class SimulationOrchestrator:
             score_diff = self.away_score - self.home_score
             aggression = self.game_config.get("away_aggression", 0.5)
 
+        # Clock Management & Coaching AI
+        timeouts_left = 3 # Placeholder
+
+        # Build Philosophy from config or defaults
+        coach_philosophy = CoachingPhilosophy(
+            aggressiveness=int(aggression * 100),
+            run_pass_ratio=50
+        )
+        coaching_ai = CoachingAIService(coach_philosophy)
+        clock_ai = ClockManagementAI(coaching_ai)
+
+        game_situation = ClockGameSituation(
+            quarter=self.current_quarter,
+            time_remaining=time_left_seconds,
+            down=self.down,
+            distance=self.distance,
+            field_position=self.yard_line if self.possession == "home" else 100 - self.yard_line,
+            score_diff=score_diff
+        )
+
+        clock_strategy = clock_ai.get_clock_strategy(game_situation, timeouts_left)
+        self.last_clock_strategy = clock_strategy
+        is_hurry_up = clock_strategy == ClockStrategy.HURRY_UP
+
+        # Hande Spike/Kneel
+        if clock_strategy == ClockStrategy.KNEEL:
+            result = PlayResult(
+                yards_gained=-1, is_touchdown=False, is_turnover=False,
+                description="Kneel down.", headline=None, injuries=[],
+                time_elapsed=40 # Drains clock
+            )
+            self.history.append(result)
+            await self._update_game_state(result)
+            return result
+        elif clock_strategy == ClockStrategy.SPIKE:
+            result = PlayResult(
+                yards_gained=0, is_touchdown=False, is_turnover=False,
+                description="Spike to stop the clock!", headline=None, injuries=[],
+                time_elapsed=1
+            )
+            self.history.append(result)
+            await self._update_game_state(result)
+            return result
+
         context = PlayCallingContext(
             down=self.down,
             distance=self.distance,
@@ -437,7 +490,8 @@ class SimulationOrchestrator:
             score_diff=score_diff,
             offense_players=offense_players,
             defense_players=defense_players,
-            possession=self.possession
+            possession=self.possession,
+            is_hurry_up=is_hurry_up
         )
 
         # Update Coach Personality
@@ -631,6 +685,76 @@ class SimulationOrchestrator:
                     self.down = 1
                     self.distance = 10
 
+        # Check for Timeouts
+        if self.current_quarter in [2, 4]:
+            try:
+                # Create clock_ai for timeout decisions
+                coach_philosophy = CoachingPhilosophy(aggressiveness=50, run_pass_ratio=50)
+                coaching_ai = CoachingAIService(coach_philosophy)
+                clock_ai = ClockManagementAI(coaching_ai)
+
+                minutes, seconds = map(int, self.time_left.split(":"))
+                curr_seconds = minutes * 60 + seconds
+                post_play_time = max(0, curr_seconds - result.time_elapsed)
+
+                # Defensive Timeout Check
+                def_team_is_home = self.possession != "home"
+                def_timeouts = self.home_timeouts if def_team_is_home else self.away_timeouts
+
+                # Score diff from defense perspective
+                start_score_diff = self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
+                # Add points from this play
+                # result already processed into scores above? Yes (lines 619/621)
+                # Re-calculate current score diff
+                curr_score_diff_off = self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
+                curr_score_diff_def = -curr_score_diff_off
+
+                sit_def = ClockGameSituation(
+                    quarter=self.current_quarter,
+                    time_remaining=post_play_time,
+                    down=self.down,
+                    distance=self.distance,
+                    field_position=50,
+                    score_diff=curr_score_diff_def
+                )
+
+                if clock_ai.should_defense_call_timeout(sit_def, def_timeouts):
+                    if def_team_is_home:
+                        self.home_timeouts -= 1
+                        result.description += " (Timeout called by Home)"
+                    else:
+                        self.away_timeouts -= 1
+                        result.description += " (Timeout called by Away)"
+                    # Stop clock effect: Play took time, but no runoff.
+                    # Simulating this by clamping elapsed time if it was large (implies runoff)
+                    if result.time_elapsed > 12:
+                         result.time_elapsed = 7 # Force short duration
+
+                # Offensive Timeout Check (if no defensive timeout called)
+                elif not result.is_touchdown and not result.is_turnover:
+                     off_timeouts = self.home_timeouts if self.possession == "home" else self.away_timeouts
+                     sit_off = ClockGameSituation(
+                        quarter=self.current_quarter,
+                        time_remaining=post_play_time,
+                        down=self.down,
+                        distance=self.distance,
+                        field_position=50,
+                        score_diff=curr_score_diff_off
+                     )
+                     # Only if hurry up or explicit logic
+                     if clock_ai.should_use_timeout(sit_off, off_timeouts, is_offense=True):
+                        if self.possession == "home":
+                            self.home_timeouts -= 1
+                            result.description += " (Timeout called by Home)"
+                        else:
+                            self.away_timeouts -= 1
+                            result.description += " (Timeout called by Away)"
+                        if result.time_elapsed > 12:
+                            result.time_elapsed = 7
+
+            except Exception as e:
+                logger.error(f"Error in timeout logic: {e}")
+
         # Update time
         try:
             minutes, seconds = map(int, self.time_left.split(":"))
@@ -675,7 +799,10 @@ class SimulationOrchestrator:
             "possession": self.possession,
             "down": self.down,
             "distance": self.distance,
-            "yardLine": self.yard_line
+            "yardLine": self.yard_line,
+            "clockStrategy": self.last_clock_strategy,
+            "homeTimeouts": self.home_timeouts,
+            "awayTimeouts": self.away_timeouts
         }
 
     def get_history(self) -> List[PlayResult]:
