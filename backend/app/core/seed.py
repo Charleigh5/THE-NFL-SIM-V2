@@ -1,4 +1,5 @@
 import logging
+import os
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.team import Team
@@ -7,7 +8,13 @@ from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
 import random
 
-# Configure logging
+# NFL Data Integration (optional)
+try:
+    from app.services.nflverse_service import NflverseService
+    from app.services.ratings_generator import generate_player_ratings
+    HAS_NFLVERSE = True
+except ImportError:
+    HAS_NFLVERSE = False
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -201,12 +208,105 @@ def seed_coaches(db: Session):
     db.commit()
     logger.info(f"Seeded {coaches_created} coaches successfully.")
 
+
+def seed_players_from_nflverse(db: Session, season: int = 2024):
+    """
+    Seed players using real NFL data from nflreadpy.
+
+    Args:
+        db: Database session.
+        season: NFL season to import (default 2024).
+    """
+    if not HAS_NFLVERSE:
+        logger.warning("nflreadpy not available. Falling back to random seeding.")
+        seed_players(db)
+        return
+
+    existing_players = db.query(Player).count()
+    if existing_players > 0:
+        logger.info(f"Players already seeded ({existing_players} found). Skipping NFL import.")
+        return
+
+    logger.info(f"Seeding players from NFL {season} rosters...")
+
+    # Build team lookup
+    teams = db.query(Team).all()
+    team_lookup = {t.abbreviation: t.id for t in teams}
+
+    # Fetch real data
+    service = NflverseService(season=season)
+    players_data = service.get_all_active_players()
+
+    players_to_add = []
+    for p_data in players_data:
+        team_abbr = p_data.get("team_abbr", "")
+        team_id = team_lookup.get(team_abbr)
+
+        if not team_id:
+            continue  # Skip players without a valid team
+
+        # Generate ratings from real data
+        ratings = generate_player_ratings(p_data)
+
+        player = Player(
+            first_name=p_data.get("first_name", "Unknown"),
+            last_name=p_data.get("last_name", "Player"),
+            position=p_data.get("position", "WR"),
+            team_id=team_id,
+            college=p_data.get("college"),
+            height=p_data.get("height", 72),
+            weight=p_data.get("weight", 200),
+            age=p_data.get("age", 25),
+            experience=p_data.get("experience", 0),
+            jersey_number=p_data.get("jersey_number", 0) or 0,
+            overall_rating=ratings.get("overall_rating", 70),
+            # Apply generated ratings
+            speed=ratings.get("speed", 50),
+            acceleration=ratings.get("acceleration", 50),
+            strength=ratings.get("strength", 50),
+            agility=ratings.get("agility", 50),
+            awareness=ratings.get("awareness", 50),
+            throw_power=ratings.get("throw_power", 50),
+            throw_accuracy_short=ratings.get("throw_accuracy_short", 50),
+            throw_accuracy_mid=ratings.get("throw_accuracy_mid", 50),
+            throw_accuracy_deep=ratings.get("throw_accuracy_deep", 50),
+            catching=ratings.get("catching", 50),
+            route_running=ratings.get("route_running", 50),
+            pass_block=ratings.get("pass_block", 50),
+            run_block=ratings.get("run_block", 50),
+            tackle=ratings.get("tackle", 50),
+            hit_power=ratings.get("hit_power", 50),
+            block_shed=ratings.get("block_shed", 50),
+            man_coverage=ratings.get("man_coverage", 50),
+            zone_coverage=ratings.get("zone_coverage", 50),
+            pass_rush_power=ratings.get("pass_rush_power", 50),
+            pass_rush_finesse=ratings.get("pass_rush_finesse", 50),
+            play_recognition=ratings.get("play_recognition", 50),
+            pocket_presence=ratings.get("pocket_presence", 50),
+            quick_release=ratings.get("quick_release", 50),
+        )
+        players_to_add.append(player)
+
+    db.add_all(players_to_add)
+    db.commit()
+    logger.info(f"Seeded {len(players_to_add)} real NFL players successfully.")
+
+
 def main():
     db = SessionLocal()
+    seed_mode = os.getenv("SEED_MODE", "RANDOM").upper()
+
     try:
         seed_teams(db)
-        seed_traits(db) # Seed traits before players so we can assign them
-        seed_players(db)
+        seed_traits(db)
+
+        if seed_mode == "REAL_2024" and HAS_NFLVERSE:
+            logger.info("SEED_MODE=REAL_2024: Using real NFL data...")
+            seed_players_from_nflverse(db, season=2024)
+        else:
+            logger.info("SEED_MODE=RANDOM: Using generated players...")
+            seed_players(db)
+
         seed_coaches(db)
     except Exception as e:
         logger.error(f"Error seeding database: {e}")
@@ -214,5 +314,7 @@ def main():
     finally:
         db.close()
 
+
 if __name__ == "__main__":
     main()
+
