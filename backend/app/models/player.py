@@ -173,6 +173,10 @@ class Player(Base):
     # Trait Relationship - Refactored for new setup
     player_traits: Mapped[List["PlayerTrait"]] = relationship("PlayerTrait", back_populates="player")
 
+    # --- RPG Abilities (Phase 11) ---
+    # JSON dict of unlocked abilities: {"pre_snap_diagnostician": True, "audible_master": True}
+    abilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
+
     # --- Morale & Chemistry ---
     morale: Mapped[int] = mapped_column(Integer, default=50)
 
@@ -202,6 +206,9 @@ class Player(Base):
 
     # New: Game Starts (OL Chemistry)
     game_starts: Mapped[List["PlayerGameStarts"]] = relationship("PlayerGameStarts", back_populates="player")
+
+    # Hyper-Immersive Relationships
+    body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False)
 
     def __repr__(self):
         return f"<Player(name='{self.first_name} {self.last_name}', position='{self.position}', id={self.id})>"

@@ -22,6 +22,8 @@ from app.services.playbook.clock_management import ClockManagementAI, ClockStrat
 from app.services.playbook.coaching_ai import CoachingAIService
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation as ClockGameSituation
+from app.services.ability_service import AbilityService
+from app.rpg.abilities import get_ability_definition
 
 logger = logging.getLogger(__name__)
 
@@ -567,6 +569,26 @@ class SimulationOrchestrator:
         # Update Coach Personality
         self.play_caller.aggression = float(aggression)
 
+        # Pre-snap Read Integration (Phase 11)
+        qb_read = None
+        play_state_modifiers = {}
+        if offense_players and defense_players:
+            qb = next((p for p in offense_players if p.position == "QB"), None)
+            # Find defensive coordinator (DC) - approximated by identifying team coach
+            # In a real scenario, this would come from MatchContext.coaches
+            dc = None
+            if self.match_context:
+                # Placeholder: Logic to get DC would go here
+                pass
+
+            if qb:
+                qb_read = await self._calculate_qb_read(qb, dc)
+                if qb_read:
+                    # Apply modifier to play command later
+                    play_state_modifiers["quarterback_read"] = qb_read
+                    # For now, we attach it to the PlayCommand via modifiers if possible,
+                    # but PlayCommand is created below. We will inject it then.
+
         # Select Play
         if self.match_context and hasattr(self.match_context, 'cortex') and self.match_context.cortex:
             # Use Cortex AI
@@ -595,8 +617,29 @@ class SimulationOrchestrator:
             # Legacy PlayCaller
             command = self.play_caller.select_play(context)
 
+        # Inject Pre-Snap Read Modifiers into Command
+        if qb_read and hasattr(command, 'modifiers'):
+            command.modifiers.update(play_state_modifiers)
+            # Apply awareness boost directly to execution context if needed
+            # But PlayResolver usually handles this.
+            # We add it to modifiers for PlayResolver to see.
+
+        # Audible Logic (Phase 11)
+        # Randomly check if an audible is called (simulated for now)
+        # in a real game, this would be an API signal or AI decision
+        is_audible = False # Default off
+        # If we had an "audible_probability" in context or AI output, we'd use it.
+        # For simulation purposes, let's assume no random audibles to keep flow simple for now,
+        # UNLESS controlled by a specific AI flag.
+
         # Resolve play
         result = self.play_resolver.resolve_play(command)
+
+        # Attach read info to result for frontend
+        if qb_read:
+            result.player_modifiers = result.player_modifiers or {}
+            result.player_modifiers["quarterback_read"] = qb_read
+
         self.history.append(result)
 
         # Update game state based on result
@@ -607,6 +650,63 @@ class SimulationOrchestrator:
             self._update_fatigue(offense_players, defense_players, result)
 
         return result
+
+    async def _calculate_qb_read(self, qb: Player, dc: Optional[Any]) -> Optional[dict]:
+        """
+        Calculate pre-snap read for QB with Diagnostician ability.
+
+        Returns:
+            {
+                "predicted_coverage": "Cover 2",
+                "confidence": "High",
+                "is_correct": True,
+                "awareness_modifier": 15  # +15 if correct, -5 if wrong
+            }
+        """
+        if not (qb.abilities or {}).get("pre_snap_diagnostician"):
+            return None
+
+        # Need ability definition for exact bonus
+        ability_def = get_ability_definition("pre_snap_diagnostician")
+        awareness_bonus = ability_def.effects.get("awareness_boost", 0) if ability_def else 0
+
+        # Calculate read score
+        # QB Score = Awareness + Level + Bonus
+        qb_score = getattr(qb, "awareness", 50) + getattr(qb, "level", 1) + awareness_bonus
+
+        # DC Score = Disguise Rating
+        dc_disguise = 0
+        if dc:
+             dc_disguise = getattr(dc, "defensive_disguise", getattr(dc, "defense_rating", 50))
+        else:
+             dc_disguise = 50
+
+        read_differential = qb_score - dc_disguise
+        # Accuracy floor 30%, base 50%, max 95%
+        accuracy = min(0.95, max(0.30, 0.50 + (read_differential / 100)))
+
+        # Generate "Actual" coverage (simulated)
+        # In a real play call, this would come from the defensive play command
+        actual_coverage = "Cover 3" # Default placeholder
+
+        is_correct = self.rng.random() < accuracy
+
+        if is_correct:
+            return {
+                "predicted_coverage": actual_coverage,
+                "confidence": "High" if accuracy > 0.80 else "Medium",
+                "is_correct": True,
+                "awareness_modifier": 15,
+            }
+        else:
+            wrong_options = ["Cover 1", "Cover 2", "Cover 3", "Cover 4"]
+            wrong_options = [c for c in wrong_options if c != actual_coverage]
+            return {
+                "predicted_coverage": self.rng.choice(wrong_options),
+                "confidence": "Low" if accuracy < 0.50 else "Medium",
+                "is_correct": False,
+                "awareness_modifier": -5,
+            }
 
     def _convert_decision_to_command(self, decision: str, context: PlayCallingContext) -> Any:
         """Convert Cortex decision string to PlayCommand."""

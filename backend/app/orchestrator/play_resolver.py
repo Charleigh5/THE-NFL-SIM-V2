@@ -565,6 +565,50 @@ class PlayResolver:
              # Mild pressure
              pressure_penalty = 0.10
 
+        # ======================================================================
+        # "THE CLOSER" TRAIT - Pressure & Fatigue Immunity in Crunch Time
+        # ======================================================================
+        closer_active = False
+        if qb and hasattr(qb, "player_traits"):
+            from app.services.trait_service import TraitService, TRAIT_CATALOG
+
+            # Build crunch time context from match context
+            crunch_context = {}
+            if self.current_match_context:
+                crunch_context = {
+                    "quarter": getattr(self.current_match_context, "quarter", 1),
+                    "time_remaining": getattr(self.current_match_context, "time_remaining", 900),
+                    "score_differential": abs(
+                        getattr(self.current_match_context, "home_score", 0) -
+                        getattr(self.current_match_context, "away_score", 0)
+                    ),
+                }
+
+            # Check if QB has "The Closer" trait
+            the_closer_def = TRAIT_CATALOG.get("the_closer")
+            if the_closer_def:
+                # Check if player has this trait (via player_traits relationship or traits list)
+                qb_trait_names = []
+                if hasattr(qb, "player_traits"):
+                    qb_trait_names = [pt.trait.name if hasattr(pt, "trait") else "" for pt in qb.player_traits]
+                elif hasattr(qb, "traits"):
+                    qb_trait_names = [t.name if hasattr(t, "name") else t for t in qb.traits]
+
+                if "The Closer" in qb_trait_names:
+                    # Check if crunch time is active
+                    if TraitService.check_crunch_time(crunch_context):
+                        closer_active = True
+                        logger.info(f"🧊 THE CLOSER ACTIVATED: {qb.last_name} - Pressure & Fatigue immunity!")
+
+                        # Apply immunity effects
+                        if the_closer_def.effects.get("pressure_immunity", 0) >= 1.0:
+                            pressure_penalty = 0.0
+                            logger.debug("Pressure penalty nullified by The Closer")
+
+                        if the_closer_def.effects.get("fatigue_override", 0) >= 1.0:
+                            fatigue_penalty = 0.0
+                            logger.debug("Fatigue penalty nullified by The Closer")
+
         # F. Final Probability Calculation
         # Normalize throw accuracy (0-100) to 0.0-1.0 base probability
         # base_prob is already calculated above with weather modifiers

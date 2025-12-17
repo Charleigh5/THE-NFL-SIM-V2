@@ -6,12 +6,15 @@ from app.models.team import Team
 from app.models.player import Player
 from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
+from app.data.scouts import TEAM_SCOUTS
+from app.models.scout import Scout
 import random
 
 # NFL Data Integration (optional)
 try:
     from app.services.nflverse_service import NflverseService
-    from app.services.ratings_generator import generate_player_ratings
+    from app.services.ratings_generator import generate_player_ratings, calculate_overall_rating_modifier
+    from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS
     HAS_NFLVERSE = True
 except ImportError:
     HAS_NFLVERSE = False
@@ -98,7 +101,7 @@ def generate_player(position: str, team_id: int) -> Player:
     )
 
 from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.models.trait import Trait, TraitSource
+from app.models.trait import Trait, TraitSource, TraitEffectType
 
 def seed_traits(db: Session):
     """Seed traits from the catalog into the database."""
@@ -113,8 +116,9 @@ def seed_traits(db: Session):
         trait = Trait(
             name=definition.name,
             description=definition.description,
-            tier=definition.tier,
-            icon_url=f"/assets/traits/{key}.png" # Placeholder
+            # Map effect type if available
+            effect_type=getattr(definition, 'effect_type', TraitEffectType.PASSIVE) if hasattr(definition, 'effect_type') else TraitEffectType.PASSIVE,
+            effect_value=getattr(definition, 'effect_value', 0.0) if hasattr(definition, 'effect_value') else 0.0,
         )
         traits_to_add.append(trait)
 
@@ -159,6 +163,38 @@ def seed_players(db: Session):
             db.refresh(qb)
             TraitService.assign_trait(db, qb.id, field_general.id, TraitSource.DEVELOPMENT)
         logger.info("Trait assignment complete.")
+
+def seed_scouts(db: Session):
+    """Seed scouts for all 32 NFL teams from static data."""
+    existing_scouts = db.query(Scout).count()
+    if existing_scouts > 0:
+        logger.info(f"Scouts already seeded ({existing_scouts} found). Skipping.")
+        return
+
+    logger.info("Seeding scouts for all 32 teams...")
+    scouts_created = 0
+
+    for scout_data in TEAM_SCOUTS:
+        team = db.query(Team).filter(Team.abbreviation == scout_data.team_abbr).first()
+        if not team:
+            logger.warning(f"Team {scout_data.team_abbr} not found for scout. Skipping...")
+            continue
+
+        scout = Scout(
+            name=scout_data.name,
+            team_id=team.id,
+            region=scout_data.region.value if hasattr(scout_data.region, 'value') else scout_data.region,
+            bias=scout_data.bias.value if hasattr(scout_data.bias, 'value') else scout_data.bias,
+            position_specialty=scout_data.specialty,
+            evaluation_ability=scout_data.evaluation_ability,
+            efficiency=scout_data.efficiency,
+            reputation=scout_data.reputation,
+        )
+        db.add(scout)
+        scouts_created += 1
+
+    db.commit()
+    logger.info(f"Seeded {scouts_created} scouts successfully.")
 
 def seed_coaches(db: Session):
     """Seed 2025 NFL coaching staff for all 32 teams."""
@@ -246,7 +282,25 @@ def seed_players_from_nflverse(db: Session, season: int = 2024):
             continue  # Skip players without a valid team
 
         # Generate ratings from real data
-        ratings = generate_player_ratings(p_data)
+        ratings = generate_player_ratings(
+            p_data,
+            ngstats=p_data.get("ngs"),
+            standard_stats=p_data.get("stats")
+        )
+
+        # Calculate overall rating with modifiers
+        base_rating = sum(ratings.values()) / len(ratings) if ratings else 70
+        accolades = PLAYER_ACCOMPLISHMENTS.get((p_data.get("first_name"), p_data.get("last_name")))
+        final_overall = calculate_overall_rating_modifier(base_rating, p_data, accolades)
+
+        # Helper function for safe int conversion
+        def safe_int(value, default=0):
+            if value is None:
+                return default
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
 
         player = Player(
             first_name=p_data.get("first_name", "Unknown"),
@@ -254,12 +308,18 @@ def seed_players_from_nflverse(db: Session, season: int = 2024):
             position=p_data.get("position", "WR"),
             team_id=team_id,
             college=p_data.get("college"),
-            height=p_data.get("height", 72),
-            weight=p_data.get("weight", 200),
-            age=p_data.get("age", 25),
-            experience=p_data.get("experience", 0),
-            jersey_number=p_data.get("jersey_number", 0) or 0,
-            overall_rating=ratings.get("overall_rating", 70),
+            height=safe_int(p_data.get("height"), 72),
+            weight=safe_int(p_data.get("weight"), 200),
+            age=safe_int(p_data.get("age"), 25),
+            experience=safe_int(p_data.get("experience"), 0),
+            jersey_number=safe_int(p_data.get("jersey_number"), 0),
+
+            # Contracts (Real Data)
+            contract_years=safe_int(p_data.get("contract_years"), 1),
+            contract_salary=safe_int(p_data.get("contract_salary"), 1000000),
+
+            overall_rating=final_overall,
+
             # Apply generated ratings
             speed=ratings.get("speed", 50),
             acceleration=ratings.get("acceleration", 50),
@@ -292,7 +352,111 @@ def seed_players_from_nflverse(db: Session, season: int = 2024):
     logger.info(f"Seeded {len(players_to_add)} real NFL players successfully.")
 
 
+# =============================================================================
+# 2025 FREE AGENT SEEDING
+# =============================================================================
+# AUTO-UPDATE NOTES:
+# This section seeds verified 2025 free agent signings with accurate ratings.
+# To keep this simulation SOTA and EA Sports-caliber:
+# 1. Update free_agents_2025.py after major free agency signings
+# 2. Run data_sync_service.py to check for new nflverse data
+# 3. After August 26, 2025: Use nflreadpy.load_rosters(2025) for full rosters
+# 4. Monitor: PFF, ESPN, NFL.com for breaking transactions
+
+def seed_free_agents_2025(db: Session):
+    """
+    Seed 2025 free agent signings with verified ratings.
+
+    This provides accurate player data for the 2025 season before
+    the official nflverse roster data is available.
+    """
+    from app.data.free_agents_2025 import FREE_AGENT_SIGNINGS_2025
+
+    # Get team lookup
+    teams = db.query(Team).all()
+    team_lookup = {t.abbreviation: t.id for t in teams}
+
+    players_added = 0
+    players_updated = 0
+
+    for fa in FREE_AGENT_SIGNINGS_2025:
+        team_id = team_lookup.get(fa.new_team)
+        if not team_id:
+            logger.warning(f"Unknown team {fa.new_team} for {fa.first_name} {fa.last_name}")
+            continue
+
+        # Check if player exists
+        existing = db.query(Player).filter(
+            Player.first_name == fa.first_name,
+            Player.last_name == fa.last_name
+        ).first()
+
+        if existing:
+            # Update existing player with new team and ratings
+            existing.team_id = team_id
+            existing.contract_years = fa.contract_years
+            existing.contract_salary = fa.apy
+            existing.overall_rating = fa.overall_rating
+            if fa.speed:
+                existing.speed = fa.speed
+            if fa.strength:
+                existing.strength = fa.strength
+            if fa.awareness:
+                existing.awareness = fa.awareness
+            players_updated += 1
+        else:
+            # Create new player with position-based defaults
+            # Height in inches, weight in lbs (approximate by position)
+            position_defaults = {
+                "QB": (75, 220), "RB": (70, 210), "WR": (72, 195), "TE": (77, 250),
+                "OT": (78, 315), "OG": (76, 310), "C": (75, 305),
+                "DE": (76, 270), "DT": (75, 310), "EDGE": (76, 255),
+                "LB": (74, 240), "CB": (71, 190), "S": (72, 205),
+                "K": (72, 200), "P": (74, 210)
+            }
+            default_h, default_w = position_defaults.get(fa.position, (74, 225))
+
+            player = Player(
+                first_name=fa.first_name,
+                last_name=fa.last_name,
+                position=fa.position,
+                team_id=team_id,
+                age=fa.age,
+                height=default_h,
+                weight=default_w,
+                overall_rating=fa.overall_rating,
+                contract_years=fa.contract_years,
+                contract_salary=fa.apy,
+                speed=fa.speed or 75,
+                strength=fa.strength or 75,
+                awareness=fa.awareness or 75,
+            )
+            db.add(player)
+            players_added += 1
+
+    db.commit()
+    logger.info(f"2025 Free Agents: Added {players_added}, Updated {players_updated}")
+
+
 def main():
+    """
+    Main seeding function with multi-mode support.
+
+    SEED_MODE options:
+    - RANDOM: Generate random players (default)
+    - REAL_2024: Use nflreadpy 2024 roster data
+    - REAL_2025: Use 2024 base + 2025 free agent updates
+
+    AUTO-UPDATE STRATEGY:
+    ---------------------
+    To maintain SOTA simulation quality:
+    1. Weekly: Check nflverse for roster/stats updates
+    2. Daily (during FA): Sync contract and transaction data
+    3. After Draft: Import rookie data from load_draft_picks()
+    4. September: Switch to load_rosters(2025) when available
+
+    Run data_sync_service.py for automated recommendations.
+    """
     db = SessionLocal()
     seed_mode = os.getenv("SEED_MODE", "RANDOM").upper()
 
@@ -300,7 +464,13 @@ def main():
         seed_teams(db)
         seed_traits(db)
 
-        if seed_mode == "REAL_2024" and HAS_NFLVERSE:
+        if seed_mode == "REAL_2025" and HAS_NFLVERSE:
+            # 2025 Mode: Base 2024 rosters + 2025 free agent updates
+            logger.info("SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...")
+            seed_players_from_nflverse(db, season=2024)
+            seed_free_agents_2025(db)
+
+        elif seed_mode == "REAL_2024" and HAS_NFLVERSE:
             logger.info("SEED_MODE=REAL_2024: Using real NFL data...")
             seed_players_from_nflverse(db, season=2024)
         else:
@@ -308,6 +478,16 @@ def main():
             seed_players(db)
 
         seed_coaches(db)
+        seed_scouts(db)
+
+        # Log update recommendations
+        logger.info("=" * 50)
+        logger.info("DATA UPDATE RECOMMENDATIONS:")
+        logger.info("  1. Run: python -m app.services.data_sync_service")
+        logger.info("  2. Check: free_agents_2025.py for new signings")
+        logger.info("  3. After Aug 26: Use SEED_MODE=REAL_2025 with full rosters")
+        logger.info("=" * 50)
+
     except Exception as e:
         logger.error(f"Error seeding database: {e}")
         db.rollback()

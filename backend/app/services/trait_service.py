@@ -558,6 +558,27 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         rarity_tier=TraitRarity.RARE,
         max_league_count=12,
     ),
+
+    # -------------------------------------------------------------------------
+    # TRUE-TO-LIFE TRAITS (Phase 11)
+    # -------------------------------------------------------------------------
+    "the_closer": TraitDefinition(
+        name="The Closer",
+        description="Ice in the veins. Ignores pressure penalties and fatigue effects in crunch time (4th quarter <5 min remaining, score within 8 points, or Overtime).",
+        position_requirements=["ALL"],
+        acquisition_method="PROGRESSION",
+        activation_triggers=["CRUNCH_TIME"],
+        effects={
+            "pressure_immunity": 1.0,      # Boolean: Nullifies pressure penalties
+            "fatigue_override": 1.0,       # Boolean: Ignores fatigue penalties
+            "awareness_boost": 15,         # Situational awareness for clock/bounds
+            "fumble_chance_reduction": 0.20,  # 20% less fumbles under pressure
+        },
+        tier="ELITE",
+        min_experience=4,
+        rarity_tier=TraitRarity.RARE,
+        max_league_count=15,
+    ),
 }
 
 
@@ -784,6 +805,38 @@ class TraitService:
         return True, "Eligible"
 
     @staticmethod
+    def check_crunch_time(context: Dict[str, Any]) -> bool:
+        """
+        Determine if the game is in "Crunch Time" for The Closer trait activation.
+
+        Crunch Time conditions (ANY of the following):
+        - 4th Quarter with less than 5 minutes remaining AND score within 8 points
+        - Overtime period
+
+        Args:
+            context: Game context with keys:
+                - quarter: int (1-4, 5+ for OT)
+                - time_remaining: float (seconds remaining in quarter)
+                - score_differential: int (absolute difference in score)
+
+        Returns:
+            True if crunch time conditions are met
+        """
+        quarter = context.get("quarter", 1)
+        time_remaining = context.get("time_remaining", 900)  # Default 15 min
+        score_diff = abs(context.get("score_differential", 0))
+
+        # Overtime is always crunch time
+        if quarter >= 5:
+            return True
+
+        # 4th quarter with < 5 min AND close game (within 8 points)
+        if quarter == 4 and time_remaining <= 300 and score_diff <= 8:
+            return True
+
+        return False
+
+    @staticmethod
     def check_trait_activation(
         trait_def: TraitDefinition,
         context: Dict[str, Any]
@@ -798,6 +851,11 @@ class TraitService:
         # Always-active traits
         if "ALWAYS" in trait_def.activation_triggers or "ON_FIELD" in trait_def.activation_triggers:
             return True
+
+        # Special case: CRUNCH_TIME trigger (The Closer)
+        if "CRUNCH_TIME" in trait_def.activation_triggers:
+            if TraitService.check_crunch_time(context):
+                return True
 
         # Check if any context triggers match trait triggers
         context_triggers = context.get("triggers", [])

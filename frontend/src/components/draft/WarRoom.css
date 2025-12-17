@@ -1,0 +1,121 @@
+.war-room-ticker {
+  background: rgba(0, 0, 0, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-family: "Roboto Mono", monospace;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ticker-label {
+  background: #c00;
+  color: white;
+  padding: 0 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.ticker-content {
+  flex: 1;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  position: absolute; /* Stacked for animation */
+}
+
+.ticker-time {
+  opacity: 0.6;
+  font-size: 0.75rem;
+}
+
+.ticker-text {
+  color: #fff;
+  font-weight: 500;
+}
+
+.type-rumor .ticker-text {
+  color: #ffd700;
+}
+.type-news .ticker-text {
+  color: #fff;
+}
+.type-trade .ticker-text {
+  color: #ff4d4d;
+}
+.type-pick .ticker-text {
+  color: #00ff88;
+}
+
+/* TRADE PHONE */
+.trade-phone-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+}
+
+.trade-phone-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  background: #222;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.trade-phone-container.ringing .trade-phone-btn {
+  background: #cc0000;
+  border: 2px solid #ff4d4d;
+}
+
+.phone-label {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #888;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.phone-notification-badge {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  color: red;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid red;
+}

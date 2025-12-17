@@ -100,6 +100,8 @@ class NflverseService:
         self._nextgen_cache: Optional[pl.DataFrame] = None
         self._combine_cache: Optional[pl.DataFrame] = None
         self._ftn_cache: Optional[pl.DataFrame] = None
+        self._contracts_cache: Optional[pl.DataFrame] = None
+        self._player_stats_cache: Optional[pl.DataFrame] = None
 
     def import_rosters(self) -> pl.DataFrame:
         """
@@ -184,9 +186,13 @@ class NflverseService:
         Returns:
             Polars DataFrame with standard stats (yards, TDs, etc.).
         """
+        if self._player_stats_cache is not None:
+            return self._player_stats_cache
+
         logger.info(f"Loading player stats for {self.season}...")
         try:
             df = nfl.load_player_stats(self.season)
+            self._player_stats_cache = df
             logger.info(f"Loaded {len(df)} player stats entries.")
             return df
         except Exception as e:
@@ -200,9 +206,13 @@ class NflverseService:
         Returns:
             Polars DataFrame with contract values and years.
         """
+        if self._contracts_cache is not None:
+            return self._contracts_cache
+
         logger.info("Loading NFL contracts...")
         try:
             df = nfl.load_contracts()
+            self._contracts_cache = df
             logger.info(f"Loaded {len(df)} contract entries.")
             return df
         except Exception as e:
@@ -237,36 +247,124 @@ class NflverseService:
             if not combine_row.is_empty():
                 player_dict.update(combine_row.to_dicts()[0])
 
+        # NOTE: This method is less efficient than get_all_active_players for bulk ops
         return player_dict
 
     def get_all_active_players(self) -> List[Dict[str, Any]]:
         """
-        Get all active players from the roster with normalized data.
+        Get all active players from the roster with normalized data,
+        enriched with Contracts, Next Gen Stats, and Player Stats.
 
         Returns:
             List of player dictionaries ready for DB insertion.
         """
         rosters = self.import_rosters()
+        contract_df = self.import_contracts()
+        combine_df = self.import_combine_data()
+        ngs_df = self.import_nextgen_stats()  # Caution: NGS data is player-season based, mostly for QBs/RBs/Rec
+        stats_df = self.import_player_stats()
+
         if rosters.is_empty():
             return []
 
+        # Create Lookup Maps for quick O(1) access
+        # Contracts keys: 'year_signed', 'years', 'value', 'apy', 'gsis_id'
+        contracts_map = {}
+        if not contract_df.is_empty():
+            try:
+                # Filter for active contracts where possible or just take latest
+                # Simplified: group by gsis_id, take last (latest contract)
+               contracts_map = {
+                   r['gsis_id']: r
+                   for r in contract_df.to_dicts()
+                   if r.get('gsis_id')
+               }
+            except Exception as e:
+                logger.warning(f"Error Mapping contracts: {e}")
+
+        # Combine Map
+        combine_map = {}
+        if not combine_df.is_empty():
+            try:
+                 combine_map = {
+                   r['gsis_id']: r
+                   for r in combine_df.to_dicts()
+                   if r.get('gsis_id')
+               }
+            except Exception:
+                pass
+
+        # Stats Maps (Standard & NGS)
+        # NGS is typically player_gsis_id or player_id? Checking docs... Usually 'player_gsis_id' or similar.
+        # But nflreadpy normalizes. Let's assume 'player_id' matches 'gsis_id' in many contexts,
+        # OR we need to join on names. nflreadpy documentation says NGS has 'player_gsis_id'.
+        ngs_map = {}
+        if not ngs_df.is_empty():
+             # NGS might have multiple rows per player? No, load_nextgen_stats returns season aggregates usually?
+             # Actually load_nextgen_stats returns WEEKLY data. We need to aggregate it.
+             # Or just use the season totals if available? Pffft.
+             # Let's aggregate CPOE, avg_separation, etc. by taking the mean.
+             try:
+                 # Group by player_gsis_id (if exists) or player_display_name?
+                 # Let's check columns... usually has 'player_gsis_id'.
+                 # Aggregating...
+                 cols_to_mean = [c for c in ngs_df.columns if c not in ['player_gsis_id', 'season', 'week']]
+                 ngs_agg = ngs_df.group_by("player_gsis_id").mean()
+                 ngs_map = {
+                     r['player_gsis_id']: r
+                     for r in ngs_agg.to_dicts()
+                     if r.get('player_gsis_id')
+                 }
+             except Exception as e:
+                 logger.warning(f"Error aggregating NGS: {e}")
+
+        stats_map = {}
+        if not stats_df.is_empty():
+            try:
+                stats_map = {
+                    r['player_id']: r
+                    for r in stats_df.to_dicts()
+                    if r.get('player_id')
+                }
+            except Exception:
+                pass
+
         players = []
         for row in rosters.iter_rows(named=True):
+            gsis_id = row.get("gsis_id")
+
+            # Base Player Dict
             player = {
                 "first_name": row.get("first_name", "Unknown"),
                 "last_name": row.get("last_name", "Player"),
                 "position": map_position(row.get("position", "WR")),
-                "position_raw": row.get("position", "WR"),  # Keep original
+                "position_raw": row.get("position", "WR"),
                 "team_abbr": map_team_abbr(row.get("team", "")),
                 "college": row.get("college"),
-                "height": row.get("height", 72),  # Default 6'0"
+                "height": row.get("height", 72),
                 "weight": row.get("weight", 200),
                 "age": calculate_age(row.get("birth_date")),
                 "experience": row.get("years_exp", 0),
                 "jersey_number": row.get("jersey_number", 0),
-                "gsis_id": row.get("gsis_id"),
+                "gsis_id": gsis_id,
             }
+
+            # Enriched: Combine
+            if gsis_id and gsis_id in combine_map:
+                player.update(combine_map[gsis_id])
+
+            # Enriched: Contracts
+            if gsis_id and gsis_id in contracts_map:
+                c_data = contracts_map[gsis_id]
+                player["contract_years"] = int(c_data.get("years", 1)) if c_data.get("years") else 1
+                # APY is in float, convert to int
+                player["contract_salary"] = int(c_data.get("apy", 1000000)) if c_data.get("apy") else 1000000
+
+            # Pack Stats for Ratings Generator
+            player["ngs"] = ngs_map.get(gsis_id, {})
+            player["stats"] = stats_map.get(gsis_id, {})
+
             players.append(player)
 
-        logger.info(f"Processed {len(players)} active players.")
+        logger.info(f"Processed {len(players)} active players with enriched data.")
         return players

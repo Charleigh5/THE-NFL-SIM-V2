@@ -36,6 +36,14 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
     return "F";
   };
 
+  const getDisplayRating = (p: Prospect) => {
+    if (p.scouting_report && p.scouting_report.attributes["overall_rating"]) {
+      return p.scouting_report.attributes["overall_rating"].display;
+    }
+    // Fallback if no report (legacy or user team knows)
+    return p.overall_rating.toString();
+  };
+
   // Helper to determine need level
   const getNeedLevel = (position: string): "high" | "medium" | "low" => {
     const need = teamNeeds.find((n) => n.position === position);
@@ -130,7 +138,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 
                   <div className="prospect-details">
                     <span className={`grade-badge grade-${grade.charAt(0)}`}>{grade}</span>
-                    <span className="rating-text">{p.overall_rating} OVR</span>
+                    <span className="rating-text">{getDisplayRating(p)} OVR</span>
                     {p.genesis_revealed && (
                       <span className="ml-2 text-[10px] text-cyan-400 font-bold border border-cyan-400 px-1 rounded">
                         GENESIS

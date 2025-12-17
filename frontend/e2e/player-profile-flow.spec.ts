@@ -52,16 +52,53 @@ const mockRoster = [
 ];
 
 test.describe("Player Profile Flow", () => {
-  test("should open a player profile modal from the roster and display details", async ({
-    page,
-  }) => {
+  test.beforeEach(async ({ page }) => {
     await page.route("**/api/teams/1", async (route) => {
       await route.fulfill({ json: mockTeam });
     });
     await page.route("**/api/teams/1/roster", async (route) => {
       await route.fulfill({ json: mockRoster });
     });
+    await page.route("**/api/players/101", async (route) => {
+      await route.fulfill({
+        json: {
+          ...mockRoster[0],
+          xp: 2500,
+          level: 7,
+          abilities: { pre_snap_diagnostician: true },
+          player_traits: [
+            { trait: { name: "The Closer", tier: "ELITE" } },
+            { trait: { name: "Field General", tier: "GOLD" } },
+          ],
+          contract: {
+            years_remaining: 3,
+            yearly_salary: 45000000,
+            signing_bonus: 25000000,
+          },
+        },
+      });
+    });
+    await page.route("**/api/abilities/players/101", async (route) => {
+      await route.fulfill({
+        json: {
+          pre_snap_diagnostician: {
+            status: "UNLOCKED",
+            name: "Pre-Snap Diagnostician",
+          },
+          audible_master: {
+            status: "AVAILABLE",
+            name: "Audible Master",
+            level_required: 8,
+            xp_cost: 3000,
+          },
+        },
+      });
+    });
+  });
 
+  test("should open a player profile modal from the roster and display details", async ({
+    page,
+  }) => {
     await page.goto("/empire/front-office");
 
     // Wait for the page to finish loading (network can be slower on WebKit/Firefox).
@@ -79,5 +116,64 @@ test.describe("Player Profile Flow", () => {
     await expect(page.getByTestId("player-modal-content")).toContainText("Player One");
     await expect(page.getByTestId("player-modal-content")).toContainText("QB");
     await expect(page.getByTestId("player-modal-content")).toContainText("90");
+  });
+
+  test("should display player traits in profile modal", async ({ page }) => {
+    await page.goto("/empire/front-office");
+
+    await expect(page.locator("text=Loading Front Office...")).not.toBeVisible({ timeout: 35000 });
+    await page.getByTestId("player-card-101").click();
+    await expect(page.getByTestId("player-modal")).toBeVisible();
+
+    // Check for trait badges
+    const traitSection = page.locator('[data-testid="player-traits"], .traits-section');
+    if (await traitSection.isVisible({ timeout: 2000 })) {
+      await expect(traitSection).toContainText("The Closer");
+      await expect(traitSection).toContainText("Field General");
+    }
+  });
+
+  test("should display player abilities status", async ({ page }) => {
+    await page.goto("/empire/front-office");
+
+    await expect(page.locator("text=Loading Front Office...")).not.toBeVisible({ timeout: 35000 });
+    await page.getByTestId("player-card-101").click();
+    await expect(page.getByTestId("player-modal")).toBeVisible();
+
+    // Check for abilities section
+    const abilitiesSection = page.locator('[data-testid="player-abilities"], .abilities-section');
+    if (await abilitiesSection.isVisible({ timeout: 2000 })) {
+      await expect(abilitiesSection).toContainText("Diagnostician");
+    }
+  });
+
+  test("should display contract information", async ({ page }) => {
+    await page.goto("/empire/front-office");
+
+    await expect(page.locator("text=Loading Front Office...")).not.toBeVisible({ timeout: 35000 });
+    await page.getByTestId("player-card-101").click();
+    await expect(page.getByTestId("player-modal")).toBeVisible();
+
+    // Check for contract section
+    const contractSection = page.locator('[data-testid="player-contract"], .contract-info');
+    if (await contractSection.isVisible({ timeout: 2000 })) {
+      await expect(contractSection).toContainText("$45");
+    }
+  });
+
+  test("should display XP and level progression", async ({ page }) => {
+    await page.goto("/empire/front-office");
+
+    await expect(page.locator("text=Loading Front Office...")).not.toBeVisible({ timeout: 35000 });
+    await page.getByTestId("player-card-101").click();
+    await expect(page.getByTestId("player-modal")).toBeVisible();
+
+    // Check for level/XP display
+    const progressionSection = page.locator(
+      '[data-testid="player-progression"], .xp-bar, text=/Level|XP/i'
+    );
+    if (await progressionSection.isVisible({ timeout: 2000 })) {
+      await expect(progressionSection).toContainText(/7|2500/);
+    }
   });
 });

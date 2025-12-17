@@ -10,12 +10,10 @@ import type { DraftPickDetail } from "./types/offseason";
 // Import pages
 import Dashboard from "./pages/Dashboard";
 import SeasonDashboard from "./pages/SeasonDashboard";
-import SeasonDashboardLegacy from "./pages/SeasonDashboardLegacy";
 import OffseasonDashboard from "./pages/OffseasonDashboard";
 import { FrontOffice } from "./pages/FrontOffice";
 import { DepthChart } from "./pages/DepthChart";
 import { DraftRoom } from "./pages/DraftRoom";
-import DraftLegacy from "./pages/DraftLegacy";
 import { TrainingCenter } from "./pages/TrainingCenter";
 import TradeCenterPage from "./pages/TradeCenterPage";
 import TrophyRoom from "./pages/TrophyRoom";
@@ -299,12 +297,7 @@ export const router = createBrowserRouter([
         loader: seasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
-      {
-        // Back-compat alias (older E2E + deep links)
-        path: "season-dashboard",
-        element: <SeasonDashboardLegacy />,
-        errorElement: <RouteErrorBoundary />,
-      },
+
       {
         path: "offseason",
         element: <OffseasonDashboard />,
@@ -324,12 +317,7 @@ export const router = createBrowserRouter([
         loader: draftRoomLoader,
         errorElement: <RouteErrorBoundary />,
       },
-      {
-        // Back-compat alias for older Draft Room tests
-        path: "draft",
-        element: <DraftLegacy />,
-        errorElement: <RouteErrorBoundary />,
-      },
+
       {
         path: "empire/front-office",
         element: <FrontOffice />,

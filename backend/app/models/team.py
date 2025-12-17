@@ -14,6 +14,7 @@ class Team(Base):
     gm = relationship("GM", back_populates="team", uselist=False)
     stadium = relationship("Stadium", back_populates="team", uselist=False)
     depth_chart = relationship("DepthChart", back_populates="team")
+    scouts = relationship("Scout", back_populates="team")
 
     # Division/Conference
     conference = Column(String, index=True) # AFC/NFC

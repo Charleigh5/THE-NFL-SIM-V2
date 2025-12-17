@@ -1,0 +1,8 @@
+/* Medical Center Styles */
+.body-map-container {
+  perspective: 1000px;
+}
+
+.treatment-option:hover {
+  transform: translateX(5px);
+}

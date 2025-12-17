@@ -16,9 +16,10 @@ from app.schemas.play import PlayResult
 class PlayCommand(ABC):
     """Abstract base class for all play commands"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any]):
+    def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None):
         self.offense = offense_players
         self.defense = defense_players
+        self.modifiers = modifiers or {}
 
     @abstractmethod
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
@@ -35,8 +36,8 @@ class PassPlayCommand(PlayCommand):
     """Command for passing plays"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 target_receiver_id: int = None, depth: str = "short"):
-        super().__init__(offense_players, defense_players)
+                 target_receiver_id: int = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None):
+        super().__init__(offense_players, defense_players, modifiers)
         self.target_receiver = target_receiver_id
         self.depth = depth  # short, mid, deep
 
@@ -59,8 +60,8 @@ class RunPlayCommand(PlayCommand):
     """Command for running plays"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 run_direction: str = "middle"):
-        super().__init__(offense_players, defense_players)
+                 run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None):
+        super().__init__(offense_players, defense_players, modifiers)
         self.run_direction = run_direction  # left, middle, right
 
     def get_play_type(self) -> str:

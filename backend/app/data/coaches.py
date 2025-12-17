@@ -34,6 +34,7 @@ class CoachData(BaseModel):
     """Individual coach information."""
     first_name: str
     last_name: str
+    defensive_disguise: int = 50  # Playbook Phase 11: Capability to mask coverage
 
 
 class CoachingPhilosophy(BaseModel):
@@ -94,7 +95,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "NYJ": TeamCoachingStaff(
         head_coach=CoachData(first_name="Aaron", last_name="Glenn"),
         offensive_coordinator=CoachData(first_name="Tanner", last_name="Engstrand"),
-        defensive_coordinator=CoachData(first_name="Steve", last_name="Wilks"),
+        defensive_coordinator=CoachData(first_name="Steve", last_name="Wilks", defensive_disguise=80),
         playbook_offense=OffensiveScheme.WEST_COAST,
         playbook_defense=DefensiveScheme.FOUR_THREE,
         philosophy=CoachingPhilosophy(run_pass_ratio=45, blitz_frequency=40, aggressiveness=50, tempo=50)
@@ -146,7 +147,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "IND": TeamCoachingStaff(
         head_coach=CoachData(first_name="Shane", last_name="Steichen"),
         offensive_coordinator=CoachData(first_name="Jim Bob", last_name="Cooter"),
-        defensive_coordinator=CoachData(first_name="Lou", last_name="Anarumo"),
+        defensive_coordinator=CoachData(first_name="Lou", last_name="Anarumo", defensive_disguise=82),
         playbook_offense=OffensiveScheme.WEST_COAST,
         playbook_defense=DefensiveScheme.FOUR_THREE,
         philosophy=CoachingPhilosophy(run_pass_ratio=50, blitz_frequency=30, aggressiveness=55, tempo=55)
@@ -180,7 +181,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "KC": TeamCoachingStaff(
         head_coach=CoachData(first_name="Andy", last_name="Reid"),
         offensive_coordinator=CoachData(first_name="Matt", last_name="Nagy"),
-        defensive_coordinator=CoachData(first_name="Steve", last_name="Spagnuolo"),
+        defensive_coordinator=CoachData(first_name="Steve", last_name="Spagnuolo", defensive_disguise=85),
         playbook_offense=OffensiveScheme.WEST_COAST,
         playbook_defense=DefensiveScheme.FOUR_THREE,
         philosophy=CoachingPhilosophy(run_pass_ratio=40, blitz_frequency=35, aggressiveness=70, tempo=60, trick_play_frequency=30)
@@ -222,7 +223,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "PHI": TeamCoachingStaff(
         head_coach=CoachData(first_name="Nick", last_name="Sirianni"),
         offensive_coordinator=CoachData(first_name="Kevin", last_name="Patullo"),
-        defensive_coordinator=CoachData(first_name="Vic", last_name="Fangio"),
+        defensive_coordinator=CoachData(first_name="Vic", last_name="Fangio", defensive_disguise=88),
         playbook_offense=OffensiveScheme.ZONE_RUN,
         playbook_defense=DefensiveScheme.THREE_FOUR,
         philosophy=CoachingPhilosophy(run_pass_ratio=55, blitz_frequency=30, aggressiveness=65, tempo=55)
@@ -230,7 +231,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "WAS": TeamCoachingStaff(
         head_coach=CoachData(first_name="Dan", last_name="Quinn"),
         offensive_coordinator=CoachData(first_name="Kliff", last_name="Kingsbury"),
-        defensive_coordinator=CoachData(first_name="Joe", last_name="Whitt Jr."),
+        defensive_coordinator=CoachData(first_name="Joe", last_name="Whitt Jr."),  # Quinn is HC/DC essentially
         playbook_offense=OffensiveScheme.AIR_RAID,
         playbook_defense=DefensiveScheme.FOUR_THREE,
         philosophy=CoachingPhilosophy(run_pass_ratio=35, blitz_frequency=40, aggressiveness=70, tempo=70)
@@ -264,7 +265,7 @@ COACHES_DB: Dict[str, TeamCoachingStaff] = {
     "MIN": TeamCoachingStaff(
         head_coach=CoachData(first_name="Kevin", last_name="O'Connell"),
         offensive_coordinator=CoachData(first_name="Wes", last_name="Phillips"),
-        defensive_coordinator=CoachData(first_name="Brian", last_name="Flores"),
+        defensive_coordinator=CoachData(first_name="Brian", last_name="Flores", defensive_disguise=90),
         playbook_offense=OffensiveScheme.WEST_COAST,
         playbook_defense=DefensiveScheme.THREE_FOUR,
         philosophy=CoachingPhilosophy(run_pass_ratio=40, blitz_frequency=55, aggressiveness=60, tempo=55)

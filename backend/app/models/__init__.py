@@ -15,4 +15,9 @@ from app.models.depth_chart import DepthChart
 from app.models.feedback import UserFeedback
 from app.models.weather import GameWeather, StadiumClimate
 from app.models.trade_offer import TradeOffer, TradeOfferStatus
-
+from app.models.player_game_starts import PlayerGameStarts
+from app.models.trait import PlayerTrait
+# Hyper-Immersive Models
+from app.models.scout import Scout, ScoutingReport
+from app.models.medical import BodyPart, InjuryEvent
+from app.models.gameplan import Gameplan, CoachingTree

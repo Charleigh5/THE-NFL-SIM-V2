@@ -21356,3 +21356,321 @@ PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
 PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0', 'C:\\Users\\cweir\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages', 'C:\\Users\\cweir\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python313\\site-packages\\win32']
 PYTEST DEBUG: app.__file__=None
 PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL contracts...
+Loaded 1 contract entries.
+Loading NFL Combine data...
+Loaded 0 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 2 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 2 player stats entries.
+Processed 2 active players with enriched data.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL contracts...
+Loaded 1 contract entries.
+Loading NFL Combine data...
+Loaded 0 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 2 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 2 player stats entries.
+Processed 2 active players with enriched data.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL contracts...
+Loaded 1 contract entries.
+Loading NFL Combine data...
+Loaded 0 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 2 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 2 player stats entries.
+Processed 2 active players with enriched data.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL rosters for 2024...
+Loaded 2 roster entries.
+Loading NFL contracts...
+Loaded 1 contract entries.
+Loading NFL Combine data...
+Loaded 0 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 2 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 2 player stats entries.
+Processed 2 active players with enriched data.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Error seeding database: When initializing mapper Mapper[Player(player)], expression 'PlayerGameStarts' failed to locate a name ('PlayerGameStarts'). If this is a class name, consider adding this relationship() to the <class 'app.models.player.Player'> class after both dependent classes have been defined.
+Error seeding database: (sqlite3.OperationalError) no such column: team.elo_rating
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT team.id AS team_id, team.name AS team_name, team.city AS team_city, team.abbreviation AS team_abbreviation, team.conference AS team_conference, team.division AS team_division, team.wins AS team_wins, team.losses AS team_losses, team.ties AS team_ties, team.elo_rating AS team_elo_rating, team.prestige AS team_prestige, team.salary_cap_space AS team_salary_cap_space, team.fan_support AS team_fan_support, team.medical_rating AS team_medical_rating, team.training_staff_quality AS team_training_staff_quality, team.medical_budget AS team_medical_budget, team.logo_url AS team_logo_url, team.primary_color AS team_primary_color, team.secondary_color AS team_secondary_color, team.established_year AS team_established_year, team.stadium_id AS team_stadium_id 
+FROM team) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Error seeding database: 'tier' is an invalid keyword argument for Trait
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Seeded 31 traits successfully.
+SEED_MODE=REAL_2024: Using real NFL data...
+Seeding players from NFL 2024 rosters...
+Loading NFL rosters for 2024...
+Loaded 3216 roster entries.
+Loading NFL contracts...
+Loaded 49289 contract entries.
+Loading NFL Combine data...
+Loaded 8649 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 614 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 18981 player stats entries.
+Processed 3216 active players with enriched data.
+Error seeding database: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Seeded 31 traits successfully.
+SEED_MODE=REAL_2024: Using real NFL data...
+Seeding players from NFL 2024 rosters...
+Loading NFL rosters for 2024...
+Loaded 3216 roster entries.
+Loading NFL contracts...
+Loaded 49289 contract entries.
+Loading NFL Combine data...
+Loaded 8649 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 614 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 18981 player stats entries.
+Processed 3216 active players with enriched data.
+Seeded 3018 real NFL players successfully.
+Seeding 2025 NFL coaching staff...
+Seeded 96 coaches successfully.
+Teams already seeded (32 found). Skipping.
+Traits already seeded (31 found). Skipping.
+SEED_MODE=REAL_2024: Using real NFL data...
+Players already seeded (3018 found). Skipping NFL import.
+Coaches already seeded (96 found). Skipping.
+Teams already seeded (32 found). Skipping.
+Traits already seeded (31 found). Skipping.
+SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...
+Players already seeded (3018 found). Skipping NFL import.
+Error seeding database: (sqlite3.IntegrityError) NOT NULL constraint failed: player.height
+[SQL: INSERT INTO player (first_name, last_name, position, college, height, weight, age, experience, jersey_number, overall_rating, depth_chart_rank, team_id, speed, acceleration, strength, agility, awareness, stamina, injury_resistance, forty_yard_dash, b ... 1248 characters truncated ...  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('Dan', 'Moore Jr.', 'OT', None, None, None, 26, 0, 0, 83, 999, 31, 75, 50, 88, 50, 82, 80, 80, None, None, None, None, None, None, None, None, None, 0, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 'OverTop', 6.0, 45, 100.0, 0, 1, 0, <DevelopmentTrait.NORMAL: 'NORMAL'>, 50, <InjuryStatus.ACTIVE: 'ACTIVE'>, None, 0, 0, 0.0, None, None, 4, 20500000, 0, 0, None, 0)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Teams already seeded (32 found). Skipping.
+Traits already seeded (31 found). Skipping.
+SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...
+Players already seeded (3018 found). Skipping NFL import.
+2025 Free Agents: Added 7, Updated 21
+Coaches already seeded (96 found). Skipping.
+==================================================
+DATA UPDATE RECOMMENDATIONS:
+  1. Run: python -m app.services.data_sync_service
+  2. Check: free_agents_2025.py for new signings
+  3. After Aug 26: Use SEED_MODE=REAL_2025 with full rosters
+==================================================
+Error seeding database: Mapper 'Mapper[Team(team)]' has no property 'scouts'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+Error seeding database: Mapper 'Mapper[Player(player)]' has no property 'body_health'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+Error seeding database: (sqlite3.OperationalError) no such table: team
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT team.id AS team_id, team.name AS team_name, team.city AS team_city, team.abbreviation AS team_abbreviation, team.conference AS team_conference, team.division AS team_division, team.wins AS team_wins, team.losses AS team_losses, team.ties AS team_ties, team.elo_rating AS team_elo_rating, team.prestige AS team_prestige, team.salary_cap_space AS team_salary_cap_space, team.fan_support AS team_fan_support, team.medical_rating AS team_medical_rating, team.training_staff_quality AS team_training_staff_quality, team.medical_budget AS team_medical_budget, team.logo_url AS team_logo_url, team.primary_color AS team_primary_color, team.secondary_color AS team_secondary_color, team.established_year AS team_established_year, team.stadium_id AS team_stadium_id 
+FROM team) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Error seeding database: (sqlite3.OperationalError) no such table: team
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT team.id AS team_id, team.name AS team_name, team.city AS team_city, team.abbreviation AS team_abbreviation, team.conference AS team_conference, team.division AS team_division, team.wins AS team_wins, team.losses AS team_losses, team.ties AS team_ties, team.elo_rating AS team_elo_rating, team.prestige AS team_prestige, team.salary_cap_space AS team_salary_cap_space, team.fan_support AS team_fan_support, team.medical_rating AS team_medical_rating, team.training_staff_quality AS team_training_staff_quality, team.medical_budget AS team_medical_budget, team.logo_url AS team_logo_url, team.primary_color AS team_primary_color, team.secondary_color AS team_secondary_color, team.established_year AS team_established_year, team.stadium_id AS team_stadium_id 
+FROM team) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Error seeding database: (sqlite3.OperationalError) no such column: team.elo_rating
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT team.id AS team_id, team.name AS team_name, team.city AS team_city, team.abbreviation AS team_abbreviation, team.conference AS team_conference, team.division AS team_division, team.wins AS team_wins, team.losses AS team_losses, team.ties AS team_ties, team.elo_rating AS team_elo_rating, team.prestige AS team_prestige, team.salary_cap_space AS team_salary_cap_space, team.fan_support AS team_fan_support, team.medical_rating AS team_medical_rating, team.training_staff_quality AS team_training_staff_quality, team.medical_budget AS team_medical_budget, team.logo_url AS team_logo_url, team.primary_color AS team_primary_color, team.secondary_color AS team_secondary_color, team.established_year AS team_established_year, team.stadium_id AS team_stadium_id 
+FROM team) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Error seeding database: (sqlite3.OperationalError) no such table: team
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT team.id AS team_id, team.name AS team_name, team.city AS team_city, team.abbreviation AS team_abbreviation, team.conference AS team_conference, team.division AS team_division, team.wins AS team_wins, team.losses AS team_losses, team.ties AS team_ties, team.elo_rating AS team_elo_rating, team.prestige AS team_prestige, team.salary_cap_space AS team_salary_cap_space, team.fan_support AS team_fan_support, team.medical_rating AS team_medical_rating, team.training_staff_quality AS team_training_staff_quality, team.medical_budget AS team_medical_budget, team.logo_url AS team_logo_url, team.primary_color AS team_primary_color, team.secondary_color AS team_secondary_color, team.established_year AS team_established_year, team.stadium_id AS team_stadium_id 
+FROM team) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Seeded 31 traits successfully.
+SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...
+Seeding players from NFL 2024 rosters...
+Loading NFL rosters for 2024...
+Loaded 3216 roster entries.
+Loading NFL contracts...
+Loaded 49340 contract entries.
+Loading NFL Combine data...
+Loaded 8649 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 614 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 18981 player stats entries.
+Processed 3216 active players with enriched data.
+Seeded 3018 real NFL players successfully.
+2025 Free Agents: Added 7, Updated 21
+Seeding 2025 NFL coaching staff...
+Seeded 96 coaches successfully.
+==================================================
+DATA UPDATE RECOMMENDATIONS:
+  1. Run: python -m app.services.data_sync_service
+  2. Check: free_agents_2025.py for new signings
+  3. After Aug 26: Use SEED_MODE=REAL_2025 with full rosters
+==================================================
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Seeded 31 traits successfully.
+SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...
+Seeding players from NFL 2024 rosters...
+Loading NFL rosters for 2024...
+Loaded 3216 roster entries.
+Loading NFL contracts...
+Loaded 49340 contract entries.
+Loading NFL Combine data...
+Loaded 8649 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 614 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 18981 player stats entries.
+Processed 3216 active players with enriched data.
+Seeded 3018 real NFL players successfully.
+2025 Free Agents: Added 7, Updated 21
+Seeding 2025 NFL coaching staff...
+Seeded 96 coaches successfully.
+==================================================
+DATA UPDATE RECOMMENDATIONS:
+  1. Run: python -m app.services.data_sync_service
+  2. Check: free_agents_2025.py for new signings
+  3. After Aug 26: Use SEED_MODE=REAL_2025 with full rosters
+==================================================
+Seeding 32 NFL Teams...
+Teams seeded successfully.
+Seeding Traits from Catalog...
+Seeded 31 traits successfully.
+SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...
+Seeding players from NFL 2024 rosters...
+Loading NFL rosters for 2024...
+Loaded 3216 roster entries.
+Loading NFL contracts...
+Loaded 49340 contract entries.
+Loading NFL Combine data...
+Loaded 8649 Combine entries.
+Loading Next Gen Stats for 2024...
+Loaded 614 Next Gen Stats entries.
+Loading player stats for 2024...
+Loaded 18981 player stats entries.
+Processed 3216 active players with enriched data.
+Seeded 3018 real NFL players successfully.
+2025 Free Agents: Added 7, Updated 21
+Seeding 2025 NFL coaching staff...
+Seeded 96 coaches successfully.
+Seeding scouts for all 32 teams...
+Seeded 96 scouts successfully.
+==================================================
+DATA UPDATE RECOMMENDATIONS:
+  1. Run: python -m app.services.data_sync_service
+  2. Check: free_agents_2025.py for new signings
+  3. After Aug 26: Use SEED_MODE=REAL_2025 with full rosters
+==================================================
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions

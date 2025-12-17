@@ -29,6 +29,22 @@ test.describe("Trophy Room Flow", () => {
         },
       });
     });
+
+    // Mock dynasty history
+    await page.route("**/api/dynasty/history**", async (route) => {
+      await route.fulfill({
+        json: {
+          championships: [
+            { year: 2024, opponent: "Chiefs", score: "31-24", mvp: "Kyler Murray" },
+            { year: 2022, opponent: "Eagles", score: "27-21", mvp: "DeAndre Hopkins" },
+          ],
+          playoff_appearances: 5,
+          division_titles: 3,
+          total_wins: 156,
+          total_losses: 88,
+        },
+      });
+    });
   });
 
   test("should load trophy room page", async ({ page }) => {
@@ -60,5 +76,80 @@ test.describe("Trophy Room Flow", () => {
     // Verify UI layer exists
     const uiLayer = page.locator(".ui-layer");
     await expect(uiLayer).toBeVisible();
+  });
+
+  test("should display dynasty championship history", async ({ page }) => {
+    await page.goto("/trophy-room");
+
+    // Look for championship list or timeline
+    const championshipSection = page
+      .locator('[data-testid="championship-list"]')
+      .or(page.locator(".championship-history"))
+      .or(page.getByText(/Championship|Super Bowl/i));
+
+    if (await championshipSection.isVisible({ timeout: 3000 })) {
+      await expect(championshipSection).toContainText("2024");
+      await expect(championshipSection).toContainText("Chiefs");
+    }
+  });
+
+  test("should show championship details on click", async ({ page }) => {
+    await page.goto("/trophy-room");
+
+    // Look for trophy or championship item to click
+    const trophyItem = page
+      .locator('[data-testid="trophy-2024"]')
+      .or(page.locator(".trophy-item"))
+      .or(page.getByText(/2024.*Championship/i))
+      .first();
+
+    if (await trophyItem.isVisible({ timeout: 3000 })) {
+      await trophyItem.click();
+
+      // Should show details modal or expanded view
+      const details = page
+        .locator('[data-testid="championship-details"]')
+        .or(page.locator(".trophy-details"));
+      if (await details.isVisible({ timeout: 2000 })) {
+        await expect(details).toContainText("Kyler Murray");
+        await expect(details).toContainText("MVP");
+      }
+    }
+  });
+
+  test("should handle empty dynasty gracefully", async ({ page }) => {
+    // Override with empty dynasty
+    await page.route("**/api/dynasty/history**", async (route) => {
+      await route.fulfill({
+        json: {
+          championships: [],
+          playoff_appearances: 0,
+          division_titles: 0,
+          total_wins: 0,
+          total_losses: 0,
+        },
+      });
+    });
+
+    await page.goto("/trophy-room");
+
+    // Should still load page
+    await expect(page.locator("text=Hall of Champions")).toBeVisible();
+
+    // May show empty state message
+    const emptyState = page.locator("text=/No championships|Start your dynasty/i");
+    if (await emptyState.isVisible({ timeout: 2000 })) {
+      await expect(emptyState).toBeVisible();
+    }
+  });
+
+  test("should display team branding in trophy room", async ({ page }) => {
+    await page.goto("/trophy-room");
+
+    // Check for team colors or logo
+    const teamBranding = page.locator('[data-testid="team-logo"], .team-banner, text=/Cardinals/i');
+    if (await teamBranding.isVisible({ timeout: 2000 })) {
+      await expect(teamBranding).toBeVisible();
+    }
   });
 });

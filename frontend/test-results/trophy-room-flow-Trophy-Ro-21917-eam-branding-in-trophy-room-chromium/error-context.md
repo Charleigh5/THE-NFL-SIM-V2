@@ -1,0 +1,68 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23] [cursor=pointer]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e27]: Season
+      - listitem [ref=e28]:
+        - link "Offseason" [ref=e29] [cursor=pointer]:
+          - /url: /offseason
+          - img [ref=e31]
+          - generic [ref=e34]: Offseason
+      - listitem [ref=e35]:
+        - link "Draft Room" [ref=e36] [cursor=pointer]:
+          - /url: /offseason/draft
+          - img [ref=e38]
+          - generic [ref=e44]: Draft Room
+      - listitem [ref=e45]:
+        - link "Roster" [ref=e46] [cursor=pointer]:
+          - /url: /empire/front-office
+          - img [ref=e48]
+          - generic [ref=e53]: Roster
+      - listitem [ref=e54]:
+        - link "Depth Chart" [ref=e55] [cursor=pointer]:
+          - /url: /empire/depth-chart
+          - img [ref=e57]
+          - generic [ref=e60]: Depth Chart
+      - listitem [ref=e61]:
+        - link "Trade Center" [ref=e62] [cursor=pointer]:
+          - /url: /empire/trade-center
+          - img [ref=e64]
+          - generic [ref=e67]: Trade Center
+      - listitem [ref=e68]:
+        - link "Training" [ref=e69] [cursor=pointer]:
+          - /url: /training
+          - img [ref=e71]
+          - generic [ref=e77]: Training
+      - listitem [ref=e78]:
+        - link "My Team" [ref=e79] [cursor=pointer]:
+          - /url: /team-selection
+          - img [ref=e81]
+          - generic [ref=e83]: My Team
+      - listitem [ref=e84]:
+        - link "Settings" [ref=e85] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e87]
+          - generic [ref=e90]: Settings
+    - generic [ref=e92]: System Online
+  - main [ref=e94]:
+    - generic [ref=e96]:
+      - generic:
+        - generic:
+          - heading "Hall of Champions" [level=1]
+          - heading "Green Bay Packers Trophy Case" [level=2]
+  - button "Mission Control" [ref=e102] [cursor=pointer]: ⚡
+```

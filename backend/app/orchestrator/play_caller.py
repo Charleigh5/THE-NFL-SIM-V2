@@ -137,6 +137,42 @@ class PlayCaller:
 
         return self.rng.random() < pass_prob
 
+    def call_audible(
+        self,
+        qb: "Player",
+        current_play: str,
+        new_play: str,
+        play_clock_remaining: float
+    ) -> tuple[str, float, bool]:
+        """
+        Process an audible call.
+
+        Returns:
+            (final_play, new_clock_remaining, false_start_occurred)
+        """
+        # Check for Audible Master ability
+        from app.models.player import Player
+        has_audible_master = False
+        if isinstance(qb, Player):
+             has_audible_master = (qb.abilities or {}).get("audible_master", False)
+
+        if has_audible_master:
+            clock_cost = 2.0  # 2 seconds
+            false_start_risk = 0.0
+        else:
+            clock_cost = 8.0  # 8 seconds
+            false_start_risk = 0.05  # 5% chance
+
+        new_clock = max(0, play_clock_remaining - clock_cost)
+
+        # Check for false start
+        false_start = self.rng.random() < false_start_risk
+
+        if false_start:
+            return current_play, new_clock, True  # Penalty, play stays same
+
+        return new_play, new_clock, False
+
     def _create_pass_play(self, context: PlayCallingContext) -> PassPlayCommand:
         """Determine pass depth and create command."""
         # Determine depth based on distance needed

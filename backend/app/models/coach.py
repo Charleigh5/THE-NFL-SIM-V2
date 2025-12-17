@@ -29,6 +29,11 @@ class Coach(Base):
     development_rating = Column(Integer, default=50)
     intelligence = Column(Integer, default=70)  # NFL Identity Blueprint: Coordinator IQ
 
+    # --- Defensive Disguise (Phase 11) ---
+    # Used for DC vs QB pre-snap read battles
+    # Higher rating = better at disguising coverages
+    defensive_disguise = Column(Integer, default=50)
+
     # Skill Tree
     # e.g. {"WestCoastOffense": 5, "ZoneBlitz": 3}
     skills = Column(JSON, default=dict)
@@ -43,3 +48,6 @@ class Coach(Base):
     playbook_offense = Column(String, nullable=True) # e.g. "West Coast", "Spread"
     playbook_defense = Column(String, nullable=True) # e.g. "4-3", "3-4"
     philosophy = Column(JSON, default=dict) # e.g. {"run_heavy": 70, "blitz_frequency": 40}
+
+    # Hyper-Immersive
+    coaching_tree = relationship("CoachingTree", backref="coach", uselist=False)

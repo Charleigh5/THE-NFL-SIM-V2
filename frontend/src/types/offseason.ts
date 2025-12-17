@@ -32,6 +32,23 @@ export interface Prospect {
   projected_round?: number;
   combine?: CombineResult;
   genesis_revealed?: boolean;
+  scouting_report?: ScoutingReport;
+}
+
+export interface ScoutingReport {
+  prospect_id: string;
+  completion: number;
+  attributes: Record<
+    string,
+    {
+      value: number | null;
+      range: [number, number] | null;
+      tier: string;
+      display: string;
+    }
+  >;
+  strengths: string[];
+  weaknesses: string[];
 }
 
 export interface DraftPickSummary {

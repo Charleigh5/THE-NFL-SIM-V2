@@ -6,12 +6,14 @@ import { DraftBoard } from "../components/offseason/DraftBoard";
 // import { DraftTicker } from "../components/offseason/DraftTicker";
 import { TradeModal } from "../components/offseason/TradeModal";
 import { DraftAssistant } from "../components/draft/DraftAssistant";
+import { WarRoomTicker } from "../components/draft/WarRoomTicker";
+import { TradePhone } from "../components/draft/TradePhone";
 import type { Prospect, DraftPickDetail, DraftPickSummary, TeamNeed } from "../types/offseason";
 import type { Team } from "../services/api";
 import type { Season } from "../types/season";
 // import "./DraftRoom.css";
 import { ParallaxScene } from "../components/immersive/ParallaxScene";
-import { RibbonTicker } from "../components/immersive/RibbonTicker";
+// import { RibbonTicker } from "../components/immersive/RibbonTicker";
 import { BroadcastPanel } from "../components/immersive/BroadcastPanel";
 import styles from "./DraftRoom.module.css";
 
@@ -163,16 +165,11 @@ export const DraftRoom: React.FC = () => {
           )}
         </div>
 
-        <RibbonTicker
-          items={
-            recentPicks.length > 0
-              ? recentPicks.map(
-                  (p) =>
-                    `Rd ${p.round} #${p.pick_number}: ${p.player_position} ${p.player_name} (${p.player_overall})`
-                )
-              : ["Draft Night Live", "War Room Active", "Make Your Selection"]
-          }
-          speedSec={30}
+        <WarRoomTicker />
+
+        <TradePhone
+          hasOffer={showTradeModal} // Simulate offer when modal is open for now, or add specific state
+          onAnswer={() => setShowTradeModal(true)}
         />
 
         <div className={styles.draftContent}>
