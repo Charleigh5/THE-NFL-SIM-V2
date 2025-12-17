@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 # Check for nflreadpy availability
 try:
-    import nflreadpy
+    import nflreadpy  # type: ignore[import-not-found]
     HAS_NFLVERSE = True
 except ImportError:
     HAS_NFLVERSE = False

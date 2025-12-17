@@ -38,3 +38,7 @@ export interface TraitAssignment {
   trait_id: number;
   source: TraitSource;
 }
+
+export interface TraitUnlockRequest {
+  trait_name: string;
+}

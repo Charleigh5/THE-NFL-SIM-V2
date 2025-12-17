@@ -49,6 +49,8 @@ function StorylineCard({ storyline }: { storyline: Storyline }) {
         <span className="detail-item">{storyline.event_count} events</span>
       </div>
 
+      {/* Using CSS custom property to pass dynamic value to CSS - not a layout style */}
+      {/* eslint-disable-next-line react/forbid-dom-props */}
       <div
         className="intensity-bar-container"
         style={{ "--intensity-pct": `${intensityPct}%` } as React.CSSProperties}

@@ -22,6 +22,7 @@ import { MedicalCenter } from "./pages/MedicalCenter";
 import { Playbook } from "./pages/Playbook";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
+import { SkillsPage } from "./pages/SkillsPage";
 import NotFound from "./components/NotFound.tsx";
 import RootErrorBoundary from "./components/RootErrorBoundary.tsx";
 import RouteErrorBoundary from "./components/RouteErrorBoundary.tsx";
@@ -272,6 +273,29 @@ export async function teamSelectionLoader() {
   }
 }
 
+// Skills Page Loader
+export async function skillsLoader({ params }: { params: { playerId?: string } }) {
+  // Use optional to match RouteObject types if stricter, but params usually string
+  try {
+    const playerId = params.playerId ? parseInt(params.playerId) : NaN;
+    if (isNaN(playerId)) throw new Error("Invalid Player ID");
+
+    // Dynamically import to avoid circular dependency
+    const { traitsApi } = await import("./services/traits");
+
+    // Fetch player and traits
+    const [player, traits] = await Promise.all([
+      api.getPlayer(playerId),
+      traitsApi.getPlayerTraits(playerId),
+    ]);
+    return { player, traits };
+  } catch (error) {
+    if (error instanceof Response) throw error;
+    console.error("Failed to load skills data:", error);
+    throw new Response("Failed to load skills data", { status: 500 });
+  }
+}
+
 /**
  * Router Configuration
  * Using React Router v7's createBrowserRouter for data-driven routing
@@ -371,6 +395,17 @@ export const router = createBrowserRouter([
       {
         path: "training",
         element: <TrainingCenter />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "players/:playerId/skills",
+        element: <SkillsPage />,
+        loader: skillsLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "skills",
+        element: <SkillsPage />,
         errorElement: <RouteErrorBoundary />,
       },
       {
