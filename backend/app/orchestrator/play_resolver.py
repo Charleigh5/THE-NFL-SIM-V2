@@ -466,7 +466,7 @@ class PlayResolver:
             loss_yards = self.rng.randint(5, 10)
 
             # Publish Event
-            if sacker and beaten_ol:
+            if sacker:
                 intimidation_factor = 1.0
                 # Check for Intimidation trait
                 if hasattr(sacker, "traits"):
@@ -475,10 +475,15 @@ class PlayResolver:
                             intimidation_factor = 1.5
                             break
 
+                # STRICT PAYLOAD for SackEventPayload
                 EventBus.publish(EventType.SACK_EVENT, {
-                    "beaten_linemen_ids": [beaten_ol.id],
-                    "sacker_id": sacker.id,
-                    "intimidation_factor": intimidation_factor
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "sacked_player_id": qb.id,
+                    "defense_player_id": sacker.id,
+                    "yards_lost": loss_yards
                 })
 
             return PlayResult(
@@ -683,6 +688,32 @@ class PlayResolver:
             elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(self.rng, 0.1):
                 is_touchdown = True
 
+            # PUBLISH TOUCHDOWN EVENT
+            if is_touchdown:
+                offense_team_id = getattr(self.current_match_context, 'home_team_id', 0) if getattr(command, 'is_home_team', False) else getattr(self.current_match_context, 'away_team_id', 0)
+                EventBus.publish(EventType.TOUCHDOWN_EVENT, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "scoring_player_id": target.id,
+                    "scoring_team_id": offense_team_id,
+                    "touchdown_type": "PASS",
+                    "yards": yards_gained
+                })
+
+            # PUBLISH SPECTACULAR CATCH (Narrative)
+            # If contested catch trait was active and catch was made
+            if trait_bonus > 0 and is_complete:
+                 EventBus.publish(EventType.SPECTACULAR_CATCH, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "player_id": target.id,
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "description": "Contested catch in traffic"
+                })
+
             # 4. Empire Kernel: XP Awards
             xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
 
@@ -741,6 +772,17 @@ class PlayResolver:
             is_interception = ProbabilityEngine.resolve_outcome(self.rng, int_chance)
 
             if is_interception:
+                # PUBLISH TURNOVER EVENT
+                EventBus.publish(EventType.TURNOVER_EVENT, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "turnover_type": "INTERCEPTION",
+                    "player_id": qb.id,
+                    "forced_by_player_id": defender.id
+                })
+
                 return PlayResult(
                     yards_gained=0,
                     is_turnover=True,
@@ -754,6 +796,18 @@ class PlayResolver:
 
             # Normal Incomplete - add pressure indicator if applicable
             pressure_note = " under pressure" if BlockingResult.LOSS in block_results else ""
+
+            # CHECK FOR DROPPED PASS (Simulated)
+            # If success chance was high (>70%) but failed, 20% chance it was a drop
+            if success_chance > 0.70 and ProbabilityEngine.resolve_outcome(self.rng, 0.20):
+                 EventBus.publish(EventType.DROPPED_PASS, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "player_id": target.id
+                })
+
             return PlayResult(
                 yards_gained=0,
                 description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
@@ -928,6 +982,49 @@ class PlayResolver:
             headline = f"FUMBLE! {rb.last_name} loses the ball!"
             is_highlight_worthy = True
             yards_gained = 0 # Or yards until fumble? Simplified to 0.
+
+            # PUBLISH TURNOVER EVENT (Fumble)
+            EventBus.publish(EventType.TURNOVER_EVENT, {
+                "season_id": getattr(self.current_match_context, "season", 0),
+                "week": getattr(self.current_match_context, "week", 0),
+                "game_id": getattr(self.current_match_context, "game_id", None),
+                "play_id": getattr(command, "play_id", "unknown"),
+                "turnover_type": "FUMBLE",
+                "player_id": rb.id,
+                "forced_by_player_id": defender.id
+            })
+
+            # PUBLISH CRITICAL FUMBLE (Narrative)
+            # If fatigue was a major factor or critical moment
+            if current_fatigue > 80:
+                 EventBus.publish(EventType.CRITICAL_FUMBLE, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "player_id": rb.id,
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "description": "Fatigue-induced fumble"
+                })
+
+        # Check for Touchdown
+        if not is_turnover:
+            if yards_gained > 80:
+                is_touchdown = True
+            elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(self.rng, 0.1):
+                is_touchdown = True
+
+            if is_touchdown:
+                offense_team_id = getattr(self.current_match_context, 'home_team_id', 0) if getattr(command, 'is_home_team', False) else getattr(self.current_match_context, 'away_team_id', 0)
+                EventBus.publish(EventType.TOUCHDOWN_EVENT, {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "scoring_player_id": rb.id,
+                    "scoring_team_id": offense_team_id,
+                    "touchdown_type": "RUSH",
+                    "yards": yards_gained
+                })
 
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})

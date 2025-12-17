@@ -14,10 +14,20 @@ class TraitEffectType(str, Enum):
     SITUATIONAL = "SITUATIONAL"
     PASSIVE = "PASSIVE"
 
+
+class TraitTier(str, Enum):
+    """APF 2K8-style trait tiers for player differentiation."""
+    GOLD = "GOLD"       # Elite, game-breaking abilities (max 1 per player)
+    SILVER = "SILVER"   # Strong role-player traits (max 2 per player)
+    BRONZE = "BRONZE"   # Solid supporting abilities (max 3 per player)
+    COMMON = "COMMON"   # No cap, baseline traits
+
+
 class TraitSource(str, Enum):
     DRAFT = "DRAFT"
     DEVELOPMENT = "DEVELOPMENT"
     MILESTONE = "MILESTONE"
+
 
 class Trait(Base):
     __tablename__ = 'traits'
@@ -28,6 +38,11 @@ class Trait(Base):
     effect_type: Mapped[TraitEffectType] = mapped_column(default=TraitEffectType.PASSIVE)
     effect_value: Mapped[float] = mapped_column(default=0.0)
     position_groups = mapped_column(JSON, nullable=True)  # JSON list of positions
+
+    # APF 2K8-style tiered badge system
+    tier: Mapped[TraitTier] = mapped_column(default=TraitTier.COMMON, nullable=True)
+    is_badge: Mapped[bool] = mapped_column(default=True, nullable=True)  # Visible badge vs backend-only
+    icon_url: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     # Relationships
     players: Mapped[List["PlayerTrait"]] = relationship(back_populates="trait")

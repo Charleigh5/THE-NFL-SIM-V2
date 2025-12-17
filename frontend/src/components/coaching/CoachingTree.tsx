@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import "./CoachingTree.css";
 
 interface CoachNodeProps {
   name: string;
@@ -9,14 +10,11 @@ interface CoachNodeProps {
 
 const CoachNode: React.FC<CoachNodeProps> = ({ name, role, specialty, color }) => (
   <motion.div
-    className={`flex flex-col items-center p-3 rounded-lg border border-opacity-50 min-w-[120px] bg-black/40 backdrop-blur-sm`}
-    style={{ borderColor: color }}
+    className={`coach-node flex flex-col items-center p-3 rounded-lg border border-opacity-50 min-w-[120px] bg-black/40 backdrop-blur-sm`}
+    style={{ "--node-color": color } as React.CSSProperties}
     whileHover={{ scale: 1.05, boxShadow: `0 0 15px ${color}40` }}
   >
-    <div
-      className="w-12 h-12 rounded-full mb-2 flex items-center justify-center font-bold text-white border-2"
-      style={{ borderColor: color, backgroundColor: `${color}20` }}
-    >
+    <div className="coach-node-icon w-12 h-12 rounded-full mb-2 flex items-center justify-center font-bold text-white border-2">
       {name.charAt(0)}
     </div>
     <div className="text-xs font-bold text-gray-200">{role}</div>

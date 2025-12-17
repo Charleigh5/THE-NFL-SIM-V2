@@ -68,6 +68,80 @@ class ProbabilityEngine:
         return max(min_chance, min(max_chance, total_chance))
 
     @staticmethod
+    def calculate_success_chance_with_traits(
+        base_probability: float,
+        base_attribute_modifiers: float,
+        player_traits: list,  # List of TraitDefinition objects
+        context: dict,  # Game context for conditional trait activation
+        fatigue_penalty: float = 0.0,
+        min_chance: float = 0.05,
+        max_chance: float = 0.95
+    ) -> tuple[float, list]:
+        """
+        Calculate success probability with trait modifiers applied.
+
+        Follows industry best practices:
+        - Modular: Traits are treated as separate modifier components
+        - Data-driven: Effects defined in trait catalog, not hardcoded
+        - Additive first: Base + trait modifiers, then context
+
+        Args:
+            base_probability: Starting probability (0.0-1.0)
+            base_attribute_modifiers: Sum of attribute comparison modifiers
+            player_traits: List of TraitDefinition objects for the player
+            context: Dict with keys like 'triggers', 'quarter', 'down', etc.
+            fatigue_penalty: Reduction from fatigue (0.0-1.0)
+            min_chance: Floor value for probability
+            max_chance: Ceiling value for probability
+
+        Returns:
+            Tuple of (final_probability, list of active trait names)
+        """
+        # Import here to avoid circular dependency
+        from app.services.trait_service import TraitService
+
+        trait_bonus = 0.0
+        active_traits = []
+        context_bonus = 0.0
+
+        # Apply trait modifiers
+        for trait_def in player_traits:
+            if TraitService.check_trait_activation(trait_def, context):
+                active_traits.append(trait_def.name)
+
+                # Extract relevant effects and convert to probability modifiers
+                effects = trait_def.effects
+
+                # Generic boost effects (scaled to probability)
+                for key, value in effects.items():
+                    if "_boost" in key:
+                        # Stat boosts: +10 rating = +5% probability
+                        trait_bonus += value * 0.005
+                    elif "_chance" in key or "_rate" in key:
+                        # Direct probability modifiers
+                        trait_bonus += value
+                    elif "_reduction" in key:
+                        # Penalty reductions (add as positive)
+                        trait_bonus += value
+                    elif key == "pressure_immunity" and value:
+                        # Boolean flags: nullify specific penalties
+                        context_bonus += 0.10  # +10% for pressure immunity
+                    elif key == "fatigue_override" and value:
+                        fatigue_penalty = 0.0  # Override fatigue
+
+        # Apply additively: base + attributes + traits + context - fatigue
+        total_chance = (
+            base_probability
+            + base_attribute_modifiers
+            + trait_bonus
+            + context_bonus
+            - fatigue_penalty
+        )
+
+        final_probability = max(min_chance, min(max_chance, total_chance))
+        return final_probability, active_traits
+
+    @staticmethod
     def resolve_outcome(rng, probability: float) -> bool:
         """
         Resolve a boolean outcome based on probability.

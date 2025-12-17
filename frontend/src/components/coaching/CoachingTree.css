@@ -1,0 +1,10 @@
+.coach-node {
+  /* Dynamic border color handled via var(--node-color) */
+  border-color: var(--node-color);
+}
+
+.coach-node-icon {
+  border-color: var(--node-color);
+  /* Subtle tinted background - fully browser compatible */
+  background-color: rgba(255, 255, 255, 0.1);
+}

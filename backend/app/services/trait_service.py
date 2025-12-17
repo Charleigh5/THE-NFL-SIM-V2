@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple, Dict, Any
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger, ErrorCategory, log_error
@@ -669,7 +669,17 @@ class TraitService:
         trait_id: int,
         source: TraitSource = TraitSource.DEVELOPMENT
     ) -> Optional[PlayerTrait]:
-        """Assign a trait to a player."""
+        """Assign a trait to a player with APF 2K8-style tier caps."""
+        from app.models.trait import TraitTier  # Local import to avoid circular
+
+        # Tier caps: limits per player (APF 2K8 balance)
+        TIER_CAPS = {
+            TraitTier.GOLD: 1,
+            TraitTier.SILVER: 2,
+            TraitTier.BRONZE: 3,
+            TraitTier.COMMON: None,  # No limit
+        }
+
         try:
             # Check if already assigned
             existing = db.scalar(
@@ -687,6 +697,23 @@ class TraitService:
             if not player or not trait:
                 raise ValueError("Player or Trait not found")
 
+            # Validate tier cap
+            trait_tier = getattr(trait, 'tier', TraitTier.COMMON)
+            cap = TIER_CAPS.get(trait_tier)
+            if cap is not None:
+                # Count existing traits of this tier
+                existing_count = db.scalar(
+                    select(func.count(PlayerTrait.trait_id))
+                    .join(Trait, Trait.id == PlayerTrait.trait_id)
+                    .where(PlayerTrait.player_id == player_id)
+                    .where(Trait.tier == trait_tier)
+                )
+                if existing_count >= cap:
+                    raise ValueError(
+                        f"Player already has {existing_count} {trait_tier.value} traits "
+                        f"(max {cap}). Cannot assign '{trait.name}'."
+                    )
+
             new_assignment = PlayerTrait(
                 player_id=player_id,
                 trait_id=trait_id,
@@ -701,7 +728,8 @@ class TraitService:
                 player_id=player_id,
                 trait_id=trait_id,
                 source=source,
-                trait_name=trait.name
+                trait_name=trait.name,
+                tier=str(trait_tier)
             )
             return new_assignment
 

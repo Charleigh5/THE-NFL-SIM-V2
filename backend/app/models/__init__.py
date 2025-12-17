@@ -16,8 +16,11 @@ from app.models.feedback import UserFeedback
 from app.models.weather import GameWeather, StadiumClimate
 from app.models.trade_offer import TradeOffer, TradeOfferStatus
 from app.models.player_game_starts import PlayerGameStarts
-from app.models.trait import PlayerTrait
+from app.models.trait import PlayerTrait, TraitTier
 # Hyper-Immersive Models
 from app.models.scout import Scout, ScoutingReport
 from app.models.medical import BodyPart, InjuryEvent
 from app.models.gameplan import Gameplan, CoachingTree
+from app.models.news_item import NewsItem, NewsCategory
+from app.models.weekly_recap import WeeklyRecap
+from app.models.rpg_event import RPGEvent
