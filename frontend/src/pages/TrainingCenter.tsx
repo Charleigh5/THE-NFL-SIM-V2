@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import type { Drill } from "../types/training";
 import { CoachingStyleType } from "../types/training";
 import { trainingService } from "../services/trainingApi";
+import type { BatchExecuteRequest } from "../services/trainingApi";
+import { useNotificationStore } from "../store/useNotificationStore";
 import { DrillCard } from "../components/training/DrillCard";
 import { CoachingStylePicker } from "../components/training/CoachingStylePicker";
 import { Loader2 } from "lucide-react";
@@ -12,6 +14,7 @@ export const TrainingCenter = () => {
   const [drills, setDrills] = useState<Drill[]>([]);
   const [currentStyle, setCurrentStyle] = useState<CoachingStyleType>(CoachingStyleType.SMART);
   const [selectedDrills, setSelectedDrills] = useState<string[]>([]);
+  const addNotification = useNotificationStore((state) => state.addNotification);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,9 +47,42 @@ export const TrainingCenter = () => {
 
   const handleExecute = async () => {
     setLoading(true);
-    await trainingService.executeTraining();
-    setLoading(false);
-    // TODO: Show success notification or summary
+
+    // Construct a mock batch request for now based on selected drills
+    // In a real app, this would use actual player IDs and scheduled assignments
+    const request: BatchExecuteRequest = {
+      assignments: selectedDrills.map((drillId) => ({
+        player_id: Math.floor(Math.random() * 50) + 1, // Mock Player IDs
+        drill_name: drills.find((d) => d.id === drillId)?.name || "Unknown Drill",
+        season_phase: "regular",
+        player_age: 22,
+        coaching_style: currentStyle,
+      })),
+    };
+
+    // If no drills selected, add at least one dummy one to show the flow
+    if (request.assignments.length === 0) {
+      request.assignments.push({
+        player_id: 12,
+        drill_name: "7-on-7 Skeleton",
+        season_phase: "regular",
+        player_age: 22,
+        coaching_style: currentStyle,
+      });
+    }
+
+    try {
+      const result = await trainingService.executeBatchTraining(request);
+      addNotification({
+        type: "TRAINING_SUMMARY",
+        data: result,
+        duration: 5000,
+      });
+    } catch (error) {
+      console.error("Training failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {

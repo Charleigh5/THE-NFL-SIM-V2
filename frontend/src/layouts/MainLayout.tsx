@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import FeedbackWidget from "../components/common/FeedbackWidget";
+import GlobalNotificationLayer from "../components/ui/GlobalNotificationLayer";
 import "./MainLayout.css";
 
 const MainLayout = () => {
@@ -12,6 +13,7 @@ const MainLayout = () => {
   return (
     <div className="main-layout">
       <Navigation />
+      <GlobalNotificationLayer />
       <main className="main-content">
         <Outlet />
       </main>

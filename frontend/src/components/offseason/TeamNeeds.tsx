@@ -20,7 +20,11 @@ export const TeamNeeds: React.FC<TeamNeedsProps> = ({ needs }) => {
           const leagueAvg = need.league_avg_quality || 75;
 
           return (
-            <div key={need.position} className={`need-card priority-${priority}`} data-testid={`team-need-card-${need.position}`}>
+            <div
+              key={need.position}
+              className={`need-card priority-${priority}`}
+              data-testid={`team-need-card-${need.position}`}
+            >
               <div className="need-header">
                 <div className="need-title">
                   <span className="need-pos">{need.position}</span>
