@@ -1,40 +1,75 @@
-export interface Drill {
-  id: string;
-  name: string;
-  category: "QB" | "RB" | "WR" | "OL" | "DL" | "LB" | "DB" | "ST" | "TEAM";
-  description: string;
-  targetStats: string[];
-  injuryRisk: "LOW" | "MEDIUM" | "HIGH" | "EXTREME";
-  xpMultiplier: number; // e.g. 1.0, 1.2
-  energyCost: number; // 0-100
-}
-
-export const CoachingStyleType = {
-  VOLUME: "VOLUME",
-  INTENSITY: "INTENSITY",
-  SMART: "SMART",
-  OLD_SCHOOL: "OLD_SCHOOL",
+export const SeasonPhase = {
+  OFFSEASON: "offseason",
+  PRESEASON: "preseason",
+  REGULAR: "regular",
+  PLAYOFFS: "playoffs",
 } as const;
+export type SeasonPhase = (typeof SeasonPhase)[keyof typeof SeasonPhase];
 
-export type CoachingStyleType = (typeof CoachingStyleType)[keyof typeof CoachingStyleType];
+export const DrillCategory = {
+  STRENGTH: "STRENGTH",
+  SPEED: "SPEED",
+  TECHNIQUE: "TECHNIQUE",
+  MENTAL: "MENTAL",
+  ENDURANCE: "ENDURANCE",
+  RECOVERY: "RECOVERY",
+} as const;
+export type DrillCategory = (typeof DrillCategory)[keyof typeof DrillCategory];
+
+export interface Drill {
+  name: string;
+  target_stat: string;
+  secondary_stats: string[];
+  injury_risk: number;
+  xp_multiplier: number;
+  fatigue_cost: number;
+  category: DrillCategory | string;
+  description: string;
+  season_filter: SeasonPhase[] | string[];
+}
 
 export interface CoachingStyle {
-  type: CoachingStyleType;
   name: string;
+  display_name: string;
   description: string;
-  bonuses: string[];
-  penalties: string[];
+  xp_multiplier: number;
+  injury_risk_multiplier: number;
+  fatigue_multiplier: number;
+  recovery_multiplier: number;
 }
 
-export interface TrainingDeepDive {
-  positionGroup: string;
-  assignedDrills: string[]; // drill IDs
-  intensity: number; // 1-10
+export interface TrainingResult {
+  player_id: number;
+  drill_name: string;
+  xp_gained: number;
+  target_stat: string;
+  secondary_stats: string[];
+  injury_occurred: boolean;
+  fatigue_added: number;
+  final_injury_risk: number;
+  weekly_load: number;
+  coaching_style_used: string;
 }
 
-export interface TrainingSchedule {
-  week: number;
-  coachingStyle: CoachingStyleType;
-  focusGroups: TrainingDeepDive[];
-  completed: boolean;
+export interface ScheduleRecommendation {
+  day: string;
+  drill_name: string;
+  intensity: string;
+  notes: string;
+}
+
+export interface WeeklySchedule {
+  position: string;
+  season_phase: string;
+  coaching_style: string;
+  recommendations: ScheduleRecommendation[];
+  seasonal_intensity_cap: number;
+}
+
+export interface DrillListResponse {
+  drills: Drill[];
+  total: number;
+  position_filter?: string;
+  season_filter?: string;
+  category_filter?: string;
 }

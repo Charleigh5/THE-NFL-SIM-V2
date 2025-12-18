@@ -1,9 +1,10 @@
 import { Sparkles, Stars, Cloud } from "@react-three/drei";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 export const StarfieldBackground = () => {
-  const groupRef = useRef<any>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (groupRef.current) {
@@ -39,15 +40,7 @@ export const StarfieldBackground = () => {
       />
 
       {/* Subtle Fog/Clouds for depth */}
-      <Cloud
-        opacity={0.15}
-        speed={0.2} // Rotation speed
-        width={10}
-        depth={1.5}
-        segments={20}
-        position={[0, -5, -10]}
-        color="#1f2937"
-      />
+      <Cloud opacity={0.15} speed={0.2} segments={20} color="#1f2937" />
     </group>
   );
 };

@@ -1,5 +1,3 @@
-import { TraitTier } from "../types/trait";
-
 export interface SkillTreeNodeConfig {
   traitId: string; // Matches the 'name' field in backend Trait
   position: [number, number, number]; // 3D coordinates [x, y, z]
@@ -9,24 +7,6 @@ export interface SkillTreeNodeConfig {
 }
 
 export type SkillTreeLayout = Record<string, SkillTreeNodeConfig>;
-
-// Helper to define grid positions
-// Z is typically 0, but can vary for depth effects
-const P = {
-  CENTER: [0, 0, 0],
-  TOP: [0, 2, 0],
-  BOTTOM: [0, -2, 0],
-  LEFT: [-2, 0, 0],
-  RIGHT: [2, 0, 0],
-  TOP_LEFT: [-2, 2, 0],
-  TOP_RIGHT: [2, 2, 0],
-  BOTTOM_LEFT: [-2, -2, 0],
-  BOTTOM_RIGHT: [2, -2, 0],
-  // Farther out
-  FAR_LEFT: [-4, 0, 0],
-  FAR_RIGHT: [4, 0, 0],
-  FAR_TOP: [0, 4, 0],
-} as const;
 
 // ---------------------------------------------------------------------------
 // QUARTERBACK SKILL TREE LAYOUT (Archetype: General -> Specific)

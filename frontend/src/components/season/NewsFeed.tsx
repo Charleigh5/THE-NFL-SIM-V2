@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import "./NewsFeed.css";
 
 // ============================================================================
@@ -96,7 +97,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
   const [expanded, setExpanded] = useState(!compact);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  const fetchNews = async () => {
+  const fetchNews = React.useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -120,7 +121,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [teamFilter, maxItems]);
 
   useEffect(() => {
     fetchNews();
@@ -129,7 +130,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
       const interval = setInterval(fetchNews, refreshInterval * 1000);
       return () => clearInterval(interval);
     }
-  }, [teamFilter, maxItems, refreshInterval]);
+  }, [fetchNews, refreshInterval]);
 
   const handleRefresh = () => {
     fetchNews();
@@ -194,26 +195,33 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
 
       {(!compact || expanded) && (
         <div className="news-list">
-          {news.map((item, index) => (
-            <div
-              key={`${item.headline}-${index}`}
-              className={`news-item ${item.is_breaking ? "breaking" : ""}`}
-            >
-              {item.is_breaking && <div className="breaking-badge">BREAKING</div>}
-              <div className="news-content">
-                <div className="news-category">
-                  {getCategoryIcon(item.category)}
-                  <span className="category-label">{item.category}</span>
+          <AnimatePresence mode="popLayout">
+            {news.map((item, index) => (
+              <motion.div
+                key={`${item.headline}-${index}`}
+                className={`news-item ${item.is_breaking ? "breaking" : ""}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
+              >
+                {item.is_breaking && <div className="breaking-badge">BREAKING</div>}
+                <div className="news-content">
+                  <div className="news-category">
+                    {getCategoryIcon(item.category)}
+                    <span className="category-label">{item.category}</span>
+                  </div>
+                  <h4 className="news-headline">{item.headline}</h4>
+                  <div className="news-meta">
+                    <span className="news-source">{item.source}</span>
+                    <span className="news-separator">•</span>
+                    <span className="news-date">{formatDate(item.date)}</span>
+                  </div>
                 </div>
-                <h4 className="news-headline">{item.headline}</h4>
-                <div className="news-meta">
-                  <span className="news-source">{item.source}</span>
-                  <span className="news-separator">•</span>
-                  <span className="news-date">{formatDate(item.date)}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {news.length === 0 && (
             <div className="no-news">

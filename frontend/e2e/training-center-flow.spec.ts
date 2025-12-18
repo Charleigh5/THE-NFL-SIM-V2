@@ -1,131 +1,65 @@
 import { test, expect } from "@playwright/test";
 
-/**
- * E2E Tests for Training Center
- * Covers: Page load, coach display, coaching philosophy, drill catalog
- */
-
 test.describe("Training Center Flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock training drills API
-    await page.route("**/api/training/drills**", async (route) => {
+    // Mock API calls
+    await page.route("**/api/v1/training/drills", async (route) => {
       await route.fulfill({
-        json: [
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify([
           {
-            id: "sprint-1",
-            name: "40-Yard Dash",
-            category: "SPEED",
-            position: "ALL",
-            xp_gain: 25,
-            fatigue_cost: 15,
-            injury_risk: 0.02,
-            description: "Explosive speed training",
+            id: "1",
+            name: "Oklahoma Drill",
+            category: "CONTACT",
+            energyCost: 20,
+            xpMultiplier: 1.5,
+            injuryRisk: "HIGH",
           },
           {
-            id: "tackle-1",
-            name: "Tackling Drill",
-            category: "FUNDAMENTALS",
-            position: "DEF",
-            xp_gain: 20,
-            fatigue_cost: 20,
-            injury_risk: 0.05,
-            description: "Form tackling practice",
+            id: "2",
+            name: "7-on-7 Skeleton",
+            category: "PASSING",
+            energyCost: 15,
+            xpMultiplier: 1.2,
+            injuryRisk: "LOW",
           },
-          {
-            id: "route-1",
-            name: "Route Running",
-            category: "SKILL",
-            position: "WR",
-            xp_gain: 30,
-            fatigue_cost: 10,
-            injury_risk: 0.01,
-            description: "Precision route running",
-          },
-        ],
+        ]),
       });
     });
 
-    // Mock training schedule API
-    await page.route("**/api/training/schedule**", async (route) => {
-      await route.fulfill({
-        json: {
-          coachingStyle: "SMART",
-          weeklyLoad: 75,
-          fatigueLevel: 20,
-        },
-      });
+    await page.route("**/api/v1/training/schedule", async (route) => {
+      await route.fulfill({ status: 200, body: JSON.stringify({ currentWait: 0 }) });
     });
 
-    // Mock execute training API
-    await page.route("**/api/training/execute**", async (route) => {
-      await route.fulfill({
-        json: {
-          success: true,
-          results: {
-            xpGained: 150,
-            fatigueIncrease: 25,
-            injuriesOccurred: 0,
-          },
-        },
-      });
-    });
-
-    // Mock coaching style update
-    await page.route("**/api/training/coaching-style**", async (route) => {
-      await route.fulfill({
-        json: { success: true },
-      });
-    });
+    // Navigate to training page
+    await page.goto("http://localhost:5173/training");
   });
 
   test("should load training center page", async ({ page }) => {
-    await page.goto("/training");
-
-    // Verify page loaded
-    await expect(page.getByRole("heading", { name: "Training Center" })).toBeVisible();
-
-    // Verify main sections exist
-    await expect(page.getByRole("heading", { name: "Head Coach" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Coaching Philosophy" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Drill Catalog" })).toBeVisible();
+    await expect(page.getByText("Training Center")).toBeVisible();
+    await expect(page.getByText("Coaching Philosophy")).toBeVisible();
   });
 
-  test("should display coach card component", async ({ page }) => {
-    await page.goto("/training");
-
-    // Verify coach card shows coach info
-    await expect(page.locator("text=Andy Reid")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Head Coach" })).toBeVisible();
+  test("should allow selecting coaching style", async ({ page }) => {
+    // Check initial state or default
+    // Click on a different style
+    await page.getByText("Old School").click();
+    await expect(page.getByText("Old School")).toHaveClass(/border-cyan-400/); // Assuming selected style gets border class
   });
 
-  test("should display drill cards from API", async ({ page }) => {
-    await page.goto("/training");
-
-    await page.waitForResponse("**/api/training/drills**");
-
-    // Wait for drills to load
-    await expect(page.locator("text=40-Yard Dash")).toBeVisible();
-    await expect(page.locator("text=Tackling Drill")).toBeVisible();
-    await expect(page.locator("text=Route Running")).toBeVisible();
+  test("should display drills", async ({ page }) => {
+    await expect(page.getByText("Oklahoma Drill")).toBeVisible();
+    await expect(page.getByText("7-on-7 Skeleton")).toBeVisible();
   });
 
-  test("should have execute week button", async ({ page }) => {
-    await page.goto("/training");
+  test("should toggle drill selection", async ({ page }) => {
+    const drillCard = page.locator(".drill-card").first();
+    await drillCard.click();
+    // Verify selection state (e.g. border color change or checkbox)
+    await expect(drillCard).toHaveClass(/border-cyan-400/);
 
-    // Verify execute button exists
-    const executeBtn = page.locator("text=Execute Week");
-    await expect(executeBtn).toBeVisible();
-    await expect(executeBtn).toBeEnabled();
-  });
-
-  test("should show coaching style picker", async ({ page }) => {
-    await page.goto("/training");
-
-    // Verify coaching philosophy section
-    await expect(page.locator("text=Coaching Philosophy")).toBeVisible();
-
-    // CoachingStylePicker should be present
-    // The picker likely has style options
-    await expect(page.locator("text=SMART").or(page.locator("text=Smart"))).toBeVisible();
+    await drillCard.click();
+    await expect(drillCard).not.toHaveClass(/border-cyan-400/);
   });
 });

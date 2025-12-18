@@ -1,0 +1,104 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e27]: Season
+      - listitem [ref=e28]:
+        - link "Offseason" [ref=e29]:
+          - /url: /offseason
+          - img [ref=e31]
+          - generic [ref=e34]: Offseason
+      - listitem [ref=e35]:
+        - link "Draft Room" [ref=e36]:
+          - /url: /offseason/draft
+          - img [ref=e38]
+          - generic [ref=e44]: Draft Room
+      - listitem [ref=e45]:
+        - link "Roster" [ref=e46]:
+          - /url: /empire/front-office
+          - img [ref=e48]
+          - generic [ref=e53]: Roster
+      - listitem [ref=e54]:
+        - link "Depth Chart" [ref=e55]:
+          - /url: /empire/depth-chart
+          - img [ref=e57]
+          - generic [ref=e60]: Depth Chart
+      - listitem [ref=e61]:
+        - link "Trade Center" [ref=e62]:
+          - /url: /empire/trade-center
+          - img [ref=e64]
+          - generic [ref=e67]: Trade Center
+      - listitem [ref=e68]:
+        - link "Training" [ref=e69]:
+          - /url: /training
+          - img [ref=e71]
+          - generic [ref=e77]: Training
+      - listitem [ref=e78]:
+        - link "My Team" [ref=e79]:
+          - /url: /team-selection
+          - img [ref=e81]
+          - generic [ref=e83]: My Team
+      - listitem [ref=e84]:
+        - link "Settings" [ref=e85]:
+          - /url: /settings
+          - img [ref=e87]
+          - generic [ref=e90]: Settings
+    - generic [ref=e92]: System Online
+  - main [ref=e94]:
+    - generic [ref=e96]:
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - heading "Medical Center" [level=1] [ref=e99]
+          - paragraph [ref=e100]: "Active Roster Health: 89%"
+        - generic [ref=e101]:
+          - text: Team Doctor
+          - generic [ref=e102]: Dr. Chao
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - generic [ref=e105]: Select Zone to Treat
+          - generic [ref=e106]:
+            - img [ref=e107]:
+              - 'generic "Head: 95% Health" [ref=e108]'
+              - 'generic "Torso: 88% Health" [ref=e109]'
+              - 'generic "Left Arm: 98% Health" [ref=e110]'
+              - 'generic "Right Arm: 75% Health" [ref=e111]'
+              - 'generic "Left Leg: 85% Health" [ref=e112]'
+              - 'generic "Right Leg: 92% Health" [ref=e113]'
+            - generic [ref=e114]: Click a zone to inspect wear
+        - generic [ref=e115]:
+          - heading "Injury Report" [level=3] [ref=e116]
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - generic [ref=e120]: QB
+                - generic [ref=e121]:
+                  - generic [ref=e122]: J. Burrow
+                  - generic [ref=e123]: Right Arm - Elbow Sprain
+              - generic [ref=e124]:
+                - generic [ref=e125]: 75%
+                - generic [ref=e126]: WEAR LEVEL
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]: RB
+                - generic [ref=e130]:
+                  - generic [ref=e131]: J. Mixon
+                  - generic [ref=e132]: Left Leg - Hamstring Tightness
+              - generic [ref=e133]:
+                - generic [ref=e134]: 85%
+                - generic [ref=e135]: WEAR LEVEL
+  - button "Mission Control" [ref=e137] [cursor=pointer]: ⚡
+```

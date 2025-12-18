@@ -62,22 +62,46 @@ class OffseasonService:
         players = list(self.db.execute(stmt).scalars().all())
         progression_results = []
 
+        # Position-specific decline start ages (RPG-003)
+        DECLINE_STARTS = {
+            "RB": 26, "FB": 27,  # Speed positions decline earliest
+            "WR": 29, "TE": 30,  # Receivers slightly later
+            "CB": 28, "S": 29,   # DBs rely on speed
+            "LB": 29, "DE": 30, "DT": 31,  # Front 7 varies
+            "OT": 32, "OG": 32, "C": 32,   # OL peak late
+            "QB": 35, "K": 38, "P": 38     # Mental/technique positions
+        }
+
+        # Position-specific peak ages (optimal development window)
+        PEAK_STARTS = {
+            "RB": 24, "FB": 25, "WR": 26, "TE": 26,
+            "CB": 25, "S": 26, "LB": 26, "DE": 26, "DT": 27,
+            "OT": 27, "OG": 27, "C": 27, "QB": 28, "K": 30, "P": 30
+        }
+
         for player in players:
             old_rating = player.overall_rating
 
-            # Age-based rating change
+            # Get position-specific thresholds
+            decline_age = DECLINE_STARTS.get(player.position, 30)
+            peak_start = PEAK_STARTS.get(player.position, 26)
+
+            # Age-based rating change with position-specific curves
             age_change = 0
-            if player.age <= 24:
-                # Young players: +1 to +3
+            if player.age < peak_start - 2:
+                # Young players: Strong growth (+1 to +3)
                 age_change = self.rng.randint(1, 3)
-            elif player.age <= 28:
-                # Peak years: -1 to +2
-                age_change = self.rng.randint(-1, 2)
-            elif player.age <= 32:
-                # Gradual decline: -2 to +1
-                age_change = self.rng.randint(-2, 1)
+            elif player.age < peak_start:
+                # Approaching peak: Moderate growth (+0 to +2)
+                age_change = self.rng.randint(0, 2)
+            elif player.age <= decline_age:
+                # Peak years: Maintain or slight improvement (-1 to +1)
+                age_change = self.rng.randint(-1, 1)
+            elif player.age <= decline_age + 3:
+                # Gradual decline: (-2 to +0)
+                age_change = self.rng.randint(-2, 0)
             else:
-                # Significant decline: -3 to -1
+                # Significant decline: (-3 to -1)
                 age_change = self.rng.randint(-3, -1)
 
             # Experience factor adjustment

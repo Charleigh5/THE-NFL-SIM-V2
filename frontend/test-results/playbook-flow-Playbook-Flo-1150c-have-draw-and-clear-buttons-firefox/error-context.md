@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23] [cursor=pointer]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e36]: Season
+      - listitem [ref=e37]:
+        - link "Offseason" [ref=e38] [cursor=pointer]:
+          - /url: /offseason
+          - img [ref=e40]
+          - generic [ref=e45]: Offseason
+      - listitem [ref=e46]:
+        - link "Draft Room" [ref=e47] [cursor=pointer]:
+          - /url: /offseason/draft
+          - img [ref=e49]
+          - generic [ref=e56]: Draft Room
+      - listitem [ref=e57]:
+        - link "Roster" [ref=e58] [cursor=pointer]:
+          - /url: /empire/front-office
+          - img [ref=e60]
+          - generic [ref=e65]: Roster
+      - listitem [ref=e66]:
+        - link "Depth Chart" [ref=e67] [cursor=pointer]:
+          - /url: /empire/depth-chart
+          - img [ref=e69]
+          - generic [ref=e76]: Depth Chart
+      - listitem [ref=e77]:
+        - link "Trade Center" [ref=e78] [cursor=pointer]:
+          - /url: /empire/trade-center
+          - img [ref=e80]
+          - generic [ref=e85]: Trade Center
+      - listitem [ref=e86]:
+        - link "Training" [ref=e87] [cursor=pointer]:
+          - /url: /training
+          - img [ref=e89]
+          - generic [ref=e95]: Training
+      - listitem [ref=e96]:
+        - link "My Team" [ref=e97] [cursor=pointer]:
+          - /url: /team-selection
+          - img [ref=e99]
+          - generic [ref=e101]: My Team
+      - listitem [ref=e102]:
+        - link "Settings" [ref=e103] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e105]
+          - generic [ref=e108]: Settings
+    - generic [ref=e110]: System Online
+  - main [ref=e112]:
+    - generic [ref=e114]:
+      - generic [ref=e115]:
+        - generic [ref=e116]:
+          - heading "Playbook & Strategy" [level=1] [ref=e117]
+          - paragraph [ref=e118]: "Offensive Scheme: West Coast • Defensive Scheme: Base 4-3"
+        - generic [ref=e119]:
+          - button "Weekly Install" [ref=e120] [cursor=pointer]
+          - button "Coaching Staff" [ref=e121] [cursor=pointer]
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - img [ref=e126]
+            - 'heading "Week 10 Opponent Intel: Baltimore Ravens" [level=3] [ref=e129]'
+          - paragraph [ref=e130]: "Scouting Report: Heavy reliance on Run/RPO. Weakness in secondary depth. Suggested: Load the Box or Contain Spy."
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - img [ref=e133]
+            - heading "Offensive Install" [level=4] [ref=e142]
+          - generic [ref=e143]:
+            - generic [ref=e144]: Establish The Run
+            - generic [ref=e145]: +5 Run Blocking, -2 Pass Pro
+          - generic [ref=e146]:
+            - generic [ref=e147]: Air Raid
+            - generic [ref=e148]: +5 Pass Acc, -5 Run Blk
+          - generic [ref=e149]:
+            - generic [ref=e150]: Pro Style Balanced
+            - generic [ref=e151]: No bonuses or penalties
+          - generic [ref=e152]:
+            - generic [ref=e153]: Play Action Heavy
+            - generic [ref=e154]: +3 PA Eff, +2 Run Blk
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - img [ref=e157]
+            - heading "Defensive Install" [level=4] [ref=e159]
+          - generic [ref=e160]:
+            - generic [ref=e161]: Blitzburgh
+            - generic [ref=e162]: +5 Pass Rush, -3 Coverage
+          - generic [ref=e163]:
+            - generic [ref=e164]: Tampa 2
+            - generic [ref=e165]: +5 Zone Cov, -3 Run Def
+          - generic [ref=e166]:
+            - generic [ref=e167]: Base 4-3
+            - generic [ref=e168]: Balanced front
+          - generic [ref=e169]:
+            - generic [ref=e170]: Man Free
+            - generic [ref=e171]: +4 Man Cov, +2 Blitz
+        - generic [ref=e172]:
+          - img [ref=e173]
+          - heading "Focus Bonus" [level=4] [ref=e177]
+          - generic [ref=e178]: "Proj. Efficiency: 92%"
+          - button "Finalize Gameplan" [ref=e179] [cursor=pointer]
+  - button "Mission Control" [ref=e181] [cursor=pointer]: ⚡
+```

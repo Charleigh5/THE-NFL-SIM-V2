@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Text, Html, Float, MeshDistortMaterial } from "@react-three/drei";
 import * as THREE from "three";
@@ -50,7 +50,7 @@ export const SkillNode3D: React.FC<SkillNode3DProps> = ({
   iconType,
   isUnlocked,
   isEquipped,
-  tier,
+  // tier is passed but not currently used in rendering
   label,
   onClick,
 }) => {
@@ -69,7 +69,7 @@ export const SkillNode3D: React.FC<SkillNode3DProps> = ({
   // Icon Component
   const IconComponent = ICON_MAP[iconType as keyof typeof ICON_MAP] || Brain; // Default to brain
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (meshRef.current) {
       // Hover Scale Animation
       const targetScale = hovered ? 1.2 : 1.0;

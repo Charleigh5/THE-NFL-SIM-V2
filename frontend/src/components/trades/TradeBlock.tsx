@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from "react";
 import type { TradeBlockPlayer, IncomingTradeOffer, TradePlayer } from "../../types/trade";
 import { tradeApi } from "../../services/tradeApi";
+import { motion, AnimatePresence } from "framer-motion";
 import "./TradeBlock.css";
 
 interface TradeBlockProps {
@@ -154,7 +155,13 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
   }
 
   return (
-    <div className="trade-block-container" data-testid="trade-block-container">
+    <motion.div
+      className="trade-block-container"
+      data-testid="trade-block-container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       {/* Trade Block Section */}
       <section className="trade-block-section" data-testid="trade-block-section">
         <div className="section-header">
@@ -179,47 +186,55 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
           </div>
         ) : (
           <div className="trade-block-grid">
-            {tradeBlockPlayers.map((player) => (
-              <div
-                key={player.player_id}
-                className="trade-block-card"
-                data-testid={`trade-block-player-${player.player_id}`}
-              >
-                <div className="block-card-header">
-                  <span className="position-badge">{player.position}</span>
-                  <span className={`overall-badge ${getOverallClass(player.overall)}`}>
-                    {player.overall}
-                  </span>
-                </div>
-                <div className="block-card-body">
-                  <h4>{player.player_name}</h4>
-                  <div className="block-stats">
-                    <div className="stat">
-                      <span className="label">Trade Value</span>
-                      <span className="value">{player.trade_value}</span>
+            <AnimatePresence mode="popLayout">
+              {tradeBlockPlayers.map((player) => (
+                <motion.div
+                  key={player.player_id}
+                  layoutId={`block-player-${player.player_id}`}
+                  className="trade-block-card"
+                  data-testid={`trade-block-player-${player.player_id}`}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.3)" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                >
+                  <div className="block-card-header">
+                    <span className="position-badge">{player.position}</span>
+                    <span className={`overall-badge ${getOverallClass(player.overall)}`}>
+                      {player.overall}
+                    </span>
+                  </div>
+                  <div className="block-card-body">
+                    <h4>{player.player_name}</h4>
+                    <div className="block-stats">
+                      <div className="stat">
+                        <span className="label">Trade Value</span>
+                        <span className="value">{player.trade_value}</span>
+                      </div>
+                      <div className="stat">
+                        <span className="label">Interest</span>
+                        <span className="value">
+                          {player.interest_level > 0 ? `${player.interest_level}%` : "Low"}
+                        </span>
+                      </div>
                     </div>
-                    <div className="stat">
-                      <span className="label">Interest</span>
-                      <span className="value">
-                        {player.interest_level > 0 ? `${player.interest_level}%` : "Low"}
-                      </span>
+                    <div className={`asking-price ${getAskingPriceClass(player.asking_price)}`}>
+                      Asking: {player.asking_price.toUpperCase()}
                     </div>
                   </div>
-                  <div className={`asking-price ${getAskingPriceClass(player.asking_price)}`}>
-                    Asking: {player.asking_price.toUpperCase()}
+                  <div className="block-card-actions">
+                    <button
+                      className="block-action-btn remove"
+                      onClick={() => handleRemoveFromBlock(player.player_id)}
+                      aria-label="Remove from trade block"
+                    >
+                      Remove
+                    </button>
                   </div>
-                </div>
-                <div className="block-card-actions">
-                  <button
-                    className="block-action-btn remove"
-                    onClick={() => handleRemoveFromBlock(player.player_id)}
-                    aria-label="Remove from trade block"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </section>
@@ -244,186 +259,209 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
           </div>
         ) : (
           <div className="offers-list">
-            {incomingOffers.map((offer) => (
-              <div key={offer.id} className="offer-card" data-testid={`offer-${offer.id}`}>
-                <div className="offer-header">
-                  <div className="offer-from">
-                    <span className="team-logo">🏈</span>
-                    <span className="team-name">{offer.from_team_name}</span>
+            <AnimatePresence mode="popLayout">
+              {incomingOffers.map((offer) => (
+                <motion.div
+                  key={offer.id}
+                  layoutId={`offer-${offer.id}`} // layoutId allows elements to animate to new positions when list changes
+                  className="offer-card"
+                  data-testid={`offer-${offer.id}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                >
+                  <div className="offer-header">
+                    <div className="offer-from">
+                      <span className="team-logo">🏈</span>
+                      <span className="team-name">{offer.from_team_name}</span>
+                    </div>
+                    <span className={`urgency-badge ${offer.urgency}`}>
+                      {offer.urgency === "high"
+                        ? "⚡ Urgent"
+                        : offer.urgency === "medium"
+                          ? "📌 Standard"
+                          : "🕐 Open"}
+                    </span>
                   </div>
-                  <span className={`urgency-badge ${offer.urgency}`}>
-                    {offer.urgency === "high"
-                      ? "⚡ Urgent"
-                      : offer.urgency === "medium"
-                        ? "📌 Standard"
-                        : "🕐 Open"}
-                  </span>
-                </div>
 
-                <div className="offer-details">
-                  <div className="offer-column giving">
-                    <h5>They Offer</h5>
-                    <div className="offer-assets-list">
-                      {offer.offered_assets.map((asset) => (
-                        <div key={`${asset.type}-${asset.id}`} className="offer-asset-item">
-                          {asset.type === "player" ? (
-                            <>
-                              <span className="pos">{asset.position}</span>
-                              <span className="name">{asset.name}</span>
-                              <span className={`ovr ${getOverallClass(asset.overall || 0)}`}>
-                                {asset.overall}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="pick-icon">📜</span>
-                              <span className="name">
-                                Round {asset.round} Pick ({asset.year})
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      ))}
+                  <div className="offer-details">
+                    <div className="offer-column giving">
+                      <h5>They Offer</h5>
+                      <div className="offer-assets-list">
+                        {offer.offered_assets.map((asset) => (
+                          <div key={`${asset.type}-${asset.id}`} className="offer-asset-item">
+                            {asset.type === "player" ? (
+                              <>
+                                <span className="pos">{asset.position}</span>
+                                <span className="name">{asset.name}</span>
+                                <span className={`ovr ${getOverallClass(asset.overall || 0)}`}>
+                                  {asset.overall}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="pick-icon">📜</span>
+                                <span className="name">
+                                  Round {asset.round} Pick ({asset.year})
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="offer-arrow">⇄</div>
+
+                    <div className="offer-column receiving">
+                      <h5>They Want</h5>
+                      <div className="offer-assets-list">
+                        {offer.requested_assets.map((asset) => (
+                          <div key={`${asset.type}-${asset.id}`} className="offer-asset-item">
+                            {asset.type === "player" ? (
+                              <>
+                                <span className="pos">{asset.position}</span>
+                                <span className="name">{asset.name}</span>
+                                <span className={`ovr ${getOverallClass(asset.overall || 0)}`}>
+                                  {asset.overall}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="pick-icon">📜</span>
+                                <span className="name">
+                                  Round {asset.round} Pick ({asset.year})
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="offer-arrow">⇄</div>
-
-                  <div className="offer-column receiving">
-                    <h5>They Want</h5>
-                    <div className="offer-assets-list">
-                      {offer.requested_assets.map((asset) => (
-                        <div key={`${asset.type}-${asset.id}`} className="offer-asset-item">
-                          {asset.type === "player" ? (
-                            <>
-                              <span className="pos">{asset.position}</span>
-                              <span className="name">{asset.name}</span>
-                              <span className={`ovr ${getOverallClass(asset.overall || 0)}`}>
-                                {asset.overall}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="pick-icon">📜</span>
-                              <span className="name">
-                                Round {asset.round} Pick ({asset.year})
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      ))}
+                  {offer.gm_message && (
+                    <div className="gm-message">
+                      <span className="quote-icon">💬</span>
+                      <p>"{offer.gm_message}"</p>
                     </div>
-                  </div>
-                </div>
+                  )}
 
-                {offer.gm_message && (
-                  <div className="gm-message">
-                    <span className="quote-icon">💬</span>
-                    <p>"{offer.gm_message}"</p>
+                  <div className="offer-actions">
+                    <button
+                      className="offer-action-btn reject"
+                      onClick={() => handleOfferResponse(offer.id, "reject")}
+                      disabled={processingOffer === offer.id}
+                    >
+                      Decline
+                    </button>
+                    <button
+                      className="offer-action-btn counter"
+                      onClick={() => handleOfferResponse(offer.id, "counter")}
+                      disabled={processingOffer === offer.id}
+                    >
+                      Counter
+                    </button>
+                    <button
+                      className="offer-action-btn accept"
+                      onClick={() => handleOfferResponse(offer.id, "accept")}
+                      disabled={processingOffer === offer.id}
+                    >
+                      {processingOffer === offer.id ? "Processing..." : "Accept"}
+                    </button>
                   </div>
-                )}
-
-                <div className="offer-actions">
-                  <button
-                    className="offer-action-btn reject"
-                    onClick={() => handleOfferResponse(offer.id, "reject")}
-                    disabled={processingOffer === offer.id}
-                  >
-                    Decline
-                  </button>
-                  <button
-                    className="offer-action-btn counter"
-                    onClick={() => handleOfferResponse(offer.id, "counter")}
-                    disabled={processingOffer === offer.id}
-                  >
-                    Counter
-                  </button>
-                  <button
-                    className="offer-action-btn accept"
-                    onClick={() => handleOfferResponse(offer.id, "accept")}
-                    disabled={processingOffer === offer.id}
-                  >
-                    {processingOffer === offer.id ? "Processing..." : "Accept"}
-                  </button>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </section>
 
       {/* Add to Trade Block Modal */}
-      {showAddModal && (
-        <div className="modal-overlay" data-testid="add-to-block-modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Add Player to Trade Block</h3>
-              <button
-                className="modal-close"
-                onClick={() => setShowAddModal(false)}
-                aria-label="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="modal-body">
-              <div className="form-group">
-                <label>Select Player</label>
-                <select
-                  value={selectedPlayerId || ""}
-                  onChange={(e) => setSelectedPlayerId(Number(e.target.value) || null)}
-                  data-testid="select-player-for-block"
-                  aria-label="Select player to add to trade block"
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div
+            className="modal-overlay"
+            data-testid="add-to-block-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="modal-content"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+            >
+              <div className="modal-header">
+                <h3>Add Player to Trade Block</h3>
+                <button
+                  className="modal-close"
+                  onClick={() => setShowAddModal(false)}
+                  aria-label="Close modal"
                 >
-                  <option value="">Choose a player...</option>
-                  {availableForBlock.map((player) => (
-                    <option key={player.id} value={player.id}>
-                      {player.position} - {player.first_name} {player.last_name} (
-                      {player.overall_rating} OVR)
-                    </option>
-                  ))}
-                </select>
+                  ✕
+                </button>
               </div>
 
-              <div className="form-group">
-                <label>Asking Price</label>
-                <div className="price-options">
-                  {(["high", "medium", "low"] as const).map((price) => (
-                    <button
-                      key={price}
-                      className={`price-option ${askingPrice === price ? "selected" : ""} ${price}`}
-                      onClick={() => setAskingPrice(price)}
-                    >
-                      {price.charAt(0).toUpperCase() + price.slice(1)}
-                    </button>
-                  ))}
+              <div className="modal-body">
+                <div className="form-group">
+                  <label>Select Player</label>
+                  <select
+                    value={selectedPlayerId || ""}
+                    onChange={(e) => setSelectedPlayerId(Number(e.target.value) || null)}
+                    data-testid="select-player-for-block"
+                    aria-label="Select player to add to trade block"
+                  >
+                    <option value="">Choose a player...</option>
+                    {availableForBlock.map((player) => (
+                      <option key={player.id} value={player.id}>
+                        {player.position} - {player.first_name} {player.last_name} (
+                        {player.overall_rating} OVR)
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <p className="price-hint">
-                  {askingPrice === "high" && "Premium price - may limit interest"}
-                  {askingPrice === "medium" && "Fair market value - balanced interest"}
-                  {askingPrice === "low" && "Discount price - attracts more offers"}
-                </p>
-              </div>
-            </div>
 
-            <div className="modal-footer">
-              <button className="modal-btn cancel" onClick={() => setShowAddModal(false)}>
-                Cancel
-              </button>
-              <button
-                className="modal-btn confirm"
-                onClick={handleAddToBlock}
-                disabled={!selectedPlayerId}
-                data-testid="confirm-add-to-block"
-              >
-                Add to Trade Block
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+                <div className="form-group">
+                  <label>Asking Price</label>
+                  <div className="price-options">
+                    {(["high", "medium", "low"] as const).map((price) => (
+                      <button
+                        key={price}
+                        className={`price-option ${askingPrice === price ? "selected" : ""} ${price}`}
+                        onClick={() => setAskingPrice(price)}
+                      >
+                        {price.charAt(0).toUpperCase() + price.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="price-hint">
+                    {askingPrice === "high" && "Premium price - may limit interest"}
+                    {askingPrice === "medium" && "Fair market value - balanced interest"}
+                    {askingPrice === "low" && "Discount price - attracts more offers"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button className="modal-btn cancel" onClick={() => setShowAddModal(false)}>
+                  Cancel
+                </button>
+                <button
+                  className="modal-btn confirm"
+                  onClick={handleAddToBlock}
+                  disabled={!selectedPlayerId}
+                  data-testid="confirm-add-to-block"
+                >
+                  Add to Trade Block
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

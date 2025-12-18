@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from typing import List, Any, Optional
+from dataclasses import dataclass, field
+from typing import List, Any, Optional, Dict
 from app.orchestrator.play_commands import (
     PlayCommand, PassPlayCommand, RunPlayCommand,
     PuntCommand, FieldGoalCommand
 )
+
 
 @dataclass
 class PlayCallingContext:
@@ -12,10 +13,12 @@ class PlayCallingContext:
     distance_to_goal: int
     time_left_seconds: int
     score_diff: int  # Positive means winning, negative means losing
-    possession: str # "home" or "away"
+    possession: str  # "home" or "away"
     offense_players: List[Any]
     defense_players: List[Any]
     is_hurry_up: bool = False
+    # 2-Minute Drill AI (AI-005) - adjustments from ClockManagementAI
+    two_minute_adjustments: Optional[Dict[str, Any]] = None
 
 class PlayCaller:
     """
@@ -105,7 +108,7 @@ class PlayCaller:
     def _decide_run_vs_pass(self, context: PlayCallingContext) -> bool:
         """
         Returns True for Pass, False for Run.
-        Adjusts base ratio based on situation.
+        Adjusts base ratio based on situation and 2-minute drill adjustments.
         """
         # Start with base probability of passing
         pass_prob = 1.0 - self.run_pass_ratio
@@ -113,18 +116,25 @@ class PlayCaller:
         # Adjust for Down and Distance
         if context.down == 3:
             if context.distance > 6:
-                pass_prob += 0.3 # Likely pass on 3rd and long
+                pass_prob += 0.3  # Likely pass on 3rd and long
             elif context.distance <= 2:
-                pass_prob -= 0.2 # Likely run on 3rd and short
+                pass_prob -= 0.2  # Likely run on 3rd and short
 
         # Adjust for Score/Time (Catchup logic)
         if context.score_diff < -8 and context.time_left_seconds < 600:
-            pass_prob += 0.3 # Throw to catch up
+            pass_prob += 0.3  # Throw to catch up
         elif context.score_diff > 8 and context.time_left_seconds < 600:
-            pass_prob -= 0.3 # Run to kill clock
+            pass_prob -= 0.3  # Run to kill clock
 
         if context.is_hurry_up:
             pass_prob += 0.25
+
+        # 2-Minute Drill AI (AI-005) adjustments
+        if context.two_minute_adjustments:
+            adj = context.two_minute_adjustments
+            pass_prob += adj.get("pass_probability_boost", 0.0)
+            # Run penalty effectively increases pass probability
+            pass_prob += adj.get("run_penalty", 0.0)
 
         # Adjust for Aggression
         if self.aggression > 0.7:
@@ -176,7 +186,7 @@ class PlayCaller:
     def _create_pass_play(self, context: PlayCallingContext) -> PassPlayCommand:
         """Determine pass depth and create command."""
         # Determine depth based on distance needed
-        depth_weights = {"short": 1, "mid": 1, "deep": 1}
+        depth_weights = {"short": 1.0, "mid": 1.0, "deep": 1.0}
 
         if context.distance > 10:
             depth_weights["deep"] += 2
@@ -187,6 +197,20 @@ class PlayCaller:
         # Aggression factor
         if self.aggression > 0.7:
             depth_weights["deep"] += 1
+
+        # 2-Minute Drill AI (AI-005) adjustments
+        if context.two_minute_adjustments:
+            adj = context.two_minute_adjustments
+            # Penalize deep passes in critical situations (takes too long)
+            deep_penalty = adj.get("deep_pass_penalty", 0.0)
+            if deep_penalty > 0:
+                depth_weights["deep"] = max(0.1, depth_weights["deep"] - deep_penalty * 3)
+                depth_weights["short"] += deep_penalty * 2
+            # Boost sideline routes (short/mid more likely to stop clock)
+            sideline_boost = adj.get("sideline_route_boost", 0.0)
+            if sideline_boost > 0:
+                depth_weights["short"] += sideline_boost
+                depth_weights["mid"] += sideline_boost * 0.5
 
         # Select depth
         choices = list(depth_weights.keys())

@@ -3,6 +3,8 @@ from typing import Optional
 from enum import Enum
 import math
 
+from app.core.gameplay_constants import GAMEPLAY
+
 class OutcomeType(Enum):
     CRITICAL_FAILURE = "critical_failure"
     FAILURE = "failure"
@@ -29,28 +31,39 @@ class ProbabilityEngine:
     def compare_speed(attacker_speed: int, defender_speed: int) -> float:
         """
         Compare speed attributes to determine a separation bonus.
-        Returns a value between -0.10 and 0.20.
+        Returns a value between SPEED_MIN_MOD and SPEED_MAX_MOD.
         """
         # Custom scaling for speed: 1 point = 1%
         # Asymmetric cap: Speed kills, so advantage is higher than disadvantage
         diff = attacker_speed - defender_speed
-        return max(-0.10, min(0.20, diff / 100.0))
+        return max(
+            GAMEPLAY.attributes.SPEED_MIN_MOD,
+            min(GAMEPLAY.attributes.SPEED_MAX_MOD, diff * GAMEPLAY.attributes.SPEED_SCALE)
+        )
 
     @staticmethod
     def compare_strength(attacker_str: int, defender_str: int) -> float:
         """
         Compare strength attributes for blocking/tackling.
-        Returns a value between -0.2 and 0.2.
+        Returns a value between -STRENGTH_MAX_MOD and +STRENGTH_MAX_MOD.
         """
-        return ProbabilityEngine.compare_attributes(attacker_str, defender_str, scale=0.01, max_mod=0.20)
+        return ProbabilityEngine.compare_attributes(
+            attacker_str, defender_str,
+            scale=GAMEPLAY.attributes.STRENGTH_SCALE,
+            max_mod=GAMEPLAY.attributes.STRENGTH_MAX_MOD
+        )
 
     @staticmethod
     def compare_skill(attacker_skill: int, defender_skill: int) -> float:
         """
         Compare specific skills (e.g., Route Running vs Man Coverage).
-        Returns a value between -0.25 and 0.25.
+        Returns a value between -SKILL_MAX_MOD and +SKILL_MAX_MOD.
         """
-        return ProbabilityEngine.compare_attributes(attacker_skill, defender_skill, scale=0.01, max_mod=0.25)
+        return ProbabilityEngine.compare_attributes(
+            attacker_skill, defender_skill,
+            scale=GAMEPLAY.attributes.SKILL_SCALE,
+            max_mod=GAMEPLAY.attributes.SKILL_MAX_MOD
+        )
 
     @staticmethod
     def calculate_success_chance(
@@ -116,7 +129,7 @@ class ProbabilityEngine:
                 for key, value in effects.items():
                     if "_boost" in key:
                         # Stat boosts: +10 rating = +5% probability
-                        trait_bonus += value * 0.005
+                        trait_bonus += value * GAMEPLAY.passing.STAT_BOOST_TO_PROB_SCALE
                     elif "_chance" in key or "_rate" in key:
                         # Direct probability modifiers
                         trait_bonus += value

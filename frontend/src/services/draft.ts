@@ -50,53 +50,13 @@ export interface DraftSuggestionRequest {
 
 export const draftService = {
   getDraftBoard: async (): Promise<Prospect[]> => {
-    // Mock data for UI verification
-    const mockProspects: Prospect[] = [
-      {
-        id: 101,
-        first_name: "Caleb",
-        last_name: "Williams",
-        position: "QB",
-        overall_rating: 92,
-        age: 22,
-        height: 73,
-        weight: 215,
-        college: "USC",
-        combine: { gps_speed_max: 21.5, power_clean_max: 315 },
-        genesis_revealed: false,
-        name: "Caleb Williams",
-      },
-      {
-        id: 102,
-        first_name: "Marvin",
-        last_name: "Harrison Jr.",
-        position: "WR",
-        overall_rating: 91,
-        age: 21,
-        height: 76,
-        weight: 205,
-        college: "Ohio State",
-        combine: { gps_speed_max: 22.1, power_clean_max: 295 },
-        genesis_revealed: false,
-        name: "Marvin Harrison Jr.",
-      },
-      {
-        id: 103,
-        first_name: "Drake",
-        last_name: "Maye",
-        position: "QB",
-        overall_rating: 89,
-        age: 21,
-        height: 76,
-        weight: 225,
-        college: "UNC",
-        combine: { gps_speed_max: 19.8, power_clean_max: 305 },
-        genesis_revealed: false,
-        name: "Drake Maye",
-      },
-    ] as unknown as Prospect[];
-
-    return mockProspects;
+    const response = await api.get<Prospect[]>("/draft/board");
+    // Map backend response to frontend Prospect interface if needed
+    // Backend sends first_name, last_name. Frontend expects name (combined) + first/last
+    return response.data.map((p) => ({
+      ...p,
+      name: `${p.first_name} ${p.last_name}`,
+    }));
   },
 
   getDraftSuggestion: async (request: DraftSuggestionRequest): Promise<DraftSuggestionResponse> => {

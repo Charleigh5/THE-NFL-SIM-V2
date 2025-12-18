@@ -14,6 +14,7 @@ from app.services.chemistry_service import ChemistryService
 from app.services.weather_service import WeatherService
 from app.engine.trait_effects import TraitEffectResolver
 from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
+from app.services.use_based_progression import UseBasedProgression, ActionType
 from typing import Optional, Any, List, Tuple, Dict
 import logging
 
@@ -496,6 +497,11 @@ class PlayResolver:
                 passer_id=qb.id
             )
 
+        # === USE-BASED PROGRESSION: Sack XP for defender ===
+        if sacker:
+            UseBasedProgression.award_action_xp(sacker, ActionType.SACK, {})
+            UseBasedProgression.check_and_apply_levelups(sacker)
+
         # 4. Attribute-Based Core Logic via ProbabilityEngine
 
         # ** ATTRIBUTE INTERACTIONS ** (Set 3/Set 4 Integration)
@@ -717,6 +723,34 @@ class PlayResolver:
             # 4. Empire Kernel: XP Awards
             xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
 
+            # === USE-BASED SKILL PROGRESSION (Skyrim-style) ===
+            # Award attribute XP for successful play actions
+            field_position = getattr(command, "field_position", 50)
+            context = {
+                "red_zone": field_position >= 80,
+                "goal_line": field_position >= 95,
+                "contested": trait_bonus > 0,
+            }
+
+            # QB gets pass completion XP
+            if command.depth == "short":
+                UseBasedProgression.award_action_xp(qb, ActionType.PASS_COMPLETION_SHORT, context)
+            elif command.depth == "mid":
+                UseBasedProgression.award_action_xp(qb, ActionType.PASS_COMPLETION_MID, context)
+            else:
+                UseBasedProgression.award_action_xp(qb, ActionType.PASS_COMPLETION_DEEP, context)
+
+            # Receiver gets reception XP
+            UseBasedProgression.award_action_xp(target, ActionType.RECEPTION, context)
+            if trait_bonus > 0:
+                UseBasedProgression.award_action_xp(target, ActionType.CONTESTED_CATCH, context)
+
+            # Check for level-ups
+            UseBasedProgression.check_and_apply_levelups(qb)
+            UseBasedProgression.check_and_apply_levelups(target)
+
+            logger.debug(f"Awarded use-based XP: QB={qb.id}, WR={target.id}")
+
             # Weather narrative
             weather_note = ""
             if weather_effects:
@@ -782,6 +816,10 @@ class PlayResolver:
                     "player_id": qb.id,
                     "forced_by_player_id": defender.id
                 })
+
+                # === USE-BASED PROGRESSION: Interception ===
+                UseBasedProgression.award_action_xp(defender, ActionType.INTERCEPTION, {})
+                UseBasedProgression.check_and_apply_levelups(defender)
 
                 return PlayResult(
                     yards_gained=0,
@@ -1028,6 +1066,29 @@ class PlayResolver:
 
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
+
+        # === USE-BASED SKILL PROGRESSION (Skyrim-style) for Run Plays ===
+        if not is_turnover:
+            field_position = getattr(command, "field_position", 50)
+            context = {
+                "red_zone": field_position >= 80,
+                "goal_line": field_position >= 95,
+            }
+
+            # RB gets rushing XP
+            if yards_gained > 0:
+                UseBasedProgression.award_action_xp(rb, ActionType.RUSHING_GAIN, context)
+
+            if yards_gained >= 10:  # Big run
+                UseBasedProgression.award_action_xp(rb, ActionType.BIG_RUN, context)
+
+            if is_touchdown:
+                UseBasedProgression.award_action_xp(rb, ActionType.RUSHING_TD, context)
+
+            # Check for level-ups
+            UseBasedProgression.check_and_apply_levelups(rb)
+
+            logger.debug(f"Awarded run play XP: RB={rb.id}, yards={yards_gained}")
 
         return PlayResult(
             yards_gained=yards_gained,

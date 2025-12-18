@@ -32,10 +32,10 @@
 
 | ID           | Feature Name                  | Status              | Spec Doc                                 | Tests  | Priority | Notes                                                          |
 | ------------ | ----------------------------- | ------------------- | ---------------------------------------- | ------ | -------- | -------------------------------------------------------------- |
-| **GAME-001** | Play Resolution System        | 🟢 SPEC_COMPLETE    | ✅ `OFFENSIVE/DEFENSIVE_FUNDAMENTALS.md` | 🧪 85% | P0       | Full spec created 2025-12-12                                   |
-| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P0       | Part of GAME-001                                               |
-| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P0       | Part of GAME-001                                               |
-| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P0       | Basic kicks/punts work                                         |
+| **GAME-001** | Play Resolution System        | ✅ IMPLEMENTED      | ✅ `OFFENSIVE/DEFENSIVE_FUNDAMENTALS.md` | 🧪 85% | P0       | Core engine in `play_resolver.py`                              |
+| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`           | 🧪 80% | P0       | `_resolve_pass_play`                                           |
+| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`           | 🧪 80% | P0       | `_resolve_run_play`                                            |
+| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ⚠️ Basic Physics Only                    | 🧪 60% | P0       | `special_teams.py` (Kicks/Punts only)                          |
 | **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`        | 🧪 90% | P0       | Well documented                                                |
 | **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md`       | 🧪 85% | P0       | Good docs exist                                                |
 | **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                               | 🧪 75% | P1       | Integrated with match context                                  |
@@ -57,7 +57,7 @@
 | **AI-002** | Player AI State Machines      | 🟢 SPEC_COMPLETE | ✅ `specs/AI-002_player_state_machines.md`   | 🧪 65% | P0       | Stateless trees in `ai.py`                 |
 | **AI-003** | Coaching AI Personality       | ✅ IMPLEMENTED   | ❌                                           | 🧪 70% | P1       | `CoachingAIService` with aggression        |
 | **AI-004** | 4th Down Decision AI          | 🟢 SPEC_COMPLETE | ✅ `specs/AI-004_4th_down_decision_logic.md` | 🧪 60% | P1       | Basic Playbook logic                       |
-| **AI-005** | 2-Minute Drill AI             | 🔵 PROPOSED      | ❌                                           | ❌ 0%  | P1       | Clock management                           |
+| **AI-005** | 2-Minute Drill AI             | 🟢 SPEC_COMPLETE | ✅ `specs/AI-005_two_minute_drill_ai.md`     | 🧪 80% | P1       | UrgencyLevel, PlayCaller integration       |
 | **AI-006** | Timeout Management            | ✅ IMPLEMENTED   | ❌                                           | 🧪 60% | P2       | `GameState.TIMEOUT`, `should_call_timeout` |
 | **AI-007** | Challenge Flag Decisions      | 🔵 PROPOSED      | ❌                                           | ❌ 0%  | P3       | Replay system                              |
 | **AI-008** | Defensive Formation Selection | ✅ IMPLEMENTED   | ❌                                           | 🧪 50% | P1       | Basic implementation                       |
@@ -75,9 +75,9 @@
 | **ATTR-003** | Defensive Attributes                      | 🟢 SPEC_COMPLETE | ✅ `player-system/defensive-positions.md` | 🧪 75% | P0       | Defensive documented                     |
 | **ATTR-004** | Special Teams Attributes                  | 🟢 SPEC_COMPLETE | ✅ `player-system/special-teams.md`       | 🧪 70% | P1       | ST documented                            |
 | **ATTR-005** | Attribute Interactions (Inter-Positional) | ✅ IMPLEMENTED   | ❌                                        | 🧪 75% | P1       | `AttributeInteractionEngine` (769 lines) |
-| **ATTR-006** | QB Field General → WR/OL Boost            | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P1       | Part of ATTR-005                         |
+| **ATTR-006** | QB Field General → WR/OL Boost            | ✅ IMPLEMENTED   | ❌                                        | 🧪 75% | P1       | `field_general_influence` interaction    |
 | **ATTR-007** | OL Unit Chemistry                         | ✅ IMPLEMENTED   | ⚠️ In proposed features                   | 🧪 70% | P1       | `chemistry_service.py` active            |
-| **ATTR-008** | RB Patience → OL Timing                   | 🔵 PROPOSED      | ⚠️ In proposed features                   | ❌ 0%  | P2       | Part of ATTR-005                         |
+| **ATTR-008** | RB Patience → OL Timing                   | ✅ IMPLEMENTED   | ❌                                        | 🧪 75% | P2       | `rb_patience_vs_lb_run_fit` interaction  |
 | **ATTR-009** | QB Quick Release                          | ✅ IMPLEMENTED   | ❌                                        | 🧪 50% | P1       | Exists as attribute                      |
 | **ATTR-010** | QB Pocket Presence                        | ✅ IMPLEMENTED   | ❌                                        | 🧪 80% | P1       | Same as GAME-008                         |
 
@@ -85,21 +85,21 @@
 
 ## 4. RPG & Progression Systems
 
-| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                                          |
-| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | ---------------------------------------------- |
-| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                                   |
-| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12                   |
-| **RPG-003** | Age-Based Growth Curves        | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P1       | Young players grow faster                      |
-| **RPG-004** | Position-Specific Growth Rates | 🔵 PROPOSED      | ❌                                    | ❌ 0%  | P2       | Speed peaks early, IQ late                     |
-| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines)                 |
-| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested                            |
-| **RPG-007** | Trait: WR Possession Receiver  | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_possession_receiver_effects`            |
-| **RPG-008** | Trait: RB Chip Block           | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `apply_chip_block_effects`                     |
-| **RPG-009** | Trait: LB Green Dot            | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_green_dot_effects` + pre-game           |
-| **RPG-010** | Trait: DB Pick Artist          | ✅ IMPLEMENTED   | ❌                                    | 🧪 75% | P1       | `apply_pick_artist_effects` in INT check       |
-| **RPG-011** | Trait Acquisition System       | ✅ IMPLEMENTED   | ❌                                    | 🧪 60% | P1       | `TraitAcquisitionService`                      |
-| **RPG-012** | Training Programs              | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `training/camp.py`, `drills.py`                |
-| **RPG-013** | Coaching Staff Influence       | ✅ IMPLEMENTED   | ❌                                    | 🧪 65% | P2       | `coaching_philosophy.py`, `coach_expertise.py` |
+| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                                              |
+| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | -------------------------------------------------- |
+| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                                       |
+| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12                       |
+| **RPG-003** | Age-Based Growth Curves        | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | Position-specific curves in `offseason_service.py` |
+| **RPG-004** | Position-Specific Growth Rates | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P2       | RB:26, WR:29, QB:35 decline ages                   |
+| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines)                     |
+| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested                                |
+| **RPG-007** | Trait: WR Possession Receiver  | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_possession_receiver_effects`                |
+| **RPG-008** | Trait: RB Chip Block           | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `apply_chip_block_effects`                         |
+| **RPG-009** | Trait: LB Green Dot            | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_green_dot_effects` + pre-game               |
+| **RPG-010** | Trait: DB Pick Artist          | ✅ IMPLEMENTED   | ❌                                    | 🧪 75% | P1       | `apply_pick_artist_effects` in INT check           |
+| **RPG-011** | Trait Acquisition System       | ✅ IMPLEMENTED   | ❌                                    | 🧪 60% | P1       | `TraitAcquisitionService`                          |
+| **RPG-012** | Training Programs              | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `training/camp.py`, `drills.py`                    |
+| **RPG-013** | Coaching Staff Influence       | ✅ IMPLEMENTED   | ❌                                    | 🧪 65% | P2       | `coaching_philosophy.py`, `coach_expertise.py`     |
 
 ---
 
@@ -117,8 +117,8 @@
 | **FRAN-008** | Draft System                | ✅ IMPLEMENTED   | ❌                                             | 🧪 80% | P0       | Basic draft works                                   |
 | **FRAN-009** | Scouting System             | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P1       | `ScoutingService`, `ScoutingEngine` package         |
 | **FRAN-010** | Scouting Accuracy Levels    | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `ScoutProfile` with accuracy tiers                  |
-| **FRAN-011** | Hidden Potential Mechanic   | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Prospects have hidden stats                         |
-| **FRAN-012** | Bust/Boom Probability       | 🔵 PROPOSED      | ❌                                             | ❌ 0%  | P2       | Draft risk assessment                               |
+| **FRAN-011** | Hidden Potential Mechanic   | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `Prospect.true_rating`, `FogOfWarSystem`            |
+| **FRAN-012** | Bust/Boom Probability       | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `ScoutingReport.confidence_score`, `tier_level`     |
 | **FRAN-013** | Contract System             | ✅ IMPLEMENTED   | ❌                                             | 🧪 70% | P0       | Basic contracts work                                |
 | **FRAN-014** | Contract Negotiation        | ✅ IMPLEMENTED   | ❌                                             | 🧪 60% | P2       | `gm_agent.negotiate_contract()`                     |
 | **FRAN-015** | Salary Cap Management       | ✅ IMPLEMENTED   | ❌                                             | 🧪 75% | P1       | `salary_cap_service.py`                             |
@@ -173,8 +173,8 @@
 | **UI-012** | Camera Angle System          | 🔵 PROPOSED    | ❌       | ❌ 0%      | P3       | Broadcast-quality views   |
 | **UI-013** | Commentary Generation        | 🔵 PROPOSED    | ❌       | ❌ 0%      | P3       | AI-generated commentary   |
 | **UI-014** | Advanced Analytics Dashboard | 🔵 PROPOSED    | ❌       | ❌ 0%      | P2       | EPA, win prob, efficiency |
-| **UI-015** | Narrative News Feed          | 🔵 PROPOSED    | ❌       | ❌ 0%      | P2       | Story engine integration  |
-| **UI-016** | Player Storyline Tracker     | 🔵 PROPOSED    | ❌       | ❌ 0%      | P3       | Career narratives         |
+| **UI-015** | Narrative News Feed          | ✅ IMPLEMENTED | ❌       | ⚠️ Partial | P2       | `NewsFeedWidget.tsx`      |
+| **UI-016** | Player Storyline Tracker     | ✅ IMPLEMENTED | ❌       | ⚠️ Partial | P3       | `StorylineTracker.tsx`    |
 
 ---
 
@@ -196,10 +196,10 @@
 ### By Status
 
 - 🎯 **PRODUCTION_READY**: 2 features
-- ✅ **IMPLEMENTED**: 67 features (+16 from audit)
+- ✅ **IMPLEMENTED**: 75 features (+22 from audit)
 - 🟡 **SPEC_NEEDED**: 11 features (implemented but undocumented)
 - 🟢 **SPEC_COMPLETE**: 8 features
-- 🔵 **PROPOSED**: 34 features (documented but not implemented)
+- 🔵 **PROPOSED**: 26 features (documented but not implemented)
 - 🔨 **IN_DEVELOPMENT**: 0 features
 
 **Total Features Tracked**: 122
@@ -213,7 +213,7 @@
 
 ### Implementation Coverage
 
-- **Implemented Features**: 89 / 122 = **73%** (+16 from audit)
+- **Implemented Features**: 97 / 122 = **79%** (+22 from audit)
 - **Fully Documented**: 10 / 122 = **8%**
 - **Production Ready**: 2 / 122 = **2%**
 

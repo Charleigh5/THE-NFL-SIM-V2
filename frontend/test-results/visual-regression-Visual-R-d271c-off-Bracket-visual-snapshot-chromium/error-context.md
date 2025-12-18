@@ -1,0 +1,134 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - heading "THE NFL SIM" [level=1] [ref=e10]
+      - paragraph [ref=e11]: Night Game Franchise
+    - list [ref=e12]:
+      - listitem [ref=e13]:
+        - link "Dashboard" [ref=e14] [cursor=pointer]:
+          - /url: /
+          - img [ref=e16]
+          - generic [ref=e21]: Dashboard
+      - listitem [ref=e22]:
+        - link "Season" [ref=e23] [cursor=pointer]:
+          - /url: /season
+          - img [ref=e25]
+          - generic [ref=e27]: Season
+      - listitem [ref=e28]:
+        - link "Offseason" [ref=e29] [cursor=pointer]:
+          - /url: /offseason
+          - img [ref=e31]
+          - generic [ref=e34]: Offseason
+      - listitem [ref=e35]:
+        - link "Draft Room" [ref=e36] [cursor=pointer]:
+          - /url: /offseason/draft
+          - img [ref=e38]
+          - generic [ref=e44]: Draft Room
+      - listitem [ref=e45]:
+        - link "Roster" [ref=e46] [cursor=pointer]:
+          - /url: /empire/front-office
+          - img [ref=e48]
+          - generic [ref=e53]: Roster
+      - listitem [ref=e54]:
+        - link "Depth Chart" [ref=e55] [cursor=pointer]:
+          - /url: /empire/depth-chart
+          - img [ref=e57]
+          - generic [ref=e60]: Depth Chart
+      - listitem [ref=e61]:
+        - link "Trade Center" [ref=e62] [cursor=pointer]:
+          - /url: /empire/trade-center
+          - img [ref=e64]
+          - generic [ref=e67]: Trade Center
+      - listitem [ref=e68]:
+        - link "Training" [ref=e69] [cursor=pointer]:
+          - /url: /training
+          - img [ref=e71]
+          - generic [ref=e77]: Training
+      - listitem [ref=e78]:
+        - link "My Team" [ref=e79] [cursor=pointer]:
+          - /url: /team-selection
+          - img [ref=e81]
+          - generic [ref=e83]: My Team
+      - listitem [ref=e84]:
+        - link "Settings" [ref=e85] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e87]
+          - generic [ref=e90]: Settings
+    - generic [ref=e92]: System Online
+  - main [ref=e94]:
+    - generic [ref=e98]:
+      - generic [ref=e100]:
+        - generic [ref=e101]: Season Live
+        - generic [ref=e103]: Broadcast Network
+        - generic [ref=e105]: League Wire
+        - generic [ref=e107]: Season Live
+        - generic [ref=e109]: Broadcast Network
+        - generic [ref=e111]: League Wire
+      - generic [ref=e113]:
+        - generic [ref=e114]: 2024 Season - Week 19
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - generic [ref=e118]: 2024 Season
+              - heading "Playoffs" [level=2] [ref=e119]
+            - generic [ref=e120]: Playoffs
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - generic [ref=e123]: Current Round
+              - generic [ref=e124]: Playoffs
+            - generic [ref=e125]:
+              - generic [ref=e126]: Teams Remaining
+              - generic [ref=e127]: "--"
+          - generic [ref=e128]:
+            - button "⚡ Simulate Week" [ref=e129] [cursor=pointer]:
+              - generic [ref=e130]: ⚡
+              - generic [ref=e131]: Simulate Week
+            - button "⏩ Sim to Postseason" [disabled] [ref=e132]:
+              - generic [ref=e133]: ⏩
+              - generic [ref=e134]: Sim to Postseason
+            - button "🏆 Bracket" [ref=e135] [cursor=pointer]:
+              - generic [ref=e136]: 🏆
+              - generic [ref=e137]: Bracket
+      - generic [ref=e138]:
+        - button "📺 Overview" [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]: 📺 Overview
+        - button "📊 Standings" [ref=e141] [cursor=pointer]:
+          - generic [ref=e142]: 📊 Standings
+        - button "📅 Schedule" [ref=e143] [cursor=pointer]:
+          - generic [ref=e144]: 📅 Schedule
+        - button "🏟️ Playoffs" [active] [ref=e145] [cursor=pointer]:
+          - generic [ref=e147]: 🏟️ Playoffs
+        - button "⭐ Leaders" [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: ⭐ Leaders
+      - generic [ref=e150]:
+        - generic [ref=e152]:
+          - generic [ref=e154]: playoffs
+          - generic [ref=e156]:
+            - generic [ref=e157]:
+              - generic [ref=e158]: AFC
+              - generic [ref=e159]:
+                - generic [ref=e161]: Wild Card
+                - generic [ref=e163]: Divisional
+                - generic [ref=e165]: Conference
+            - generic [ref=e166]:
+              - generic [ref=e167]: NFC
+              - generic [ref=e168]:
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Wild Card
+                  - generic [ref=e171]:
+                    - generic [ref=e172]:
+                      - generic [ref=e173]: "1"
+                      - generic [ref=e174]: Arizona Cardinals
+                    - generic [ref=e175]:
+                      - generic [ref=e176]: "2"
+                      - generic [ref=e177]: San Francisco 49ers
+                - generic [ref=e179]: Divisional
+                - generic [ref=e181]: Conference
+        - generic [ref=e183]:
+          - generic [ref=e185]: Season Status
+          - generic [ref=e187]: Week 19 of 17
+  - button "Mission Control" [ref=e189] [cursor=pointer]: ⚡
+```

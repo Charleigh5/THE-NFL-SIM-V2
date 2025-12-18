@@ -25,6 +25,12 @@ from app.models.stats import PlayerGameStats
 from app.models.feedback import UserFeedback
 from app.models.trait import Trait, PlayerTrait
 from app.models.player_game_starts import PlayerGameStarts
+# New Player Decomposition Models
+from app.models.player_attributes import PlayerAttributes
+from app.models.player_contract import PlayerContract
+from app.models.player_physics import PlayerPhysics
+from app.models.player_injury import PlayerInjury
+from app.models.player_progression import PlayerProgression
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

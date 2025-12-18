@@ -1,62 +1,71 @@
-import { useSimulationStore } from "../store/useSimulationStore";
+import React from "react";
+// import { useSimulationStore } from "../store/useSimulationStore"; // Unused in static view
+import { GameCanvas } from "./game/GameCanvas";
+import { PlayerSprite } from "./game/PlayerSprite";
 
 export const FieldView = () => {
-  const { gameState } = useSimulationStore();
+  // For Phase 1, we just render static placeholders.
+  // In Phase 2, we will use gameState.playContext to position them.
 
-  // Calculate positions based on yardLine (0-100)
-  // 0 is left endzone, 50 is midfield, 100 is right endzone
-  // We'll assume the offense is always moving left to right for this simple view,
-  // or we need to handle direction. For MVP, let's just show the line.
+  // Example Formation: I-Form vs 4-3
+  // 1 yard = 10 px.
+  // X = 20 yards (200px) for LOS.
+  // Y = Middle (53.3 / 2 approx 26 yards -> 266px)
 
-  const yardLinePercent = gameState.yardLine; // 0-100
-  const firstDownLinePercent = Math.min(100, gameState.yardLine + gameState.distance);
+  const losX = 200;
+  const centerY = 266;
 
   return (
-    <div className="w-full h-full bg-green-900/20 border border-white/10 rounded-xl relative overflow-hidden perspective-1000">
-      {/* Field Surface */}
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_49%,rgba(255,255,255,0.1)_50%,transparent_51%,transparent_100%)] bg-[length:10%_100%]" />
+    <div className="w-full overflow-x-auto">
+      <GameCanvas width={1200} height={533}>
+        {/* OFFENSE (Red) - Moving Right */}
+        {/* C */}
+        <PlayerSprite x={losX} y={centerY} color={0xff0000} isOffense />
+        {/* QB */}
+        <PlayerSprite x={losX - 20} y={centerY} color={0xff0000} isOffense />
+        {/* HB */}
+        <PlayerSprite x={losX - 50} y={centerY} color={0xff0000} isOffense />
+        {/* FB */}
+        <PlayerSprite x={losX - 35} y={centerY} color={0xff0000} isOffense />
+        {/* LT */}
+        <PlayerSprite x={losX} y={centerY - 20} color={0xff0000} isOffense />
+        {/* LG */}
+        <PlayerSprite x={losX} y={centerY - 10} color={0xff0000} isOffense />
+        {/* RG */}
+        <PlayerSprite x={losX} y={centerY + 10} color={0xff0000} isOffense />
+        {/* RT */}
+        <PlayerSprite x={losX} y={centerY + 20} color={0xff0000} isOffense />
+        {/* TE */}
+        <PlayerSprite x={losX} y={centerY + 30} color={0xff0000} isOffense />
+        {/* WR1 (Top) */}
+        <PlayerSprite x={losX} y={centerY - 150} color={0xff0000} isOffense />
+        {/* WR2 (Bottom) */}
+        <PlayerSprite x={losX} y={centerY + 150} color={0xff0000} isOffense />
 
-      {/* Endzones */}
-      <div className="absolute left-0 top-0 bottom-0 w-[10%] bg-red-900/30 border-r border-white/20 flex items-center justify-center">
-        <span className="text-white/20 -rotate-90 font-bold tracking-widest">HOME</span>
-      </div>
-      <div className="absolute right-0 top-0 bottom-0 w-[10%] bg-blue-900/30 border-l border-white/20 flex items-center justify-center">
-        <span className="text-white/20 90 font-bold tracking-widest rotate-90">AWAY</span>
-      </div>
-
-      {/* Yard Markers (Every 10 yards) */}
-      {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((yard) => (
-        <div
-          key={yard}
-          className="absolute top-0 bottom-0 border-l border-white/5 flex flex-col justify-between py-2"
-          style={{ left: `${yard}%` }}
-        >
-          <span className="text-[10px] text-white/30 -translate-x-1/2">
-            {yard <= 50 ? yard : 100 - yard}
-          </span>
-          <span className="text-[10px] text-white/30 -translate-x-1/2">
-            {yard <= 50 ? yard : 100 - yard}
-          </span>
-        </div>
-      ))}
-
-      {/* Line of Scrimmage */}
-      <div
-        className="absolute top-0 bottom-0 w-0.5 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)] z-10 transition-all duration-500"
-        style={{ left: `${yardLinePercent}%` }}
-      />
-
-      {/* First Down Line */}
-      <div
-        className="absolute top-0 bottom-0 w-0.5 bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.8)] z-10 transition-all duration-500"
-        style={{ left: `${firstDownLinePercent}%` }}
-      />
-
-      {/* Ball/Player Indicator */}
-      <div
-        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg z-20 transition-all duration-500"
-        style={{ left: `${yardLinePercent}%` }}
-      />
+        {/* DEFENSE (Blue) - Moving Left */}
+        {/* DT1 */}
+        <PlayerSprite x={losX + 15} y={centerY - 5} color={0x0000ff} />
+        {/* DT2 */}
+        <PlayerSprite x={losX + 15} y={centerY + 5} color={0x0000ff} />
+        {/* DE1 */}
+        <PlayerSprite x={losX + 15} y={centerY - 25} color={0x0000ff} />
+        {/* DE2 */}
+        <PlayerSprite x={losX + 15} y={centerY + 25} color={0x0000ff} />
+        {/* MLB */}
+        <PlayerSprite x={losX + 50} y={centerY} color={0x0000ff} />
+        {/* OLB1 */}
+        <PlayerSprite x={losX + 50} y={centerY - 40} color={0x0000ff} />
+        {/* OLB2 */}
+        <PlayerSprite x={losX + 50} y={centerY + 40} color={0x0000ff} />
+        {/* CB1 */}
+        <PlayerSprite x={losX + 50} y={centerY - 150} color={0x0000ff} />
+        {/* CB2 */}
+        <PlayerSprite x={losX + 50} y={centerY + 150} color={0x0000ff} />
+        {/* FS */}
+        <PlayerSprite x={losX + 120} y={centerY - 20} color={0x0000ff} />
+        {/* SS */}
+        <PlayerSprite x={losX + 120} y={centerY + 20} color={0x0000ff} />
+      </GameCanvas>
     </div>
   );
 };

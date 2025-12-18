@@ -32,7 +32,7 @@ export const DraftRoom: React.FC = () => {
   const [seasonId, setSeasonId] = useState<number | null>(loaderData?.season?.id ?? null);
   const [currentPick, setCurrentPick] = useState<DraftPickDetail | null>(null);
   const [prospects, setProspects] = useState<Prospect[]>([]);
-  const [recentPicks, setRecentPicks] = useState<DraftPickSummary[]>([]);
+  const [_recentPicks, setRecentPicks] = useState<DraftPickSummary[]>([]);
   const [teamNeeds, setTeamNeeds] = useState<TeamNeed[]>([]);
 
   const [simulating, setSimulating] = useState(false);

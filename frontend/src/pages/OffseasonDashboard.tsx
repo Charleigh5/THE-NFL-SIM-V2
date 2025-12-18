@@ -12,6 +12,7 @@ import type {
   PlayerProgressionResult,
   SalaryCapData,
 } from "../types/offseason";
+import { NewsFeed } from "../components/season/NewsFeed";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { TeamNeeds } from "../components/offseason/TeamNeeds";
 import { DraftBoard } from "../components/offseason/DraftBoard";
@@ -475,6 +476,10 @@ const OffseasonDashboard: React.FC = () => {
           </div>
 
           <div className={stylesModule.sideColumn}>
+            <BroadcastPanel title="League Wire">
+              <NewsFeed maxItems={5} compact={false} refreshInterval={60} />
+            </BroadcastPanel>
+
             {salaryCapData && (
               <BroadcastPanel title="Cap Ledger">
                 <SalaryCapWidget data={salaryCapData} />
