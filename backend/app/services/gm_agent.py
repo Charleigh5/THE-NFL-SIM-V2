@@ -88,7 +88,7 @@ class GMAgent:
 
         # 6. Final Decision
         # Aggression lowers the threshold to accept
-        acceptance_threshold = 0 - (self.gm_traits["aggression"] - 50) * 0.5
+        acceptance_threshold = 0 - (float(self.gm_traits.get("aggression", 50)) - 50.0) * 0.5
 
         decision = "ACCEPT" if modified_score >= acceptance_threshold else "REJECT"
 
@@ -153,7 +153,7 @@ class GMAgent:
         negotiation_skill = self.gm_traits["negotiation"]
 
         # Skill factor: 0.8 to 1.2 (High skill reduces price)
-        skill_factor = 1.2 - (negotiation_skill / 250)
+        skill_factor = 1.2 - (float(negotiation_skill or 50) / 250.0)
 
         counter_offer = demand * skill_factor
 
@@ -206,7 +206,7 @@ class GMAgent:
 
             year_offset = pick.get("year", 2025) - 2025
             if year_offset > 0:
-                discount_rate = 0.8 + (self.gm_traits["patience"] / 500)
+                discount_rate = 0.8 + (float(self.gm_traits.get("patience", 50)) / 500.0)
                 pick_val *= (discount_rate ** year_offset)
 
             total_value += (pick_val / 30.0)
