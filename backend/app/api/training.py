@@ -84,6 +84,20 @@ class ExecuteTrainingResponse(BaseModel):
     coaching_style_used: Optional[str] = None
 
 
+class BatchExecuteRequest(BaseModel):
+    """Request to execute training for multiple players."""
+    assignments: List[ExecuteTrainingRequest]
+
+
+class BatchTrainingResponse(BaseModel):
+    """Response for batch training execution."""
+    total_xp_gained: float
+    injuries_occurred: int
+    injured_player_ids: List[int]
+    results: List[ExecuteTrainingResponse]
+    top_performers: List[dict]  # { player_id, xp_gained }
+
+
 class ScheduleRecommendation(BaseModel):
     """Recommended training schedule."""
     day: str
@@ -222,6 +236,82 @@ async def execute_training(request: ExecuteTrainingRequest) -> ExecuteTrainingRe
         final_injury_risk=result["final_injury_risk"],
         weekly_load=result["weekly_load"],
         coaching_style_used=request.coaching_style,
+    )
+
+
+@router.post("/execute-batch", response_model=BatchTrainingResponse)
+async def execute_batch_training(request: BatchExecuteRequest) -> BatchTrainingResponse:
+    """
+    Execute training for multiple players/drills at once.
+    """
+    results = []
+    total_xp = 0.0
+    injuries = []
+
+    # Process all assignments
+    for assignment in request.assignments:
+        try:
+            # Reuse the single execute logic
+            # In a real scenario, we might want to optimize this to avoid repeated setups
+            # but for now, calling the internal logic is fine.
+
+            # Find drill
+            drill = next((d for d in ALL_DRILLS if d.name.lower() == assignment.drill_name.lower()), None)
+            if not drill:
+                continue # Skip invalid drills in batch for resilience
+
+            # Coaching style
+            coaching_style = None
+            if assignment.coaching_style:
+                try:
+                    coaching_style = get_coaching_style(assignment.coaching_style)
+                except ValueError:
+                    pass
+
+            engine = TrainingEngine()
+            res_dict = engine.train_with_drill(
+                drill=drill,
+                player_age=assignment.player_age,
+                coaching_style=coaching_style,
+                season_phase=assignment.season_phase,
+            )
+
+            response = ExecuteTrainingResponse(
+                player_id=assignment.player_id,
+                drill_name=drill.name,
+                xp_gained=res_dict["xp_gained"],
+                target_stat=res_dict["target_stat"],
+                secondary_stats=res_dict["secondary_stats"],
+                injury_occurred=res_dict["injury_occurred"],
+                fatigue_added=res_dict["fatigue_added"],
+                final_injury_risk=res_dict["final_injury_risk"],
+                weekly_load=res_dict["weekly_load"],
+                coaching_style_used=assignment.coaching_style,
+            )
+
+            results.append(response)
+            total_xp += response.xp_gained
+            if response.injury_occurred:
+                injuries.append(response.player_id)
+
+        except Exception as e:
+            # Log error but continue batch
+            print(f"Error executing training for player {assignment.player_id}: {e}")
+            continue
+
+    # Identify top performers
+    sorted_results = sorted(results, key=lambda x: x.xp_gained, reverse=True)
+    top_performers = [
+        {"player_id": r.player_id, "xp_gained": r.xp_gained}
+        for r in sorted_results[:3]
+    ]
+
+    return BatchTrainingResponse(
+        total_xp_gained=total_xp,
+        injuries_occurred=len(injuries),
+        injured_player_ids=injuries,
+        results=results,
+        top_performers=top_performers
     )
 
 

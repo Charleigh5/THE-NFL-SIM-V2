@@ -63,7 +63,10 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
   const gamesRemaining = Math.max(0, season.total_weeks - gamesPlayed);
 
   return (
-    <div className={`season-summary-card ${animate ? "animate-update" : ""}`} data-testid="season-summary-card">
+    <div
+      className={`season-summary-card ${animate ? "animate-update" : ""}`}
+      data-testid="season-summary-card"
+    >
       <div className="card-header" data-testid="season-summary-header">
         <div className="season-title-group">
           <span className="season-year">{season.year} Season</span>
