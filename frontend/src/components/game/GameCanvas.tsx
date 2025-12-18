@@ -1,5 +1,6 @@
 import React from "react";
 import { Application, extend } from "@pixi/react";
+import type { Graphics as PixiGraphics } from "pixi.js";
 import { Container, Graphics, Text } from "pixi.js";
 
 // Register components
@@ -25,7 +26,7 @@ interface GameCanvasProps {
 }
 
 const FieldGraphics = () => {
-  const drawField = (g: any) => {
+  const drawField = (g: PixiGraphics) => {
     g.clear();
     // Draw Grass
     g.rect(0, 0, FIELD_WIDTH_PX, FIELD_HEIGHT_PX);
@@ -60,7 +61,7 @@ const FieldGraphics = () => {
     }
   };
 
-  // @ts-ignore - Dynamic JSX type for Pixi
+  // @ts-expect-error - Dynamic JSX type for Pixi v8
   return <pixiGraphics draw={drawField} />;
 };
 
@@ -77,7 +78,7 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({ width = 1200, height = 5
       }}
     >
       <Application width={width} height={height} backgroundColor={0x1a1a1a}>
-        {/* @ts-ignore - Dynamic JSX type for Pixi */}
+        {/* @ts-expect-error - Dynamic JSX type for Pixi v8 */}
         <pixiContainer x={0} y={0}>
           <FieldGraphics />
           {children}
