@@ -341,7 +341,14 @@ class SimulationOrchestrator:
 
         logger.debug("Play resolved")
 
-        self._save_progress()
+        # Legacy synchronous support: Attempt to schedule async save if event loop exists.
+        # This prevents "Coroutine not awaited" warnings/errors in legacy contexts.
+        try:
+             loop = asyncio.get_running_loop()
+             loop.create_task(self._save_progress())
+        except RuntimeError:
+             # No running loop; skip async save in synchronous legacy mode.
+             pass
 
         return result
 

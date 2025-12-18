@@ -32,22 +32,6 @@ const OffseasonDashboard: React.FC = () => {
   // Get loader data
   const loaderData = useLoaderData() as OffseasonLoaderData | undefined;
 
-  // Handle no season state from loader
-  if (loaderData?.noSeason) {
-    return (
-      <div className="offseason-dashboard" data-testid="no-season-state">
-        <div className="empty-state">
-          <div className="empty-state-icon">🏈</div>
-          <h1>No Active Season</h1>
-          <p>Start a new season from the Season Dashboard to access the Offseason features.</p>
-          <a href="/season" className="action-button">
-            Go to Season Dashboard
-          </a>
-        </div>
-      </div>
-    );
-  }
-
   const [season, setSeason] = useState<Season | null>(loaderData?.season ?? null);
   const [loading, setLoading] = useState<boolean>(true);
   const [processing, setProcessing] = useState<boolean>(false);
@@ -190,6 +174,22 @@ const OffseasonDashboard: React.FC = () => {
       setProcessing(false);
     }
   };
+
+  // Handle no season state from loader - Moved after hooks
+  if (loaderData?.noSeason) {
+    return (
+      <div className="offseason-dashboard" data-testid="no-season-state">
+        <div className="empty-state">
+          <div className="empty-state-icon">🏈</div>
+          <h1>No Active Season</h1>
+          <p>Start a new season from the Season Dashboard to access the Offseason features.</p>
+          <a href="/season" className="action-button">
+            Go to Season Dashboard
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   if (loading)
     return (

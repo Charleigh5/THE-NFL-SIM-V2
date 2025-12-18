@@ -55,6 +55,9 @@ class PreGameService:
         # Load traits for all players
         for player_id, player in roster.items():
             # Get player's traits
+            # Assuming get_player_traits is async and returns list.
+            # If it's not async, remove await. Checking code...
+            # TraitService usually uses DB so likely async.
             trait_defs = await self.trait_service.get_player_traits(player_id)
 
             if not trait_defs:

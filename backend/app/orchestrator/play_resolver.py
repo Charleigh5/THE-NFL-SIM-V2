@@ -85,7 +85,7 @@ class PlayResolver:
                 return p
 
         # Fallback to first player if specific position not found
-        return players[0]
+        return players[0] if players else None
 
     def _get_weather_temp(self) -> float:
         if self.current_match_context and self.current_match_context.weather_config:
@@ -280,10 +280,12 @@ class PlayResolver:
         temp = self._get_weather_temp()
         # Use get_current_fatigue (read-only) for penalty calculation
         # Fatigue update happens in Orchestrator
-        current_fatigue = self.kernels.genesis.get_current_fatigue(qb.id)
+        current_fatigue = self.kernels.genesis.get_current_fatigue(qb.id) if qb else 0
 
         # Injury Check
-        injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
+        injury_check = {"is_injured": False}
+        if qb:
+            injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
         injuries = [injury_check] if injury_check["is_injured"] else []
 
         # 3. Line Battle & Sack Check
@@ -358,14 +360,19 @@ class PlayResolver:
                     "intimidation_factor": intimidation_factor
                 })
 
+            # Safe access to names
+            qb_name = qb.last_name if qb else "QB"
+            sacker_name = sacker.last_name if sacker else "the defense"
+            passer_id = qb.id if qb else None
+
             return PlayResult(
                 yards_gained=-loss_yards,
                 is_touchdown=False,
-                description=f"SACKED! {qb.last_name} is taken down by {sacker.last_name if sacker else 'the defense'} for a loss of {loss_yards} yards.",
-                headline=f"Sack! {sacker.last_name if sacker else 'Defense'} gets home!",
+                description=f"SACKED! {qb_name} is taken down by {sacker_name} for a loss of {loss_yards} yards.",
+                headline=f"Sack! {sacker_name} gets home!",
                 is_highlight_worthy=True,
                 injuries=injuries,
-                passer_id=qb.id
+                passer_id=passer_id
             )
 
         # 4. Attribute-Based Core Logic via ProbabilityEngine
@@ -575,7 +582,7 @@ class PlayResolver:
         temp = self._get_weather_temp()
         # print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
         # Use get_current_fatigue (read-only)
-        current_fatigue = self.kernels.genesis.get_current_fatigue(rb.id)
+        current_fatigue = self.kernels.genesis.get_current_fatigue(rb.id) if rb else 0
         # print(f"DEBUG: Calculated Fatigue: {current_fatigue}")
 
         # 3. Attribute Logic via ProbabilityEngine
@@ -709,15 +716,18 @@ class PlayResolver:
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
 
+        rb_name = rb.last_name if rb else "RB"
+        rusher_id = rb.id if rb else None
+
         return PlayResult(
             yards_gained=yards_gained,
             is_touchdown=is_touchdown,
             is_turnover=is_turnover,
-            description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards.",
+            description=f"Run {command.run_direction} by {rb_name} for {yards_gained} yards.",
             headline=headline,
             is_highlight_worthy=is_highlight_worthy or is_touchdown,
             xp_awards=xp_result.get("xp_awards", {}),
-            rusher_id=rb.id
+            rusher_id=rusher_id
         )
 
     def _resolve_legacy_random_pass(self, command: PassPlayCommand) -> PlayResult:
