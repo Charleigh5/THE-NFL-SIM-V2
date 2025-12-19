@@ -27,11 +27,15 @@ class MatchContext:
         self.weather_config = weather_config or {}
 
         # New Context Fields
-        # Populate using WeatherService
-        stadium_id = self.weather_config.get("stadium_id", 0)
-        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+        # Weather is now initialized asynchronously in load_rosters
+        self.weather_conditions: Dict[str, float] = {
+            "passing": 0.0,
+            "rushing": 0.0,
+            "fumble": 0.0,
+            "fg_accuracy": 0.0
+        }
+        self.weather_data: Dict[str, Any] = {} # Stores full weather info (temp, wind, etc.)
 
-        self.weather_conditions: Dict[str, float] = WeatherService.get_weather_modifiers(stadium_id, game_time)
         self.home_ol_chemistry: int = 0
         self.away_ol_chemistry: int = 0
 
@@ -49,7 +53,20 @@ class MatchContext:
         logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
 
     async def load_rosters(self):
-        """Loads full rosters for both teams from the database."""
+        """Loads full rosters for both teams from the database and initializes environment."""
+
+        # 1. Initialize Weather (Async)
+        stadium_id = self.weather_config.get("stadium_id", 0) # default to 0 if not set, logic handles it
+        # If no stadium_id provided in config, try to infer from home team (if we had access to Team model here)
+        # For now, we assume weather_config has it or we pass 0
+
+        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+
+        # Fetch simulation weather
+        weather_result = await WeatherService.calculate_simulation_weather(self.db, stadium_id, game_time)
+        self.weather_conditions = weather_result.get("modifiers", {})
+        self.weather_data = weather_result.get("conditions", {})
+
         # Load Home Team
         stmt_home = select(Player).where(Player.team_id == self.home_team_id)
         result_home = await self.db.execute(stmt_home)
@@ -76,13 +93,17 @@ class MatchContext:
 
         # Register all players
         all_players = list(self.home_roster.values()) + list(self.away_roster.values())
-        for p in all_players:
-            # Determine climate familiarity based on team (placeholder logic)
-            # In real app, Team model would have 'stadium_type' or 'climate'
-            climate = "Neutral"
 
+        # Get climate info for genesis adaptation
+        home_climate = "Neutral" # Placeholder
+        if self.weather_data.get("temperature", 70) < 40:
+            home_climate = "Cold"
+        elif self.weather_data.get("temperature", 70) > 85:
+            home_climate = "Hot"
+
+        for p in all_players:
             self.genesis.register_player(p.id, {
-                "fatigue": {"home_climate": climate},
+                "fatigue": {"home_climate": home_climate},
                 "anatomy": {}
             })
 
