@@ -1,0 +1,14 @@
+.page-transition-wrapper {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Prevent layout shift during transitions */
+.page-transition-wrapper > * {
+  will-change: opacity, transform;
+}
+
+/* Smooth scroll reset on page change */
+.page-transition-wrapper {
+  scroll-behavior: smooth;
+}

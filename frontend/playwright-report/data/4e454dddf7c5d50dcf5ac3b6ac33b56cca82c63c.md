@@ -2,169 +2,169 @@
 
 ```yaml
 - generic [ref=e3]:
-  - navigation [ref=e4]:
-    - generic [ref=e5]:
-      - heading "THE NFL SIM" [level=1] [ref=e10]
-      - paragraph [ref=e11]: Night Game Franchise
-    - list [ref=e12]:
-      - listitem [ref=e13]:
-        - link "Dashboard" [ref=e14] [cursor=pointer]:
-          - /url: /
-          - img [ref=e16]
-          - generic [ref=e21]: Dashboard
-      - listitem [ref=e22]:
-        - link "Season" [ref=e23] [cursor=pointer]:
-          - /url: /season
-          - img [ref=e25]
-          - generic [ref=e36]: Season
-      - listitem [ref=e37]:
-        - link "Offseason" [ref=e38] [cursor=pointer]:
-          - /url: /offseason
-          - img [ref=e40]
-          - generic [ref=e45]: Offseason
-      - listitem [ref=e46]:
-        - link "Draft Room" [ref=e47] [cursor=pointer]:
-          - /url: /offseason/draft
-          - img [ref=e49]
-          - generic [ref=e56]: Draft Room
-      - listitem [ref=e57]:
-        - link "Roster" [ref=e58] [cursor=pointer]:
-          - /url: /empire/front-office
-          - img [ref=e60]
-          - generic [ref=e65]: Roster
-      - listitem [ref=e66]:
-        - link "Depth Chart" [ref=e67] [cursor=pointer]:
-          - /url: /empire/depth-chart
-          - img [ref=e69]
-          - generic [ref=e76]: Depth Chart
-      - listitem [ref=e77]:
-        - link "Trade Center" [ref=e78] [cursor=pointer]:
-          - /url: /empire/trade-center
-          - img [ref=e80]
-          - generic [ref=e85]: Trade Center
-      - listitem [ref=e86]:
-        - link "Training" [ref=e87] [cursor=pointer]:
-          - /url: /training
-          - img [ref=e89]
-          - generic [ref=e95]: Training
-      - listitem [ref=e96]:
-        - link "My Team" [ref=e97] [cursor=pointer]:
-          - /url: /team-selection
-          - img [ref=e99]
-          - generic [ref=e101]: My Team
-      - listitem [ref=e102]:
-        - link "Settings" [ref=e103] [cursor=pointer]:
-          - /url: /settings
-          - img [ref=e105]
-          - generic [ref=e108]: Settings
-    - generic [ref=e110]: System Online
-  - main [ref=e112]:
-    - generic [ref=e114]:
-      - generic [ref=e115]:
-        - 'heading "Front Office: Arizona Cardinals" [level=1] [ref=e116]'
-        - paragraph [ref=e117]: "Cap Space: $12.4M"
-      - generic [ref=e118]:
-        - generic [ref=e119]:
-          - heading "Active Roster (2)" [level=2] [ref=e120]
-          - generic [ref=e121]:
-            - generic [ref=e123]:
-              - button "View Backstory" [ref=e124] [cursor=pointer]:
-                - img [ref=e125]
-              - generic [ref=e128]:
-                - img [ref=e129]
-                - generic [ref=e132]: 90 OVR
-              - generic [ref=e133]:
-                - generic [ref=e134]:
-                  - heading "P. One" [level=3] [ref=e135]
-                  - paragraph [ref=e136]: QB • ARI
-                - generic [ref=e137]:
-                  - generic [ref=e138]:
-                    - paragraph [ref=e139]: SPD
-                    - paragraph [ref=e140]: "92"
-                  - generic [ref=e141]:
-                    - paragraph [ref=e142]: STR
-                    - paragraph [ref=e143]: "88"
-                  - generic [ref=e144]:
-                    - paragraph [ref=e145]: AGI
-                    - paragraph [ref=e146]: "90"
-            - generic [ref=e148]:
-              - button "View Backstory" [ref=e149] [cursor=pointer]:
-                - img [ref=e150]
-              - generic [ref=e153]:
-                - img [ref=e154]
-                - generic [ref=e157]: 82 OVR
-              - generic [ref=e158]:
-                - generic [ref=e159]:
-                  - heading "P. Two" [level=3] [ref=e160]
-                  - paragraph [ref=e161]: RB • ARI
-                - generic [ref=e162]:
-                  - generic [ref=e163]:
-                    - paragraph [ref=e164]: SPD
-                    - paragraph [ref=e165]: "92"
-                  - generic [ref=e166]:
-                    - paragraph [ref=e167]: STR
-                    - paragraph [ref=e168]: "88"
-                  - generic [ref=e169]:
-                    - paragraph [ref=e170]: AGI
-                    - paragraph [ref=e171]: "90"
-        - generic [ref=e173]:
-          - heading "Head Coach Philosophy" [level=3] [ref=e175]
-          - generic [ref=e177]:
-            - generic [ref=e178]:
-              - generic [ref=e179]: "Run / Pass Ratio: 50"
-              - slider "Run/Pass Ratio" [ref=e180]: "50"
-              - generic [ref=e181]:
-                - generic [ref=e182]: Pass Heavy
-                - generic [ref=e183]: Balanced
-                - generic [ref=e184]: Run Heavy
-            - generic [ref=e185]:
-              - generic [ref=e186]: "General Aggressiveness: 50"
-              - slider "General Aggressiveness" [ref=e187]: "50"
-              - generic [ref=e188]:
-                - generic [ref=e189]: Conservative
-                - generic [ref=e190]: Risky
-            - generic [ref=e191]:
-              - generic [ref=e192]: "4th Down Aggression: 50"
-              - slider "4th Down Aggression" [ref=e193]: "50"
-              - generic [ref=e194]:
-                - generic [ref=e195]: Punt/FG
-                - generic [ref=e196]: Go For It
-            - generic [ref=e197]:
-              - generic [ref=e198]: "Tempo: 50"
-              - slider "Tempo" [ref=e199]: "50"
-              - generic [ref=e200]:
-                - generic [ref=e201]: Chew Clock
-                - generic [ref=e202]: Hurry Up
-            - generic [ref=e203]:
-              - generic [ref=e204]: "Trick Play Freq: 5%"
-              - slider "Trick Play Frequency" [ref=e205]: "5"
-            - generic [ref=e206]:
-              - generic [ref=e207]: "2-Pt Conversion Threshold: 50"
-              - slider "2-Point Conversion Threshold" [ref=e208]: "50"
-              - generic [ref=e209]:
-                - generic [ref=e210]: Conservative (Kick 1)
-                - generic [ref=e211]: Aggressive (Go for 2)
-            - button "Save Coaching Strategy" [ref=e212] [cursor=pointer]
-      - generic [ref=e214]:
-        - button "Close player details" [ref=e215] [cursor=pointer]:
-          - img [ref=e216]
-        - generic [ref=e219]:
-          - generic [ref=e220]: "1"
-          - generic [ref=e221]:
-            - heading "Player One" [level=2] [ref=e222]
-            - paragraph [ref=e223]: QB • Cardinals
-        - generic [ref=e224]:
-          - generic [ref=e225]:
-            - paragraph [ref=e226]: Overall
-            - paragraph [ref=e227]: "90"
-          - generic [ref=e228]:
-            - paragraph [ref=e229]: Age
-            - paragraph [ref=e230]: "25"
-          - generic [ref=e231]:
-            - paragraph [ref=e232]: Speed
-            - paragraph [ref=e233]: "92"
-          - generic [ref=e234]:
-            - paragraph [ref=e235]: Strength
-            - paragraph [ref=e236]: "70"
-  - button "Mission Control" [ref=e238] [cursor=pointer]: ⚡
+    - navigation [ref=e4]:
+        - generic [ref=e5]:
+            - heading "THE NFL SIM" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Night Game Franchise
+        - list [ref=e12]:
+            - listitem [ref=e13]:
+                - link "Dashboard" [ref=e14] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e16]
+                    - generic [ref=e21]: Dashboard
+            - listitem [ref=e22]:
+                - link "Season" [ref=e23] [cursor=pointer]:
+                    - /url: /season
+                    - img [ref=e25]
+                    - generic [ref=e36]: Season
+            - listitem [ref=e37]:
+                - link "Offseason" [ref=e38] [cursor=pointer]:
+                    - /url: /offseason
+                    - img [ref=e40]
+                    - generic [ref=e45]: Offseason
+            - listitem [ref=e46]:
+                - link "Draft Room" [ref=e47] [cursor=pointer]:
+                    - /url: /offseason/draft
+                    - img [ref=e49]
+                    - generic [ref=e56]: Draft Room
+            - listitem [ref=e57]:
+                - link "Roster" [ref=e58] [cursor=pointer]:
+                    - /url: /empire/front-office
+                    - img [ref=e60]
+                    - generic [ref=e65]: Roster
+            - listitem [ref=e66]:
+                - link "Depth Chart" [ref=e67] [cursor=pointer]:
+                    - /url: /empire/depth-chart
+                    - img [ref=e69]
+                    - generic [ref=e76]: Depth Chart
+            - listitem [ref=e77]:
+                - link "Trade Center" [ref=e78] [cursor=pointer]:
+                    - /url: /empire/trade-center
+                    - img [ref=e80]
+                    - generic [ref=e85]: Trade Center
+            - listitem [ref=e86]:
+                - link "Training" [ref=e87] [cursor=pointer]:
+                    - /url: /training
+                    - img [ref=e89]
+                    - generic [ref=e95]: Training
+            - listitem [ref=e96]:
+                - link "My Team" [ref=e97] [cursor=pointer]:
+                    - /url: /team-selection
+                    - img [ref=e99]
+                    - generic [ref=e101]: My Team
+            - listitem [ref=e102]:
+                - link "Settings" [ref=e103] [cursor=pointer]:
+                    - /url: /settings
+                    - img [ref=e105]
+                    - generic [ref=e108]: Settings
+        - generic [ref=e110]: System Online
+    - main [ref=e112]:
+        - generic [ref=e114]:
+            - generic [ref=e115]:
+                - 'heading "Front Office: Arizona Cardinals" [level=1] [ref=e116]'
+                - paragraph [ref=e117]: "Cap Space: $12.4M"
+            - generic [ref=e118]:
+                - generic [ref=e119]:
+                    - heading "Active Roster (2)" [level=2] [ref=e120]
+                    - generic [ref=e121]:
+                        - generic [ref=e123]:
+                            - button "View Backstory" [ref=e124] [cursor=pointer]:
+                                - img [ref=e125]
+                            - generic [ref=e128]:
+                                - img [ref=e129]
+                                - generic [ref=e132]: 90 OVR
+                            - generic [ref=e133]:
+                                - generic [ref=e134]:
+                                    - heading "P. One" [level=3] [ref=e135]
+                                    - paragraph [ref=e136]: QB • ARI
+                                - generic [ref=e137]:
+                                    - generic [ref=e138]:
+                                        - paragraph [ref=e139]: SPD
+                                        - paragraph [ref=e140]: "92"
+                                    - generic [ref=e141]:
+                                        - paragraph [ref=e142]: STR
+                                        - paragraph [ref=e143]: "88"
+                                    - generic [ref=e144]:
+                                        - paragraph [ref=e145]: AGI
+                                        - paragraph [ref=e146]: "90"
+                        - generic [ref=e148]:
+                            - button "View Backstory" [ref=e149] [cursor=pointer]:
+                                - img [ref=e150]
+                            - generic [ref=e153]:
+                                - img [ref=e154]
+                                - generic [ref=e157]: 82 OVR
+                            - generic [ref=e158]:
+                                - generic [ref=e159]:
+                                    - heading "P. Two" [level=3] [ref=e160]
+                                    - paragraph [ref=e161]: RB • ARI
+                                - generic [ref=e162]:
+                                    - generic [ref=e163]:
+                                        - paragraph [ref=e164]: SPD
+                                        - paragraph [ref=e165]: "92"
+                                    - generic [ref=e166]:
+                                        - paragraph [ref=e167]: STR
+                                        - paragraph [ref=e168]: "88"
+                                    - generic [ref=e169]:
+                                        - paragraph [ref=e170]: AGI
+                                        - paragraph [ref=e171]: "90"
+                - generic [ref=e173]:
+                    - heading "Head Coach Philosophy" [level=3] [ref=e175]
+                    - generic [ref=e177]:
+                        - generic [ref=e178]:
+                            - generic [ref=e179]: "Run / Pass Ratio: 50"
+                            - slider "Run/Pass Ratio" [ref=e180]: "50"
+                            - generic [ref=e181]:
+                                - generic [ref=e182]: Pass Heavy
+                                - generic [ref=e183]: Balanced
+                                - generic [ref=e184]: Run Heavy
+                        - generic [ref=e185]:
+                            - generic [ref=e186]: "General Aggressiveness: 50"
+                            - slider "General Aggressiveness" [ref=e187]: "50"
+                            - generic [ref=e188]:
+                                - generic [ref=e189]: Conservative
+                                - generic [ref=e190]: Risky
+                        - generic [ref=e191]:
+                            - generic [ref=e192]: "4th Down Aggression: 50"
+                            - slider "4th Down Aggression" [ref=e193]: "50"
+                            - generic [ref=e194]:
+                                - generic [ref=e195]: Punt/FG
+                                - generic [ref=e196]: Go For It
+                        - generic [ref=e197]:
+                            - generic [ref=e198]: "Tempo: 50"
+                            - slider "Tempo" [ref=e199]: "50"
+                            - generic [ref=e200]:
+                                - generic [ref=e201]: Chew Clock
+                                - generic [ref=e202]: Hurry Up
+                        - generic [ref=e203]:
+                            - generic [ref=e204]: "Trick Play Freq: 5%"
+                            - slider "Trick Play Frequency" [ref=e205]: "5"
+                        - generic [ref=e206]:
+                            - generic [ref=e207]: "2-Pt Conversion Threshold: 50"
+                            - slider "2-Point Conversion Threshold" [ref=e208]: "50"
+                            - generic [ref=e209]:
+                                - generic [ref=e210]: Conservative (Kick 1)
+                                - generic [ref=e211]: Aggressive (Go for 2)
+                        - button "Save Coaching Strategy" [ref=e212] [cursor=pointer]
+            - generic [ref=e214]:
+                - button "Close player details" [ref=e215] [cursor=pointer]:
+                    - img [ref=e216]
+                - generic [ref=e219]:
+                    - generic [ref=e220]: "1"
+                    - generic [ref=e221]:
+                        - heading "Player One" [level=2] [ref=e222]
+                        - paragraph [ref=e223]: QB • Cardinals
+                - generic [ref=e224]:
+                    - generic [ref=e225]:
+                        - paragraph [ref=e226]: Overall
+                        - paragraph [ref=e227]: "90"
+                    - generic [ref=e228]:
+                        - paragraph [ref=e229]: Age
+                        - paragraph [ref=e230]: "25"
+                    - generic [ref=e231]:
+                        - paragraph [ref=e232]: Speed
+                        - paragraph [ref=e233]: "92"
+                    - generic [ref=e234]:
+                        - paragraph [ref=e235]: Strength
+                        - paragraph [ref=e236]: "70"
+    - button "Mission Control" [ref=e238] [cursor=pointer]: ⚡
 ```

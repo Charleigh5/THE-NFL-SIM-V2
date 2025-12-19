@@ -398,6 +398,11 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorBoundary />,
       },
       {
+        path: "training/:playerId",
+        element: <TrainingCenter />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: "players/:playerId/skills",
         element: <SkillsPage />,
         loader: skillsLoader,

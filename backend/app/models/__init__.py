@@ -1,4 +1,10 @@
 from app.models.base import Base
+# Player satellite models must be imported BEFORE Player for relationship resolution
+from app.models.player_attributes import PlayerAttributes
+from app.models.player_contract import PlayerContract
+from app.models.player_physics import PlayerPhysics
+from app.models.player_injury import PlayerInjury
+from app.models.player_progression import PlayerProgression
 from app.models.player import Player, Position
 from app.models.team import Team
 from app.models.stadium import Stadium

@@ -16,6 +16,14 @@ from app.engine.trait_effects import TraitEffectResolver
 from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
 from app.services.use_based_progression import UseBasedProgression, ActionType
 from app.services.playbook.familiarity import FamiliarityManager
+# Phase 2: Position-Specific Physics Integration
+from app.engine.position_physics import (
+    QuarterbackPhysics, QBState, QBPhysicsConfig, ThrowResult, PocketState,
+    RunningBackPhysics, RBState, RBPhysicsConfig, TackleAttempt, CutMove, CutType, ContactType,
+    WideReceiverPhysics, WRState, WRPhysicsConfig, CatchAttempt, RouteType,
+    DefensiveBackPhysics, DBState, DBPhysicsConfig, CoverageType,
+    Vector2,
+)
 from typing import Optional, Any, List, Tuple, Dict
 import logging
 
@@ -223,6 +231,86 @@ class PlayResolver:
                     f"{old_fam:.2f} -> {new_fam:.2f}"
                 )
 
+    # ==========================================================================
+    # PHASE 2: POSITION PHYSICS FACTORY METHODS
+    # ==========================================================================
+
+    def _create_qb_physics(self, qb: Any) -> QuarterbackPhysics:
+        """Create QB physics engine from player attributes."""
+        return QuarterbackPhysics(
+            throw_power_rating=getattr(qb, "throw_power", 80),
+            throw_accuracy_rating=getattr(qb, "throw_accuracy_mid", 80),
+            awareness_rating=getattr(qb, "awareness", 80),
+            speed_rating=getattr(qb, "speed", 70),
+            agility_rating=getattr(qb, "agility", 70),
+            poise_rating=getattr(qb, "poise", 75) if hasattr(qb, "poise") else 75,
+        )
+
+    def _create_wr_physics(self, wr: Any) -> WideReceiverPhysics:
+        """Create WR physics engine from player attributes."""
+        return WideReceiverPhysics(
+            speed_rating=getattr(wr, "speed", 90),
+            acceleration_rating=getattr(wr, "acceleration", 88),
+            agility_rating=getattr(wr, "agility", 85),
+            route_running_rating=getattr(wr, "route_running", 85),
+            catching_rating=getattr(wr, "catching", 85),
+            catch_in_traffic_rating=getattr(wr, "catch_in_traffic", 80),
+            spectacular_catch_rating=getattr(wr, "spectacular_catch", 75),
+            release_rating=getattr(wr, "release", 80),
+            height_inches=getattr(wr, "height", 72),
+            vertical_jump_inches=int(getattr(wr, "vertical_jump", 36) or 36),
+            hand_size_inches=float(getattr(wr, "hand_size", 9.5) or 9.5),
+        )
+
+    def _create_rb_physics(self, rb: Any) -> RunningBackPhysics:
+        """Create RB physics engine from player attributes."""
+        return RunningBackPhysics(
+            speed_rating=getattr(rb, "speed", 85),
+            acceleration_rating=getattr(rb, "acceleration", 85),
+            agility_rating=getattr(rb, "agility", 85),
+            strength_rating=getattr(rb, "strength", 70),
+            elusiveness_rating=getattr(rb, "elusiveness", 80) if hasattr(rb, "elusiveness") else 80,
+            trucking_rating=getattr(rb, "trucking", 70) if hasattr(rb, "trucking") else 70,
+            ball_carrier_vision_rating=getattr(rb, "ball_carrier_vision", 80) if hasattr(rb, "ball_carrier_vision") else 80,
+            weight=getattr(rb, "weight", 210),
+        )
+
+    def _create_db_physics(self, db: Any) -> DefensiveBackPhysics:
+        """Create DB physics engine from player attributes."""
+        return DefensiveBackPhysics(
+            speed_rating=getattr(db, "speed", 88),
+            acceleration_rating=getattr(db, "acceleration", 86),
+            agility_rating=getattr(db, "agility", 85),
+            man_coverage_rating=getattr(db, "man_coverage", 80),
+            zone_coverage_rating=getattr(db, "zone_coverage", 78),
+            press_rating=getattr(db, "press", 75),
+            ball_skills_rating=getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
+            play_recognition_rating=getattr(db, "play_recognition", 78),
+        )
+
+    def _calculate_physics_separation(
+        self,
+        wr_physics: WideReceiverPhysics,
+        db_physics: DefensiveBackPhysics,
+        route_type: RouteType,
+        time_elapsed_ms: float,
+    ) -> float:
+        """
+        Calculate WR-DB separation using physics engines.
+        Returns separation in yards.
+        """
+        # Create states
+        wr_state = WRState(route_type=route_type)
+        db_state = DBState()
+
+        # Calculate separation at given time
+        separation = wr_physics.calculate_separation(
+            wr_state=wr_state,
+            db_physics=db_physics,
+            time_elapsed_ms=time_elapsed_ms,
+            is_press=(db_physics.press > 70),
+        )
+        return separation
 
 
     def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Dict[str, float] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
@@ -595,9 +683,42 @@ class PlayResolver:
         )
 
         # B. Receiver vs Defender (Speed & Route Running)
-        # Apply WR familiarity to route running effectiveness
+        # PHASE 2: Use physics-based separation calculation
+        wr_physics = self._create_wr_physics(target)
+        db_physics = self._create_db_physics(defender)
+
+        # Determine route type from command depth
+        route_type_map = {
+            "short": RouteType.SLANT,
+            "mid": RouteType.OUT,
+            "deep": RouteType.GO,
+        }
+        route_type = route_type_map.get(command.depth, RouteType.OUT)
+
+        # Calculate physics-based separation (time = ~2000ms for typical pass)
+        time_in_route_ms = 2000.0  # Base route time
+        if command.depth == "deep":
+            time_in_route_ms = 3000.0
+        elif command.depth == "short":
+            time_in_route_ms = 1200.0
+
+        try:
+            physics_separation = self._calculate_physics_separation(
+                wr_physics, db_physics, route_type, time_in_route_ms
+            )
+            # Convert separation to matchup factor (-0.2 to 0.2)
+            # 3+ yards separation = very open (+0.2)
+            # 0-1 yards = contested (-0.1)
+            separation_factor = min(0.2, max(-0.2, (physics_separation - 1.5) / 7.5))
+            logger.debug(f"Physics separation: {physics_separation:.2f} yards -> factor: {separation_factor:.3f}")
+        except Exception as e:
+            logger.warning(f"Physics separation failed, using fallback: {e}")
+            separation_factor = 0.0
+
+        # Apply WR familiarity to route running effectiveness (legacy fallback blend)
         effective_route_running = (getattr(target, "route_running", None) or 50) * wr_familiarity_modifier
 
+        # Legacy calculations (blended with physics)
         speed_diff = ProbabilityEngine.compare_speed(
             getattr(target, "speed", None) or 50,
             getattr(defender, "speed", None) or 50
@@ -607,6 +728,9 @@ class PlayResolver:
             effective_route_running,
             getattr(defender, "man_coverage", None) or 50
         )
+
+        # Blend physics and legacy (70% physics, 30% legacy)
+        blended_matchup = (separation_factor * 0.7) + (matchup_factor * 0.3)
 
         # C. Weather Impact
         weather_effects = self._get_weather_effects()
@@ -692,7 +816,8 @@ class PlayResolver:
         # base_prob is already calculated above with weather modifiers
 
         # Modifiers are already in float format (-0.2 to 0.2)
-        attr_modifiers = speed_diff + matchup_factor + interaction_modifier
+        # PHASE 2: Use blended physics matchup instead of legacy matchup_factor
+        attr_modifiers = speed_diff + blended_matchup + interaction_modifier
 
         # TRAIT EFFECT: Possession Receiver (WR/TE)
         # Bonus for contested catches (when defensive coverage is strong)
@@ -993,7 +1118,36 @@ class PlayResolver:
 
         logger.debug(f"Run Familiarity: RB={rb_familiarity_modifier:.2f} for play {play_id}")
 
-        # Power Run (Strength vs Tackle)
+        # PHASE 2: Physics-based RB tackle resolution
+        rb_physics = self._create_rb_physics(rb)
+        rb_state = RBState()
+
+        # Create tackle attempt from first defender
+        try:
+            tackle_attempt = TackleAttempt(
+                tackler_id=str(defender.id),
+                tackler_weight=getattr(defender, "weight", 220),
+                tackler_speed=getattr(defender, "speed", 80) / 20.0,  # Convert to yards/sec
+                tackle_rating=getattr(defender, "tackle", 75),
+                contact_type=ContactType.FORM_TACKLE if command.run_direction == "middle" else ContactType.PURSUIT,
+                approach_angle=0.0 if command.run_direction == "middle" else 45.0,
+            )
+
+            # Resolve tackle with physics
+            physics_tackle_result = rb_physics.resolve_tackle_attempt(
+                state=rb_state,
+                tackle=tackle_attempt,
+                rng=self.rng,
+            )
+
+            # Calculate physics-based yards modifier (positive = broke tackle, negative = stopped)
+            physics_yards_modifier = rb_state.yards_after_contact if rb_state.yards_after_contact else 0.0
+            logger.debug(f"Physics tackle result: YAC={physics_yards_modifier:.2f}, Balance={rb_state.balance:.1f}")
+        except Exception as e:
+            logger.warning(f"Physics tackle failed, using fallback: {e}")
+            physics_yards_modifier = 0.0
+
+        # Power Run (Strength vs Tackle) - LEGACY CALCULATION (blended with physics)
         # Apply familiarity to strength effectiveness
         effective_strength = (getattr(rb, "strength", None) or 50) * rb_familiarity_modifier
 
@@ -1001,6 +1155,9 @@ class PlayResolver:
             effective_strength,
             getattr(defender, "tackle", None) or 50
         )
+
+        # Blend physics and legacy (60% physics, 40% legacy)
+        blended_power_diff = (physics_yards_modifier * 0.6 / 5.0) + (power_diff * 0.4)
 
         # Speed (for outside runs)
         speed_diff = 0.0
@@ -1032,11 +1189,12 @@ class PlayResolver:
         # Calculate Base Yards with tribe adjustments
         # Middle run: consistent but lower ceiling
         # Outside run: higher variance
+        # PHASE 2: Use blended physics power_diff
         if command.run_direction == "middle":
-            base_yards = tribe_base_yards + (power_diff * 10.0) # +/- 2 yards based on strength
+            base_yards = tribe_base_yards + (blended_power_diff * 10.0)  # +/- 2 yards based on physics strength
             std_dev = tribe_std_dev
         else:
-            base_yards = (tribe_base_yards - 1.0) + (speed_diff * 20.0) # +/- 4 yards based on speed
+            base_yards = (tribe_base_yards - 1.0) + (speed_diff * 20.0)  # +/- 4 yards based on speed
             std_dev = tribe_std_dev * 1.5  # Outside runs have higher variance
 
         # B-008: Apply momentum modifier to run play

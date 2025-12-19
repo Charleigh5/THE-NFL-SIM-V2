@@ -1,32 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import { motion, AnimatePresence } from "framer-motion";
 import { StarfieldBackground } from "../components/skills/StarfieldBackground";
-import { DrillCard3D } from "../components/training/DrillCard3D";
+import { DrillSelector } from "../components/training/DrillSelector";
 import { CoachingStyleDial } from "../components/training/CoachingStyleDial";
 import { WeeklyScheduleTimeline } from "../components/training/WeeklyScheduleTimeline";
+import { TrainingSessionResult } from "../components/training/TrainingSessionResult";
 import { trainingApi } from "../services/trainingApi";
-import type { Drill, CoachingStyle } from "../types/training";
-import { SeasonPhase } from "../types/training";
-import { ChevronLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import type { Drill, CoachingStyle, TrainingResult } from "../types/training";
+import { ChevronLeft, User, AlertTriangle } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
+
+// Types for player data
+interface PlayerWeaknessData {
+  player_id: number;
+  player_name: string;
+  position: string;
+  age: number;
+  weaknesses: string[];
+  fatigue: number;
+}
 
 export const TrainingCenter: React.FC = () => {
-  const [drills, setDrills] = useState<Drill[]>([]);
+  const { playerId } = useParams<{ playerId?: string }>();
+
   const [styles, setStyles] = useState<CoachingStyle[]>([]);
   const [selectedDrill, setSelectedDrill] = useState<Drill | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string>("smart");
   const [loading, setLoading] = useState(true);
+  const [isTraining, setIsTraining] = useState(false);
+  const [trainingResult, setTrainingResult] = useState<TrainingResult | null>(null);
 
+  // Player-specific data
+  const [playerData, setPlayerData] = useState<PlayerWeaknessData | null>(null);
+  const [playerWeaknesses, setPlayerWeaknesses] = useState<string[]>([]);
+
+  // Fetch coaching styles and player data on mount
   useEffect(() => {
     async function init() {
       try {
-        const [drillData, styleData] = await Promise.all([
-          trainingApi.getDrills({ season: SeasonPhase.REGULAR }),
-          trainingApi.getCoachingStyles(),
-        ]);
-        setDrills(drillData.drills);
+        const styleData = await trainingApi.getCoachingStyles();
         setStyles(styleData);
+
+        // Fetch player weaknesses if playerId is provided
+        if (playerId) {
+          try {
+            const response = await axios.get(
+              `http://localhost:8000/api/v1/players/${playerId}/training-profile`
+            );
+            setPlayerData(response.data);
+            setPlayerWeaknesses(response.data.weaknesses || []);
+          } catch (playerErr) {
+            console.warn("Could not fetch player training profile, using defaults", playerErr);
+            // Default weaknesses for demo
+            setPlayerWeaknesses(["route_running", "catching"]);
+          }
+        } else {
+          // Default demo weaknesses when no player selected
+          setPlayerWeaknesses(["speed", "awareness"]);
+        }
       } catch (err) {
         console.error("Failed to load training data", err);
       } finally {
@@ -34,18 +67,40 @@ export const TrainingCenter: React.FC = () => {
       }
     }
     init();
+  }, [playerId]);
+
+  const handleDrillSelect = useCallback((drill: Drill) => {
+    setSelectedDrill(drill);
   }, []);
 
   const handleTrain = async () => {
     if (!selectedDrill) return;
-    // TODO: Connect to real player ID context
-    const result = await trainingApi.executeTraining(1, selectedDrill.name, selectedStyle);
-    alert(`Training Complete! XP Gained: ${result.xp_gained}`);
+
+    setIsTraining(true);
+    try {
+      const result = await trainingApi.executeTraining(
+        playerData?.player_id || 1,
+        selectedDrill.name,
+        selectedStyle,
+        "regular",
+        playerData?.age || 25
+      );
+      setTrainingResult(result);
+    } catch (err) {
+      console.error("Training failed", err);
+      alert("Training session failed. Please try again.");
+    } finally {
+      setIsTraining(false);
+    }
+  };
+
+  const handleResultClose = () => {
+    setTrainingResult(null);
     setSelectedDrill(null);
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black font-sans text-white">
+    <div className="relative w-full min-h-screen overflow-hidden bg-black font-sans text-white">
       {/* 3D Background */}
       <div className="absolute inset-0 z-0 opacity-60">
         <Canvas camera={{ position: [0, 0, 20], fov: 45 }}>
@@ -55,7 +110,7 @@ export const TrainingCenter: React.FC = () => {
       </div>
 
       {/* UI Overlay */}
-      <div className="relative z-10 w-full h-full overflow-y-auto custom-scrollbar">
+      <div className="relative z-10 w-full min-h-screen overflow-y-auto custom-scrollbar">
         <div className="container mx-auto px-6 py-8">
           {/* Header */}
           <motion.header
@@ -77,14 +132,32 @@ export const TrainingCenter: React.FC = () => {
               </div>
             </div>
 
-            {/* Stats Summary (Mock) */}
-            <div className="flex gap-8 text-right">
-              <div>
-                <div className="text-2xl font-bold text-white">94%</div>
-                <div className="text-xs text-gray-500 uppercase">Team Energy</div>
+            {/* Player Info & Stats */}
+            <div className="flex gap-8 items-center">
+              {playerData && (
+                <div className="flex items-center gap-3 bg-gray-800/50 px-4 py-2 rounded-xl border border-gray-700/50">
+                  <User className="w-5 h-5 text-blue-400" />
+                  <div>
+                    <div className="text-sm font-bold text-white">{playerData.player_name}</div>
+                    <div className="text-xs text-gray-500">
+                      {playerData.position} • Age {playerData.age}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="text-right">
+                <div className="text-2xl font-bold text-white">
+                  {playerData ? `${100 - playerData.fatigue}%` : "94%"}
+                </div>
+                <div className="text-xs text-gray-500 uppercase">Energy</div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-green-400">Low</div>
+              <div className="text-right">
+                <div
+                  className={`text-2xl font-bold ${(playerData?.fatigue ?? 0) > 70 ? "text-red-400" : "text-green-400"}`}
+                >
+                  {(playerData?.fatigue ?? 0) > 70 ? "High" : "Low"}
+                </div>
                 <div className="text-xs text-gray-500 uppercase">Injury Risk</div>
               </div>
             </div>
@@ -115,67 +188,48 @@ export const TrainingCenter: React.FC = () => {
             </motion.section>
           </div>
 
-          {/* Main Content Grid */}
-          <main className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Drill Filters / Sidebar (Future) */}
-            <div className="hidden lg:block lg:col-span-1 space-y-4">
-              <h3 className="text-lg font-bold border-b border-white/20 pb-2">CATEGORIES</h3>
-              {["QB Skill", "Strength", "Film Study", "Recovery"].map((cat) => (
-                <div
-                  key={cat}
-                  className="p-3 rounded bg-white/5 hover:bg-white/10 cursor-pointer text-sm"
-                >
-                  {cat}
-                </div>
-              ))}
-            </div>
-
-            {/* Drill Catalogue */}
-            <div className="lg:col-span-3">
-              <h3 className="text-lg font-bold border-b border-white/20 pb-2 mb-6 text-right">
-                AVAILABLE PROTOCOLS
-              </h3>
-
-              {loading ? (
-                <div className="text-center py-20 text-gray-500 animate-pulse">
-                  Initializing Sim...
-                </div>
-              ) : (
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center"
-                >
-                  {drills.map((drill) => (
-                    <DrillCard3D
-                      key={drill.name}
-                      drill={drill}
-                      isSelected={selectedDrill?.name === drill.name}
-                      onSelect={setSelectedDrill}
-                    />
-                  ))}
-                </motion.div>
-              )}
-            </div>
+          {/* Main Content - DrillSelector */}
+          <main>
+            {loading ? (
+              <div className="text-center py-20 text-gray-500 animate-pulse">
+                Initializing Sim...
+              </div>
+            ) : (
+              <DrillSelector
+                position={playerData?.position}
+                onDrillSelect={handleDrillSelect}
+                selectedDrill={selectedDrill}
+                playerWeaknesses={playerWeaknesses}
+              />
+            )}
           </main>
         </div>
       </div>
 
-      {/* Action Shade / Modal */}
+      {/* Action Shade / Modal for Selected Drill */}
       <AnimatePresence>
-        {selectedDrill && (
+        {selectedDrill && !trainingResult && (
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            className="fixed bottom-0 left-0 w-full h-80 bg-gray-900 border-t border-blue-500/50 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]"
+            className="fixed bottom-0 left-0 w-full bg-gray-900 border-t border-blue-500/50 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]"
           >
-            <div className="container mx-auto px-6 py-8 flex items-center justify-between h-full">
+            <div className="container mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-6">
               <div className="max-w-2xl">
                 <h2 className="text-3xl font-bold mb-2 text-white">{selectedDrill.name}</h2>
                 <div className="text-blue-400 font-mono text-sm mb-4">
                   {selectedDrill.target_stat} Target Protocol
                 </div>
                 <p className="text-gray-300 leading-relaxed">{selectedDrill.description}</p>
+
+                {/* Injury Risk Warning */}
+                {selectedDrill.injury_risk > 0.08 && (
+                  <div className="mt-4 flex items-center gap-2 text-red-400 text-sm">
+                    <AlertTriangle className="w-4 h-4" />
+                    High-intensity drill. Increased injury risk.
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-6 items-center">
@@ -186,16 +240,32 @@ export const TrainingCenter: React.FC = () => {
                   </div>
                 </div>
                 <button
-                  onClick={handleTrain}
-                  className="px-12 py-6 bg-blue-600 hover:bg-blue-500 text-white font-bold tracking-widest uppercase rounded shadow-lg hover:shadow-blue-500/25 transition-all transform hover:scale-105"
+                  onClick={() => setSelectedDrill(null)}
+                  className="px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold tracking-widest uppercase rounded transition-all"
                 >
-                  Initiate Sequence
+                  Cancel
+                </button>
+                <button
+                  onClick={handleTrain}
+                  disabled={isTraining}
+                  className={`px-12 py-4 font-bold tracking-widest uppercase rounded shadow-lg transition-all transform hover:scale-105 ${
+                    isTraining
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-500 text-white hover:shadow-blue-500/25"
+                  }`}
+                >
+                  {isTraining ? "Training..." : "Initiate Sequence"}
                 </button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Training Result Modal */}
+      {trainingResult && (
+        <TrainingSessionResult result={trainingResult} onClose={handleResultClose} />
+      )}
     </div>
   );
 };

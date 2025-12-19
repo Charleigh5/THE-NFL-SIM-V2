@@ -2,165 +2,165 @@
 
 ```yaml
 - generic [ref=e3]:
-  - navigation [ref=e4]:
-    - generic [ref=e5]:
-      - heading "THE NFL SIM" [level=1] [ref=e10]
-      - paragraph [ref=e11]: Night Game Franchise
-    - list [ref=e12]:
-      - listitem [ref=e13]:
-        - link "Dashboard" [ref=e14] [cursor=pointer]:
-          - /url: /
-          - img [ref=e16]
-          - generic [ref=e21]: Dashboard
-      - listitem [ref=e22]:
-        - link "Season" [ref=e23] [cursor=pointer]:
-          - /url: /season
-          - img [ref=e25]
-          - generic [ref=e27]: Season
-      - listitem [ref=e28]:
-        - link "Offseason" [ref=e29] [cursor=pointer]:
-          - /url: /offseason
-          - img [ref=e31]
-          - generic [ref=e34]: Offseason
-      - listitem [ref=e35]:
-        - link "Draft Room" [ref=e36] [cursor=pointer]:
-          - /url: /offseason/draft
-          - img [ref=e38]
-          - generic [ref=e44]: Draft Room
-      - listitem [ref=e45]:
-        - link "Roster" [ref=e46] [cursor=pointer]:
-          - /url: /empire/front-office
-          - img [ref=e48]
-          - generic [ref=e53]: Roster
-      - listitem [ref=e54]:
-        - link "Depth Chart" [ref=e55] [cursor=pointer]:
-          - /url: /empire/depth-chart
-          - img [ref=e57]
-          - generic [ref=e60]: Depth Chart
-      - listitem [ref=e61]:
-        - link "Trade Center" [ref=e62] [cursor=pointer]:
-          - /url: /empire/trade-center
-          - img [ref=e64]
-          - generic [ref=e67]: Trade Center
-      - listitem [ref=e68]:
-        - link "Training" [ref=e69] [cursor=pointer]:
-          - /url: /training
-          - img [ref=e71]
-          - generic [ref=e77]: Training
-      - listitem [ref=e78]:
-        - link "My Team" [ref=e79] [cursor=pointer]:
-          - /url: /team-selection
-          - img [ref=e81]
-          - generic [ref=e83]: My Team
-      - listitem [ref=e84]:
-        - link "Settings" [ref=e85] [cursor=pointer]:
-          - /url: /settings
-          - img [ref=e87]
-          - generic [ref=e90]: Settings
-    - generic [ref=e92]: System Online
-  - main [ref=e94]:
-    - generic [ref=e96]:
-      - generic [ref=e97]:
-        - generic [ref=e98]:
-          - heading "Training Center" [level=1] [ref=e99]
-          - paragraph [ref=e100]: "Week 4 Prep • OVR Team Energy: 88%"
-        - button "Execute Week" [ref=e101] [cursor=pointer]
-      - generic [ref=e102]:
-        - heading "Head Coach" [level=2] [ref=e103]: Head Coach
-        - generic [ref=e104]:
-          - generic [ref=e105]: LEGEND
-          - generic [ref=e106]:
-            - heading "Andy Reid" [level=3] [ref=e107]
-            - generic [ref=e108]: Head Coach
-          - generic [ref=e109]:
-            - generic [ref=e110]: Archetype
-            - generic [ref=e111]: QB GURU
-          - generic [ref=e112]:
-            - generic [ref=e113]:
-              - generic [ref=e114]: Experience
-              - generic [ref=e115]: 26 Yrs
-            - generic [ref=e116]:
-              - generic [ref=e117]: Scheme
-              - generic [ref=e118]: West Coast
-      - generic [ref=e119]:
-        - heading "Coaching Philosophy" [level=2] [ref=e120]: Coaching Philosophy
-        - generic [ref=e121]:
-          - generic [ref=e122]:
-            - generic [ref=e123]:
-              - img [ref=e124]
-              - heading "High Volume" [level=3] [ref=e130]
-            - paragraph [ref=e131]: Max reps. High XP, High Fatigue.
-          - generic [ref=e132]:
-            - generic [ref=e133]:
-              - img [ref=e134]
-              - heading "High Intensity" [level=3] [ref=e139]
-            - paragraph [ref=e140]: Game speed. Max XP, High Injury Risk.
-          - generic [ref=e141]:
-            - generic [ref=e142]:
-              - img [ref=e143]
-              - heading "Smart & Balanced" [level=3] [ref=e151]
-            - paragraph [ref=e152]: Data-driven. Moderate gains, Low Risk.
-          - generic [ref=e153]:
-            - generic [ref=e154]:
-              - img [ref=e155]
-              - heading "Old School" [level=3] [ref=e159]
-            - paragraph [ref=e160]: Grit & tough love. Boosts physicals, lowers morale.
-      - generic [ref=e161]:
-        - heading "Drill Catalog" [level=2] [ref=e162]: Drill Catalog
-        - generic [ref=e163]:
-          - generic [ref=e164]:
-            - generic [ref=e165]:
-              - heading "7-on-7 Skeleton" [level=3] [ref=e166]
-              - text: QB
-            - paragraph [ref=e167]: Passing focus without pass rush pressure.
-            - generic [ref=e168]:
-              - generic [ref=e169]:
-                - img [ref=e170]
-                - text: accuracy, read_recognition
-              - generic [ref=e173]:
-                - img [ref=e174]
-                - generic [ref=e176]: XP x1.2
-              - generic [ref=e177]:
-                - img [ref=e178]
-                - generic [ref=e180]: "Cost: 15"
-              - generic [ref=e181]:
-                - img [ref=e182]
-                - generic [ref=e184]: LOW Risk
-          - generic [ref=e185]:
-            - generic [ref=e186]:
-              - heading "Pass Protection Slides" [level=3] [ref=e187]
-              - text: OL
-            - paragraph [ref=e188]: Footwork drills for pass blocking.
-            - generic [ref=e189]:
-              - generic [ref=e190]:
-                - img [ref=e191]
-                - text: pass_block, agility
-              - generic [ref=e194]:
-                - img [ref=e195]
-                - generic [ref=e197]: XP x1
-              - generic [ref=e198]:
-                - img [ref=e199]
-                - generic [ref=e201]: "Cost: 10"
-              - generic [ref=e202]:
-                - img [ref=e203]
-                - generic [ref=e205]: LOW Risk
-          - generic [ref=e206]:
-            - generic [ref=e207]:
-              - heading "Oklahoma Drill" [level=3] [ref=e208]
-              - text: TEAM
-            - paragraph [ref=e209]: Full contact blocking and tackling drill.
-            - generic [ref=e210]:
-              - generic [ref=e211]:
-                - img [ref=e212]
-                - text: strength, tackling, break_tackle
-              - generic [ref=e215]:
-                - img [ref=e216]
-                - generic [ref=e218]: XP x1.5
-              - generic [ref=e219]:
-                - img [ref=e220]
-                - generic [ref=e222]: "Cost: 30"
-              - generic [ref=e223]:
-                - img [ref=e224]
-                - generic [ref=e226]: HIGH Risk
-  - button "Mission Control" [ref=e228] [cursor=pointer]: ⚡
+    - navigation [ref=e4]:
+        - generic [ref=e5]:
+            - heading "THE NFL SIM" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Night Game Franchise
+        - list [ref=e12]:
+            - listitem [ref=e13]:
+                - link "Dashboard" [ref=e14] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e16]
+                    - generic [ref=e21]: Dashboard
+            - listitem [ref=e22]:
+                - link "Season" [ref=e23] [cursor=pointer]:
+                    - /url: /season
+                    - img [ref=e25]
+                    - generic [ref=e27]: Season
+            - listitem [ref=e28]:
+                - link "Offseason" [ref=e29] [cursor=pointer]:
+                    - /url: /offseason
+                    - img [ref=e31]
+                    - generic [ref=e34]: Offseason
+            - listitem [ref=e35]:
+                - link "Draft Room" [ref=e36] [cursor=pointer]:
+                    - /url: /offseason/draft
+                    - img [ref=e38]
+                    - generic [ref=e44]: Draft Room
+            - listitem [ref=e45]:
+                - link "Roster" [ref=e46] [cursor=pointer]:
+                    - /url: /empire/front-office
+                    - img [ref=e48]
+                    - generic [ref=e53]: Roster
+            - listitem [ref=e54]:
+                - link "Depth Chart" [ref=e55] [cursor=pointer]:
+                    - /url: /empire/depth-chart
+                    - img [ref=e57]
+                    - generic [ref=e60]: Depth Chart
+            - listitem [ref=e61]:
+                - link "Trade Center" [ref=e62] [cursor=pointer]:
+                    - /url: /empire/trade-center
+                    - img [ref=e64]
+                    - generic [ref=e67]: Trade Center
+            - listitem [ref=e68]:
+                - link "Training" [ref=e69] [cursor=pointer]:
+                    - /url: /training
+                    - img [ref=e71]
+                    - generic [ref=e77]: Training
+            - listitem [ref=e78]:
+                - link "My Team" [ref=e79] [cursor=pointer]:
+                    - /url: /team-selection
+                    - img [ref=e81]
+                    - generic [ref=e83]: My Team
+            - listitem [ref=e84]:
+                - link "Settings" [ref=e85] [cursor=pointer]:
+                    - /url: /settings
+                    - img [ref=e87]
+                    - generic [ref=e90]: Settings
+        - generic [ref=e92]: System Online
+    - main [ref=e94]:
+        - generic [ref=e96]:
+            - generic [ref=e97]:
+                - generic [ref=e98]:
+                    - heading "Training Center" [level=1] [ref=e99]
+                    - paragraph [ref=e100]: "Week 4 Prep • OVR Team Energy: 88%"
+                - button "Execute Week" [ref=e101] [cursor=pointer]
+            - generic [ref=e102]:
+                - heading "Head Coach" [level=2] [ref=e103]: Head Coach
+                - generic [ref=e104]:
+                    - generic [ref=e105]: LEGEND
+                    - generic [ref=e106]:
+                        - heading "Andy Reid" [level=3] [ref=e107]
+                        - generic [ref=e108]: Head Coach
+                    - generic [ref=e109]:
+                        - generic [ref=e110]: Archetype
+                        - generic [ref=e111]: QB GURU
+                    - generic [ref=e112]:
+                        - generic [ref=e113]:
+                            - generic [ref=e114]: Experience
+                            - generic [ref=e115]: 26 Yrs
+                        - generic [ref=e116]:
+                            - generic [ref=e117]: Scheme
+                            - generic [ref=e118]: West Coast
+            - generic [ref=e119]:
+                - heading "Coaching Philosophy" [level=2] [ref=e120]: Coaching Philosophy
+                - generic [ref=e121]:
+                    - generic [ref=e122]:
+                        - generic [ref=e123]:
+                            - img [ref=e124]
+                            - heading "High Volume" [level=3] [ref=e130]
+                        - paragraph [ref=e131]: Max reps. High XP, High Fatigue.
+                    - generic [ref=e132]:
+                        - generic [ref=e133]:
+                            - img [ref=e134]
+                            - heading "High Intensity" [level=3] [ref=e139]
+                        - paragraph [ref=e140]: Game speed. Max XP, High Injury Risk.
+                    - generic [ref=e141]:
+                        - generic [ref=e142]:
+                            - img [ref=e143]
+                            - heading "Smart & Balanced" [level=3] [ref=e151]
+                        - paragraph [ref=e152]: Data-driven. Moderate gains, Low Risk.
+                    - generic [ref=e153]:
+                        - generic [ref=e154]:
+                            - img [ref=e155]
+                            - heading "Old School" [level=3] [ref=e159]
+                        - paragraph [ref=e160]: Grit & tough love. Boosts physicals, lowers morale.
+            - generic [ref=e161]:
+                - heading "Drill Catalog" [level=2] [ref=e162]: Drill Catalog
+                - generic [ref=e163]:
+                    - generic [ref=e164]:
+                        - generic [ref=e165]:
+                            - heading "7-on-7 Skeleton" [level=3] [ref=e166]
+                            - text: QB
+                        - paragraph [ref=e167]: Passing focus without pass rush pressure.
+                        - generic [ref=e168]:
+                            - generic [ref=e169]:
+                                - img [ref=e170]
+                                - text: accuracy, read_recognition
+                            - generic [ref=e173]:
+                                - img [ref=e174]
+                                - generic [ref=e176]: XP x1.2
+                            - generic [ref=e177]:
+                                - img [ref=e178]
+                                - generic [ref=e180]: "Cost: 15"
+                            - generic [ref=e181]:
+                                - img [ref=e182]
+                                - generic [ref=e184]: LOW Risk
+                    - generic [ref=e185]:
+                        - generic [ref=e186]:
+                            - heading "Pass Protection Slides" [level=3] [ref=e187]
+                            - text: OL
+                        - paragraph [ref=e188]: Footwork drills for pass blocking.
+                        - generic [ref=e189]:
+                            - generic [ref=e190]:
+                                - img [ref=e191]
+                                - text: pass_block, agility
+                            - generic [ref=e194]:
+                                - img [ref=e195]
+                                - generic [ref=e197]: XP x1
+                            - generic [ref=e198]:
+                                - img [ref=e199]
+                                - generic [ref=e201]: "Cost: 10"
+                            - generic [ref=e202]:
+                                - img [ref=e203]
+                                - generic [ref=e205]: LOW Risk
+                    - generic [ref=e206]:
+                        - generic [ref=e207]:
+                            - heading "Oklahoma Drill" [level=3] [ref=e208]
+                            - text: TEAM
+                        - paragraph [ref=e209]: Full contact blocking and tackling drill.
+                        - generic [ref=e210]:
+                            - generic [ref=e211]:
+                                - img [ref=e212]
+                                - text: strength, tackling, break_tackle
+                            - generic [ref=e215]:
+                                - img [ref=e216]
+                                - generic [ref=e218]: XP x1.5
+                            - generic [ref=e219]:
+                                - img [ref=e220]
+                                - generic [ref=e222]: "Cost: 30"
+                            - generic [ref=e223]:
+                                - img [ref=e224]
+                                - generic [ref=e226]: HIGH Risk
+    - button "Mission Control" [ref=e228] [cursor=pointer]: ⚡
 ```

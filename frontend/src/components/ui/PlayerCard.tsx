@@ -2,6 +2,8 @@ import clsx from "clsx";
 import { User, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { PlayerBackstoryModal } from "../player/PlayerBackstoryModal";
+import { ArchetypeBadge } from "../player/ArchetypeBadge";
+import { PlayerArchetype } from "../../types/archetypes";
 import "./PlayerCard.css";
 
 interface PlayerCardProps {
@@ -11,6 +13,7 @@ interface PlayerCardProps {
   team: string;
   className?: string;
   traits?: string[];
+  archetype?: PlayerArchetype | string;
 }
 
 export const PlayerCard = ({
@@ -21,7 +24,7 @@ export const PlayerCard = ({
   className,
   onClick,
   testId,
-  traits,
+  archetype,
 }: PlayerCardProps & { onClick?: () => void; testId?: string }) => {
   const [showBackstory, setShowBackstory] = useState(false);
 
@@ -36,10 +39,10 @@ export const PlayerCard = ({
           className
         )}
       >
-        {/* Traits Badges */}
-        {traits && traits.includes("Field General") && (
-          <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-yellow-500 to-amber-600 text-black px-2 py-0.5 rounded-sm text-[10px] font-bold border border-yellow-300 shadow-lg flex items-center gap-1">
-            <span>★</span> GEN
+        {/* Archetype Badge */}
+        {archetype && (
+          <div className="absolute top-2 left-2 z-30">
+            <ArchetypeBadge archetype={archetype} size="sm" showTooltip={true} />
           </div>
         )}
 

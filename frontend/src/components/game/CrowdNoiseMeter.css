@@ -1,0 +1,6 @@
+/* CrowdNoiseMeter.css */
+
+.meter-fill-bar {
+  width: var(--fill-width, 0%);
+  transition: width 0.7s ease-out;
+}

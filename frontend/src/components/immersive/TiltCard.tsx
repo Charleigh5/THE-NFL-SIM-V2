@@ -21,8 +21,7 @@ export function TiltCard({
   "data-testid": testId,
 }: TiltCardProps) {
   const isAutomated =
-    typeof navigator !== "undefined" &&
-    (navigator as unknown as { webdriver?: boolean }).webdriver;
+    typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
   const reduceMotion = useReducedMotion() || isAutomated;
 
   const rotateX = useMotionValue(0);

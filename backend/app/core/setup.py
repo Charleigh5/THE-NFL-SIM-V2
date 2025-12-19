@@ -69,7 +69,7 @@ def configure_routes(app: FastAPI) -> None:
         system, simulation, data, websocket, teams, players, season,
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api
+        playbook, physics_api, training
     )
 
     # Core system routes
@@ -106,6 +106,7 @@ def configure_routes(app: FastAPI) -> None:
     # Medical and gameplans
     app.include_router(medical.router)
     app.include_router(gameplans.router)
+    app.include_router(training.router, prefix="/api/training", tags=["training"])
 
     # Playbook and familiarity (Phase 3)
     app.include_router(playbook.router, prefix="/api", tags=["playbook"])

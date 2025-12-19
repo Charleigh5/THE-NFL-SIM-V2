@@ -12,6 +12,7 @@ import { WeatherWidget } from "../components/game/WeatherWidget";
 import { GameStats } from "../components/game/GameStats";
 import { CoachingWidget } from "../components/game/CoachingWidget";
 import { MomentumIndicator } from "../components/game/MomentumIndicator";
+import { CrowdNoiseMeter } from "../components/game/CrowdNoiseMeter";
 import { Play, Pause, FastForward, Activity, BarChart2 } from "lucide-react";
 
 type ViewMode = "field" | "stats";
@@ -192,6 +193,15 @@ export const LiveSim = () => {
                 {/* Coaching Overlay */}
                 <div className="absolute top-4 left-4 z-10 transition-opacity hover:opacity-100 opacity-80">
                   <CoachingWidget teamId={1} />
+                </div>
+
+                {/* Crowd Noise Overlay (New) */}
+                <div className="absolute top-24 right-4 z-10 transition-opacity hover:opacity-100 opacity-90 scale-90 origin-top-right">
+                  <CrowdNoiseMeter
+                    decibels={92 + gameState.homeMomentum * 2} // Mock dynamic noise based on momentum
+                    stadiumName="Lambeau Field"
+                    isAwayTeamOnOffense={true} // Mock: assume away team is on offense for demo
+                  />
                 </div>
 
                 {/* Simulation Controls Overlay */}

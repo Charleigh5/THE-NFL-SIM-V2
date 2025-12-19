@@ -22,6 +22,15 @@ POSITION_CURVES: Dict[str, Tuple[int, int, float]] = {
     "DEFAULT": (25, 29, 0.04)
 }
 
+# Age-based LEARNING rate modifiers (how fast players improve)
+# Different from performance curves - this is about skill acquisition
+AGE_DEVELOPMENT_MODIFIERS: Dict[Tuple[int, int], float] = {
+    (21, 24): 1.2,   # Peak learning years - young brain, high neural plasticity
+    (25, 27): 1.0,   # Steady state - established patterns
+    (28, 30): 0.8,   # Slower gains - harder to learn new skills
+    (31, 99): 0.5,   # Veteran maintenance - mostly pattern recognition
+}
+
 def get_age_modifier(age: int, position: str) -> float:
     """
     Calculate the age-based performance modifier (0.0 - 1.0).
@@ -47,6 +56,39 @@ def get_age_modifier(age: int, position: str) -> float:
         # Floor value to prevent elite vets from becoming useless too fast
         # Minimum physical floor is 70% of peak
         return max(0.70, 1.0 - decline)
+
+
+def get_development_rate_modifier(age: int, development_trait: str = "NORMAL") -> float:
+    """
+    Calculate XP/skill learning rate modifier based on age.
+
+    Young players (21-24) learn faster, veterans (31+) struggle to develop new skills.
+    This affects how quickly training drills improve player ratings.
+
+    Args:
+        age: Player's current age
+        development_trait: Player's development trait (NORMAL, STAR, SUPERSTAR, XFACTOR)
+
+    Returns:
+        Multiplier for XP gains (0.5 - 1.5)
+    """
+    # Find the age bracket
+    base_modifier = 1.0
+    for (min_age, max_age), modifier in AGE_DEVELOPMENT_MODIFIERS.items():
+        if min_age <= age <= max_age:
+            base_modifier = modifier
+            break
+
+    # Development trait bonus stacks with age
+    trait_bonus = {
+        "NORMAL": 1.0,
+        "STAR": 1.25,
+        "SUPERSTAR": 1.5,
+        "XFACTOR": 2.0,
+    }.get(development_trait, 1.0)
+
+    return base_modifier * trait_bonus
+
 
 def get_experience_bonus(years_experience: int, position: str) -> float:
     """
@@ -83,3 +125,4 @@ def get_physical_regression(age: int, position: str) -> float:
     else:
         # Slower regression for linemen/QBs
         return max(0.85, 1.0 - (years_over * 0.008))
+

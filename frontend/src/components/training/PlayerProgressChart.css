@@ -1,0 +1,42 @@
+.player-progress-chart {
+  @apply w-full p-6 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-white/5;
+}
+
+/* Stat bar hover effect */
+.stat-bar-container:hover .absolute {
+  filter: brightness(1.1);
+}
+
+/* Previous value ghost bar - uses CSS variables from component */
+.previous-bar {
+  width: var(--prev-width, 0%);
+  background-color: var(--prev-color, #64748b);
+}
+
+/* Weekly XP section styling */
+.weekly-xp-section svg {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.2));
+}
+
+/* Data point hover */
+.weekly-xp-section circle:hover {
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .player-progress-chart {
+    @apply p-4;
+  }
+
+  .player-progress-chart h3 {
+    @apply text-lg;
+  }
+}
+
+/* Glow bar effect - uses CSS variables from component */
+.glow-bar {
+  width: var(--glow-width, 0%);
+  background: var(--glow-bg, transparent);
+}
