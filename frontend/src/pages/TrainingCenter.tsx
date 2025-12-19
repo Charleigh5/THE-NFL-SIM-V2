@@ -6,8 +6,7 @@ import { DrillCard3D } from "../components/training/DrillCard3D";
 import { CoachingStyleDial } from "../components/training/CoachingStyleDial";
 import { WeeklyScheduleTimeline } from "../components/training/WeeklyScheduleTimeline";
 import { trainingApi } from "../services/trainingApi";
-import type { Drill, CoachingStyle } from "../types/training";
-import { SeasonPhase } from "../types/training";
+import { Drill, CoachingStyle, SeasonPhase } from "../types/training";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 

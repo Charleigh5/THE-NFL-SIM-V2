@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import type { Graphics as PixiGraphics } from "pixi.js";
 // We assume 'extend' was called in the parent or app root.
 // If needed, we can call it here too, but duplicate calls might be safe or warned.
 // To be safe, we won't call it here but assume <pixiGraphics> handles it.
@@ -13,7 +12,7 @@ interface PlayerSpriteProps {
 
 export const PlayerSprite: React.FC<PlayerSpriteProps> = ({ x, y, color, isOffense }) => {
   const draw = useCallback(
-    (g: PixiGraphics) => {
+    (g: any) => {
       g.clear();
 
       // Shadow
@@ -42,6 +41,6 @@ export const PlayerSprite: React.FC<PlayerSpriteProps> = ({ x, y, color, isOffen
     [color, isOffense]
   );
 
-  // @ts-expect-error - Dynamic JSX type for Pixi v8
+  // @ts-ignore
   return <pixiGraphics draw={draw} x={x} y={y} />;
 };
