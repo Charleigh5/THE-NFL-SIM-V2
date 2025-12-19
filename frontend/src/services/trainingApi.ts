@@ -1,12 +1,11 @@
-import {
+import type {
   Drill,
-  DrillCategory,
-  SeasonPhase,
   TrainingResult,
   WeeklySchedule,
   CoachingStyle,
   DrillListResponse,
 } from "../types/training";
+import { DrillCategory, SeasonPhase } from "../types/training";
 import axios from "axios";
 
 // Base API URL

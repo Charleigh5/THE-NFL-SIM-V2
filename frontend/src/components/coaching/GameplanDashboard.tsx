@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Scroll, Shield, Swords, Target } from "lucide-react";
+import { Scroll, Shield, Swords, Target, AlertTriangle } from "lucide-react";
+import { FamiliarityBar } from "../playbook/FamiliarityBar";
 
 export const GameplanDashboard: React.FC = () => {
   const [offFocus, setOffFocus] = useState("BALANCED");
@@ -42,21 +43,38 @@ export const GameplanDashboard: React.FC = () => {
           <Swords className="text-cyan-400" />
           <h4 className="font-bold text-lg text-white">Offensive Install</h4>
         </div>
-        {strategies.offense.map((strat) => (
-          <motion.div
-            key={strat.id}
-            onClick={() => setOffFocus(strat.id)}
-            className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-              offFocus === strat.id
-                ? "bg-cyan-900/40 border-cyan-400"
-                : "bg-black/20 border-white/5 hover:border-white/20"
-            }`}
-            whileHover={{ x: 5 }}
-          >
-            <div className="font-bold text-white">{strat.name}</div>
-            <div className="text-xs text-gray-400">{strat.desc}</div>
-          </motion.div>
-        ))}
+        {strategies.offense.map((strat) => {
+          // Mock familiarity depending on strategy for demo
+          // In real app, this would come from backend B-048
+          const familiarityScore =
+            strat.id === "BALANCED" ? 0.95 : strat.id === "AIR_RAID" ? 0.35 : 0.65;
+
+          return (
+            <motion.div
+              key={strat.id}
+              onClick={() => setOffFocus(strat.id)}
+              className={`p-4 rounded-lg border cursor-pointer transition-colors relative overflow-hidden ${
+                offFocus === strat.id
+                  ? "bg-cyan-900/40 border-cyan-400"
+                  : "bg-black/20 border-white/5 hover:border-white/20"
+              }`}
+              whileHover={{ x: 5 }}
+            >
+              <div className="font-bold text-white flex justify-between">{strat.name}</div>
+              <div className="text-xs text-gray-400 mb-2">{strat.desc}</div>
+
+              <FamiliarityBar score={familiarityScore} showLabel={true} />
+
+              {/* Warning for low familiarity */}
+              {offFocus === strat.id && familiarityScore < 0.5 && (
+                <div className="mt-2 text-[10px] text-red-300 bg-red-500/10 border border-red-500/30 p-1.5 rounded flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>Critical unfamiliarity penalty active.</span>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Defensive Strategy */}
@@ -65,21 +83,38 @@ export const GameplanDashboard: React.FC = () => {
           <Shield className="text-red-400" />
           <h4 className="font-bold text-lg text-white">Defensive Install</h4>
         </div>
-        {strategies.defense.map((strat) => (
-          <motion.div
-            key={strat.id}
-            onClick={() => setDefFocus(strat.id)}
-            className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-              defFocus === strat.id
-                ? "bg-red-900/40 border-red-400"
-                : "bg-black/20 border-white/5 hover:border-white/20"
-            }`}
-            whileHover={{ x: 5 }}
-          >
-            <div className="font-bold text-white">{strat.name}</div>
-            <div className="text-xs text-gray-400">{strat.desc}</div>
-          </motion.div>
-        ))}
+        {strategies.defense.map((strat) => {
+          // Mock familiarity depending on strategy for demo
+          // In real app, this would come from backend B-048
+          const familiarityScore =
+            strat.id === "BASE_43" ? 0.95 : strat.id === "COVER_2" ? 0.45 : 0.75;
+
+          return (
+            <motion.div
+              key={strat.id}
+              onClick={() => setDefFocus(strat.id)}
+              className={`p-4 rounded-lg border cursor-pointer transition-colors relative overflow-hidden ${
+                defFocus === strat.id
+                  ? "bg-red-900/40 border-red-400"
+                  : "bg-black/20 border-white/5 hover:border-white/20"
+              }`}
+              whileHover={{ x: 5 }}
+            >
+              <div className="font-bold text-white flex justify-between">{strat.name}</div>
+              <div className="text-xs text-gray-400 mb-2">{strat.desc}</div>
+
+              <FamiliarityBar score={familiarityScore} showLabel={true} />
+
+              {/* Warning for low familiarity */}
+              {defFocus === strat.id && familiarityScore < 0.5 && (
+                <div className="mt-2 text-[10px] text-red-300 bg-red-500/10 border border-red-500/30 p-1.5 rounded flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
+                  <AlertTriangle className="w-3 h-3" />
+                  <span>Inefficient! -25% Execution until learned.</span>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Summary / Bonus */}

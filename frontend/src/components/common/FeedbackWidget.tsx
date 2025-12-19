@@ -124,14 +124,15 @@ const FeedbackWidget = ({ currentPage = "Unknown" }: FeedbackWidgetProps) => {
     setLastBatchResult(null);
 
     try {
-      const response = await axios.post("/api/feedback/batch", { annotations });
+      // Use the new export endpoint to save to docs/updates_and_enhancements
+      const response = await axios.post("/api/feedback/export", { annotations });
       const result: BatchSubmitResult = response.data;
       setLastBatchResult(result);
       clearAll();
       // Don't close panel - show success with "Generate Plan" option
     } catch (error) {
-      console.error("Batch submit failed:", error);
-      alert("❌ Failed to submit batch. Check console for details.");
+      console.error("Export failed:", error);
+      alert("❌ Failed to export tasks. Check console for details.");
     } finally {
       setIsSubmitting(false);
     }
@@ -235,7 +236,7 @@ const FeedbackWidget = ({ currentPage = "Unknown" }: FeedbackWidgetProps) => {
             {lastBatchResult && (
               <div className="success-panel">
                 <div className="success-icon">✅</div>
-                <h4>Batch Submitted!</h4>
+                <h4>Tasks Exported!</h4>
                 <p className="success-details">{lastBatchResult.issues_logged} issues logged</p>
                 <div className="success-actions">
                   <button
@@ -299,8 +300,8 @@ const FeedbackWidget = ({ currentPage = "Unknown" }: FeedbackWidgetProps) => {
                       disabled={isSubmitting}
                     >
                       {isSubmitting
-                        ? "Generating Artifact..."
-                        : `Submit Batch (${annotations.length})`}
+                        ? "Exporting..."
+                        : `Export Updates to Docs (${annotations.length})`}
                     </button>
                     <button className="clear-link" onClick={clearAll}>
                       Clear List

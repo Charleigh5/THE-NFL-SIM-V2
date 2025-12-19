@@ -1,0 +1,7 @@
+.drill-card-3d-reflection {
+  transform: translateZ(20px);
+}
+
+.drill-card-3d-content {
+  transform: translateZ(50px);
+}

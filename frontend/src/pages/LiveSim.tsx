@@ -1,22 +1,26 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSimulationStore } from "../store/useSimulationStore";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { simulationService } from "../services/simulation";
 import { ScoreBoard } from "../components/ScoreBoard";
 import { GameClock } from "../components/GameClock";
-import { FieldView } from "../components/FieldView";
+import { FieldCanvas } from "../components/game/FieldCanvas";
+import type { FieldCanvasRef } from "../components/game/FieldCanvas";
 import { PlayByPlayFeed } from "../components/PlayByPlayFeed";
+import { PhysicsDebugOverlay } from "../components/debug/PhysicsDebugOverlay";
 import { WeatherWidget } from "../components/game/WeatherWidget";
 import { GameStats } from "../components/game/GameStats";
 import { CoachingWidget } from "../components/game/CoachingWidget";
+import { MomentumIndicator } from "../components/game/MomentumIndicator";
 import { Play, Pause, FastForward, Activity, BarChart2 } from "lucide-react";
 
 type ViewMode = "field" | "stats";
 
 export const LiveSim = () => {
-  const { isLive, setLiveStatus, engineData } = useSimulationStore();
+  const { isLive, setLiveStatus, engineData, gameState } = useSimulationStore();
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("field");
+  const canvasRef = useRef<FieldCanvasRef>(null);
 
   // Connect to WebSocket
   // Assuming the WebSocket URL is relative to the current host or configured in env
@@ -55,6 +59,39 @@ export const LiveSim = () => {
       console.error("Failed to stop simulation:", error);
     }
   };
+
+  // Mock Trajectory for F-032 Verification
+  const [mockTrajectory] = useState(generateMockPlay());
+
+  function generateMockPlay() {
+    // Create a 2 second play with 60Hz frames
+    const frames = [];
+    for (let i = 0; i < 120; i++) {
+      frames.push({
+        frame_id: i,
+        timestamp: i / 60,
+        ball: { position: { x: 20 + i * 0.1, y: 26 }, height: 0, rotation: 0 },
+        events: [],
+        players: [
+          {
+            player_id: 1,
+            position: { x: 20 + i * 0.05, y: 26 },
+            velocity: { x: 0, y: 0 },
+            orientation: 0,
+            state: "RUN" as const,
+          },
+          {
+            player_id: 12,
+            position: { x: 25 - i * 0.02, y: 26 },
+            velocity: { x: 0, y: 0 },
+            orientation: 3.14,
+            state: "IDLE" as const,
+          },
+        ],
+      });
+    }
+    return { play_id: "test", frames, duration: 2.0 };
+  }
 
   // Weather extraction with safety checks
   const weather = {
@@ -96,8 +133,14 @@ export const LiveSim = () => {
         <GameClock />
       </header>
 
-      {/* Scoreboard */}
-      <ScoreBoard />
+      {/* Scoreboard & Momentum */}
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center px-4">
+          <MomentumIndicator label="Home Momentum" state={gameState.homeMomentum} align="left" />
+          <MomentumIndicator label="Away Momentum" state={gameState.awayMomentum} align="right" />
+        </div>
+        <ScoreBoard />
+      </div>
 
       {/* Main Game Area */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-0">
@@ -132,7 +175,14 @@ export const LiveSim = () => {
           <div className="flex-1 glass-panel rounded-xl border border-white/5 relative overflow-hidden p-1">
             {viewMode === "field" ? (
               <>
-                <FieldView />
+                <PhysicsDebugOverlay play={mockTrajectory} canvasRef={canvasRef} />
+                <FieldCanvas
+                  ref={canvasRef}
+                  isPlaying={isLive}
+                  currentPlay={mockTrajectory}
+                  playbackSpeed={1.0}
+                  onPlayComplete={() => console.log("Play complete")}
+                />
 
                 {/* Weather Overlay */}
                 <div className="absolute top-4 right-4 z-10 transition-opacity hover:opacity-100 opacity-80">

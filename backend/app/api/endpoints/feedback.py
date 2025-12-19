@@ -11,7 +11,8 @@ from app.schemas.feedback import (
 from app.services.issue_logger import IssueLoggerService, IssueEntry
 from app.services.ai_research_service import ai_research_service
 from app.services.artifact_generator import (
-    artifact_generator, AnnotationData, AnnotationElement, AIResearchData
+    artifact_generator, AnnotationData, AnnotationElement, AIResearchData,
+    ArtifactGeneratorService
 )
 import logging
 
@@ -148,4 +149,65 @@ async def submit_batch(request: BatchSubmitRequest):
         logger.error(f"Batch submit failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Batch submission failed: {str(e)}")
 
+@router.post("/export", response_model=BatchSubmitResponse)
+async def export_updates(request: BatchSubmitRequest):
+    """
+    Export annotations to a markdown file in docs/updates_and_enhancements.
+    """
+    logger.info(f"Received export request with {len(request.annotations)} annotations")
 
+    try:
+        # Convert to internal format (reusing logic)
+        annotations = []
+        for ann in request.annotations:
+            element = AnnotationElement(
+                selector=ann.element.selector,
+                tagName=ann.element.tagName,
+                textContent=ann.element.textContent or "",
+                className=ann.element.className
+            )
+
+            ai_research = None
+            if ann.aiResearch:
+                ai_research = AIResearchData(
+                    summary=ann.aiResearch.summary,
+                    codeExamples=ann.aiResearch.codeExamples,
+                    complexity=ann.aiResearch.complexity,
+                    sources=ann.aiResearch.sources
+                )
+
+            annotations.append(AnnotationData(
+                id=ann.id,
+                timestamp=ann.timestamp,
+                note=ann.note,
+                element=element,
+                aiResearch=ai_research
+            ))
+
+        # Use absolute path to docs/updates_and_enhancements
+        from pathlib import Path
+        import os
+
+        # Get project root (assuming we are in app/api/endpoints)
+        # ../../../..
+        project_root = Path(os.getcwd()) # Should be backend or project root. Assuming execution context.
+        # Ensure we find the right docs folder.
+        # If running from backend dir, docs is ../docs possibly?
+        # Let's rely on absolute path construction relative to known anchor if possible.
+        # Safer: Use absolute path c:\Users\cweir\Documents\GitHub\THE NFL SIM\docs\updates_and_enhancements
+        # But for portability, let's try to resolve it.
+
+        output_dir = Path("c:/Users/cweir/Documents/GitHub/THE NFL SIM/docs/updates_and_enhancements")
+
+        # Initialize generator with specific output dir
+        custom_generator = ArtifactGeneratorService(output_dir=output_dir)
+        artifact_path = await custom_generator.generate_artifact_async(annotations)
+
+        return BatchSubmitResponse(
+            success=True,
+            artifact_path=str(artifact_path),
+            issues_logged=len(request.annotations)
+        )
+    except Exception as e:
+        logger.error(f"Export failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")

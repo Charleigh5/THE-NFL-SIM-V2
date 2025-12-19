@@ -2,6 +2,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Drill } from "../../types/training";
 import { Activity, Zap, HeartPulse, Brain } from "lucide-react";
 import React from "react";
+import "./DrillCard3D.css";
 
 interface DrillCard3DProps {
   drill: Drill;
@@ -76,15 +77,9 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({ drill, isSelected, onS
       `}
     >
       {/* Glossy Reflection Gradient */}
-      <div
-        className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/5 to-transparent pointer-events-none"
-        style={{ transform: "translateZ(20px)" }}
-      />
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/5 to-transparent pointer-events-none drill-card-3d-reflection" />
 
-      <div
-        className="p-6 flex flex-col h-full items-center text-center space-y-4"
-        style={{ transform: "translateZ(50px)" }}
-      >
+      <div className="p-6 flex flex-col h-full items-center text-center space-y-4 drill-card-3d-content">
         {/* Floating Icon */}
         <div className="p-4 rounded-full bg-white/5 shadow-inner backdrop-blur-sm">{getIcon()}</div>
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Application, extend } from "@pixi/react";
 import type { Graphics as PixiGraphics } from "pixi.js";
 import { Container, Graphics, Text } from "pixi.js";
+import "./GameCanvas.css";
 
 // Register components
 extend({ Container, Graphics, Text });
@@ -61,24 +62,13 @@ const FieldGraphics = () => {
     }
   };
 
-  // @ts-expect-error - Dynamic JSX type for Pixi v8
   return <pixiGraphics draw={drawField} />;
 };
 
 export const GameCanvas: React.FC<GameCanvasProps> = ({ width = 1200, height = 533, children }) => {
   return (
-    <div
-      style={{
-        width: "100%",
-        overflow: "hidden",
-        border: "4px solid #444",
-        borderRadius: "8px",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <div className="game-canvas-wrapper">
       <Application width={width} height={height} backgroundColor={0x1a1a1a}>
-        {/* @ts-expect-error - Dynamic JSX type for Pixi v8 */}
         <pixiContainer x={0} y={0}>
           <FieldGraphics />
           {children}

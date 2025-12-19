@@ -1,76 +1,74 @@
+import { Flame, Snowflake, Minus, ChevronUp } from "lucide-react";
 import { MomentumState } from "../../types/momentum";
-import { Flame, Snowflake, Minus } from "lucide-react";
 
 interface MomentumIndicatorProps {
+  label: string;
   state: MomentumState;
-  size?: "sm" | "md";
+  align?: "left" | "right";
 }
 
-export const MomentumIndicator = ({ state, size = "md" }: MomentumIndicatorProps) => {
-  const getStyle = () => {
-    switch (state) {
-      case MomentumState.ICE_COLD:
+export const MomentumIndicator = ({ label, state, align = "left" }: MomentumIndicatorProps) => {
+  const getConfig = (s: MomentumState) => {
+    switch (s) {
+      case MomentumState.ON_FIRE:
         return {
-          icon: Snowflake,
-          color: "text-blue-400",
-          bg: "bg-blue-400/10",
-          border: "border-blue-400/20",
-          label: "Ice Cold",
-          animate: "animate-pulse",
-        };
-      case MomentumState.COLD:
-        return {
-          icon: Snowflake,
-          color: "text-cyan-300",
-          bg: "bg-cyan-300/5",
-          border: "border-cyan-300/10",
-          label: "Cold",
-          animate: "",
+          color: "text-amber-400",
+          bg: "bg-amber-500/20",
+          border: "border-amber-500/50",
+          icon: <Flame className="w-4 h-4 animate-pulse" fill="currentColor" />,
+          text: "ON FIRE",
+          shadow: "shadow-[0_0_15px_rgba(251,191,36,0.5)]",
         };
       case MomentumState.HEATING_UP:
         return {
-          icon: Flame,
           color: "text-orange-400",
-          bg: "bg-orange-400/10",
-          border: "border-orange-400/20",
-          label: "Heating Up",
-          animate: "animate-pulse",
+          bg: "bg-orange-500/20",
+          border: "border-orange-500/50",
+          icon: <ChevronUp className="w-4 h-4" />,
+          text: "HEATING UP",
+          shadow: "shadow-[0_0_10px_rgba(251,146,60,0.3)]",
         };
-      case MomentumState.ON_FIRE:
+      case MomentumState.COLD:
         return {
-          icon: Flame,
-          color: "text-amber-400",
-          bg: "bg-amber-400/10",
-          border: "border-amber-400/20",
-          label: "On Fire",
-          animate: "animate-bounce", // Subtle bounce or aggressive pulse
+          color: "text-blue-400",
+          bg: "bg-blue-500/20",
+          border: "border-blue-500/50",
+          icon: <Snowflake className="w-4 h-4" />,
+          text: "COLD",
+          shadow: "",
+        };
+      case MomentumState.ICE_COLD:
+        return {
+          color: "text-cyan-300",
+          bg: "bg-cyan-500/20",
+          border: "border-cyan-500/50",
+          icon: <Snowflake className="w-4 h-4 animate-spin-slow" />,
+          text: "ICE COLD",
+          shadow: "shadow-[0_0_10px_rgba(34,211,238,0.3)]",
         };
       default:
         return {
-          icon: Minus,
-          color: "text-gray-500",
-          bg: "bg-gray-500/5",
-          border: "border-gray-500/10",
-          label: "Neutral",
-          animate: "",
+          color: "text-gray-400",
+          bg: "bg-white/5",
+          border: "border-white/10",
+          icon: <Minus className="w-4 h-4" />,
+          text: "NEUTRAL",
+          shadow: "",
         };
     }
   };
 
-  const style = getStyle();
-  const Icon = style.icon;
+  const config = getConfig(state);
 
   return (
-    <div
-      className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border ${style.bg} ${style.border}`}
-      title={`Momentum: ${style.label}`}
-    >
-      <Icon className={`w-3 h-3 ${style.color} ${style.animate}`} />
-      {size === "md" && (
-        <span className={`text-[10px] uppercase tracking-wider font-bold ${style.color}`}>
-          {style.label}
-        </span>
-      )}
+    <div className={`flex flex-col gap-1 ${align === "right" ? "items-end" : "items-start"}`}>
+      <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{label}</span>
+      <div
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-500 ${config.bg} ${config.border} ${config.shadow}`}
+      >
+        <div className={`${config.color}`}>{config.icon}</div>
+        <span className={`text-xs font-bold tracking-wide ${config.color}`}>{config.text}</span>
+      </div>
     </div>
   );
 };

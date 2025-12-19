@@ -15,6 +15,7 @@ from app.services.weather_service import WeatherService
 from app.engine.trait_effects import TraitEffectResolver
 from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
 from app.services.use_based_progression import UseBasedProgression, ActionType
+from app.services.playbook.familiarity import FamiliarityManager
 from typing import Optional, Any, List, Tuple, Dict
 import logging
 
@@ -32,6 +33,8 @@ class PlayResolver:
         self.interaction_engine = AttributeInteractionEngine(rng=rng)
         # B-006: Momentum engine reference (set by orchestrator)
         self.momentum_engine = None
+        # B-055: Playbook Familiarity (Phase 3)
+        self.familiarity_manager = FamiliarityManager()
 
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
@@ -174,6 +177,52 @@ class PlayResolver:
             humidity=config.get("humidity", 0.0)
         )
         return WeatherEffects(weather)
+
+    # ==========================================================================
+    # B-055/B-056/B-057: PLAYBOOK FAMILIARITY INTEGRATION
+    # ==========================================================================
+
+    def _get_familiarity_penalty(self, player: Any, play_id: str) -> float:
+        """
+        B-056: Get execution penalty based on player's familiarity with the play.
+
+        Returns a multiplier (0.7 to 1.0) to apply to player ratings.
+        """
+        if not player or not play_id:
+            return 1.0
+
+        experience = getattr(player, "years_pro", 0)
+        familiarity = self.familiarity_manager.get_or_create(player.id, experience)
+        return familiarity.calculate_execution_penalty(play_id)
+
+    def _apply_familiarity_learning(
+        self,
+        players: List[Any],
+        play_id: str,
+        success: bool
+    ) -> None:
+        """
+        B-057: Increment learning for all players after play execution.
+
+        Called at the end of each play to update familiarity.
+        """
+        if not play_id or not players:
+            return
+
+        for player in players:
+            if player is None:
+                continue
+            experience = getattr(player, "years_pro", 0)
+            familiarity = self.familiarity_manager.get_or_create(player.id, experience)
+            old_fam = familiarity.get_familiarity(play_id)
+            new_fam = familiarity.learn_play(play_id, success=success)
+
+            if new_fam > old_fam + 0.01:  # Only log significant changes
+                logger.debug(
+                    f"Player {player.id} learned {play_id}: "
+                    f"{old_fam:.2f} -> {new_fam:.2f}"
+                )
+
 
 
     def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Dict[str, float] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
@@ -530,14 +579,32 @@ class PlayResolver:
         elif command.depth == "deep":
              throw_accuracy = getattr(qb, "throw_accuracy_deep", None) or 50
 
+        # B-056: Apply Playbook Familiarity Penalty
+        # Get play_id from command (fallback to "GENERIC_PASS" if not set)
+        play_id = getattr(command, "play_id", None) or "GENERIC_PASS"
+
+        qb_familiarity_modifier = self._get_familiarity_penalty(qb, play_id)
+        wr_familiarity_modifier = self._get_familiarity_penalty(target, play_id)
+
+        # Apply penalty to throw accuracy (0.7-1.0 multiplier)
+        throw_accuracy = int(throw_accuracy * qb_familiarity_modifier)
+
+        logger.debug(
+            f"Familiarity: QB={qb_familiarity_modifier:.2f}, WR={wr_familiarity_modifier:.2f} "
+            f"for play {play_id}"
+        )
+
         # B. Receiver vs Defender (Speed & Route Running)
+        # Apply WR familiarity to route running effectiveness
+        effective_route_running = (getattr(target, "route_running", None) or 50) * wr_familiarity_modifier
+
         speed_diff = ProbabilityEngine.compare_speed(
             getattr(target, "speed", None) or 50,
             getattr(defender, "speed", None) or 50
         )
 
         matchup_factor = ProbabilityEngine.compare_skill(
-            getattr(target, "route_running", None) or 50,
+            effective_route_running,
             getattr(defender, "man_coverage", None) or 50
         )
 
@@ -774,6 +841,13 @@ class PlayResolver:
                 # Add the most impactful interaction narrative
                 base_desc += f" {interaction_narratives[0]}"
 
+            # B-057: Apply familiarity learning for successful play
+            self._apply_familiarity_learning(
+                [p for p in [qb, target] if p is not None],
+                play_id,
+                success=True
+            )
+
             return PlayResult(
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,
@@ -846,6 +920,13 @@ class PlayResolver:
                     "player_id": target.id
                 })
 
+            # B-057: Apply familiarity learning for failed play (still learn, slower)
+            self._apply_familiarity_learning(
+                [p for p in [qb, target] if p is not None],
+                play_id,
+                success=False
+            )
+
             return PlayResult(
                 yards_gained=0,
                 description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
@@ -903,9 +984,21 @@ class PlayResolver:
 
         logger.debug(f"Run interaction yards bonus: {interaction_yards_bonus:.2f}")
 
+        # B-056: Apply Playbook Familiarity Penalty for run plays
+        play_id = getattr(command, "play_id", None) or "GENERIC_RUN"
+        rb_familiarity_modifier = self._get_familiarity_penalty(rb, play_id)
+
+        # Apply familiarity to vision (affects hole recognition)
+        effective_vision = (getattr(rb, "carrying_vision", None) or 50) * rb_familiarity_modifier
+
+        logger.debug(f"Run Familiarity: RB={rb_familiarity_modifier:.2f} for play {play_id}")
+
         # Power Run (Strength vs Tackle)
+        # Apply familiarity to strength effectiveness
+        effective_strength = (getattr(rb, "strength", None) or 50) * rb_familiarity_modifier
+
         power_diff = ProbabilityEngine.compare_strength(
-            getattr(rb, "strength", None) or 50,
+            effective_strength,
             getattr(defender, "tackle", None) or 50
         )
 
@@ -1089,6 +1182,11 @@ class PlayResolver:
             UseBasedProgression.check_and_apply_levelups(rb)
 
             logger.debug(f"Awarded run play XP: RB={rb.id}, yards={yards_gained}")
+
+        # B-057: Apply familiarity learning for run plays
+        # Success determined by yards gained (positive = success)
+        run_success = yards_gained > 0 and not is_turnover
+        self._apply_familiarity_learning([rb], play_id, success=run_success)
 
         return PlayResult(
             yards_gained=yards_gained,

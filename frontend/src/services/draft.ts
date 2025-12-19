@@ -63,4 +63,10 @@ export const draftService = {
     const response = await api.post<DraftSuggestionResponse>("/draft/suggest-pick", request);
     return response.data;
   },
+
+  revealGenesisData: async (playerId: string | number, position: string): Promise<any> => {
+    // Calls B-047 endpoint
+    const response = await api.get(`/combine/genesis-reveal/${playerId}?position=${position}`);
+    return response.data;
+  },
 };

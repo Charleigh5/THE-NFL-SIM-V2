@@ -10,6 +10,7 @@ export interface CombineResult {
   power_clean_max?: number; // lbs
   gps_speed_max?: number; // mph
   s2_cognition_score?: number; // 0-99
+  position_agility_score?: number; // 0-100
   medical_flags?: string[]; // e.g. ["ACL Tear (2022)", "Shoulder Labrum (2024)"]
 }
 

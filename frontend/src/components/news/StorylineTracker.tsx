@@ -1,9 +1,4 @@
-/**
- * StorylineTracker Component
- *
- * Displays active storylines for a team or the entire league.
- * Shows storyline type, intensity, and progression.
- */
+import { useRef, useEffect } from "react";
 import { useStorylines } from "../../hooks/useLivingWorld";
 import type { Storyline } from "../../hooks/useLivingWorld";
 import "./StorylineTracker.css";
@@ -25,6 +20,8 @@ const STORYLINE_CONFIG: Record<string, { icon: string; color: string; label: str
 };
 
 function StorylineCard({ storyline }: { storyline: Storyline }) {
+  const intensityRef = useRef<HTMLDivElement>(null);
+
   const config = STORYLINE_CONFIG[storyline.type] || {
     icon: "📖",
     color: "#95a5a6",
@@ -33,6 +30,12 @@ function StorylineCard({ storyline }: { storyline: Storyline }) {
 
   // Intensity bar (1-5)
   const intensityPct = (storyline.intensity / 5) * 100;
+
+  useEffect(() => {
+    if (intensityRef.current) {
+      intensityRef.current.style.setProperty("--intensity-pct", `${intensityPct}%`);
+    }
+  }, [intensityPct]);
 
   return (
     <div
@@ -49,12 +52,7 @@ function StorylineCard({ storyline }: { storyline: Storyline }) {
         <span className="detail-item">{storyline.event_count} events</span>
       </div>
 
-      {/* Using CSS custom property to pass dynamic value to CSS - not a layout style */}
-      {/* eslint-disable-next-line react/forbid-dom-props */}
-      <div
-        className="intensity-bar-container"
-        style={{ "--intensity-pct": `${intensityPct}%` } as React.CSSProperties}
-      >
+      <div ref={intensityRef} className="intensity-bar-container">
         <div className="intensity-label">
           <span>Intensity</span>
           <span>{storyline.intensity}/5</span>

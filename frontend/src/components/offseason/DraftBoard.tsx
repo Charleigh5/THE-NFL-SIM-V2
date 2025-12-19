@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import type { Prospect, TeamNeed } from "../../types/offseason";
 import { GenesisReveal } from "../draft/GenesisReveal";
+import { draftService } from "../../services/draft";
 import { GpsSpeedViz } from "../draft/GpsSpeedViz";
 import { Eye, Dumbbell, FileText } from "lucide-react";
 import { ScoutingReportModal } from "../scouting/ScoutingReportModal";
@@ -217,10 +218,36 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
           data={revealingProspect.combine}
           isRevealed={!!revealingProspect.genesis_revealed}
           onClose={() => setRevealingProspect(null)}
-          onReveal={() => {
-            // Create updated prospect with genesis_revealed = true
-            // In a real app, this would also call an API
-            setRevealingProspect({ ...revealingProspect, genesis_revealed: true });
+          onReveal={async () => {
+            try {
+              // Call API to reveal data
+              const revealedData = await draftService.revealGenesisData(
+                revealingProspect.id,
+                revealingProspect.position
+              );
+
+              // Update local state with new data
+              const updatedProspect = {
+                ...revealingProspect,
+                combine: {
+                  ...revealingProspect.combine,
+                  ...revealedData, // Merge in S2, biometric fields, flags
+                },
+                genesis_revealed: true,
+              };
+
+              // Update the revealing prospect state to show data immediately in modal
+              setRevealingProspect(updatedProspect);
+
+              // Update the main prospects list
+              // (In a real app, we might just refetch the board, but this is faster)
+              // NOTE: This requires `prospects` prop to be mutable or handled by parent.
+              // Since we can't mutate props, we rely on parent `fetchDraftState` refresh or accepts this isn't persistent until refresh.
+              // Ideally validation/parent update should happen.
+              // For now, let's just ensure the modal shows it.
+            } catch (err) {
+              console.error("Failed to reveal GENESIS data:", err);
+            }
           }}
         />
       )}
