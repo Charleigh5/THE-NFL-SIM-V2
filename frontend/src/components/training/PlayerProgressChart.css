@@ -1,5 +1,5 @@
 .player-progress-chart {
-  @apply w-full p-6 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-white/5;
+  @apply flex flex-col items-center justify-center p-6 bg-gray-900/80 rounded-2xl border border-white/5;
 }
 
 /* Stat bar hover effect */
@@ -9,8 +9,6 @@
 
 /* Previous value ghost bar - uses CSS variables from component */
 .previous-bar {
-  width: var(--prev-width, 0%);
-  background-color: var(--prev-color, #64748b);
 }
 
 /* Weekly XP section styling */
@@ -31,7 +29,7 @@
   }
 
   .player-progress-chart h3 {
-    @apply text-lg;
+    @apply text-blue-400;
   }
 }
 

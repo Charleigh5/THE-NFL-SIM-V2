@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAudio } from "../../context/AudioContext";
+import { useAudio } from "../../context/useAudio";
 import { Play, Pause, Volume2, VolumeX, Music, ChevronDown, ChevronUp } from "lucide-react";
 import "./SoundtrackPlayer.css";
 

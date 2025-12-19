@@ -1,7 +1,18 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import styled from "styled-components";
 import "./PlayerProgressChart.css";
+
+const StyledPreviousBar = styled.div<{ width: string; color: string }>`
+  width: ${(props) => props.width};
+  background-color: ${(props) => props.color};
+`;
+
+const StyledGlowBar = styled(motion.div)<{ width: string; glowColor: string }>`
+  width: ${(props) => props.width};
+  background: ${(props) => props.glowColor};
+`;
 
 interface StatProgress {
   stat: string;
@@ -150,14 +161,10 @@ export const PlayerProgressChart: React.FC<PlayerProgressChartProps> = ({
               {/* Progress Bar */}
               <div className="relative h-3 bg-gray-800/60 rounded-full overflow-hidden">
                 {/* Previous value (ghost bar) */}
-                <div
+                <StyledPreviousBar
                   className="absolute inset-0 h-full rounded-full opacity-30 previous-bar"
-                  style={
-                    {
-                      "--prev-width": `${(stat.previous / stat.max) * 100}%`,
-                      "--prev-color": color,
-                    } as React.CSSProperties
-                  }
+                  width={`${(stat.previous / stat.max) * 100}%`}
+                  color={color}
                 />
 
                 {/* Current value */}
@@ -170,17 +177,13 @@ export const PlayerProgressChart: React.FC<PlayerProgressChartProps> = ({
                 />
 
                 {/* Glow effect */}
-                <motion.div
+                <StyledGlowBar
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
                   className="glow-bar absolute inset-0 h-full rounded-full"
-                  style={
-                    {
-                      "--glow-width": `${percentage}%`,
-                      "--glow-bg": `linear-gradient(90deg, transparent, ${color}40)`,
-                    } as React.CSSProperties
-                  }
+                  width={`${percentage}%`}
+                  glowColor={`linear-gradient(90deg, transparent, ${color}40)`}
                 />
               </div>
             </motion.div>
@@ -254,7 +257,6 @@ export const PlayerProgressChart: React.FC<PlayerProgressChartProps> = ({
                   />
                 );
               })}
-
               {/* Gradient definition */}
               <defs>
                 <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">

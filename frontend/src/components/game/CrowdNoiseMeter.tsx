@@ -1,6 +1,11 @@
 import React from "react";
 import { Volume2, MicOff, AlertCircle } from "lucide-react";
+import styled from "styled-components";
 import "./CrowdNoiseMeter.css";
+
+const StyledMeterFill = styled.div<{ fill: number }>`
+  width: ${(props) => props.fill}%;
+`;
 
 export type CrowdNoiseLevel = "QUIET" | "MODERATE" | "LOUD" | "DEAFENING";
 
@@ -78,11 +83,11 @@ export const CrowdNoiseMeter: React.FC<CrowdNoiseMeterProps> = ({
 
       {/* Meter Bar */}
       <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-3 shadow-inner">
-        <div
+        <StyledMeterFill
+          fill={fillPercentage}
           className={`meter-fill-bar h-full ${currentConfig.barColor} ${
             level === "DEAFENING" ? "animate-pulse" : ""
           }`}
-          style={{ "--fill-width": `${fillPercentage}%` } as React.CSSProperties}
         />
       </div>
 

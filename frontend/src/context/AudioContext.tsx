@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { Howl } from "howler";
 
@@ -131,11 +131,5 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     </AudioContext.Provider>
   );
 };
-
-export const useAudio = (): AudioContextType => {
-  const context = useContext(AudioContext);
-  if (context === undefined) {
-    throw new Error("useAudio must be used within an AudioProvider");
-  }
-  return context;
-};
+export { AudioContext };
+export type { AudioContextType };
