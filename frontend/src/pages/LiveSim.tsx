@@ -21,7 +21,7 @@ export const LiveSim = () => {
   const { isLive, setLiveStatus, engineData, gameState } = useSimulationStore();
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("field");
-  const canvasRef = useRef<FieldCanvasRef>(null);
+  const canvasRef = useRef<FieldCanvasRef | null>(null);
 
   // Connect to WebSocket
   // Assuming the WebSocket URL is relative to the current host or configured in env
@@ -198,7 +198,7 @@ export const LiveSim = () => {
                 {/* Crowd Noise Overlay (New) */}
                 <div className="absolute top-24 right-4 z-10 transition-opacity hover:opacity-100 opacity-90 scale-90 origin-top-right">
                   <CrowdNoiseMeter
-                    decibels={92 + gameState.homeMomentum * 2} // Mock dynamic noise based on momentum
+                    decibels={92 + (Number(gameState.homeMomentum) || 0) * 2} // Dynamic noise based on momentum
                     stadiumName="Lambeau Field"
                     isAwayTeamOnOffense={true} // Mock: assume away team is on offense for demo
                   />

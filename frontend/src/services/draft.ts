@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { Prospect } from "../types/offseason";
+import type { Prospect, GenesisRevealData } from "../types/offseason";
 
 export interface HistoricalComparison {
   comparable_player_name: string;
@@ -64,9 +64,14 @@ export const draftService = {
     return response.data;
   },
 
-  revealGenesisData: async (playerId: string | number, position: string): Promise<any> => {
+  revealGenesisData: async (
+    playerId: string | number,
+    position: string
+  ): Promise<GenesisRevealData> => {
     // Calls B-047 endpoint
-    const response = await api.get(`/combine/genesis-reveal/${playerId}?position=${position}`);
+    const response = await api.get<GenesisRevealData>(
+      `/combine/genesis-reveal/${playerId}?position=${position}`
+    );
     return response.data;
   },
 };

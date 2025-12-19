@@ -4,7 +4,7 @@ import type { FieldCanvasRef } from "../game/FieldCanvas";
 
 interface PhysicsDebugOverlayProps {
   play: PlayTrajectory;
-  canvasRef: React.RefObject<FieldCanvasRef>;
+  canvasRef: React.RefObject<FieldCanvasRef | null>;
 }
 
 interface DebugData {

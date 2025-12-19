@@ -1,24 +1,8 @@
-import { createContext, useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ReactNode } from "react";
 import { Howl } from "howler";
-
-interface AudioContextType {
-  isPlaying: boolean;
-  volume: number;
-  isMuted: boolean;
-  play: () => void;
-  pause: () => void;
-  toggle: () => void;
-  setVolume: (volume: number) => void;
-  toggleMute: () => void;
-}
-
-const STORAGE_KEY = "nfl-sim-audio-prefs";
-
-interface AudioPreferences {
-  volume: number;
-  isMuted: boolean;
-}
+import { STORAGE_KEY, AudioContext } from "./AudioTypes";
+import type { AudioPreferences } from "./AudioTypes";
 
 const getStoredPreferences = (): AudioPreferences => {
   try {
@@ -39,8 +23,6 @@ const savePreferences = (prefs: AudioPreferences): void => {
     // Ignore localStorage errors
   }
 };
-
-const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const prefs = getStoredPreferences();
@@ -131,5 +113,3 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     </AudioContext.Provider>
   );
 };
-export { AudioContext };
-export type { AudioContextType };

@@ -101,3 +101,16 @@ export interface SalaryCapData {
   league_avg_available: number;
   projected_rookie_impact: number;
 }
+
+/**
+ * Genesis Reveal data returned from the combine/genesis-reveal endpoint (B-047).
+ * Contains revealed "true" stats and traits for a prospect.
+ */
+export interface GenesisRevealData {
+  player_id: number;
+  position: string;
+  revealed_stats: Record<string, number>;
+  revealed_traits: string[];
+  confidence_level: number;
+  scouting_accuracy: number;
+}

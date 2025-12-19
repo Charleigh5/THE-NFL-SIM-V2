@@ -1,4 +1,4 @@
-import React from "react";
+// FieldView: Static formation diagram for Phase 1 (I-Form vs 4-3)
 // import { useSimulationStore } from "../store/useSimulationStore"; // Unused in static view
 import { GameCanvas } from "./game/GameCanvas";
 import { PlayerSprite } from "./game/PlayerSprite";

@@ -75,7 +75,6 @@ export const useWebSocket = (url: string | null) => {
               (navigator as unknown as { webdriver?: boolean }).webdriver;
             // Live-sim E2E overrides WebSocket and exposes `window.originalWebSocket`.
             // Use that as an additional signal since WebKit may not set `navigator.webdriver`.
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const hasE2EWebSocketOverride =
               typeof window !== "undefined" &&
               Boolean((window as unknown as { originalWebSocket?: unknown }).originalWebSocket);

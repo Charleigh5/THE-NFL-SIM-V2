@@ -1,5 +1,4 @@
 import type {
-  Drill,
   TrainingResult,
   WeeklySchedule,
   CoachingStyle,
