@@ -48,6 +48,7 @@ class ScoutBias(str, Enum):
     OLD_SCHOOL = "OLD_SCHOOL"     # Overvalues Size/Strength, underrates Spread QBs
     ANALYTICS = "ANALYTICS"       # Overvalues Efficiency, underrates "Eye Test"
     RAS_LOVER = "RAS_LOVER"       # Overvalues Athleticism regardless of skill
+    TECHNICIAN = "TECHNICIAN"    # Overvalues Technique/Precision, underrates athleticism
     CHARACTER = "CHARACTER"       # Overvalues Leadership/Intangibles
 
 # ============================================================================

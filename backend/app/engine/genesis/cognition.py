@@ -262,7 +262,7 @@ class CognitionEngine:
         self,
         elapsed_ms: float,
         defenders_nearby: int = 0,
-        open_receiver_quality: List[float] = None,
+        open_receiver_quality: Optional[List[float]] = None,
     ) -> Tuple[ReadPhase, int, bool]:
         """
         Process QB read progression for one time step.

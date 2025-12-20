@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
 import { AudioProvider } from "./context/AudioContext.tsx";
-import { ThemeProvider } from "./context/ThemeContext.tsx";
+import { ThemeProvider } from "./context/ThemeProvider.tsx";
 import App from "./App.tsx";
 
 const queryClient = new QueryClient();

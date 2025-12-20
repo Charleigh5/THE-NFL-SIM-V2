@@ -210,6 +210,8 @@ class TestCognitionEngine:
     def test_read_progression(self, engine):
         """Test QB read progression over time."""
         # Simulate 500ms of reads
+        phase = ReadPhase.PRE_SNAP
+        reads = 0
         for _ in range(30):  # 30 * 16.67ms ≈ 500ms
             phase, reads, should_throw = engine.process_read_progression(
                 elapsed_ms=16.67,

@@ -566,10 +566,10 @@ class MasterOrchestrator:
             icon = "✅" if phase.status == PhaseStatus.COMPLETED else "❌"
             duration_str = f"({phase.duration:.2f}s)" if phase.duration else ""
             logger.info(f"{icon} {phase.name} {duration_str}")
-            if phase.duration:
-                total_duration = max(total_duration, phase.end_time - min(
-                    p.start_time for p in self.graph.phases.values() if p.start_time
-                ))
+            if phase.duration is not None and phase.end_time is not None:
+                start_times = [p.start_time for p in self.graph.phases.values() if p.start_time is not None]
+                if start_times:
+                    total_duration = max(total_duration, phase.end_time - min(start_times))
 
         success_count = sum(1 for p in self.graph.phases.values()
                           if p.status == PhaseStatus.COMPLETED)

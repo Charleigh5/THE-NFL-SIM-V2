@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Activity, Brain, AlertTriangle } from "lucide-react";
+import { Lock, Activity, AlertTriangle } from "lucide-react";
 import type { CombineResult } from "../../types/combine";
 
 interface GenesisRevealProps {
@@ -139,17 +139,13 @@ export const GenesisReveal = ({
                     <div className="flex justify-between">
                       <span className="text-gray-500">Fast Twitch</span>
                       <span className="text-white">
-                        {(data as any).fast_twitch_percentage
-                          ? `${(data as any).fast_twitch_percentage}%`
-                          : "--"}
+                        {data.fast_twitch_percentage ? `${data.fast_twitch_percentage}%` : "--"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Body Fat</span>
                       <span className="text-white">
-                        {(data as any).body_fat_percentage
-                          ? `${(data as any).body_fat_percentage}%`
-                          : "--"}
+                        {data.body_fat_percentage ? `${data.body_fat_percentage}%` : "--"}
                       </span>
                     </div>
                   </div>
@@ -160,13 +156,13 @@ export const GenesisReveal = ({
                     <div className="flex justify-between">
                       <span className="text-gray-500">Hands</span>
                       <span className="text-white">
-                        {(data as any).hand_size ? `${(data as any).hand_size}"` : "--"}
+                        {data.hand_size ? `${data.hand_size}"` : "--"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Wingspan</span>
                       <span className="text-white">
-                        {(data as any).wingspan ? `${(data as any).wingspan}"` : "--"}
+                        {data.wingspan ? `${data.wingspan}"` : "--"}
                       </span>
                     </div>
                   </div>

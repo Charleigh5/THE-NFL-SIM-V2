@@ -1,8 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { Badge } from "./ui/Badge";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import {
   LayoutDashboard,
   Trophy,

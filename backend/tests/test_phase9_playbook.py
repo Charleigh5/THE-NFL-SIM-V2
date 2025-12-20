@@ -59,7 +59,7 @@ class TestPlayCallerAI:
     @pytest.fixture
     def ai(self):
         pb = PlaybookGenerator.generate_west_coast("KC")
-        return PlayCallerAI(pb, AggressionLevel.BALANCED)
+        return PlayCallerAI(pb, aggression=AggressionLevel.BALANCED)
 
     def test_call_play_basic(self, ai):
         """AI selects a play."""

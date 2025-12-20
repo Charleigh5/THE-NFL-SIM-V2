@@ -3,7 +3,6 @@ export {
   SlideTransition,
   FadeBlurTransition,
   StaggeredTransition,
-  staggerChildVariants,
-  transitionVariants,
 } from "./PageTransition";
+export { staggerChildVariants, transitionVariants } from "./transitionVariants";
 export { default } from "./PageTransition";

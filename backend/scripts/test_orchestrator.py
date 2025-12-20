@@ -20,7 +20,7 @@ import asyncio
 import pytest
 import pytest_asyncio
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 from unittest.mock import AsyncMock, MagicMock, patch
 
 # Import from master_orchestrator
@@ -50,8 +50,8 @@ def make_task():
     def _make_task(
         id: str = "test_task",
         name: str = "Test Task",
-        dependencies: List[str] = None,
-        outputs: List[str] = None,
+        dependencies: Optional[List[str]] = None,
+        outputs: Optional[List[str]] = None,
         **kwargs
     ) -> AgentTask:
         task = AgentTask(
@@ -77,8 +77,8 @@ def make_phase(make_task):
     def _make_phase(
         id: str = "test_phase",
         name: str = "Test Phase",
-        tasks: List[AgentTask] = None,
-        phase_dependencies: List[str] = None,
+        tasks: Optional[List[AgentTask]] = None,
+        phase_dependencies: Optional[List[str]] = None,
         **kwargs
     ) -> Phase:
         if tasks is None:
@@ -271,7 +271,7 @@ class TestSimulatedAgentExecutor:
         result = await executor.execute(task)
 
         assert result.success is False
-        assert "Simulated failure" in result.error
+        assert result.error is not None and "Simulated failure" in result.error
         assert result.outputs == []
 
     @pytest.mark.asyncio

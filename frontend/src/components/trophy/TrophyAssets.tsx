@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, type ThreeElements } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -26,7 +26,7 @@ const CrystalMaterial = () => (
 
 // --- Trophies ---
 
-export const LombardiTrophy = (props: any) => {
+export const LombardiTrophy = (props: ThreeElements["group"]) => {
   const group = useRef<THREE.Group>(null);
 
   // Slow rotation
@@ -65,7 +65,7 @@ export const LombardiTrophy = (props: any) => {
   );
 };
 
-export const MvpTrophy = (props: any) => {
+export const MvpTrophy = (props: ThreeElements["group"]) => {
   const mesh = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
@@ -89,7 +89,7 @@ export const MvpTrophy = (props: any) => {
   );
 };
 
-export const DivisionTitleTrophy = (props: any) => {
+export const DivisionTitleTrophy = (props: ThreeElements["group"]) => {
   return (
     <group {...props}>
       <mesh position={[0, 1.2, 0]} castShadow>

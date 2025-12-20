@@ -12,6 +12,12 @@ export interface CombineResult {
   s2_cognition_score?: number; // 0-99
   position_agility_score?: number; // 0-100
   medical_flags?: string[]; // e.g. ["ACL Tear (2022)", "Shoulder Labrum (2024)"]
+
+  // Biometric measurements
+  fast_twitch_percentage?: number; // percentage
+  body_fat_percentage?: number; // percentage
+  hand_size?: number; // inches
+  wingspan?: number; // inches
 }
 
 export interface ProspectWithCombine {

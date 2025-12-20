@@ -82,6 +82,7 @@ class SimulationCalibrator:
         Run calibration loop until convergence.
         """
         adjustments = {}
+        avg_error = 0.0  # Initialize to handle empty targets case
 
         for iteration in range(max_iterations):
             total_error = 0
