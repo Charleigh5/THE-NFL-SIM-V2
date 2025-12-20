@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import type { Prospect, TeamNeed } from "../../types/offseason";
+import type { CombineResult } from "../../types/combine";
 import { GenesisReveal } from "../draft/GenesisReveal";
 import { draftService } from "../../services/draft";
 import { GpsSpeedViz } from "../draft/GpsSpeedViz";
@@ -227,12 +228,12 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
               );
 
               // Update local state with new data
-              const updatedProspect = {
+              const updatedProspect: Prospect = {
                 ...revealingProspect,
                 combine: {
-                  ...revealingProspect.combine,
-                  ...revealedData, // Merge in S2, biometric fields, flags
-                },
+                  ...revealingProspect.combine!,
+                  ...revealedData.revealed_stats,
+                } as unknown as CombineResult, // Safe cast after spread to ensure all required fields are present and correctly typed
                 genesis_revealed: true,
               };
 

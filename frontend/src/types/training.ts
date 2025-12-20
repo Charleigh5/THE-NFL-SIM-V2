@@ -6,6 +6,14 @@ export const SeasonPhase = {
 } as const;
 export type SeasonPhase = (typeof SeasonPhase)[keyof typeof SeasonPhase];
 
+export const CoachingStyleType = {
+  VOLUME: "volume",
+  INTENSITY: "intensity",
+  SMART: "smart",
+  OLD_SCHOOL: "old_school",
+} as const;
+export type CoachingStyleType = (typeof CoachingStyleType)[keyof typeof CoachingStyleType];
+
 export const DrillCategory = {
   STRENGTH: "STRENGTH",
   SPEED: "SPEED",

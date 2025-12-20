@@ -1,5 +1,5 @@
 import { TrophyCaseScene } from "../components/trophy/TrophyCaseScene";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../context/useTheme";
 import { motion } from "framer-motion";
 import "./TrophyRoom.css";
 

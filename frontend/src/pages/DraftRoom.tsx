@@ -33,8 +33,7 @@ export const DraftRoom: React.FC = () => {
   const [currentPick, setCurrentPick] = useState<DraftPickDetail | null>(null);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   // TODO: Display recentPicks in a ticker or sidebar component
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [recentPicks, setRecentPicks] = useState<DraftPickSummary[]>([]);
+  const [, setRecentPicks] = useState<DraftPickSummary[]>([]);
   const [teamNeeds, setTeamNeeds] = useState<TeamNeed[]>([]);
 
   const [simulating, setSimulating] = useState(false);

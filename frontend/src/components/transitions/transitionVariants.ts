@@ -1,4 +1,4 @@
-import type { Variants } from "framer-motion";
+import { type Variants } from "framer-motion";
 
 /**
  * Child item variants for use with StaggeredTransition

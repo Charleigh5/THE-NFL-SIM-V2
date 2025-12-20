@@ -2,12 +2,18 @@ import { Flame, Snowflake, Minus, ChevronUp } from "lucide-react";
 import { MomentumState } from "../../types/momentum";
 
 interface MomentumIndicatorProps {
-  label: string;
+  label?: string;
   state: MomentumState;
   align?: "left" | "right";
+  size?: "sm" | "md";
 }
 
-export const MomentumIndicator = ({ label, state, align = "left" }: MomentumIndicatorProps) => {
+export const MomentumIndicator = ({
+  label,
+  state,
+  align = "left",
+  size = "md",
+}: MomentumIndicatorProps) => {
   const getConfig = (s: MomentumState) => {
     switch (s) {
       case MomentumState.ON_FIRE:
@@ -61,13 +67,25 @@ export const MomentumIndicator = ({ label, state, align = "left" }: MomentumIndi
   const config = getConfig(state);
 
   return (
-    <div className={`flex flex-col gap-1 ${align === "right" ? "items-end" : "items-start"}`}>
-      <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{label}</span>
+    <div className={`flex flex-col gap-0.5 ${align === "right" ? "items-end" : "items-start"}`}>
+      {label && (
+        <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">
+          {label}
+        </span>
+      )}
       <div
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-500 ${config.bg} ${config.border} ${config.shadow}`}
+        className={`
+          flex items-center gap-2 rounded-full border transition-all duration-500
+          ${size === "sm" ? "px-2 py-0.5" : "px-3 py-1.5"}
+          ${config.bg} ${config.border} ${config.shadow}
+        `}
       >
         <div className={`${config.color}`}>{config.icon}</div>
-        <span className={`text-xs font-bold tracking-wide ${config.color}`}>{config.text}</span>
+        <span
+          className={`font-bold tracking-wide ${config.color} ${size === "sm" ? "text-[10px]" : "text-xs"}`}
+        >
+          {config.text}
+        </span>
       </div>
     </div>
   );

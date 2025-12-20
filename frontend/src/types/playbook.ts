@@ -1,8 +1,9 @@
-export enum FamiliarityLevel {
-  UNFAMILIAR = "UNFAMILIAR", // < 50%
-  VETERAN = "VETERAN", // 50-80%
-  EXPERT = "EXPERT", // > 80%
-}
+export const FamiliarityLevel = {
+  UNFAMILIAR: "UNFAMILIAR", // < 50%
+  VETERAN: "VETERAN", // 50-80%
+  EXPERT: "EXPERT", // > 80%
+} as const;
+export type FamiliarityLevel = (typeof FamiliarityLevel)[keyof typeof FamiliarityLevel];
 
 export interface PlaybookFamiliarity {
   play_id: string;

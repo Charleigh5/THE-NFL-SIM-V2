@@ -127,19 +127,12 @@ export class PhysicsStreamClient {
   private ws: WebSocket | null = null;
   private onFrame: FrameCallback | null = null;
   private onComplete: CompleteCallback | null = null;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 3;
-
-  /**
-   * Connect to physics WebSocket.
-   */
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       const wsUrl = `${WS_BASE_URL}/physics/stream`;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        this.reconnectAttempts = 0;
         resolve();
       };
 

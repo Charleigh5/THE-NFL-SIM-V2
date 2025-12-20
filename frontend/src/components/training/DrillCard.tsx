@@ -9,11 +9,13 @@ interface DrillCardProps {
 
 export const DrillCard = ({ drill, isSelected = false, onSelect }: DrillCardProps) => {
   const riskColor =
-    drill.injuryRisk === "LOW"
+    drill.injury_risk < 0.2
       ? "text-emerald-400"
-      : drill.injuryRisk === "MEDIUM"
+      : drill.injury_risk < 0.5
         ? "text-yellow-400"
         : "text-red-500";
+
+  const riskLabel = drill.injury_risk < 0.2 ? "LOW" : drill.injury_risk < 0.5 ? "MEDIUM" : "HIGH";
 
   return (
     <div
@@ -42,19 +44,19 @@ export const DrillCard = ({ drill, isSelected = false, onSelect }: DrillCardProp
       <div className="grid grid-cols-2 gap-2 text-xs mb-3">
         <div className="flex items-center gap-1.5 text-gray-300">
           <TrendingUp className="w-3 h-3 text-cyan-400" />
-          <span>{drill.targetStats.join(", ")}</span>
+          <span>{drill.target_stat}</span>
         </div>
         <div className="flex items-center gap-1.5 text-gray-300">
           <Zap className="w-3 h-3 text-amber-400" />
-          <span>XP x{drill.xpMultiplier}</span>
+          <span>XP x{drill.xp_multiplier}</span>
         </div>
         <div className="flex items-center gap-1.5 text-gray-300">
           <Activity className="w-3 h-3 text-blue-400" />
-          <span>Cost: {drill.energyCost}</span>
+          <span>Cost: {drill.fatigue_cost}</span>
         </div>
         <div className="flex items-center gap-1.5 text-gray-300">
           <AlertTriangle className={`w-3 h-3 ${riskColor}`} />
-          <span className={riskColor}>{drill.injuryRisk} Risk</span>
+          <span className={riskColor}>{riskLabel} Risk</span>
         </div>
       </div>
     </div>
