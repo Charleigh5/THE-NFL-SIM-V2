@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, Stars } from "@react-three/drei";
 import { LombardiTrophy, MvpTrophy, DivisionTitleTrophy } from "./TrophyAssets";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../context/useTheme";
 
 export const TrophyCaseScene = () => {
   const { activeTeam } = useTheme();
