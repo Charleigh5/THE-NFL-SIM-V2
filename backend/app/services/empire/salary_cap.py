@@ -391,20 +391,57 @@ class SalaryCapEngine:
 
         return contract
 
+    def get_historical_cap(self, year: int) -> Optional[int]:
+        """
+        Get the actual NFL salary cap for a historical year.
+
+        Uses real NFL data from 1994-2025.
+        Returns None for 2010 (uncapped year) or years before 1994.
+        """
+        from app.core.nfl_reference_data import HISTORICAL_SALARY_CAPS
+        return HISTORICAL_SALARY_CAPS.get(year)
+
+    def get_cap_for_season(self, year: int) -> int:
+        """
+        Get salary cap for a season, using historical data when available,
+        or projecting forward for future years.
+        """
+        from app.core.nfl_reference_data import HISTORICAL_SALARY_CAPS, SALARY_CAP_CAGR
+
+        # Use historical data if available
+        historical = HISTORICAL_SALARY_CAPS.get(year)
+        if historical is not None:
+            return historical
+
+        # For years before 1994 or after 2025, project from 2025
+        base_year = 2025
+        base_cap = HISTORICAL_SALARY_CAPS[base_year]
+        if base_cap is None:
+            base_cap = 279_200_000
+
+        years_diff = year - base_year
+        if years_diff > 0:
+            # Project forward
+            return int(base_cap * ((1 + SALARY_CAP_CAGR) ** years_diff))
+        else:
+            # Year before 1994, just return 1994 value
+            return HISTORICAL_SALARY_CAPS.get(1994, 34_600_000) or 34_600_000
+
     def project_cap(
         self,
         current_cap: int,
         years_ahead: int,
-        growth_rate: float = 0.08,
     ) -> List[int]:
         """
         Project future salary caps.
 
-        Default 8% annual growth.
+        Uses real NFL CAGR (6.97%) from reference data.
         """
+        from app.core.nfl_reference_data import SALARY_CAP_CAGR
+
         caps = [current_cap]
         for _ in range(years_ahead):
-            caps.append(int(caps[-1] * (1 + growth_rate)))
+            caps.append(int(caps[-1] * (1 + SALARY_CAP_CAGR)))
         return caps[1:]
 
     def get_cap_summary(self, state: TeamCapState) -> Dict[str, Any]:
@@ -420,3 +457,4 @@ class SalaryCapEngine:
             "cap_space": state.cap_space,
             "contracts_count": len(state.contracts),
         }
+

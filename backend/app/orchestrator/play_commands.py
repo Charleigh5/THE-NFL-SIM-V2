@@ -16,10 +16,15 @@ from app.schemas.play import PlayResult
 class PlayCommand(ABC):
     """Abstract base class for all play commands"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None):
+    def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+                 distance: int = 10, down: int = 1, yard_line: int = 20):
         self.offense = offense_players
         self.defense = defense_players
         self.modifiers = modifiers or {}
+        self.play_id = play_id
+        self.distance = distance
+        self.down = down
+        self.yard_line = yard_line
 
     @abstractmethod
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
@@ -36,8 +41,9 @@ class PassPlayCommand(PlayCommand):
     """Command for passing plays"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None):
-        super().__init__(offense_players, defense_players, modifiers)
+                 target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+                 distance: int = 10, down: int = 1, yard_line: int = 20):
+        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
         self.target_receiver = target_receiver_id
         self.depth = depth  # short, mid, deep
 
@@ -60,8 +66,9 @@ class RunPlayCommand(PlayCommand):
     """Command for running plays"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None):
-        super().__init__(offense_players, defense_players, modifiers)
+                 run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+                 distance: int = 10, down: int = 1, yard_line: int = 20):
+        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
         self.run_direction = run_direction  # left, middle, right
 
     def get_play_type(self) -> str:

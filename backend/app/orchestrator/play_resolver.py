@@ -44,6 +44,49 @@ class PlayResolver:
         # B-055: Playbook Familiarity (Phase 3)
         self.familiarity_manager = FamiliarityManager()
 
+    def _resolve_special_play_modifiers(self, command: PlayCommand) -> Dict[str, Any]:
+        """
+        RESOLVE SPECIAL PLAYS (Tush Push, Flea Flicker, etc.)
+        Returns a dictionary of modifiers:
+        - success_prob_override: Optional[float]
+        - epa_bonus: float
+        - risk_modifier: float
+        """
+        from app.core.nfl_reference_data import SPECIAL_PLAYS, PlayReference
+
+        play_id = getattr(command, "play_id", "")
+        if not play_id or play_id not in SPECIAL_PLAYS:
+            return {"success_prob_override": None, "epa_bonus": 0.0, "risk_modifier": 1.0}
+
+        special_play = SPECIAL_PLAYS[play_id]
+        modifiers = {
+            "success_prob_override": None,
+            "epa_bonus": special_play.epa,
+            "risk_modifier": 1.0
+        }
+
+        # Check Prerequisites Logic (Simplified)
+        # In a full systems, this would be a parser.
+        # Here we map specific known plays to logic.
+
+        if play_id == "TUSH_PUSH":
+            # Requires short yardage
+            if getattr(command, "distance", 10) <= 2:
+                modifiers["success_prob_override"] = special_play.success_rate_avg
+            else:
+                 # Reduced effectiveness if called on 3rd & 10
+                 modifiers["success_prob_override"] = 0.60
+
+        elif play_id == "HAIL_MARY":
+            modifiers["success_prob_override"] = special_play.success_rate_avg
+            modifiers["risk_modifier"] = 2.0 # High interception risk
+
+        elif play_id == "FLEA_FLICKER":
+             modifiers["risk_modifier"] = 2.5 # Very high sack/fumble risk
+             # If successful, big EPA bonus already in 'epa'
+
+        return modifiers
+
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
         self.current_match_context = match_context
@@ -768,6 +811,15 @@ class PlayResolver:
              pressure_penalty = 0.10
 
         # ======================================================================
+        # SPECIAL PLAYS INTEGRATION
+        # ======================================================================
+        special_mods = self._resolve_special_play_modifiers(command)
+        if special_mods["success_prob_override"]:
+            # Blend special probability with base Probability
+            # 80% Special Data, 20% Physics
+            base_prob = (special_mods["success_prob_override"] * 0.8) + (base_prob * 0.2)
+            logger.debug(f"Special Play {getattr(command, 'play_id', '')} override applied. Base Prob: {base_prob:.3f}")
+
         # "THE CLOSER" TRAIT - Pressure & Fatigue Immunity in Crunch Time
         # ======================================================================
         closer_active = False
@@ -1107,6 +1159,13 @@ class PlayResolver:
         interaction_yards_bonus = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 10.0
         interaction_narratives = interaction_results.get("narratives", [])
 
+        # SPECIAL PLAYS INTEGRATION
+        special_mods = self._resolve_special_play_modifiers(command)
+        is_special_run = False
+        if special_mods["success_prob_override"]:
+             is_special_run = True
+             logger.debug(f"Special Run Play {getattr(command, 'play_id', '')} detected.")
+
         logger.debug(f"Run interaction yards bonus: {interaction_yards_bonus:.2f}")
 
         # B-056: Apply Playbook Familiarity Penalty for run plays
@@ -1190,7 +1249,25 @@ class PlayResolver:
         # Middle run: consistent but lower ceiling
         # Outside run: higher variance
         # PHASE 2: Use blended physics power_diff
-        if command.run_direction == "middle":
+
+        if is_special_run:
+             # Logic for Tush Push / Special Runs
+             # Use the overridden success probability to determine base outcome state
+             prob = special_mods["success_prob_override"]
+
+             # Ensure prob is float
+             if hasattr(prob, 'success_rate_avg'): # Handle if PlayReference object was passed instead of float
+                 prob = prob.success_rate_avg
+
+             if float(self.rng.random()) < float(prob):
+                  # Success state: Guaranteed short gain
+                  base_yards = 2.0
+                  std_dev = 0.5
+             else:
+                  # Failure state: Stuffed
+                  base_yards = -0.5
+                  std_dev = 0.5
+        elif command.run_direction == "middle":
             base_yards = tribe_base_yards + (blended_power_diff * 10.0)  # +/- 2 yards based on physics strength
             std_dev = tribe_std_dev
         else:

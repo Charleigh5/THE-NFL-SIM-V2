@@ -38,36 +38,65 @@ class CoachingAIService:
     def should_go_for_it_4th_down(self, situation: GameSituation) -> bool:
         """
         Decide whether to go for it on 4th down.
+
+        Uses real NFL analytics data from FOURTH_DOWN_ANALYTICS.
         """
+        print(f"CALLED should_go_for_it_4th_down: dist={situation.distance} pos={situation.field_position}")
+        from app.core.nfl_reference_data import FOURTH_DOWN_ANALYTICS
+
         if situation.down != 4:
             return False
 
-        # Distance factor
-        distance_penalty = situation.distance * 10 # 10% penalty per yard
+        analytics = FOURTH_DOWN_ANALYTICS
 
-        # Field position factor (0=own end, 100=opp end)
-        # Sweet spot is 40-yard line (60) to 20-yard line (80)
+        # === SHORT YARDAGE: ALWAYS GO ===
+        # Real data: 95.2% optimal on 4th & 1
+        if situation.distance <= analytics.always_go_distance:
+            # Almost always go for it on 4th & 1 (unless very conservative)
+            if self.philosophy.aggressiveness >= 30:  # Even moderately aggressive
+                return True
+
+        # === FIELD POSITION BONUS ===
+        # Go-for-it zone: Opponent's 40 to midfield (4th-60 zone)
         position_bonus = 0
-        if 40 <= situation.field_position <= 80:
-            position_bonus = 20
-        elif situation.field_position > 90:
-             # Too close, maybe kick FG unless aggressive
-             position_bonus = -10
+        if analytics.go_for_it_zone_start <= situation.field_position <= analytics.go_for_it_zone_end:
+            position_bonus = 30  # Strong bonus in optimal zone
+        elif situation.field_position > 80:  # Deep in opponent territory
+            position_bonus = 10  # Consider FG range
+        elif situation.field_position > 95:
+            position_bonus = -20  # Inside the 5 - chip shot FG territory
 
-        # Aggression factor (use the specific 4th down trait if available)
-        # Fallback to general aggression if model hasn't been reloaded yet,
-        # but since we updated code, it should be there.
-        aggression_score = getattr(self.philosophy, 'fourth_down_aggression', self.philosophy.aggressiveness)
+        # === DISTANCE PENALTY ===
+        # Higher penalty for longer distance
+        distance_penalty = situation.distance * 8
 
-        # Situational overrides
-        if situation.quarter == 4 and situation.score_diff < -8 and situation.time_remaining < 300:
-            # Down by 2 scores, late -> almost always go
-            return True
+        # === COACH AGGRESSION ===
+        aggression_score = getattr(
+            self.philosophy,
+            'fourth_down_aggression',
+            self.philosophy.aggressiveness
+        )
 
+        # === SITUATIONAL OVERRIDES ===
+        # Late game, trailing -> desperate times
+        if analytics.late_game_trailing_2scores_override:
+            if (situation.quarter == 4 and
+                situation.score_diff < -8 and
+                situation.time_remaining < 300):
+                return True
+
+        # === MEDIUM YARDAGE: CONSIDER ANALYTICS ===
+        if situation.distance <= analytics.consider_go_distance:
+            # Real data: kicking on 4th & 5 forfeits ~3% WP
+            # We'll give a slight nudge to go for it on 4th & 2-5
+            position_bonus += 15
+
+        # Calculate final probability
         probability = aggression_score - distance_penalty + position_bonus
 
         # Random roll
         roll = random.uniform(0, 100)
+        print(f"DEBUG: agg={aggression_score} dist_p={distance_penalty} pos_b={position_bonus} prob={probability} roll={roll}")
         return roll < probability
 
     def get_2pt_decision(self, situation: GameSituation) -> bool:
