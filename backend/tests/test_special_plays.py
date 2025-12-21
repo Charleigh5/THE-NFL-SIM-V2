@@ -94,9 +94,27 @@ class TestSpecialPlays:
     def test_tush_push_execution_success(self, resolver):
         """Verify Tush Push integration into resolve_run_play outcome logic"""
         # QB as runner with explicit attributes
-        qb = MagicMock(id="QB1", position="QB", strength=80, speed=80, fatigue=0, ball_security=95, carrying_vision=80)
+        qb = MagicMock(id="QB1")
+        qb.position = "QB"
+        qb.strength = 80
+        qb.speed = 80.0
+        qb.acceleration = 80.0
+        qb.agility = 80.0
+        qb.weight = 210
+        qb.fatigue = 0
+        qb.last_name = "Quarterback"
+        qb.ball_security = 95
+        qb.carrying_vision = 80
+        qb.years_pro = 5
+
         # DT as defender
-        dt = MagicMock(id="DT1", position="DT", tackle=70, speed=60, weight=300, hit_power=75)
+        dt = MagicMock(id="DT1")
+        dt.position = "DT"
+        dt.tackle = 70.0
+        dt.speed = 60.0
+        dt.weight = 300
+        dt.hit_power = 75.0
+        dt.last_name = "Defender"
 
         # Force Mock RNG behavior
         resolver.rng.random.return_value = 0.1
@@ -116,6 +134,9 @@ class TestSpecialPlays:
         # Mock helper needed since player lookup might fail on mocks inside list
         resolver._get_player_by_position = MagicMock(return_value=qb)
 
+        # Override _get_familiarity_penalty to avoid mock comparison errors
+        resolver._get_familiarity_penalty = MagicMock(return_value=1.0)
+
         # Mock tribe modifiers to return concrete floats (prevent MagicMock contamination)
         with patch('app.orchestrator.play_resolver.get_tribe_modifiers') as mock_tribe:
             mock_tribe.return_value = {
@@ -129,11 +150,12 @@ class TestSpecialPlays:
             # Mock physics state
             resolver._create_rb_physics = MagicMock()
             mock_physics_state = MagicMock()
-            mock_physics_state.yards_after_contact = 0.0 # Float required
+            mock_physics_state.yards_after_contact = 1.0 # Float required
             mock_physics_state.balance = 50.0 # Float required
             resolver._create_rb_physics.return_value = mock_physics_state
 
             result = resolver._resolve_run_play(command)
+
         # We mainly want to ensure no crash and logical flow
         assert result is not None
         assert result.yards_gained is not None
