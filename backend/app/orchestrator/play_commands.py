@@ -36,7 +36,7 @@ class PassPlayCommand(PlayCommand):
     """Command for passing plays"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 target_receiver_id: int = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None):
+                 target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None):
         super().__init__(offense_players, defense_players, modifiers)
         self.target_receiver = target_receiver_id
         self.depth = depth  # short, mid, deep
@@ -218,17 +218,30 @@ class TwoPointConversionCommand(PlayCommand):
                  play_type: str = "pass"):
         super().__init__(offense_players, defense_players)
         self.play_type = play_type  # pass or run
+        self.executed_command: Optional[PlayCommand] = None
 
     def get_play_type(self) -> str:
         return f"TWO_POINT_{self.play_type.upper()}"
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
-        """Execute a 2-point conversion attempt"""
-        is_successful = rng.randint(0, 100) < 45  # ~45% success rate
+        """
+        Execute a 2-point conversion attempt.
 
+        NOTE: This class primarily serves as a wrapper/tag for the orchestrator.
+        The actual execution happens by resolving the specific Pass/Run command
+        contained within, but applied to the 2-point context (short field).
+
+        If executed directly without a sub-command, it defaults to failure (safe fallback).
+        """
+        if self.executed_command:
+            result = self.executed_command.execute(context, rng)
+            # Override checking for 2-point success criteria if needed,
+            # but usually PlayResolver handles the rules.
+            return result
+
+        # Fallback if no command attached
         return PlayResult(
             yards_gained=0,
-            is_touchdown=is_successful,
-            description=f"2-point conversion attempt ({self.play_type}) " +
-                       ("SUCCESSFUL!" if is_successful else "FAILED")
+            is_touchdown=False,
+            description="2-point conversion failed (No Play Selected)"
         )

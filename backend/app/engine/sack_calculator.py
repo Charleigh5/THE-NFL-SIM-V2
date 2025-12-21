@@ -17,59 +17,61 @@ class SackCalculator:
     - OL Chemistry (cohesion)
     - QB Pocket Presence (new attribute)
     - QB Mobility (scramble willingness, speed)
+
+    NFL Calibration (2020-2024):
+    - League average sack rate: ~6.5% per pass play
+    - Elite QB sack rate: ~4.5-5.0%
+    - Poor QB sack rate: ~8.5-9.0%
+    - Pressure-to-sack conversion: ~22%
     """
 
-    BASE_SACK_PROBABILITY = 0.07 # 7% base sack rate on pass plays
+    BASE_SACK_PROBABILITY = 0.065  # 6.5% NFL average sack rate
 
     @staticmethod
     def calculate_sack_probability(
         qb: Player,
-        pressure_level: float, # 0.0 to 1.0 representing pass rush win rate
-        ol_chemistry_bonus: int # 0 to 5
+        pressure_level: float,  # 0.0 to 1.0 representing pass rush win rate
+        ol_chemistry_bonus: int  # 0 to 5
     ) -> float:
         """
         Calculate the refined probability of a sack occurring given the pressure.
 
         Formula:
         P(Sack) = Base * PressureFactor * (1 - PocketPresenceEffect) * (1 - ChemistryEffect)
+
+        NFL Calibration:
+        - 90+ pocket presence → ~4.5% sack rate (elite)
+        - 50 pocket presence → ~6.5% sack rate (average)
+        - <40 pocket presence → ~9% sack rate (poor)
         """
         try:
-            # 1. Pocket Presence Effect (0.0 to 0.495 reduction)
+            # 1. Pocket Presence Effect (0.0 to 0.45 reduction)
             # Higher presence = lower sack chance
+            # NFL: Elite QBs (90+ rating) have ~30-40% fewer sacks
             pocket_presence = getattr(qb, 'pocket_presence', None) or 50
-            presence_factor = pocket_presence * 0.005
+            presence_factor = pocket_presence * 0.005  # 90 rating = 45% reduction
 
             # 2. Chemistry Effect (0.0 to 0.1 reduction)
             # Each point of chemistry reduces sack chance by 2%
             chemistry_factor = ol_chemistry_bonus * 0.02
 
             # 3. Mobility Factor (Escape)
-            # If pressure implies a sack, QB can scramble
             # Combine speed/agility/acceleration with safe defaults
+            # NFL: Mobile QBs like Jackson, Allen have lower sack rates
             qb_speed = getattr(qb, 'speed', None) or 50
             qb_accel = getattr(qb, 'acceleration', None) or 50
             qb_agility = getattr(qb, 'agility', None) or 50
-            mobility_score = (qb_speed + qb_accel + qb_agility) / 300.0 # 0.0-1.0
-            escape_factor = mobility_score * 0.3 # Up to 30% reduction for elite mobility
+            mobility_score = (qb_speed + qb_accel + qb_agility) / 300.0  # 0.0-1.0
+            escape_factor = mobility_score * 0.25  # Up to 25% reduction for elite mobility
 
-            # Combine reduction factors (multiplicative for diminishing returns)
-            # Total Reduction = 1 - ((1-p)(1-c)(1-e))
-            # Just multiply the probability by (1 - factor)
-
-            # Base probability scaled by pressure (pressure 0.5 = normal, 1.0 = instant jailbreak)
-            # Let's say pressure_level scales the base prob.
-            # If pressure_level is defined as "Probability DL wins rep", then:
-            # P(Pressure) = pressure_level
-            # P(Sack | Pressure) vs P(ThrowAway | Pressure) etc.
-
-            # Simplified for Engine:
-            # initial_prob is proportional to pressure_level
+            # Base probability scaled by pressure
+            # pressure_level 0.5 = normal, 1.0 = instant pressure
             initial_prob = SackCalculator.BASE_SACK_PROBABILITY * (1 + pressure_level)
 
             final_prob = initial_prob * (1 - presence_factor) * (1 - chemistry_factor) * (1 - escape_factor)
 
-            # Clamp
-            final_prob = max(0.0, min(0.95, final_prob))
+            # Clamp to reasonable bounds
+            final_prob = max(0.02, min(0.25, final_prob))
 
             logger.debug(
                 "sack_calc",

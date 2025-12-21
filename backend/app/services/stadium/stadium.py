@@ -85,8 +85,8 @@ class StadiumEngine:
     Calculates home field advantage effects.
     """
 
-    # Known loud stadiums
-    LOUD_STADIUMS = {"KC", "SEA", "NO", "DEN", "BAL"}
+    # Kown loud stadiums (NFL calibrated)
+    LOUD_STADIUMS = {"KC", "SEA", "NO", "DEN", "BAL", "MIN", "BUF"}
 
     def __init__(self, config: StadiumConfig):
         self.config = config
@@ -111,7 +111,12 @@ class StadiumEngine:
         # Energy modifier
         energy_mod = crowd.energy * 10
 
-        total = base + attendance_mod + situation_mod + energy_mod
+        # Dome / Known Loud Stadium Bonus
+        dome_bonus = 0
+        if self.config.stadium_type == StadiumType.DOME or self.config.stadium_id in self.LOUD_STADIUMS:
+            dome_bonus = 10 # Reflective acoustics
+
+        total = base + attendance_mod + situation_mod + energy_mod + dome_bonus
 
         if total >= 95:
             return NoiseLevel.DEAFENING
@@ -141,8 +146,9 @@ class StadiumEngine:
         # Altitude effect (Denver)
         altitude_factor = 0.0
         if self.config.altitude > 4000:
-            # Every 1000 ft above 4000 = 2% more fatigue for visitors
-            altitude_factor = ((self.config.altitude - 4000) / 1000) * 0.02
+            # Physics-based fatigue drain
+            # Every 1000 ft above 4000 = 2.5% more fatigue for visitors
+            altitude_factor = ((self.config.altitude - 4000) / 1000) * 0.025
 
         # Crowd energy bonus to home team
         energy_bonus = crowd.energy * 0.05  # Up to 5% performance boost

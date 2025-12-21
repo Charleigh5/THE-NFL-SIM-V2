@@ -779,8 +779,42 @@ class SimulationOrchestrator:
         # Update Player Stats (in-memory aggregation removed, using _save_player_stats at end)
         # self._update_player_stats(result)
 
+        if getattr(result, "is_safety", False):
+            # Safety Handling (GAME-013)
+            # Award points to defense
+            if self.possession == "home":
+                self.away_score += 2
+                def_team = "away"
+            else:
+                self.home_score += 2
+                def_team = "home"
+
+            self.momentum_engine.process_event(def_team, MomentumEvent.SAFETY)
+            logger.debug(f"Momentum: SAFETY by defense {def_team}")
+
+            # Change possession (Free Kick from 20)
+            # Standard: Scored-upon team kicks off from 20
+            # Flip possession first, then set yard line
+            self.possession = "away" if self.possession == "home" else "home"
+            self.yard_line = 35 # Should be 20 for safety kick, but using 35 (kickoff default) for now
+                                # Ideally PlayResolver executes a KickoffCommand from the 20 next.
+                                # For simulation flow: Just set them up at opponent's 35 (simulating good return from 20)?
+                                # Let's simulate a standard kickoff result: 25 yard line own territory logic
+            self.yard_line = 25
+            self.down = 1
+            self.distance = 10
+
+            # Check for OT Win on Safety
+            if self.current_quarter >= 5:
+                # If first possession: Defense wins.
+                # If sudden death: Defense wins.
+                # Simplified: Safety in OT is always a win?
+                # Yes, any score in Sudden Death wins.
+                # On first possession, a safety wins (Rule 16-1-3-b).
+                pass # Game Over check will handle score discrepancy
+
         # Check for touchdown
-        if result.is_touchdown or self.yard_line >= 100 or self.yard_line <= 0:
+        elif result.is_touchdown or self.yard_line >= 100 or self.yard_line <= 0:
             # Determine team ID for momentum tracking
             if self.match_context:
                 offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
@@ -795,6 +829,11 @@ class SimulationOrchestrator:
             # B-003: Momentum - Touchdown event
             self.momentum_engine.process_event(offense_team_id, MomentumEvent.TOUCHDOWN)
             logger.debug(f"Momentum: TOUCHDOWN for team {offense_team_id}")
+
+            # 2-Point Conversion Logic (GAME-012)
+            # Basic stub for decision making (Go for 1 vs 2)
+            # In a real loop, we would insert a TwoPointConversionCommand here.
+            # detailed implementation requires async flow interruption or immediate resolution.
 
             # Reset to kickoff
             self.yard_line = 25
@@ -816,6 +855,11 @@ class SimulationOrchestrator:
             self.yard_line = 100 - self.yard_line
             self.down = 1
             self.distance = 10
+
+            if self.current_quarter >= 5:
+                # OT Turnover = Possession change count
+                # managed in game state manager or here?
+                pass
 
         # Normal down progression
         else:

@@ -37,6 +37,7 @@ class MomentumEvent(str, Enum):
     THRD_DOWN_STOP = "THRD_DOWN_STOP"
     MISSED_FG = "MISSED_FG"
     TIMEOUT = "TIMEOUT" # Can freeze momentum
+    SAFETY = "SAFETY" # Safety scored
 
 
 # ============================================================================
@@ -104,6 +105,7 @@ class MomentumEngine:
             MomentumEvent.THRD_DOWN_STOP: 5.0,
             MomentumEvent.MISSED_FG: -10.0,
             MomentumEvent.TIMEOUT: 0.0, # Special logic
+            MomentumEvent.SAFETY: 12.0,
         }
 
         shift = shifts.get(event, 0.0)

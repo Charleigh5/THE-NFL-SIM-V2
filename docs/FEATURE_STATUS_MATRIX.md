@@ -30,22 +30,22 @@
 
 ## 1. Core Game Engine Features
 
-| ID           | Feature Name                  | Status              | Spec Doc                                 | Tests  | Priority | Notes                                                          |
-| ------------ | ----------------------------- | ------------------- | ---------------------------------------- | ------ | -------- | -------------------------------------------------------------- |
-| **GAME-001** | Play Resolution System        | ✅ IMPLEMENTED      | ✅ `OFFENSIVE/DEFENSIVE_FUNDAMENTALS.md` | 🧪 85% | P0       | Core engine in `play_resolver.py`                              |
-| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`           | 🧪 80% | P0       | `_resolve_pass_play`                                           |
-| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`           | 🧪 80% | P0       | `_resolve_run_play`                                            |
-| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ⚠️ Basic Physics Only                    | 🧪 60% | P0       | `special_teams.py` (Kicks/Punts only)                          |
-| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`        | 🧪 90% | P0       | Well documented                                                |
-| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md`       | 🧪 85% | P0       | Good docs exist                                                |
-| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                               | 🧪 75% | P1       | Integrated with match context                                  |
-| **GAME-008** | QB Pocket Presence            | ✅ IMPLEMENTED      | ❌                                       | 🧪 80% | P1       | `sack_calculator.py` active                                    |
-| **GAME-009** | Environmental Weather Effects | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P1       | Fully integrated: Pass wind penalties, mud speed, kick impacts |
-| **GAME-010** | Venue-Specific Effects        | ✅ IMPLEMENTED      | ❌                                       | 🧪 60% | P2       | `StadiumEngine`, dome support, home field advantage            |
-| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ❌                                       | 🧪 70% | P0       | Works but undocumented                                         |
-| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ❌                                       | 🧪 50% | P1       | Basic implementation                                           |
-| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ❌                                       | 🧪 40% | P2       | Needs testing                                                  |
-| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                       | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.                            |
+| ID           | Feature Name                  | Status              | Spec Doc                                             | Tests  | Priority | Notes                                               |
+| ------------ | ----------------------------- | ------------------- | ---------------------------------------------------- | ------ | -------- | --------------------------------------------------- |
+| **GAME-001** | Play Resolution System        | ✅ IMPLEMENTED      | ✅ `OFFENSIVE/DEFENSIVE_FUNDAMENTALS.md`             | 🧪 85% | P0       | Core engine in `play_resolver.py`                   |
+| **GAME-002** | Pass Play Resolution          | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`                       | 🧪 80% | P0       | `_resolve_pass_play`                                |
+| **GAME-003** | Run Play Resolution           | ✅ IMPLEMENTED      | ✅ `OFFENSIVE_FUNDAMENTALS.md`                       | 🧪 80% | P0       | `_resolve_run_play`                                 |
+| **GAME-004** | Special Teams                 | ✅ IMPLEMENTED      | ⚠️ Basic Physics Only                                | 🧪 60% | P0       | `special_teams.py` (Kicks/Punts only)               |
+| **GAME-005** | Probability Engine            | 🎯 PRODUCTION_READY | ✅ `probability_engine_design.md`                    | 🧪 90% | P0       | Well documented                                     |
+| **GAME-006** | Match Context System          | 🟢 SPEC_COMPLETE    | ✅ `MATCH_CONTEXT_ARCHITECTURE.md`                   | 🧪 85% | P0       | Good docs exist                                     |
+| **GAME-007** | Fatigue System                | ✅ IMPLEMENTED      | ⚠️ Partial                                           | 🧪 75% | P1       | Integrated with match context                       |
+| **GAME-008** | QB Pocket Presence            | 🟢 SPEC_COMPLETE    | ✅ `specs/GAME-008_qb_pocket_presence.md`            | 🧪 80% | P1       | NFL-calibrated 6.5% base sack rate                  |
+| **GAME-009** | Environmental Weather Effects | 🟢 SPEC_COMPLETE    | ✅ `specs/GAME-009_environmental_weather_effects.md` | 🧪 60% | P1       | NFL-calibrated wind, rain, snow, cold effects       |
+| **GAME-010** | Venue-Specific Effects        | ✅ IMPLEMENTED      | ✅ `specs/GAME-010_venue_effects.md`                 | 🧪 80% | P2       | `StadiumEngine`, dome support, home field advantage |
+| **GAME-011** | Overtime Rules                | ✅ IMPLEMENTED      | ✅ `specs/GAME-011_overtime_rules.md`                | 🧪 70% | P0       | `GameStateManager`, `SimulationOrchestrator`        |
+| **GAME-012** | 2-Point Conversion            | ✅ IMPLEMENTED      | ✅ `specs/GAME-012_two_point_conversion.md`          | 🧪 50% | P1       | `PlayCommands`, `SimulationOrchestrator`            |
+| **GAME-013** | Safety Scenarios              | ✅ IMPLEMENTED      | ✅ `specs/GAME-013_safety_scenarios.md`              | 🧪 40% | P2       | `PlayResolver`, `SimulationOrchestrator`            |
+| **GAME-014** | Trick Plays                   | 🔵 PROPOSED         | ❌                                                   | ❌ 0%  | P2       | Fake punts, Statue of Liberty, etc.                 |
 
 ---
 
@@ -55,7 +55,7 @@
 | ---------- | ----------------------------- | ---------------- | -------------------------------------------- | ------ | -------- | ------------------------------------------ |
 | **AI-001** | Play Calling AI               | 🟢 SPEC_COMPLETE | ✅ `PLAY_CALLING_AI_SPEC.md`                 | 🧪 70% | P0       | Full spec created 2025-12-12               |
 | **AI-002** | Player AI State Machines      | 🟢 SPEC_COMPLETE | ✅ `specs/AI-002_player_state_machines.md`   | 🧪 65% | P0       | Stateless trees in `ai.py`                 |
-| **AI-003** | Coaching AI Personality       | ✅ IMPLEMENTED   | ❌                                           | 🧪 70% | P1       | `CoachingAIService` with aggression        |
+| **AI-003** | Coaching AI Personality       | ✅ IMPLEMENTED   | ✅ `specs/AI-003_coaching_personality.md`    | 🧪 85% | P1       | `CoachingAIService` with 7 archetypes      |
 | **AI-004** | 4th Down Decision AI          | 🟢 SPEC_COMPLETE | ✅ `specs/AI-004_4th_down_decision_logic.md` | 🧪 60% | P1       | Basic Playbook logic                       |
 | **AI-005** | 2-Minute Drill AI             | 🟢 SPEC_COMPLETE | ✅ `specs/AI-005_two_minute_drill_ai.md`     | 🧪 80% | P1       | UrgencyLevel, PlayCaller integration       |
 | **AI-006** | Timeout Management            | ✅ IMPLEMENTED   | ❌                                           | 🧪 60% | P2       | `GameState.TIMEOUT`, `should_call_timeout` |
@@ -85,21 +85,21 @@
 
 ## 4. RPG & Progression Systems
 
-| ID          | Feature Name                   | Status           | Spec Doc                              | Tests  | Priority | Notes                                              |
-| ----------- | ------------------------------ | ---------------- | ------------------------------------- | ------ | -------- | -------------------------------------------------- |
-| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md` | 🧪 85% | P0       | Working well                                       |
-| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`    | 🧪 80% | P0       | Full spec created 2025-12-12                       |
-| **RPG-003** | Age-Based Growth Curves        | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | Position-specific curves in `offseason_service.py` |
-| **RPG-004** | Position-Specific Growth Rates | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P2       | RB:26, WR:29, QB:35 decline ages                   |
-| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                    | 🧪 70% | P1       | `trait_service.py` (704 lines)                     |
-| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                               | 🧪 80% | P1       | Integrated & Tested                                |
-| **RPG-007** | Trait: WR Possession Receiver  | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_possession_receiver_effects`                |
-| **RPG-008** | Trait: RB Chip Block           | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `apply_chip_block_effects`                         |
-| **RPG-009** | Trait: LB Green Dot            | ✅ IMPLEMENTED   | ❌                                    | 🧪 80% | P1       | `apply_green_dot_effects` + pre-game               |
-| **RPG-010** | Trait: DB Pick Artist          | ✅ IMPLEMENTED   | ❌                                    | 🧪 75% | P1       | `apply_pick_artist_effects` in INT check           |
-| **RPG-011** | Trait Acquisition System       | ✅ IMPLEMENTED   | ❌                                    | 🧪 60% | P1       | `TraitAcquisitionService`                          |
-| **RPG-012** | Training Programs              | ✅ IMPLEMENTED   | ❌                                    | 🧪 70% | P2       | `training/camp.py`, `drills.py`                    |
-| **RPG-013** | Coaching Staff Influence       | ✅ IMPLEMENTED   | ❌                                    | 🧪 65% | P2       | `coaching_philosophy.py`, `coach_expertise.py`     |
+| ID          | Feature Name                   | Status           | Spec Doc                                | Tests  | Priority | Notes                                          |
+| ----------- | ------------------------------ | ---------------- | --------------------------------------- | ------ | -------- | ---------------------------------------------- |
+| **RPG-001** | XP Gain System                 | 🟢 SPEC_COMPLETE | ✅ `player-system/rpg-progression.md`   | 🧪 85% | P0       | Working well                                   |
+| **RPG-002** | Attribute Progression          | 🟢 SPEC_COMPLETE | ✅ `ATTRIBUTE_PROGRESSION_SPEC.md`      | 🧪 80% | P0       | Full spec created 2025-12-12                   |
+| **RPG-003** | Age-Based Growth Curves        | ✅ IMPLEMENTED   | ✅ `specs/RPG-003_age_growth_curves.md` | 🧪 85% | P1       | Position-specific curves in `progression.py`   |
+| **RPG-004** | Position-Specific Growth Rates | ✅ IMPLEMENTED   | ❌                                      | 🧪 80% | P2       | RB:26, WR:29, QB:35 decline ages               |
+| **RPG-005** | Trait System (Database)        | ✅ IMPLEMENTED   | ⚠️ DB models exist                      | 🧪 70% | P1       | `trait_service.py` (704 lines)                 |
+| **RPG-006** | QB Field General Trait         | ✅ IMPLEMENTED   | ✅ Spec                                 | 🧪 80% | P1       | Integrated & Tested                            |
+| **RPG-007** | Trait: WR Possession Receiver  | ✅ IMPLEMENTED   | ❌                                      | 🧪 80% | P1       | `apply_possession_receiver_effects`            |
+| **RPG-008** | Trait: RB Chip Block           | ✅ IMPLEMENTED   | ❌                                      | 🧪 70% | P2       | `apply_chip_block_effects`                     |
+| **RPG-009** | Trait: LB Green Dot            | ✅ IMPLEMENTED   | ❌                                      | 🧪 80% | P1       | `apply_green_dot_effects` + pre-game           |
+| **RPG-010** | Trait: DB Pick Artist          | ✅ IMPLEMENTED   | ❌                                      | 🧪 75% | P1       | `apply_pick_artist_effects` in INT check       |
+| **RPG-011** | Trait Acquisition System       | ✅ IMPLEMENTED   | ❌                                      | 🧪 60% | P1       | `TraitAcquisitionService`                      |
+| **RPG-012** | Training Programs              | ✅ IMPLEMENTED   | ❌                                      | 🧪 70% | P2       | `training/camp.py`, `drills.py`                |
+| **RPG-013** | Coaching Staff Influence       | ✅ IMPLEMENTED   | ❌                                      | 🧪 65% | P2       | `coaching_philosophy.py`, `coach_expertise.py` |
 
 ---
 

@@ -8,6 +8,7 @@ class PlayResult(BaseModel):
     is_turnover: bool = False
     is_sack: bool = False
     is_penalty: bool = False
+    is_safety: bool = False
     penalty_yards: int = 0
     time_elapsed: float = 40.0  # seconds
     description: str

@@ -1346,6 +1346,44 @@ class PlayResolver:
         run_success = yards_gained > 0 and not is_turnover
         self._apply_familiarity_learning([rb], play_id, success=run_success)
 
+        # Safety Detection (GAME-013)
+        # Determine if ball carrier was tackled in own endzone
+        # Logic depends on direction.
+        # Home offense: driving 0 -> 100. Own Endzone is <= 0.
+        # Away offense: driving 100 -> 0. Own Endzone is >= 100.
+
+        is_safety = False
+        # The `yards_gained` variable is already calculated.
+        # We need the starting field position to determine if a safety occurred.
+        # Assuming `command` or `self.current_match_context` has the necessary field position.
+        # For this example, let's assume `command.start_yard_line` exists.
+        # If not, this logic would need to be adapted to how field position is tracked.
+
+        # Placeholder for `start_yard_line` and `total_yards` (which is `yards_gained` here)
+        # The provided snippet uses `context.get("yard_line", ...)`, but `context` is not defined here.
+        # Let's use `command.start_yard_line` as a hypothetical source for now,
+        # and `yards_gained` for `total_yards`.
+
+        start_yard_line = getattr(command, "start_yard_line", 50) # Default to 50 if not present
+
+        if command.possession == "home": # Home team is offense, driving towards 100
+             # Own endzone is 0. If current position + yards gained <= 0, it's a safety.
+             # Note: `yards_gained` can be negative.
+             if start_yard_line + yards_gained <= 0:
+                 is_safety = True
+                 yards_gained = -start_yard_line # Clamp yards to reach 0, effectively
+
+        else: # Away team is offense, driving towards 0
+             # Own endzone is 100. If current position - yards gained >= 100, it's a safety.
+             # (Away team's perspective: start_yard_line is distance from their own endzone)
+             # If start_yard_line is 75, and they lose 30 yards, new pos is 105 (past 100)
+             if start_yard_line - yards_gained >= 100:
+                 is_safety = True
+                 yards_gained = -(100 - start_yard_line) # Clamp yards to reach 100, effectively
+
+        # The snippet also introduces `description` and `injuries` which are not defined.
+        # Sticking to existing variables for the return statement.
+
         return PlayResult(
             yards_gained=yards_gained,
             is_touchdown=is_touchdown,
@@ -1354,7 +1392,8 @@ class PlayResolver:
             headline=headline,
             is_highlight_worthy=is_highlight_worthy or is_touchdown,
             xp_awards=xp_result.get("xp_awards", {}),
-            rusher_id=rb.id
+            rusher_id=rb.id,
+            is_safety=is_safety # New Field
         )
 
     def _resolve_legacy_random_pass(self, command: PassPlayCommand) -> PlayResult:

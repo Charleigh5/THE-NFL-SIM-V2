@@ -22,9 +22,9 @@ def test_passing_modifiers_heavy_wind():
     )
     effects = WeatherEffects(weather)
     acc, dist = effects.get_passing_modifiers()
-    # Accuracy: -1% per mph over 10 -> -10% -> 0.9
+    # NFL calibrated: -0.8% per mph over 10 -> -8% -> 0.92
     # Distance: -0.5% per mph over 10 -> -5% -> 0.95
-    assert acc == pytest.approx(0.9)
+    assert acc == pytest.approx(0.92)
     assert dist == pytest.approx(0.95)
 
 def test_passing_modifiers_rain():
@@ -35,7 +35,8 @@ def test_passing_modifiers_rain():
     )
     effects = WeatherEffects(weather)
     acc, dist = effects.get_passing_modifiers()
-    assert acc == 0.9
+    # NFL calibrated: Rain causes -12% accuracy
+    assert acc == pytest.approx(0.88)
     assert dist == 1.0
 
 def test_fumble_modifier_wet():

@@ -25775,3 +25775,107 @@ AttributeInteractionEngine initialized with 13 interactions
 Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
 AttributeInteractionEngine initialized with 13 interactions
 Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\mcp', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\integration', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Injury: Player 1 suffered Hyperextension (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 5), out 6 weeks. Can play through: False
+Injury: Player 1 suffered Contusion (severity 2), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Moderate Sprain (severity 5), out 6 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 4), out 4 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 4), out 5 weeks. Can play through: False
+Injury: Player 1 suffered Contusion (severity 2), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Partial Ligament Tear (severity 7), out 7 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 4), out 5 weeks. Can play through: False
+Injury: Player 1 suffered Muscle Strain (severity 3), out 3 weeks. Can play through: True
+Injury: Player 1 suffered Partial Ligament Tear (severity 6), out 6 weeks. Can play through: False
+Injury: Player 1 suffered Hyperextension (severity 4), out 2 weeks. Can play through: False
+Injury: Player 1 suffered Stress Fracture (severity 7), out 10 weeks. Can play through: False
+Injury: Player 1 suffered High Ankle Sprain (severity 6), out 10 weeks. Can play through: False
+Injury: Player 1 suffered Muscle Strain (severity 2), out 3 weeks. Can play through: True
+Injury: Player 1 suffered Partial Ligament Tear (severity 6), out 6 weeks. Can play through: False
+Injury: Player 1 suffered Hyperextension (severity 4), out 2 weeks. Can play through: False
+Injury: Player 1 suffered Stress Fracture (severity 7), out 7 weeks. Can play through: False
+Injury: Player 1 suffered Minor Sprain (severity 3), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Stress Fracture (severity 7), out 10 weeks. Can play through: False
+Injury: Player 1 suffered High Ankle Sprain (severity 6), out 10 weeks. Can play through: False
+Injury: Player 1 suffered Muscle Strain (severity 2), out 3 weeks. Can play through: True
+Injury: Player 1 suffered Muscle Strain (severity 2), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Stress Fracture (severity 7), out 7 weeks. Can play through: False
+Injury: Player 1 suffered Minor Sprain (severity 3), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Contusion (severity 1), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Muscle Strain (severity 2), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Hyperextension (severity 5), out 4 weeks. Can play through: False
+Injury: Player 1 suffered Contusion (severity 1), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Contusion (severity 1), out 2 weeks. Can play through: True
+Injury: Player 1 suffered Hyperextension (severity 5), out 4 weeks. Can play through: False
+Injury: Player 1 suffered Contusion (severity 1), out 2 weeks. Can play through: True
+Injury: Player 1 suffered Muscle Tear (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered High Ankle Sprain (severity 6), out 7 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered Minor Sprain (severity 3), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Muscle Tear (severity 4), out 6 weeks. Can play through: False
+Injury: Player 1 suffered Minor Sprain (severity 1), out 3 weeks. Can play through: True
+Injury: Player 1 suffered Muscle Tear (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered High Ankle Sprain (severity 6), out 7 weeks. Can play through: False
+Injury: Player 1 suffered Moderate Sprain (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered Hyperextension (severity 4), out 3 weeks. Can play through: False
+Injury: Player 1 suffered Minor Sprain (severity 3), out 1 weeks. Can play through: True
+Injury: Player 1 suffered Fracture (severity 8), out 14 weeks. Can play through: False
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+🎯 LEVEL UP! Player 10: awareness 55 → 56
+🎯 LEVEL UP! Player 11: tackle 59 → 60
+🎯 LEVEL UP! Player 12: speed 55 → 56
+🎯 LEVEL UP! Player 12: speed 56 → 57
+🎯 LEVEL UP! Player 13: kick_accuracy 98 → 99
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM\backend
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+🎯 LEVEL UP! Player 10: awareness 55 → 56
+🎯 LEVEL UP! Player 11: tackle 59 → 60
+🎯 LEVEL UP! Player 12: speed 55 → 56
+🎯 LEVEL UP! Player 12: speed 56 → 57
+🎯 LEVEL UP! Player 13: kick_accuracy 98 → 99
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error 11001 connecting to redis:6379. getaddrinfo failed.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=C:\Users\cweir\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+PYTEST DEBUG: cwd=C:\Users\cweir\Documents\GitHub\THE NFL SIM
+PYTEST DEBUG: sys.path[:8]=['C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend\\tests\\unit', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM\\backend', 'C:\\Users\\cweir\\Documents\\GitHub\\THE NFL SIM', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python313.zip', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\DLLs', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\Lib', 'C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
+Advanced to quarter 5

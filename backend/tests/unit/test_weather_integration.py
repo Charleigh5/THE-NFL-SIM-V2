@@ -15,8 +15,8 @@ class TestWeatherIntegration:
         effects = WeatherEffects(weather)
         acc_mod, dist_mod = effects.get_passing_modifiers()
 
-        # 1% per mph over 10 -> 10 * 0.01 = 0.1 penalty
-        assert acc_mod == pytest.approx(0.9, 0.01)
+        # NFL calibrated: 0.8% per mph over 10 -> 10 * 0.008 = 0.08 penalty
+        assert acc_mod == pytest.approx(0.92, 0.01)
         # 0.5% per mph over 10 -> 10 * 0.005 = 0.05 penalty
         assert dist_mod == pytest.approx(0.95, 0.01)
 

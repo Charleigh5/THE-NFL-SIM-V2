@@ -14,22 +14,22 @@ class TestPersonalityProfiles:
     """Tests for coaching personality definitions."""
 
     def test_conservative_low_aggression(self):
-        """Conservative coaches have low aggression."""
-        profile = PERSONALITY_PROFILES[CoachingPersonality.CONSERVATIVE]
-        assert profile.aggression == 0.20
-        assert profile.run_pass_ratio == 0.55  # Run-heavy
+        """Old School coaches have low aggression."""
+        profile = PERSONALITY_PROFILES[CoachingPersonality.OLD_SCHOOL]
+        assert profile.aggression == 0.15
+        assert profile.run_pass_ratio == 0.65  # Run-heavy
 
     def test_gambler_high_aggression(self):
-        """Gambler coaches are very aggressive."""
-        profile = PERSONALITY_PROFILES[CoachingPersonality.GAMBLER]
-        assert profile.aggression == 0.90
-        assert profile.run_pass_ratio == 0.30  # Pass-heavy
+        """Gambler (Riverboat) coaches are very aggressive."""
+        profile = PERSONALITY_PROFILES[CoachingPersonality.RIVERBOAT]
+        assert profile.aggression == 0.80
+        assert profile.run_pass_ratio == 0.45
 
     def test_balanced_middle_ground(self):
-        """Balanced coaches are in the middle."""
-        profile = PERSONALITY_PROFILES[CoachingPersonality.BALANCED]
-        assert 0.4 <= profile.aggression <= 0.6
-        assert 0.4 <= profile.run_pass_ratio <= 0.5
+        """CEO coaches are balanced."""
+        profile = PERSONALITY_PROFILES[CoachingPersonality.CEO]
+        assert profile.aggression == 0.40
+        assert profile.run_pass_ratio == 0.50
 
 
 class TestSituationalModifiers:
@@ -78,24 +78,24 @@ class TestPersonalityDetermination:
         personality = get_personality_for_coach(aggression_rating=85)
         assert personality == CoachingPersonality.GAMBLER
 
-    def test_moderate_aggression_is_aggressive(self):
-        """60-79 aggression = Aggressive personality."""
-        personality = get_personality_for_coach(aggression_rating=65)
-        assert personality == CoachingPersonality.AGGRESSIVE
+    def test_moderate_aggression_is_offensive_guru(self):
+        """70-79 aggression = Offensive Guru."""
+        personality = get_personality_for_coach(aggression_rating=75)
+        assert personality == CoachingPersonality.GURU_OFF
 
-    def test_low_aggression_is_conservative(self):
-        """<40 aggression = Conservative personality."""
-        personality = get_personality_for_coach(aggression_rating=30)
-        assert personality == CoachingPersonality.CONSERVATIVE
+    def test_low_aggression_is_old_school(self):
+        """20-29 aggression = Old School."""
+        personality = get_personality_for_coach(aggression_rating=25)
+        assert personality == CoachingPersonality.OLD_SCHOOL
 
 
 class TestPlayCallerIntegration:
     """Tests for PlayCaller config generation."""
 
-    def test_create_config_balanced(self):
-        """Create balanced config for PlayCaller."""
+    def test_create_config_ceo(self):
+        """Create balanced config for CEO."""
         config = create_playcaller_config(
-            personality=CoachingPersonality.BALANCED,
+            personality=CoachingPersonality.CEO,
             score_diff=0,
             time_remaining=3600,
             is_home=True,
@@ -104,12 +104,12 @@ class TestPlayCallerIntegration:
 
         assert "aggression" in config
         assert "run_pass_ratio" in config
-        assert 0.4 <= config["aggression"] <= 0.6
+        assert 0.35 <= config["aggression"] <= 0.55
 
-    def test_create_config_gambler_trailing(self):
-        """Gambler trailing should be very aggressive."""
+    def test_create_config_analytics_trailing(self):
+        """Analytics trailing should be very aggressive."""
         config = create_playcaller_config(
-            personality=CoachingPersonality.GAMBLER,
+            personality=CoachingPersonality.ANALYTICS,
             score_diff=-14,
             time_remaining=600,
             is_home=False,
@@ -119,4 +119,4 @@ class TestPlayCallerIntegration:
         # Should be capped at 1.0
         assert config["aggression"] <= 1.0
         # Should be very pass-heavy
-        assert config["run_pass_ratio"] < 0.30
+        assert config["run_pass_ratio"] < 0.45
