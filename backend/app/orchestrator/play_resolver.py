@@ -282,6 +282,7 @@ class PlayResolver:
 
     def _create_qb_physics(self, qb: Any) -> QuarterbackPhysics:
         """Create QB physics engine from player attributes."""
+        # Note: Matches signature in app/engine/position_physics/quarterback.py
         return QuarterbackPhysics(
             throw_power_rating=getattr(qb, "throw_power", 80),
             throw_accuracy_rating=getattr(qb, "throw_accuracy_mid", 80),
@@ -293,45 +294,62 @@ class PlayResolver:
 
     def _create_wr_physics(self, wr: Any) -> WideReceiverPhysics:
         """Create WR physics engine from player attributes."""
+        ratings = {
+            "speed": getattr(wr, "speed", 90),
+            "acceleration": getattr(wr, "acceleration", 88),
+            "agility": getattr(wr, "agility", 85),
+            "route_running": getattr(wr, "route_running", 85),
+            "catching": getattr(wr, "catching", 85),
+            "catch_in_traffic": getattr(wr, "catch_in_traffic", 80),
+            "spectacular_catch": getattr(wr, "spectacular_catch", 75),
+            "release": getattr(wr, "release", 80),
+            "jumping": int(getattr(wr, "vertical_jump", 36) or 36),
+            "forty_time": 4.45
+        }
         return WideReceiverPhysics(
-            speed_rating=getattr(wr, "speed", 90),
-            acceleration_rating=getattr(wr, "acceleration", 88),
-            agility_rating=getattr(wr, "agility", 85),
-            route_running_rating=getattr(wr, "route_running", 85),
-            catching_rating=getattr(wr, "catching", 85),
-            catch_in_traffic_rating=getattr(wr, "catch_in_traffic", 80),
-            spectacular_catch_rating=getattr(wr, "spectacular_catch", 75),
-            release_rating=getattr(wr, "release", 80),
+            ratings=ratings,
             height_inches=getattr(wr, "height", 72),
-            vertical_jump_inches=int(getattr(wr, "vertical_jump", 36) or 36),
-            hand_size_inches=float(getattr(wr, "hand_size", 9.5) or 9.5),
+            hand_size=float(getattr(wr, "hand_size", 9.5) or 9.5),
         )
 
     def _create_rb_physics(self, rb: Any) -> RunningBackPhysics:
         """Create RB physics engine from player attributes."""
+        # Note: Matches signature in app/engine/position_physics/running_back.py
+        ratings = {
+            "speed": getattr(rb, "speed", 85),
+            "acceleration": getattr(rb, "acceleration", 85),
+            "agility": getattr(rb, "agility", 85),
+            "strength": getattr(rb, "strength", 70),
+            "elusiveness": getattr(rb, "elusiveness", 80) if hasattr(rb, "elusiveness") else 80,
+            "trucking": getattr(rb, "trucking", 70) if hasattr(rb, "trucking") else 70,
+            "ball_carrier_vision": getattr(rb, "ball_carrier_vision", 80) if hasattr(rb, "ball_carrier_vision") else 80,
+            "break_tackle": getattr(rb, "break_tackle", 75),
+            "stiff_arm": getattr(rb, "stiff_arm", 70),
+            "balance": getattr(rb, "balance", 75),
+            "forty_time": 4.5
+        }
         return RunningBackPhysics(
-            speed_rating=getattr(rb, "speed", 85),
-            acceleration_rating=getattr(rb, "acceleration", 85),
-            agility_rating=getattr(rb, "agility", 85),
-            strength_rating=getattr(rb, "strength", 70),
-            elusiveness_rating=getattr(rb, "elusiveness", 80) if hasattr(rb, "elusiveness") else 80,
-            trucking_rating=getattr(rb, "trucking", 70) if hasattr(rb, "trucking") else 70,
-            ball_carrier_vision_rating=getattr(rb, "ball_carrier_vision", 80) if hasattr(rb, "ball_carrier_vision") else 80,
-            weight=getattr(rb, "weight", 210),
+            ratings=ratings,
+            weight=float(getattr(rb, "weight", 210)),
         )
 
     def _create_db_physics(self, db: Any) -> DefensiveBackPhysics:
         """Create DB physics engine from player attributes."""
-        return DefensiveBackPhysics(
-            speed_rating=getattr(db, "speed", 88),
-            acceleration_rating=getattr(db, "acceleration", 86),
-            agility_rating=getattr(db, "agility", 85),
-            man_coverage_rating=getattr(db, "man_coverage", 80),
-            zone_coverage_rating=getattr(db, "zone_coverage", 78),
-            press_rating=getattr(db, "press", 75),
-            ball_skills_rating=getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
-            play_recognition_rating=getattr(db, "play_recognition", 78),
-        )
+        # Note: Matches signature in app/engine/position_physics/defensive_back.py
+        ratings = {
+            "speed": getattr(db, "speed", 88),
+            "acceleration": getattr(db, "acceleration", 86),
+            "agility": getattr(db, "agility", 85),
+            "man_coverage": getattr(db, "man_coverage", 80),
+            "zone_coverage": getattr(db, "zone_coverage", 78),
+            "press": getattr(db, "press", 75),
+            "ball_skills": getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
+            "play_recognition": getattr(db, "play_recognition", 78),
+            "ball_skills": getattr(db, "ball_skills", 75),
+            "change_of_direction": getattr(db, "change_of_direction", 80),
+            "strength": getattr(db, "strength", 60)
+        }
+        return DefensiveBackPhysics(ratings=ratings)
 
     def _calculate_physics_separation(
         self,
@@ -344,21 +362,24 @@ class PlayResolver:
         Calculate WR-DB separation using physics engines.
         Returns separation in yards.
         """
-        # Create states
+        # Create state
         wr_state = WRState(route_type=route_type)
-        db_state = DBState()
 
-        # Calculate separation at given time
+        # Estimate yards into route based on time (approx 7 yards/sec avg speed for WR)
+        yards_into_route = (time_elapsed_ms / 1000.0) * 7.0
+
         separation = wr_physics.calculate_separation(
-            wr_state=wr_state,
-            db_physics=db_physics,
-            time_elapsed_ms=time_elapsed_ms,
-            is_press=(db_physics.press > 70),
+            state=wr_state,
+            route_type=route_type,
+            yards_into_route=yards_into_route,
+            defender_speed=db_physics.speed,
+            defender_coverage_rating=db_physics.man_coverage,
+            press_coverage=(db_physics.press > 70)
         )
         return separation
 
 
-    def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Dict[str, float] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
+    def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Optional[Dict[str, float]] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
         """
         Simulate the battle between OL and DL.
         Returns (results, winning_defenders, beaten_linemen)
@@ -395,7 +416,7 @@ class PlayResolver:
             ol_rating += modifier
 
             # Resolve block
-            result = BlockingEngine.resolve_pass_block(self.rng, ol_rating, dl_rating)
+            result = BlockingEngine.resolve_pass_block(self.rng, int(ol_rating), int(dl_rating))
 
             results.append(result)
             if result == BlockingResult.LOSS or result == BlockingResult.PANCAKE:
@@ -554,6 +575,14 @@ class PlayResolver:
         defender = self._get_player_by_position(command.defense, "CB") or \
                    self._get_player_by_position(command.defense, "S") or \
                    command.defense[0]
+
+        if not qb:
+             logger.warning("No QB found for pass play")
+             return PlayResult(yards_gained=0, description="Play broken (No QB)")
+
+        if not target or not defender:
+             # Fallback if rosters incomplete
+             return self._resolve_legacy_random_pass(command)
 
         # 2. Genesis Kernel: Calculate Fatigue & Injury Risk
         temp = self._get_weather_temp()
@@ -770,8 +799,8 @@ class PlayResolver:
         )
 
         matchup_factor = ProbabilityEngine.compare_skill(
-            effective_route_running,
-            getattr(defender, "man_coverage", None) or 50
+            int(effective_route_running),
+            int(getattr(defender, "man_coverage", None) or 50)
         )
 
         # Blend physics and legacy (70% physics, 30% legacy)
@@ -1000,11 +1029,12 @@ class PlayResolver:
             # Weather narrative
             weather_note = ""
             if weather_effects:
-                if weather_effects.weather.precipitation_type == "Snow":
+                p_type = str(weather_effects.weather.precipitation_type)
+                if p_type == "Snow":
                     weather_note = " through the falling snow"
-                elif weather_effects.weather.precipitation_type == "Rain":
+                elif p_type == "Rain":
                     weather_note = " in the rain"
-                elif weather_effects.weather.wind_speed > 15:
+                elif int(getattr(weather_effects.weather, "wind_speed", 0)) > 15:
                     weather_note = " fighting the wind"
 
             # Build full description with interactions
@@ -1081,8 +1111,7 @@ class PlayResolver:
                     headline=f"Turnover! {defender.last_name} with the pick!",
                     is_highlight_worthy=True,
                     injuries=injuries,
-                    passer_id=qb.id,
-                    defender_id=defender.id
+                    passer_id=qb.id
                 )
 
             # Normal Incomplete - add pressure indicator if applicable
@@ -1190,7 +1219,7 @@ class PlayResolver:
                 tackler_weight=getattr(defender, "weight", 220),
                 tackler_speed=getattr(defender, "speed", 80) / 20.0,  # Convert to yards/sec
                 tackle_rating=getattr(defender, "tackle", 75),
-                contact_type=ContactType.FORM_TACKLE if command.run_direction == "middle" else ContactType.PURSUIT,
+                contact_type=ContactType.WRAP_UP if command.run_direction == "middle" else ContactType.PURSUIT,
                 approach_angle=0.0 if command.run_direction == "middle" else 45.0,
             )
 
@@ -1213,8 +1242,8 @@ class PlayResolver:
         effective_strength = (getattr(rb, "strength", None) or 50) * rb_familiarity_modifier
 
         power_diff = ProbabilityEngine.compare_strength(
-            effective_strength,
-            getattr(defender, "tackle", None) or 50
+            int(effective_strength),
+            int(getattr(defender, "tackle", None) or 50)
         )
 
         # Blend physics and legacy (60% physics, 40% legacy)

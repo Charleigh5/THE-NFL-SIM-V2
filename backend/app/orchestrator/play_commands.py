@@ -17,7 +17,7 @@ class PlayCommand(ABC):
     """Abstract base class for all play commands"""
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20):
+                 distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True, possession: str = "home", start_yard_line: int = 20):
         self.offense = offense_players
         self.defense = defense_players
         self.modifiers = modifiers or {}
@@ -25,6 +25,9 @@ class PlayCommand(ABC):
         self.distance = distance
         self.down = down
         self.yard_line = yard_line
+        self.is_home_team = is_home_team
+        self.possession = possession
+        self.start_yard_line = start_yard_line
 
     @abstractmethod
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:

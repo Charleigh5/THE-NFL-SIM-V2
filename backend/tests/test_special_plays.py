@@ -94,27 +94,29 @@ class TestSpecialPlays:
     def test_tush_push_execution_success(self, resolver):
         """Verify Tush Push integration into resolve_run_play outcome logic"""
         # QB as runner with explicit attributes
-        qb = MagicMock(id="QB1")
+        qb = MagicMock(id=101)
         qb.position = "QB"
-        qb.strength = 80
+        qb.strength = 80.0
         qb.speed = 80.0
         qb.acceleration = 80.0
         qb.agility = 80.0
-        qb.weight = 210
-        qb.fatigue = 0
+        qb.weight = 210.0
+        qb.fatigue = 0.0
         qb.last_name = "Quarterback"
-        qb.ball_security = 95
-        qb.carrying_vision = 80
-        qb.years_pro = 5
+        qb.ball_security = 95.0
+        qb.carrying_vision = 80.0
+        qb.years_pro = 5.0
+        qb.age = 28 # Add age for UseBasedProgression
 
         # DT as defender
-        dt = MagicMock(id="DT1")
+        dt = MagicMock(id=201)
         dt.position = "DT"
         dt.tackle = 70.0
         dt.speed = 60.0
-        dt.weight = 300
+        dt.weight = 300.0
         dt.hit_power = 75.0
         dt.last_name = "Defender"
+        dt.age = 30 # Add age
 
         # Force Mock RNG behavior
         resolver.rng.random.return_value = 0.1
@@ -131,8 +133,14 @@ class TestSpecialPlays:
             yard_line=60
         )
 
-        # Mock helper needed since player lookup might fail on mocks inside list
-        resolver._get_player_by_position = MagicMock(return_value=qb)
+        # Smart mock for player lookup
+        # Smart mock for player lookup
+        def get_player_side_effect(players, position):
+             if players == [qb]:  # Offense list
+                 return qb
+             return dt  # Defense list
+
+        resolver._get_player_by_position = MagicMock(side_effect=get_player_side_effect)
 
         # Override _get_familiarity_penalty to avoid mock comparison errors
         resolver._get_familiarity_penalty = MagicMock(return_value=1.0)
@@ -147,15 +155,29 @@ class TestSpecialPlays:
                 "fumble_mult": 1.0
             }
 
-            # Mock physics state
+            # Mock physics state to avoid ContactType errors and ensure float results
             resolver._create_rb_physics = MagicMock()
-            mock_physics_state = MagicMock()
-            mock_physics_state.yards_after_contact = 1.0 # Float required
-            mock_physics_state.balance = 50.0 # Float required
-            resolver._create_rb_physics.return_value = mock_physics_state
+            mock_physics_engine = MagicMock()
 
-            result = resolver._resolve_run_play(command)
+            # Use a real RBState to receive the results
+            from app.engine.position_physics import RBState
+            real_rb_state = RBState()
+            real_rb_state.yards_after_contact = 1.0
+            real_rb_state.balance = 50.0
+
+            def mock_resolve_tackle(state, tackle, rng):
+                state.yards_after_contact = 1.0
+                state.balance = 50.0
+                return MagicMock()
+
+            mock_physics_engine.resolve_tackle_attempt.side_effect = mock_resolve_tackle
+            resolver._create_rb_physics.return_value = mock_physics_engine
+
+            # Patch rb_state creation to use our real_rb_state
+            with patch('app.orchestrator.play_resolver.RBState', return_value=real_rb_state):
+                result = resolver._resolve_run_play(command)
 
         # We mainly want to ensure no crash and logical flow
         assert result is not None
         assert result.yards_gained is not None
+        assert result.rusher_id == 101
