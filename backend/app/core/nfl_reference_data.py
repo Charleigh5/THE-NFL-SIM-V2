@@ -7,6 +7,7 @@ Source: NFL Financial Thresholds and Salary Cap Performance Metrics.
 
 from dataclasses import dataclass
 from typing import Dict, Optional, List
+from enum import Enum
 
 # ============================================================================
 # SALARY CAP DATA
@@ -56,6 +57,11 @@ SALARY_CAP_CAGR = 0.0697  # 6.97%
 # SPECIAL PLAYS DATA
 # ============================================================================
 
+class RiskLevel(str, Enum):
+    LOW = "Low"
+    MODERATE = "Moderate"
+    HIGH = "High"
+
 @dataclass(frozen=True)
 class PlayReference:
     """Statistical reference for a specific play type."""
@@ -63,50 +69,58 @@ class PlayReference:
     success_rate_min: float
     success_rate_max: float
     epa_value: float
-    risk_level: str  # "Low", "Moderate", "High"
+    risk_level: RiskLevel
     description: str
+    prerequisites: Optional[str] = None
+    personnel: Optional[str] = None
+    frequency_per_game: Optional[float] = None
+
+    @property
+    def success_rate_avg(self) -> float:
+        return (self.success_rate_min + self.success_rate_max) / 2.0
 
 SPECIAL_PLAYS: Dict[str, PlayReference] = {
-    "tush_push": PlayReference(
+    "TUSH_PUSH": PlayReference(
         name="Tush Push",
         success_rate_min=0.81,
         success_rate_max=0.927,
         epa_value=0.25,
-        risk_level="Low",
+        risk_level=RiskLevel.LOW,
         description="QB Sneak with pushers. Highly efficient in short yardage."
     ),
-    "flea_flicker": PlayReference(
+    "FLEA_FLICKER": PlayReference(
         name="Flea Flicker",
-        success_rate_min=0.73,
-        success_rate_max=0.79,
-        epa_value=0.30,
-        risk_level="High",
-        description="Trick play involving backward pass to QB for deep throw."
+        success_rate_min=0.35,
+        success_rate_max=0.55,
+        epa_value=0.8,
+        risk_level=RiskLevel.MODERATE,
+        description="RB flip back to QB for deep shot."
     ),
-    "fake_punt": PlayReference(
+    "FAKE_PUNT": PlayReference(
         name="Fake Punt",
-        success_rate_min=0.50,
-        success_rate_max=0.50,
-        epa_value=0.15, # Estimated
-        risk_level="Moderate",
-        description="Fourth down deception to steal possession."
+        success_rate_min=0.60,
+        success_rate_max=0.75,
+        epa_value=0.4,
+        risk_level=RiskLevel.HIGH,
+        description="Special teams trick play."
     ),
-    "rpo": PlayReference(
+    "RPO": PlayReference(
         name="RPO",
-        success_rate_min=0.312,
-        success_rate_max=0.312,
-        epa_value=-0.047, # Real data suggests RPOs can have negative EPA if misread
-        risk_level="Moderate",
-        description="Run-Pass Option reading a second-level defender."
+        success_rate_min=0.55,
+        success_rate_max=0.68,
+        epa_value=0.35,
+        risk_level=RiskLevel.LOW,
+        description="Run-Pass Option. Modern offensive staple."
     ),
-    "wr_option": PlayReference(
-        name="WR Option",
-        success_rate_min=1.0, # Target rate in specific schemas
-        success_rate_max=1.0,
-        epa_value=0.40,
-        risk_level="High",
-        description="Wide receiver choice route based on coverage."
-    ),
+    "HAIL_MARY": PlayReference(
+        name="Hail Mary",
+        success_rate_min=0.04,
+        success_rate_max=0.12,
+        epa_value=-0.5, # Usually low expected value due to incompletion prob
+        risk_level=RiskLevel.HIGH,
+        description="Desperation deep pass to end zone.",
+        prerequisites="End of half/game; long distance"
+    )
 }
 
 # ============================================================================

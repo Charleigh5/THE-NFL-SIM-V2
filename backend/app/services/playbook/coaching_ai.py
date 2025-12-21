@@ -41,7 +41,6 @@ class CoachingAIService:
 
         Uses real NFL analytics data from FOURTH_DOWN_ANALYTICS.
         """
-        print(f"CALLED should_go_for_it_4th_down: dist={situation.distance} pos={situation.field_position}")
         from app.core.nfl_reference_data import FOURTH_DOWN_ANALYTICS
 
         if situation.down != 4:
@@ -96,7 +95,6 @@ class CoachingAIService:
 
         # Random roll
         roll = random.uniform(0, 100)
-        print(f"DEBUG: agg={aggression_score} dist_p={distance_penalty} pos_b={position_bonus} prob={probability} roll={roll}")
         return roll < probability
 
     def get_2pt_decision(self, situation: GameSituation) -> bool:

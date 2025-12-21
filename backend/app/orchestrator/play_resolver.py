@@ -55,13 +55,15 @@ class PlayResolver:
         from app.core.nfl_reference_data import SPECIAL_PLAYS, PlayReference
 
         play_id = getattr(command, "play_id", "")
+        if play_id: play_id = play_id.upper()
+
         if not play_id or play_id not in SPECIAL_PLAYS:
             return {"success_prob_override": None, "epa_bonus": 0.0, "risk_modifier": 1.0}
 
         special_play = SPECIAL_PLAYS[play_id]
         modifiers = {
             "success_prob_override": None,
-            "epa_bonus": special_play.epa,
+            "epa_bonus": special_play.epa_value,
             "risk_modifier": 1.0
         }
 

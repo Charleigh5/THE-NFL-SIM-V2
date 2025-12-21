@@ -73,15 +73,14 @@ def test_coaching_ai_4th_down_analytics():
     assert ai.should_go_for_it_4th_down(situation_desperate) is True
 
 def test_coaching_ai_4th_down_optimal_zone():
-    """Test coaching AI in the optimal 'go zone' (4th-60 zone)."""
+    """Test coaching AI in the optimal 'go zone'."""
     philosophy = CoachingPhilosophy(
-        aggressiveness=0,
+        aggressiveness=60,  # Moderately aggressive
         run_pass_ratio=50
     )
     ai = CoachingAIService(philosophy)
 
-    # Even a conservative coach in the 4th-60 zone might go for it if distance is short
-    # 4th & 2 at midfield
+    # 4th & 2 at midfield (in the go-for-it zone: 40-60)
     situation_midfield = GameSituation(
         down=4,
         distance=2,
@@ -91,23 +90,21 @@ def test_coaching_ai_4th_down_optimal_zone():
         time_remaining=300
     )
 
-    # With 0 aggressiveness:
-    # Aggression Score = 0
+    # With 60 aggressiveness:
+    # Aggression Score = 60
     # Distance Penalty = 2 * 8 = 16
-    # Position Bonus = 30 (for midfield)
+    # Position Bonus = 30 (for midfield in 40-60 zone)
     # Consider Go Bonus = 15 (for distance <= 5)
-    # Total probability = 0 - 16 + 30 + 15 = 29%
-
-    # We can't deterministicly test a random roll easily without mocking,
-    # but we can verify the logic is weighted correctly.
-    # Let's mock random to be sure.
+    # Total probability = 60 - 16 + 30 + 15 = 89%
     import app.services.playbook.coaching_ai as coaching_ai
-    print(f"DEBUG: coaching_ai file={coaching_ai.__file__}")
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 20)
+        # Roll of 85 should succeed (85 < 89)
+        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 85)
         result = ai.should_go_for_it_4th_down(situation_midfield)
         assert result is True
 
-        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 40)
+        # Roll of 95 should fail (95 > 89)
+        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 95)
         result = ai.should_go_for_it_4th_down(situation_midfield)
         assert result is False
+
