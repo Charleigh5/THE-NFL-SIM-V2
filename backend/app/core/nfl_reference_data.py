@@ -158,3 +158,68 @@ POSITION_CAREER_DATA: Dict[str, PositionCareerData] = {
     "OT": PositionCareerData(avg_length_games=45, peak_age_start=25, peak_age_end=31, decline_rate_post_30=0.05),
     "DB": PositionCareerData(avg_length_games=38, peak_age_start=23, peak_age_end=28, decline_rate_post_30=0.10),
 }
+
+# ============================================================================
+# TRICK PLAY CONFIGURATION
+# ============================================================================
+
+@dataclass(frozen=True)
+class TrickPlayConfiguration:
+    """Configuration for trick play success and risk."""
+    name: str
+    base_success_rate: float
+    min_success_rate: float  # Against 'Safe' defense
+    max_success_rate: float  # Against 'Vulnerable' defense
+    turnover_risk_multiplier: float   # Multiplier on base interception/fumble chance
+    confusion_duration_s: float  # Reduction in defender reaction time (seconds)
+
+TRICK_PLAY_TABLE: Dict[str, TrickPlayConfiguration] = {
+    "FAKE_PUNT_RUN": TrickPlayConfiguration(
+        name="Fake Punt Run",
+        base_success_rate=0.45,
+        min_success_rate=0.05,
+        max_success_rate=0.85,
+        turnover_risk_multiplier=1.2,
+        confusion_duration_s=0.5
+    ),
+    "FAKE_PUNT_PASS": TrickPlayConfiguration(
+        name="Fake Punt Pass",
+        base_success_rate=0.38,
+        min_success_rate=0.02,
+        max_success_rate=0.75,
+        turnover_risk_multiplier=2.0,
+        confusion_duration_s=0.6
+    ),
+    "FAKE_FG_RUN": TrickPlayConfiguration(
+        name="Fake FG Run",
+        base_success_rate=0.42,
+        min_success_rate=0.05,
+        max_success_rate=0.80,
+        turnover_risk_multiplier=1.5,
+        confusion_duration_s=0.4
+    ),
+    "FAKE_FG_PASS": TrickPlayConfiguration(
+        name="Fake FG Pass",
+        base_success_rate=0.35,
+        min_success_rate=0.01,
+        max_success_rate=0.70,
+        turnover_risk_multiplier=2.2,
+        confusion_duration_s=0.5
+    ),
+    "FLEA_FLICKER": TrickPlayConfiguration(
+        name="Flea Flicker",
+        base_success_rate=0.30,
+        min_success_rate=0.10,
+        max_success_rate=0.60,
+        turnover_risk_multiplier=2.5,
+        confusion_duration_s=1.2
+    ),
+    "PHILLY_SPECIAL": TrickPlayConfiguration(
+        name="Philly Special",
+        base_success_rate=0.33,
+        min_success_rate=0.05,
+        max_success_rate=0.65,
+        turnover_risk_multiplier=1.6,
+        confusion_duration_s=1.0
+    ),
+}

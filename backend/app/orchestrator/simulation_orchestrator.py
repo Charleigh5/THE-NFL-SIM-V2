@@ -796,11 +796,11 @@ class SimulationOrchestrator:
             # Standard: Scored-upon team kicks off from 20
             # Flip possession first, then set yard line
             self.possession = "away" if self.possession == "home" else "home"
-            self.yard_line = 35 # Should be 20 for safety kick, but using 35 (kickoff default) for now
+            self.yard_line = 20 # Free Kick from scoring team's 20 (Safety Rule)
                                 # Ideally PlayResolver executes a KickoffCommand from the 20 next.
                                 # For simulation flow: Just set them up at opponent's 35 (simulating good return from 20)?
                                 # Let's simulate a standard kickoff result: 25 yard line own territory logic
-            self.yard_line = 25
+            self.yard_line = 35 # Receiving team gets it around their 35 (Simulated return)
             self.down = 1
             self.distance = 10
 

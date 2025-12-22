@@ -26,6 +26,12 @@ class PlayType(str, Enum):
     PLAY_ACTION = "PLAY_ACTION"
     SCREEN = "SCREEN"
     TRICK = "TRICK"
+    FAKE_PUNT_RUN = "FAKE_PUNT_RUN"
+    FAKE_PUNT_PASS = "FAKE_PUNT_PASS"
+    FAKE_FG_RUN = "FAKE_FG_RUN"
+    FAKE_FG_PASS = "FAKE_FG_PASS"
+    FLEA_FLICKER = "FLEA_FLICKER"
+    PHILLY_SPECIAL = "PHILLY_SPECIAL"
 
 
 class Formation(str, Enum):

@@ -89,6 +89,40 @@ class PlayResolver:
 
         return modifiers
 
+    def _check_for_safety(self, command: PlayCommand, yards_gained: float) -> Tuple[bool, int]:
+        """
+        Check if the play resulted in a safety.
+        Returns (is_safety, clamped_yards_gained).
+        """
+        start_yard = getattr(command, "start_yard_line", 50)
+        possession = getattr(command, "possession", "home")
+
+        is_safety = False
+        clamped_yards = int(yards_gained)
+
+        if possession == "home":
+            # Driving 0 -> 100. Own endzone is <= 0.
+            if start_yard + yards_gained <= 0:
+                is_safety = True
+                clamped_yards = int(-start_yard)
+        else:
+            # Driving 100 -> 0. Own endzone is 100.
+            if start_yard - yards_gained >= 100:
+                is_safety = True
+                clamped_yards = int(-(100 - start_yard))
+
+        if is_safety:
+            # Log it via EventBus
+            EventBus.publish(EventType.SAFETY, {
+                "season_id": getattr(self.current_match_context, "season", 0) if self.current_match_context else 0,
+                "week": getattr(self.current_match_context, "week", 0) if self.current_match_context else 0,
+                "game_id": getattr(self.current_match_context, "game_id", None),
+                "play_id": getattr(command, "play_id", "unknown"),
+                "scoring_team_id": getattr(command, "defense_team_id", 0) # Defense scores
+            })
+
+        return is_safety, clamped_yards
+
     def register_players(self, match_context: Any) -> None:
         """Register all players from the match context with the kernels."""
         self.current_match_context = match_context
@@ -698,11 +732,21 @@ class PlayResolver:
                     "yards_lost": loss_yards
                 })
 
+            # Check for Safety
+            is_safety, loss_yards_clamped = self._check_for_safety(command, -loss_yards)
+            if is_safety:
+                description = f"SAFETY! {qb.last_name} is sacked in the end zone by {sacker.last_name if sacker else 'the defense'}!"
+                headline = f"SAFETY! {sacker.last_name if sacker else 'Defense'} creates points!"
+            else:
+                 description = f"SACKED! {qb.last_name} is taken down by {sacker.last_name if sacker else 'the defense'} for a loss of {loss_yards} yards."
+                 headline = f"Sack! {sacker.last_name if sacker else 'Defense'} gets home!"
+
             return PlayResult(
-                yards_gained=-loss_yards,
+                yards_gained=loss_yards_clamped, # Already negative from helper? No helper checks raw gain. -loss_yards passed in.
                 is_touchdown=False,
-                description=f"SACKED! {qb.last_name} is taken down by {sacker.last_name if sacker else 'the defense'} for a loss of {loss_yards} yards.",
-                headline=f"Sack! {sacker.last_name if sacker else 'Defense'} gets home!",
+                is_safety=is_safety,
+                description=description,
+                headline=headline,
                 is_highlight_worthy=True,
                 injuries=injuries,
                 passer_id=qb.id
@@ -1455,39 +1499,8 @@ class PlayResolver:
         self._apply_familiarity_learning([rb], play_id, success=run_success)
 
         # Safety Detection (GAME-013)
-        # Determine if ball carrier was tackled in own endzone
-        # Logic depends on direction.
-        # Home offense: driving 0 -> 100. Own Endzone is <= 0.
-        # Away offense: driving 100 -> 0. Own Endzone is >= 100.
-
-        is_safety = False
-        # The `yards_gained` variable is already calculated.
-        # We need the starting field position to determine if a safety occurred.
-        # Assuming `command` or `self.current_match_context` has the necessary field position.
-        # For this example, let's assume `command.start_yard_line` exists.
-        # If not, this logic would need to be adapted to how field position is tracked.
-
-        # Placeholder for `start_yard_line` and `total_yards` (which is `yards_gained` here)
-        # The provided snippet uses `context.get("yard_line", ...)`, but `context` is not defined here.
-        # Let's use `command.start_yard_line` as a hypothetical source for now,
-        # and `yards_gained` for `total_yards`.
-
-        start_yard_line = getattr(command, "start_yard_line", 50) # Default to 50 if not present
-
-        if command.possession == "home": # Home team is offense, driving towards 100
-             # Own endzone is 0. If current position + yards gained <= 0, it's a safety.
-             # Note: `yards_gained` can be negative.
-             if start_yard_line + yards_gained <= 0:
-                 is_safety = True
-                 yards_gained = -start_yard_line # Clamp yards to reach 0, effectively
-
-        else: # Away team is offense, driving towards 0
-             # Own endzone is 100. If current position - yards gained >= 100, it's a safety.
-             # (Away team's perspective: start_yard_line is distance from their own endzone)
-             # If start_yard_line is 75, and they lose 30 yards, new pos is 105 (past 100)
-             if start_yard_line - yards_gained >= 100:
-                 is_safety = True
-                 yards_gained = -(100 - start_yard_line) # Clamp yards to reach 100, effectively
+        # Check if ball carrier was tackled in own endzone
+        is_safety, yards_gained = self._check_for_safety(command, yards_gained)
 
         # The snippet also introduces `description` and `injuries` which are not defined.
         # Sticking to existing variables for the return statement.
