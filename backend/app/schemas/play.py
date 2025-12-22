@@ -37,4 +37,7 @@ class PlayResult(BaseModel):
     # Attribute Interactions (Set 5)
     interaction_events: List[Dict[str, Any]] = []
 
+    # Player-specific modifiers (e.g., quarterback read results)
+    player_modifiers: Optional[Dict[str, Any]] = None
+
     model_config = ConfigDict(from_attributes=True)

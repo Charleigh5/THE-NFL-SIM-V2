@@ -40,7 +40,7 @@ class CoachingAIService:
         """
         Decide whether to go for it on 4th down.
 
-        Uses real NFL analytics data from FOURTH_DOWN_ANALYTICS.
+        Uses real NFL analytics data and coach personality matrices.
         """
         from app.core.nfl_reference_data import FOURTH_DOWN_ANALYTICS
 
@@ -49,91 +49,99 @@ class CoachingAIService:
 
         analytics = FOURTH_DOWN_ANALYTICS
 
-        # === SHORT YARDAGE: ALWAYS GO ===
-        # Real data: 95.2% optimal on 4th & 1
-        if situation.distance <= analytics.always_go_distance:
-            # Almost always go for it on 4th & 1 (unless very conservative)
-            if self.philosophy.aggressiveness >= 30:  # Even moderately aggressive
-                return True
-
-        # === FIELD POSITION BONUS ===
-        # Go-for-it zone: Opponent's 40 to midfield (4th-60 zone)
-        position_bonus = 0
-        if analytics.go_for_it_zone_start <= situation.field_position <= analytics.go_for_it_zone_end:
-            position_bonus = 30  # Strong bonus in optimal zone
-        elif situation.field_position > 80:  # Deep in opponent territory
-            position_bonus = 10  # Consider FG range
-        elif situation.field_position > 95:
-            position_bonus = -20  # Inside the 5 - chip shot FG territory
-
-        # === DISTANCE PENALTY ===
-        # Higher penalty for longer distance
-        distance_penalty = situation.distance * 8
-
-        # === COACH AGGRESSION ===
-        aggression_score = getattr(
-            self.philosophy,
-            'fourth_down_aggression',
-            self.philosophy.aggressiveness
+        # Get coach's specific 4th down trait
+        fourth_down_agg = getattr(
+            self.philosophy, 'fourth_down_aggression', self.philosophy.aggressiveness
         )
 
-        # === SITUATIONAL OVERRIDES ===
-        # Late game, trailing -> desperate times
-        if analytics.late_game_trailing_2scores_override:
-            if (situation.quarter == 4 and
-                situation.score_diff < -8 and
-                situation.time_remaining < 300):
-                return True
+        # === ARCHETYPE LOGIC ===
+        # THE GAMBLER (aggression >= 75): Goes for it on 4th & Short anywhere past own 30
+        # ANALYTICS DISCIPLE (60-74): Follows the chart strictly
+        # BALANCED (40-59): Standard logic
+        # CONSERVATIVE (< 40): Rarely goes for it unless desperate
 
-        # === MEDIUM YARDAGE: CONSIDER ANALYTICS ===
-        if situation.distance <= analytics.consider_go_distance:
-            # Real data: kicking on 4th & 5 forfeits ~3% WP
-            # We'll give a slight nudge to go for it on 4th & 2-5
-            position_bonus += 15
+        # --- Phase 1: Desperation Overrides (ALL archetypes) ---
+        if situation.quarter == 4 and situation.score_diff < -8 and situation.time_remaining < 300:
+            # Trailing by 2+ scores in final 5 mins -> GO FOR IT
+            return True
 
-        # Calculate final probability
-        probability = aggression_score - distance_penalty + position_bonus
+        if situation.time_remaining < 60 and situation.score_diff < 0:
+            # Final minute, losing -> GO FOR IT
+            return True
 
-        # Random roll
-        roll = random.uniform(0, 100)
-        return roll < probability
+        # --- Phase 2: Archetype-based Matrix ---
+
+        # THE GAMBLER
+        if fourth_down_agg >= 75:
+            if situation.distance <= 2 and situation.field_position > 30:
+                return True  # 4th & 1-2 past own 30
+            if situation.distance <= 5 and situation.field_position > 50:
+                return True  # 4th & 3-5 in opponent territory
+            if situation.distance <= 10 and situation.field_position > 65:
+                return True  # 4th & 6-10 in opponent red zone
+
+        # ANALYTICS DISCIPLE
+        elif fourth_down_agg >= 60:
+            if situation.distance <= analytics.always_go_distance:
+                return True  # Always go on 4th & 1
+            if situation.distance <= analytics.consider_go_distance and \
+               analytics.go_for_it_zone_start <= situation.field_position <= analytics.go_for_it_zone_end:
+                return True  # Go for it in the "go zone" on 4th & 2-5
+
+        # BALANCED
+        elif fourth_down_agg >= 40:
+            if situation.distance <= 1 and situation.field_position > 50:
+                return True  # 4th & 1 in opponent territory only
+            if situation.distance <= 2 and situation.field_position > 70:
+                return True  # 4th & 2 in red zone
+
+        # CONSERVATIVE (< 40)
+        else:
+            # Only go for it on goal line stands
+            if situation.distance <= 1 and situation.field_position > 97:
+                return True  # 4th & Goal from the 1
+
+        return False
 
     def get_2pt_decision(self, situation: GameSituation) -> bool:
         """
         Decide whether to go for 2 points after a touchdown.
+        Uses "The Chart" logic with personality overrides.
         """
-        threshold = getattr(self.philosophy, 'two_pt_conversion_threshold', 50)
+        # "The Chart" optimal situations for 2-point attempts
+        # Score differential AFTER the TD (so if you were down 8, you're now down 2)
+        optimal_2pt_diffs = [-2, -5, -9, -16, -19, 1, 4, 5, 12, 19]
 
-        # Standard chart logic approximation
-        # Down by 2, 5, 16, 19 usually calls for 2
-        # Up by 1, 4, 5, 12, 19 usually calls for 2
-        # Implementation of "The Chart" is complex, we'll use a simplified version
-        # influenced by the threshold.
+        score_diff = situation.score_diff
+        aggression = self.philosophy.aggressiveness
+        two_pt_threshold = getattr(self.philosophy, 'two_pt_conversion_threshold', 50)
 
-        score_diff = situation.score_diff # This is AFTER the TD code triggers this logic presumably?
-        # Usually this decision is made when score_diff is e.g. -2.
+        # --- ARCHETYPE OVERRIDES ---
 
-        # If the 'chart' suggests it, we check if personality allows it
-        chart_says_go = False
-        if score_diff in [-2, -5, -16, -19, 1, 4, 5, 12, 19]:
-            chart_says_go = True
+        # THE GAMBLER (aggression >= 75): Goes for 2 more often
+        if aggression >= 75:
+            # Go for 2 on any close game situation
+            if abs(score_diff) <= 8:
+                return True
+            # Always follow chart
+            if score_diff in optimal_2pt_diffs:
+                return True
 
-        if chart_says_go:
-            # Conservative coaches might still kick
-            if threshold > 70: # High threshold = conservative about 2pt (confusing naming?)
-                # Wait, 'threshold' usually means 'minimum value to trigger'.
-                # If we name it 'aggressiveness', high = go more.
-                # If we name it 'threshold', it might mean probability?
-                # Let's assume the field 'two_pt_conversion_threshold' acts as a
-                # "tendency to follow the analytics chart".
-                # For this MVP, let's treat it as "Probablity to go for it in marginal situations"
-                pass
-            return True # Simplified: Always follow chart for now
+        # ANALYTICS DISCIPLE (60-74): Strictly follows the chart
+        elif aggression >= 60:
+            if score_diff in optimal_2pt_diffs:
+                return True
 
-        # Random aggression override
-        if self.philosophy.aggressiveness > 80:
-             if random.random() < 0.1: # 10% chance to go for it just because
-                 return True
+        # BALANCED (40-59): Follows chart with some hesitation
+        elif aggression >= 40:
+            if score_diff in [-2, -5, 1, 4]:  # Only most obvious situations
+                return True
+
+        # CONSERVATIVE / OLD SCHOOL (< 40): Almost never goes for 2
+        else:
+            # Only go for 2 if down by 2 late in game (must tie)
+            if score_diff == -2 and situation.quarter == 4 and situation.time_remaining < 300:
+                return True
 
         return False
 

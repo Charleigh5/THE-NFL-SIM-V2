@@ -41,7 +41,7 @@ class PlayResolver:
         self.offensive_line_ai = OffensiveLineAI()
         self.interaction_engine = AttributeInteractionEngine(rng=rng)
         # B-006: Momentum engine reference (set by orchestrator)
-        self.momentum_engine = None
+        self.momentum_engine: Optional[Any] = None  # Type: MomentumEngine (set by orchestrator)
         # B-055: Playbook Familiarity (Phase 3)
         self.familiarity_manager = FamiliarityManager()
 

@@ -1,0 +1,179 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - heading "Trade Center" [level=1] [ref=e107]
+            - paragraph [ref=e108]: Arizona Cardinals • 2024 Season
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - generic [ref=e111]: Cap Space
+              - generic [ref=e112]: $25.0M
+            - generic [ref=e113]:
+              - generic [ref=e114]: Record
+              - generic [ref=e115]: 5-3
+        - tablist "Trade Center Tabs" [ref=e116]:
+          - tab "🔄 Negotiate" [selected] [ref=e117] [cursor=pointer]:
+            - generic [ref=e118]: 🔄
+            - generic [ref=e119]: Negotiate
+          - tab "📫 Offers" [ref=e120] [cursor=pointer]:
+            - generic [ref=e121]: 📫
+            - generic [ref=e122]: Offers
+          - tab "📋 Trade Block" [ref=e123] [cursor=pointer]:
+            - generic [ref=e124]: 📋
+            - generic [ref=e125]: Trade Block
+      - main [ref=e126]:
+        - tabpanel "Negotiate" [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - heading "Trade Negotiator" [level=2] [ref=e130]
+              - generic [ref=e131]: 💡 Drag players to propose trades
+            - generic [ref=e132]:
+              - generic [ref=e133]: Select Trade Partner
+              - combobox "Select trade partner team" [ref=e134] [cursor=pointer]:
+                - option "Choose a team..."
+                - option "Kansas City Chiefs (7-1)" [selected]
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - heading "Your Roster" [level=3] [ref=e137]
+                - generic [ref=e138]:
+                  - button "QB Kyler Murray Age 26 85 Value 85" [active] [ref=e139]:
+                    - generic [ref=e140]: QB
+                    - generic:
+                      - generic: Kyler Murray
+                      - generic [ref=e141]: Age 26
+                    - generic [ref=e142]: "85"
+                    - generic [ref=e143]:
+                      - generic [ref=e144]: Value
+                      - generic [ref=e145]: "85"
+                  - button "RB James Conner Age 28 78 Value 78" [ref=e146]:
+                    - generic [ref=e147]: RB
+                    - generic:
+                      - generic: James Conner
+                      - generic [ref=e148]: Age 28
+                    - generic [ref=e149]: "78"
+                    - generic [ref=e150]:
+                      - generic [ref=e151]: Value
+                      - generic [ref=e152]: "78"
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - heading "You Offer" [level=4] [ref=e155]
+                  - generic [ref=e156]: "0"
+                - generic [ref=e158]:
+                  - generic [ref=e159]: ➕
+                  - paragraph [ref=e160]: Drag your players here
+              - generic [ref=e161]:
+                - generic [ref=e162]:
+                  - heading "You Receive" [level=4] [ref=e163]
+                  - generic [ref=e164]: "0"
+                - generic [ref=e166]:
+                  - generic [ref=e167]: ➕
+                  - paragraph [ref=e168]: Drag their players here
+              - generic [ref=e169]:
+                - heading "Chiefs Roster" [level=3] [ref=e170]
+                - generic [ref=e171]:
+                  - button "QB Patrick Mahomes Age 28 99 Value 99" [ref=e172]:
+                    - generic [ref=e173]: QB
+                    - generic:
+                      - generic: Patrick Mahomes
+                      - generic [ref=e174]: Age 28
+                    - generic [ref=e175]: "99"
+                    - generic [ref=e176]:
+                      - generic [ref=e177]: Value
+                      - generic [ref=e178]: "99"
+                  - button "TE Travis Kelce Age 34 95 Value 75" [ref=e179]:
+                    - generic [ref=e180]: TE
+                    - generic:
+                      - generic: Travis Kelce
+                      - generic [ref=e181]: Age 34
+                    - generic [ref=e182]: "95"
+                    - generic [ref=e183]:
+                      - generic [ref=e184]: Value
+                      - generic [ref=e185]: "75"
+            - generic [ref=e186]:
+              - generic [ref=e187]:
+                - generic [ref=e188]:
+                  - generic [ref=e189]: You Offer
+                  - generic [ref=e190]: "0"
+                - generic [ref=e191]:
+                  - generic [ref=e192]: ⇄
+                  - generic [ref=e193]: "0"
+                - generic [ref=e194]:
+                  - generic [ref=e195]: You Receive
+                  - generic [ref=e196]: "0"
+              - generic [ref=e197]:
+                - button "Clear Trade" [disabled] [ref=e198]
+                - button "Get GM Response" [disabled] [ref=e199]
+                - button "Submit Formal Offer" [disabled] [ref=e200]
+              - generic [ref=e201]:
+                - heading "AI Trade Analysis" [level=4] [ref=e203]
+                - button "Analyze Fairness" [disabled] [ref=e204]
+          - status [ref=e205]: Draggable item user-player-101 was dropped over droppable area requested-zone
+  - button "Mission Control" [ref=e207] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e209] [cursor=pointer]:
+    - img [ref=e210]
+```

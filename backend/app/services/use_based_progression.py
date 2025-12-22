@@ -209,16 +209,22 @@ DEV_TRAIT_MULTIPLIERS = {
 }
 
 # Age-based learning rate multipliers
-def get_age_multiplier(age: int) -> float:
-    """Young players learn faster, veterans slower."""
-    if age < 24:
-        return 1.2
-    elif age <= 30:
-        return 1.0
-    elif age <= 33:
-        return 0.8
-    else:
-        return 0.6
+def get_age_multiplier(age: int, position: str = "DEFAULT") -> float:
+    """
+    Get XP learning multiplier based on age and position.
+    Young players learn faster, veterans slower. Position affects prime window.
+
+    Now delegates to age_curves.get_development_rate_modifier for consistency,
+    but also incorporates phase-based multipliers.
+    """
+    from app.services.age_curves import get_phase_xp_multiplier, get_development_rate_modifier
+
+    # Combine phase multiplier (ASCENSION/PRIME/DECLINE) with development rate
+    phase_mult = get_phase_xp_multiplier(position, age)
+    dev_mult = get_development_rate_modifier(age)
+
+    # Average them to avoid over-penalizing
+    return (phase_mult + dev_mult) / 2
 
 
 # Difficulty/context multipliers
@@ -323,7 +329,11 @@ class UseBasedProgression:
         dev_mult = DEV_TRAIT_MULTIPLIERS.get(str(dev_trait).upper(), 1.0)
 
         age = getattr(player, "age", 25)
-        age_mult = get_age_multiplier(age)
+        position = getattr(player, "position", "DEFAULT")
+        # Convert Position enum to string if needed
+        from enum import Enum
+        position_str = position.value if isinstance(position, Enum) else str(position)
+        age_mult = get_age_multiplier(age, position_str)
 
         # Context multipliers
         context_mult = 1.0

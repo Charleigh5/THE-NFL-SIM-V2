@@ -43,14 +43,16 @@ def test_special_plays_data():
     assert SPECIAL_PLAYS["TUSH_PUSH"].epa_value == 0.25
 
 def test_coaching_ai_4th_down_analytics():
-    """Test coaching AI uses analytics data."""
+    """Test coaching AI uses analytics data with archetype logic."""
+    # Analytics Disciple archetype (fourth_down_aggression >= 60)
     philosophy = CoachingPhilosophy(
-        aggressiveness=50,
-        run_pass_ratio=50
+        aggressiveness=65,
+        run_pass_ratio=50,
+        fourth_down_aggression=65  # Explicitly set for Analytics Disciple
     )
     ai = CoachingAIService(philosophy)
 
-    # 4th & 1 should always be a 'go' for 50 aggressiveness
+    # 4th & 1 should be a 'go' for Analytics Disciple (goes on 4th & 1 always)
     situation_4th_1 = GameSituation(
         down=4,
         distance=1,
@@ -61,7 +63,7 @@ def test_coaching_ai_4th_down_analytics():
     )
     assert ai.should_go_for_it_4th_down(situation_4th_1) is True
 
-    # Late game desperation should trigger override
+    # Late game desperation should trigger override (ALL archetypes)
     situation_desperate = GameSituation(
         down=4,
         distance=10,
@@ -73,38 +75,52 @@ def test_coaching_ai_4th_down_analytics():
     assert ai.should_go_for_it_4th_down(situation_desperate) is True
 
 def test_coaching_ai_4th_down_optimal_zone():
-    """Test coaching AI in the optimal 'go zone'."""
-    philosophy = CoachingPhilosophy(
-        aggressiveness=60,  # Moderately aggressive
-        run_pass_ratio=50
+    """Test coaching AI archetypes in various field positions."""
+    # THE GAMBLER archetype (fourth_down_aggression >= 75)
+    gambler_philosophy = CoachingPhilosophy(
+        aggressiveness=80,
+        run_pass_ratio=50,
+        fourth_down_aggression=80
     )
-    ai = CoachingAIService(philosophy)
+    gambler_ai = CoachingAIService(gambler_philosophy)
 
-    # 4th & 2 at midfield (in the go-for-it zone: 40-60)
-    situation_midfield = GameSituation(
+    # Gambler should go for 4th & 2 past their own 30
+    situation_own_45 = GameSituation(
         down=4,
         distance=2,
+        field_position=45,  # Own 45 (past own 30)
+        score_diff=0,
+        quarter=2,
+        time_remaining=300
+    )
+    assert gambler_ai.should_go_for_it_4th_down(situation_own_45) is True
+
+    # CONSERVATIVE archetype (fourth_down_aggression < 40)
+    conservative_philosophy = CoachingPhilosophy(
+        aggressiveness=25,
+        run_pass_ratio=60,
+        fourth_down_aggression=25
+    )
+    conservative_ai = CoachingAIService(conservative_philosophy)
+
+    # Conservative should NOT go for 4th & 1 at midfield - only at goal line
+    situation_midfield = GameSituation(
+        down=4,
+        distance=1,
         field_position=50,
         score_diff=0,
         quarter=2,
         time_remaining=300
     )
+    assert conservative_ai.should_go_for_it_4th_down(situation_midfield) is False
 
-    # With 60 aggressiveness:
-    # Aggression Score = 60
-    # Distance Penalty = 2 * 8 = 16
-    # Position Bonus = 30 (for midfield in 40-60 zone)
-    # Consider Go Bonus = 15 (for distance <= 5)
-    # Total probability = 60 - 16 + 30 + 15 = 89%
-    import app.services.playbook.coaching_ai as coaching_ai
-    with pytest.MonkeyPatch.context() as mp:
-        # Roll of 60 should succeed (60 < 89)
-        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 60)
-        result = ai.should_go_for_it_4th_down(situation_midfield)
-        assert result is True
-
-        # Roll of 95 should fail (95 > 89)
-        mp.setattr(coaching_ai.random, "uniform", lambda a, b: 95)
-        result = ai.should_go_for_it_4th_down(situation_midfield)
-        assert result is False
-
+    # Conservative SHOULD go for 4th & Goal from the 1 (field_position > 97)
+    situation_goal_line = GameSituation(
+        down=4,
+        distance=1,
+        field_position=99,  # 1-yard line
+        score_diff=0,
+        quarter=2,
+        time_remaining=300
+    )
+    assert conservative_ai.should_go_for_it_4th_down(situation_goal_line) is True

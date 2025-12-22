@@ -55,6 +55,7 @@ class TestStadiumEngine:
 
         bonus = mile_high.calculate_home_field_bonus(crowd)
         assert bonus.fatigue_modifier > 0  # Altitude penalty for visitors
+        assert bonus.kick_distance_bonus > 0  # Thin air = longer kicks
 
     def test_crowd_energy_update(self, arrowhead):
         """Touchdowns increase crowd energy."""

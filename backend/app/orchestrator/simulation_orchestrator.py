@@ -10,6 +10,7 @@ from app.orchestrator.match_context import MatchContext
 from app.orchestrator.kernels.cortex_kernel import GameSituation
 from app.core.random_utils import DeterministicRNG
 from app.services.society.momentum import MomentumEngine, MomentumEvent
+from app.services.stadium.stadium import StadiumEngine, StadiumConfig, CrowdState, NoiseLevel, StadiumType, SurfaceType
 
 from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
@@ -159,16 +160,16 @@ class SimulationOrchestrator:
             game = result.scalar_one_or_none()
 
             if game:
-                game.home_score = self.home_score
-                game.away_score = self.away_score
-                game.current_quarter = self.current_quarter
-                game.time_left = self.time_left
+                game.home_score = self.home_score  # type: ignore[assignment]
+                game.away_score = self.away_score  # type: ignore[assignment]
+                game.current_quarter = self.current_quarter  # type: ignore[assignment]
+                game.time_left = self.time_left  # type: ignore[assignment]
 
                 # Update game data with plays and config
-                current_data = dict(game.game_data) if game.game_data else {}
-                current_data["plays"] = [p.model_dump() for p in self.history]
-                current_data["state"] = self.get_game_state()
-                game.game_data = current_data
+                current_data: dict = dict(game.game_data) if game.game_data else {}  # type: ignore[arg-type]
+                current_data["plays"] = [p.model_dump() for p in self.history]  # type: ignore[assignment]
+                current_data["state"] = self.get_game_state()  # type: ignore[assignment]
+                game.game_data = current_data  # type: ignore[assignment]
 
                 await self.db_session.commit()
         except Exception as e:
@@ -186,7 +187,7 @@ class SimulationOrchestrator:
             game = result.scalar_one_or_none()
 
             if game:
-                game.is_played = True
+                game.is_played = True  # type: ignore[assignment]
                 # Save player stats
                 await self._save_player_stats()
                 await self._save_progress() # Ensure final state is saved
@@ -216,8 +217,8 @@ class SimulationOrchestrator:
             home_stmt = select(Team).where(Team.id == game.home_team_id)
             away_stmt = select(Team).where(Team.id == game.away_team_id)
 
-            home_result = await self.db_session.execute(home_stmt)
-            away_result = await self.db_session.execute(away_stmt)
+            home_result = await self.db_session.execute(home_stmt)  # type: ignore[union-attr]
+            away_result = await self.db_session.execute(away_stmt)  # type: ignore[union-attr]
 
             home_team = home_result.scalar_one_or_none()
             away_team = away_result.scalar_one_or_none()
@@ -227,38 +228,38 @@ class SimulationOrchestrator:
                 return
 
             # Determine winner/loser
-            home_score = game.home_score or self.home_score
-            away_score = game.away_score or self.away_score
+            home_score = int(game.home_score or 0) if game.home_score else self.home_score  # type: ignore[arg-type]
+            away_score = int(game.away_score or 0) if game.away_score else self.away_score  # type: ignore[arg-type]
             point_diff = abs(home_score - away_score)
-            is_tie = home_score == away_score
+            is_tie = (home_score == away_score)
 
             if is_tie:
                 # For ties, update both with tie logic
                 new_home_elo, new_away_elo = EloService.update_ratings(
-                    home_team.elo_rating or 1500.0,
-                    away_team.elo_rating or 1500.0,
+                    float(home_team.elo_rating or 1500.0),  # type: ignore[arg-type]
+                    float(away_team.elo_rating or 1500.0),  # type: ignore[arg-type]
                     point_diff=0,
                     is_tie=True
                 )
             elif home_score > away_score:
                 new_home_elo, new_away_elo = EloService.update_ratings(
-                    home_team.elo_rating or 1500.0,
-                    away_team.elo_rating or 1500.0,
+                    float(home_team.elo_rating or 1500.0),  # type: ignore[arg-type]
+                    float(away_team.elo_rating or 1500.0),  # type: ignore[arg-type]
                     point_diff=point_diff
                 )
             else:
                 # Away team won
                 new_away_elo, new_home_elo = EloService.update_ratings(
-                    away_team.elo_rating or 1500.0,
-                    home_team.elo_rating or 1500.0,
+                    float(away_team.elo_rating or 1500.0),  # type: ignore[arg-type]
+                    float(home_team.elo_rating or 1500.0),  # type: ignore[arg-type]
                     point_diff=point_diff
                 )
 
             # Update team objects
-            home_team.elo_rating = new_home_elo
-            away_team.elo_rating = new_away_elo
+            home_team.elo_rating = new_home_elo  # type: ignore[assignment]
+            away_team.elo_rating = new_away_elo  # type: ignore[assignment]
 
-            await self.db_session.commit()
+            await self.db_session.commit()  # type: ignore[union-attr]
 
             logger.info(
                 "Elo ratings updated",
@@ -273,7 +274,7 @@ class SimulationOrchestrator:
         except Exception as e:
             logger.exception("Error updating Elo ratings", extra={"game_id": game.id})
 
-    async def _save_player_stats(self, game: Game = None) -> None:
+    async def _save_player_stats(self, game: Optional[Game] = None) -> None:
         """Aggregate and save player stats from game history."""
         if not self.history:
             return
@@ -281,7 +282,7 @@ class SimulationOrchestrator:
         # If game object not passed, fetch it
         if not game and self.current_game_id:
              stmt = select(Game).where(Game.id == self.current_game_id)
-             result = await self.db_session.execute(stmt)
+             result = await self.db_session.execute(stmt)  # type: ignore[union-attr]
              game = result.scalar_one_or_none()
 
         if not game: return
@@ -348,7 +349,7 @@ class SimulationOrchestrator:
             if not team_id:
                 # Fallback: query player if not in match context (shouldn't happen often)
                 stmt = select(Player).where(Player.id == pid)
-                result = await self.db_session.execute(stmt)
+                result = await self.db_session.execute(stmt)  # type: ignore[union-attr]
                 player = result.scalar_one_or_none()
                 if player:
                     team_id = player.team_id
@@ -361,7 +362,7 @@ class SimulationOrchestrator:
                 PlayerGameStats.player_id == pid,
                 PlayerGameStats.game_id == game.id
             )
-            result = await self.db_session.execute(stmt)
+            result = await self.db_session.execute(stmt)  # type: ignore[union-attr]
             pgs = result.scalar_one_or_none()
 
             if not pgs:
@@ -372,7 +373,7 @@ class SimulationOrchestrator:
                     season_id=game.season_id,
                     **stats
                 )
-                self.db_session.add(pgs)
+                self.db_session.add(pgs)  # type: ignore[union-attr]
             else:
                 # Update existing
                 for k, v in stats.items():
@@ -380,7 +381,7 @@ class SimulationOrchestrator:
 
             count += 1
 
-        await self.db_session.commit()
+        await self.db_session.commit()  # type: ignore[union-attr]
         logger.info("Player stats saved", extra={"game_id": game.id, "player_count": count})
 
     def run_simulation(self) -> PlayResult:
@@ -422,7 +423,7 @@ class SimulationOrchestrator:
 
         logger.debug("Play resolved")
 
-        self._save_progress()
+        # Note: _save_progress is async, not called from this legacy sync method
 
         return result
 
@@ -493,6 +494,57 @@ class SimulationOrchestrator:
             # Use default formations for now as PlayCaller hasn't run yet
             offense_players = self.match_context.get_fielded_players(off_team_id, "standard", "OFFENSE")
             defense_players = self.match_context.get_fielded_players(def_team_id, "4-3", "DEFENSE")
+
+        # ======================================================================
+        # GAME-010: Pre-Snap Venue Effects (False Starts)
+        # ======================================================================
+        if self.possession == "away" and self.match_context:
+            # Away team on offense in loud stadium = false start risk
+            stadium_config = StadiumConfig(
+                stadium_id=self.game_config.get("stadium_id", "GENERIC"),
+                name=self.game_config.get("stadium_name", "Generic Stadium"),
+                team_id=str(self.match_context.home_team_id),
+                capacity=70000,
+                base_noise_rating=self.game_config.get("noise_rating", 70),
+                altitude=self.game_config.get("altitude", 0),
+                stadium_type=StadiumType.OPEN_AIR,
+                surface=SurfaceType.NATURAL_GRASS
+            )
+            stadium_engine = StadiumEngine(stadium_config)
+
+            # Calculate crowd state (assume high attendance for now)
+            crowd = CrowdState(
+                attendance=int(stadium_config.capacity * 0.95),
+                attendance_pct=0.95,
+                noise_level=NoiseLevel.LOUD,  # Will recalculate
+                energy=0.7  # Moderate-high crowd energy
+            )
+            # Determine actual noise level
+            game_sit = "NORMAL"
+            if self.down == 3: game_sit = "CRITICAL"
+            crowd.noise_level = stadium_engine.calculate_noise_level(crowd, game_sit)
+
+            # Get Home Field Bonus
+            hf_bonus = stadium_engine.calculate_home_field_bonus(crowd)
+
+            # Roll for False Start (away team on offense)
+            if self.rng.random() < hf_bonus.false_start_modifier:
+                logger.info(f"GAME-010: False Start triggered! (Modifier: {hf_bonus.false_start_modifier:.2%})")
+                result = PlayResult(
+                    yards_gained=-5,  # 5-yard penalty
+                    is_touchdown=False,
+                    is_turnover=False,
+                    description="FALSE START on the offense. 5-yard penalty, repeat down.",
+                    headline="Pre-Snap Penalty",
+                    injuries=[],
+                    time_elapsed=0,
+                    is_penalty=True
+                )
+                self.history.append(result)
+                # Penalty doesn't change possession or down, just yards
+                self.yard_line = max(1, self.yard_line - 5)
+                self.distance += 5
+                return result
 
         # Build PlayCallingContext
         try:
@@ -566,8 +618,8 @@ class SimulationOrchestrator:
             is_hurry_up=is_hurry_up
         )
 
-        # Update Coach Personality
-        self.play_caller.aggression = float(aggression)
+        # Update Coach Personality (using aggressiveness attribute)
+        self.play_caller.aggressiveness = float(aggression)
 
         # Pre-snap Read Integration (Phase 11)
         qb_read = None
@@ -590,32 +642,42 @@ class SimulationOrchestrator:
                     # but PlayCommand is created below. We will inject it then.
 
         # Select Play
-        if self.match_context and hasattr(self.match_context, 'cortex') and self.match_context.cortex:
-            # Use Cortex AI
-            situation = GameSituation(
-                down=self.down,
-                distance=self.distance,
-                field_position=self.yard_line if self.possession == "home" else 100 - self.yard_line,
-                time_remaining=time_left_seconds,
-                score_differential=score_diff,
-                quarter=self.current_quarter,
-                timeouts_left=3 # Placeholder
-            )
+        # Note: Cortex integration is Phase 11 future work - currently disabled
+        # if self.match_context and hasattr(self.match_context, 'cortex') and self.match_context.cortex:
+        #     situation = GameSituation(...)
+        #     pass
 
-            coach_philosophy = {
-                "aggressiveness": int(aggression * 100),
-                "pass_tendency": 50 # Default, could be loaded from Coach model
-            }
+        # Standard Play Caller with Personality (AI-003)
+        current_philosophy = None
+        if self.match_context:
+            current_team = self.match_context.home_team if self.possession == "home" else self.match_context.away_team
+            if current_team and current_team.coaches:
+                # Find Head Coach
+                hc = next((c for c in current_team.coaches if c.role == "Head Coach"), None)
+                if hc and hc.philosophy:
+                     try:
+                         # Merge default philosophy with coach's JSON overrides
+                         # Since CoachingPhilosophy is a Pydantic model with defaults,
+                         # we can just unpack the dict.
+                         current_philosophy = CoachingPhilosophy(**hc.philosophy)
+                     except Exception as e:
+                         # Fallback to default if JSON is malformed
+                         logger.warning(f"Failed to load philosophy for coach {hc.id}", exc_info=e)
+                         pass
 
-            play_decision = self.match_context.cortex.call_play(situation, coach_philosophy)
-            command = self._convert_decision_to_command(play_decision, context)
-            logger.debug(
-                "Cortex AI decision",
-                extra={"decision": play_decision, "down": self.down, "distance": self.distance},
-            )
-        else:
-            # Legacy PlayCaller
-            command = self.play_caller.select_play(context)
+
+        # If no specific coach philosophy found (e.g. no HC or testing), use game config or defaults
+        if not current_philosophy:
+             config_agg = float(self.game_config.get("home_aggression", 0.5) if self.possession == "home" else self.game_config.get("away_aggression", 0.5))
+             current_philosophy = CoachingPhilosophy(
+                 aggressiveness=int(config_agg * 100)
+             )
+
+        # Update PlayCaller with contextual philosophy
+        # We re-instantiate PlayCaller to ensure clean state and correct RNG usage
+        self.play_caller = PlayCaller(self.rng, philosophy=current_philosophy)
+
+        command = self.play_caller.select_play(context)
 
         # Inject Pre-Snap Read Modifiers into Command
         if qb_read and hasattr(command, 'modifiers'):
@@ -752,16 +814,27 @@ class SimulationOrchestrator:
         if result.rusher_id: key_players.add(result.rusher_id)
         if result.receiver_id: key_players.add(result.receiver_id)
 
+        # ======================================================================
+        # GAME-010: Altitude Fatigue Modifier
+        # Away team at high altitude stadiums (e.g., Denver) gets extra fatigue drain.
+        # ======================================================================
+        altitude_modifier = 1.0
+        if self.possession == "away":
+            altitude = self.game_config.get("altitude", 0)
+            if altitude > 4000:
+                # Every 1000 ft above 4000 = 2.5% more fatigue for visitors
+                altitude_modifier = 1.0 + ((altitude - 4000) / 1000) * 0.025
+
         # Update Offense
         offense_ids = [p.id for p in offense]
         # Key players exert more energy
         key_ids = [pid for pid in offense_ids if pid in key_players]
         other_ids = [pid for pid in offense_ids if pid not in key_players]
 
-        self.match_context.update_fatigue(key_ids, 0.05) # High exertion
-        self.match_context.update_fatigue(other_ids, 0.01) # Low exertion
+        self.match_context.update_fatigue(key_ids, 0.05 * altitude_modifier) # High exertion
+        self.match_context.update_fatigue(other_ids, 0.01 * altitude_modifier) # Low exertion
 
-        # Update Defense
+        # Update Defense (no altitude mod for home team defense)
         defense_ids = [p.id for p in defense]
         self.match_context.update_fatigue(defense_ids, 0.02) # Medium exertion
 
@@ -925,7 +998,7 @@ class SimulationOrchestrator:
 
                 sit_def = ClockGameSituation(
                     quarter=self.current_quarter,
-                    time_remaining=post_play_time,
+                    time_remaining=int(post_play_time),
                     down=self.down,
                     distance=self.distance,
                     field_position=50,
@@ -949,7 +1022,7 @@ class SimulationOrchestrator:
                      off_timeouts = self.home_timeouts if self.possession == "home" else self.away_timeouts
                      sit_off = ClockGameSituation(
                         quarter=self.current_quarter,
-                        time_remaining=post_play_time,
+                        time_remaining=int(post_play_time),
                         down=self.down,
                         distance=self.distance,
                         field_position=50,

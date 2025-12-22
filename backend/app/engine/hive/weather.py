@@ -162,6 +162,7 @@ class WeatherPhysics:
         weather: GameWeather,
         kick_distance: float,
         is_field_goal: bool = True,
+        altitude: int = 0,  # GAME-010: Stadium altitude in feet
     ) -> Tuple[float, float]:
         """
         Calculate wind effect on kicks.
@@ -169,8 +170,18 @@ class WeatherPhysics:
         Returns:
             Tuple of (distance_adjustment, accuracy_penalty)
         """
+        # ======================================================================
+        # GAME-010: Altitude Kicking Bonus (Thin Air Physics)
+        # Denver (5280 ft) gets ~3% bonus. Formula: +2.5% per 1000 ft above 4000.
+        # ======================================================================
+        altitude_bonus = 0.0
+        if altitude > 4000:
+            altitude_bonus = ((altitude - 4000) / 1000) * 0.025 * kick_distance
+        elif altitude > 3000:
+            altitude_bonus = 0.01 * kick_distance
+
         if weather.is_dome or weather.wind_speed_mph < 5:
-            return 0.0, 0.0
+            return altitude_bonus, 0.0
 
         wind_mph = weather.wind_speed_mph
         wind_factor = wind_mph / 10.0 * self.config.wind_kick_distance_factor
@@ -189,7 +200,7 @@ class WeatherPhysics:
         if weather.wind_direction in [WindDirection.CROSSWIND_LEFT, WindDirection.CROSSWIND_RIGHT]:
             accuracy_penalty *= 2.0  # Crosswind very bad for kicking
 
-        return distance_adj, accuracy_penalty
+        return distance_adj + altitude_bonus, accuracy_penalty
 
     def calculate_stamina_modifier(
         self,

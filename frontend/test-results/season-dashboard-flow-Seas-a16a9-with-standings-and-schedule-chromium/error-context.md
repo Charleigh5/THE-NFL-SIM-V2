@@ -2,65 +2,72 @@
 
 ```yaml
 - generic [ref=e3]:
-    - navigation [ref=e4]:
-        - generic [ref=e5]:
-            - heading "THE NFL SIM" [level=1] [ref=e10]
-            - paragraph [ref=e11]: Night Game Franchise
-        - list [ref=e12]:
-            - listitem [ref=e13]:
-                - link "Dashboard" [ref=e14] [cursor=pointer]:
-                    - /url: /
-                    - img [ref=e16]
-                    - generic [ref=e21]: Dashboard
-            - listitem [ref=e22]:
-                - link "Season" [ref=e23] [cursor=pointer]:
-                    - /url: /season
-                    - img [ref=e25]
-                    - generic [ref=e27]: Season
-            - listitem [ref=e28]:
-                - link "Offseason" [ref=e29] [cursor=pointer]:
-                    - /url: /offseason
-                    - img [ref=e31]
-                    - generic [ref=e34]: Offseason
-            - listitem [ref=e35]:
-                - link "Draft Room" [ref=e36] [cursor=pointer]:
-                    - /url: /offseason/draft
-                    - img [ref=e38]
-                    - generic [ref=e44]: Draft Room
-            - listitem [ref=e45]:
-                - link "Roster" [ref=e46] [cursor=pointer]:
-                    - /url: /empire/front-office
-                    - img [ref=e48]
-                    - generic [ref=e53]: Roster
-            - listitem [ref=e54]:
-                - link "Depth Chart" [ref=e55] [cursor=pointer]:
-                    - /url: /empire/depth-chart
-                    - img [ref=e57]
-                    - generic [ref=e60]: Depth Chart
-            - listitem [ref=e61]:
-                - link "Trade Center" [ref=e62] [cursor=pointer]:
-                    - /url: /empire/trade-center
-                    - img [ref=e64]
-                    - generic [ref=e67]: Trade Center
-            - listitem [ref=e68]:
-                - link "Training" [ref=e69] [cursor=pointer]:
-                    - /url: /training
-                    - img [ref=e71]
-                    - generic [ref=e77]: Training
-            - listitem [ref=e78]:
-                - link "My Team" [ref=e79] [cursor=pointer]:
-                    - /url: /team-selection
-                    - img [ref=e81]
-                    - generic [ref=e83]: My Team
-            - listitem [ref=e84]:
-                - link "Settings" [ref=e85] [cursor=pointer]:
-                    - /url: /settings
-                    - img [ref=e87]
-                    - generic [ref=e90]: Settings
-        - generic [ref=e92]: System Online
-    - main [ref=e94]:
-        - generic [ref=e96]:
-            - heading "404 - Page Not Found" [level=1] [ref=e97]
-            - paragraph [ref=e98]: The page you're looking for doesn't exist.
-    - button "Mission Control" [ref=e100] [cursor=pointer]: ⚡
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e103]:
+      - heading "500 Error" [level=1] [ref=e104]
+      - paragraph [ref=e105]: An error occurred
+      - paragraph [ref=e106]: Failed to load season data
+  - button "Mission Control" [ref=e108] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e110] [cursor=pointer]:
+    - img [ref=e111]
 ```

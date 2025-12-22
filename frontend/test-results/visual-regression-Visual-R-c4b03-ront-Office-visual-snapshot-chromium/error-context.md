@@ -1,0 +1,155 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - 'heading "Front Office: Arizona Cardinals" [level=1] [ref=e105]'
+        - paragraph [ref=e106]: "Cap Space: $12.4M"
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - heading "Active Roster (2)" [level=2] [ref=e109]
+          - generic [ref=e110]:
+            - generic [ref=e112]:
+              - button "View Backstory" [ref=e113] [cursor=pointer]:
+                - img [ref=e114]
+              - generic [ref=e116]:
+                - img [ref=e117]
+                - generic [ref=e120]: 85 OVR
+              - generic [ref=e121]:
+                - generic [ref=e122]:
+                  - heading "K. Murray" [level=3] [ref=e123]
+                  - paragraph [ref=e124]: QB • ARI
+                - generic [ref=e125]:
+                  - generic [ref=e126]:
+                    - paragraph [ref=e127]: SPD
+                    - paragraph [ref=e128]: "92"
+                  - generic [ref=e129]:
+                    - paragraph [ref=e130]: STR
+                    - paragraph [ref=e131]: "88"
+                  - generic [ref=e132]:
+                    - paragraph [ref=e133]: AGI
+                    - paragraph [ref=e134]: "90"
+            - generic [ref=e136]:
+              - button "View Backstory" [ref=e137] [cursor=pointer]:
+                - img [ref=e138]
+              - generic [ref=e140]:
+                - img [ref=e141]
+                - generic [ref=e144]: 82 OVR
+              - generic [ref=e145]:
+                - generic [ref=e146]:
+                  - heading "J. Conner" [level=3] [ref=e147]
+                  - paragraph [ref=e148]: RB • ARI
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - paragraph [ref=e151]: SPD
+                    - paragraph [ref=e152]: "92"
+                  - generic [ref=e153]:
+                    - paragraph [ref=e154]: STR
+                    - paragraph [ref=e155]: "88"
+                  - generic [ref=e156]:
+                    - paragraph [ref=e157]: AGI
+                    - paragraph [ref=e158]: "90"
+        - generic [ref=e160]:
+          - heading "Head Coach Philosophy" [level=3] [ref=e162]
+          - generic [ref=e164]:
+            - generic [ref=e165]:
+              - generic [ref=e166]: "Run / Pass Ratio: 50"
+              - slider "Run/Pass Ratio" [ref=e167]: "50"
+              - generic [ref=e168]:
+                - generic [ref=e169]: Pass Heavy
+                - generic [ref=e170]: Balanced
+                - generic [ref=e171]: Run Heavy
+            - generic [ref=e172]:
+              - generic [ref=e173]: "General Aggressiveness: 50"
+              - slider "General Aggressiveness" [ref=e174]: "50"
+              - generic [ref=e175]:
+                - generic [ref=e176]: Conservative
+                - generic [ref=e177]: Risky
+            - generic [ref=e178]:
+              - generic [ref=e179]: "4th Down Aggression: 50"
+              - slider "4th Down Aggression" [ref=e180]: "50"
+              - generic [ref=e181]:
+                - generic [ref=e182]: Punt/FG
+                - generic [ref=e183]: Go For It
+            - generic [ref=e184]:
+              - generic [ref=e185]: "Tempo: 50"
+              - slider "Tempo" [ref=e186]: "50"
+              - generic [ref=e187]:
+                - generic [ref=e188]: Chew Clock
+                - generic [ref=e189]: Hurry Up
+            - generic [ref=e190]:
+              - generic [ref=e191]: "Trick Play Freq: 5%"
+              - slider "Trick Play Frequency" [ref=e192]: "5"
+            - generic [ref=e193]:
+              - generic [ref=e194]: "2-Pt Conversion Threshold: 50"
+              - slider "2-Point Conversion Threshold" [ref=e195]: "50"
+              - generic [ref=e196]:
+                - generic [ref=e197]: Conservative (Kick 1)
+                - generic [ref=e198]: Aggressive (Go for 2)
+            - button "Save Coaching Strategy" [ref=e199] [cursor=pointer]
+  - button "Mission Control" [ref=e201] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e203] [cursor=pointer]:
+    - img [ref=e204]
+```

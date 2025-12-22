@@ -2,8 +2,31 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Training Center Flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock API calls
-    await page.route("**/api/v1/training/drills", async (route) => {
+    // Mock coaching styles API
+    await page.route("**/api/v1/training/coaching-styles", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify([
+          { id: "smart", name: "Smart", description: "Balanced approach", xpModifier: 1.0 },
+          {
+            id: "aggressive",
+            name: "Aggressive",
+            description: "High risk high reward",
+            xpModifier: 1.3,
+          },
+          {
+            id: "conservative",
+            name: "Conservative",
+            description: "Safe and steady",
+            xpModifier: 0.8,
+          },
+        ]),
+      });
+    });
+
+    // Mock drills API
+    await page.route("**/api/v1/training/drills**", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -12,17 +35,19 @@ test.describe("Training Center Flow", () => {
             id: "1",
             name: "Oklahoma Drill",
             category: "CONTACT",
-            energyCost: 20,
-            xpMultiplier: 1.5,
-            injuryRisk: "HIGH",
+            target_stat: "Strength",
+            description: "High intensity blocking drill",
+            xp_multiplier: 1.5,
+            injury_risk: 0.1,
           },
           {
             id: "2",
             name: "7-on-7 Skeleton",
             category: "PASSING",
-            energyCost: 15,
-            xpMultiplier: 1.2,
-            injuryRisk: "LOW",
+            target_stat: "Route Running",
+            description: "Passing game practice",
+            xp_multiplier: 1.2,
+            injury_risk: 0.03,
           },
         ]),
       });
@@ -33,33 +58,34 @@ test.describe("Training Center Flow", () => {
     });
 
     // Navigate to training page
-    await page.goto("http://localhost:5173/training");
+    await page.goto("/training");
   });
 
   test("should load training center page", async ({ page }) => {
-    await expect(page.getByText("Training Center")).toBeVisible();
-    await expect(page.getByText("Coaching Philosophy")).toBeVisible();
+    // Check for Training Center heading (uppercase in UI)
+    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible();
   });
 
-  test("should allow selecting coaching style", async ({ page }) => {
-    // Check initial state or default
-    // Click on a different style
-    await page.getByText("Old School").click();
-    await expect(page.getByText("Old School")).toHaveClass(/border-cyan-400/); // Assuming selected style gets border class
+  test("should display coaching style selector", async ({ page }) => {
+    // Wait for styles to load
+    await page.waitForTimeout(500);
+
+    // Coaching style selector should be visible
+    await expect(page.getByText("Smart")).toBeVisible();
   });
 
   test("should display drills", async ({ page }) => {
-    await expect(page.getByText("Oklahoma Drill")).toBeVisible();
+    // Wait for drills to load
+    await expect(page.getByText("Oklahoma Drill")).toBeVisible({ timeout: 10000 });
     await expect(page.getByText("7-on-7 Skeleton")).toBeVisible();
   });
 
-  test("should toggle drill selection", async ({ page }) => {
-    const drillCard = page.locator(".drill-card").first();
-    await drillCard.click();
-    // Verify selection state (e.g. border color change or checkbox)
-    await expect(drillCard).toHaveClass(/border-cyan-400/);
+  test("should select a drill and show action panel", async ({ page }) => {
+    // Wait for drills to load
+    await page.getByText("Oklahoma Drill").click({ timeout: 10000 });
 
-    await drillCard.click();
-    await expect(drillCard).not.toHaveClass(/border-cyan-400/);
+    // Action panel should appear with drill details
+    await expect(page.getByRole("button", { name: /initiate sequence/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
   });
 });

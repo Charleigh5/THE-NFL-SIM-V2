@@ -15,6 +15,7 @@ from typing import Dict, List, Optional, Tuple
 from enum import Enum
 import math
 import random
+from app.services.training.growth_curves import GrowthCurveEngine
 
 
 # ============================================================================
@@ -51,6 +52,7 @@ class PlayerProgressionState:
     level: int  # OVR approximation
     dev_trait: DevTrait
     xp_to_next_level: int
+    position: str = "ATH"  # Needed for growth curves
     career_phase: ProgressionPhase = ProgressionPhase.ROOKIE
 
 
@@ -144,33 +146,10 @@ class ProgressionEngine:
         multiplier = self.get_dev_trait_multiplier(state.dev_trait)
 
         # Apply Age Curve Logic (RPG-003)
-        # Use player_id or state tracking to get position, but state here is minimal.
-        # Assuming we pass separate position or lookup?
-        # For now, we will assume standard age curve if position isn't passed, or update signature later.
-        # But wait, determine_phase needs position.
-        # We will assume a default 'ATH' curve if not available, OR
-        # since we can't change signature easily without breaking callers, we might need a workaround.
-        # Ideally state has it. If not, we skip age mod or default it.
-        # Actually, let's look at apply_xp signature: determine_phase is called in calculate_regression with position.
-        # We need position here.
-        # Let's add position to PlayerProgressionState if possible?
-        # Or just rely on dev trait for now and do age curve in 'Development' event externally?
-        # No, requirements say Age-Based Growth.
+        # Uses GrowthCurveEngine to get position-specific multiplier
+        age_multiplier = GrowthCurveEngine.get_xp_multiplier(state.age, state.position)
 
-        # NOTE: Position is missing from PlayerProgressionState.
-        # We will assume multiplier 1.0 for age inside here unless we pass it.
-        # User prompt asks for "implementation". I will assume I can update the dataclass if needed,
-        # OR just use age roughly since phases are similar.
-        # Let's use a generic generic_peak = (25, 29) for now to allow age effect.
-
-        generic_peak = (25, 29)
-        age = state.age
-        age_mult = 1.0
-        if age < 25: age_mult = 1.2
-        elif age > 31: age_mult = 0.6
-        elif age > 29: age_mult = 0.8
-
-        adjusted_xp = int(xp_gained * multiplier * age_mult)
+        adjusted_xp = int(xp_gained * multiplier * age_multiplier)
 
         new_xp = state.current_xp + adjusted_xp
         levels_gained = 0
@@ -195,43 +174,45 @@ class ProgressionEngine:
         """
         Calculate attribute regression for declining players.
 
-        Physics:
-        - Speed/Agility decay fastest
-        - Strength decays moderate
-        - Awareness/skills stay or grow
+        Uses GrowthCurveEngine for regression severity scores.
         """
-        phase = self.determine_phase(position, age)
-        if phase != ProgressionPhase.DECLINE:
+        # Get standardized regression score (0-100)
+        regression_score = GrowthCurveEngine.get_regression_score(age, position)
+
+        if regression_score == 0:
             return {} # No regression
-
-        start_peak, end_peak = self.PEAK_AGES.get(position, (25, 29))
-        years_past_prime = age - end_peak
-
-        # Regression severity increases with age (The Cliff)
-        # Spec RPG-003: Decline factor accelerates
-        decline_factor = 1.0 + (years_past_prime * 0.25)
-
-        # RBs hit the wall harder
-        if position == "RB" and years_past_prime > 1:
-            decline_factor *= 1.5
-
-        loss_chance = 0.5 * decline_factor
 
         regressed_attrs = {}
 
-        for attr, val in attributes.items():
-            if attr in ["speed", "acceleration", "agility", "jumping"]:
-                # Physical traits hit hardest
-                if random.random() < loss_chance:
-                    loss = random.randint(1, 1 + years_past_prime)
-                    regressed_attrs[attr] = -loss
-            elif attr in ["strength", "throw_power"]:
-                # Power traits hit slower
-                if random.random() < (loss_chance * 0.6):
-                    loss = random.randint(1, 2)
-                    regressed_attrs[attr] = -loss
-            elif attr in ["awareness", "play_recognition"]:
-                # Mental traits rarely regress, might even gain
-                pass
+        # Convert score to actual potential drops
+        # Score 10 ~= 10% chance to lose 1
+        # Score 50 ~= 50% chance to lose 1, maybe 2
+
+        # Physical Attributes (Hit Hardest)
+        physicals = ["speed", "acceleration", "agility", "jumping"]
+        physical_loss_chance = regression_score / 100.0  # e.g., 0.50
+
+        for attr in physicals:
+             if attr in attributes:
+                  if random.random() < physical_loss_chance:
+                       # Major regression can lose multiple points
+                       loss = 1
+                       if regression_score > 40 and random.random() < 0.3: loss += 1
+                       if regression_score > 70 and random.random() < 0.3: loss += 1
+                       regressed_attrs[attr] = -loss
+
+        # Skill Attributes (Hit Moderate)
+        skills = ["carry", "catch", "throw_power", "throw_accuracy", "block", "tackle", "kick_power"]
+        skill_loss_chance = regression_score / 200.0 # Half as likely
+
+        for attr in skills:
+             if attr in attributes:
+                  if random.random() < skill_loss_chance:
+                       loss = 1
+                       if regression_score > 60 and random.random() < 0.2: loss += 1
+                       regressed_attrs[attr] = -loss
+
+        # Mental Attributes (Safe)
+        # No regression applied here by default in this engine version
 
         return regressed_attrs

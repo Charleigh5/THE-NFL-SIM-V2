@@ -1,9 +1,13 @@
 from dataclasses import dataclass, field
-from typing import List, Any, Optional, Dict
+from typing import List, Any, Optional, Dict, TYPE_CHECKING
 from app.orchestrator.play_commands import (
     PlayCommand, PassPlayCommand, RunPlayCommand,
     PuntCommand, FieldGoalCommand
 )
+from app.data.coaches import CoachingPhilosophy
+
+if TYPE_CHECKING:
+    from app.models.player import Player
 
 
 @dataclass
@@ -24,20 +28,52 @@ class PlayCaller:
     """
     Handles situation-aware play selection based on game state and coach personality.
     """
-    def __init__(self, rng: Any, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
+    def __init__(self, rng: Any, philosophy: Optional['CoachingPhilosophy'] = None, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
         """
-        Initialize PlayCaller.
+        Initialize PlayCaller with coaching personality.
 
         Args:
             rng: DeterministicRNG instance
-            aggression (float): 0.0 (conservative) to 1.0 (aggressive).
-                               Affects 4th down decisions, deep passes, etc.
-            run_pass_ratio (float): 0.0 (all pass) to 1.0 (all run).
-                                   Base tendency before situational adjustments.
+            philosophy: CoachingPhilosophy object containing personality traits.
+            aggression: Legacy arg (float 0.0-1.0), used if philosophy is None.
+            run_pass_ratio: Legacy arg (float 0.0-1.0), used if philosophy is None.
         """
         self.rng = rng
-        self.aggression = aggression
-        self.run_pass_ratio = run_pass_ratio
+        self.philosophy = philosophy
+
+        # Map 0-100 scales to 0.0-1.0 internal factors
+        # Default to 0.5 (Balanced) if no philosophy provided
+        if philosophy:
+            self.run_pass_ratio = philosophy.run_pass_ratio / 100.0
+            self.aggressiveness = philosophy.aggressiveness / 100.0
+            self.fourth_down_aggression = philosophy.fourth_down_aggression / 100.0
+            self.blitz_frequency = philosophy.blitz_frequency / 100.0
+        else:
+            # Legacy / Default
+            self.run_pass_ratio = run_pass_ratio
+            self.aggressiveness = aggression
+            self.fourth_down_aggression = aggression # Simple mapping
+            self.blitz_frequency = 0.3
+
+    def _get_effective_aggression(self, context: PlayCallingContext) -> float:
+        """
+        Calculate effective aggression based on game state and personality.
+        Urgency (late game/trailing) increases aggression.
+        """
+        aggression = self.aggressiveness
+
+        # Desperation Logic
+        if context.score_diff < 0 and context.time_left_seconds < 300: # Last 5 mins
+            if context.score_diff < -8: # Two scores down
+                aggression += 0.4
+            else: # One score down
+                aggression += 0.2
+
+        # Protecting Lead Logic
+        elif context.score_diff > 8 and context.time_left_seconds < 600:
+            aggression -= 0.2 # Play safer
+
+        return max(0.0, min(1.0, aggression))
 
     def select_play(self, context: PlayCallingContext) -> PlayCommand:
         """
@@ -59,32 +95,45 @@ class PlayCaller:
         """Handle 4th down logic: Punt, FG, or Go for it."""
 
         # Field Goal Range (approx 35 yard line, so 35+17 = 52 yard FG)
-        # distance_to_goal <= 35 means we are at opponent 35 or closer.
         in_fg_range = context.distance_to_goal <= 38
 
-        # Decision Logic
+        # Base decision primarily driven by Fourth Down Aggression trait
+        effective_aggression = self._get_effective_aggression(context)
+
+        # Use the specific fourth_down_aggression trait if available, modulated by effective urgency
+        trait_bias = self.fourth_down_aggression
+        final_aggression = (effective_aggression + trait_bias) / 2.0
+
         should_go_for_it = False
 
-        # Desperation (Late game, losing)
-        if context.time_left_seconds < 300 and context.score_diff < 0:
-            # If losing by more than 3 and in FG range, might still go for it if time is low
-            if context.score_diff < -3:
+        # 1. DESPERATION OVERRIDES (Always trump personality)
+        if context.time_left_seconds < 120 and context.score_diff < 0:
+             # Losing in last 2 mins - MUST go for it if FG won't tie/win
+            if context.score_diff < -3 or not in_fg_range:
                 should_go_for_it = True
-            # If losing by <= 3 and in FG range, kick the FG to tie/win
-            elif in_fg_range:
-                should_go_for_it = False
+
+        # 2. PERSONALITY LOGIC
+        elif not should_go_for_it:
+            # "The Gambler" (High Aggression)
+            if final_aggression > 0.75:
+                # Go for it on 4th & Short (< 2) anywhere past own 40
+                if context.distance <= 2 and context.distance_to_goal <= 60:
+                     should_go_for_it = True
+                # Go for it on 4th & Medium (< 5) in opponent territory
+                if context.distance <= 5 and context.distance_to_goal <= 40:
+                     should_go_for_it = True
+
+            # "Calculated Risk" (Medium Aggression)
+            elif final_aggression > 0.5:
+                 # Go for it on 4th & 1 past midfield
+                 if context.distance <= 1 and context.distance_to_goal <= 50:
+                     should_go_for_it = True
+
+            # "Conservative" (Low Aggression)
             else:
-                should_go_for_it = True # Must go for it if out of range
-
-        # Aggressive Coach Logic
-        elif self.aggression > 0.7:
-            if context.distance <= 2 and context.distance_to_goal <= 60:
-                should_go_for_it = True
-
-        # Normal Logic
-        else:
-            if context.distance_to_goal < 3: # Goal line stand
-                should_go_for_it = True
+                # Goal line stand only
+                if context.distance_to_goal < 3 and context.distance <= 2:
+                    should_go_for_it = True
 
         if should_go_for_it:
             # Treat as normal down
@@ -108,41 +157,42 @@ class PlayCaller:
     def _decide_run_vs_pass(self, context: PlayCallingContext) -> bool:
         """
         Returns True for Pass, False for Run.
-        Adjusts base ratio based on situation and 2-minute drill adjustments.
+        Adjusts base ratio based on situation and personality.
         """
-        # Start with base probability of passing
+        # Start with Coach's philosophy (0.0 = All Pass, 1.0 = All Run)
+        # We convert to "Pass Probability" so: 0.0 run_pass_ratio -> 1.0 pass_prob
         pass_prob = 1.0 - self.run_pass_ratio
 
-        # Adjust for Down and Distance
+        # Context Modifiers
+        # 3rd Down & Long -> High Pass Prob
         if context.down == 3:
             if context.distance > 6:
-                pass_prob += 0.3  # Likely pass on 3rd and long
+                pass_prob += 0.25
             elif context.distance <= 2:
-                pass_prob -= 0.2  # Likely run on 3rd and short
+                pass_prob -= 0.15
 
-        # Adjust for Score/Time (Catchup logic)
-        if context.score_diff < -8 and context.time_left_seconds < 600:
-            pass_prob += 0.3  # Throw to catch up
-        elif context.score_diff > 8 and context.time_left_seconds < 600:
-            pass_prob -= 0.3  # Run to kill clock
+        # Score Effects (Catchup vs Kill Clock)
+        if context.score_diff < -8 and context.time_left_seconds < 900: # Trailing by 2 scores, Q4 or late Q3
+             pass_prob += 0.20
+        elif context.score_diff > 8 and context.time_left_seconds < 600: # Leading late, run the ball
+             pass_prob -= 0.25
 
+        # Hurry Up
         if context.is_hurry_up:
-            pass_prob += 0.25
+            pass_prob += 0.2
 
-        # 2-Minute Drill AI (AI-005) adjustments
+        # 2-Minute Drill Adjustments
         if context.two_minute_adjustments:
-            adj = context.two_minute_adjustments
-            pass_prob += adj.get("pass_probability_boost", 0.0)
-            # Run penalty effectively increases pass probability
-            pass_prob += adj.get("run_penalty", 0.0)
+            pass_prob += context.two_minute_adjustments.get("pass_probability_boost", 0.0)
 
-        # Adjust for Aggression
-        if self.aggression > 0.7:
-            pass_prob += 0.1
-        elif self.aggression < 0.3:
-            pass_prob -= 0.1
+        # Aggression Impact (Aggressive coaches throw deeper/more often to step on throat)
+        effective_aggression = self._get_effective_aggression(context)
+        if effective_aggression > 0.7:
+             pass_prob += 0.05
+        elif effective_aggression < 0.3:
+             pass_prob -= 0.05
 
-        # Clamp probability
+        # Clamp
         pass_prob = max(0.05, min(0.95, pass_prob))
 
         return self.rng.random() < pass_prob
@@ -195,7 +245,7 @@ class PlayCaller:
             depth_weights["short"] += 2
 
         # Aggression factor
-        if self.aggression > 0.7:
+        if self.aggressiveness > 0.7:
             depth_weights["deep"] += 1
 
         # 2-Minute Drill AI (AI-005) adjustments

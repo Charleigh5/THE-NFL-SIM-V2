@@ -74,6 +74,7 @@ class HomeFieldBonus:
     snap_count_modifier: float    # Makes it harder to hear snap
     fatigue_modifier: float       # Altitude effect
     crowd_energy_bonus: float     # Performance boost
+    kick_distance_bonus: float = 0.0  # Altitude kicking bonus (Denver +3%)
 
 
 # ============================================================================
@@ -145,10 +146,16 @@ class StadiumEngine:
 
         # Altitude effect (Denver)
         altitude_factor = 0.0
+        kick_bonus = 0.0
         if self.config.altitude > 4000:
             # Physics-based fatigue drain
             # Every 1000 ft above 4000 = 2.5% more fatigue for visitors
             altitude_factor = ((self.config.altitude - 4000) / 1000) * 0.025
+            # Thin air = longer kicks (Denver ~+3%)
+            kick_bonus = ((self.config.altitude - 4000) / 1000) * 0.025
+        elif self.config.altitude > 3000:
+            # Minor bonus for moderate altitude
+            kick_bonus = 0.01  # +1%
 
         # Crowd energy bonus to home team
         energy_bonus = crowd.energy * 0.05  # Up to 5% performance boost
@@ -157,7 +164,8 @@ class StadiumEngine:
             false_start_modifier=noise_factor,
             snap_count_modifier=snap_mod,
             fatigue_modifier=altitude_factor,
-            crowd_energy_bonus=energy_bonus
+            crowd_energy_bonus=energy_bonus,
+            kick_distance_bonus=kick_bonus
         )
 
     def update_crowd_energy(self, current: CrowdState, event: str) -> CrowdState:

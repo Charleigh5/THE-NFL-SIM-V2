@@ -22,7 +22,7 @@ class MatchContext:
     - Weather & Chemistry Context
     """
 
-    def __init__(self, home_team_id: int, away_team_id: int, db: AsyncSession, weather_config: Dict = None):
+    def __init__(self, home_team_id: int, away_team_id: int, db: AsyncSession, weather_config: Optional[Dict[str, Any]] = None):
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
         self.db = db
@@ -41,6 +41,10 @@ class MatchContext:
         self.home_roster: Dict[int, Player] = {}
         self.away_roster: Dict[int, Player] = {}
 
+        # Teams
+        self.home_team: Optional[Team] = None
+        self.away_team: Optional[Team] = None
+
         # Fatigue: player_id -> fatigue_level (0.0 to 1.0, where 1.0 is exhausted)
         self.fatigue_state: Dict[int, float] = {}
 
@@ -51,8 +55,28 @@ class MatchContext:
         logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
 
     async def load_rosters(self):
-        """Loads full rosters for both teams from the database, including traits."""
-        # Load Home Team with eager-loaded traits
+        """Loads full rosters and team data for both teams."""
+        # Load Home Team with eager-loaded traits AND Team data with Coaches
+        # We need 2 queries or one careful one.
+        # Easier to fetch Team separately or via players?
+        # Fetching Team directly is better.
+
+        # 1. Fetch Teams with Coaches
+        stmt_teams = (
+             select(Team)
+             .options(selectinload(Team.coaches))
+             .where(Team.id.in_([self.home_team_id, self.away_team_id]))
+        )
+        result_teams = await self.db.execute(stmt_teams)
+        teams = result_teams.scalars().all()
+
+        for t in teams:
+            if t.id == self.home_team_id:
+                self.home_team = t
+            elif t.id == self.away_team_id:
+                self.away_team = t
+
+        # 2. Fetch Players (keep existing logic)
         stmt_home = (
             select(Player)
             .where(Player.team_id == self.home_team_id)
@@ -73,8 +97,9 @@ class MatchContext:
         self.away_roster = {p.id: p for p in away_players}
 
         # Flatten traits to active_traits list for efficient access during game loop
+        # Using setattr as active_traits is a runtime-only attribute, not persisted
         for p in list(self.home_roster.values()) + list(self.away_roster.values()):
-            p.active_traits = [pt.trait.name for pt in p.player_traits if pt.trait]
+            setattr(p, 'active_traits', [pt.trait.name for pt in p.player_traits if pt.trait])
 
         # Initialize fatigue for all players
         for pid in self.home_roster:

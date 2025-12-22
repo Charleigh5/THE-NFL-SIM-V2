@@ -1,89 +1,89 @@
-# RPG-003: Age-Based Growth & Regression Curves Specification
+# RPG-003: Age-Based Growth & Regression Curves
 
-**Feature ID:** RPG-003
-**Status:** 🟢 SPEC_COMPLETE
-**Priority:** P1
-**Last Updated:** 2025-12-20
+**Objective**: Simulate realistic NFL career arcs where players evolve based on position-specific aging curves. Front-load XP for young players, stabilize in prime, and apply regression penalties in decline phase.
 
----
+## 1. Aging Curve Archetypes
 
-## 1. Overview
+We define 4 primary curve shapes based on PFF research:
 
-The Age-Based Growth & Regression system implements position-specific "Aging Curves" derived from NFL data. This replaces linear progression with bio-realistic curves, ensuring players peak at appropriate ages and decline realistically, creating a dynamic and evolving league ecosystem.
+### A. The "Running Back" Curve (Early Peak, Sharp Decline)
 
-## 2. Core Concepts
+- **Positions**: RB, CB, WR (Speed)
+- **Ascension**: Ages 21-24 (Rapid Growth)
+- **Prime**: Ages 25-27
+- **Decline**: Age 28+ (Sharp Regression, especially physicals)
 
-### 2.1 The "Curve" Function
+### B. The "Skill" Curve (Standard)
 
-Progression is no longer linear. It follows a multi-stage function:
+- **Positions**: WR (Route/Possession), LB, S, TE
+- **Ascension**: Ages 21-25
+- **Prime**: Ages 26-29
+- **Decline**: Age 30+ (Moderate Regression)
 
-1. **Ascension (Rookie - Peak)**: High XP gains, rapid attribute growth.
-2. **Peak Plateau**: XP maintains attributes, mental attributes grow, physicals hold.
-3. **The Cliff (Decline)**: Negative XP modifiers, physical attribute decay.
+### C. The "Trench" Curve (Late Peak, Slow Decline)
 
-### 2.2 Position-Specific Epochs
+- **Positions**: OL, DL
+- **Ascension**: Ages 21-26 (Slower Mastery)
+- **Prime**: Ages 27-31
+- **Decline**: Age 32+ (Gradual Regression)
 
-| Position | Breakout Age | Peak Band | Decline Start | The Cliff |
-| :------- | :----------- | :-------- | :------------ | :-------- |
-| **RB**   | 22           | 24-26     | 27            | 29        |
-| **WR**   | 23           | 26-29     | 30            | 32        |
-| **TE**   | 24           | 26-30     | 31            | 33        |
-| **QB**   | 24           | 28-32     | 34            | 36        |
-| **OL**   | 24           | 26-30     | 31            | 33        |
-| **DL**   | 23           | 25-29     | 30            | 32        |
-| **LB**   | 23           | 25-28     | 29            | 31        |
-| **DB**   | 22           | 24-28     | 29            | 31        |
-| **K/P**  | 24           | 27-32     | 34            | 36        |
+### D. The "Quarterback" Curve (Longevity)
 
----
-
-## 3. Implementation Logic
-
-### 3.1 Attribute Decay Categories
-
-Regression hits attributes differently based on their biological nature.
-
-- **Tier 1: Physical (Fast Decay)**
-
-  - Speed, Acceleration, Agility, Jumping, Change of Direction.
-  - _Decay Rate_: High (loss of 1-3 pts/year in decline).
-
-- **Tier 2: Technical (Slow Decay)**
-
-  - Strength, Throw Power, Break Tackle, Route Running.
-  - _Decay Rate_: Low (loss of 0-1 pts/year).
-
-- **Tier 3: Mental (No Decay / Growth)**
-  - Awareness, Play Recognition, Vision.
-  - _Decay Rate_: None (Often grows until retirement).
-
-### 3.2 Regression Algo (`offseason_service.py`)
-
-```python
-def calculate_regression(player):
-    curve = get_curve(player.position)
-    years_past_peak = player.age - curve.peak_end
-
-    if years_past_peak <= 0:
-        return # Safe
-
-    # The Cliff logic
-    decline_factor = 1.0 + (years_past_peak * 0.25) # Accelerates over time
-
-    if player.position == "RB" and years_past_peak > 2:
-        decline_factor *= 1.5 # RBs fall off hard
-
-    for attr in player.attributes:
-         if attr.is_physical:
-             roll = random()
-             if roll < (0.3 * decline_factor):
-                 decrement(attr, 1-2 pts)
-```
+- **Positions**: QB, K, P
+- **Ascension**: Ages 21-26
+- **Prime**: Ages 27-33
+- **Decline**: Age 35+ (Slowest Regression)
 
 ---
 
-## 4. Verification Plan
+## 2. Mechanics
 
-1. **Test: RB Shelf Life**: Verify that <10% of generated RBs remain starters (OVR > 80) past age 30.
-2. **Test: QB Longevity**: Verify QBs consistently maintain OVR > 85 into their early 30s.
-3. **Test: Speed Kills**: Verify that Speed is the first attribute to drop in 90% of regressions.
+### XP Multiplier (Growth)
+
+Applied to `ProgressionService` when awarding XP.
+
+| Age Phase       | Age Range       | Multiplier | Notes                    |
+| :-------------- | :-------------- | :--------- | :----------------------- |
+| **Rookie/Soph** | 21-22           | **1.5x**   | "Rookie Bump"            |
+| **Ascension**   | 23-25           | **1.2x**   | Developing               |
+| **Prime**       | (Pos Dependent) | **1.0x**   | Baseline                 |
+| **Veteran**     | Post-Prime      | **0.5x**   | Hard to learn new tricks |
+
+### Regression Logic
+
+Applied during `OffseasonService`.
+
+**Regression Severity Formula**:
+`Regression Score = (Current Age - Decline Start Age) * Severity Factor`
+
+**Attribute decay priority:**
+
+1. **Physicals** (Speed, Agility, Acceleration) - Decay FIRST and FASTEST.
+2. **Skills** (Throw Power, Catching, Tackling) - Decay MODERATELY.
+3. **Mental** (Awareness, Play Rec) - Decay SLOWEST (or even grow).
+
+---
+
+## 3. Implementation Plan
+
+### Phase A: `GrowthCurveEngine` (`app/services/training/growth_curves.py`)
+
+- Define `POSITION_CURVES` dictionary mapping positions to curve types.
+- Implement `get_xp_multiplier(age, position)`
+- Implement `get_regression_factors(age, position)`
+
+### Phase B: Integrate with `ProgressionService`
+
+- In `apply_xp`: `xp_to_add = raw_xp * GrowthCurveEngine.get_xp_multiplier(...)`
+
+### Phase C: Integrate with `OffseasonService`
+
+- In `process_regression`:
+  - Fetch `regression_factors`.
+  - Apply decay to attributes based on type.
+
+## 4. Verification
+
+- **Test A**: RB at age 29 should gain virtually no Speed XP and lose ~2-3 points of Speed in offseason.
+- **Test B**: QB at age 32 should still be stable.
+- **Test C**: Rookie (21) should gain XP 50% faster than vet.

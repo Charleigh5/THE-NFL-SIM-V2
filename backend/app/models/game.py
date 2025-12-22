@@ -13,7 +13,7 @@ class GameType(str, Enum):
     SUPER_BOWL = "SUPER_BOWL"
 
 class Game(Base):
-    __tablename__ = "game"
+    __tablename__ = "game"  # type: ignore[assignment]
     __table_args__ = (
         Index("ix_game_season_week", "season_id", "week"),
     )
@@ -43,6 +43,10 @@ class Game(Base):
     home_score = Column(Integer, default=0)
     away_score = Column(Integer, default=0)
     is_played = Column(Boolean, default=False)
+
+    # Live Game State (for resumability)
+    current_quarter = Column(Integer, default=1)
+    time_left = Column(String, default="15:00")
 
     # Detailed Game Data (Play-by-play summary or reference)
     game_data = Column(JSON, nullable=True)
