@@ -66,9 +66,9 @@ async def start_live_simulation(request: SimulationRequest, background_tasks: Ba
     orchestrator.on_play_complete = on_play_complete
     orchestrator.on_game_update = on_game_update
     
-    # Initialize game session synchronously to get ID
+    # Initialize game session to get ID
     # Mocking Team IDs 1 and 2 for now
-    orchestrator.start_new_game_session(home_team_id=1, away_team_id=2, config=request.config)
+    await orchestrator.start_new_game_session(home_team_id=1, away_team_id=2, config=request.config)
     game_id = orchestrator.current_game_id
     
     # Start continuous simulation in background

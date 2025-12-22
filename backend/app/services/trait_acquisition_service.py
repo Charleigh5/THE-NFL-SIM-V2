@@ -2,7 +2,7 @@ from typing import List, Dict, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.models.player import Player
-from app.models.stats import PlayerSeasonStats
+from app.models.history import PlayerSeasonStats
 from app.services.trait_service import TraitService
 from app.services.gm_agent import GMAgent
 import structlog

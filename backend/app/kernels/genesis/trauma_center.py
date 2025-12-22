@@ -1,6 +1,9 @@
 from app.kernels.core.ecs_manager import Component
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 from pydantic import Field
+
+if TYPE_CHECKING:
+    from app.kernels.genesis.bio_metrics import AnatomyModel
 
 class TraumaModel(Component):
     # Directive 8: Medical Fog of War
