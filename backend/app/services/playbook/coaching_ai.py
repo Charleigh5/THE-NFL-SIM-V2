@@ -1,5 +1,6 @@
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation
+from typing import Optional
 import random
 
 class CoachingAIService:
@@ -164,3 +165,58 @@ class CoachingAIService:
                      return True
 
         return False
+
+    def should_attempt_trick_play(self, situation: GameSituation) -> Optional[str]:
+        """
+        Determine if a trick play should be called and which one.
+        Returns PlayCall ID (e.g. "FAKE_PUNT_RUN") or None.
+        """
+        # 1. Base Eligibility
+        # rare check first to save compute
+        rand_check = random.random()
+        base_prob = 0.02 # 2% base chance per valid down? Low...
+
+        # Adjust by Aggressiveness (0-100) -> 0.0 to 0.10
+        aggression_factor = (self.philosophy.aggressiveness / 100.0) * 0.10
+
+        threshold = base_prob + aggression_factor
+
+        # Situational Bonuses
+        if situation.score_diff < -3 and situation.score_diff > -17:
+            # Trailing by 1-2 scores -> desperate/momentum needed
+            threshold += 0.05
+
+        if situation.quarter == 4 and situation.score_diff < 0:
+            threshold += 0.05
+
+        # Field Position Constraints
+        # Don't do it inside own 30 unless desperate
+        if situation.field_position < 30 and situation.score_diff > -10:
+             return None
+
+        if rand_check > threshold:
+             return None
+
+        # 2. Select Play Type based on Down/Distance
+        if situation.down == 4:
+            # PUNT or FG Formation Logic
+            # If in FG Range (roughly Opp 38+)
+            if situation.field_position >= 62: # Opp 38
+                # Fake FG?
+                if random.random() < 0.5:
+                    return "FAKE_FG_PASS" if random.random() < 0.6 else "FAKE_FG_RUN"
+            else:
+                # Fake Punt
+                if situation.distance < 10: # Reasonable fake distance
+                     return "FAKE_PUNT_RUN" if situation.distance < 4 else "FAKE_PUNT_PASS"
+
+        elif situation.down in [1, 2]:
+             # Offensive Trickery (Flea Flicker, etc)
+             # Best used on 1st & 10 or 2nd & Short
+             if situation.field_position > 40 and situation.field_position < 80:
+                  if random.random() < 0.3:
+                       return "FLEA_FLICKER"
+                  elif random.random() < 0.3:
+                       return "PHILLY_SPECIAL"
+
+        return None

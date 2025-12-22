@@ -35,20 +35,20 @@ Implement simple probabilistic resolution for "Fake Punt Run/Pass" and "Fake FG"
 
 **The Critic Attacks:**
 
-1.  **"RNG-fest":** Pure probability feels cheap. If I have a freak athlete at Punter, I want his speed to matter, not a dice roll.
-2.  **Logic Gaps:** What if the defense is in "Safe Special Teams" formation? A fake punt should almost _never_ work against a safe defense.
-3.  **Exploits:** If the success rate is > 50%, players will run Fake Punt every 4th down. The AI is too stupid to counter it.
-4.  **Physics Disconnect:** If the play is a "Flea Flicker", the engine needs to handle the ball transfer `RB -> QB` without glitching the `Possession` mechanics.
+1. **"RNG-fest":** Pure probability feels cheap. If I have a freak athlete at Punter, I want his speed to matter, not a dice roll.
+2. **Logic Gaps:** What if the defense is in "Safe Special Teams" formation? A fake punt should almost _never_ work against a safe defense.
+3. **Exploits:** If the success rate is > 50%, players will run Fake Punt every 4th down. The AI is too stupid to counter it.
+4. **Physics Disconnect:** If the play is a "Flea Flicker", the engine needs to handle the ball transfer `RB -> QB` without glitching the `Possession` mechanics.
 
 ### The Superior Synthesis
 
 **The Definitive Architecture:**
 We will implement a **Context-Aware Deception System**.
 
-1.  **Formation Matchups:** Success is heavily weighted by the defensive formation. (e.g., `Punt Block` = High Vulnerability to Pass, `Punt Return` = High Vulnerability to Run, `Safe` = Near Zero Success).
-2.  **Attribute Injection:** We use the _actual_ attributes of the specific players involved. `Punter.throwing_accuracy`, `Holder.speed`.
-3.  **"Confusion" Mechanic:** We calculate a `ConfusionScore` for the defense based on `(DeceptionAttr + CoachingTrickery) - (DefensiveAwareness + PrepTime)`. High confusion = delayed defender reaction times in the physics engine.
-4.  **Dynamic Cooldowns:** The "Surprise Factor" decays rapidly. Calling a trick play twice in a game applies a massive cumulative penalty to the confusion score.
+1. **Formation Matchups:** Success is heavily weighted by the defensive formation. (e.g., `Punt Block` = High Vulnerability to Pass, `Punt Return` = High Vulnerability to Run, `Safe` = Near Zero Success).
+2. **Attribute Injection:** We use the _actual_ attributes of the specific players involved. `Punter.throwing_accuracy`, `Holder.speed`.
+3. **"Confusion" Mechanic:** We calculate a `ConfusionScore` for the defense based on `(DeceptionAttr + CoachingTrickery) - (DefensiveAwareness + PrepTime)`. High confusion = delayed defender reaction times in the physics engine.
+4. **Dynamic Cooldowns:** The "Surprise Factor" decays rapidly. Calling a trick play twice in a game applies a massive cumulative penalty to the confusion score.
 
 </adversarial_analysis>
 

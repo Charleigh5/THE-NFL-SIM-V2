@@ -1,4 +1,4 @@
-from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
+from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand, TrickPlayCommand
 from app.schemas.play import PlayResult
 from app.orchestrator.kernels_interface import KernelInterface
 from app.engine.probability_engine import ProbabilityEngine, OutcomeType
@@ -14,6 +14,7 @@ from app.services.chemistry_service import ChemistryService
 from app.services.weather_service import WeatherService
 from app.engine.trait_effects import TraitEffectResolver
 from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
+from app.core.nfl_reference_data import TRICK_PLAY_TABLE
 from app.services.use_based_progression import UseBasedProgression, ActionType
 from app.services.playbook.familiarity import FamiliarityManager
 # Phase 2: Position-Specific Physics Integration
@@ -43,6 +44,84 @@ class PlayResolver:
         self.momentum_engine = None
         # B-055: Playbook Familiarity (Phase 3)
         self.familiarity_manager = FamiliarityManager()
+
+    def _calculate_trick_play_confusion(self, command: TrickPlayCommand) -> float:
+        """
+        Calculate the confusion factor (0.0 to 2.0) based on Attributes and State.
+        Higher is better for Offense (more confusion).
+        """
+        config = TRICK_PLAY_TABLE.get(command.trick_type)
+        if not config:
+            return 0.0
+
+        base_confusion = config.confusion_duration_s
+
+        # 1. Coach Aggressiveness vs Defensive Awareness
+        # Assuming coach/team attributes available via command context or match context
+        off_aggressiveness = 50 # Default
+        def_awareness = 50 # Default
+
+        if self.current_match_context:
+            if command.is_home_team:
+                # off_aggressiveness = self.current_match_context.home_coach.aggressiveness ...
+                def_awareness = getattr(self.current_match_context, "away_team_awareness", 50)
+            else:
+                def_awareness = getattr(self.current_match_context, "home_team_awareness", 50)
+
+        # Scale (-0.5 to +0.5 impact)
+        awareness_mod = (50 - def_awareness) / 100.0
+
+        return max(0.0, base_confusion + awareness_mod)
+
+    def _resolve_trick_play(self, command: TrickPlayCommand) -> PlayResult:
+        """
+        Resolve a trick play using the Confusion Engine.
+        """
+        config = TRICK_PLAY_TABLE.get(command.trick_type)
+        if not config:
+             return PlayResult(yards_gained=0, description="Unknown Trick Play Failed")
+
+        confusion = self._calculate_trick_play_confusion(command)
+
+        # Roll for Success
+        roll = self.rng.random()
+
+        # Calculate Threshold
+        # Base chance + Confusion Bonus
+        # confusion of 0.5s -> +10% success?
+        success_chance = config.base_success_rate + (confusion * 0.2)
+
+        # Cap logic (Min/Max from config)
+        success_chance = max(config.min_success_rate, min(config.max_success_rate, success_chance))
+
+        description = f"TRICK PLAY! {config.name} executed."
+
+        if roll < success_chance:
+            # SUCCESS
+            # Calculate Gain based on type
+            yards = 0
+            if "PASS" in command.trick_type or "FLEA" in command.trick_type or "PHILLY" in command.trick_type:
+                 yards = self.rng.randint(15, 45) # Boom play
+                 description += f" The defense is fooled! gain of {yards} yards!"
+            else:
+                 yards = self.rng.randint(5, 20) # Run play
+                 description += f" They catch them off guard! gain of {yards} yards!"
+
+            return PlayResult(
+                yards_gained=yards,
+                is_touchdown=(yards > command.distance + 20), # Simplified TD chance
+                description=description,
+                is_highlight_worthy=True
+            )
+        else:
+            # FAIL
+            # Risk Check
+            risk_roll = self.rng.random()
+            if risk_roll < (0.1 * config.turnover_risk_multiplier):
+                 # TURNOVER
+                 return PlayResult(yards_gained=-5, is_turnover=True, description=f"{description} BUT IT'S INTERCEPTED/FUMBLED!")
+
+            return PlayResult(yards_gained=-2, description=f"{description} The defense stays home. Loss of 2.")
 
     def _resolve_special_play_modifiers(self, command: PlayCommand) -> Dict[str, Any]:
         """
@@ -159,6 +238,8 @@ class PlayResolver:
             result = self._resolve_pass_play(command)
         elif isinstance(command, RunPlayCommand):
             result = self._resolve_run_play(command)
+        elif isinstance(command, TrickPlayCommand):
+            result = self._resolve_trick_play(command)
         else:
             # Add resolvers for other command types here
             context = {}
@@ -341,9 +422,17 @@ class PlayResolver:
             "forty_time": 4.45
         }
         return WideReceiverPhysics(
-            ratings=ratings,
+            speed_rating=ratings.get("speed", 88),
+            acceleration_rating=ratings.get("acceleration", 85),
+            agility_rating=ratings.get("agility", 85),
+            route_running_rating=ratings.get("route_running", 85),
+            catching_rating=ratings.get("catching", 85),
+            catch_in_traffic_rating=ratings.get("catch_in_traffic", 80),
+            spectacular_catch_rating=ratings.get("spectacular_catch", 75),
+            release_rating=ratings.get("release", 80),
             height_inches=getattr(wr, "height", 72),
-            hand_size=float(getattr(wr, "hand_size", 9.5) or 9.5),
+            vertical_jump_inches=ratings.get("jumping", 36),
+            hand_size_inches=float(getattr(wr, "hand_size", 9.5) or 9.5),
         )
 
     def _create_rb_physics(self, rb: Any) -> RunningBackPhysics:
@@ -363,8 +452,14 @@ class PlayResolver:
             "forty_time": 4.5
         }
         return RunningBackPhysics(
-            ratings=ratings,
-            weight=float(getattr(rb, "weight", 210)),
+            speed_rating=ratings.get("speed", 85),
+            acceleration_rating=ratings.get("acceleration", 85),
+            agility_rating=ratings.get("agility", 85),
+            strength_rating=ratings.get("strength", 70),
+            elusiveness_rating=ratings.get("elusiveness", 80),
+            trucking_rating=ratings.get("trucking", 70),
+            ball_carrier_vision_rating=ratings.get("ball_carrier_vision", 80),
+            weight=int(getattr(rb, "weight", 210)),
         )
 
     def _create_db_physics(self, db: Any) -> DefensiveBackPhysics:
@@ -383,7 +478,15 @@ class PlayResolver:
             "change_of_direction": getattr(db, "change_of_direction", 80),
             "strength": getattr(db, "strength", 60)
         }
-        return DefensiveBackPhysics(ratings=ratings)
+        return DefensiveBackPhysics(
+            speed_rating=ratings.get("speed", 88),
+            acceleration_rating=ratings.get("acceleration", 86),
+            agility_rating=ratings.get("agility", 85),
+            man_coverage_rating=ratings.get("man_coverage", 80),
+            zone_coverage_rating=ratings.get("zone_coverage", 78),
+            press_rating=ratings.get("press", 75),
+            play_recognition_rating=ratings.get("play_recognition", 78),
+        )
 
     def _calculate_physics_separation(
         self,

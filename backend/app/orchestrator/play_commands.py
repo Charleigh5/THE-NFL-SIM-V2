@@ -255,3 +255,28 @@ class TwoPointConversionCommand(PlayCommand):
             is_touchdown=False,
             description="2-point conversion failed (No Play Selected)"
         )
+
+
+class TrickPlayCommand(PlayCommand):
+    """Command for trick plays (Fake Punt, Flea Flicker, etc.)"""
+
+    def __init__(self, offense_players: List[Any], defense_players: List[Any],
+                 trick_type: str, modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+                 distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True,
+                 possession: str = "home", start_yard_line: int = 20):
+        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line,
+                         is_home_team, possession, start_yard_line)
+        self.trick_type = trick_type
+
+    def get_play_type(self) -> str:
+        return self.trick_type
+
+    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+        """
+        Execute a trick play.
+        Real logic is in PlayResolver._resolve_trick_play
+        """
+        return PlayResult(
+            yards_gained=0,
+            description=f"Trick Play ({self.trick_type}) executed"
+        )
