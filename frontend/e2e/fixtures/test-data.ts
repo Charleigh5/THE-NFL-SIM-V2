@@ -272,35 +272,45 @@ export const mockDrills = [
 
 // ============================================================================
 // HELPER: Setup common API routes for season dashboard tests
+// Routes match localhost:8000 (API server) URLs
 // ============================================================================
 
 import type { Page } from "@playwright/test";
 
 export async function setupSeasonDashboardMocks(page: Page) {
-  await page.route("**/api/teams", async (route) => {
-    await route.fulfill({ json: mockTeams });
+  // Teams endpoint - paginated response
+  await page.route("**/api/teams**", async (route) => {
+    await route.fulfill({
+      json: { items: mockTeams, total: mockTeams.length, page: 1, page_size: 100, total_pages: 1 },
+    });
   });
 
+  // Season summary endpoint
   await page.route("**/api/season/summary", async (route) => {
     await route.fulfill({ json: mockSeasonSummary });
   });
 
+  // Standings endpoint
   await page.route("**/api/season/*/standings**", async (route) => {
     await route.fulfill({ json: mockStandings });
   });
 
+  // Schedule endpoint
   await page.route("**/api/season/*/schedule**", async (route) => {
     await route.fulfill({ json: mockSchedule });
   });
 
+  // Leaders endpoint
   await page.route("**/api/season/*/leaders", async (route) => {
     await route.fulfill({ json: mockLeaders });
   });
 
+  // Projected awards endpoint
   await page.route("**/api/season/*/awards/projected", async (route) => {
     await route.fulfill({ json: mockAwards });
   });
 
+  // News league endpoint (used by NewsFeed component)
   await page.route("**/api/news/league**", async (route) => {
     await route.fulfill({ json: mockNewsResponse });
   });
@@ -308,5 +318,28 @@ export async function setupSeasonDashboardMocks(page: Page) {
   // Fallback for any living news endpoints
   await page.route("**/api/news/living/**", async (route) => {
     await route.fulfill({ json: { items: [], total_count: 0 } });
+  });
+}
+
+export async function setupTrainingMocks(page: Page) {
+  await page.route("**/api/v1/training/coaching-styles", async (route) => {
+    await route.fulfill({ json: mockCoachingStyles });
+  });
+
+  await page.route("**/api/v1/training/drills**", async (route) => {
+    await route.fulfill({ json: mockDrills });
+  });
+
+  await page.route("**/api/v1/players/*/training-profile", async (route) => {
+    await route.fulfill({
+      json: {
+        player_id: 1,
+        player_name: "Test Player",
+        position: "WR",
+        age: 25,
+        weaknesses: ["route_running"],
+        fatigue: 20,
+      },
+    });
   });
 }

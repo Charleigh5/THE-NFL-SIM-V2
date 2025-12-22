@@ -542,7 +542,8 @@ class SimulationOrchestrator:
                 )
                 self.history.append(result)
                 # Penalty doesn't change possession or down, just yards
-                self.yard_line = max(1, self.yard_line - 5)
+                # Away team drives 100 -> 0. Penalty moves them BACK (towards 100).
+                self.yard_line = min(99, self.yard_line + 5)
                 self.distance += 5
                 return result
 

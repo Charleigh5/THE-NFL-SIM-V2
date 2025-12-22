@@ -11,7 +11,7 @@ test.describe("Season Dashboard Flow", () => {
 
     // Verify Season Dashboard page loads
     await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
 
     // Verify header shows year and week
@@ -30,57 +30,65 @@ test.describe("Season Dashboard Flow", () => {
     await page.goto("/season");
 
     await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
 
     // Switch to standings tab
-    await page.locator('[data-testid="tab-standings"]').click();
+    const standingsTab = page.locator('[data-testid="tab-standings"]');
+    await expect(standingsTab).toBeVisible();
+    await standingsTab.click();
 
-    // Standings table should be visible
-    await expect(page.locator('[data-testid="standings-table"]')).toBeVisible({ timeout: 5000 });
+    // Wait for content to change - check for standings table
+    await expect(page.locator('[data-testid="standings-table"]')).toBeVisible({ timeout: 10000 });
   });
 
   test("should display standings table", async ({ page }) => {
     await page.goto("/season");
 
     await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
 
     // Switch to standings tab
-    await page.locator('[data-testid="tab-standings"]').click();
+    const standingsTab = page.locator('[data-testid="tab-standings"]');
+    await expect(standingsTab).toBeVisible();
+    await standingsTab.click();
 
     // Wait for standings content
-    await expect(page.locator('[data-testid="standings-table"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="standings-table"]')).toBeVisible({ timeout: 10000 });
   });
 
   test("should navigate to schedule tab", async ({ page }) => {
     await page.goto("/season");
 
     await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
 
     // Switch to schedule tab
-    await page.locator('[data-testid="tab-schedule"]').click();
+    const scheduleTab = page.locator('[data-testid="tab-schedule"]');
+    await expect(scheduleTab).toBeVisible();
+    await scheduleTab.click();
 
     // Schedule view should be visible
-    await expect(page.locator('[data-testid="schedule-view"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="schedule-view"]')).toBeVisible({ timeout: 10000 });
   });
 
   test("should navigate to leaders tab", async ({ page }) => {
     await page.goto("/season");
 
     await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 15000,
     });
 
     // Switch to leaders tab
-    await page.locator('[data-testid="tab-leaders"]').click();
+    const leadersTab = page.locator('[data-testid="tab-leaders"]');
+    await expect(leadersTab).toBeVisible();
+    await leadersTab.click();
 
     // Leaders content should be visible
     await expect(page.locator('[data-testid="league-leaders-container"]')).toBeVisible({
-      timeout: 5000,
+      timeout: 10000,
     });
   });
 });

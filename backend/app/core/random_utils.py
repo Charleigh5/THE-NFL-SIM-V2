@@ -41,6 +41,10 @@ class DeterministicRNG:
         """Return the next random floating point number in the range [0.0, 1.0)."""
         return self._rng.random()
 
+    def next_float(self) -> float:
+        """Alias for random() to match CORTEX RNG interface."""
+        return self.random()
+
     def randint(self, a: int, b: int) -> int:
         """Return random integer in range [a, b], including both end points."""
         return self._rng.randint(a, b)

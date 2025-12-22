@@ -399,25 +399,25 @@ class PlayResolver:
         """Create QB physics engine from player attributes."""
         # Note: Matches signature in app/engine/position_physics/quarterback.py
         return QuarterbackPhysics(
-            throw_power_rating=getattr(qb, "throw_power", 80),
-            throw_accuracy_rating=getattr(qb, "throw_accuracy_mid", 80),
-            awareness_rating=getattr(qb, "awareness", 80),
-            speed_rating=getattr(qb, "speed", 70),
-            agility_rating=getattr(qb, "agility", 70),
-            poise_rating=getattr(qb, "poise", 75) if hasattr(qb, "poise") else 75,
+            throw_power_rating=getattr(qb, "throw_power", 80) or 80,
+            throw_accuracy_rating=getattr(qb, "throw_accuracy_mid", 80) or 80,
+            awareness_rating=getattr(qb, "awareness", 80) or 80,
+            speed_rating=getattr(qb, "speed", 70) or 70,
+            agility_rating=getattr(qb, "agility", 70) or 70,
+            poise_rating=(getattr(qb, "poise", 75) or 75) if hasattr(qb, "poise") else 75,
         )
 
     def _create_wr_physics(self, wr: Any) -> WideReceiverPhysics:
         """Create WR physics engine from player attributes."""
         ratings = {
-            "speed": getattr(wr, "speed", 90),
-            "acceleration": getattr(wr, "acceleration", 88),
-            "agility": getattr(wr, "agility", 85),
-            "route_running": getattr(wr, "route_running", 85),
-            "catching": getattr(wr, "catching", 85),
-            "catch_in_traffic": getattr(wr, "catch_in_traffic", 80),
-            "spectacular_catch": getattr(wr, "spectacular_catch", 75),
-            "release": getattr(wr, "release", 80),
+            "speed": getattr(wr, "speed", 90) or 90,
+            "acceleration": getattr(wr, "acceleration", 88) or 88,
+            "agility": getattr(wr, "agility", 85) or 85,
+            "route_running": getattr(wr, "route_running", 85) or 85,
+            "catching": getattr(wr, "catching", 85) or 85,
+            "catch_in_traffic": getattr(wr, "catch_in_traffic", 80) or 80,
+            "spectacular_catch": getattr(wr, "spectacular_catch", 75) or 75,
+            "release": getattr(wr, "release", 80) or 80,
             "jumping": int(getattr(wr, "vertical_jump", 36) or 36),
             "forty_time": 4.45
         }
@@ -430,7 +430,7 @@ class PlayResolver:
             catch_in_traffic_rating=ratings.get("catch_in_traffic", 80),
             spectacular_catch_rating=ratings.get("spectacular_catch", 75),
             release_rating=ratings.get("release", 80),
-            height_inches=getattr(wr, "height", 72),
+            height_inches=getattr(wr, "height", 72) or 72,
             vertical_jump_inches=ratings.get("jumping", 36),
             hand_size_inches=float(getattr(wr, "hand_size", 9.5) or 9.5),
         )
@@ -439,16 +439,16 @@ class PlayResolver:
         """Create RB physics engine from player attributes."""
         # Note: Matches signature in app/engine/position_physics/running_back.py
         ratings = {
-            "speed": getattr(rb, "speed", 85),
-            "acceleration": getattr(rb, "acceleration", 85),
-            "agility": getattr(rb, "agility", 85),
-            "strength": getattr(rb, "strength", 70),
-            "elusiveness": getattr(rb, "elusiveness", 80) if hasattr(rb, "elusiveness") else 80,
-            "trucking": getattr(rb, "trucking", 70) if hasattr(rb, "trucking") else 70,
-            "ball_carrier_vision": getattr(rb, "ball_carrier_vision", 80) if hasattr(rb, "ball_carrier_vision") else 80,
-            "break_tackle": getattr(rb, "break_tackle", 75),
-            "stiff_arm": getattr(rb, "stiff_arm", 70),
-            "balance": getattr(rb, "balance", 75),
+            "speed": getattr(rb, "speed", 85) or 85,
+            "acceleration": getattr(rb, "acceleration", 85) or 85,
+            "agility": getattr(rb, "agility", 85) or 85,
+            "strength": getattr(rb, "strength", 70) or 70,
+            "elusiveness": (getattr(rb, "elusiveness", 80) or 80) if hasattr(rb, "elusiveness") else 80,
+            "trucking": (getattr(rb, "trucking", 70) or 70) if hasattr(rb, "trucking") else 70,
+            "ball_carrier_vision": (getattr(rb, "ball_carrier_vision", 80) or 80) if hasattr(rb, "ball_carrier_vision") else 80,
+            "break_tackle": getattr(rb, "break_tackle", 75) or 75,
+            "stiff_arm": getattr(rb, "stiff_arm", 70) or 70,
+            "balance": getattr(rb, "balance", 75) or 75,
             "forty_time": 4.5
         }
         return RunningBackPhysics(
@@ -459,24 +459,24 @@ class PlayResolver:
             elusiveness_rating=ratings.get("elusiveness", 80),
             trucking_rating=ratings.get("trucking", 70),
             ball_carrier_vision_rating=ratings.get("ball_carrier_vision", 80),
-            weight=int(getattr(rb, "weight", 210)),
+            weight=int(getattr(rb, "weight", 210) or 210),
         )
 
     def _create_db_physics(self, db: Any) -> DefensiveBackPhysics:
         """Create DB physics engine from player attributes."""
         # Note: Matches signature in app/engine/position_physics/defensive_back.py
         ratings = {
-            "speed": getattr(db, "speed", 88),
-            "acceleration": getattr(db, "acceleration", 86),
-            "agility": getattr(db, "agility", 85),
-            "man_coverage": getattr(db, "man_coverage", 80),
-            "zone_coverage": getattr(db, "zone_coverage", 78),
-            "press": getattr(db, "press", 75),
-            "ball_skills": getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
-            "play_recognition": getattr(db, "play_recognition", 78),
-            "ball_skills": getattr(db, "ball_skills", 75),
-            "change_of_direction": getattr(db, "change_of_direction", 80),
-            "strength": getattr(db, "strength", 60)
+            "speed": getattr(db, "speed", 88) or 88,
+            "acceleration": getattr(db, "acceleration", 86) or 86,
+            "agility": getattr(db, "agility", 85) or 85,
+            "man_coverage": getattr(db, "man_coverage", 80) or 80,
+            "zone_coverage": getattr(db, "zone_coverage", 78) or 78,
+            "press": getattr(db, "press", 75) or 75,
+            "ball_tracking": (getattr(db, "ball_tracking", 75) or 75) if hasattr(db, "ball_tracking") else 75,
+            "play_recognition": getattr(db, "play_recognition", 78) or 78,
+            "ball_skills": getattr(db, "ball_skills", 75) or 75,
+            "change_of_direction": getattr(db, "change_of_direction", 80) or 80,
+            "strength": getattr(db, "strength", 60) or 60
         }
         return DefensiveBackPhysics(
             speed_rating=ratings.get("speed", 88),
