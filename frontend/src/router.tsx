@@ -4,8 +4,6 @@ import { api } from "./services/api";
 import type { Team } from "./services/api";
 import { seasonApi } from "./services/season";
 import type { PlayoffMatchup } from "./types/playoff";
-import type { Season } from "./types/season";
-import type { DraftPickDetail } from "./types/offseason";
 
 // Import pages
 import Dashboard from "./pages/Dashboard";
@@ -132,66 +130,34 @@ export async function offseasonDashboardLoader() {
 }
 
 // Draft Room Loader
-// Draft Room Loader
 export async function draftRoomLoader() {
-  // Mock data for UI verification
-  const mockTeams: Team[] = [
-    {
-      id: 1,
-      name: "Cardinals",
-      city: "Arizona",
-      abbreviation: "ARI",
-      conference: "NFC",
-      division: "West",
-      primary_color: "#97233F",
-      secondary_color: "#000000",
-      wins: 0,
-      losses: 0,
-      salary_cap_space: 50000000,
-    },
-    {
-      id: 2,
-      name: "Falcons",
-      city: "Atlanta",
-      abbreviation: "ATL",
-      conference: "NFC",
-      division: "South",
-      primary_color: "#A71930",
-      secondary_color: "#000000",
-      wins: 0,
-      losses: 0,
-      salary_cap_space: 50000000,
-    },
-  ];
+  try {
+    const [teams, season] = await Promise.all([api.getTeams(), seasonApi.getCurrentSeason()]);
 
-  const mockSeason: Season = {
-    id: 1,
-    year: 2024,
-    current_week: 1,
-    status: "OFF_SEASON",
-    total_weeks: 18,
-    playoff_weeks: 4,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
+    let currentPick = null;
+    if (season) {
+      try {
+        currentPick = await seasonApi.getCurrentPick(season.id);
+      } catch (e) {
+        console.error("Failed to fetch current pick in loader", e);
+      }
+    }
 
-  const mockCurrentPick: DraftPickDetail = {
-    id: 1,
-    season_id: 1,
-    round: 1,
-    pick_number: 1,
-    team_id: 1,
-    original_team_id: 1,
-    player_id: undefined,
-  };
-
-  return {
-    teams: mockTeams,
-    season: mockSeason,
-    currentPick: mockCurrentPick,
-    noSeason: false,
-  };
+    return {
+      teams,
+      season,
+      currentPick,
+      noSeason: !season,
+    };
+  } catch (error) {
+    console.error("Failed to load draft room data:", error);
+    return {
+      teams: [],
+      season: null,
+      currentPick: null,
+      noSeason: true,
+    };
+  }
 }
 
 // Front Office Loader - Fetch user's team and roster
@@ -337,6 +303,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "offseason/draft",
+        element: <DraftRoom />,
+        loader: draftRoomLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "draft",
         element: <DraftRoom />,
         loader: draftRoomLoader,
         errorElement: <RouteErrorBoundary />,

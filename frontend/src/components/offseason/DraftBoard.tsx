@@ -156,6 +156,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                         setRevealingProspect(p);
                       }}
                       className="text-[10px] flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-gray-300 transition-colors"
+                      data-testid={`reveal-button-${p.id}`}
                     >
                       <Eye className="w-3 h-3" /> Reveal
                     </button>
@@ -166,6 +167,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                         setScoutingReportProspect(p);
                       }}
                       className="text-[10px] flex items-center gap-1 bg-cyan-900/40 hover:bg-cyan-900/60 border border-cyan-800/50 px-2 py-1 rounded text-cyan-200 transition-colors"
+                      data-testid={`report-button-${p.id}`}
                     >
                       <FileText className="w-3 h-3" /> Report
                     </button>

@@ -1,89 +1,64 @@
 # RPG-003: Age-Based Growth & Regression Curves
 
-**Objective**: Simulate realistic NFL career arcs where players evolve based on position-specific aging curves. Front-load XP for young players, stabilize in prime, and apply regression penalties in decline phase.
+**Status:** Implemented
+**Owner:** RPG Mechanics Team
+**Last Updated:** 2025-12-22
 
-## 1. Aging Curve Archetypes
+## 1. Overview
 
-We define 4 primary curve shapes based on PFF research:
+This feature simulates the biological and career lifecycle of NFL players. It replaces linear progression with position-specific "Aging Curves," ensuring that Running Backs decline early (the "RB Cliff"), Quarterbacks can play into their late 30s, and physical attributes decay faster than mental skills.
 
-### A. The "Running Back" Curve (Early Peak, Sharp Decline)
+## 2. Core Mechanics
 
-- **Positions**: RB, CB, WR (Speed)
-- **Ascension**: Ages 21-24 (Rapid Growth)
-- **Prime**: Ages 25-27
-- **Decline**: Age 28+ (Sharp Regression, especially physicals)
+### 2.1 Growth Curve Archetypes
 
-### B. The "Skill" Curve (Standard)
+We define four distinct aging archetypes based on PFF data:
 
-- **Positions**: WR (Route/Possession), LB, S, TE
-- **Ascension**: Ages 21-25
-- **Prime**: Ages 26-29
-- **Decline**: Age 30+ (Moderate Regression)
+| Archetype     | Positions     | Prime Window | Decline Start | Description                                     |
+| :------------ | :------------ | :----------- | :------------ | :---------------------------------------------- |
+| **RB_SPEED**  | RB, CB        | 23-26        | 27            | Relies on athleticism. Hard wall at 28.         |
+| **SKILL_POS** | WR, TE, LB, S | 25-29        | 30            | Balanced physical/technical. Moderate decline.  |
+| **TRENCHES**  | OL, DL        | 26-30        | 31            | Strength profiles peak later and last longer.   |
+| **QB_KICKER** | QB, K, P      | 27-33        | 35            | Relies on mental processing. Very slow decline. |
 
-### C. The "Trench" Curve (Late Peak, Slow Decline)
+### 2.2 XP Acquisition Efficiency (Neuroplasticity)
 
-- **Positions**: OL, DL
-- **Ascension**: Ages 21-26 (Slower Mastery)
-- **Prime**: Ages 27-31
-- **Decline**: Age 32+ (Gradual Regression)
+Players earn XP at different rates depending on their age phase:
 
-### D. The "Quarterback" Curve (Longevity)
+| Phase          | Age Range  | XP Multiplier             |
+| :------------- | :--------- | :------------------------ |
+| **Rookie/Dev** | < 22       | **1.5x** (Rapid Growth)   |
+| **Pre-Prime**  | 23-24      | **1.2x**                  |
+| **Prime**      | (Variable) | **1.0x**                  |
+| **Post-Prime** | (Variable) | **0.8x**                  |
+| **Decline**    | (Variable) | **0.5x** (Stalled Growth) |
 
-- **Positions**: QB, K, P
-- **Ascension**: Ages 21-26
-- **Prime**: Ages 27-33
-- **Decline**: Age 35+ (Slowest Regression)
+### 2.3 Regression Physics
 
----
+Regression is **probabilistic** and **attribute-specific**.
 
-## 2. Mechanics
+#### The Regression Score (0-100)
 
-### XP Multiplier (Growth)
+Calculated annually: `Score = (Current Age - Decline Age) * Severity Factor`
 
-Applied to `ProgressionService` when awarding XP.
+- **RB Severity**: 12 (Very High)
+- **Skill Severity**: 6 (Medium)
+- **Trenches Severity**: 4 (Low)
+- **QB Severity**: 3 (Very Low)
 
-| Age Phase       | Age Range       | Multiplier | Notes                    |
-| :-------------- | :-------------- | :--------- | :----------------------- |
-| **Rookie/Soph** | 21-22           | **1.5x**   | "Rookie Bump"            |
-| **Ascension**   | 23-25           | **1.2x**   | Developing               |
-| **Prime**       | (Pos Dependent) | **1.0x**   | Baseline                 |
-| **Veteran**     | Post-Prime      | **0.5x**   | Hard to learn new tricks |
+#### Attribute Decay Tiers
 
-### Regression Logic
+1.  **Physicals (Speed, Agility, Jump)**:
+    - _Vulnerability_: High (Score / 100 chance to lose point).
+    - _Impact_: Can lose 1-3 points per year in deep decline.
+2.  **Skills (Catch, Block, Throw Power)**:
+    - _Vulnerability_: Moderate (Score / 200 chance).
+    - _Impact_: Typically lose 0-1 point.
+3.  **Mentals (Awareness, Play Rec)**:
+    - _Vulnerability_: None. Players do not get "dumber" with age.
 
-Applied during `OffseasonService`.
+## 3. Implementation Details
 
-**Regression Severity Formula**:
-`Regression Score = (Current Age - Decline Start Age) * Severity Factor`
-
-**Attribute decay priority:**
-
-1. **Physicals** (Speed, Agility, Acceleration) - Decay FIRST and FASTEST.
-2. **Skills** (Throw Power, Catching, Tackling) - Decay MODERATELY.
-3. **Mental** (Awareness, Play Rec) - Decay SLOWEST (or even grow).
-
----
-
-## 3. Implementation Plan
-
-### Phase A: `GrowthCurveEngine` (`app/services/training/growth_curves.py`)
-
-- Define `POSITION_CURVES` dictionary mapping positions to curve types.
-- Implement `get_xp_multiplier(age, position)`
-- Implement `get_regression_factors(age, position)`
-
-### Phase B: Integrate with `ProgressionService`
-
-- In `apply_xp`: `xp_to_add = raw_xp * GrowthCurveEngine.get_xp_multiplier(...)`
-
-### Phase C: Integrate with `OffseasonService`
-
-- In `process_regression`:
-  - Fetch `regression_factors`.
-  - Apply decay to attributes based on type.
-
-## 4. Verification
-
-- **Test A**: RB at age 29 should gain virtually no Speed XP and lose ~2-3 points of Speed in offseason.
-- **Test B**: QB at age 32 should still be stable.
-- **Test C**: Rookie (21) should gain XP 50% faster than vet.
+- **Engine**: `app.services.training.growth_curves.GrowthCurveEngine`
+- **Logic**: `app.services.training.progression.ProgressionEngine`
+- **Verification**: `backend/tests/unit/test_growth_curves.py`

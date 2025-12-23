@@ -258,6 +258,22 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
     setEvaluation(null);
   };
 
+  // Quick Add (Click to Add)
+  const handlePlayerClick = (player: TradePlayer) => {
+    const isUser = userPlayers.some((p) => p.id === player.id);
+    if (isUser) {
+      if (!offeredPlayers.find((p) => p.id === player.id)) {
+        setOfferedPlayers([...offeredPlayers, player]);
+        setEvaluation(null);
+      }
+    } else {
+      if (!requestedPlayers.find((p) => p.id === player.id)) {
+        setRequestedPlayers([...requestedPlayers, player]);
+        setEvaluation(null);
+      }
+    }
+  };
+
   // Evaluate trade
   const handleEvaluateTrade = async () => {
     if (!selectedPartner) return;
@@ -357,7 +373,12 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
             <h3>Your Roster</h3>
             <div className="player-list">
               {availableUserPlayers.map((player) => (
-                <DraggableAsset key={player.id} id={`user-player-${player.id}`} player={player} />
+                <DraggableAsset
+                  key={player.id}
+                  id={`user-player-${player.id}`}
+                  player={player}
+                  onClick={() => handlePlayerClick(player)}
+                />
               ))}
             </div>
           </div>
@@ -393,6 +414,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
                       key={player.id}
                       id={`partner-player-${player.id}`}
                       player={player}
+                      onClick={() => handlePlayerClick(player)}
                     />
                   ))
                 )}

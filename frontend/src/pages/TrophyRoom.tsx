@@ -20,6 +20,7 @@ const TrophyRoom = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="trophy-room__header"
+          data-testid="team-branding"
         >
           <h1 className="trophy-room__title">Hall of Champions</h1>
           <h2 className="trophy-room__subtitle">{activeTeam?.name || "Franchise"} Trophy Case</h2>

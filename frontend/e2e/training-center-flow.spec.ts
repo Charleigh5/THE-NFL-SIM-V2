@@ -1,28 +1,21 @@
 import { test, expect } from "@playwright/test";
-import { mockCoachingStyles, mockDrills } from "./fixtures/test-data";
+import { setupTrainingMocks, mockDrills } from "./fixtures/test-data";
 
 test.describe("Training Center Flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock coaching styles API
-    await page.route("**/api/v1/training/coaching-styles", async (route) => {
-      await route.fulfill({ json: mockCoachingStyles });
-    });
+    await setupTrainingMocks(page);
 
-    // Mock drills API - match exact path pattern used by component
-    await page.route("**/api/v1/training/drills**", async (route) => {
-      await route.fulfill({ json: mockDrills });
-    });
-
-    // Mock player training profile
-    await page.route("**/api/v1/players/*/training-profile", async (route) => {
+    // Mock training execution response
+    await page.route("**/api/training/execute", async (route) => {
       await route.fulfill({
         json: {
-          player_id: 1,
-          player_name: "Test Player",
-          position: "WR",
-          age: 25,
-          weaknesses: ["route_running"],
-          fatigue: 20,
+          success: true,
+          xp_gained: 150,
+          drill_name: mockDrills[0].name,
+          target_stat: mockDrills[0].target_stat,
+          fatigue_added: 5,
+          weekly_load: 45,
+          injury_occurred: false,
         },
       });
     });
@@ -31,70 +24,69 @@ test.describe("Training Center Flow", () => {
   test("should load training center page", async ({ page }) => {
     await page.goto("/training");
 
-    // Check for Training Center heading (uppercase in UI)
-    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({
-      timeout: 10000,
-    });
+    // Check for Training Center heading
+    await expect(page.getByTestId("training-center-page")).toBeVisible();
+    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible();
   });
 
   test("should display coaching style selector", async ({ page }) => {
     await page.goto("/training");
-
-    // Wait for page to load
-    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({
-      timeout: 10000,
-    });
-
-    // Wait for coaching styles to load - look for any coaching style name
-    await page.waitForTimeout(500);
+    await expect(page.getByTestId("training-center-page")).toBeVisible();
 
     // The CoachingStyleDial should be visible
-    const coachingSection = page.locator("section").first();
-    await expect(coachingSection).toBeVisible();
+    await expect(page.getByTestId("coaching-style-dial")).toBeVisible();
+    await expect(page.getByText("Smart")).toBeVisible();
   });
 
-  test("should display drills", async ({ page }) => {
+  test("should filter and select a drill", async ({ page }) => {
     await page.goto("/training");
+    await expect(page.getByTestId("training-center-page")).toBeVisible();
 
-    // Wait for page to load
-    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({
-      timeout: 10000,
-    });
+    // Wait for drills to be visible
+    await expect(page.getByTestId("drill-selector")).toBeVisible();
 
-    // Wait for drills to load
-    await page.waitForTimeout(1000);
+    // Test search functionality
+    const searchInput = page.getByTestId("drill-search-input");
+    // Search is hidden by default behind the filter toggle
+    await page.getByTestId("filter-toggle-button").click();
+    await expect(searchInput).toBeVisible();
 
-    // Look for drill names from mock data
-    const drillName = page.getByText(mockDrills[0].name);
-    if ((await drillName.count()) > 0) {
-      await expect(drillName.first()).toBeVisible();
-    }
+    await searchInput.fill(mockDrills[0].name);
+
+    // Find and click the drill card
+    const drillCard = page.getByTestId(`drill-card-${mockDrills[0].name}`);
+    await drillCard.click();
+
+    // Action panel should appear with details
+    await expect(page.getByTestId("initiate-training-button")).toBeVisible();
+    await expect(page.getByTestId("cancel-training-button")).toBeVisible();
+
+    // Verify drill details in action shade
+    await expect(page.getByText(mockDrills[0].name)).toHaveCount(2); // One in grid, one in shade
   });
 
-  test("should select a drill and show action panel", async ({ page }) => {
+  test("should complete a training sequence and closing result", async ({ page }) => {
     await page.goto("/training");
+    await expect(page.getByTestId("training-center-page")).toBeVisible();
 
-    // Wait for page to load
-    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({
-      timeout: 10000,
-    });
+    // Select first drill
+    await page.getByTestId(`drill-card-${mockDrills[0].name}`).click();
 
-    // Wait for drills to load
-    await page.waitForTimeout(1000);
+    // Click Initiate and wait for response
+    const [response] = await Promise.all([
+      page.waitForResponse("**/api/training/execute"),
+      page.getByTestId("initiate-training-button").click(),
+    ]);
 
-    // Find and click a drill
-    const drillCard = page.getByText(mockDrills[0].name);
-    if ((await drillCard.count()) > 0) {
-      await drillCard.first().click();
+    expect(response.status()).toBe(200);
 
-      // Action panel should appear with drill details
-      const initiateButton = page.getByRole("button", { name: /initiate sequence/i });
-      const cancelButton = page.getByRole("button", { name: /cancel/i });
+    // Verify Result Modal appears
+    await expect(page.getByTestId("training-result-container")).toBeVisible();
+    await expect(page.getByText("Training Complete")).toBeVisible();
+    await expect(page.getByText("+150 XP")).toBeVisible();
 
-      if ((await initiateButton.count()) > 0) {
-        await expect(initiateButton).toBeVisible();
-        await expect(cancelButton).toBeVisible();
-      }
-    }
+    // Close result
+    await page.getByTestId("training-result-continue-button").click();
+    await expect(page.getByTestId("training-result-container")).not.toBeVisible();
   });
 });

@@ -100,7 +100,10 @@ export const TrainingCenter: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-black font-sans text-white">
+    <div
+      className="relative w-full min-h-screen overflow-hidden bg-black font-sans text-white"
+      data-testid="training-center-page"
+    >
       {/* 3D Background */}
       <div className="absolute inset-0 z-0 opacity-60">
         <Canvas camera={{ position: [0, 0, 20], fov: 45 }}>
@@ -242,6 +245,7 @@ export const TrainingCenter: React.FC = () => {
                 <button
                   onClick={() => setSelectedDrill(null)}
                   className="px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold tracking-widest uppercase rounded transition-all"
+                  data-testid="cancel-training-button"
                 >
                   Cancel
                 </button>
@@ -253,6 +257,7 @@ export const TrainingCenter: React.FC = () => {
                       ? "bg-gray-600 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-500 text-white hover:shadow-blue-500/25"
                   }`}
+                  data-testid="initiate-training-button"
                 >
                   {isTraining ? "Training..." : "Initiate Sequence"}
                 </button>

@@ -51,7 +51,10 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      data-testid="scouting-report-modal"
+    >
       <div className="relative w-full max-w-4xl bg-slate-900/95 border border-cyan-900/50 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-200 flex flex-col md:flex-row h-[80vh] md:h-auto">
         {/* Left Sidebar - Summary & Comparison */}
         <div className="w-full md:w-1/3 bg-black/40 border-b md:border-b-0 md:border-r border-white/10 p-6 flex flex-col">
@@ -105,6 +108,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
             onClick={onClose}
             className="absolute top-4 right-4 p-2 text-white/50 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-10"
             title="Close Report"
+            data-testid="close-modal"
           >
             <X size={20} />
           </button>
@@ -132,7 +136,10 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-green-950/10 border border-green-900/20 p-4 rounded-lg">
+                <div
+                  className="bg-green-950/10 border border-green-900/20 p-4 rounded-lg"
+                  data-testid="scouting-strengths"
+                >
                   <h4 className="text-green-400 font-bold mb-3 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" /> Strengths
                   </h4>
@@ -146,7 +153,10 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                   </ul>
                 </div>
 
-                <div className="bg-red-950/10 border border-red-900/20 p-4 rounded-lg">
+                <div
+                  className="bg-red-950/10 border border-red-900/20 p-4 rounded-lg"
+                  data-testid="scouting-weaknesses"
+                >
                   <h4 className="text-red-400 font-bold mb-3 flex items-center gap-2">
                     <TrendingDown className="w-4 h-4" /> Areas for Improvement
                   </h4>

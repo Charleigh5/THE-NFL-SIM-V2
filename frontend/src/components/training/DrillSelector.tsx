@@ -144,7 +144,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
   const hasActiveFilters = searchQuery.length > 0 || activeCategory !== null || showRecommendedOnly;
 
   return (
-    <div className="drill-selector">
+    <div className="drill-selector" data-testid="drill-selector">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
@@ -175,6 +175,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                 ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/50"
                 : "bg-gray-800/50 text-gray-400 hover:text-white border border-transparent"
             }`}
+            data-testid="recommended-filter-button"
           >
             <Star className={`w-4 h-4 ${showRecommendedOnly ? "fill-yellow-300" : ""}`} />
             Recommended
@@ -189,6 +190,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                 ? "bg-blue-600 text-white"
                 : "bg-gray-800/50 text-gray-300 hover:text-white"
             }`}
+            data-testid="filter-toggle-button"
           >
             <Filter className="w-5 h-5" />
           </button>
@@ -213,6 +215,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search drills by name or stat..."
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                data-testid="drill-search-input"
               />
             </div>
 
@@ -231,6 +234,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                         ? `bg-gradient-to-r ${config.color} text-white shadow-lg`
                         : "bg-gray-800/60 text-gray-300 hover:bg-gray-700/60"
                     }`}
+                    data-testid={`drill-category-${key.toLowerCase()}`}
                   >
                     {config.icon}
                     {config.label}
@@ -273,6 +277,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ delay: index * 0.05 }}
+                data-testid={`drill-card-${drill.name}`}
               >
                 <DrillCard3D
                   drill={drill}

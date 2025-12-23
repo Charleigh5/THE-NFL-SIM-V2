@@ -217,6 +217,7 @@ export const DraftRoom: React.FC = () => {
                   className={styles.actionButton}
                   onClick={handleSimulateDraft}
                   disabled={simulating || !currentPick}
+                  data-testid="simulate-draft-button"
                 >
                   {simulating ? "Simulating..." : "Auto-Sim Draft"}
                 </button>
@@ -225,6 +226,7 @@ export const DraftRoom: React.FC = () => {
                   className={styles.actionButton}
                   onClick={() => setShowTradeModal(true)}
                   disabled={!currentPick}
+                  data-testid="propose-trade-button"
                 >
                   Propose Trade
                 </button>

@@ -14,7 +14,7 @@ export const CoachingStyleDial: React.FC<CoachingStyleDialProps> = ({
   onSelect,
 }) => {
   return (
-    <div className="relative w-full overflow-hidden py-8">
+    <div className="relative w-full overflow-hidden py-8" data-testid="coaching-style-dial">
       {/* Background Track */}
       <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2" />
 

@@ -67,15 +67,11 @@ test.describe.serial("Trade System E2E", () => {
     await page.route("**/api/**", async (route) => {
       const url = route.request().url();
       const allowed = [
-        /\/api\/settings$/,
-        /\/api\/(season|seasons)\/current$/,
-        /\/api\/teams\?page=1&page_size=100$/,
-        /\/api\/teams\/(\d+)$/,
-        /\/api\/teams\/(\d+)\/roster$/,
-        /\/api\/trades\/pending\/(\d+)$/,
-        /\/api\/trades\/evaluate$/,
-        /\/api\/trades\/offer$/,
-        /\/api\/trades\/(respond|counter)\/(\d+)$/,
+        /\/settings$/,
+        /\/season\/current$/,
+        /\/seasons\/current$/,
+        /\/teams/,
+        /\/trades\//,
       ];
 
       if (allowed.some((re) => re.test(url))) {
@@ -87,34 +83,15 @@ test.describe.serial("Trade System E2E", () => {
       await route.abort();
     });
 
-    // Mock User Settings (required for userTeamId)
+    // Mock User Settings
     await page.route("**/api/settings", async (route) => {
-      await route.fulfill({
-        json: { user_team_id: USER_TEAM_ID },
-      });
+      await route.fulfill({ json: { user_team_id: USER_TEAM_ID, difficulty_level: "All-Pro" } });
     });
 
-    // Mock Current Season (support both legacy and newer endpoint shapes)
-    await page.route("**/api/season/current", async (route) => {
-      await route.fulfill({
-        json: {
-          id: 1,
-          year: 2024,
-          current_week: 5,
-          status: "REGULAR_SEASON",
-        },
-      });
-    });
-    await page.route("**/api/seasons/current", async (route) => {
-      await route.fulfill({
-        json: {
-          id: 1,
-          year: 2024,
-          current_week: 5,
-          status: "REGULAR_SEASON",
-        },
-      });
-    });
+    // Mock Current Season
+    const mockSeason = { id: 1, year: 2024, current_week: 5, status: "REGULAR_SEASON" };
+    await page.route("**/api/season/current", (route) => route.fulfill({ json: mockSeason }));
+    await page.route("**/api/seasons/current", (route) => route.fulfill({ json: mockSeason }));
 
     // Mock Individual Team Data
     await page.route(`**/api/teams/${USER_TEAM_ID}`, async (route) => {
@@ -133,13 +110,11 @@ test.describe.serial("Trade System E2E", () => {
 
     // Mock Pending Offers
     await page.route(`**/api/trades/pending/${USER_TEAM_ID}`, async (route) => {
-      await route.fulfill({
-        json: { incoming: [], outgoing: [] },
-      });
+      await route.fulfill({ json: { incoming: [], outgoing: [] } });
     });
 
     // Mock Teams List
-    await page.route("**/api/teams?page=1&page_size=100", async (route) => {
+    await page.route("**/api/teams?**", async (route) => {
       await route.fulfill({
         json: {
           items: [
@@ -160,6 +135,7 @@ test.describe.serial("Trade System E2E", () => {
               losses: 1,
             },
           ],
+          total: 2,
         },
       });
     });

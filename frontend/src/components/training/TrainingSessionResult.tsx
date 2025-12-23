@@ -20,7 +20,10 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
     >
-      <div className="w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden relative">
+      <div
+        className="w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden relative"
+        data-testid="training-result-container"
+      >
         {/* Background Effect */}
         <div
           className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${isInjury ? "from-red-500 to-orange-500" : "from-green-400 to-blue-500"}`}
@@ -113,6 +116,7 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
                 ? "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/20"
                 : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20"
             }`}
+            data-testid="training-result-continue-button"
           >
             {isInjury ? "Acknowledge" : "Continue"}
           </button>

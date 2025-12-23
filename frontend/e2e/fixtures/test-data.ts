@@ -52,6 +52,43 @@ export const mockTeams = [
 ];
 
 // ============================================================================
+// PLAYER DATA
+// ============================================================================
+
+export const mockPlayers = [
+  {
+    id: 1,
+    first_name: "Kyler",
+    last_name: "Murray",
+    position: "QB",
+    overall_rating: 88,
+    team_id: 1,
+    jersey_number: 1,
+    age: 27,
+  },
+  {
+    id: 2,
+    first_name: "James",
+    last_name: "Conner",
+    position: "RB",
+    overall_rating: 84,
+    team_id: 1,
+    jersey_number: 6,
+    age: 29,
+  },
+  {
+    id: 3,
+    first_name: "Marvin",
+    last_name: "Harrison Jr",
+    position: "WR",
+    overall_rating: 82,
+    team_id: 1,
+    jersey_number: 18,
+    age: 22,
+  },
+];
+
+// ============================================================================
 // SEASON DATA
 // ============================================================================
 
@@ -206,26 +243,35 @@ export const mockProspects = [
   {
     id: 1,
     name: "Caleb Williams",
+    first_name: "Caleb",
+    last_name: "Williams",
     position: "QB",
     college: "USC",
     overall_grade: 95,
     projected_round: 1,
+    overall_rating: 95,
   },
   {
     id: 2,
     name: "Marvin Harrison Jr",
+    first_name: "Marvin",
+    last_name: "Harrison Jr",
     position: "WR",
     college: "Ohio State",
     overall_grade: 94,
     projected_round: 1,
+    overall_rating: 94,
   },
   {
     id: 3,
     name: "Drake Maye",
+    first_name: "Drake",
+    last_name: "Maye",
     position: "QB",
     college: "North Carolina",
     overall_grade: 92,
     projected_round: 1,
+    overall_rating: 92,
   },
 ];
 
@@ -244,9 +290,36 @@ export const mockDraftPick = {
 // ============================================================================
 
 export const mockCoachingStyles = [
-  { id: "smart", name: "Smart", description: "Balanced approach", xpModifier: 1.0 },
-  { id: "aggressive", name: "Aggressive", description: "High risk high reward", xpModifier: 1.3 },
-  { id: "conservative", name: "Conservative", description: "Safe and steady", xpModifier: 0.8 },
+  {
+    id: "smart",
+    name: "smart",
+    display_name: "Smart",
+    description: "Balanced approach",
+    xp_multiplier: 1.0,
+    injury_risk_multiplier: 1.0,
+    fatigue_multiplier: 1.0,
+    recovery_multiplier: 1.0,
+  },
+  {
+    id: "aggressive",
+    name: "aggressive",
+    display_name: "Aggressive",
+    description: "High risk high reward",
+    xp_multiplier: 1.3,
+    injury_risk_multiplier: 1.5,
+    fatigue_multiplier: 1.2,
+    recovery_multiplier: 0.8,
+  },
+  {
+    id: "conservative",
+    name: "conservative",
+    display_name: "Conservative",
+    description: "Safe and steady",
+    xp_multiplier: 0.8,
+    injury_risk_multiplier: 0.5,
+    fatigue_multiplier: 0.8,
+    recovery_multiplier: 1.4,
+  },
 ];
 
 export const mockDrills = [
@@ -322,12 +395,12 @@ export async function setupSeasonDashboardMocks(page: Page) {
 }
 
 export async function setupTrainingMocks(page: Page) {
-  await page.route("**/api/v1/training/coaching-styles", async (route) => {
+  await page.route("**/api/training/styles", async (route) => {
     await route.fulfill({ json: mockCoachingStyles });
   });
 
-  await page.route("**/api/v1/training/drills**", async (route) => {
-    await route.fulfill({ json: mockDrills });
+  await page.route("**/api/training/drills**", async (route) => {
+    await route.fulfill({ json: { drills: mockDrills, total: mockDrills.length } });
   });
 
   await page.route("**/api/v1/players/*/training-profile", async (route) => {
@@ -339,6 +412,130 @@ export async function setupTrainingMocks(page: Page) {
         age: 25,
         weaknesses: ["route_running"],
         fatigue: 20,
+      },
+    });
+  });
+}
+
+// ============================================================================
+// SCOUTING MOCK DATA
+// ============================================================================
+
+export const mockScoutingReport = {
+  player_id: 1,
+  player_name: "Caleb Williams",
+  position: "QB",
+  overall_grade: 95,
+  strengths: [
+    "Elite arm talent with ability to make any throw",
+    "Outstanding mobility and escapability",
+    "Excellent field vision and decision making",
+  ],
+  weaknesses: [
+    "Tendency to hold the ball too long",
+    "Can be too aggressive with throws into coverage",
+  ],
+  nfl_comparison: "Patrick Mahomes",
+  ceiling: 98,
+  floor: 82,
+  summary: "Generational talent with rare combination of arm strength, accuracy, and mobility.",
+  generated_at: new Date().toISOString(),
+};
+
+// ============================================================================
+// HELPER: Setup draft room mocks
+// ============================================================================
+
+export async function setupDraftMocks(page: Page) {
+  // Mock settings - both with and without /api prefix to be safe
+  await page.route("**/api/settings", async (route) => {
+    await route.fulfill({ json: { user_team_id: 1 } });
+  });
+  await page.route("**/settings", async (route) => {
+    await route.fulfill({ json: { user_team_id: 1 } });
+  });
+
+  // Season current - for draftRoomLoader
+  const mockSeasonData = { id: 1, year: 2024, status: "OFF_SEASON", current_week: 0 };
+  await page.route("**/api/season/current", async (route) => {
+    await route.fulfill({ json: mockSeasonData });
+  });
+  await page.route("**/api/seasons/current", async (route) => {
+    await route.fulfill({ json: mockSeasonData });
+  });
+  await page.route("**/season/current", async (route) => {
+    await route.fulfill({ json: mockSeasonData });
+  });
+
+  // Teams list - for draftRoomLoader (getTeams uses pagination)
+  await page.route("**/api/teams?**", async (route) => {
+    await route.fulfill({
+      json: {
+        items: [mockTeam],
+        total: 1,
+        page: 1,
+        page_size: 100,
+      },
+    });
+  });
+
+  // Individual team
+  await page.route("**/api/teams/1", async (route) => {
+    await route.fulfill({ json: mockTeam });
+  });
+  await page.route("**/teams/1", async (route) => {
+    await route.fulfill({ json: mockTeam });
+  });
+
+  // Current pick - for draftRoomLoader
+  await page.route("**/api/season/*/draft/current-pick", async (route) => {
+    await route.fulfill({
+      json: { id: 1, season_id: 1, round: 1, pick_number: 1, team_id: 1, original_team_id: 1 },
+    });
+  });
+
+  // Draft board - critical for draftService.getDraftBoard()
+  await page.route("**/draft/board**", async (route) => {
+    await route.fulfill({ json: mockProspects });
+  });
+
+  // Team needs - for DraftRoom
+  await page.route("**/api/season/*/offseason/needs/**", async (route) => {
+    await route.fulfill({
+      json: [{ position: "QB", current_count: 2, target_count: 3, need_score: 4.5 }],
+    });
+  });
+
+  // Draft order
+  await page.route("**/draft/order**", async (route) => {
+    await route.fulfill({
+      json: [
+        { round: 1, pick: 1, team_id: 1, team_name: "Cardinals" },
+        { round: 1, pick: 2, team_id: 2, team_name: "Bears" },
+      ],
+    });
+  });
+}
+
+// ============================================================================
+// HELPER: Setup scouting mocks
+// ============================================================================
+
+export async function setupScoutingMocks(page: Page) {
+  await setupDraftMocks(page);
+
+  await page.route("**/api/scouting/report/*", async (route) => {
+    await route.fulfill({ json: mockScoutingReport });
+  });
+
+  await page.route("**/api/players/*/backstory**", async (route) => {
+    await route.fulfill({
+      json: {
+        player_id: 1,
+        player_name: "Caleb Williams",
+        content:
+          "Caleb Williams grew up in Washington D.C. where he developed his passion for football.",
+        generated_at: new Date().toISOString(),
       },
     });
   });
