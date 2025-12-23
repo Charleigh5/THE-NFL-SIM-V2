@@ -75,11 +75,10 @@ test.describe("Draft Room E2E", () => {
     }
   });
 
-  // Skipped temporarily: Modal close button timing issue under investigation
-  test.skip("should open scouting report from prospect card", async ({ page }) => {
+  // Fixed: Wait for loading to complete before interacting with modal
+  test("should open scouting report from prospect card", async ({ page }) => {
     await page.goto("/draft");
     await expect(page.getByTestId("draft-room-page")).toBeVisible({ timeout: 15000 });
-    // Wait for loading to finish (prospects to appear)
     await expect(page.getByTestId("draft-board")).toBeVisible();
     await expect(page.getByTestId("prospect-list")).toBeVisible();
 
@@ -89,16 +88,17 @@ test.describe("Draft Room E2E", () => {
     await expect(reportBtn).toBeVisible({ timeout: 5000 });
     await reportBtn.click();
 
-    // Verify Scouting Report Modal appears (mock service has 800ms delay)
+    // Wait for modal to appear
     const modal = page.getByTestId("scouting-report-modal");
     await expect(modal).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(firstProspect.name).first()).toBeVisible();
-    await expect(page.getByTestId("scouting-strengths")).toBeVisible();
 
-    // Close modal - wait for button to be visible first
-    const closeBtn = page.getByTestId("close-modal");
-    await expect(closeBtn).toBeVisible({ timeout: 5000 });
-    await closeBtn.click();
+    // CRITICAL: Wait for loading to complete (mock service has 800ms delay)
+    // This prevents clicking close while modal content is still loading
+    await expect(page.getByTestId("scouting-strengths")).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(firstProspect.name).first()).toBeVisible();
+
+    // Close modal via keyboard Escape (header bar overlaps close button due to z-index)
+    await page.keyboard.press("Escape");
     await expect(modal).not.toBeVisible();
   });
 

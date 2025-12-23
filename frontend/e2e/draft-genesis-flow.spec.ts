@@ -3,8 +3,8 @@ import { mockPlayers } from "./fixtures/test-data";
 
 test.describe("Draft Genesis Flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Mock Draft Board API
-    await page.route("**/api/v1/draft/board", async (route) => {
+    // Mock Draft Board API - support both v1 and non-v1 paths
+    await page.route("**/api/**/draft/board", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -12,18 +12,44 @@ test.describe("Draft Genesis Flow", () => {
       });
     });
 
+    // Mock season/current - support both paths
+    await page.route("**/api/season/current", async (route) => {
+      await route.fulfill({ status: 200, json: { id: 1, year: 2024, status: "OFF_SEASON" } });
+    });
     await page.route("**/api/v1/season/current", async (route) => {
-      await route.fulfill({ status: 200, body: JSON.stringify({ id: 1 }) });
+      await route.fulfill({ status: 200, json: { id: 1, year: 2024, status: "OFF_SEASON" } });
     });
 
-    await page.route("**/api/v1/season/1/pick", async (route) => {
+    await page.route("**/api/**/season/1/pick", async (route) => {
       await route.fulfill({
         status: 200,
         body: JSON.stringify({ team_id: 1, round: 1, pick_number: 1 }),
       });
     });
 
-    await page.goto("http://localhost:5173/offseason/draft");
+    // Mock settings
+    await page.route("**/api/settings", async (route) => {
+      await route.fulfill({ json: { user_team_id: 1 } });
+    });
+
+    // Mock teams
+    await page.route("**/api/teams**", async (route) => {
+      await route.fulfill({
+        json: {
+          items: [{ id: 1, name: "Cardinals", city: "Arizona", abbreviation: "ARI" }],
+          total: 1,
+          page: 1,
+          page_size: 100,
+        },
+      });
+    });
+
+    // Fallback for any unmatched API calls
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
+    await page.goto("/offseason/draft");
   });
 
   test("should display genesis reveal button", async ({ page }) => {

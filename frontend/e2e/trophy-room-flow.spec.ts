@@ -12,13 +12,31 @@ test.describe("Trophy Room Flow", () => {
       await route.fulfill({
         json: {
           team_id: 1,
+          user_team_id: 1,
           difficulty: "MEDIUM",
           sound_enabled: true,
         },
       });
     });
 
-    // Mock team data
+    // Mock season/current - CRITICAL for app initialization
+    await page.route("**/api/season/current", async (route) => {
+      await route.fulfill({
+        json: { id: 1, year: 2024, status: "REGULAR_SEASON", current_week: 10 },
+      });
+    });
+
+    // Mock team data - both patterns
+    await page.route("**/api/teams/**", async (route) => {
+      await route.fulfill({
+        json: {
+          id: 1,
+          name: "Cardinals",
+          city: "Arizona",
+          abbreviation: "ARI",
+        },
+      });
+    });
     await page.route("**/api/team/**", async (route) => {
       await route.fulfill({
         json: {
@@ -44,6 +62,11 @@ test.describe("Trophy Room Flow", () => {
           total_losses: 88,
         },
       });
+    });
+
+    // Fallback for any unmatched API calls
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
     });
   });
 

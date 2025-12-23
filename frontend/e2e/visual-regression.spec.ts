@@ -35,6 +35,11 @@ test.describe("Visual Regression Tests", () => {
       status: "REGULAR_SEASON",
     };
 
+    // CRITICAL: Mock season/current endpoint
+    await page.route("**/api/season/current", async (route) => {
+      await route.fulfill({ json: mockSeason });
+    });
+
     await page.route(/.*\/api\/teams.*/, async (route) => {
       console.log("Intercepted teams request:", route.request().url());
       await route.fulfill({
@@ -99,6 +104,11 @@ test.describe("Visual Regression Tests", () => {
       total_weeks: 17,
       status: "POST_SEASON",
     };
+
+    // CRITICAL: Mock season/current endpoint
+    await page.route("**/api/season/current", async (route) => {
+      await route.fulfill({ json: mockPlayoffSeason });
+    });
 
     const mockBracket = [
       {

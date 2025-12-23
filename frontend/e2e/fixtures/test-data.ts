@@ -351,6 +351,11 @@ export const mockDrills = [
 import type { Page } from "@playwright/test";
 
 export async function setupSeasonDashboardMocks(page: Page) {
+  // Season current endpoint - CRITICAL: many components fetch this
+  await page.route("**/api/season/current", async (route) => {
+    await route.fulfill({ json: mockSeason });
+  });
+
   // Teams endpoint - paginated response
   await page.route("**/api/teams**", async (route) => {
     await route.fulfill({

@@ -48,6 +48,20 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
     fetchReport();
   }, [isOpen, playerId]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -66,7 +80,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
           </div>
 
           {loading ? (
-            <div className="space-y-4 animate-pulse flex-1">
+            <div className="space-y-4 animate-pulse flex-1" data-testid="scouting-loading">
               <div className="h-32 bg-white/5 rounded"></div>
               <div className="h-10 bg-white/5 rounded"></div>
             </div>

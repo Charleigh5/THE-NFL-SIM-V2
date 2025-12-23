@@ -1,0 +1,219 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e36]: SEASON
+      - link "OFFSEASON" [ref=e37] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e39]:
+          - img [ref=e40]
+          - generic [ref=e45]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e46] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e48]:
+          - img [ref=e49]
+          - generic [ref=e56]: DRAFT ROOM
+      - link "ROSTER" [ref=e57] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - generic [ref=e65]: ROSTER
+      - link "DEPTH CHART" [ref=e66] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e68]:
+          - img [ref=e69]
+          - generic [ref=e76]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e77] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e79]:
+          - img [ref=e80]
+          - generic [ref=e85]: TRADE CENTER
+      - link "TRAINING" [ref=e86] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e88]:
+          - img [ref=e89]
+          - generic [ref=e95]: TRAINING
+      - link "MY TEAM" [ref=e96] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e98]:
+          - img [ref=e99]
+          - generic [ref=e101]: MY TEAM
+      - link "SETTINGS" [ref=e102] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e105]:
+          - img [ref=e106]
+          - generic [ref=e109]: SETTINGS
+    - generic [ref=e111]:
+      - img [ref=e113]
+      - generic [ref=e115]:
+        - generic [ref=e116]: GENESIS
+        - generic [ref=e117]: System Online
+  - main [ref=e118]:
+    - generic [ref=e123]:
+      - generic [ref=e125]:
+        - generic [ref=e126]: Season Live
+        - generic [ref=e128]: Broadcast Network
+        - generic [ref=e130]: League Wire
+        - generic [ref=e132]: Season Live
+        - generic [ref=e134]: Broadcast Network
+        - generic [ref=e136]: League Wire
+      - generic [ref=e138]:
+        - generic [ref=e139]: 2024 Season - Week 2
+        - generic [ref=e140]:
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]: 2024 Season
+              - heading "Week 2" [level=2] [ref=e144]
+            - generic [ref=e145]: Active
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: Games Played
+              - generic [ref=e149]: "1"
+            - generic [ref=e150]:
+              - generic [ref=e151]: Remaining
+              - generic [ref=e152]: "17"
+            - generic [ref=e153]:
+              - generic [ref=e154]: Total Weeks
+              - generic [ref=e155]: "18"
+          - generic [ref=e157]:
+            - generic [ref=e158]: Season Progress
+            - generic [ref=e159]: 11%
+          - generic [ref=e162]:
+            - button "⚡ Simulate Week" [ref=e163] [cursor=pointer]:
+              - generic [ref=e164]: ⚡
+              - generic [ref=e165]: Simulate Week
+            - button "⏩ Sim to Postseason" [ref=e166] [cursor=pointer]:
+              - generic [ref=e167]: ⏩
+              - generic [ref=e168]: Sim to Postseason
+            - button "🏆 Bracket" [disabled] [ref=e169]:
+              - generic [ref=e170]: 🏆
+              - generic [ref=e171]: Bracket
+      - generic [ref=e172]:
+        - button "📺 Overview" [ref=e173] [cursor=pointer]:
+          - generic [ref=e175]: 📺 Overview
+        - button "📊 Standings" [ref=e176] [cursor=pointer]:
+          - generic [ref=e177]: 📊 Standings
+        - button "📅 Schedule" [ref=e178] [cursor=pointer]:
+          - generic [ref=e179]: 📅 Schedule
+        - button "⭐ Leaders" [ref=e180] [cursor=pointer]:
+          - generic [ref=e181]: ⭐ Leaders
+      - generic [ref=e182]:
+        - generic [ref=e184]:
+          - generic [ref=e186]: Live Feed
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - heading "Upcoming Games (Week 2)" [level=3] [ref=e191]
+              - generic [ref=e194]:
+                - generic [ref=e195]:
+                  - generic [ref=e196]: 49ers
+                  - generic [ref=e197]: vs
+                  - generic [ref=e198]: Cardinals
+                - generic [ref=e199]: 9/15/2024
+            - generic [ref=e200]:
+              - heading "Recent Results" [level=3] [ref=e201]
+              - paragraph [ref=e203]: No games played this week yet.
+            - generic [ref=e204]:
+              - heading "Standings Overview" [level=3] [ref=e205]
+              - table [ref=e208]:
+                - rowgroup [ref=e209]:
+                  - row "Rank Team W L T" [ref=e210]:
+                    - columnheader "Rank" [ref=e211] [cursor=pointer]
+                    - columnheader "Team" [ref=e212] [cursor=pointer]
+                    - columnheader "W" [ref=e213] [cursor=pointer]
+                    - columnheader "L" [ref=e214] [cursor=pointer]
+                    - columnheader "T" [ref=e215] [cursor=pointer]
+                - rowgroup [ref=e216]:
+                  - row "1 SF 6 1 0" [ref=e217]:
+                    - cell "1" [ref=e218]
+                    - cell "SF" [ref=e219]:
+                      - generic [ref=e220]: SF
+                    - cell "6" [ref=e221]
+                    - cell "1" [ref=e222]
+                    - cell "0" [ref=e223]
+                  - row "2 ARI 5 2 0" [ref=e224]:
+                    - cell "2" [ref=e225]
+                    - cell "ARI" [ref=e226]:
+                      - generic [ref=e227]: ARI
+                    - cell "5" [ref=e228]
+                    - cell "2" [ref=e229]
+                    - cell "0" [ref=e230]
+                  - row "3 SEA 4 3 0" [ref=e231]:
+                    - cell "3" [ref=e232]
+                    - cell "SEA" [ref=e233]:
+                      - generic [ref=e234]: SEA
+                    - cell "4" [ref=e235]
+                    - cell "3" [ref=e236]
+                    - cell "0" [ref=e237]
+                  - row "4 LAR 3 4 0" [ref=e238]:
+                    - cell "4" [ref=e239]
+                    - cell "LAR" [ref=e240]:
+                      - generic [ref=e241]: LAR
+                    - cell "3" [ref=e242]
+                    - cell "4" [ref=e243]
+                    - cell "0" [ref=e244]
+        - generic [ref=e245]:
+          - generic [ref=e246]:
+            - generic [ref=e248]: Awards Race
+            - generic [ref=e250]:
+              - generic [ref=e251]:
+                - heading "MVP" [level=4] [ref=e252]
+                - generic [ref=e253]:
+                  - paragraph [ref=e254]: Kyler Murray
+                  - paragraph [ref=e255]: ARI • QB
+                  - paragraph [ref=e256]: "Score: 85.5"
+              - generic [ref=e257]:
+                - heading "OPOY" [level=4] [ref=e258]
+                - generic [ref=e259]:
+                  - paragraph [ref=e260]: Marvin Harrison Jr
+                  - paragraph [ref=e261]: ARI • WR
+              - generic [ref=e262]:
+                - heading "DPOY" [level=4] [ref=e263]
+                - paragraph [ref=e264]: No candidates
+          - generic [ref=e265]:
+            - generic [ref=e267]: League Wire
+            - generic [ref=e269]:
+              - generic [ref=e270]:
+                - generic [ref=e271]:
+                  - img [ref=e272]
+                  - heading "League News" [level=3] [ref=e277]
+                - button "Refresh news" [ref=e279] [cursor=pointer]
+              - generic [ref=e280]:
+                - generic [ref=e282]:
+                  - generic [ref=e283]:
+                    - img [ref=e284]
+                    - generic [ref=e289]: game
+                  - heading "Cardinals Win Big in Week 1" [level=4] [ref=e290]
+                  - generic [ref=e291]:
+                    - generic [ref=e292]: NFL Network
+                    - generic [ref=e293]: •
+                    - generic [ref=e294]: Today
+                - generic [ref=e295]:
+                  - generic [ref=e296]: BREAKING
+                  - generic [ref=e297]:
+                    - generic [ref=e298]:
+                      - img [ref=e299]
+                      - generic [ref=e304]: trades
+                    - heading "49ers Acquire Star Receiver" [level=4] [ref=e305]
+                    - generic [ref=e306]:
+                      - generic [ref=e307]: ESPN
+                      - generic [ref=e308]: •
+                      - generic [ref=e309]: Today
+              - generic [ref=e311]: "Updated: 11:43:53 PM"
+  - button "Mission Control" [ref=e313] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e315] [cursor=pointer]:
+    - img [ref=e316]
+```
