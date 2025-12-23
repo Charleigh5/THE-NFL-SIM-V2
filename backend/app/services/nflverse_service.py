@@ -4,13 +4,21 @@ NFL Verse Data Service
 Bridge between nflreadpy library and THE NFL SIM's Player model.
 Fetches real-world NFL data and converts it to our internal formats.
 """
+from __future__ import annotations
+
 import logging
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
 from datetime import date
 
-try:
+# Type-checking imports (never executed at runtime)
+if TYPE_CHECKING:
     import nflreadpy as nfl
     import polars as pl
+
+# Runtime imports with fallback
+try:
+    import nflreadpy as nfl  # type: ignore[no-redef]
+    import polars as pl  # type: ignore[no-redef]
     HAS_NFLREADPY = True
 except ImportError:
     HAS_NFLREADPY = False
@@ -96,12 +104,12 @@ class NflverseService:
                 "Install with: pip install nflreadpy polars"
             )
         self.season = season
-        self._rosters_cache: Optional[pl.DataFrame] = None
-        self._nextgen_cache: Optional[pl.DataFrame] = None
-        self._combine_cache: Optional[pl.DataFrame] = None
-        self._ftn_cache: Optional[pl.DataFrame] = None
-        self._contracts_cache: Optional[pl.DataFrame] = None
-        self._player_stats_cache: Optional[pl.DataFrame] = None
+        self._rosters_cache: Optional["pl.DataFrame"] = None
+        self._nextgen_cache: Optional["pl.DataFrame"] = None
+        self._combine_cache: Optional["pl.DataFrame"] = None
+        self._ftn_cache: Optional["pl.DataFrame"] = None
+        self._contracts_cache: Optional["pl.DataFrame"] = None
+        self._player_stats_cache: Optional["pl.DataFrame"] = None
 
     def import_rosters(self) -> pl.DataFrame:
         """

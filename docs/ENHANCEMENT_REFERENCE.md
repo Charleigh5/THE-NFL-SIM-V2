@@ -79,13 +79,14 @@ age_modifier = {
 - [ ] **Distribution Fidelity Gates** (±1.2 PPG, ±0.15 YPC)
 
 **Validation Targets**:
-| Metric | Target | Tolerance |
-|--------|--------|-----------|
-| Team PPG | NFL avg | ±1.2 pts |
-| QB TD passes | Per season | ±3.1 TDs |
-| RB YPC | 4.3-4.7 | ±0.15 yds |
-| Sack Rate | 6.8-7.5% | ±0.5% |
-| 3rd Down Conv | 39-42% | ±2% |
+
+| Metric        | Target     | Tolerance |
+| ------------- | ---------- | --------- |
+| Team PPG      | NFL avg    | ±1.2 pts  |
+| QB TD passes  | Per season | ±3.1 TDs  |
+| RB YPC        | 4.3-4.7    | ±0.15 yds |
+| Sack Rate     | 6.8-7.5%   | ±0.5%     |
+| 3rd Down Conv | 39-42%     | ±2%       |
 
 ---
 
@@ -168,15 +169,15 @@ age_modifier = {
 
 ### Phase 2: Core Enhancements (Week 3-4)
 
-4. Position-specific physics formulas
-5. Validation gates with KS tests
-6. New player archetypes
+1. Position-specific physics formulas
+2. Validation gates with KS tests
+3. New player archetypes
 
 ### Phase 3: Deep Integration (Week 5-8)
 
-7. Full training program system
-8. Off-field activities
-9. Crowd noise/momentum system
+1. Full training program system
+2. Off-field activities
+3. Crowd noise/momentum system
 
 ---
 
