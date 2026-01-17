@@ -217,10 +217,23 @@ class PlayCaller:
         weights = list(depth_weights.values())
         selected_depth = self.rng.choices(choices, weights=weights, k=1)[0]
 
+        # Calculate absolute yard line
+        yard_line = 0
+        if context.possession == "home":
+             yard_line = 100 - context.distance_to_goal
+        else:
+             yard_line = context.distance_to_goal
+
         return PassPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            depth=selected_depth
+            depth=selected_depth,
+            distance=context.distance,
+            down=context.down,
+            yard_line=yard_line,
+            is_home_team=(context.possession == "home"),
+            possession=context.possession,
+            start_yard_line=yard_line
         )
 
     def _create_run_play(self, context: PlayCallingContext) -> RunPlayCommand:
@@ -229,8 +242,21 @@ class PlayCaller:
         # Could adjust based on team strengths later
         selected_dir = self.rng.choice(directions)
 
+        # Calculate absolute yard line
+        yard_line = 0
+        if context.possession == "home":
+             yard_line = 100 - context.distance_to_goal
+        else:
+             yard_line = context.distance_to_goal
+
         return RunPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            run_direction=selected_dir
+            run_direction=selected_dir,
+            distance=context.distance,
+            down=context.down,
+            yard_line=yard_line,
+            is_home_team=(context.possession == "home"),
+            possession=context.possession,
+            start_yard_line=yard_line
         )

@@ -16,8 +16,9 @@ if TYPE_CHECKING:
     from app.models.player_physics import PlayerPhysics
     from app.models.player_injury import PlayerInjury
     from app.models.player_progression import PlayerProgression
-    # from app.models.team import Team # Circular import handling if needed, or string reference
-    # from app.models.stats import PlayerSeasonStats
+    from app.models.team import Team
+    from app.models.stats import PlayerSeasonStats
+    from app.models.medical import BodyPart
 
 class Position(str, enum.Enum):
     QB = "QB"

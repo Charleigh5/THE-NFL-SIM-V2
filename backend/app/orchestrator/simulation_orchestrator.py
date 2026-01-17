@@ -278,6 +278,10 @@ class SimulationOrchestrator:
         if not self.history:
             return
 
+        if not self.db_session:
+            logger.warning("No DB session available to save player stats")
+            return
+
         # If game object not passed, fetch it
         if not game and self.current_game_id:
              stmt = select(Game).where(Game.id == self.current_game_id)

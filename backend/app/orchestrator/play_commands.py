@@ -45,8 +45,8 @@ class PassPlayCommand(PlayCommand):
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
                  target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20):
-        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
+                 distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True, possession: str = "home", start_yard_line: int = 20):
+        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line, is_home_team, possession, start_yard_line)
         self.target_receiver = target_receiver_id
         self.depth = depth  # short, mid, deep
 
@@ -70,8 +70,8 @@ class RunPlayCommand(PlayCommand):
 
     def __init__(self, offense_players: List[Any], defense_players: List[Any],
                  run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20):
-        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
+                 distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True, possession: str = "home", start_yard_line: int = 20):
+        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line, is_home_team, possession, start_yard_line)
         self.run_direction = run_direction  # left, middle, right
 
     def get_play_type(self) -> str:
