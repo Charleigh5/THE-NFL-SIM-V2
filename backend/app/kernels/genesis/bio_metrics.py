@@ -1,6 +1,8 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, Optional
+
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class BiologicalProfile(Component):
     # Directive 1: Hard cap MaxAcceleration based on FastTwitchRatio
@@ -39,7 +41,7 @@ class AnatomyModel(Component):
     current_health: float = 100.0 # Temporary health
     chronic_wear: float = 0.0 # Permanent degradation (Directive 6)
 
-    ligaments: Dict[str, Dict[str, float]] = Field(default_factory=lambda: {
+    ligaments: dict[str, dict[str, float]] = Field(default_factory=lambda: {
         "ACL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 85.0}, # Directive 7
         "MCL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 90.0},
         "Achilles": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 80.0}

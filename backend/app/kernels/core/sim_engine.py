@@ -1,11 +1,11 @@
+
 from app.kernels.core.ecs_manager import Component
-from typing import List, Dict
-import time
+
 
 class ECSManager:
     # Directive 1: ECS Architecture (Cache Locality)
     # Simplified: Using Dicts for components, but structured for iteration
-    components: Dict[str, Dict[str, Component]] = {} # ComponentType -> EntityID -> Component
+    components: dict[str, dict[str, Component]] = {} # ComponentType -> EntityID -> Component
 
     def add_component(self, entity_id: str, component: Component):
         comp_type = type(component).__name__
@@ -20,7 +20,7 @@ class SimEngine:
     # Directive 2: Fixed Time-Step (10Hz)
     target_fps: int = 10
     time_step: float = 1.0 / 10.0
-    
+
     # Directive 9: Decoupled Physics/AI Kernels
     physics_kernel: 'PhysicsKernel' = None
     ai_kernel: 'AIKernel' = None

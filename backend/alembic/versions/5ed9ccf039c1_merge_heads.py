@@ -1,28 +1,26 @@
-"""Merge heads
-
-Revision ID: 5ed9ccf039c1
-Revises: 5b2c3d4e5f6a, d68652484c61
-Create Date: 2025-12-03 20:39:48.194325
-
-"""
-from typing import Sequence, Union
-
-from alembic import op
-import sqlalchemy as sa
-
-
-# revision identifiers, used by Alembic.
-revision: str = '5ed9ccf039c1'
-down_revision: Union[str, Sequence[str], None] = ('5b2c3d4e5f6a', 'd68652484c61')
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
-
-
 def upgrade() -> None:
     """Upgrade schema."""
-    pass
+    op.create_table('stadium',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('name', sa.String(), nullable=True),
+        sa.Column('city', sa.String(), nullable=True),
+        sa.Column('state', sa.String(), nullable=True),
+        sa.Column('country', sa.String(), nullable=True),
+        sa.Column('capacity', sa.Integer(), nullable=True),
+        sa.Column('type', sa.String(), nullable=True),
+        sa.Column('turf_type', sa.String(), nullable=True),
+        sa.Column('year_built', sa.Integer(), nullable=True),
+        sa.Column('altitude', sa.Integer(), nullable=True),
+        sa.Column('dome', sa.Boolean(), nullable=True),
+        sa.Column('image_url', sa.String(), nullable=True),
+        sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_stadium_id'), 'stadium', ['id'], unique=False)
+    op.create_index(op.f('ix_stadium_name'), 'stadium', ['name'], unique=False)
 
 
 def downgrade() -> None:
     """Downgrade schema."""
-    pass
+    op.drop_index(op.f('ix_stadium_name'), table_name='stadium')
+    op.drop_index(op.f('ix_stadium_id'), table_name='stadium')
+    op.drop_table('stadium')

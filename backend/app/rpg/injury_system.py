@@ -1,10 +1,11 @@
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
-from app.models.player import Player, InjuryStatus
-from app.core.random_utils import DeterministicRNG
-from app.core import injury_config as InjuryConfig
-import random
 import logging
+import random
+from dataclasses import dataclass
+from typing import Any
+
+from app.core import injury_config as InjuryConfig
+from app.core.random_utils import DeterministicRNG
+from app.models.player import InjuryStatus, Player
 
 logger = logging.getLogger(__name__)
 
@@ -202,9 +203,9 @@ class InjurySystem:
 
     def evaluate_post_play_injuries(
         self,
-        play_context: Dict[str, Any],
-        players_on_field: List[Player],
-    ) -> List[Dict[str, Any]]:
+        play_context: dict[str, Any],
+        players_on_field: list[Player],
+    ) -> list[dict[str, Any]]:
         """
         Evaluate all players for injury after a play (class method).
 
@@ -252,7 +253,7 @@ class InjurySystem:
         self,
         player: Player,
         has_ragknow: bool = False,
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Calculate performance penalties for playing through injury (class method).
         """
@@ -305,7 +306,7 @@ class PlayContext:
     is_contact: bool = True               # Whether this was a contact play
     season: int = 0
     week: int = 0
-    play_id: Optional[str] = None
+    play_id: str | None = None
 
 
 @dataclass
@@ -319,7 +320,7 @@ class InjuryEvent:
     body_part: str = "Unknown"
     weeks_to_recovery: int = 0
     can_play_through: bool = False        # Based on toughness/Ragknow
-    performance_penalties: Dict[str, int] = None
+    performance_penalties: dict[str, int] = None
 
     def __post_init__(self):
         if self.performance_penalties is None:
@@ -438,7 +439,7 @@ def calculate_injured_performance_penalty(
     severity: int,
     toughness: int = 50,
     has_ragknow: bool = False
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """
     Calculate attribute penalties for playing through an injury.
 
@@ -477,7 +478,7 @@ def apply_playing_injured_risk(
     player: Player,
     current_severity: int,
     rng: DeterministicRNG = None
-) -> Optional[int]:
+) -> int | None:
     """
     Check if playing through an injury causes it to worsen.
 
@@ -515,9 +516,9 @@ def apply_playing_injured_risk(
 
 def evaluate_post_play_injuries(
     play_context: PlayContext,
-    players_on_field: List[Player],
+    players_on_field: list[Player],
     rng: DeterministicRNG = None
-) -> List[InjuryEvent]:
+) -> list[InjuryEvent]:
     """
     Evaluate all players on the field for potential injuries after a play.
 

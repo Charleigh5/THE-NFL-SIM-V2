@@ -1,5 +1,6 @@
 from app.kernels.core.ecs_manager import Component
 
+
 class BehavioralProfile(Component):
     def __init__(self):
         self.tendencies = {
