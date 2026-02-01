@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bandit-security-report
-          path: bandit-report.json
+          path: backend/bandit-report.json
 
       - name: Run unit tests with coverage
         env:
@@ -87,6 +87,7 @@ jobs:
           pytest tests/test_benchmarks.py -v --benchmark-only --benchmark-json=benchmark-results.json
 
       - name: Upload benchmark results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results
