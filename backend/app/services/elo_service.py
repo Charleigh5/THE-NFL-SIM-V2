@@ -7,7 +7,9 @@ Standard starting rating is 1500.
 """
 
 import math
+
 from sqlalchemy.orm import Session
+
 from app.models.team import Team
 
 

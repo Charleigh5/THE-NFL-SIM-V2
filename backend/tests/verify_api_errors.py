@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 from fastapi.testclient import TestClient
 
 # Add backend to path
@@ -11,7 +12,7 @@ client = TestClient(app)
 
 def verify_api_errors():
     print("Starting Manual API Error Verification...")
-    
+
     # 1. 404 Not Found - Team
     print("\nTest 1: GET /api/v1/teams/999999 (Non-existent Team)")
     try:
@@ -37,7 +38,7 @@ def verify_api_errors():
             print("  FAIL")
     except Exception as e:
         print(f"  ERROR: {e}")
-        
+
     # 3. 404 Not Found (Route Mismatch) - Invalid ID type
     print("\nTest 3: GET /api/v1/teams/invalid_id (Invalid ID Type)")
     try:

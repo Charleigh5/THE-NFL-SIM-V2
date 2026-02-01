@@ -13,10 +13,9 @@ import json
 import logging
 import random
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict
-import time
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -48,7 +47,7 @@ def create_mock_teams():
     return offense, defense
 
 
-def run_simulation(num_plays: int, rng: random.Random) -> Dict:
+def run_simulation(num_plays: int, rng: random.Random) -> dict:
     """Run simplified simulation for validation."""
     logger.info(f"Running {num_plays:,} play simulation...")
 

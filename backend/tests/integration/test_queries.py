@@ -1,10 +1,10 @@
-import pytest
-from app.models.team import Team
+from app.models.game import Game
 from app.models.player import Player, Position
 from app.models.season import Season
-from app.models.game import Game
 from app.models.stats import PlayerGameStats
+from app.models.team import Team
 from app.services.stats_service import StatsService
+
 
 def test_get_league_leaders(db_session):
     # Setup

@@ -1,23 +1,16 @@
+
 import pytest
-from pydantic import ValidationError
 from backend.app.schemas.expanded_stats import (
-    PositionType,
+    LeagueLeaders,
     PlayerStat,
+    PositionType,
     QuarterbackStat,
     RunningBackStat,
+    TeamStats,
     WideReceiverStat,
-    TightEndStat,
-    OffensiveLineStat,
-    DefensiveLineStat,
-    LinebackerStat,
-    DefensiveBackStat,
-    KickerStat,
-    PunterStat,
-    SpecialTeamsStat,
-    LeagueLeaders,
-    TeamStats
 )
-import datetime
+from pydantic import ValidationError
+
 
 class TestPositionType:
     """Test PositionType enum functionality"""

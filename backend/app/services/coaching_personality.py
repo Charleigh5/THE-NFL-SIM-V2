@@ -12,7 +12,6 @@ Personalities affect:
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional
 from enum import Enum
 
 
@@ -61,7 +60,7 @@ class PersonalityProfile:
 # PERSONALITY DEFINITIONS
 # ============================================================================
 
-PERSONALITY_PROFILES: Dict[CoachingPersonality, PersonalityProfile] = {
+PERSONALITY_PROFILES: dict[CoachingPersonality, PersonalityProfile] = {
     CoachingPersonality.CEO: PersonalityProfile(
         name="The CEO",
         aggression=0.40,
@@ -151,7 +150,7 @@ def get_situational_modifiers(
     time_remaining_seconds: int,
     is_home: bool,
     quarter: int
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Calculate situational modifiers to coaching behavior.
 
@@ -212,7 +211,7 @@ def apply_personality_modifiers(
     time_remaining: int,
     is_home: bool,
     quarter: int
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Get final play-calling parameters with situational adjustments.
 
@@ -241,7 +240,7 @@ def apply_personality_modifiers(
 
 def get_personality_for_coach(
     aggression_rating: int,
-    risk_tolerance: Optional[int] = None
+    risk_tolerance: int | None = None
 ) -> CoachingPersonality:
     """
     Determine personality based on coach attributes.
@@ -276,7 +275,7 @@ def create_playcaller_config(
     time_remaining: int = 3600,
     is_home: bool = True,
     quarter: int = 1
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Generate PlayCaller initialization parameters from personality.
 

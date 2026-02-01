@@ -16,11 +16,9 @@ Context7 Best Practices:
 - No side effects in core logic
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
-
+from dataclasses import dataclass, field
+from enum import Enum
 
 # ============================================================================
 # ENUMS
@@ -104,9 +102,9 @@ class VisionCone:
 
     def can_see_target(
         self,
-        player_pos: Tuple[float, float],
-        target_pos: Tuple[float, float]
-    ) -> Tuple[bool, float]:
+        player_pos: tuple[float, float],
+        target_pos: tuple[float, float]
+    ) -> tuple[bool, float]:
         """
         Check if target is within vision cone.
 
@@ -225,7 +223,7 @@ class CognitionEngine:
     - Vision-based awareness
     """
 
-    def __init__(self, profile: Optional[CognitiveProfile] = None):
+    def __init__(self, profile: CognitiveProfile | None = None):
         self.profile = profile or CognitiveProfile()
 
     def calculate_decision_delay(
@@ -262,8 +260,8 @@ class CognitionEngine:
         self,
         elapsed_ms: float,
         defenders_nearby: int = 0,
-        open_receiver_quality: Optional[List[float]] = None,
-    ) -> Tuple[ReadPhase, int, bool]:
+        open_receiver_quality: list[float] | None = None,
+    ) -> tuple[ReadPhase, int, bool]:
         """
         Process QB read progression for one time step.
 
@@ -336,9 +334,9 @@ class CognitionEngine:
 
     def can_see_player(
         self,
-        own_position: Tuple[float, float],
-        target_position: Tuple[float, float],
-    ) -> Tuple[bool, float]:
+        own_position: tuple[float, float],
+        target_position: tuple[float, float],
+    ) -> tuple[bool, float]:
         """
         Check if this player can see another player.
 

@@ -1,12 +1,14 @@
-import sys
 import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.engine.physics import BallPhysics, Vector3
 from app.engine.blocking import BlockingEngine
 from app.engine.defense import PassRushEngine, PassRushMove
+from app.engine.physics import BallPhysics
 from app.engine.special_teams import SpecialTeamsEngine
 from app.rpg.progression import ProgressionEngine
+
 
 def test_ball_physics():
     print("Testing Ball Physics...")
@@ -20,7 +22,7 @@ def test_blocking():
     print("\nTesting Blocking Engine...")
     res = BlockingEngine.resolve_pass_block(ol_rating=80, dl_rating=75, ol_technique="KickStep")
     print(f"  Pass Block Result: {res}")
-    
+
     run_res = BlockingEngine.resolve_run_block(ol_strength=80, dl_anchor=70, scheme="Zone")
     print(f"  Run Block Result: {run_res}")
     assert run_res['displacement'] > 0

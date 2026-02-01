@@ -1,5 +1,6 @@
 from app.services.chemistry_service import ChemistryService
 
+
 def test_hash_generation():
     ids_1 = [1, 2, 3, 4, 5]
     ids_2 = [5, 4, 3, 2, 1]

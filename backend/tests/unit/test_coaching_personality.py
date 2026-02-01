@@ -1,12 +1,9 @@
-import pytest
 from app.services.coaching_personality import (
-    CoachingPersonality,
-    PersonalityProfile,
     PERSONALITY_PROFILES,
-    get_situational_modifiers,
-    apply_personality_modifiers,
-    get_personality_for_coach,
+    CoachingPersonality,
     create_playcaller_config,
+    get_personality_for_coach,
+    get_situational_modifiers,
 )
 
 

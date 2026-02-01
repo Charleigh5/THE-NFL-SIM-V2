@@ -1,8 +1,8 @@
-import pytest
-from app.models.team import Team
+from app.models.game import Game
 from app.models.player import Player, Position
 from app.models.season import Season, SeasonStatus
-from app.models.game import Game
+from app.models.team import Team
+
 
 def test_create_team(db_session):
     team = Team(

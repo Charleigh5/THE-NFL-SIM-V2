@@ -1,5 +1,9 @@
-import pytest
-from backend.mcp_servers.nfl_stats_server.server import get_player_career_stats, get_league_averages, get_team_historical_performance
+from backend.mcp_servers.nfl_stats_server.server import (
+    get_league_averages,
+    get_player_career_stats,
+    get_team_historical_performance,
+)
+
 
 def test_get_player_career_stats():
     result = get_player_career_stats("Patrick Mahomes")

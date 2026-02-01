@@ -1,8 +1,12 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, JSON, Index, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 import datetime
 from enum import Enum
+
+from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Index, Integer, String
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class GameType(str, Enum):
     """Type of game for special scheduling and presentation."""

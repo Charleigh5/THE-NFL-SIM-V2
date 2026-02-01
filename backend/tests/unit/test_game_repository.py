@@ -2,8 +2,10 @@
 Unit tests for GameRepository.
 """
 
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+
 from app.orchestrator.game_repository import GameRepository
 from app.schemas.play import PlayResult
 

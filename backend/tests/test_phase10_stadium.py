@@ -6,10 +6,16 @@ Unit tests for stadium and crowd modules.
 """
 
 import pytest
+
 from app.services.stadium import (
-    StadiumEngine, StadiumConfig, CrowdState,
-    StadiumType, SurfaceType, NoiseLevel,
-    CrowdEngine, CrowdMood,
+    CrowdEngine,
+    CrowdMood,
+    CrowdState,
+    NoiseLevel,
+    StadiumConfig,
+    StadiumEngine,
+    StadiumType,
+    SurfaceType,
 )
 
 

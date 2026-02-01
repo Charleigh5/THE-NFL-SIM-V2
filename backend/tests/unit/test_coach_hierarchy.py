@@ -1,14 +1,12 @@
-import pytest
 from app.models.coach import CoachTier
 from app.services.training.coach_expertise import (
     CoachArchetype,
-    calculate_tier_from_ratings,
-    get_tier_multiplier,
-    get_scheme_bonus,
-    get_archetype_bonus,
     calculate_development_bonus,
+    calculate_tier_from_ratings,
+    get_archetype_bonus,
     get_position_development_summary,
-    TIER_MULTIPLIERS,
+    get_scheme_bonus,
+    get_tier_multiplier,
 )
 
 

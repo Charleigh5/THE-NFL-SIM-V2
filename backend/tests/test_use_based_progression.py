@@ -5,20 +5,16 @@ Test Use-Based Skill Progression
 Unit tests for Skyrim-style use-based progression system.
 Tests follow AAA pattern with comprehensive coverage.
 """
-import pytest
-from unittest.mock import MagicMock
 from dataclasses import dataclass
-from typing import Optional, Dict
+
+import pytest
 
 from app.services.use_based_progression import (
-    UseBasedProgression,
     ActionType,
-    ACTION_XP_AWARDS,
-    DEV_TRAIT_MULTIPLIERS,
+    UseBasedProgression,
     get_age_multiplier,
     get_xp_threshold,
 )
-
 
 # =============================================================================
 # MOCK PLAYER FIXTURE
@@ -30,7 +26,7 @@ class MockPlayer:
     id: int = 1
     age: int = 25
     development_trait: str = "NORMAL"
-    attribute_xp: Optional[Dict[str, int]] = None
+    attribute_xp: dict[str, int] | None = None
 
     # Attributes that can be improved
     throw_accuracy_short: int = 70

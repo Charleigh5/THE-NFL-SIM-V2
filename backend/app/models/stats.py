@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+
 from app.models.base import Base
+
 
 class PlayerGameStats(Base):
     id = Column(Integer, primary_key=True, index=True)
@@ -59,13 +61,3 @@ class PlayerGameStats(Base):
     pancakes = Column(Integer, default=0)
     sacks_allowed = Column(Integer, default=0)
     pressures_allowed = Column(Integer, default=0)
-
-class PlayerGameStart(Base):
-    __tablename__ = "player_game_starts"
-    id = Column(Integer, primary_key=True, index=True)
-    player_id = Column(Integer, ForeignKey("player.id"), index=True)
-    game_id = Column(Integer, ForeignKey("game.id"), index=True)
-    team_id = Column(Integer, ForeignKey("team.id"), index=True)
-    season_id = Column(Integer, ForeignKey("season.id"), index=True)
-    week = Column(Integer)
-    position = Column(String) # The position they started at (e.g. "LT")

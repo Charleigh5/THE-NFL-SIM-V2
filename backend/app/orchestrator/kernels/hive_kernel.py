@@ -1,5 +1,7 @@
-from typing import Dict, Any
-from app.kernels.hive import TurfDegradationMesh, CrowdSentimentMachine
+from typing import Any
+
+from app.kernels.hive import CrowdSentimentMachine, TurfDegradationMesh
+
 
 class HiveKernel:
     """
@@ -10,10 +12,10 @@ class HiveKernel:
         self.turf = TurfDegradationMesh()
         self.crowd = CrowdSentimentMachine()
 
-    def get_field_conditions(self) -> Dict[str, Any]:
+    def get_field_conditions(self) -> dict[str, Any]:
         # Placeholder: Assuming get_state exists or returning empty dict
         return self.turf.get_state() if hasattr(self.turf, 'get_state') else {}
 
-    def get_crowd_sentiment(self) -> Dict[str, Any]:
+    def get_crowd_sentiment(self) -> dict[str, Any]:
         # Placeholder: Assuming get_sentiment exists or returning empty dict
         return self.crowd.get_sentiment() if hasattr(self.crowd, 'get_sentiment') else {}

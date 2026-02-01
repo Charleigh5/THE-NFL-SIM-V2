@@ -1,6 +1,7 @@
-import pytest
-import asyncio
 import logging
+
+import pytest
+
 from app.core.mcp_registry import registry
 
 # Configure logging

@@ -1,21 +1,22 @@
 from __future__ import annotations
 
 import enum
-from typing import List, Optional, TYPE_CHECKING
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON, Enum, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 
 if TYPE_CHECKING:
-    from app.models.trait import PlayerTrait
-    from app.models.player_game_starts import PlayerGameStarts
     from app.models.player_attributes import PlayerAttributes
     from app.models.player_contract import PlayerContract
-    from app.models.player_physics import PlayerPhysics
+    from app.models.player_game_starts import PlayerGameStarts
     from app.models.player_injury import PlayerInjury
+    from app.models.player_physics import PlayerPhysics
     from app.models.player_progression import PlayerProgression
+    from app.models.trait import PlayerTrait
     # from app.models.team import Team # Circular import handling if needed, or string reference
     # from app.models.stats import PlayerSeasonStats
 
@@ -59,7 +60,7 @@ class Player(Base):
     first_name: Mapped[str] = mapped_column(String, index=True)
     last_name: Mapped[str] = mapped_column(String, index=True)
     position: Mapped[str] = mapped_column(String, index=True) # Using String for flexibility, validation in schema
-    college: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
+    college: Mapped[str | None] = mapped_column(String, index=True, nullable=True)
     height: Mapped[int] = mapped_column(Integer) # in inches
     weight: Mapped[int] = mapped_column(Integer) # in lbs
     age: Mapped[int] = mapped_column(Integer)
@@ -69,8 +70,8 @@ class Player(Base):
     depth_chart_rank: Mapped[int] = mapped_column(Integer, default=999) # Lower is better (starter = 1)
 
     # Team Relationship
-    team_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("team.id"), nullable=True, index=True)
-    team: Mapped[Optional["Team"]] = relationship("Team", back_populates="players")
+    team_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("team.id"), nullable=True, index=True)
+    team: Mapped[Team | None] = relationship("Team", back_populates="players")
 
     # --- RPG Attributes (Proxied to PlayerAttributes) ---
     @hybrid_property
@@ -124,42 +125,42 @@ class Player(Base):
 
     # --- NFL Combine Metrics (Proxied to PlayerAttributes) ---
     @hybrid_property
-    def forty_yard_dash(self) -> Optional[float]:
+    def forty_yard_dash(self) -> float | None:
         return self.attributes.forty_yard_dash if self.attributes else None
     @forty_yard_dash.setter
     def forty_yard_dash(self, value):
         if self.attributes: self.attributes.forty_yard_dash = value
 
     @hybrid_property
-    def bench_press(self) -> Optional[int]:
+    def bench_press(self) -> int | None:
         return self.attributes.bench_press if self.attributes else None
     @bench_press.setter
     def bench_press(self, value):
         if self.attributes: self.attributes.bench_press = value
 
     @hybrid_property
-    def vertical_jump(self) -> Optional[float]:
+    def vertical_jump(self) -> float | None:
         return self.attributes.vertical_jump if self.attributes else None
     @vertical_jump.setter
     def vertical_jump(self, value):
         if self.attributes: self.attributes.vertical_jump = value
 
     @hybrid_property
-    def broad_jump(self) -> Optional[int]:
+    def broad_jump(self) -> int | None:
         return self.attributes.broad_jump if self.attributes else None
     @broad_jump.setter
     def broad_jump(self, value):
         if self.attributes: self.attributes.broad_jump = value
 
     @hybrid_property
-    def three_cone_drill(self) -> Optional[float]:
+    def three_cone_drill(self) -> float | None:
         return self.attributes.three_cone_drill if self.attributes else None
     @three_cone_drill.setter
     def three_cone_drill(self, value):
         if self.attributes: self.attributes.three_cone_drill = value
 
     @hybrid_property
-    def twenty_yard_shuttle(self) -> Optional[float]:
+    def twenty_yard_shuttle(self) -> float | None:
         return self.attributes.twenty_yard_shuttle if self.attributes else None
     @twenty_yard_shuttle.setter
     def twenty_yard_shuttle(self, value):
@@ -167,28 +168,28 @@ class Player(Base):
 
     # --- Genesis Data (Proxied to PlayerAttributes / PlayerInjury) ---
     @hybrid_property
-    def power_clean_max(self) -> Optional[int]:
+    def power_clean_max(self) -> int | None:
         return self.attributes.power_clean_max if self.attributes else None
     @power_clean_max.setter
     def power_clean_max(self, value):
         if self.attributes: self.attributes.power_clean_max = value
 
     @hybrid_property
-    def gps_speed_max(self) -> Optional[float]:
+    def gps_speed_max(self) -> float | None:
         return self.attributes.gps_speed_max if self.attributes else None
     @gps_speed_max.setter
     def gps_speed_max(self, value):
         if self.attributes: self.attributes.gps_speed_max = value
 
     @hybrid_property
-    def s2_cognition_score(self) -> Optional[int]:
+    def s2_cognition_score(self) -> int | None:
         return self.attributes.s2_cognition_score if self.attributes else None
     @s2_cognition_score.setter
     def s2_cognition_score(self, value):
         if self.attributes: self.attributes.s2_cognition_score = value
 
     @hybrid_property
-    def medical_flags(self) -> Optional[dict]:
+    def medical_flags(self) -> dict | None:
         return self.injury.medical_flags if self.injury else None
     @medical_flags.setter
     def medical_flags(self, value):
@@ -549,11 +550,11 @@ class Player(Base):
         if self.progression: self.progression.development_trait = value
 
     # Trait Relationship - Refactored for new setup
-    player_traits: Mapped[List["PlayerTrait"]] = relationship("PlayerTrait", back_populates="player")
+    player_traits: Mapped[list[PlayerTrait]] = relationship("PlayerTrait", back_populates="player")
 
     # --- RPG Abilities (Phase 11) ---
     @hybrid_property
-    def abilities(self) -> Optional[dict]:
+    def abilities(self) -> dict | None:
         return self.progression.abilities if self.progression else {}
     @abilities.setter
     def abilities(self, value):
@@ -561,7 +562,7 @@ class Player(Base):
 
     # --- Use-Based Skill Progression (Skyrim-style) ---
     @hybrid_property
-    def attribute_xp(self) -> Optional[dict]:
+    def attribute_xp(self) -> dict | None:
         return self.progression.attribute_xp if self.progression else {}
     @attribute_xp.setter
     def attribute_xp(self, value):
@@ -584,7 +585,7 @@ class Player(Base):
         if self.injury: self.injury.injury_status = value
 
     @hybrid_property
-    def injury_type(self) -> Optional[str]:
+    def injury_type(self) -> str | None:
         return self.injury.injury_type if self.injury else None
     @injury_type.setter
     def injury_type(self, value):
@@ -612,8 +613,8 @@ class Player(Base):
         if self.injury: self.injury.injury_recurrence_risk = value
 
     # Nano Banana
-    image_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    nano_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    image_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    nano_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # --- Contracts & Offseason (Proxied to PlayerContract) ---
     @hybrid_property
@@ -645,7 +646,7 @@ class Player(Base):
         if self.contract: self.contract.is_retired = value
 
     @hybrid_property
-    def retirement_year(self) -> Optional[int]:
+    def retirement_year(self) -> int | None:
         return self.contract.retirement_year if self.contract else None
     @retirement_year.setter
     def retirement_year(self, value):
@@ -659,26 +660,26 @@ class Player(Base):
         if self.contract: self.contract.legacy_score = value
 
     # History
-    season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player")
+    season_stats: Mapped[list[PlayerSeasonStats]] = relationship("PlayerSeasonStats", back_populates="player")
 
     # New: Game Starts (OL Chemistry)
-    game_starts: Mapped[List["PlayerGameStarts"]] = relationship("PlayerGameStarts", back_populates="player")
+    game_starts: Mapped[list[PlayerGameStarts]] = relationship("PlayerGameStarts", back_populates="player")
 
     # Hyper-Immersive Relationships
-    body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False)
+    body_health: Mapped[BodyPart] = relationship("BodyPart", back_populates="player", uselist=False)
 
     # --- Phase 3: Player Decomposition (1:1 Relationships) ---
-    attributes: Mapped["PlayerAttributes"] = relationship("PlayerAttributes", back_populates="player", uselist=False, lazy="joined")
-    contract: Mapped["PlayerContract"] = relationship("PlayerContract", back_populates="player", uselist=False, lazy="joined")
-    physics: Mapped["PlayerPhysics"] = relationship("PlayerPhysics", back_populates="player", uselist=False, lazy="joined")
-    injury: Mapped["PlayerInjury"] = relationship("PlayerInjury", back_populates="player", uselist=False, lazy="joined")
-    progression: Mapped["PlayerProgression"] = relationship("PlayerProgression", back_populates="player", uselist=False, lazy="joined")
+    attributes: Mapped[PlayerAttributes] = relationship("PlayerAttributes", back_populates="player", uselist=False, lazy="joined")
+    contract: Mapped[PlayerContract] = relationship("PlayerContract", back_populates="player", uselist=False, lazy="joined")
+    physics: Mapped[PlayerPhysics] = relationship("PlayerPhysics", back_populates="player", uselist=False, lazy="joined")
+    injury: Mapped[PlayerInjury] = relationship("PlayerInjury", back_populates="player", uselist=False, lazy="joined")
+    progression: Mapped[PlayerProgression] = relationship("PlayerProgression", back_populates="player", uselist=False, lazy="joined")
 
     def __init__(self, **kwargs):
         from app.models.player_attributes import PlayerAttributes
         from app.models.player_contract import PlayerContract
-        from app.models.player_physics import PlayerPhysics
         from app.models.player_injury import PlayerInjury
+        from app.models.player_physics import PlayerPhysics
         from app.models.player_progression import PlayerProgression
 
         # Initialize satellite models so setters work during initialization

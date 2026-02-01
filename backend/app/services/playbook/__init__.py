@@ -9,31 +9,29 @@ Phase 9: Playbook & AI
 - Defensive Coordinator
 """
 
-from .playbook import (
-    Playbook,
-    Play,
-    Personnel,
-    PlayType,
-    Formation,
-    Concept,
-    DefensiveScheme,
-    PlaybookGenerator,
+from .defensive_ai import (
+    BlitzPackage,
+    CoverageType,
+    DefensiveCall,
+    DefensiveCoordinatorAI,
+    DefensiveGameplan,
 )
-
 from .play_caller import (
-    PlayCallerAI,
-    GameSituation,
-    PlayCallResult,
     AggressionLevel,
     GameScript,
+    GameSituation,
+    PlayCallerAI,
+    PlayCallResult,
 )
-
-from .defensive_ai import (
-    DefensiveCoordinatorAI,
-    DefensiveCall,
-    DefensiveGameplan,
-    CoverageType,
-    BlitzPackage,
+from .playbook import (
+    Concept,
+    DefensiveScheme,
+    Formation,
+    Personnel,
+    Play,
+    Playbook,
+    PlaybookGenerator,
+    PlayType,
 )
 
 __all__ = [

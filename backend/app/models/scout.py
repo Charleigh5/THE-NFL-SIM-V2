@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON, Boolean, Enum
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from app.models.base import Base
 import enum
+
+from sqlalchemy import JSON, Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class Region(str, enum.Enum):
     NATIONAL = "NATIONAL"

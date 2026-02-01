@@ -10,20 +10,17 @@ Tests validate:
 6. Edge cases and error handling
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
 from dataclasses import dataclass
-from typing import Any
+
+import pytest
 
 from app.engine.attribute_interaction import (
     AttributeInteractionEngine,
-    InteractionType,
     InteractionOutcome,
     InteractionResult,
-    InteractionDefinition,
-    apply_interaction_to_play
+    InteractionType,
+    apply_interaction_to_play,
 )
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TEST FIXTURES

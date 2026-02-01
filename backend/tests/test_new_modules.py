@@ -1,18 +1,19 @@
-import sys
 import os
+import sys
 
 # Add backend to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 from app.data.helmets import HELMET_CATALOG
 from app.data.stadiums import STADIUM_DB
-from app.kernels.empire.capologist import CapologistPhysics, ContractYear
-from app.kernels.cortex.strategy import StrategyEngine, PersonnelGrouping, DefensiveScheme
 from app.kernels.cortex.coverage_net import CoverageNet
+from app.kernels.cortex.strategy import DefensiveScheme, PersonnelGrouping, StrategyEngine
+from app.kernels.empire.capologist import CapologistPhysics, ContractYear
+
 
 def test_new_modules():
     print("Testing Reference Data, Capologist, and Strategy...")
-    
+
     # 1. Reference Data
     print(f"Data: Loaded {len(HELMET_CATALOG)} Helmets")
     print(f"Data: Loaded {len(STADIUM_DB)} Stadiums")
@@ -27,7 +28,7 @@ def test_new_modules():
     ]
     dead_money = cap.calculate_dead_money_acceleration(contract, 2025)
     print(f"Empire: Dead Money Acceleration {dead_money}M")
-    
+
     restructured = cap.restructure_contract(contract, 2026, 9.0)
     print(f"Empire: Restructured 2026 Base {restructured[1].base_salary}M")
     print(f"Empire: Restructured 2026 Bonus {restructured[1].signing_bonus_proration}M")
@@ -36,7 +37,7 @@ def test_new_modules():
     strat = StrategyEngine()
     multiplier = strat.get_schematic_multiplier("INSIDE_ZONE", "RUN_COMMIT")
     print(f"Strategy: Run vs Run Commit Multiplier {multiplier}")
-    
+
     matchup_val = strat.resolve_matchup(PersonnelGrouping.P21, DefensiveScheme.DIME)
     print(f"Strategy: 21 Personnel vs Dime Advantage {matchup_val}")
 

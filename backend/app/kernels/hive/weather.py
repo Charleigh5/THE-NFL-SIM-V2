@@ -1,10 +1,8 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Tuple
-from pydantic import Field
-import math
-import math
-from typing import Optional
+
+
 from app.core.random_utils import DeterministicRNG
+from app.kernels.core.ecs_manager import Component
+
 
 class WeatherSys(Component):
     # Directive 5: Dynamic Weather
@@ -17,7 +15,7 @@ class WeatherSys(Component):
     # Directive 14: Altitude
     altitude_ft: float = 0.0 # Sea level default
 
-    def get_ballistic_modifiers(self) -> Tuple[float, float]:
+    def get_ballistic_modifiers(self) -> tuple[float, float]:
         """
         Directive 6: Ballistics Trajectory.
         Returns (DistanceMultiplier, DriftMultiplier).
@@ -45,7 +43,7 @@ class WeatherSys(Component):
     forecast: str = "Clear" # "Rain", "Snow", "Heavy Snow"
     fog_density: float = 0.0 # 0.0 - 1.0
 
-    def generate_forecast(self, month: int, location_climate: str, rng: Optional[DeterministicRNG] = None):
+    def generate_forecast(self, month: int, location_climate: str, rng: DeterministicRNG | None = None):
         """
         Generates a forecast based on season and location.
         """
@@ -60,7 +58,7 @@ class WeatherSys(Component):
             self.forecast = "Rain" if rng.random() > 0.7 else "Clear"
             self.temperature_f = 75.0
 
-    def get_ballistic_modifiers(self) -> Tuple[float, float, float]:
+    def get_ballistic_modifiers(self) -> tuple[float, float, float]:
         """
         Directive 6: Ballistics Trajectory.
         Returns (DistanceMultiplier, DriftMultiplier, WeightMultiplier).
@@ -102,7 +100,7 @@ class WeatherSys(Component):
         Directive: Weekly Weather Forecast Top Story.
         """
         if self.forecast == "Clear":
-            return f"Clear skies expected, perfect for passing."
+            return "Clear skies expected, perfect for passing."
         elif self.forecast == "Snow":
-            return f"Snow forecast! Expect reduced visibility and slippery conditions."
+            return "Snow forecast! Expect reduced visibility and slippery conditions."
         return f"Weather Alert: {self.forecast} conditions may impact game strategy."

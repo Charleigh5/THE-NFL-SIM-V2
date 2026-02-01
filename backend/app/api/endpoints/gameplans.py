@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional, Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -13,7 +13,7 @@ class GameplanRequest(BaseModel):
     season_id: int
     week: int
     opponent_id: int
-    strategy: Dict[str, str]
+    strategy: dict[str, str]
 
 def get_gameplan_service(db: Session = Depends(get_db)) -> GameplanService:
     return GameplanService(db)

@@ -5,6 +5,7 @@ Tests the Elo rating calculation and update logic.
 """
 
 import pytest
+
 from app.services.elo_service import EloService
 
 

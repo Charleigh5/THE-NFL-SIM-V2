@@ -10,9 +10,7 @@ Phase 11: Validation
 - Auto-calibration
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Callable
-import math
+from dataclasses import dataclass
 
 
 @dataclass
@@ -41,7 +39,7 @@ class CalibrationResult:
     iterations: int
     converged: bool
     final_error: float
-    adjustments: Dict[str, float]
+    adjustments: dict[str, float]
 
 
 class SimulationCalibrator:
@@ -53,7 +51,7 @@ class SimulationCalibrator:
 
     def __init__(self, learning_rate: float = 0.1):
         self.learning_rate = learning_rate
-        self.targets: Dict[str, CalibrationTarget] = {}
+        self.targets: dict[str, CalibrationTarget] = {}
 
     def add_target(self, target: CalibrationTarget):
         """Register a calibration target."""
@@ -110,7 +108,7 @@ class SimulationCalibrator:
             adjustments=adjustments
         )
 
-    def get_tuned_parameters(self) -> Dict[str, float]:
+    def get_tuned_parameters(self) -> dict[str, float]:
         """
         Get all current parameter values.
         """

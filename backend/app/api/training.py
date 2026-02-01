@@ -10,27 +10,25 @@ Endpoints:
 - GET /training/schedule - Get recommended schedule (B-036)
 """
 
+
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import List, Optional
-from app.services.training.drills import (
-    Drill,
-    SeasonPhase,
-    DrillCategory,
-    ALL_DRILLS,
-    POSITION_DRILL_MAP,
-    get_drills_for_position,
-    get_drills_for_season,
-    get_drills_by_category,
-)
+
+from app.kernels.rpg.training import TrainingEngine
 from app.services.training.coaching_philosophy import (
-    CoachingStyle,
-    CoachingStyleName,
     COACHING_STYLES,
     get_coaching_style,
     get_seasonal_intensity_cap,
 )
-from app.kernels.rpg.training import TrainingEngine
+from app.services.training.drills import (
+    ALL_DRILLS,
+    POSITION_DRILL_MAP,
+    DrillCategory,
+    SeasonPhase,
+    get_drills_by_category,
+    get_drills_for_position,
+    get_drills_for_season,
+)
 
 router = APIRouter(prefix="/training", tags=["Training"])
 
@@ -43,29 +41,29 @@ class DrillResponse(BaseModel):
     """Response model for a single drill."""
     name: str
     target_stat: str
-    secondary_stats: List[str]
+    secondary_stats: list[str]
     injury_risk: float
     xp_multiplier: float
     fatigue_cost: float
     category: str
     description: str
-    season_filter: List[str]
+    season_filter: list[str]
 
 
 class DrillListResponse(BaseModel):
     """Response for drill list endpoint."""
-    drills: List[DrillResponse]
+    drills: list[DrillResponse]
     total: int
-    position_filter: Optional[str] = None
-    season_filter: Optional[str] = None
-    category_filter: Optional[str] = None
+    position_filter: str | None = None
+    season_filter: str | None = None
+    category_filter: str | None = None
 
 
 class ExecuteTrainingRequest(BaseModel):
     """Request to execute a training session."""
     player_id: int = Field(..., description="Player ID to train")
     drill_name: str = Field(..., description="Name of the drill to execute")
-    coaching_style: Optional[str] = Field(None, description="Coaching style to use")
+    coaching_style: str | None = Field(None, description="Coaching style to use")
     season_phase: str = Field("regular", description="Current season phase")
     player_age: int = Field(25, ge=18, le=50, description="Player's age")
 
@@ -76,12 +74,12 @@ class ExecuteTrainingResponse(BaseModel):
     drill_name: str
     xp_gained: float
     target_stat: str
-    secondary_stats: List[str]
+    secondary_stats: list[str]
     injury_occurred: bool
     fatigue_added: float
     final_injury_risk: float
     weekly_load: float
-    coaching_style_used: Optional[str] = None
+    coaching_style_used: str | None = None
 
 
 class ScheduleRecommendation(BaseModel):
@@ -97,7 +95,7 @@ class ScheduleResponse(BaseModel):
     position: str
     season_phase: str
     coaching_style: str
-    recommendations: List[ScheduleRecommendation]
+    recommendations: list[ScheduleRecommendation]
     seasonal_intensity_cap: float
 
 
@@ -107,9 +105,9 @@ class ScheduleResponse(BaseModel):
 
 @router.get("/drills", response_model=DrillListResponse)
 async def get_drills(
-    position: Optional[str] = Query(None, description="Filter by position (e.g., QB, WR)"),
-    season: Optional[str] = Query(None, description="Filter by season phase"),
-    category: Optional[str] = Query(None, description="Filter by drill category"),
+    position: str | None = Query(None, description="Filter by position (e.g., QB, WR)"),
+    season: str | None = Query(None, description="Filter by season phase"),
+    category: str | None = Query(None, description="Filter by drill category"),
 ) -> DrillListResponse:
     """
     B-034: Get available training drills.
@@ -320,8 +318,8 @@ async def get_training_schedule(
     )
 
 
-@router.get("/styles", response_model=List[dict])
-async def get_coaching_styles() -> List[dict]:
+@router.get("/styles", response_model=list[dict])
+async def get_coaching_styles() -> list[dict]:
     """Get available coaching styles and their properties."""
     return [
         {

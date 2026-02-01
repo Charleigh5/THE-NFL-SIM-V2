@@ -11,20 +11,21 @@ Tests cover:
 - Caching behavior
 """
 
-import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from typing import Optional
+from unittest.mock import MagicMock, patch
 
-from app.services.ai.gemini_client import GeminiClient, get_gemini_client  # type: ignore[import-not-found]
+import pytest
+
+from app.schemas.scouting import PlayerBackstory, ScoutingReportAI  # type: ignore[import-not-found]
+from app.services.ai.gemini_client import (  # type: ignore[import-not-found]
+    GeminiClient,
+)
 from app.services.ai.scouting_ai import (  # type: ignore[import-not-found]
     ScoutingAIService,
-    get_scouting_ai_service,
-    clear_scouting_cache,
+    _backstory_cache,
     _report_cache,
-    _backstory_cache
+    clear_scouting_cache,
+    get_scouting_ai_service,
 )
-from app.schemas.scouting import ScoutingReportAI, PlayerBackstory  # type: ignore[import-not-found]
-
 
 # ============================================================================
 # GEMINI CLIENT TESTS
