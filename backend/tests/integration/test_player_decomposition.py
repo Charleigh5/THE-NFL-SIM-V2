@@ -1,8 +1,6 @@
-import pytest
-import datetime
 from app.core.database import SessionLocal
 from app.models.player import Player
-import app.models.trait # ensure registry population
+
 
 def test_player_decomposition_integration():
     """

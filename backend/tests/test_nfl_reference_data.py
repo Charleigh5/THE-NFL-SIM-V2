@@ -1,9 +1,15 @@
 import pytest
-from app.core.nfl_reference_data import HISTORICAL_SALARY_CAPS, SPECIAL_PLAYS, FOURTH_DOWN_ANALYTICS, SALARY_CAP_CAGR
+
+from app.core.nfl_reference_data import (
+    HISTORICAL_SALARY_CAPS,
+    SALARY_CAP_CAGR,
+    SPECIAL_PLAYS,
+)
+from app.data.coaches import CoachingPhilosophy
 from app.services.empire.salary_cap import SalaryCapEngine
 from app.services.playbook.coaching_ai import CoachingAIService
-from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation
+
 
 def test_salary_cap_completeness():
     """Verify historical caps cover the expected range."""

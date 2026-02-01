@@ -1,10 +1,10 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-import asyncio
-from unittest.mock import MagicMock, patch, AsyncMock
-from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 from app.models.player import Player
-from app.models.game import Game
-from app.orchestrator.match_context import MatchContext
+from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 # from app.orchestrator.kernels.cortex_kernel import CortexKernel
 
 @pytest.mark.asyncio

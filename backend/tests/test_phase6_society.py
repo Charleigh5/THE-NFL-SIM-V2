@@ -10,18 +10,21 @@ Context7 Best Practices:
 - Testing state transitions
 """
 
+
 import pytest
-from typing import List
 
 from app.services.society import (
-    # Social Graph
-    SocialGraph, RelationshipType, CliqueType,
-    # Nemesis
-    NemesisEngine, NemesisEvent, RivalryType,
+    CliqueType,
     # Momentum
-    MomentumEngine, MomentumEvent, MomentumState,
+    MomentumEngine,
+    MomentumEvent,
+    MomentumState,
+    # Nemesis
+    NemesisEngine,
+    NemesisEvent,
+    RelationshipType,
+    SocialGraph,
 )
-
 
 # ============================================================================
 # SOCIAL GRAPH TESTS

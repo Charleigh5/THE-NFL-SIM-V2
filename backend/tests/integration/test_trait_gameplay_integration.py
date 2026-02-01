@@ -9,16 +9,17 @@ Tests verify that the top 5 priority traits properly affect gameplay:
 5. Pick Artist (CB/S) - Interception bonus
 """
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-from app.services.pre_game_service import PreGameService
-from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.orchestrator.match_context import MatchContext
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_commands import PassPlayCommand
-from app.models.player import Player
+
 from app.core.random_utils import DeterministicRNG
 from app.engine.blocking import BlockingResult
+from app.models.player import Player
+from app.orchestrator.play_commands import PassPlayCommand
+from app.orchestrator.play_resolver import PlayResolver
+from app.services.pre_game_service import PreGameService
+from app.services.trait_service import TRAIT_CATALOG
 
 
 class TestTraitGameplayIntegration:
@@ -339,4 +340,4 @@ class TestTraitGameplayIntegration:
             assert hasattr(wr, 'active_modifiers')
             assert wr.active_modifiers.get('awareness') == 5
 
-            print(f"\n✅ Trait Persistence Test: Effects maintained throughout game")
+            print("\n✅ Trait Persistence Test: Effects maintained throughout game")

@@ -5,13 +5,13 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.engine.event_bus import EventType
 from app.models.base import Base
 from app.models.player import Player
 from app.models.rpg_event import RPGEvent
-from app.models.trait import Trait, PlayerTrait, TraitTier
-from app.engine.event_bus import EventType
-from app.services.trait_evolution_service import TraitEvolutionService, TRAIT_TRIGGERS
+from app.models.trait import PlayerTrait, TraitTier
 from app.services.storyline_service import StorylineEventService, StorylineType
+from app.services.trait_evolution_service import TraitEvolutionService
 
 
 @pytest.fixture

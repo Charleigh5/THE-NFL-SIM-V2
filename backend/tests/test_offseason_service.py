@@ -12,16 +12,16 @@ Testing approach: Use mocks and patches to test service logic independently
 without requiring full database integration.
 """
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, call, AsyncMock
+
+from app.models.draft import DraftPick
+from app.models.player import Position
+from app.models.season import SeasonStatus
 from app.services.offseason_service import OffseasonService
 from app.services.rookie_generator import RookieGenerator
-from app.models.player import Player, Position
-from app.models.team import Team
-from app.models.season import Season, SeasonStatus
-from app.models.draft import DraftPick
-from app.models.playoff import PlayoffMatchup, PlayoffRound
-from sqlalchemy import select
+
 
 class MockTeam:
     """Mock Team object for testing."""

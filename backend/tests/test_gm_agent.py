@@ -1,9 +1,12 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock
-from app.services.gm_agent import GMAgent
+
+from app.models.gm import GM, GMDecision
 from app.models.player import Player
 from app.models.team import Team
-from app.models.gm import GM, GMDecision
+from app.services.gm_agent import GMAgent
+
 
 @pytest.fixture
 def mock_db():

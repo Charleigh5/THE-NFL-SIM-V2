@@ -13,7 +13,6 @@ Context7 Best Practices:
 import json
 import time
 from pathlib import Path
-from typing import Optional
 
 
 def get_marker_dir() -> Path:
@@ -24,7 +23,7 @@ def get_marker_dir() -> Path:
     return marker_dir
 
 
-def mark_complete(output_id: str, metadata: Optional[dict] = None) -> Path:
+def mark_complete(output_id: str, metadata: dict | None = None) -> Path:
     """
     Mark an output as complete by writing a .done marker file.
 

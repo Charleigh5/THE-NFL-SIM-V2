@@ -2,8 +2,7 @@
 Unit tests for The Closer trait (Phase 11: True-to-Life RPG).
 Tests crunch time activation and pressure/fatigue immunity effects.
 """
-import pytest
-from app.services.trait_service import TraitService, TRAIT_CATALOG
+from app.services.trait_service import TRAIT_CATALOG, TraitService
 
 
 class TestTheCloserTrait:

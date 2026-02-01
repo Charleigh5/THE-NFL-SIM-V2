@@ -1,14 +1,13 @@
-import sys
 import os
-import random
+import sys
 from collections import defaultdict
 
 # Add backend to path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from app.orchestrator.play_resolver import PlayResolver
 from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
-from app.schemas.play import PlayResult
+from app.orchestrator.play_resolver import PlayResolver
+
 
 # Mocks
 class MockPlayer:

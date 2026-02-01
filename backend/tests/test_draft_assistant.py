@@ -1,10 +1,13 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-from app.services.draft_assistant import DraftAssistant
-from app.models.player import Player, Position
-from app.core.mcp_registry import registry
+
 from app.core.mcp_cache import mcp_cache
+from app.core.mcp_registry import registry
+from app.models.player import Player
 from app.schemas.draft import DraftSuggestionResponse
+from app.services.draft_assistant import DraftAssistant
+
 
 @pytest.fixture(autouse=True)
 def clear_cache():

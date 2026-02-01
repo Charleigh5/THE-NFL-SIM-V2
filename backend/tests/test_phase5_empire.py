@@ -9,17 +9,23 @@ Context7 Best Practices:
 - Edge case coverage
 """
 
+
 import pytest
-from typing import List
 
 from app.services.empire import (
-    # Salary Cap
-    SalaryCapEngine, Contract, ContractType, TeamCapState,
     # GM AI
-    GMAI, GMState, DraftPick, RosterNeed, TeamPhilosophy,
-    TradeAssetType, NeedPriority, GOAPAction,
+    GMAI,
+    ContractType,
+    DraftPick,
+    GOAPAction,
+    NeedPriority,
+    RosterNeed,
+    # Salary Cap
+    SalaryCapEngine,
+    TeamCapState,
+    TeamPhilosophy,
+    TradeAssetType,
 )
-
 
 # ============================================================================
 # SALARY CAP TESTS

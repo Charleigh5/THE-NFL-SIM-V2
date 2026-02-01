@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from pathlib import Path
+
 
 def verify_mcp_config(config_path="backend/mcp_config.json"):
     """
@@ -15,7 +15,7 @@ def verify_mcp_config(config_path="backend/mcp_config.json"):
         return False
 
     try:
-        with open(config_path, 'r') as f:
+        with open(config_path) as f:
             config = json.load(f)
     except json.JSONDecodeError as e:
         print(f"❌ Invalid JSON in config file: {e}")
@@ -34,12 +34,12 @@ def verify_mcp_config(config_path="backend/mcp_config.json"):
 
         # Check required fields
         if not server.get("command"):
-            print(f"  ❌ Missing 'command'")
+            print("  ❌ Missing 'command'")
             all_valid = False
 
         args = server.get("args", [])
         if not args:
-             print(f"  ⚠️ No 'args' specified (might be intentional)")
+             print("  ⚠️ No 'args' specified (might be intentional)")
 
         # Check if script path exists (if it's a python script in args)
         if server.get("command") == "python" and args:

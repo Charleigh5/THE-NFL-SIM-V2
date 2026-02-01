@@ -1,6 +1,5 @@
 
 import sqlite3
-import pandas as pd
 
 conn = sqlite3.connect('nfl_sim.db')
 cursor = conn.cursor()

@@ -2,7 +2,6 @@
 Unit tests for GameStateManager.
 """
 
-import pytest
 from app.orchestrator.game_state_manager import GameStateManager
 
 
