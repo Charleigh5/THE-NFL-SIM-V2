@@ -7,19 +7,17 @@ Following FastAPI best practices:
 - Dependency injection for database sessions
 - Query parameter validation
 """
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
 from datetime import datetime
-from enum import Enum
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.news_item import NewsItem, NewsCategory
-from app.models.weekly_recap import WeeklyRecap
+from app.models.news_item import NewsCategory
 from app.services.news_feed_service import NewsFeedService
+from app.services.storyline_service import StorylineEventService
 from app.services.weekly_recap_service import WeeklyRecapService
-from app.services.storyline_service import StorylineEventService, StorylineType
 
 router = APIRouter(prefix="/api/news", tags=["News & Recaps"])
 
@@ -33,12 +31,12 @@ class NewsItemResponse(BaseModel):
     id: int
     season_id: int
     week: int
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     category: str
     headline: str
     content: str
-    image_url: Optional[str] = None
+    image_url: str | None = None
     importance_score: float = Field(ge=0.0, le=1.0)
     created_at: datetime
 
@@ -48,7 +46,7 @@ class NewsItemResponse(BaseModel):
 
 class NewsFeedResponse(BaseModel):
     """Paginated news feed response."""
-    items: List[NewsItemResponse]
+    items: list[NewsItemResponse]
     total_count: int
     page: int
     page_size: int
@@ -61,10 +59,10 @@ class WeeklyRecapResponse(BaseModel):
     season_id: int
     week: int
     summary_text: str
-    mvp_player_id: Optional[int] = None
-    play_of_the_week_id: Optional[str] = None
-    surprising_result: Optional[str] = None
-    media_assets: Optional[List[str]] = None
+    mvp_player_id: int | None = None
+    play_of_the_week_id: str | None = None
+    surprising_result: str | None = None
+    media_assets: list[str] | None = None
     created_at: datetime
 
     class Config:
@@ -74,8 +72,8 @@ class WeeklyRecapResponse(BaseModel):
 class StorylineResponse(BaseModel):
     """Schema for an active storyline."""
     type: str
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     start_week: int
     intensity: int = Field(ge=1, le=5)
     event_count: int
@@ -83,7 +81,7 @@ class StorylineResponse(BaseModel):
 
 class StorylineListResponse(BaseModel):
     """List of active storylines."""
-    storylines: List[StorylineResponse]
+    storylines: list[StorylineResponse]
 
 
 class ErrorResponse(BaseModel):
@@ -107,8 +105,8 @@ class ErrorResponse(BaseModel):
 )
 async def get_news_feed(
     season_id: int = Query(..., description="Season ID to filter news"),
-    week: Optional[int] = Query(None, ge=1, le=22, description="Week number (1-22)"),
-    category: Optional[str] = Query(None, description="Filter by news category"),
+    week: int | None = Query(None, ge=1, le=22, description="Week number (1-22)"),
+    category: str | None = Query(None, description="Filter by news category"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db)
@@ -219,7 +217,7 @@ async def generate_weekly_recap(
     description="Retrieve all active storylines, optionally filtered by team."
 )
 async def get_storylines(
-    team_id: Optional[int] = Query(None, description="Filter by team ID")
+    team_id: int | None = Query(None, description="Filter by team ID")
 ):
     """
     Get all active narrative storylines.
@@ -236,7 +234,7 @@ async def get_storylines(
 
 @router.get(
     "/categories",
-    response_model=List[str],
+    response_model=list[str],
     summary="Get News Categories",
     description="Get all available news category types."
 )

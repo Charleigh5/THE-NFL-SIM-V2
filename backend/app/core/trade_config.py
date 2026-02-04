@@ -1,6 +1,8 @@
-from typing import Dict, List, Any
-from pydantic_settings import BaseSettings
 from enum import Enum
+from typing import Any
+
+from pydantic_settings import BaseSettings
+
 
 class GMArchetype(str, Enum):
     AGGRESSIVE = "AGGRESSIVE" # Howie Roseman style: Upgrade at all costs
@@ -18,7 +20,7 @@ class TradeConfigSettings(BaseSettings):
     # 1. POSITIONAL VALUE TIERS (Impact Modifiers)
     # Based on PFF WAR (Wins Above Replacement) and modern contract data.
     # -------------------------------------------------------------------------
-    POSITION_VALUE_TIERS: Dict[str, Dict[str, Any]] = {
+    POSITION_VALUE_TIERS: dict[str, dict[str, Any]] = {
         "ELITE": {
             "positions": ["QB"],
             "multiplier": 1.45,
@@ -50,7 +52,7 @@ class TradeConfigSettings(BaseSettings):
     # 2. GM ARCHETYPES
     # Personality profiles that alter trade behavior.
     # -------------------------------------------------------------------------
-    GM_ARCHETYPES: Dict[GMArchetype, Dict[str, float]] = {
+    GM_ARCHETYPES: dict[GMArchetype, dict[str, float]] = {
         GMArchetype.AGGRESSIVE: {
             "target_overvalue": 1.25,      # Willing to overpay for target
             "own_pick_value": 0.85,        # Undervalues own picks (willing to trade them)
@@ -81,7 +83,7 @@ class TradeConfigSettings(BaseSettings):
     # 3. PANIC & URGENCY FACTORS
     # Situational multipliers for logic overrides.
     # -------------------------------------------------------------------------
-    PANIC_MULTIPLIERS: Dict[str, float] = {
+    PANIC_MULTIPLIERS: dict[str, float] = {
         "QB_INJURY_CONTENDER": 2.0,   # "Bradford Rule": Contender loses QB -> Panic buy
         "DEADLINE_URGENCY": 1.5,      # Final week before deadline
         "JOB_SECURITY_LOW": 1.3,      # GM on hot seat buys veterans
@@ -105,7 +107,7 @@ class TradeConfigSettings(BaseSettings):
         tier = self.get_position_tier(position)
         return self.POSITION_VALUE_TIERS[tier]["multiplier"]
 
-    def get_archetype_modifiers(self, archetype: GMArchetype) -> Dict[str, float]:
+    def get_archetype_modifiers(self, archetype: GMArchetype) -> dict[str, float]:
         """Returns modifiers for a specific GM archetype."""
         return self.GM_ARCHETYPES.get(archetype, self.GM_ARCHETYPES[GMArchetype.BALANCED])
 

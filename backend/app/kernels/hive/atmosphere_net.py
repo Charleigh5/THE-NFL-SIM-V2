@@ -1,5 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 import enum
+
+from app.kernels.core.ecs_manager import Component
+
 
 class CrowdSentiment(str, enum.Enum):
     EUPHORIC = "Euphoric"
@@ -14,11 +16,11 @@ class CrowdSentimentMachine(Component):
 
     def update_sentiment(self, home_score: int, away_score: int, big_play: bool):
         diff = home_score - away_score
-        
+
         if big_play:
             self.momentum += 10
             self.decibels += 15
-            
+
         if diff > 14:
             self.sentiment = CrowdSentiment.EUPHORIC
             self.decibels = max(self.decibels, 100)
@@ -28,7 +30,7 @@ class CrowdSentimentMachine(Component):
         elif diff < 0:
             self.sentiment = CrowdSentiment.ANXIOUS
             self.decibels = 90
-            
+
         # Decay
         self.decibels = max(70, self.decibels - 0.5)
 

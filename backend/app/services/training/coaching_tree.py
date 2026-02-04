@@ -11,9 +11,7 @@ Phase 7: Training & Development
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -67,7 +65,7 @@ class CoachState:
     xp: int = 0
     xp_to_next: int = 1000
     points_available: int = 0
-    skills: Dict[str, CoachSkill] = field(default_factory=dict)
+    skills: dict[str, CoachSkill] = field(default_factory=dict)
 
     # Track specialty
     archetype: str = "Standard" # e.g. "QB Guru"
@@ -162,7 +160,7 @@ class CoachingEngine:
         coach.points_available -= 1
         return True
 
-    def get_staff_bonuses(self, staff: List[CoachState]) -> Dict[str, float]:
+    def get_staff_bonuses(self, staff: list[CoachState]) -> dict[str, float]:
         """
         Aggregate bonuses from entire coaching staff.
 

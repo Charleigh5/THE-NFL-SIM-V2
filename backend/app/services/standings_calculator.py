@@ -1,9 +1,9 @@
-from typing import List, Dict, Optional, Tuple
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, select
-from app.models.team import Team
-from app.models.game import Game
 from pydantic import BaseModel, ConfigDict
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.models.game import Game
+from app.models.team import Team
 
 
 class TeamStanding(BaseModel):
@@ -24,13 +24,13 @@ class TeamStanding(BaseModel):
     point_differential: int
     division_rank: int
     conference_rank: int
-    seed: Optional[int] = None
+    seed: int | None = None
     strength_of_schedule: float = 0.0
     clinched_playoff: bool = False
     clinched_division: bool = False
-    clinched_seed: Optional[int] = None
-    tiebreaker_reason: Optional[str] = None
-    elo_rating: Optional[float] = 1500.0  # Power Ranking (Elo system)
+    clinched_seed: int | None = None
+    tiebreaker_reason: str | None = None
+    elo_rating: float | None = 1500.0  # Power Ranking (Elo system)
 
 
 class StandingsCalculator:
@@ -49,7 +49,7 @@ class StandingsCalculator:
     def __init__(self, db: Session):
         self.db = db
 
-    def calculate_standings(self, season_id: int) -> List[TeamStanding]:
+    def calculate_standings(self, season_id: int) -> list[TeamStanding]:
         """
         Calculate standings for all teams in a season.
 
@@ -219,7 +219,7 @@ class StandingsCalculator:
 
         return standings
 
-    def _assign_ranks(self, standings_data: List[Dict]) -> List[Dict]:
+    def _assign_ranks(self, standings_data: list[dict]) -> list[dict]:
         """Assign conference and division ranks with tiebreaker info."""
 
         # 1. Group by Division and Rank
@@ -251,7 +251,7 @@ class StandingsCalculator:
 
         return standings_data
 
-    def _rank_group(self, teams: List[Dict], group_type: str):
+    def _rank_group(self, teams: list[dict], group_type: str):
         """
         Sort a group of teams in place using tiebreakers.
         group_type: 'division' or 'conference'
@@ -274,7 +274,7 @@ class StandingsCalculator:
                 reason = self._determine_tiebreaker_reason(t1, t2, group_type)
                 t1['tiebreaker_reason'] = reason
 
-    def _make_sort_key(self, team: Dict, all_teams_in_group: List[Dict], group_type: str):
+    def _make_sort_key(self, team: dict, all_teams_in_group: list[dict], group_type: str):
         """Generate a sort key for a team."""
         # 1. Win Percentage
         win_pct = team['win_percentage']
@@ -304,7 +304,7 @@ class StandingsCalculator:
 
             return (is_div_winner, win_pct, conf_pct, sos, diff)
 
-    def _determine_tiebreaker_reason(self, t1: Dict, t2: Dict, group_type: str) -> str:
+    def _determine_tiebreaker_reason(self, t1: dict, t2: dict, group_type: str) -> str:
         """Explain why t1 is ranked above t2."""
         if t1['win_percentage'] != t2['win_percentage']:
             return ""
@@ -314,7 +314,7 @@ class StandingsCalculator:
         t2_wins_vs_t1 = t2['head_to_head'].get(t1['team_id'], 0)
 
         if t1_wins_vs_t2 > t2_wins_vs_t1:
-            return f"Head-to-head sweep"
+            return "Head-to-head sweep"
 
         if group_type == 'division':
             if t1['division_win_pct'] > t2['division_win_pct']:
@@ -331,7 +331,7 @@ class StandingsCalculator:
 
         return "Coin toss"
 
-    def get_division_standings(self, season_id: int, conference: str, division: str) -> List[TeamStanding]:
+    def get_division_standings(self, season_id: int, conference: str, division: str) -> list[TeamStanding]:
         """Get standings for a specific division."""
         all_standings = self.calculate_standings(season_id)
         return [
@@ -339,7 +339,7 @@ class StandingsCalculator:
             if s.conference == conference and s.division == division
         ]
 
-    def get_conference_standings(self, season_id: int, conference: str) -> List[TeamStanding]:
+    def get_conference_standings(self, season_id: int, conference: str) -> list[TeamStanding]:
         """Get standings for a specific conference."""
         all_standings = self.calculate_standings(season_id)
         return [
