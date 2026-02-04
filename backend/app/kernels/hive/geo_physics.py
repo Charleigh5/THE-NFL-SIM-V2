@@ -1,8 +1,9 @@
+
 from app.kernels.core.ecs_manager import Component
-from typing import List, Tuple
+
 
 class TurfDegradationMesh(Component):
-    grid: List[List[float]] = []
+    grid: list[list[float]] = []
 
     def __init__(self, width: int = 53, length: int = 120, **data):
         super().__init__(**data)
@@ -20,7 +21,7 @@ class TurfDegradationMesh(Component):
         return self.grid[int(x)][int(y)] if 0 <= x < len(self.grid) else 1.0
 
 class FluidDynamicsSolver(Component):
-    wind_vector: Tuple[float, float] = (0.0, 0.0) # x, y
+    wind_vector: tuple[float, float] = (0.0, 0.0) # x, y
     air_density: float = 1.225 # kg/m^3
 
     def calculate_magnus_effect(self, velocity: float, spin: float) -> float:

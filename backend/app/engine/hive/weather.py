@@ -11,13 +11,11 @@ Phase 4: HIVE Environment Physics
 - Combined environment calculations
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
+from typing import Any
 
 from .turf_grid import WeatherEffect
-
 
 # ============================================================================
 # ENUMS
@@ -116,7 +114,7 @@ class WeatherPhysics:
     - Combined modifiers for equipment
     """
 
-    def __init__(self, config: Optional[WeatherConfig] = None):
+    def __init__(self, config: WeatherConfig | None = None):
         self.config = config or WeatherConfig()
 
     def calculate_pass_wind_effect(
@@ -124,7 +122,7 @@ class WeatherPhysics:
         weather: GameWeather,
         throw_direction: float,  # Degrees, 0 = upfield/north
         throw_distance: float,   # Yards intended
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate wind effect on pass.
 
@@ -162,7 +160,7 @@ class WeatherPhysics:
         weather: GameWeather,
         kick_distance: float,
         is_field_goal: bool = True,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate wind effect on kicks.
 
@@ -302,7 +300,7 @@ class WeatherPhysics:
     def get_combined_modifiers(
         self,
         weather: GameWeather,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Get all weather modifiers in one call.
 
@@ -316,7 +314,7 @@ class WeatherPhysics:
             "kick_accuracy_penalty": self.calculate_kick_wind_effect(weather, 40)[1],
         }
 
-    def to_dict(self, weather: GameWeather) -> Dict[str, Any]:
+    def to_dict(self, weather: GameWeather) -> dict[str, Any]:
         """Serialize weather state with modifiers."""
         return {
             "temperature_f": weather.temperature_f,

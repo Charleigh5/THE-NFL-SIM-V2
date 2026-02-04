@@ -1,13 +1,14 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from app.models.player import Player, DevelopmentTrait, InjuryStatus
-from app.models.team import Team
-from app.models.coach import Coach
 import random
-from typing import List, Dict
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.core.random_utils import DeterministicRNG
+from app.models.player import DevelopmentTrait, Player
+from app.models.team import Team
 from app.rpg.injury_system import InjurySystem
+
 
 class TrainingFocus(str):
     GENERAL = "GENERAL"
@@ -125,7 +126,7 @@ class PlayerDevelopmentService:
             # But we need overall to change for the user to see progress.
             player.overall_rating = min(99, player.overall_rating + 1)
 
-    def _get_relevant_stats(self, position: str) -> List[str]:
+    def _get_relevant_stats(self, position: str) -> list[str]:
         common = ["speed", "agility", "awareness", "strength"]
         if position == "QB":
             return common + ["throw_power", "throw_accuracy_short", "throw_accuracy_mid", "throw_accuracy_deep"]

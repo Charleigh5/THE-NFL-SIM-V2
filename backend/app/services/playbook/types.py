@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+
 from .playbook import Play
+
 
 class AggressionLevel(str, Enum):
     """Offensive coordinator aggression."""

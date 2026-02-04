@@ -10,7 +10,6 @@ This module defines the Ability catalog and status tracking.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional
 from enum import Enum
 
 
@@ -28,12 +27,12 @@ class AbilityDefinition:
     """
     name: str
     description: str
-    position_requirements: List[str]
+    position_requirements: list[str]
     level_requirement: int
     xp_cost: int
-    effects: Dict[str, float]
+    effects: dict[str, float]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary for API responses."""
         return {
             "name": self.name,
@@ -49,7 +48,7 @@ class AbilityDefinition:
 # ABILITY CATALOG
 # =============================================================================
 
-ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
+ABILITY_CATALOG: dict[str, AbilityDefinition] = {
     # -------------------------------------------------------------------------
     # QB ABILITIES
     # -------------------------------------------------------------------------
@@ -156,12 +155,12 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
 # ABILITY HELPER FUNCTIONS
 # =============================================================================
 
-def get_ability_definition(ability_key: str) -> Optional[AbilityDefinition]:
+def get_ability_definition(ability_key: str) -> AbilityDefinition | None:
     """Get an ability definition by its key."""
     return ABILITY_CATALOG.get(ability_key)
 
 
-def get_ability_by_name(name: str) -> Optional[AbilityDefinition]:
+def get_ability_by_name(name: str) -> AbilityDefinition | None:
     """Get an ability definition by its display name."""
     for ability_def in ABILITY_CATALOG.values():
         if ability_def.name == name:
@@ -169,7 +168,7 @@ def get_ability_by_name(name: str) -> Optional[AbilityDefinition]:
     return None
 
 
-def get_abilities_for_position(position: str) -> List[AbilityDefinition]:
+def get_abilities_for_position(position: str) -> list[AbilityDefinition]:
     """Get all abilities available for a specific position."""
     return [
         ability for ability in ABILITY_CATALOG.values()

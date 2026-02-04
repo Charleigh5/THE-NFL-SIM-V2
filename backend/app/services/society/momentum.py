@@ -10,10 +10,8 @@ Phase 6: SOCIETY Locker Room Dynamics
 - "Flow State" mechanics
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -82,7 +80,7 @@ class MomentumEngine:
     """
 
     def __init__(self):
-        self.teams: Dict[str, TeamMomentum] = {}
+        self.teams: dict[str, TeamMomentum] = {}
 
     def get_team_momentum(self, team_id: str) -> TeamMomentum:
         """Get or create team momentum state."""

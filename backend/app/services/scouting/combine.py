@@ -15,10 +15,9 @@ Phase 2 Enhancement: GENESIS Integration
 - S2 cognition and medical flags exposure
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
 import random
-import math
+from dataclasses import dataclass, field
+from typing import Any
 
 from app.engine.genesis.biometrics import BiometricProfile, generate_biometrics_for_position
 
@@ -51,7 +50,7 @@ class CombineResults:
     injury_flag: bool = False
 
     # B-044: Medical Flags (populated by GENESIS reveal)
-    medical_flags: List[str] = field(default_factory=list)
+    medical_flags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -66,7 +65,7 @@ class GenesisRevealData:
     fast_twitch_percentage: float # 0-100
     reaction_time_ms: float       # milliseconds
     body_fat_percentage: float    # percent
-    medical_flags: List[str]      # List of medical concerns
+    medical_flags: list[str]      # List of medical concerns
 
     @classmethod
     def from_biometric_profile(
@@ -95,9 +94,9 @@ class CombineSimulation:
     """
 
     def __init__(self):
-        self._biometric_cache: Dict[int, BiometricProfile] = {}
+        self._biometric_cache: dict[int, BiometricProfile] = {}
 
-    def run_combine(self, true_attributes: Dict[str, int], position: str) -> CombineResults:
+    def run_combine(self, true_attributes: dict[str, int], position: str) -> CombineResults:
         """
         Generate mock combine numbers derived from ratings.
 
@@ -161,8 +160,8 @@ class CombineSimulation:
         self,
         player_id: int,
         position: str,
-        biometric_profile: Optional[BiometricProfile] = None,
-        rng: Optional[Any] = None
+        biometric_profile: BiometricProfile | None = None,
+        rng: Any | None = None
     ) -> GenesisRevealData:
         """
         B-041: Reveal hidden GENESIS biometric data at combine.
@@ -204,7 +203,7 @@ class CombineSimulation:
 
         return reveal
 
-    def _screen_medical_flags(self, profile: BiometricProfile) -> List[str]:
+    def _screen_medical_flags(self, profile: BiometricProfile) -> list[str]:
         """
         B-044: Generate medical flags based on biometric profile.
 

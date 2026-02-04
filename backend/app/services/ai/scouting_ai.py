@@ -9,19 +9,16 @@ Includes in-memory caching for performance optimization.
 """
 
 import logging
-from typing import Optional, List, Dict, Tuple, Any
-from datetime import datetime
-from functools import lru_cache
 
-from app.schemas.scouting import ScoutingReportAI, PlayerBackstory  # type: ignore[import-not-found]
+from app.schemas.scouting import PlayerBackstory, ScoutingReportAI  # type: ignore[import-not-found]
 from app.services.ai.gemini_client import get_gemini_client  # type: ignore[import-not-found]
 
 logger = logging.getLogger(__name__)
 
 
 # In-memory cache for reports (cleared on season/game advance)
-_report_cache: Dict[Tuple[str, str, int], ScoutingReportAI] = {}
-_backstory_cache: Dict[Tuple[str, str], PlayerBackstory] = {}
+_report_cache: dict[tuple[str, str, int], ScoutingReportAI] = {}
+_backstory_cache: dict[tuple[str, str], PlayerBackstory] = {}
 
 
 class ScoutingAIService:
@@ -44,9 +41,9 @@ class ScoutingAIService:
         player_name: str,
         position: str,
         overall_rating: int,
-        college: Optional[str] = None,
-        attributes: Optional[dict] = None,
-        team_needs: Optional[List[str]] = None,
+        college: str | None = None,
+        attributes: dict | None = None,
+        team_needs: list[str] | None = None,
         use_cache: bool = True
     ) -> ScoutingReportAI:
         """
@@ -102,9 +99,9 @@ class ScoutingAIService:
         player_name: str,
         position: str,
         overall_rating: int,
-        college: Optional[str],
-        attributes: Optional[dict],
-        team_needs: Optional[List[str]]
+        college: str | None,
+        attributes: dict | None,
+        team_needs: list[str] | None
     ) -> str:
         """Build the prompt for scouting report generation."""
 
@@ -190,7 +187,7 @@ Use vivid language like a real scout would. Include specific plays or tendencies
         player_name: str,
         position: str,
         overall_rating: int,
-        team_needs: Optional[List[str]]
+        team_needs: list[str] | None
     ) -> ScoutingReportAI:
         """Generate a template-based fallback when AI is unavailable."""
 
@@ -236,7 +233,7 @@ Use vivid language like a real scout would. Include specific plays or tendencies
         self,
         player_name: str,
         position: str,
-        college: Optional[str] = None,
+        college: str | None = None,
         use_cache: bool = True
     ) -> PlayerBackstory:
         """
@@ -296,7 +293,7 @@ Make it feel authentic and human. Avoid clichés.
         self,
         player_name: str,
         position: str,
-        college: Optional[str]
+        college: str | None
     ) -> PlayerBackstory:
         """Generate template-based backstory when AI unavailable."""
 
@@ -311,7 +308,7 @@ Make it feel authentic and human. Avoid clichés.
 
 
 # Singleton instance
-_service_instance: Optional[ScoutingAIService] = None
+_service_instance: ScoutingAIService | None = None
 
 
 def get_scouting_ai_service() -> ScoutingAIService:
@@ -322,7 +319,7 @@ def get_scouting_ai_service() -> ScoutingAIService:
     return _service_instance
 
 
-def clear_scouting_cache() -> Dict[str, int]:
+def clear_scouting_cache() -> dict[str, int]:
     """
     Clear all cached scouting reports and backstories.
 
