@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String
+
 from app.models.base import Base
+
 
 class Gameplan(Base):
     """

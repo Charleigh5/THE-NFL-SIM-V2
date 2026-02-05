@@ -13,10 +13,8 @@ CITATION: ENHANCEMENT_REFERENCE.md - Position-Specific Physics Deep Dive
 """
 
 import math
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
-
 
 # =============================================================================
 # COMMON PHYSICS UTILITIES
@@ -62,7 +60,7 @@ class QuarterbackPhysics:
     VISION_CONE_ANGLE = 120  # degrees
     POCKET_COLLAPSE_THRESHOLD = 1.8  # seconds
 
-    def __init__(self, ratings: Dict[str, int]):
+    def __init__(self, ratings: dict[str, int]):
         self.arm_strength = ratings.get("throw_power", 80)
         self.awareness = ratings.get("awareness", 80)
         self.release_speed = ratings.get("release", 80)
@@ -102,7 +100,7 @@ class QuarterbackPhysics:
 
         return angle_diff <= (self.VISION_CONE_ANGLE / 2)
 
-    def calculate_ooda_delay(self, time_elapsed: float) -> Tuple[bool, float]:
+    def calculate_ooda_delay(self, time_elapsed: float) -> tuple[bool, float]:
         """
         Calculate OODA (Observe-Orient-Decide-Act) loop delay.
 
@@ -194,7 +192,7 @@ class RunningBackPhysics:
     - G-force injury risk on sharp cuts
     """
 
-    def __init__(self, ratings: Dict[str, int], weight: float = 215.0):
+    def __init__(self, ratings: dict[str, int], weight: float = 215.0):
         self.mass = weight
         self.break_tackle = ratings.get("break_tackle", 75)
         self.balance = ratings.get("balance", 75)
@@ -354,7 +352,7 @@ class WideReceiverPhysics:
 
     def __init__(
         self,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         height_inches: int = 72,
         hand_size: float = 9.5,
     ):
@@ -451,7 +449,7 @@ class WideReceiverPhysics:
         ball_distance: float,
         defender_distance: float,
         is_contested: bool,
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Determine catch success.
 
@@ -509,7 +507,7 @@ class CornerbackPhysics:
     - Interception timing window
     """
 
-    def __init__(self, ratings: Dict[str, int]):
+    def __init__(self, ratings: dict[str, int]):
         self.press = ratings.get("press", 75)
         self.man_coverage = ratings.get("man_coverage", 80)
         self.zone_coverage = ratings.get("zone_coverage", 78)
@@ -524,7 +522,7 @@ class CornerbackPhysics:
         self,
         wr_release: int,
         wr_strength: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate press jam result.
 
@@ -579,7 +577,7 @@ class CornerbackPhysics:
         ball_distance: float,
         wr_distance_to_ball: float,
         ball_flight_time: float,
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Attempt to intercept pass.
 

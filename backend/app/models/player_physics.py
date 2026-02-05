@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from sqlalchemy import Integer, ForeignKey, Float, String
+
+from sqlalchemy import Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 if TYPE_CHECKING:
@@ -18,7 +21,7 @@ class PlayerPhysics(Base):
     player_id: Mapped[int] = mapped_column(Integer, ForeignKey("player.id"), unique=True, index=True)
 
     # Back relation
-    player: Mapped["Player"] = relationship("Player", back_populates="physics")
+    player: Mapped[Player] = relationship("Player", back_populates="physics")
 
     # Physics Attributes
     arm_slot: Mapped[str] = mapped_column(String, default="OverTop")

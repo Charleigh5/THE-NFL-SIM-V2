@@ -10,11 +10,9 @@ Phase 7: Training & Development
 - Position-specific gains
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS
@@ -46,7 +44,7 @@ class DrillConfig:
     """Configuration for a specific drill."""
     name: str
     type: DrillType
-    targeted_attributes: List[str]
+    targeted_attributes: list[str]
     xp_multiplier: float
     injury_risk_base: float
     fatigue_cost: float
@@ -64,9 +62,9 @@ class CampDay:
 @dataclass
 class CampResult:
     """Outcome of a processed camp day/week."""
-    xp_gained: Dict[str, float]  # PlayerID -> XP
-    injuries: List[str]          # List of injury descriptions
-    fatigue_levels: Dict[str, float]
+    xp_gained: dict[str, float]  # PlayerID -> XP
+    injuries: list[str]          # List of injury descriptions
+    fatigue_levels: dict[str, float]
 
 
 # ============================================================================
@@ -136,7 +134,7 @@ class TrainingCampEngine:
     def process_day(
         self,
         day_schedule: CampDay,
-        roster: List[str],  # List of player IDs
+        roster: list[str],  # List of player IDs
         rng_seed: int = 0
     ) -> CampResult:
         """
@@ -147,7 +145,7 @@ class TrainingCampEngine:
             return CampResult(
                 xp_gained={},
                 injuries=[],
-                fatigue_levels={pid: -20.0 for pid in roster} # Recover
+                fatigue_levels=dict.fromkeys(roster, -20.0) # Recover
             )
 
         random.seed(rng_seed)
@@ -192,7 +190,7 @@ class TrainingCampEngine:
 
         return CampResult(xp_gained, injuries, fatigue_update)
 
-    def recommend_schedule(self, team_needs: List[str]) -> List[CampDay]:
+    def recommend_schedule(self, team_needs: list[str]) -> list[CampDay]:
         """
         Generate a recommended weekly schedule based on team needs.
 

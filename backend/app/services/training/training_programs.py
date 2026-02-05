@@ -12,11 +12,9 @@ Key Features:
 - Injury risk calculation per drill
 """
 
-from enum import Enum
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
-import math
 import random
+from dataclasses import dataclass
+from enum import Enum
 
 from pydantic import BaseModel, Field
 
@@ -47,7 +45,7 @@ class PhaseConfig:
 
 
 # Phase-specific training parameters
-PHASE_CONFIGS: Dict[SeasonPhase, PhaseConfig] = {
+PHASE_CONFIGS: dict[SeasonPhase, PhaseConfig] = {
     SeasonPhase.OFFSEASON: PhaseConfig(
         intensity=0.85,
         skill_focus=0.60,
@@ -76,7 +74,7 @@ PHASE_CONFIGS: Dict[SeasonPhase, PhaseConfig] = {
 
 
 # Position-specific stat development rates (how fast each stat can improve)
-POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
+POSITION_DEVELOPMENT_RATES: dict[str, dict[str, float]] = {
     "QB": {
         "throw_power": 0.3,          # Slow (physical limit)
         "throw_accuracy_short": 0.8,
@@ -150,15 +148,15 @@ POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
 
 class TrainingResult(BaseModel):
     """Result of a training session."""
-    xp_gains: Dict[str, float] = Field(default_factory=dict)
-    stat_changes: Dict[str, int] = Field(default_factory=dict)
+    xp_gains: dict[str, float] = Field(default_factory=dict)
+    stat_changes: dict[str, int] = Field(default_factory=dict)
     fatigue_added: float = 0.0
     injury_occurred: bool = False
-    injury_type: Optional[str] = None
-    injury_severity: Optional[str] = None
+    injury_type: str | None = None
+    injury_severity: str | None = None
     weeks_out: int = 0
     session_grade: str = "B"
-    notes: List[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
 
 
 class TrainingProgramsService:
@@ -197,7 +195,7 @@ class TrainingProgramsService:
         self,
         player_age: int,
         player_position: str,
-        player_ratings: Dict[str, int],
+        player_ratings: dict[str, int],
         player_fatigue: float,
         drill_name: str,
         drill_target_stat: str,
@@ -293,7 +291,7 @@ class TrainingProgramsService:
         base_risk: float,
         fatigue: float,
         age: int,
-    ) -> Dict:
+    ) -> dict:
         """
         Calculate injury probability and determine outcome.
 
@@ -365,9 +363,9 @@ class TrainingProgramsService:
     def recommend_drills_for_player(
         self,
         player_position: str,
-        player_ratings: Dict[str, int],
-        focus_area: Optional[str] = None,
-    ) -> List[str]:
+        player_ratings: dict[str, int],
+        focus_area: str | None = None,
+    ) -> list[str]:
         """
         Recommend drills based on player's weakest stats.
 

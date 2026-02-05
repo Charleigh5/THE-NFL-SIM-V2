@@ -7,7 +7,7 @@ CITATION: ENHANCEMENT_REFERENCE.md - Equipment Physics Modifiers
 """
 
 from enum import Enum
-from typing import Dict, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -48,7 +48,7 @@ class EquipmentModifiers(BaseModel):
 
 
 # Equipment effect lookup tables
-CLEAT_EFFECTS: Dict[CleatType, Dict[str, float]] = {
+CLEAT_EFFECTS: dict[CleatType, dict[str, float]] = {
     CleatType.STANDARD: {
         "speed_modifier": 0.0,
         "traction_modifier": 0.0,
@@ -75,7 +75,7 @@ CLEAT_EFFECTS: Dict[CleatType, Dict[str, float]] = {
     },
 }
 
-GLOVE_EFFECTS: Dict[GloveType, Dict[str, float]] = {
+GLOVE_EFFECTS: dict[GloveType, dict[str, float]] = {
     GloveType.RECEIVER: {
         "catching_modifier": 0.05,    # +5% catching (baseline)
     },
@@ -97,7 +97,7 @@ GLOVE_EFFECTS: Dict[GloveType, Dict[str, float]] = {
 def calculate_equipment_modifiers(
     cleat_type: CleatType,
     glove_type: GloveType,
-    weather_temp: Optional[float] = None,
+    weather_temp: float | None = None,
     is_wet: bool = False,
 ) -> EquipmentModifiers:
     """
@@ -151,9 +151,9 @@ def calculate_equipment_modifiers(
 
 
 def apply_equipment_to_player_stats(
-    base_stats: Dict[str, float],
+    base_stats: dict[str, float],
     equipment: EquipmentModifiers,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Apply equipment modifiers to a player's base stats.
 
