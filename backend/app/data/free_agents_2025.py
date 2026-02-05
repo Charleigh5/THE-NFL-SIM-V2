@@ -22,8 +22,8 @@ sideline to every snap on the field. EA Sports-quality authenticity.
 """
 
 from dataclasses import dataclass
-from typing import List, Optional
 from enum import Enum
+
 
 class Position(str, Enum):
     QB = "QB"
@@ -57,11 +57,11 @@ class FreeAgentSigning:
     age: int
     # Ratings overrides based on real-world performance
     overall_rating: int
-    speed: Optional[int] = None
-    strength: Optional[int] = None
-    awareness: Optional[int] = None
+    speed: int | None = None
+    strength: int | None = None
+    awareness: int | None = None
     # Key attribute for position
-    primary_attribute: Optional[int] = None
+    primary_attribute: int | None = None
 
 
 # =============================================================================
@@ -70,7 +70,7 @@ class FreeAgentSigning:
 # Ranked by total contract value
 # Data verified from PFF, ESPN, NFL.com (March 2025 Free Agency)
 
-FREE_AGENT_SIGNINGS_2025: List[FreeAgentSigning] = [
+FREE_AGENT_SIGNINGS_2025: list[FreeAgentSigning] = [
     # RANK 1: Milton Williams - DT - Highest paid DT in free agency
     FreeAgentSigning(
         first_name="Milton", last_name="Williams",
@@ -303,22 +303,22 @@ FREE_AGENT_SIGNINGS_2025: List[FreeAgentSigning] = [
 # HELPER FUNCTIONS FOR SEEDING
 # =============================================================================
 
-def get_all_free_agents() -> List[FreeAgentSigning]:
+def get_all_free_agents() -> list[FreeAgentSigning]:
     """Return all 2025 free agent signings."""
     return FREE_AGENT_SIGNINGS_2025
 
 
-def get_free_agents_by_team(team_abbr: str) -> List[FreeAgentSigning]:
+def get_free_agents_by_team(team_abbr: str) -> list[FreeAgentSigning]:
     """Get free agents acquired by a specific team."""
     return [fa for fa in FREE_AGENT_SIGNINGS_2025 if fa.new_team == team_abbr]
 
 
-def get_free_agents_by_position(position: str) -> List[FreeAgentSigning]:
+def get_free_agents_by_position(position: str) -> list[FreeAgentSigning]:
     """Get free agents by position."""
     return [fa for fa in FREE_AGENT_SIGNINGS_2025 if fa.position == position]
 
 
-def get_top_free_agents(n: int = 20) -> List[FreeAgentSigning]:
+def get_top_free_agents(n: int = 20) -> list[FreeAgentSigning]:
     """Get top N free agents by contract value."""
     sorted_fas = sorted(FREE_AGENT_SIGNINGS_2025, key=lambda x: x.contract_total, reverse=True)
     return sorted_fas[:n]
@@ -384,12 +384,12 @@ NFL_DATA_CALENDAR = {
 
 if __name__ == "__main__":
     # Test the data
-    print(f"=== 2025 NFL Free Agent Data ===")
+    print("=== 2025 NFL Free Agent Data ===")
     print(f"Total signings tracked: {len(FREE_AGENT_SIGNINGS_2025)}")
-    print(f"\nTop 5 by contract value:")
+    print("\nTop 5 by contract value:")
     for i, fa in enumerate(get_top_free_agents(5), 1):
         print(f"  {i}. {fa.first_name} {fa.last_name} ({fa.position}) -> {fa.new_team}: ${fa.contract_total:,}")
 
-    print(f"\n=== Data Update Sources ===")
+    print("\n=== Data Update Sources ===")
     for source, info in DATA_UPDATE_SOURCES.items():
         print(f"  {source}: {info['source']} ({info['update_frequency']})")

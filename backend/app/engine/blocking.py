@@ -1,5 +1,5 @@
 import enum
-from pydantic import BaseModel
+
 
 class BlockType(str, enum.Enum):
     PASS_SET = "Pass Set"

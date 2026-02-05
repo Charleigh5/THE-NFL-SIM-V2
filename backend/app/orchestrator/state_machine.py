@@ -4,10 +4,11 @@ Game State Machine
 Manages game flow and state transitions with validation
 """
 
-from enum import Enum
-from typing import Optional, Dict, Any
-from pydantic import BaseModel
 import datetime
+from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel
 
 
 class GameState(str, Enum):
@@ -39,19 +40,19 @@ class GameContext(BaseModel):
     home_score: int = 0
     away_score: int = 0
     is_home_possession: bool = True
-    
+
     # Metadata
-    last_play_result: Optional[Dict[str, Any]] = None
+    last_play_result: dict[str, Any] | None = None
     timeouts_home: int = 3
     timeouts_away: int = 3
-    
+
 
 class StateTransition(BaseModel):
     """Record of a state transition"""
     from_state: GameState
     to_state: GameState
     timestamp: datetime.datetime
-    context_snapshot: Dict[str, Any]
+    context_snapshot: dict[str, Any]
 
 
 class GameStateMachine:
@@ -59,9 +60,9 @@ class GameStateMachine:
     Controls game flow and validates state transitions
     Implements a finite state machine for NFL game rules
     """
-    
+
     # Valid state transitions
-    VALID_TRANSITIONS: Dict[GameState, list[GameState]] = {
+    VALID_TRANSITIONS: dict[GameState, list[GameState]] = {
         GameState.PRE_GAME: [GameState.COIN_TOSS],
         GameState.COIN_TOSS: [GameState.KICKOFF],
         GameState.KICKOFF: [GameState.PLAY_IN_PROGRESS],
@@ -84,14 +85,14 @@ class GameStateMachine:
         GameState.FINAL: [GameState.OVERTIME],
         GameState.OVERTIME: [GameState.PLAY_CALLING, GameState.FINAL]
     }
-    
+
     def __init__(self, game_id: int, initial_state: GameState = GameState.PRE_GAME):
         self.game_id = game_id
         self.current_state = initial_state
-        self.context: Optional[GameContext] = None
+        self.context: GameContext | None = None
         self.history: list[StateTransition] = []
-        
-    def transition(self, new_state: GameState, context: Optional[GameContext] = None) -> bool:
+
+    def transition(self, new_state: GameState, context: GameContext | None = None) -> bool:
         """
         Attempt to transition to a new state
         
@@ -108,7 +109,7 @@ class GameStateMachine:
                 f"Invalid transition from {self.current_state} to {new_state}. "
                 f"Valid next states: {self.VALID_TRANSITIONS.get(self.current_state, [])}"
             )
-        
+
         # Record the transition
         transition = StateTransition(
             from_state=self.current_state,
@@ -117,48 +118,48 @@ class GameStateMachine:
             context_snapshot=self.context.dict() if self.context else {}
         )
         self.history.append(transition)
-        
+
         # Update state
         old_state = self.current_state
         self.current_state = new_state
-        
+
         # Update context if provided
         if context:
             self.context = context
-            
+
         print(f"[GameStateMachine] Transitioned: {old_state} → {new_state}")
         return True
-    
+
     def _is_valid_transition(self, new_state: GameState) -> bool:
         """Check if transition is valid"""
         valid_next_states = self.VALID_TRANSITIONS.get(self.current_state, [])
         return new_state in valid_next_states
-    
+
     def update_context(self, **kwargs) -> None:
         """Update game context with new values"""
         if self.context is None:
             raise ValueError("Context not initialized. Call set_context() first.")
-        
+
         for key, value in kwargs.items():
             if hasattr(self.context, key):
                 setattr(self.context, key, value)
-    
+
     def set_context(self, context: GameContext) -> None:
         """Set the initial game context"""
         self.context = context
-    
+
     def should_end_quarter(self) -> bool:
         """Check if quarter should end"""
         if not self.context:
             return False
         return self.context.time_remaining <= 0
-    
+
     def should_end_half(self) -> bool:
         """Check if half should end"""
         if not self.context:
             return False
         return self.context.quarter in [2, 4] and self.context.time_remaining <= 0
-    
+
     def should_trigger_two_minute_warning(self) -> bool:
         """Check if two-minute warning should be triggered"""
         if not self.context:
@@ -168,8 +169,8 @@ class GameStateMachine:
             self.context.time_remaining <= 120 and
             self.current_state == GameState.POST_PLAY
         )
-    
-    def get_state_info(self) -> Dict[str, Any]:
+
+    def get_state_info(self) -> dict[str, Any]:
         """Get current state information"""
         return {
             "game_id": self.game_id,
@@ -177,23 +178,23 @@ class GameStateMachine:
             "context": self.context.dict() if self.context else None,
             "transition_count": len(self.history)
         }
-    
+
     def persist_to_db(self, db_session) -> None:
         """
         Persist state to database
         """
         from app.models.game import Game
-        
+
         game = db_session.query(Game).filter(Game.id == self.game_id).first()
         if not game:
             print(f"[GameStateMachine] Warning: Game {self.game_id} not found in DB")
             return
-            
+
         if self.context:
             # Update columns
             game.home_score = self.context.home_score
             game.away_score = self.context.away_score
-            
+
             # Update game_data JSON
             current_data = game.game_data or {}
             current_data.update({
@@ -207,5 +208,5 @@ class GameStateMachine:
                 "current_state": self.current_state.value
             })
             game.game_data = current_data
-            
+
             db_session.commit()

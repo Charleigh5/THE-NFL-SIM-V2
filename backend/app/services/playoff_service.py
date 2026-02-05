@@ -1,12 +1,14 @@
-from sqlalchemy.orm import Session, joinedload
+import datetime
+
 from sqlalchemy import select
+from sqlalchemy.orm import Session, joinedload
+
+from app.models.game import Game
+from app.models.playoff import PlayoffMatchup, PlayoffRound
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
-from app.models.playoff import PlayoffMatchup, PlayoffRound, PlayoffConference
 from app.services.standings_calculator import StandingsCalculator
-from typing import List, Dict
-from app.models.game import Game
-import datetime
+
 
 class PlayoffService:
     """
@@ -69,7 +71,7 @@ class PlayoffService:
 
         return self.get_bracket(season_id)
 
-    def _calculate_conference_seeds(self, season_id: int, conference: str) -> List[Team]:
+    def _calculate_conference_seeds(self, season_id: int, conference: str) -> list[Team]:
         """
         Calculate playoff seeds for a conference based on NFL rules.
 
@@ -125,7 +127,7 @@ class PlayoffService:
 
         return ordered_teams
 
-    def _create_wild_card_round(self, season_id: int, conference: str, seeds: List[Team]):
+    def _create_wild_card_round(self, season_id: int, conference: str, seeds: list[Team]):
         """
         Create matchups for the Wild Card round.
 

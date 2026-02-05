@@ -1,9 +1,8 @@
 
-from typing import Optional
 from enum import Enum
-import math
 
 from app.core.gameplay_constants import GAMEPLAY
+
 
 class OutcomeType(Enum):
     CRITICAL_FAILURE = "critical_failure"
