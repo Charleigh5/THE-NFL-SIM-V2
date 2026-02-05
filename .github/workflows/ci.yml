@@ -64,6 +64,7 @@ jobs:
         with:
           name: bandit-security-report
           path: bandit-report.json
+          if-no-files-found: ignore
 
       - name: Run unit tests with coverage
         env:
