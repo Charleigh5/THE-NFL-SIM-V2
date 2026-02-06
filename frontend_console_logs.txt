@@ -1,0 +1,21 @@
+frontend/src/hooks/useWebSocket.ts:      console.log("Game state synchronized");
+frontend/src/hooks/useWebSocket.ts:        console.log("WebSocket connected");
+frontend/src/hooks/useWebSocket.ts:        console.log(`WebSocket disconnected. Reconnecting in ${delay}ms...`);
+frontend/src/components/common/FeedbackWidget.tsx:              console.log("Research complete:", res.data);
+frontend/src/components/3d/PlayAnimator.tsx:    console.log("Animating pass from", qbPosition, "to", receiverEnd);
+frontend/src/components/3d/PlayAnimator.tsx:    console.log("Animating run from", rbStart, "to", rbEnd);
+frontend/src/components/3d/PlayAnimator.tsx:    console.log("Animating kickoff return for", returnYards, "yards");
+frontend/src/pages/SkillsPage.tsx:      console.log("Toggle equip not fully supported yet");
+frontend/src/pages/SeasonDashboard.tsx:          console.log("No active season found");
+frontend/src/pages/MedicalCenter.tsx:    console.log(`Applied ${treatment} to ${selectedPart}`);
+frontend/src/pages/Dashboard.tsx:        console.log("No active season found");
+frontend/src/pages/LiveSim.tsx:      console.log("Live simulation started - receiving WebSocket updates");
+frontend/src/pages/LiveSim.tsx:      console.log("Simulation stopped");
+frontend/src/pages/LiveSim.tsx:                  onPlayComplete={() => console.log("Play complete")}
+frontend/src/services/tradeApi.ts:    console.log("Executing trade proposal:", proposal);
+frontend/src/services/tradeApi.ts:    console.log("Getting trade block for:", teamId);
+frontend/src/services/tradeApi.ts:    console.log("Removing player from trade block:", playerId);
+frontend/src/services/tradeApi.ts:      console.log(`Responded to offer ${offerId} with ${response}`);
+frontend/src/services/tradeApi.ts:    console.log("Getting trade history:", seasonId, limit);
+frontend/src/services/ImageGenService.ts:    console.log("[ImageGenService] Generating image with prompt:", prompt);
+frontend/src/services/errorLogger.ts:      if (context) console.log("Context:", context);
