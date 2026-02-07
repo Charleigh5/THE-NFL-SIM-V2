@@ -11,11 +11,9 @@ Phase 7: Advanced Training System
 - Seasonal availability
 """
 
-from dataclasses import dataclass, field
-from typing import List, Literal, Optional
 from enum import Enum
-from pydantic import BaseModel, Field
 
+from pydantic import BaseModel, Field
 
 # ============================================================================
 # ENUMS
@@ -50,9 +48,9 @@ class Drill(BaseModel):
     """
     name: str = Field(..., description="Display name of the drill")
     target_stat: str = Field(..., description="Primary stat improved by this drill")
-    secondary_stats: List[str] = Field(default_factory=list, description="Additional stats affected")
+    secondary_stats: list[str] = Field(default_factory=list, description="Additional stats affected")
     injury_risk: float = Field(ge=0.0, le=1.0, default=0.05, description="Base injury risk (0-1)")
-    season_filter: List[SeasonPhase] = Field(
+    season_filter: list[SeasonPhase] = Field(
         default_factory=lambda: [SeasonPhase.OFFSEASON, SeasonPhase.PRESEASON, SeasonPhase.REGULAR]
     )
     xp_multiplier: float = Field(default=1.0, ge=0.1, le=3.0, description="XP gain multiplier")
@@ -689,7 +687,7 @@ ALL_DRILLS = (
 )
 
 
-def get_drills_for_position(position: str) -> List[Drill]:
+def get_drills_for_position(position: str) -> list[Drill]:
     """
     Get available drills for a specific position.
 
@@ -702,7 +700,7 @@ def get_drills_for_position(position: str) -> List[Drill]:
     return POSITION_DRILL_MAP.get(position.upper(), [])
 
 
-def get_drills_for_season(drills: List[Drill], phase: SeasonPhase) -> List[Drill]:
+def get_drills_for_season(drills: list[Drill], phase: SeasonPhase) -> list[Drill]:
     """
     Filter drills available in a specific season phase.
 
@@ -716,7 +714,7 @@ def get_drills_for_season(drills: List[Drill], phase: SeasonPhase) -> List[Drill
     return [d for d in drills if phase in d.season_filter]
 
 
-def get_drills_by_category(drills: List[Drill], category: DrillCategory) -> List[Drill]:
+def get_drills_by_category(drills: list[Drill], category: DrillCategory) -> list[Drill]:
     """
     Filter drills by category.
 

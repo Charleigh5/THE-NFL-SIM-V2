@@ -10,21 +10,16 @@ Phase 9: Playbook & AI
 - Aggression settings
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from enum import Enum
 import random
-
-from .playbook import Play, Playbook, PlayType, Concept
-
 
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.coaching_ai import CoachingAIService
 
+from .playbook import Play, Playbook, PlayType
+
 # ============================================================================
 # ENUMS
 # ============================================================================
-
 from .types import AggressionLevel, GameScript, GameSituation, PlayCallResult
 
 # ============================================================================
@@ -36,9 +31,9 @@ class PlayCallerAI:
     Offensive Coordinator AI.
     """
 
-    def __init__(self, playbook: Playbook, philosophy: Optional[CoachingPhilosophy] = None, aggression: AggressionLevel = AggressionLevel.BALANCED):
+    def __init__(self, playbook: Playbook, philosophy: CoachingPhilosophy | None = None, aggression: AggressionLevel = AggressionLevel.BALANCED):
         self.playbook = playbook
-        self.tendency_history: List[PlayType] = []
+        self.tendency_history: list[PlayType] = []
 
         if philosophy:
             self.philosophy = philosophy

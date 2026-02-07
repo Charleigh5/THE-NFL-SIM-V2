@@ -10,15 +10,11 @@ Examples:
 - Loss of 3+ fumbles -> "Butterfingers" trait
 - QB throws 4+ TDs in a game -> "Gunslinger" trait boost
 """
-from typing import Dict, Any, Optional, List
 from sqlalchemy.orm import Session
-from datetime import datetime
 
-from app.models.player import Player
-from app.models.rpg_event import RPGEvent
-from app.models.trait import Trait, PlayerTrait, TraitTier, TraitSource
 from app.engine.event_bus import EventBus, EventType
-
+from app.models.rpg_event import RPGEvent
+from app.models.trait import PlayerTrait, Trait, TraitSource, TraitTier
 
 # Trait Trigger Definitions
 # Format: { trigger_key: { threshold, trait_name, tier, is_positive } }
@@ -83,7 +79,7 @@ class TraitEvolutionService:
         pass
 
     def check_trait_triggers(self, db: Session, player_id: int, season_id: int,
-                              week: Optional[int] = None, game_id: Optional[str] = None) -> List[Dict]:
+                              week: int | None = None, game_id: str | None = None) -> list[dict]:
         """
         Check if a player has triggered any new traits based on their RPG event history.
 
@@ -126,7 +122,7 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _check_game_triggers(self, db: Session, player_id: int, counts: Dict[str, int]) -> List[Dict]:
+    def _check_game_triggers(self, db: Session, player_id: int, counts: dict[str, int]) -> list[dict]:
         """Check game-specific trait triggers."""
         triggered = []
 
@@ -153,7 +149,7 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _check_season_triggers(self, db: Session, player_id: int, counts: Dict[str, int]) -> List[Dict]:
+    def _check_season_triggers(self, db: Session, player_id: int, counts: dict[str, int]) -> list[dict]:
         """Check season-wide trait triggers."""
         triggered = []
 
@@ -180,7 +176,7 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _award_trait(self, db: Session, player_id: int, trigger_key: str) -> Optional[Dict]:
+    def _award_trait(self, db: Session, player_id: int, trigger_key: str) -> dict | None:
         """
         Award a trait to a player if they don't already have it.
 
@@ -235,7 +231,7 @@ class TraitEvolutionService:
             "tier": trigger["tier"].value
         }
 
-    def remove_trait(self, db: Session, player_id: int, trait_name: str) -> Optional[Dict]:
+    def remove_trait(self, db: Session, player_id: int, trait_name: str) -> dict | None:
         """
         Remove a trait from a player.
         Useful for traits that can be "un-earned" (e.g., player improves ball security).

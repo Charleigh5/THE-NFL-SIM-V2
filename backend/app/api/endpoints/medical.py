@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional, Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -79,8 +79,8 @@ class TreatmentDecisionResponse(BaseModel):
     player_id: int
     treatment: str
     recovery_weeks: int
-    surgery_risk: Optional[float] = None
-    performance_penalty: Optional[Dict[str, int]] = None
+    surgery_risk: float | None = None
+    performance_penalty: dict[str, int] | None = None
 
 
 @router.post("/treatment", response_model=TreatmentDecisionResponse)
@@ -97,8 +97,9 @@ async def apply_treatment(
     - SURGERY: Faster recovery but surgery risk (5-15% complication)
     - PLAY_THROUGH: Player continues to play with performance penalties
     """
-    from app.models.player import Player, InjuryStatus
     import random
+
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == request.player_id).first()
     if not player:
@@ -172,19 +173,19 @@ class InjuredPlayerResponse(BaseModel):
     first_name: str
     last_name: str
     position: str
-    injury_type: Optional[str]
+    injury_type: str | None
     injury_status: str
     severity: int
     weeks_remaining: int
 
 
-@router.get("/team/{team_id}/injuries", response_model=List[InjuredPlayerResponse])
+@router.get("/team/{team_id}/injuries", response_model=list[InjuredPlayerResponse])
 async def get_team_injuries(
     team_id: int,
     db: Session = Depends(get_db)
 ):
     """Get all injured players for a team."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
     injured_players = db.query(Player).filter(
         Player.team_id == team_id,
@@ -221,7 +222,7 @@ async def calculate_surgery_risk(
     db: Session = Depends(get_db)
 ):
     """Calculate surgery risk and potential recovery improvement for a player."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:

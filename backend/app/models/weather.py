@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 import enum
+
+from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class PrecipitationType(enum.Enum):
     NONE = "None"

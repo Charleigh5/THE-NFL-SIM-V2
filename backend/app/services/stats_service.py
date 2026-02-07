@@ -1,17 +1,19 @@
+
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, select
-from typing import List, Optional
-from app.models.stats import PlayerGameStats
-from app.models.player import Player
-from app.models.team import Team
+
 from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStats
+from app.models.team import Team
 from app.schemas.stats import PlayerLeader
+
 
 class StatsService:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_league_leaders(self, season_id: int, stat_type: str, limit: int = 5) -> List[PlayerLeader]:
+    def get_league_leaders(self, season_id: int, stat_type: str, limit: int = 5) -> list[PlayerLeader]:
         """
         Get top players for a specific statistic in a season.
 

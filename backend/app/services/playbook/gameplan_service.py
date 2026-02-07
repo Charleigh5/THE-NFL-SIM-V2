@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from app.models.gameplan import Gameplan, CoachingTree
-from app.models.coach import Coach
+
+from app.models.gameplan import CoachingTree, Gameplan
+
 
 class GameplanService:
     def __init__(self, db: Session):

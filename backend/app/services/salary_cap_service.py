@@ -1,11 +1,12 @@
 
 
+from typing import Any
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, select
-from typing import List, Dict, Any, Optional
-from app.models.player import Player, Position
+
+from app.models.player import Player
 from app.models.team import Team
-from app.models.season import Season
 
 
 class SalaryCapService:
@@ -15,7 +16,7 @@ class SalaryCapService:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> Dict[str, Any]:
+    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> dict[str, Any]:
         """
         Get a detailed breakdown of a team's salary cap situation.
         """

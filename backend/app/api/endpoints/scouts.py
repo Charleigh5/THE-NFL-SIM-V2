@@ -6,8 +6,9 @@ REST API for scouting operations including scout assignment,
 report retrieval, and draft prospect evaluation.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional, Any
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -34,9 +35,9 @@ class ScoutingReportResponse(BaseModel):
     """Scouting report with fog-of-war applied."""
     prospect_id: str
     completion: float
-    attributes: Dict[str, Any]
-    strengths: List[str] = []
-    weaknesses: List[str] = []
+    attributes: dict[str, Any]
+    strengths: list[str] = []
+    weaknesses: list[str] = []
 
 class ScoutInfo(BaseModel):
     """Scout personnel information."""
@@ -51,14 +52,14 @@ class ScoutInfo(BaseModel):
 class TeamScoutsResponse(BaseModel):
     """List of team's scouts."""
     team_id: int
-    scouts: List[ScoutInfo]
+    scouts: list[ScoutInfo]
 
 # ============================================================================
 # ENDPOINTS
 # ============================================================================
 
 # Service instance (in production, use dependency injection)
-_scouting_service: Optional[ScoutingService] = None
+_scouting_service: ScoutingService | None = None
 
 def get_scouting_service(db: Session = Depends(get_db)) -> ScoutingService:
     """Dependency to get scouting service."""
@@ -113,7 +114,7 @@ async def assign_scout(
     if not success:
         raise HTTPException(
             status_code=400,
-            detail=f"Assignment failed. Verify IDs."
+            detail="Assignment failed. Verify IDs."
         )
 
     return ScoutAssignmentResponse(

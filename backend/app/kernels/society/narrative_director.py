@@ -1,9 +1,10 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Optional
+
 from app.core.random_utils import DeterministicRNG
+from app.kernels.core.ecs_manager import Component
+
 
 class StoryBeatGenerator(Component):
-    def generate_headline(self, context: dict, rng: Optional[DeterministicRNG] = None) -> str:
+    def generate_headline(self, context: dict, rng: DeterministicRNG | None = None) -> str:
         # Placeholder for GPT integration
         if rng is None:
             rng = DeterministicRNG(0)

@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -20,16 +20,16 @@ class CoachResponse(BaseModel):
     last_name: str
     role: str
     tier: str
-    team_id: Optional[int]
-    team_name: Optional[str]
+    team_id: int | None
+    team_name: str | None
     offense_rating: int
     defense_rating: int
     development_rating: int
-    playbook_offense: Optional[str]
-    playbook_defense: Optional[str]
+    playbook_offense: str | None
+    playbook_defense: str | None
 
 class CoachListResponse(BaseModel):
-    coaches: List[CoachResponse]
+    coaches: list[CoachResponse]
 
 class HireCoachRequest(BaseModel):
     coach_id: int
@@ -40,8 +40,8 @@ class FireCoachRequest(BaseModel):
     coach_id: int
 
 class CoachCarouselResponse(BaseModel):
-    available_coaches: List[CoachResponse]
-    hot_seat: List[CoachResponse]
+    available_coaches: list[CoachResponse]
+    hot_seat: list[CoachResponse]
 
 
 # =============================================================================

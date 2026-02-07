@@ -13,7 +13,7 @@ Coordinates all 6 backend kernels:
 """
 
 # from .game_orchestrator import GameOrchestrator
-from .state_machine import GameStateMachine, GameState
 from .play_resolver import PlayResolver
+from .state_machine import GameState, GameStateMachine
 
 __all__ = ["GameStateMachine", "GameState", "PlayResolver"] # "GameOrchestrator" removed temporarily
