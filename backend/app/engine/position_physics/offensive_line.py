@@ -12,12 +12,10 @@ Phase 3: Position-Specific Physics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
+from typing import Any
 
-from .base import Vector2, PhysicsState
-
+from .base import PhysicsState, Vector2
 
 # ============================================================================
 # ENUMS
@@ -56,8 +54,8 @@ class BlockerState:
 
     # Assignment
     block_type: BlockType = BlockType.PASS_SET
-    assigned_defender_id: Optional[str] = None
-    gap: Optional[GapResponsibility] = None
+    assigned_defender_id: str | None = None
+    gap: GapResponsibility | None = None
 
     # Battle state
     win_score: float = 0.0  # -1 to 1 (-1 = lost, 1 = won)
@@ -101,7 +99,7 @@ class OffensiveLinePhysics:
 
     def __init__(
         self,
-        config: Optional[OLPhysicsConfig] = None,
+        config: OLPhysicsConfig | None = None,
         strength_rating: int = 85,
         pass_block_rating: int = 80,
         run_block_rating: int = 82,
@@ -164,9 +162,9 @@ class OffensiveLinePhysics:
 
     def assign_blockers(
         self,
-        blockers: List[Tuple[str, Vector2]],
-        rushers: List[Tuple[str, Vector2]],
-    ) -> Dict[str, Optional[str]]:
+        blockers: list[tuple[str, Vector2]],
+        rushers: list[tuple[str, Vector2]],
+    ) -> dict[str, str | None]:
         """
         Deterministic blocker assignment.
         No double-targeting allowed.
@@ -208,9 +206,9 @@ class OffensiveLinePhysics:
 
     def calculate_pocket_contour(
         self,
-        blocker_positions: List[Vector2],
+        blocker_positions: list[Vector2],
         qb_position: Vector2,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Calculate pocket shape from blocker positions.
 

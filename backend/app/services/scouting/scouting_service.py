@@ -6,32 +6,26 @@ Service layer managing scouting operations with database persistence.
 Integrates SQLAlchemy > ScoutingEngine > SQLAlchemy.
 """
 
-from typing import Dict, List, Optional, Any
-from datetime import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy.future import select
 
-# DB Models
-from app.models.scout import Scout, ScoutingReport as DBReport, ScoutBias as DBScoutBias
 from app.models.player import Player
 
+# DB Models
+from app.models.scout import Scout
+from app.models.scout import ScoutingReport as DBReport
+from app.services.scouting.scout import ScoutBias as EngineBias
+
 # Logic Engine
-from app.services.scouting.scout import (
-    ScoutingEngine,
-    ScoutProfile,
-    ScoutingReport as EngineReport,
-    ScoutRegion,
-    ScoutSpecialty,
-    ScoutBias as EngineBias,
-    KnowledgeTier
-)
+from app.services.scouting.scout import ScoutingEngine, ScoutProfile, ScoutRegion, ScoutSpecialty
+from app.services.scouting.scout import ScoutingReport as EngineReport
+
 
 class ScoutingService:
     def __init__(self, db: Session):
         self.db = db
         self.engine = ScoutingEngine()
 
-    def get_team_scouts(self, team_id: int) -> List[Scout]:
+    def get_team_scouts(self, team_id: int) -> list[Scout]:
         """Get all scouts for a team from DB."""
         return self.db.query(Scout).filter(Scout.team_id == team_id).all()
 
@@ -66,7 +60,7 @@ class ScoutingService:
         self.db.commit()
         return True
 
-    def generate_report(self, team_id: int, prospect_id: int) -> Optional[EngineReport]:
+    def generate_report(self, team_id: int, prospect_id: int) -> EngineReport | None:
         """
         Generate report using the engine, based on DB state.
         """
@@ -120,7 +114,7 @@ class ScoutingService:
 
         return engine_report
 
-    def get_formatted_report(self, team_id: int, prospect_id: int) -> Dict[str, str]:
+    def get_formatted_report(self, team_id: int, prospect_id: int) -> dict[str, str]:
         engine_report = self.generate_report(team_id, prospect_id)
         if not engine_report:
             return {"error": "No report"}

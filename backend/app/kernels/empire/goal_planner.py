@@ -1,5 +1,6 @@
 from app.kernels.core.ecs_manager import Component
 
+
 class OwnerMandateAI(Component):
     current_mandate: str = "Rebuild"
     patience: int = 50 # 0-100

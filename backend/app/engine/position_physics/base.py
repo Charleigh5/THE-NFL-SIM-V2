@@ -15,11 +15,9 @@ Context7 Best Practices:
 - Pure functions for calculations
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol, Tuple, runtime_checkable
-from enum import Enum
 import math
-
+from dataclasses import dataclass, field
+from typing import Protocol, runtime_checkable
 
 # ============================================================================
 # VECTOR UTILITIES
@@ -217,7 +215,7 @@ def resolve_momentum_collision(
     player2_weight: int,
     player2_speed: float,
     angle_degrees: float,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Resolve collision using momentum conservation.
     Returns (player1_final_speed, player2_final_speed).

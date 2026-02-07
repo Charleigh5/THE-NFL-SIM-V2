@@ -10,11 +10,9 @@ Phase 9: Playbook & AI
 - Situational adjustments
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from enum import Enum
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS

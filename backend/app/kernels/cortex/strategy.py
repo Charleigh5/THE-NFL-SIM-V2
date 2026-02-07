@@ -1,6 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 from enum import Enum
-from typing import Dict, List
+
+from app.kernels.core.ecs_manager import Component
+
 
 class PersonnelGrouping(str, Enum):
     P11 = "11 Personnel" # 1 RB, 1 TE, 3 WR
@@ -26,27 +27,27 @@ class StrategyEngine(Component):
     current_personnel: PersonnelGrouping = PersonnelGrouping.P11
     current_off_scheme: OffensiveScheme = OffensiveScheme.SPREAD
     current_def_scheme: DefensiveScheme = DefensiveScheme.NICKEL
-    
+
     def get_schematic_multiplier(self, off_play_type: str, def_play_type: str) -> float:
         """
         The Rock-Paper-Scissors Logic.
         Returns a multiplier for the offense (1.0 = Neutral, >1.0 = Advantage, <1.0 = Disadvantage).
         """
         multiplier = 1.0
-        
+
         # Example RPS Logic
         if off_play_type == "INSIDE_ZONE":
             if def_play_type == "RUN_COMMIT":
                 multiplier = 0.75 # Defense Hard Counter
             elif def_play_type == "PASS_COMMIT":
                 multiplier = 1.25 # Offense Advantage
-                
+
         if off_play_type == "VERTICALS":
             if def_play_type == "COVER_3":
                 multiplier = 1.25 # Seam routes exploit Cover 3
             elif def_play_type == "PREVENT":
                 multiplier = 0.50 # Hard Counter
-                
+
         return multiplier
 
     def resolve_matchup(self, personnel: PersonnelGrouping, def_scheme: DefensiveScheme) -> float:
@@ -56,9 +57,9 @@ class StrategyEngine(Component):
         # Nickel is standard against 11 Personnel
         if personnel == PersonnelGrouping.P11 and def_scheme == DefensiveScheme.NICKEL:
             return 1.0 # Neutral
-            
+
         # Heavy Run (13/21) vs Dime = Smash
         if personnel in [PersonnelGrouping.P13, PersonnelGrouping.P21] and def_scheme == DefensiveScheme.DIME:
             return 1.5 # Massive Run Advantage
-            
+
         return 1.0

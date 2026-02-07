@@ -1,15 +1,16 @@
 from datetime import date
-from typing import List, Optional, Any
+
 from pydantic import BaseModel, ConfigDict
 
 from app.models.trait import TraitEffectType, TraitSource
 
+
 class TraitBase(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     effect_type: TraitEffectType
     effect_value: float
-    position_groups: Optional[dict] = None
+    position_groups: dict | None = None
 
 class TraitCreate(TraitBase):
     pass

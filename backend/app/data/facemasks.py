@@ -1,15 +1,16 @@
+
 from pydantic import BaseModel
-from typing import List, Optional
+
 
 class FaceMaskModel(BaseModel):
     code: str
     manufacturer: str
     style_type: str # Open, Semi-Open, Closed, Full Cage
-    positions: List[str]
+    positions: list[str]
     material: str
     weight_oz: float
     visibility_rating: float # 0.0 - 1.0
-    features: List[str]
+    features: list[str]
 
 FACEMASK_CATALOG = {
     # QB/WR/CB - Open
@@ -33,7 +34,7 @@ FACEMASK_CATALOG = {
         visibility_rating=0.98,
         features=["Titanium construction", "Panoramic view"]
     ),
-    
+
     # RB/TE/S/LB - Semi-Open
     "S2BD": FaceMaskModel(
         code="S2BD",

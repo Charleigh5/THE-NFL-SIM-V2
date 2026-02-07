@@ -6,14 +6,14 @@ Phase 3: B-059, B-060
 Provides endpoints for querying and updating player playbook familiarity.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from typing import Dict, Optional
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.player import Player
-from app.services.playbook.familiarity import FamiliarityManager, PlaybookFamiliarity
+from app.services.playbook.familiarity import FamiliarityManager
 
 router = APIRouter(prefix="/playbook", tags=["Playbook"])
 
@@ -37,11 +37,11 @@ class FamiliarityResponse(BaseModel):
     """B-059: Response for GET /playbook/familiarity/{player_id}."""
     player_id: int
     experience_years: int
-    current_scheme: Optional[str]
+    current_scheme: str | None
     total_plays_known: int
     mastered_plays_count: int
     average_familiarity: float
-    plays: Dict[str, PlayKnowledge]
+    plays: dict[str, PlayKnowledge]
 
     class Config:
         from_attributes = True

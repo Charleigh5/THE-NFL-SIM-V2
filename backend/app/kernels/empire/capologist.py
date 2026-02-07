@@ -1,6 +1,8 @@
-from app.kernels.core.ecs_manager import Component
-from typing import List, Dict, Tuple
+
 from pydantic import BaseModel
+
+from app.kernels.core.ecs_manager import Component
+
 
 class ContractYear(BaseModel):
     year: int
@@ -8,7 +10,7 @@ class ContractYear(BaseModel):
     signing_bonus_proration: float
     roster_bonus: float
     workout_bonus: float
-    
+
     @property
     def cap_hit(self) -> float:
         return self.base_salary + self.signing_bonus_proration + self.roster_bonus + self.workout_bonus
@@ -16,9 +18,9 @@ class ContractYear(BaseModel):
 class CapologistPhysics(Component):
     salary_cap: float = 255.0 # Millions
     current_cap_space: float = 0.0
-    dead_money_ledger: Dict[int, float] = {} # Year -> Amount
+    dead_money_ledger: dict[int, float] = {} # Year -> Amount
 
-    def calculate_dead_money_acceleration(self, contract_years: List[ContractYear], current_year: int) -> float:
+    def calculate_dead_money_acceleration(self, contract_years: list[ContractYear], current_year: int) -> float:
         """
         Directive 1: Dead Cap Accelerator.
         Instantly sums all future unamortized signing bonuses.
@@ -29,7 +31,7 @@ class CapologistPhysics(Component):
                 accelerated_amount += year.signing_bonus_proration
         return accelerated_amount
 
-    def restructure_contract(self, contract_years: List[ContractYear], current_year: int, amount_to_convert: float) -> List[ContractYear]:
+    def restructure_contract(self, contract_years: list[ContractYear], current_year: int, amount_to_convert: float) -> list[ContractYear]:
         """
         Directive 2: Restructure Engine (Kick the Can).
         """
@@ -43,7 +45,7 @@ class CapologistPhysics(Component):
 
         for year in remaining_years:
             year.signing_bonus_proration += proration_per_year
-            
+
         return contract_years
 
     def check_financial_risk(self, dead_cap_hit: float) -> float:
@@ -55,7 +57,7 @@ class CapologistPhysics(Component):
         elif risk_ratio > 0.05: return 0.5 # Moderate Risk
         return 0.1 # Low Risk
 
-    def validate_trade_financials(self, team_cap_space: float, incoming_contracts_value: float) -> Tuple[bool, str]:
+    def validate_trade_financials(self, team_cap_space: float, incoming_contracts_value: float) -> tuple[bool, str]:
         """
         Directive 14: Server-Authoritative Validation.
         Ensures trades are mathematically legal under the cap.

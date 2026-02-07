@@ -5,18 +5,15 @@ Command pattern implementation for different play types
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel
+from typing import Any
+
 from app.schemas.play import PlayResult
-
-
-
 
 
 class PlayCommand(ABC):
     """Abstract base class for all play commands"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+    def __init__(self, offense_players: list[Any], defense_players: list[Any], modifiers: dict[str, Any] | None = None, play_id: str | None = None,
                  distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True, possession: str = "home", start_yard_line: int = 20):
         self.offense = offense_players
         self.defense = defense_players
@@ -30,7 +27,7 @@ class PlayCommand(ABC):
         self.start_yard_line = start_yard_line
 
     @abstractmethod
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute the play and return result"""
         pass
 
@@ -43,8 +40,8 @@ class PlayCommand(ABC):
 class PassPlayCommand(PlayCommand):
     """Command for passing plays"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+    def __init__(self, offense_players: list[Any], defense_players: list[Any],
+                 target_receiver_id: int | None = None, depth: str = "short", modifiers: dict[str, Any] | None = None, play_id: str | None = None,
                  distance: int = 10, down: int = 1, yard_line: int = 20):
         super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
         self.target_receiver = target_receiver_id
@@ -53,7 +50,7 @@ class PassPlayCommand(PlayCommand):
     def get_play_type(self) -> str:
         return f"PASS_{self.depth.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """
         Execute a passing play
         This will be called by PlayResolver which integrates all engines
@@ -68,8 +65,8 @@ class PassPlayCommand(PlayCommand):
 class RunPlayCommand(PlayCommand):
     """Command for running plays"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
+    def __init__(self, offense_players: list[Any], defense_players: list[Any],
+                 run_direction: str = "middle", modifiers: dict[str, Any] | None = None, play_id: str | None = None,
                  distance: int = 10, down: int = 1, yard_line: int = 20):
         super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
         self.run_direction = run_direction  # left, middle, right
@@ -77,7 +74,7 @@ class RunPlayCommand(PlayCommand):
     def get_play_type(self) -> str:
         return f"RUN_{self.run_direction.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a running play"""
         # Placeholder - actual logic in PlayResolver
         return PlayResult(
@@ -89,13 +86,13 @@ class RunPlayCommand(PlayCommand):
 class KickoffCommand(PlayCommand):
     """Command for kickoffs"""
 
-    def __init__(self, kicking_team: List[Any], receiving_team: List[Any]):
+    def __init__(self, kicking_team: list[Any], receiving_team: list[Any]):
         super().__init__(kicking_team, receiving_team)
 
     def get_play_type(self) -> str:
         return "KICKOFF"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a kickoff"""
         base_yards = rng.randint(15, 30)
 
@@ -118,13 +115,13 @@ class KickoffCommand(PlayCommand):
 class PuntCommand(PlayCommand):
     """Command for punts"""
 
-    def __init__(self, punting_team: List[Any], receiving_team: List[Any]):
+    def __init__(self, punting_team: list[Any], receiving_team: list[Any]):
         super().__init__(punting_team, receiving_team)
 
     def get_play_type(self) -> str:
         return "PUNT"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a punt"""
         punt_distance = rng.randint(35, 55)
         return_yards = rng.randint(0, 15)
@@ -154,14 +151,14 @@ class PuntCommand(PlayCommand):
 class FieldGoalCommand(PlayCommand):
     """Command for field goal attempts"""
 
-    def __init__(self, kicking_team: List[Any], defense: List[Any], distance: int):
+    def __init__(self, kicking_team: list[Any], defense: list[Any], distance: int):
         super().__init__(kicking_team, defense)
         self.distance = distance
 
     def get_play_type(self) -> str:
         return "FIELD_GOAL"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a field goal attempt"""
 
         # Simple success calculation based on distance
@@ -211,7 +208,7 @@ class ExtraPointCommand(PlayCommand):
     def get_play_type(self) -> str:
         return "EXTRA_POINT"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute an extra point attempt"""
         is_good = rng.randint(0, 100) < 95  # 95% success rate
 
@@ -224,16 +221,16 @@ class ExtraPointCommand(PlayCommand):
 class TwoPointConversionCommand(PlayCommand):
     """Command for 2-point conversion attempts"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
+    def __init__(self, offense_players: list[Any], defense_players: list[Any],
                  play_type: str = "pass"):
         super().__init__(offense_players, defense_players)
         self.play_type = play_type  # pass or run
-        self.executed_command: Optional[PlayCommand] = None
+        self.executed_command: PlayCommand | None = None
 
     def get_play_type(self) -> str:
         return f"TWO_POINT_{self.play_type.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """
         Execute a 2-point conversion attempt.
 

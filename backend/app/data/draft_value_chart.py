@@ -1,6 +1,5 @@
-from typing import Dict, Tuple, Optional
-from datetime import datetime
 from app.core.trade_config import trade_config
+
 
 class DraftValueChart:
     """
@@ -31,7 +30,7 @@ class DraftValueChart:
     }
 
     # Cache for interpolated values
-    _FULL_CHART: Dict[int, int] = {}
+    _FULL_CHART: dict[int, int] = {}
 
     @classmethod
     def _initialize_chart(cls):
