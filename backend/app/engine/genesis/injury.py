@@ -17,10 +17,8 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # BODY PART HIERARCHY
@@ -126,7 +124,7 @@ class InjurySeverity(int, Enum):
 # BODY PART HIERARCHY MAPPING
 # ============================================================================
 
-BODY_PART_REGIONS: Dict[BodyPart, BodyRegion] = {
+BODY_PART_REGIONS: dict[BodyPart, BodyRegion] = {
     BodyPart.HEAD: BodyRegion.HEAD,
     BodyPart.NECK: BodyRegion.HEAD,
     BodyPart.CHEST: BodyRegion.TORSO,
@@ -168,7 +166,7 @@ BODY_PART_REGIONS: Dict[BodyPart, BodyRegion] = {
 }
 
 # Recovery times in weeks by injury type
-BASE_RECOVERY_WEEKS: Dict[InjuryType, Tuple[int, int]] = {
+BASE_RECOVERY_WEEKS: dict[InjuryType, tuple[int, int]] = {
     InjuryType.CRAMP: (0, 0),
     InjuryType.CONTUSION: (0, 1),
     InjuryType.STRAIN: (1, 4),
@@ -204,7 +202,7 @@ class Injury:
     weeks_elapsed: int = 0
     season: int = 0
     week: int = 0
-    play_id: Optional[str] = None
+    play_id: str | None = None
     g_force: float = 0.0  # Impact force that caused injury
 
     @property
@@ -234,7 +232,7 @@ class ChronicWear:
     """Chronic wear/damage to a body part."""
     body_part: BodyPart
     wear_level: float = 0.0  # 0-100
-    injury_history: List[Injury] = field(default_factory=list)
+    injury_history: list[Injury] = field(default_factory=list)
 
     @property
     def re_injury_risk_modifier(self) -> float:
@@ -267,13 +265,13 @@ class ChronicWear:
 class InjuryProfile:
     """Complete injury profile for a player."""
     # Current injuries
-    active_injuries: List[Injury] = field(default_factory=list)
+    active_injuries: list[Injury] = field(default_factory=list)
 
     # Injury history
-    injury_history: List[Injury] = field(default_factory=list)
+    injury_history: list[Injury] = field(default_factory=list)
 
     # Chronic wear by body part
-    chronic_wear: Dict[BodyPart, ChronicWear] = field(default_factory=dict)
+    chronic_wear: dict[BodyPart, ChronicWear] = field(default_factory=dict)
 
     # CTE risk tracking (head impacts)
     head_impact_count: int = 0
@@ -310,7 +308,7 @@ class InjuryProfile:
         force_factor = min(100, self.cumulative_head_g_force / 100)
         return (impact_factor + force_factor) / 2
 
-    def get_worst_injury(self) -> Optional[Injury]:
+    def get_worst_injury(self) -> Injury | None:
         """Get the most severe active injury."""
         if not self.active_injuries:
             return None
@@ -334,7 +332,7 @@ class InjuryEngine:
 
     def __init__(
         self,
-        profile: Optional[InjuryProfile] = None,
+        profile: InjuryProfile | None = None,
         rng: Any = None,
     ):
         self.profile = profile or InjuryProfile()
@@ -393,7 +391,7 @@ class InjuryEngine:
         is_contact: bool = True,
         season: int = 0,
         week: int = 0,
-    ) -> Optional[Injury]:
+    ) -> Injury | None:
         """
         Check if an impact causes an injury.
 
@@ -494,7 +492,7 @@ class InjuryEngine:
         self.profile.head_impact_count += 1
         self.profile.cumulative_head_g_force += g_force
 
-    def process_week(self) -> List[Injury]:
+    def process_week(self) -> list[Injury]:
         """
         Process healing for one week.
 

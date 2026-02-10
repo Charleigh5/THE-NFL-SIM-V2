@@ -1,16 +1,24 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, List, Optional
+
+from typing import Any, TYPE_CHECKING
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
+if TYPE_CHECKING:
+    class AnatomyModel:
+        current_health: float
+        chronic_wear: float
+
 
 class TraumaModel(Component):
     # Directive 8: Medical Fog of War
-    hidden_injury_flags: List[str] = Field(default_factory=list) # e.g. "Degenerative Knee"
+    hidden_injury_flags: list[str] = Field(default_factory=list) # e.g. "Degenerative Knee"
     mri_revealed: bool = False
-    
+
     # Directive 9: Painkiller Trade-Off
     painkiller_active: bool = False
-    
-    def reveal_flags(self) -> List[str]:
+
+    def reveal_flags(self) -> list[str]:
         """
         Only reveals flags if MRI has been performed (Directive 8).
         """
@@ -18,7 +26,7 @@ class TraumaModel(Component):
             return self.hidden_injury_flags
         return []
 
-    def administer_shot(self, anatomy: 'AnatomyModel'):
+    def administer_shot(self, anatomy: Any):
         """
         Directive 9: The Shot.
         Sets currentHealth to 100% but increases chronicWear by +15.
@@ -28,7 +36,7 @@ class TraumaModel(Component):
         anatomy.chronic_wear += 15.0
 
 class ScarTissueManager(Component):
-    scars: Dict[str, float] = Field(default_factory=dict) # BodyPart -> StructuralIntegrityPenalty
+    scars: dict[str, float] = Field(default_factory=dict) # BodyPart -> StructuralIntegrityPenalty
 
     def add_scar(self, body_part: str, severity: float):
         current_penalty = self.scars.get(body_part, 0.0)

@@ -1,6 +1,8 @@
-from typing import Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Any
+
 from app.kernels.cortex.strategy import StrategyEngine
+
 
 @dataclass
 class GameSituation:
@@ -70,7 +72,7 @@ class CortexKernel:
         self.rng = DeterministicRNG(seed if seed is not None else 0)
         self.coordinator_multiplier = CoordinatorMultiplier()
 
-    def call_play(self, situation: GameSituation, coach_philosophy: Optional[Dict[str, Any]] = None) -> str:
+    def call_play(self, situation: GameSituation, coach_philosophy: dict[str, Any] | None = None) -> str:
         """
         Decide on a play type based on the current game situation.
 

@@ -1,5 +1,6 @@
 import math
 
+
 class CollisionSystem:
     @staticmethod
     def resolve_tackle(runner_mass: float, runner_velocity: float, defender_mass: float, defender_velocity: float, angle_impact: float = 0.0) -> dict:

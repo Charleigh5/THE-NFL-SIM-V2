@@ -1,5 +1,6 @@
 from app.kernels.core.ecs_manager import Component
 
+
 class PhysicsKernel(Component):
     """
     The PhysicsKernel is responsible for updating the physical state of the simulation.

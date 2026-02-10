@@ -1,0 +1,5126 @@
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/combine.py:188:9
+    |
+186 |         reveal = sim.reveal_genesis_data(player_id=player_id, position=position.upper())
+187 |     except Exception as e:
+188 |         raise HTTPException(status_code=500, detail=f"Failed to reveal GENESIS data: {str(e)}")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+189 |
+190 |     return GenesisRevealResponse(
+    |
+
+F811 Redefinition of unused `AbilityStatus` from line 19
+  --> backend/app/api/endpoints/abilities.py:40:7
+   |
+40 | class AbilityStatus(BaseModel):
+   |       ^^^^^^^^^^^^^ `AbilityStatus` redefined here
+41 |     """Status of an ability for a player."""
+42 |     key: str
+   |
+  ::: backend/app/api/endpoints/abilities.py:19:31
+   |
+17 | from app.models.coach import Coach
+18 | from app.models.player import Player
+19 | from app.rpg.abilities import AbilityStatus, get_ability_definition
+   |                               ------------- previous definition of `AbilityStatus` here
+20 | from app.services.ability_service import AbilityService
+   |
+help: Remove definition: `AbilityStatus`
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/agent_tasks.py:73:9
+   |
+71 |       except Exception as e:
+72 |           logger.error(f"Plan generation failed: {e}", exc_info=True)
+73 | /         raise HTTPException(
+74 | |             status_code=500,
+75 | |             detail=f"Failed to generate implementation plan: {str(e)}"
+76 | |         )
+   | |_________^
+   |
+
+UP042 Class BroadcastStyleEnum inherits from both `str` and `enum.Enum`
+  --> backend/app/api/endpoints/broadcast.py:20:7
+   |
+18 | # =============================================================================
+19 |
+20 | class BroadcastStyleEnum(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^^
+21 |     ESPN = "ESPN"
+22 |     CBS = "CBS"
+   |
+help: Inherit from `enum.StrEnum`
+
+E711 Comparison to `None` should be `cond is None`
+  --> backend/app/api/endpoints/coaches.py:89:55
+   |
+87 | async def get_available_coaches(db: Session = Depends(get_db)):
+88 |     """Get all coaches not currently employed by a team."""
+89 |     coaches = db.query(Coach).filter(Coach.team_id == None).all()
+   |                                                       ^^^^
+90 |     return CoachListResponse(
+91 |         coaches=[_coach_to_response(c, db) for c in coaches]
+   |
+help: Replace with `cond is None`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/api/endpoints/coaches.py:102:57
+    |
+100 |     - Hot seat coaches (poor performance, candidates for firing)
+101 |     """
+102 |     available = db.query(Coach).filter(Coach.team_id == None).all()
+    |                                                         ^^^^
+103 |
+104 |     # Hot seat: ROOKIE tier coaches or low combined rating
+    |
+help: Replace with `cond is None`
+
+E711 Comparison to `None` should be `cond is not None`
+   --> backend/app/api/endpoints/coaches.py:106:26
+    |
+104 |     # Hot seat: ROOKIE tier coaches or low combined rating
+105 |     hot_seat = db.query(Coach).filter(
+106 |         Coach.team_id != None,
+    |                          ^^^^
+107 |         Coach.tier == CoachTier.ROOKIE
+108 |     ).all()
+    |
+help: Replace with `cond is not None`
+
+F841 Local variable `team_id` is assigned to but never used
+   --> backend/app/api/endpoints/coaches.py:164:5
+    |
+162 |         raise HTTPException(status_code=400, detail="Coach is not employed")
+163 |
+164 |     team_id = coach.team_id
+    |     ^^^^^^^
+165 |     coach.team_id = None
+166 |     db.commit()
+    |
+help: Remove assignment to unused variable `team_id`
+
+E712 Avoid equality comparisons to `True`; use `Player.is_rookie:` for truth checks
+  --> backend/app/api/endpoints/draft.py:31:16
+   |
+29 |     result = await db.execute(
+30 |         select(Player)
+31 |         .where(Player.is_rookie == True)
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^
+32 |         .where(Player.team_id == None)
+33 |         .order_by(Player.overall_rating.desc())
+   |
+help: Replace with `Player.is_rookie`
+
+E711 Comparison to `None` should be `cond is None`
+  --> backend/app/api/endpoints/draft.py:32:34
+   |
+30 |         select(Player)
+31 |         .where(Player.is_rookie == True)
+32 |         .where(Player.team_id == None)
+   |                                  ^^^^
+33 |         .order_by(Player.overall_rating.desc())
+34 |     )
+   |
+help: Replace with `cond is None`
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/draft.py:82:9
+   |
+80 |     except ValueError as e:
+81 |         logger.warning(f"Draft suggestion validation error: {str(e)}")
+82 |         raise HTTPException(status_code=400, detail=str(e))
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+83 |     except Exception as e:
+84 |         logger.error(f"Draft suggestion error: {str(e)}", exc_info=True)
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/draft.py:85:9
+   |
+83 |       except Exception as e:
+84 |           logger.error(f"Draft suggestion error: {str(e)}", exc_info=True)
+85 | /         raise HTTPException(
+86 | |             status_code=500,
+87 | |             detail="Failed to generate draft suggestion"
+88 | |         )
+   | |_________^
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/feedback.py:159:9
+    |
+157 |     except Exception as e:
+158 |         logger.error(f"Batch submit failed: {e}", exc_info=True)
+159 |         raise HTTPException(status_code=500, detail=f"Batch submission failed: {str(e)}")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+160 |
+161 | @router.post("/export", response_model=BatchSubmitResponse)
+    |
+
+F841 Local variable `project_root` is assigned to but never used
+   --> backend/app/api/endpoints/feedback.py:202:9
+    |
+200 |         # Get project root (assuming we are in app/api/endpoints)
+201 |         # ../../../..
+202 |         project_root = Path(os.getcwd()) # Should be backend or project root. Assuming execution context.
+    |         ^^^^^^^^^^^^
+203 |         # Ensure we find the right docs folder.
+204 |         # If running from backend dir, docs is ../docs possibly?
+    |
+help: Remove assignment to unused variable `project_root`
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/feedback.py:222:9
+    |
+220 |     except Exception as e:
+221 |         logger.error(f"Export failed: {e}", exc_info=True)
+222 |         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/news.py:227:9
+    |
+225 |     except Exception as e:
+226 |         logger.error(f"Error fetching league news: {e}")
+227 |         raise HTTPException(status_code=500, detail="Failed to fetch news")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/news.py:254:9
+    |
+252 |     except Exception as e:
+253 |         logger.error(f"Error fetching team news: {e}")
+254 |         raise HTTPException(status_code=500, detail="Failed to fetch team news")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/news.py:281:9
+    |
+279 |     except Exception as e:
+280 |         logger.error(f"Error fetching player news: {e}")
+281 |         raise HTTPException(status_code=500, detail="Failed to fetch player news")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/news.py:337:9
+    |
+335 |     except Exception as e:
+336 |         logger.error(f"Error fetching injury reports: {e}")
+337 |         raise HTTPException(status_code=500, detail="Failed to fetch injury reports")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:344:1
+    |
+342 | # ============================================================================
+343 |
+344 | from fastapi import Depends
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+345 | from pydantic import Field
+346 | from sqlalchemy.orm import Session
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:345:1
+    |
+344 | from fastapi import Depends
+345 | from pydantic import Field
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+346 | from sqlalchemy.orm import Session
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:346:1
+    |
+344 | from fastapi import Depends
+345 | from pydantic import Field
+346 | from sqlalchemy.orm import Session
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+347 |
+348 | from app.core.database import get_db
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:348:1
+    |
+346 | from sqlalchemy.orm import Session
+347 |
+348 | from app.core.database import get_db
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+349 | from app.models.news_item import NewsCategory
+350 | from app.services.news_feed_service import NewsFeedService
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:349:1
+    |
+348 | from app.core.database import get_db
+349 | from app.models.news_item import NewsCategory
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+350 | from app.services.news_feed_service import NewsFeedService
+351 | from app.services.storyline_service import StorylineEventService
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:350:1
+    |
+348 | from app.core.database import get_db
+349 | from app.models.news_item import NewsCategory
+350 | from app.services.news_feed_service import NewsFeedService
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+351 | from app.services.storyline_service import StorylineEventService
+352 | from app.services.weekly_recap_service import WeeklyRecapService
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:351:1
+    |
+349 | from app.models.news_item import NewsCategory
+350 | from app.services.news_feed_service import NewsFeedService
+351 | from app.services.storyline_service import StorylineEventService
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+352 | from app.services.weekly_recap_service import WeeklyRecapService
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/api/endpoints/news.py:352:1
+    |
+350 | from app.services.news_feed_service import NewsFeedService
+351 | from app.services.storyline_service import StorylineEventService
+352 | from app.services.weekly_recap_service import WeeklyRecapService
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+W293 Blank line contains whitespace
+  --> backend/app/api/endpoints/physics_api.py:83:1
+   |
+81 |     """
+82 |     Simulate a single play and return all frames.
+83 |
+   | ^^^^
+84 |     Returns complete frame data for replay/visualization.
+85 |     """
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/api/endpoints/physics_api.py:169:1
+    |
+167 |     """
+168 |     WebSocket endpoint for streaming physics frames in real-time.
+169 |
+    | ^^^^
+170 |     Protocol:
+171 |     1. Client sends: {"action": "simulate", "play_type": "PASS", "los": 50}
+    |
+help: Remove whitespace from blank line
+
+E712 Avoid equality comparisons to `True`; use `Season.is_active:` for truth checks
+   --> backend/app/api/endpoints/season.py:129:33
+    |
+127 |     """
+128 |     logger.info("Fetching enhanced season summary")
+129 |     stmt = select(Season).where(Season.is_active == True)
+    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+130 |     result = await db.execute(stmt)
+131 |     season = result.scalar_one_or_none()
+    |
+help: Replace with `Season.is_active`
+
+E712 Avoid equality comparisons to `True`; use `Game.is_played:` for truth checks
+   --> backend/app/api/endpoints/season.py:142:9
+    |
+140 |     stmt = select(func.count(Game.id)).where(
+141 |         Game.season_id == season.id,
+142 |         Game.is_played == True
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+143 |     )
+144 |     result = await db.execute(stmt)
+    |
+help: Replace with `Game.is_played`
+
+C401 Unnecessary generator (rewrite as a set comprehension)
+   --> backend/app/api/endpoints/season.py:171:26
+    |
+169 |             if playoff_bracket:
+170 |                 # Get the latest round with incomplete games
+171 |                 rounds = set(m.round for m in playoff_bracket)
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+172 |                 for round_name in ["WILD_CARD", "DIVISIONAL", "CONFERENCE", "SUPER_BOWL"]:
+173 |                     if round_name in rounds:
+    |
+help: Rewrite as a set comprehension
+
+F821 Undefined name `timedelta`
+   --> backend/app/api/endpoints/season.py:370:51
+    |
+368 |             # 2. Calculate Regular Season Start Date
+369 |             # Add weeks * 7 days
+370 |             regular_start_date = start_date_val + timedelta(weeks=preseason_weeks_count)
+    |                                                   ^^^^^^^^^
+371 |
+372 |             # 3. Generate Regular Season Schedule
+    |
+
+F821 Undefined name `timedelta`
+   --> backend/app/api/endpoints/season.py:396:31
+    |
+394 |         if days_until_sunday == 0:
+395 |             days_until_sunday = 7
+396 |         start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)
+    |                               ^^^^^^^^^
+397 |
+398 |     # We need to commit new_season so it's visible to sync session?
+    |
+
+E712 Avoid equality comparisons to `True`; use `Season.is_active:` for truth checks
+   --> backend/app/api/endpoints/season.py:438:33
+    |
+436 |     """Get the currently active season."""
+437 |     logger.info("Fetching current active season")
+438 |     stmt = select(Season).where(Season.is_active == True)
+    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^
+439 |     result = await db.execute(stmt)
+440 |     season = result.scalar_one_or_none()
+    |
+help: Replace with `Season.is_active`
+
+UP045 Use `X | None` for type annotations
+   --> backend/app/api/endpoints/season.py:833:58
+    |
+833 | @router.get("/{season_id}/draft/current", response_model=Optional[DraftPickDetail])
+    |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+834 | @handle_errors
+835 | async def get_current_pick(season_id: int, db: AsyncSession = Depends(get_async_db)):
+    |
+help: Convert to `X | None`
+
+UP045 Use `X | None` for type annotations
+   --> backend/app/api/endpoints/season.py:855:65
+    |
+855 | @router.post("/{season_id}/draft/simulate-next", response_model=Optional[DraftPickSummary])
+    |                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+856 | @handle_errors
+857 | async def simulate_next_pick(season_id: int, db: AsyncSession = Depends(get_async_db)):
+    |
+help: Convert to `X | None`
+
+E712 Avoid equality comparisons to `True`; use `Player.is_rookie:` for truth checks
+   --> backend/app/api/endpoints/season.py:909:13
+    |
+907 |         # We can use sync_db to query
+908 |         available_players = sync_db.query(Player).filter(
+909 |             Player.is_rookie == True,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^
+910 |             Player.team_id == None
+911 |         ).order_by(Player.overall_rating.desc()).limit(20).all()
+    |
+help: Replace with `Player.is_rookie`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/api/endpoints/season.py:910:31
+    |
+908 |         available_players = sync_db.query(Player).filter(
+909 |             Player.is_rookie == True,
+910 |             Player.team_id == None
+    |                               ^^^^
+911 |         ).order_by(Player.overall_rating.desc()).limit(20).all()
+    |
+help: Replace with `cond is None`
+
+E712 Avoid equality comparisons to `True`; use `Player.is_rookie:` for truth checks
+    --> backend/app/api/endpoints/season.py:1034:31
+     |
+1033 |         if is_rookie_only:
+1034 |             stmt = stmt.where(Player.is_rookie == True)
+     |                               ^^^^^^^^^^^^^^^^^^^^^^^^
+1035 |
+1036 |         if position_group == "QB":
+     |
+help: Replace with `Player.is_rookie`
+
+E712 Avoid equality comparisons to `True`; use `Season.is_active:` for truth checks
+    --> backend/app/api/endpoints/season.py:1096:50
+     |
+1094 |     # If season_id not provided, use current season
+1095 |     if not season_id:
+1096 |         season = db.execute(select(Season).where(Season.is_active == True)).scalar_one_or_none()
+     |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+1097 |         season_id = season.id if season else 0
+     |
+help: Replace with `Season.is_active`
+
+C401 Unnecessary generator (rewrite as a set comprehension)
+    --> backend/app/api/endpoints/season.py:1119:17
+     |
+1117 |     all_players = list(db.execute(select(Player)).scalars().all())
+1118 |     avg_ratings = {}
+1119 |     positions = set(p.position for p in all_players)
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1120 |
+1121 |     for pos in positions:
+     |
+help: Rewrite as a set comprehension
+
+F811 Redefinition of unused `suggest_draft_pick` from line 899
+    --> backend/app/api/endpoints/season.py:1178:11
+     |
+1176 | @router.post("/draft/suggest-pick", response_model=draft_schemas.DraftSuggestionResponse)
+1177 | @handle_errors
+1178 | async def suggest_draft_pick(
+     |           ^^^^^^^^^^^^^^^^^^ `suggest_draft_pick` redefined here
+1179 |     request: draft_schemas.DraftSuggestionRequest,
+1180 |     db: AsyncSession = Depends(get_async_db)
+     |
+    ::: backend/app/api/endpoints/season.py:899:11
+     |
+ 897 | @router.post("/{season_id}/draft/suggest-pick")
+ 898 | @handle_errors
+ 899 | async def suggest_draft_pick(season_id: int, team_id: int, db: AsyncSession = Depends(get_async_db)):
+     |           ------------------ previous definition of `suggest_draft_pick` here
+ 900 |     """Suggest a draft pick using AI Assistant."""
+ 901 |     from app.services.draft_assistant import DraftAssistant
+     |
+help: Remove definition: `suggest_draft_pick`
+
+W293 Blank line contains whitespace
+  --> backend/app/api/endpoints/simulation.py:42:1
+   |
+40 |     """
+41 |     Start a continuous live simulation that broadcasts via WebSocket.
+42 |
+   | ^^^^
+43 |     This endpoint:
+44 |     1. Starts the simulation in the background
+   |
+help: Remove whitespace from blank line
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/traits.py:28:9
+   |
+26 |     except Exception as e:
+27 |         log_error(logger, ErrorCategory.API_ERROR, "Failed to retrieve traits", exc_info=e)
+28 |         raise HTTPException(status_code=500, detail="Internal server error")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+29 |
+30 | @router.get("/players/{player_id}", response_model=list[schemas.Trait])
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/traits.py:66:9
+   |
+64 |     except Exception as e:
+65 |         log_error(logger, ErrorCategory.API_ERROR, "Failed to retrieve player traits", exc_info=e, player_id=player_id)
+66 |         raise HTTPException(status_code=500, detail="Internal server error")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+67 |
+68 | @router.post("/players/{player_id}", response_model=schemas.PlayerTrait)
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/traits.py:86:9
+   |
+84 |         return player_trait
+85 |     except ValueError as e:
+86 |         raise HTTPException(status_code=400, detail=str(e))
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+87 |     except Exception as e:
+88 |         log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/traits.py:89:9
+   |
+87 |     except Exception as e:
+88 |         log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
+89 |         raise HTTPException(status_code=500, detail="Internal server error")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+90 |         raise HTTPException(status_code=500, detail="Internal server error")
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/api/endpoints/traits.py:90:9
+   |
+88 |         log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
+89 |         raise HTTPException(status_code=500, detail="Internal server error")
+90 |         raise HTTPException(status_code=500, detail="Internal server error")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+91 |
+92 | @router.post("/players/{player_id}/unlock", response_model=bool)
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/endpoints/traits.py:111:9
+    |
+109 |     except Exception as e:
+110 |         log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to unlock coaching trait", exc_info=e, player_id=player_id)
+111 |         raise HTTPException(status_code=500, detail="Internal server error")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+W293 Blank line contains whitespace
+  --> backend/app/api/endpoints/websocket.py:31:1
+   |
+29 |         """
+30 |         Broadcast a message to all connected clients.
+31 |
+   | ^^^^^^^^
+32 |         Args:
+33 |             message: Dict with 'type' and 'payload' keys
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> backend/app/api/endpoints/websocket.py:56:1
+   |
+54 |     """
+55 |     WebSocket endpoint for live simulation streaming.
+56 |
+   | ^^^^
+57 |     Clients connect here to receive real-time updates:
+58 |     - GAME_UPDATE: Game state changes (score, quarter, time)
+   |
+help: Remove whitespace from blank line
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/training.py:134:13
+    |
+132 |               drills = get_drills_for_season(drills, season_enum)
+133 |           except ValueError:
+134 | /             raise HTTPException(
+135 | |                 status_code=400,
+136 | |                 detail=f"Unknown season phase: {season}. Valid phases: {[s.value for s in SeasonPhase]}"
+137 | |             )
+    | |_____________^
+138 |
+139 |       # Filter by category
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/training.py:145:13
+    |
+143 |               drills = get_drills_by_category(drills, category_enum)
+144 |           except ValueError:
+145 | /             raise HTTPException(
+146 | |                 status_code=400,
+147 | |                 detail=f"Unknown category: {category}. Valid categories: {[c.value for c in DrillCategory]}"
+148 | |             )
+    | |_____________^
+149 |
+150 |       # Convert to response format
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/training.py:201:13
+    |
+199 |             coaching_style = get_coaching_style(request.coaching_style)
+200 |         except ValueError as e:
+201 |             raise HTTPException(status_code=400, detail=str(e))
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+202 |
+203 |     # Create training engine and execute
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/api/training.py:248:9
+    |
+246 |         style = get_coaching_style(coaching_style)
+247 |     except ValueError as e:
+248 |         raise HTTPException(status_code=400, detail=str(e))
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+249 |
+250 |     seasonal_cap = get_seasonal_intensity_cap(season_phase)
+    |
+
+B007 Loop control variable `i` not used within loop body
+   --> backend/app/api/training.py:256:9
+    |
+254 |     recommendations = []
+255 |
+256 |     for i, day in enumerate(days):
+    |         ^
+257 |         if day == "Sunday":
+258 |             # Game day
+    |
+help: Rename unused `i` to `_i`
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/core/auth.py:85:9
+   |
+83 |         return decoded_token
+84 |     except auth.InvalidIdTokenError:
+85 |         raise HTTPException(status_code=401, detail="Invalid authentication token")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+86 |     except auth.ExpiredIdTokenError:
+87 |         raise HTTPException(status_code=401, detail="Authentication token expired")
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/core/auth.py:87:9
+   |
+85 |         raise HTTPException(status_code=401, detail="Invalid authentication token")
+86 |     except auth.ExpiredIdTokenError:
+87 |         raise HTTPException(status_code=401, detail="Authentication token expired")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+88 |     except Exception as e:
+89 |         logger.error(f"Token verification error: {e}")
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/core/auth.py:90:9
+   |
+88 |     except Exception as e:
+89 |         logger.error(f"Token verification error: {e}")
+90 |         raise HTTPException(status_code=401, detail="Authentication failed")
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/core/auth.py:129:9
+    |
+128 |       except ValueError:
+129 | /         raise HTTPException(
+130 | |             status_code=401,
+131 | |             detail="Invalid Authorization header format. Use 'Bearer <token>'"
+132 | |         )
+    | |_________^
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/core/error_decorators.py:53:13
+   |
+51 |                   exc_info=True
+52 |               )
+53 | /             raise HTTPException(
+54 | |                 status_code=409,
+55 | |                 detail={
+56 | |                     "error": "Integrity Error",
+57 | |                     "message": "Operation conflicts with existing data",
+58 | |                     "request_id": request_id,
+59 | |                     "timestamp": datetime.now(UTC).isoformat()
+60 | |                 }
+61 | |             )
+   | |_____________^
+62 |
+63 |           except OperationalError as e:
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  --> backend/app/core/error_decorators.py:75:13
+   |
+73 |                   exc_info=True
+74 |               )
+75 | /             raise HTTPException(
+76 | |                 status_code=503,
+77 | |                 detail={
+78 | |                     "error": "Service Unavailable",
+79 | |                     "message": "Database connection error. Please try again later.",
+80 | |                     "request_id": request_id,
+81 | |                     "timestamp": datetime.now(UTC).isoformat()
+82 | |                 }
+83 | |             )
+   | |_____________^
+84 |
+85 |           except ValidationError as e:
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/core/error_decorators.py:94:13
+    |
+ 92 |                   }
+ 93 |               )
+ 94 | /             raise HTTPException(
+ 95 | |                 status_code=422,
+ 96 | |                 detail={
+ 97 | |                     "error": "Validation Error",
+ 98 | |                     "message": "Invalid data provided",
+ 99 | |                     "details": e.errors(),
+100 | |                     "request_id": request_id,
+101 | |                     "timestamp": datetime.now(UTC).isoformat()
+102 | |                 }
+103 | |             )
+    | |_____________^
+104 |
+105 |           except ValueError as e:
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/core/error_decorators.py:114:13
+    |
+112 |                   }
+113 |               )
+114 | /             raise HTTPException(
+115 | |                 status_code=400,
+116 | |                 detail={
+117 | |                     "error": "Bad Request",
+118 | |                     "message": str(e),
+119 | |                     "request_id": request_id,
+120 | |                     "timestamp": datetime.now(UTC).isoformat()
+121 | |                 }
+122 | |             )
+    | |_____________^
+123 |
+124 |           except Exception as e:
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/core/error_decorators.py:139:13
+    |
+137 |                   }
+138 |               )
+139 | /             raise HTTPException(
+140 | |                 status_code=500,
+141 | |                 detail={
+142 | |                     "error": "Internal Server Error",
+143 | |                     "message": "An unexpected error occurred",
+144 | |                     "request_id": request_id,
+145 | |                     "timestamp": datetime.now(UTC).isoformat()
+146 | |                 }
+147 | |             )
+    | |_____________^
+148 |
+149 |       return wrapper
+    |
+
+B007 Loop control variable `name` not used within loop body
+   --> backend/app/core/mcp_registry.py:109:13
+    |
+107 |     async def shutdown(self):
+108 |         """Shutdown all connections."""
+109 |         for name, client in self.clients.items():
+    |             ^^^^
+110 |             await client.disconnect()
+111 |         self.clients.clear()
+    |
+help: Rename unused `name` to `_name`
+
+UP042 Class RiskLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/core/nfl_reference_data.py:59:7
+   |
+57 | # ============================================================================
+58 |
+59 | class RiskLevel(str, Enum):
+   |       ^^^^^^^^^
+60 |     LOW = "Low"
+61 |     MODERATE = "Moderate"
+   |
+help: Inherit from `enum.StrEnum`
+
+E402 Module level import not at top of file
+   --> backend/app/core/seed.py:108:1
+    |
+106 |     )
+107 |
+108 | from app.models.trait import Trait, TraitEffectType, TraitSource
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+109 | from app.services.trait_service import TRAIT_CATALOG, TraitService
+    |
+
+E402 Module level import not at top of file
+   --> backend/app/core/seed.py:109:1
+    |
+108 | from app.models.trait import Trait, TraitEffectType, TraitSource
+109 | from app.services.trait_service import TRAIT_CATALOG, TraitService
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+B007 Loop control variable `key` not used within loop body
+   --> backend/app/core/seed.py:121:9
+    |
+119 |     logger.info("Seeding Traits from Catalog...")
+120 |     traits_to_add = []
+121 |     for key, definition in TRAIT_CATALOG.items():
+    |         ^^^
+122 |         trait = Trait(
+123 |             name=definition.name,
+    |
+help: Rename unused `key` to `_key`
+
+UP042 Class GMArchetype inherits from both `str` and `enum.Enum`
+ --> backend/app/core/trade_config.py:7:7
+  |
+7 | class GMArchetype(str, Enum):
+  |       ^^^^^^^^^^^
+8 |     AGGRESSIVE = "AGGRESSIVE" # Howie Roseman style: Upgrade at all costs
+9 |     HOARDER = "HOARDER"       # Sam Presti style: Accumulate assets
+  |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `first` not used within loop body
+   --> backend/app/data/career_accomplishments.py:124:6
+    |
+122 | }
+123 |
+124 | for (first, last), data in PLAYER_ACCOMPLISHMENTS.items():
+    |      ^^^^^
+125 |    # Ensure clean lookup keys
+126 |    pass
+    |
+help: Rename unused `first` to `_first`
+
+B007 Loop control variable `last` not used within loop body
+   --> backend/app/data/career_accomplishments.py:124:13
+    |
+122 | }
+123 |
+124 | for (first, last), data in PLAYER_ACCOMPLISHMENTS.items():
+    |             ^^^^
+125 |    # Ensure clean lookup keys
+126 |    pass
+    |
+help: Rename unused `last` to `_last`
+
+B007 Loop control variable `data` not used within loop body
+   --> backend/app/data/career_accomplishments.py:124:20
+    |
+122 | }
+123 |
+124 | for (first, last), data in PLAYER_ACCOMPLISHMENTS.items():
+    |                    ^^^^
+125 |    # Ensure clean lookup keys
+126 |    pass
+    |
+help: Rename unused `data` to `_data`
+
+UP042 Class OffensiveScheme inherits from both `str` and `enum.Enum`
+  --> backend/app/data/coaches.py:18:7
+   |
+18 | class OffensiveScheme(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+19 |     """Offensive philosophy/concept."""
+20 |     WEST_COAST = "WEST_COAST"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DefensiveScheme inherits from both `str` and `enum.Enum`
+  --> backend/app/data/coaches.py:27:7
+   |
+27 | class DefensiveScheme(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+28 |     """Base defensive alignment."""
+29 |     FOUR_THREE = "4-3"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Position inherits from both `str` and `enum.Enum`
+  --> backend/app/data/free_agents_2025.py:28:7
+   |
+28 | class Position(str, Enum):
+   |       ^^^^^^^^
+29 |     QB = "QB"
+30 |     RB = "RB"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class InteractionType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/attribute_interaction.py:31:7
+   |
+31 | class InteractionType(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+32 |     """Categories of attribute interactions."""
+33 |     PRE_SNAP = "PRE_SNAP"           # Mind games before the play
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class InteractionOutcome inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/attribute_interaction.py:43:7
+   |
+43 | class InteractionOutcome(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^^
+44 |     """Possible outcomes of an attribute interaction."""
+45 |     DOMINANT_WIN = "DOMINANT_WIN"   # Clear victory (>15 point differential)
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `i` not used within loop body
+   --> backend/app/engine/attribute_interaction.py:514:13
+    |
+512 |         defender_secondary_bonus = 0.0
+513 |
+514 |         for i, attr in enumerate(definition.secondary_attrs[:2]):
+    |             ^
+515 |             attacker_val = getattr(attacker, attr, 50)
+516 |             defender_val = getattr(defender, attr, 50)
+    |
+help: Rename unused `i` to `_i`
+
+UP042 Class BlockType inherits from both `str` and `enum.Enum`
+ --> backend/app/engine/blocking.py:4:7
+  |
+4 | class BlockType(str, enum.Enum):
+  |       ^^^^^^^^^
+5 |     PASS_SET = "Pass Set"
+6 |     RUN_DRIVE = "Run Drive"
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BlockingResult inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/blocking.py:10:7
+   |
+ 8 |     PULL = "Pull"
+ 9 |
+10 | class BlockingResult(str, enum.Enum):
+   |       ^^^^^^^^^^^^^^
+11 |     WIN = "Win"
+12 |     LOSS = "Loss"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class SeasonPhase inherits from both `str` and `enum.Enum`
+ --> backend/app/engine/calendar.py:7:7
+  |
+7 | class SeasonPhase(str, enum.Enum):
+  |       ^^^^^^^^^^^
+8 |     PRESEASON = "Preseason"
+9 |     REGULAR_SEASON = "Regular Season"
+  |
+help: Inherit from `enum.StrEnum`
+
+B905 `zip()` without an explicit `strict=` parameter
+   --> backend/app/engine/core/deterministic_rng.py:181:29
+    |
+180 |         cumulative = 0.0
+181 |         for item, weight in zip(items, weights):
+    |                             ^^^^^^^^^^^^^^^^^^^
+182 |             cumulative += weight
+183 |             if cumulative >= threshold:
+    |
+help: Add explicit value for parameter `strict=`
+
+UP042 Class GameEventType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/core/enhanced_event_bus.py:34:7
+   |
+34 | class GameEventType(str, Enum):
+   |       ^^^^^^^^^^^^^
+35 |     """All game event types."""
+36 |     # Play Events
+   |
+help: Inherit from `enum.StrEnum`
+
+UP007 Use `X | Y` for type annotations
+   --> backend/app/engine/core/enhanced_event_bus.py:130:11
+    |
+128 | SyncHandler = Callable[[GameEvent], None]
+129 | AsyncHandler = Callable[[GameEvent], 'asyncio.Future[None]']
+130 | Handler = Union[SyncHandler, AsyncHandler]
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+help: Convert to `X | Y`
+
+UP042 Class TickEngineState inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/core/tick_engine.py:34:7
+   |
+32 | # ============================================================================
+33 |
+34 | class TickEngineState(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+35 |     """State of the tick engine."""
+36 |     STOPPED = "STOPPED"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PlayPhase inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/core/tick_engine.py:41:7
+   |
+41 | class PlayPhase(str, Enum):
+   |       ^^^^^^^^^
+42 |     """Current phase within a play."""
+43 |     PRE_SNAP = "PRE_SNAP"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PassRushMove inherits from both `str` and `enum.Enum`
+ --> backend/app/engine/defense.py:4:7
+  |
+4 | class PassRushMove(str, enum.Enum):
+  |       ^^^^^^^^^^^^
+5 |     BULL_RUSH = "Bull Rush"
+6 |     SWIM = "Swim"
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CoverageType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/defense.py:10:7
+   |
+ 8 |     RIP = "Rip"
+ 9 |
+10 | class CoverageType(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+11 |     MAN = "Man"
+12 |     ZONE = "Zone"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class EventType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/event_bus.py:54:7
+   |
+52 |     reason: str
+53 |
+54 | class EventType(str, Enum):
+   |       ^^^^^^^^^
+55 |     # Gameplay Events
+56 |     SACK_EVENT = "SACK_EVENT"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PlayerState inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/frame_physics.py:52:7
+   |
+52 | class PlayerState(str, Enum):
+   |       ^^^^^^^^^^^
+53 |     """Current state of a player in the simulation."""
+54 |     IDLE = "IDLE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PlayOutcome inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/frame_physics.py:66:7
+   |
+66 | class PlayOutcome(str, Enum):
+   |       ^^^^^^^^^^^
+67 |     """Possible outcomes for a play."""
+68 |     IN_PROGRESS = "IN_PROGRESS"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BodyType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/biometrics.py:27:7
+   |
+25 | # ============================================================================
+26 |
+27 | class BodyType(str, Enum):
+   |       ^^^^^^^^
+28 |     """Player body type classification."""
+29 |     LEAN = "LEAN"           # Low body fat, explosive
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class FiberType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/biometrics.py:36:7
+   |
+36 | class FiberType(str, Enum):
+   |       ^^^^^^^^^
+37 |     """Muscle fiber dominance."""
+38 |     FAST_TWITCH = "FAST_TWITCH"   # Explosive, quick fatigue
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CognitiveState inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/cognition.py:27:7
+   |
+25 | # ============================================================================
+26 |
+27 | class CognitiveState(str, Enum):
+   |       ^^^^^^^^^^^^^^
+28 |     """Current cognitive state of a player."""
+29 |     RELAXED = "RELAXED"         # Pre-snap, no pressure
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ReadPhase inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/cognition.py:36:7
+   |
+36 | class ReadPhase(str, Enum):
+   |       ^^^^^^^^^
+37 |     """Current phase of read progression."""
+38 |     PRE_SNAP = "PRE_SNAP"       # Reading defense alignment
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ActivityLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/fatigue.py:26:7
+   |
+24 | # ============================================================================
+25 |
+26 | class ActivityLevel(str, Enum):
+   |       ^^^^^^^^^^^^^
+27 |     """Current activity level."""
+28 |     REST = "REST"               # Sideline, huddle
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class FatigueLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/fatigue.py:36:7
+   |
+36 | class FatigueLevel(str, Enum):
+   |       ^^^^^^^^^^^^
+37 |     """Overall fatigue state."""
+38 |     FRESH = "FRESH"             # Full energy
+   |
+help: Inherit from `enum.StrEnum`
+
+B905 `zip()` without an explicit `strict=` parameter
+   --> backend/app/engine/genesis/fatigue.py:185:38
+    |
+183 |             self.neural.percentage,
+184 |         ]
+185 |         return sum(w * p for w, p in zip(weights, percentages))
+    |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+186 |
+187 |     @property
+    |
+help: Add explicit value for parameter `strict=`
+
+UP042 Class BodyRegion inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/injury.py:27:7
+   |
+25 | # ============================================================================
+26 |
+27 | class BodyRegion(str, Enum):
+   |       ^^^^^^^^^^
+28 |     """Top-level body regions."""
+29 |     HEAD = "HEAD"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BodyPart inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/injury.py:35:7
+   |
+35 | class BodyPart(str, Enum):
+   |       ^^^^^^^^
+36 |     """Specific body parts for injury tracking."""
+37 |     # Head Region
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class InjuryType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/genesis/injury.py:82:7
+   |
+82 | class InjuryType(str, Enum):
+   |       ^^^^^^^^^^
+83 |     """Types of injuries."""
+84 |     # Muscle/Soft Tissue
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CleatType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/equipment.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class CleatType(str, Enum):
+   |       ^^^^^^^^^
+22 |     """Types of football cleats."""
+23 |     MOLDED = "MOLDED"           # Standard, all-around
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class GloveType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/equipment.py:31:7
+   |
+31 | class GloveType(str, Enum):
+   |       ^^^^^^^^^
+32 |     """Types of receiver gloves."""
+33 |     STANDARD = "STANDARD"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class HelmetType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/equipment.py:40:7
+   |
+40 | class HelmetType(str, Enum):
+   |       ^^^^^^^^^^
+41 |     """Helmet protection levels."""
+42 |     STANDARD = "STANDARD"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TurfType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/turf_grid.py:27:7
+   |
+25 | # ============================================================================
+26 |
+27 | class TurfType(str, Enum):
+   |       ^^^^^^^^
+28 |     """Types of playing surfaces."""
+29 |     NATURAL_GRASS = "NATURAL_GRASS"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TurfCondition inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/turf_grid.py:37:7
+   |
+37 | class TurfCondition(str, Enum):
+   |       ^^^^^^^^^^^^^
+38 |     """Condition states of turf."""
+39 |     PRISTINE = "PRISTINE"    # 90-100%
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class WeatherEffect inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/turf_grid.py:46:7
+   |
+46 | class WeatherEffect(str, Enum):
+   |       ^^^^^^^^^^^^^
+47 |     """Weather effects on turf."""
+48 |     DRY = "DRY"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class WindDirection inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/weather.py:24:7
+   |
+22 | # ============================================================================
+23 |
+24 | class WindDirection(str, Enum):
+   |       ^^^^^^^^^^^^^
+25 |     """Wind direction relative to play direction."""
+26 |     HEADWIND = "HEADWIND"       # Against play direction
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PrecipitationType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/hive/weather.py:33:7
+   |
+33 | class PrecipitationType(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^
+34 |     """Type of precipitation."""
+35 |     NONE = "NONE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TackleOutcome inherits from both `str` and `enum.Enum`
+   --> backend/app/engine/position_physics.py:167:7
+    |
+165 | # =============================================================================
+166 |
+167 | class TackleOutcome(str, Enum):
+    |       ^^^^^^^^^^^^^
+168 |     """Possible outcomes of a tackle attempt."""
+169 |     TACKLED = "TACKLED"
+    |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `max_cut` is assigned to but never used
+   --> backend/app/engine/position_physics.py:326:9
+    |
+324 |         """
+325 |         # Maximum cut angle limited by physics
+326 |         max_cut = 90 * (self.elusiveness / 100)
+    |         ^^^^^^^
+327 |
+328 |         # Calculate lateral G-force
+    |
+help: Remove assignment to unused variable `max_cut`
+
+UP042 Class CoverageType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/defensive_back.py:29:7
+   |
+27 | # ============================================================================
+28 |
+29 | class CoverageType(str, Enum):
+   |       ^^^^^^^^^^^^
+30 |     """Types of coverage."""
+31 |     MAN_PRESS = "MAN_PRESS"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BreakType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/defensive_back.py:39:7
+   |
+39 | class BreakType(str, Enum):
+   |       ^^^^^^^^^
+40 |     """Route break recognition."""
+41 |     SLANT = "SLANT"       # 45° inside
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BlockType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/offensive_line.py:24:7
+   |
+22 | # ============================================================================
+23 |
+24 | class BlockType(str, Enum):
+   |       ^^^^^^^^^
+25 |     """Types of blocks."""
+26 |     PASS_SET = "PASS_SET"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class GapResponsibility inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/offensive_line.py:35:7
+   |
+35 | class GapResponsibility(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^
+36 |     """Gap assignments."""
+37 |     A_GAP_LEFT = "A_GAP_LEFT"
+   |
+help: Inherit from `enum.StrEnum`
+
+C401 Unnecessary generator (rewrite as a set comprehension)
+   --> backend/app/engine/position_physics/offensive_line.py:176:29
+    |
+174 |         """
+175 |         assignments = {}
+176 |         available_rushers = set(r[0] for r in rushers)
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+177 |
+178 |         # Sort blockers by x position (left to right)
+    |
+help: Rewrite as a set comprehension
+
+F841 Local variable `ys` is assigned to but never used
+   --> backend/app/engine/position_physics/offensive_line.py:229:9
+    |
+227 |         # Calculate pocket bounds
+228 |         xs = [p.x for p in blocker_positions]
+229 |         ys = [p.y for p in blocker_positions]
+    |         ^^
+230 |
+231 |         width = max(xs) - min(xs)
+    |
+help: Remove assignment to unused variable `ys`
+
+UP042 Class RushMove inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/pass_rush.py:29:7
+   |
+27 | # ============================================================================
+28 |
+29 | class RushMove(str, Enum):
+   |       ^^^^^^^^
+30 |     """Types of pass rush moves."""
+31 |     BULL_RUSH = "BULL_RUSH"       # Power move straight ahead
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BlockerStance inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/pass_rush.py:40:7
+   |
+40 | class BlockerStance(str, Enum):
+   |       ^^^^^^^^^^^^^
+41 |     """Blocker's current stance."""
+42 |     SET = "SET"           # Ready position
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ThrowType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/quarterback.py:35:7
+   |
+33 | # ============================================================================
+34 |
+35 | class ThrowType(str, Enum):
+   |       ^^^^^^^^^
+36 |     """Types of throws."""
+37 |     SCREEN = "SCREEN"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PocketState inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/quarterback.py:46:7
+   |
+46 | class PocketState(str, Enum):
+   |       ^^^^^^^^^^^
+47 |     """Current state of the pocket."""
+48 |     CLEAN = "CLEAN"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CutType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/running_back.py:38:7
+   |
+36 | # ============================================================================
+37 |
+38 | class CutType(str, Enum):
+   |       ^^^^^^^
+39 |     """Types of cut moves."""
+40 |     JUKE = "JUKE"           # Quick lateral movement
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ContactType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/running_back.py:48:7
+   |
+48 | class ContactType(str, Enum):
+   |       ^^^^^^^^^^^
+49 |     """Type of tackle contact."""
+50 |     WRAP_UP = "WRAP_UP"         # Arms around waist
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `trucking_mod` is assigned to but never used
+   --> backend/app/engine/position_physics/running_back.py:191:9
+    |
+189 |         # Modify by ratings
+190 |         elusiveness_mod = (100 - self.elusiveness) / 100.0  # Lower elusiveness = easier to tackle
+191 |         trucking_mod = self.trucking / 100.0
+    |         ^^^^^^^^^^^^
+192 |         fatigue_mod = 1.0 + (fatigue / 200.0)  # Fatigue increases tackle chance
+    |
+help: Remove assignment to unused variable `trucking_mod`
+
+UP042 Class RouteType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/wide_receiver.py:28:7
+   |
+26 | # ============================================================================
+27 |
+28 | class RouteType(str, Enum):
+   |       ^^^^^^^^^
+29 |     """Types of routes."""
+30 |     SLANT = "SLANT"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CatchType inherits from both `str` and `enum.Enum`
+  --> backend/app/engine/position_physics/wide_receiver.py:42:7
+   |
+42 | class CatchType(str, Enum):
+   |       ^^^^^^^^^
+43 |     """Types of catch situations."""
+44 |     WIDE_OPEN = "WIDE_OPEN"
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `coverage_penalty` is assigned to but never used
+   --> backend/app/engine/position_physics/wide_receiver.py:242:13
+    |
+240 |         if catch_attempt.defender_distance < self.config.contested_threshold_yards:
+241 |             # Contested catch uses CIT rating
+242 |             coverage_penalty = (self.config.contested_threshold_yards - catch_attempt.defender_distance)
+    |             ^^^^^^^^^^^^^^^^
+243 |             coverage_factor = 0.7 * (self.cit / 100.0)
+244 |         else:
+    |
+help: Remove assignment to unused variable `coverage_penalty`
+
+F841 Local variable `failure_range_start` is assigned to but never used
+   --> backend/app/engine/probability_engine.py:193:13
+    |
+191 |             # Failure branch
+192 |             # Critical Failure is the top 10% of the failure range.
+193 |             failure_range_start = probability
+    |             ^^^^^^^^^^^^^^^^^^^
+194 |             failure_range_width = 1.0 - probability
+195 |             if roll > (1.0 - (failure_range_width * critical_threshold)):
+    |
+help: Remove assignment to unused variable `failure_range_start`
+
+F821 Undefined name `PhysicsKernel`
+  --> backend/app/kernels/core/sim_engine.py:25:22
+   |
+24 |     # Directive 9: Decoupled Physics/AI Kernels
+25 |     physics_kernel: 'PhysicsKernel' = None
+   |                      ^^^^^^^^^^^^^
+26 |     ai_kernel: 'AIKernel' = None
+   |
+
+F821 Undefined name `AIKernel`
+  --> backend/app/kernels/core/sim_engine.py:26:17
+   |
+24 |     # Directive 9: Decoupled Physics/AI Kernels
+25 |     physics_kernel: 'PhysicsKernel' = None
+26 |     ai_kernel: 'AIKernel' = None
+   |                 ^^^^^^^^
+27 |
+28 |     def run_loop(self, duration_seconds: float):
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/core/sim_engine.py:36:26
+   |
+34 |         # Directive 3: Event-Driven Architecture
+35 |         # 1. AI Think
+36 |         if self.ai_kernel: self.ai_kernel.update(dt)
+   |                          ^
+37 |         # 2. Physics Move
+38 |         if self.physics_kernel: self.physics_kernel.update(dt)
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/core/sim_engine.py:38:31
+   |
+36 |         if self.ai_kernel: self.ai_kernel.update(dt)
+37 |         # 2. Physics Move
+38 |         if self.physics_kernel: self.physics_kernel.update(dt)
+   |                               ^
+   |
+
+UP042 Class NodeStatus inherits from both `str` and `enum.Enum`
+ --> backend/app/kernels/cortex/behavior_tree.py:6:7
+  |
+6 | class NodeStatus(str, enum.Enum):
+  |       ^^^^^^^^^^
+7 |     SUCCESS = "Success"
+8 |     FAILURE = "Failure"
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PersonnelGrouping inherits from both `str` and `enum.Enum`
+ --> backend/app/kernels/cortex/strategy.py:6:7
+  |
+6 | class PersonnelGrouping(str, Enum):
+  |       ^^^^^^^^^^^^^^^^^
+7 |     P11 = "11 Personnel" # 1 RB, 1 TE, 3 WR
+8 |     P12 = "12 Personnel" # 1 RB, 2 TE, 2 WR
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class OffensiveScheme inherits from both `str` and `enum.Enum`
+  --> backend/app/kernels/cortex/strategy.py:13:7
+   |
+11 |     P13 = "13 Personnel" # 1 RB, 3 TE, 1 WR
+12 |
+13 | class OffensiveScheme(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+14 |     SPREAD = "Shotgun Spread"
+15 |     WIDE_ZONE = "Wide Zone / Shanahan"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DefensiveScheme inherits from both `str` and `enum.Enum`
+  --> backend/app/kernels/cortex/strategy.py:19:7
+   |
+17 |     POWER_RUN = "Power Run"
+18 |
+19 | class DefensiveScheme(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+20 |     BASE_43 = "4-3 Defense"
+21 |     BASE_34 = "3-4 Defense"
+   |
+help: Inherit from `enum.StrEnum`
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/empire/capologist.py:56:29
+   |
+54 |         """
+55 |         risk_ratio = dead_cap_hit / self.salary_cap
+56 |         if risk_ratio > 0.15: return 1.0 # Extreme Risk
+   |                             ^
+57 |         elif risk_ratio > 0.05: return 0.5 # Moderate Risk
+58 |         return 0.1 # Low Risk
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/empire/capologist.py:57:31
+   |
+55 |         risk_ratio = dead_cap_hit / self.salary_cap
+56 |         if risk_ratio > 0.15: return 1.0 # Extreme Risk
+57 |         elif risk_ratio > 0.05: return 0.5 # Moderate Risk
+   |                               ^
+58 |         return 0.1 # Low Risk
+   |
+
+F821 Undefined name `AnatomyModel`
+  --> backend/app/kernels/genesis/trauma_center.py:23:41
+   |
+21 |         return []
+22 |
+23 |     def administer_shot(self, anatomy: 'AnatomyModel'):
+   |                                         ^^^^^^^^^^^^
+24 |         """
+25 |         Directive 9: The Shot.
+   |
+
+UP042 Class CrowdSentiment inherits from both `str` and `enum.Enum`
+ --> backend/app/kernels/hive/atmosphere_net.py:6:7
+  |
+6 | class CrowdSentiment(str, enum.Enum):
+  |       ^^^^^^^^^^^^^^
+7 |     EUPHORIC = "Euphoric"
+8 |     ANXIOUS = "Anxious"
+  |
+help: Inherit from `enum.StrEnum`
+
+W293 Blank line contains whitespace
+  --> backend/app/kernels/hive/physics_kernel.py:14:1
+   |
+12 |         """
+13 |         Update the physical state of the simulation.
+14 |
+   | ^^^^^^^^
+15 |         Args:
+16 |             dt: The time step for the update.
+   |
+help: Remove whitespace from blank line
+
+F811 Redefinition of unused `get_ballistic_modifiers` from line 18
+  --> backend/app/kernels/hive/weather.py:61:9
+   |
+59 |             self.temperature_f = 75.0
+60 |
+61 |     def get_ballistic_modifiers(self) -> tuple[float, float, float]:
+   |         ^^^^^^^^^^^^^^^^^^^^^^^ `get_ballistic_modifiers` redefined here
+62 |         """
+63 |         Directive 6: Ballistics Trajectory.
+   |
+  ::: backend/app/kernels/hive/weather.py:18:9
+   |
+16 |     altitude_ft: float = 0.0 # Sea level default
+17 |
+18 |     def get_ballistic_modifiers(self) -> tuple[float, float]:
+   |         ----------------------- previous definition of `get_ballistic_modifiers` here
+19 |         """
+20 |         Directive 6: Ballistics Trajectory.
+   |
+help: Remove definition: `get_ballistic_modifiers`
+
+F811 Redefinition of unused `get_visibility_penalty` from line 29
+  --> backend/app/kernels/hive/weather.py:76:9
+   |
+74 |         return (altitude_boost, self.wind_speed_mph * 0.5, weight_multiplier)
+75 |
+76 |     def get_visibility_penalty(self) -> float:
+   |         ^^^^^^^^^^^^^^^^^^^^^^ `get_visibility_penalty` redefined here
+77 |         """
+78 |         Directive 12: Snowfall & Fog Obscuration.
+   |
+  ::: backend/app/kernels/hive/weather.py:29:9
+   |
+27 |         return (altitude_boost, self.wind_speed_mph * 0.5)
+28 |
+29 |     def get_visibility_penalty(self) -> float:
+   |         ---------------------- previous definition of `get_visibility_penalty` here
+30 |         """
+31 |         Directive 12: Snowfall Obscuration.
+   |
+help: Remove definition: `get_visibility_penalty`
+
+F811 Redefinition of unused `get_sun_glare_vector` from line 37
+  --> backend/app/kernels/hive/weather.py:89:9
+   |
+87 |         return min(0.9, penalty)
+88 |
+89 |     def get_sun_glare_vector(self, time_of_day: str, stadium_orientation: float) -> float:
+   |         ^^^^^^^^^^^^^^^^^^^^ `get_sun_glare_vector` redefined here
+90 |         """
+91 |         Directive 5: Sun Glare.
+   |
+  ::: backend/app/kernels/hive/weather.py:37:9
+   |
+35 |         return 0.0
+36 |
+37 |     def get_sun_glare_vector(self, time_of_day: str, stadium_orientation: float) -> float:
+   |         -------------------- previous definition of `get_sun_glare_vector` here
+38 |         """
+39 |         Directive 5: Sun Glare.
+   |
+help: Remove definition: `get_sun_glare_vector`
+
+F841 Local variable `effective_fatigue` is assigned to but never used
+   --> backend/app/kernels/rpg/training.py:130:9
+    |
+128 |         Returns XP gained.
+129 |         """
+130 |         effective_fatigue = self.current_fatigue + self.chronic_fatigue
+    |         ^^^^^^^^^^^^^^^^^
+131 |
+132 |         # XP Gain logic
+    |
+help: Remove assignment to unused variable `effective_fatigue`
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/society/narrative.py:27:40
+   |
+26 |     def register_rivalry(self, team_a: str, team_b: str):
+27 |         if team_a not in self.rivalries: self.rivalries[team_a] = []
+   |                                        ^
+28 |         if team_b not in self.rivalries[team_a]:
+29 |             self.rivalries[team_a].append(team_b)
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/kernels/society/social_graph.py:36:37
+   |
+34 |         while queue:
+35 |             current_id, current_hit = queue.pop(0)
+36 |             if current_id in visited: continue
+   |                                     ^
+37 |             visited.add(current_id)
+38 |             affected_count += 1
+   |
+
+UP042 Class CoachTier inherits from both `str` and `enum.Enum`
+  --> backend/app/models/coach.py:10:7
+   |
+10 | class CoachTier(str, Enum):
+   |       ^^^^^^^^^
+11 |     """Coach tier based on combined ratings and experience."""
+12 |     LEGEND = "LEGEND"       # 270+ combined, 1.50x development
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class GameType inherits from both `str` and `enum.Enum`
+  --> backend/app/models/game.py:11:7
+   |
+11 | class GameType(str, Enum):
+   |       ^^^^^^^^
+12 |     """Type of game for special scheduling and presentation."""
+13 |     REGULAR = "REGULAR"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class NewsCategory inherits from both `str` and `enum.Enum`
+  --> backend/app/models/news_item.py:12:7
+   |
+12 | class NewsCategory(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+13 |     TRANSACTION = "TRANSACTION"
+14 |     INJURY = "INJURY"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Position inherits from both `str` and `enum.Enum`
+  --> backend/app/models/player.py:23:7
+   |
+21 |     # from app.models.stats import PlayerSeasonStats
+22 |
+23 | class Position(str, enum.Enum):
+   |       ^^^^^^^^
+24 |     QB = "QB"
+25 |     RB = "RB"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class InjuryStatus inherits from both `str` and `enum.Enum`
+  --> backend/app/models/player.py:39:7
+   |
+37 |     P = "P"
+38 |
+39 | class InjuryStatus(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+40 |     ACTIVE = "ACTIVE"
+41 |     QUESTIONABLE = "QUESTIONABLE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DevelopmentTrait inherits from both `str` and `enum.Enum`
+  --> backend/app/models/player.py:46:7
+   |
+44 |     IR = "IR"
+45 |
+46 | class DevelopmentTrait(str, enum.Enum):
+   |       ^^^^^^^^^^^^^^^^
+47 |     NORMAL = "NORMAL"
+48 |     STAR = "STAR"
+   |
+help: Inherit from `enum.StrEnum`
+
+F821 Undefined name `Team`
+  --> backend/app/models/player.py:74:18
+   |
+72 |     # Team Relationship
+73 |     team_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("team.id"), nullable=True, index=True)
+74 |     team: Mapped[Team | None] = relationship("Team", back_populates="players")
+   |                  ^^^^
+75 |
+76 |     # --- RPG Attributes (Proxied to PlayerAttributes) ---
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/models/player.py:82:27
+   |
+80 |     @speed.setter
+81 |     def speed(self, value):
+82 |         if self.attributes: self.attributes.speed = value
+   |                           ^
+83 |
+84 |     @hybrid_property
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/models/player.py:89:27
+   |
+87 |     @acceleration.setter
+88 |     def acceleration(self, value):
+89 |         if self.attributes: self.attributes.acceleration = value
+   |                           ^
+90 |
+91 |     @hybrid_property
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/models/player.py:96:27
+   |
+94 |     @strength.setter
+95 |     def strength(self, value):
+96 |         if self.attributes: self.attributes.strength = value
+   |                           ^
+97 |
+98 |     @hybrid_property
+   |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:103:27
+    |
+101 |     @agility.setter
+102 |     def agility(self, value):
+103 |         if self.attributes: self.attributes.agility = value
+    |                           ^
+104 |
+105 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:110:27
+    |
+108 |     @awareness.setter
+109 |     def awareness(self, value):
+110 |         if self.attributes: self.attributes.awareness = value
+    |                           ^
+111 |
+112 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:117:27
+    |
+115 |     @stamina.setter
+116 |     def stamina(self, value):
+117 |         if self.attributes: self.attributes.stamina = value
+    |                           ^
+118 |
+119 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:124:27
+    |
+122 |     @injury_resistance.setter
+123 |     def injury_resistance(self, value):
+124 |         if self.attributes: self.attributes.injury_resistance = value
+    |                           ^
+125 |
+126 |     # --- NFL Combine Metrics (Proxied to PlayerAttributes) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:132:27
+    |
+130 |     @forty_yard_dash.setter
+131 |     def forty_yard_dash(self, value):
+132 |         if self.attributes: self.attributes.forty_yard_dash = value
+    |                           ^
+133 |
+134 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:139:27
+    |
+137 |     @bench_press.setter
+138 |     def bench_press(self, value):
+139 |         if self.attributes: self.attributes.bench_press = value
+    |                           ^
+140 |
+141 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:146:27
+    |
+144 |     @vertical_jump.setter
+145 |     def vertical_jump(self, value):
+146 |         if self.attributes: self.attributes.vertical_jump = value
+    |                           ^
+147 |
+148 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:153:27
+    |
+151 |     @broad_jump.setter
+152 |     def broad_jump(self, value):
+153 |         if self.attributes: self.attributes.broad_jump = value
+    |                           ^
+154 |
+155 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:160:27
+    |
+158 |     @three_cone_drill.setter
+159 |     def three_cone_drill(self, value):
+160 |         if self.attributes: self.attributes.three_cone_drill = value
+    |                           ^
+161 |
+162 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:167:27
+    |
+165 |     @twenty_yard_shuttle.setter
+166 |     def twenty_yard_shuttle(self, value):
+167 |         if self.attributes: self.attributes.twenty_yard_shuttle = value
+    |                           ^
+168 |
+169 |     # --- Genesis Data (Proxied to PlayerAttributes / PlayerInjury) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:175:27
+    |
+173 |     @power_clean_max.setter
+174 |     def power_clean_max(self, value):
+175 |         if self.attributes: self.attributes.power_clean_max = value
+    |                           ^
+176 |
+177 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:182:27
+    |
+180 |     @gps_speed_max.setter
+181 |     def gps_speed_max(self, value):
+182 |         if self.attributes: self.attributes.gps_speed_max = value
+    |                           ^
+183 |
+184 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:189:27
+    |
+187 |     @s2_cognition_score.setter
+188 |     def s2_cognition_score(self, value):
+189 |         if self.attributes: self.attributes.s2_cognition_score = value
+    |                           ^
+190 |
+191 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:196:23
+    |
+194 |     @medical_flags.setter
+195 |     def medical_flags(self, value):
+196 |         if self.injury: self.injury.medical_flags = value
+    |                       ^
+197 |
+198 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:203:23
+    |
+201 |     @genesis_revealed.setter
+202 |     def genesis_revealed(self, value):
+203 |         if self.injury: self.injury.genesis_revealed = value
+    |                       ^
+204 |
+205 |     # --- Position Specific (Proxied to PlayerAttributes) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:211:27
+    |
+209 |     @throw_power.setter
+210 |     def throw_power(self, value):
+211 |         if self.attributes: self.attributes.throw_power = value
+    |                           ^
+212 |
+213 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:218:27
+    |
+216 |     @throw_accuracy_short.setter
+217 |     def throw_accuracy_short(self, value):
+218 |         if self.attributes: self.attributes.throw_accuracy_short = value
+    |                           ^
+219 |
+220 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:225:27
+    |
+223 |     @throw_accuracy_mid.setter
+224 |     def throw_accuracy_mid(self, value):
+225 |         if self.attributes: self.attributes.throw_accuracy_mid = value
+    |                           ^
+226 |
+227 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:232:27
+    |
+230 |     @throw_accuracy_deep.setter
+231 |     def throw_accuracy_deep(self, value):
+232 |         if self.attributes: self.attributes.throw_accuracy_deep = value
+    |                           ^
+233 |
+234 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:239:27
+    |
+237 |     @catching.setter
+238 |     def catching(self, value):
+239 |         if self.attributes: self.attributes.catching = value
+    |                           ^
+240 |
+241 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:246:27
+    |
+244 |     @route_running.setter
+245 |     def route_running(self, value):
+246 |         if self.attributes: self.attributes.route_running = value
+    |                           ^
+247 |
+248 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:253:27
+    |
+251 |     @pass_block.setter
+252 |     def pass_block(self, value):
+253 |         if self.attributes: self.attributes.pass_block = value
+    |                           ^
+254 |
+255 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:260:27
+    |
+258 |     @run_block.setter
+259 |     def run_block(self, value):
+260 |         if self.attributes: self.attributes.run_block = value
+    |                           ^
+261 |
+262 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:267:27
+    |
+265 |     @tackle.setter
+266 |     def tackle(self, value):
+267 |         if self.attributes: self.attributes.tackle = value
+    |                           ^
+268 |
+269 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:274:27
+    |
+272 |     @hit_power.setter
+273 |     def hit_power(self, value):
+274 |         if self.attributes: self.attributes.hit_power = value
+    |                           ^
+275 |
+276 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:281:27
+    |
+279 |     @block_shed.setter
+280 |     def block_shed(self, value):
+281 |         if self.attributes: self.attributes.block_shed = value
+    |                           ^
+282 |
+283 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:288:27
+    |
+286 |     @man_coverage.setter
+287 |     def man_coverage(self, value):
+288 |         if self.attributes: self.attributes.man_coverage = value
+    |                           ^
+289 |
+290 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:295:27
+    |
+293 |     @zone_coverage.setter
+294 |     def zone_coverage(self, value):
+295 |         if self.attributes: self.attributes.zone_coverage = value
+    |                           ^
+296 |
+297 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:302:27
+    |
+300 |     @pass_rush_power.setter
+301 |     def pass_rush_power(self, value):
+302 |         if self.attributes: self.attributes.pass_rush_power = value
+    |                           ^
+303 |
+304 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:309:27
+    |
+307 |     @pass_rush_finesse.setter
+308 |     def pass_rush_finesse(self, value):
+309 |         if self.attributes: self.attributes.pass_rush_finesse = value
+    |                           ^
+310 |
+311 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:316:27
+    |
+314 |     @play_recognition.setter
+315 |     def play_recognition(self, value):
+316 |         if self.attributes: self.attributes.play_recognition = value
+    |                           ^
+317 |
+318 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:323:27
+    |
+321 |     @kick_power.setter
+322 |     def kick_power(self, value):
+323 |         if self.attributes: self.attributes.kick_power = value
+    |                           ^
+324 |
+325 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:330:27
+    |
+328 |     @kick_accuracy.setter
+329 |     def kick_accuracy(self, value):
+330 |         if self.attributes: self.attributes.kick_accuracy = value
+    |                           ^
+331 |
+332 |     # --- Proposed Enhancements (Proxied to PlayerAttributes) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:338:27
+    |
+336 |     @pocket_presence.setter
+337 |     def pocket_presence(self, value):
+338 |         if self.attributes: self.attributes.pocket_presence = value
+    |                           ^
+339 |
+340 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:345:27
+    |
+343 |     @quick_release.setter
+344 |     def quick_release(self, value):
+345 |         if self.attributes: self.attributes.quick_release = value
+    |                           ^
+346 |
+347 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:352:27
+    |
+350 |     @scramble_willingness.setter
+351 |     def scramble_willingness(self, value):
+352 |         if self.attributes: self.attributes.scramble_willingness = value
+    |                           ^
+353 |
+354 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:359:27
+    |
+357 |     @throw_on_run.setter
+358 |     def throw_on_run(self, value):
+359 |         if self.attributes: self.attributes.throw_on_run = value
+    |                           ^
+360 |
+361 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:366:27
+    |
+364 |     @patience.setter
+365 |     def patience(self, value):
+366 |         if self.attributes: self.attributes.patience = value
+    |                           ^
+367 |
+368 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:373:27
+    |
+371 |     @pass_pro_rating.setter
+372 |     def pass_pro_rating(self, value):
+373 |         if self.attributes: self.attributes.pass_pro_rating = value
+    |                           ^
+374 |
+375 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:380:27
+    |
+378 |     @juke_efficiency.setter
+379 |     def juke_efficiency(self, value):
+380 |         if self.attributes: self.attributes.juke_efficiency = value
+    |                           ^
+381 |
+382 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:387:27
+    |
+385 |     @release.setter
+386 |     def release(self, value):
+387 |         if self.attributes: self.attributes.release = value
+    |                           ^
+388 |
+389 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:394:27
+    |
+392 |     @blocking_tenacity.setter
+393 |     def blocking_tenacity(self, value):
+394 |         if self.attributes: self.attributes.blocking_tenacity = value
+    |                           ^
+395 |
+396 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:401:27
+    |
+399 |     @pull_speed.setter
+400 |     def pull_speed(self, value):
+401 |         if self.attributes: self.attributes.pull_speed = value
+    |                           ^
+402 |
+403 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:408:27
+    |
+406 |     @anchor.setter
+407 |     def anchor(self, value):
+408 |         if self.attributes: self.attributes.anchor = value
+    |                           ^
+409 |
+410 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:415:27
+    |
+413 |     @discipline.setter
+414 |     def discipline(self, value):
+415 |         if self.attributes: self.attributes.discipline = value
+    |                           ^
+416 |
+417 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:422:27
+    |
+420 |     @first_step.setter
+421 |     def first_step(self, value):
+422 |         if self.attributes: self.attributes.first_step = value
+    |                           ^
+423 |
+424 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:429:27
+    |
+427 |     @gap_integrity.setter
+428 |     def gap_integrity(self, value):
+429 |         if self.attributes: self.attributes.gap_integrity = value
+    |                           ^
+430 |
+431 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:436:27
+    |
+434 |     @coverage_disguise.setter
+435 |     def coverage_disguise(self, value):
+436 |         if self.attributes: self.attributes.coverage_disguise = value
+    |                           ^
+437 |
+438 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:443:27
+    |
+441 |     @blitz_timing.setter
+442 |     def blitz_timing(self, value):
+443 |         if self.attributes: self.attributes.blitz_timing = value
+    |                           ^
+444 |
+445 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:450:27
+    |
+448 |     @run_fit.setter
+449 |     def run_fit(self, value):
+450 |         if self.attributes: self.attributes.run_fit = value
+    |                           ^
+451 |
+452 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:457:27
+    |
+455 |     @press.setter
+456 |     def press(self, value):
+457 |         if self.attributes: self.attributes.press = value
+    |                           ^
+458 |
+459 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:464:27
+    |
+462 |     @ball_tracking.setter
+463 |     def ball_tracking(self, value):
+464 |         if self.attributes: self.attributes.ball_tracking = value
+    |                           ^
+465 |
+466 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:471:27
+    |
+469 |     @run_support.setter
+470 |     def run_support(self, value):
+471 |         if self.attributes: self.attributes.run_support = value
+    |                           ^
+472 |
+473 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:478:27
+    |
+476 |     @hang_time.setter
+477 |     def hang_time(self, value):
+478 |         if self.attributes: self.attributes.hang_time = value
+    |                           ^
+479 |
+480 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:485:27
+    |
+483 |     @coffin_corner.setter
+484 |     def coffin_corner(self, value):
+485 |         if self.attributes: self.attributes.coffin_corner = value
+    |                           ^
+486 |
+487 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:492:27
+    |
+490 |     @return_vision.setter
+491 |     def return_vision(self, value):
+492 |         if self.attributes: self.attributes.return_vision = value
+    |                           ^
+493 |
+494 |     # --- Physics & Simulation Attributes (Proxied to PlayerPhysics) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:500:24
+    |
+498 |     @arm_slot.setter
+499 |     def arm_slot(self, value):
+500 |         if self.physics: self.physics.arm_slot = value
+    |                        ^
+501 |
+502 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:507:24
+    |
+505 |     @release_point_height.setter
+506 |     def release_point_height(self, value):
+507 |         if self.physics: self.physics.release_point_height = value
+    |                        ^
+508 |
+509 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:514:24
+    |
+512 |     @vision_cone_angle.setter
+513 |     def vision_cone_angle(self, value):
+514 |         if self.physics: self.physics.vision_cone_angle = value
+    |                        ^
+515 |
+516 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:521:24
+    |
+519 |     @break_tackle_threshold.setter
+520 |     def break_tackle_threshold(self, value):
+521 |         if self.physics: self.physics.break_tackle_threshold = value
+    |                        ^
+522 |
+523 |     # --- RPG Progression (Proxied to PlayerProgression) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:529:28
+    |
+527 |     @xp.setter
+528 |     def xp(self, value):
+529 |         if self.progression: self.progression.xp = value
+    |                            ^
+530 |
+531 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:536:28
+    |
+534 |     @level.setter
+535 |     def level(self, value):
+536 |         if self.progression: self.progression.level = value
+    |                            ^
+537 |
+538 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:543:28
+    |
+541 |     @skill_points.setter
+542 |     def skill_points(self, value):
+543 |         if self.progression: self.progression.skill_points = value
+    |                            ^
+544 |
+545 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:550:28
+    |
+548 |     @development_trait.setter
+549 |     def development_trait(self, value):
+550 |         if self.progression: self.progression.development_trait = value
+    |                            ^
+551 |
+552 |     # Trait Relationship - Refactored for new setup
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:561:28
+    |
+559 |     @abilities.setter
+560 |     def abilities(self, value):
+561 |         if self.progression: self.progression.abilities = value
+    |                            ^
+562 |
+563 |     # --- Use-Based Skill Progression (Skyrim-style) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:569:28
+    |
+567 |     @attribute_xp.setter
+568 |     def attribute_xp(self, value):
+569 |         if self.progression: self.progression.attribute_xp = value
+    |                            ^
+570 |
+571 |     # --- Morale & Chemistry ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:577:25
+    |
+575 |     @morale.setter
+576 |     def morale(self, value):
+577 |         if self.contract: self.contract.morale = value
+    |                         ^
+578 |
+579 |     # --- Injury System (Proxied to PlayerInjury) ---
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:585:23
+    |
+583 |     @injury_status.setter
+584 |     def injury_status(self, value):
+585 |         if self.injury: self.injury.injury_status = value
+    |                       ^
+586 |
+587 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:592:23
+    |
+590 |     @injury_type.setter
+591 |     def injury_type(self, value):
+592 |         if self.injury: self.injury.injury_type = value
+    |                       ^
+593 |
+594 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:599:23
+    |
+597 |     @weeks_to_recovery.setter
+598 |     def weeks_to_recovery(self, value):
+599 |         if self.injury: self.injury.weeks_to_recovery = value
+    |                       ^
+600 |
+601 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:606:23
+    |
+604 |     @injury_severity.setter
+605 |     def injury_severity(self, value):
+606 |         if self.injury: self.injury.injury_severity = value
+    |                       ^
+607 |
+608 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:613:23
+    |
+611 |     @injury_recurrence_risk.setter
+612 |     def injury_recurrence_risk(self, value):
+613 |         if self.injury: self.injury.injury_recurrence_risk = value
+    |                       ^
+614 |
+615 |     # Nano Banana
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:625:25
+    |
+623 |     @contract_years.setter
+624 |     def contract_years(self, value):
+625 |         if self.contract: self.contract.contract_years = value
+    |                         ^
+626 |
+627 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:632:25
+    |
+630 |     @contract_salary.setter
+631 |     def contract_salary(self, value):
+632 |         if self.contract: self.contract.contract_salary = value
+    |                         ^
+633 |
+634 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:639:25
+    |
+637 |     @is_rookie.setter
+638 |     def is_rookie(self, value):
+639 |         if self.contract: self.contract.is_rookie = value
+    |                         ^
+640 |
+641 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:646:25
+    |
+644 |     @is_retired.setter
+645 |     def is_retired(self, value):
+646 |         if self.contract: self.contract.is_retired = value
+    |                         ^
+647 |
+648 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:653:25
+    |
+651 |     @retirement_year.setter
+652 |     def retirement_year(self, value):
+653 |         if self.contract: self.contract.retirement_year = value
+    |                         ^
+654 |
+655 |     @hybrid_property
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/models/player.py:660:25
+    |
+658 |     @legacy_score.setter
+659 |     def legacy_score(self, value):
+660 |         if self.contract: self.contract.legacy_score = value
+    |                         ^
+661 |
+662 |     # History
+    |
+
+F821 Undefined name `PlayerSeasonStats`
+   --> backend/app/models/player.py:663:31
+    |
+662 |     # History
+663 |     season_stats: Mapped[list[PlayerSeasonStats]] = relationship("PlayerSeasonStats", back_populates="player")
+    |                               ^^^^^^^^^^^^^^^^^
+664 |
+665 |     # New: Game Starts (OL Chemistry)
+    |
+
+F821 Undefined name `BodyPart`
+   --> backend/app/models/player.py:669:25
+    |
+668 |     # Hyper-Immersive Relationships
+669 |     body_health: Mapped[BodyPart] = relationship("BodyPart", back_populates="player", uselist=False)
+    |                         ^^^^^^^^
+670 |
+671 |     # --- Phase 3: Player Decomposition (1:1 Relationships) ---
+    |
+
+F821 Undefined name `Player`
+  --> backend/app/models/player_game_starts.py:27:20
+   |
+26 |     # Relationships
+27 |     player: Mapped[Player] = relationship(back_populates="game_starts")
+   |                    ^^^^^^
+28 |     game: Mapped[Game] = relationship(back_populates="player_starts")
+   |
+
+F821 Undefined name `Game`
+  --> backend/app/models/player_game_starts.py:28:18
+   |
+26 |     # Relationships
+27 |     player: Mapped[Player] = relationship(back_populates="game_starts")
+28 |     game: Mapped[Game] = relationship(back_populates="player_starts")
+   |                  ^^^^
+29 |
+30 |     __table_args__ = (
+   |
+
+UP042 Class InjuryStatus inherits from both `str` and `enum.Enum`
+  --> backend/app/models/player_injury.py:12:7
+   |
+10 |     from app.models.player import Player
+11 |
+12 | class InjuryStatus(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+13 |     ACTIVE = "ACTIVE"
+14 |     QUESTIONABLE = "QUESTIONABLE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DevelopmentTrait inherits from both `str` and `enum.Enum`
+  --> backend/app/models/player_progression.py:14:7
+   |
+12 |     from app.models.player import Player
+13 |
+14 | class DevelopmentTrait(str, enum.Enum):
+   |       ^^^^^^^^^^^^^^^^
+15 |     NORMAL = "NORMAL"
+16 |     STAR = "STAR"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PlayoffRound inherits from both `str` and `enum.Enum`
+  --> backend/app/models/playoff.py:10:7
+   |
+10 | class PlayoffRound(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+11 |     WILD_CARD = "WILD_CARD"
+12 |     DIVISIONAL = "DIVISIONAL"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class PlayoffConference inherits from both `str` and `enum.Enum`
+  --> backend/app/models/playoff.py:16:7
+   |
+14 |     SUPER_BOWL = "SUPER_BOWL"
+15 |
+16 | class PlayoffConference(str, enum.Enum):
+   |       ^^^^^^^^^^^^^^^^^
+17 |     AFC = "AFC"
+18 |     NFC = "NFC"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Region inherits from both `str` and `enum.Enum`
+  --> backend/app/models/scout.py:9:7
+   |
+ 9 | class Region(str, enum.Enum):
+   |       ^^^^^^
+10 |     NATIONAL = "NATIONAL"
+11 |     EAST = "EAST"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ScoutBias inherits from both `str` and `enum.Enum`
+  --> backend/app/models/scout.py:16:7
+   |
+14 |     WEST = "WEST"
+15 |
+16 | class ScoutBias(str, enum.Enum):
+   |       ^^^^^^^^^
+17 |     NEUTRAL = "NEUTRAL"
+18 |     OLD_SCHOOL = "OLD_SCHOOL"     # Overvalues Size/Strength
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class SeasonStatus inherits from both `str` and `enum.Enum`
+  --> backend/app/models/season.py:9:7
+   |
+ 9 | class SeasonStatus(str, enum.Enum):
+   |       ^^^^^^^^^^^^
+10 |     """Enum for season status."""
+11 |     PRE_SEASON = "PRE_SEASON"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TraitEffectType inherits from both `str` and `enum.Enum`
+  --> backend/app/models/trait.py:12:7
+   |
+12 | class TraitEffectType(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+13 |     BOOST = "BOOST"
+14 |     SITUATIONAL = "SITUATIONAL"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TraitTier inherits from both `str` and `enum.Enum`
+  --> backend/app/models/trait.py:18:7
+   |
+18 | class TraitTier(str, Enum):
+   |       ^^^^^^^^^
+19 |     """APF 2K8-style trait tiers for player differentiation."""
+20 |     GOLD = "GOLD"       # Elite, game-breaking abilities (max 1 per player)
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TraitSource inherits from both `str` and `enum.Enum`
+  --> backend/app/models/trait.py:26:7
+   |
+26 | class TraitSource(str, Enum):
+   |       ^^^^^^^^^^^
+27 |     DRAFT = "DRAFT"
+28 |     DEVELOPMENT = "DEVELOPMENT"
+   |
+help: Inherit from `enum.StrEnum`
+
+F821 Undefined name `Player`
+  --> backend/app/models/trait.py:63:20
+   |
+62 |     # Relationships
+63 |     player: Mapped[Player] = relationship(back_populates="player_traits")
+   |                    ^^^^^^
+64 |     trait: Mapped[Trait] = relationship(back_populates="players")
+   |
+
+W293 Blank line contains whitespace
+  --> backend/app/orchestrator/game_repository.py:25:1
+   |
+23 |     """
+24 |     Handles game persistence and player stat aggregation.
+25 |
+   | ^^^^
+26 |     Extracted from SimulationOrchestrator to:
+27 |     - Isolate database operations from game logic
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> backend/app/orchestrator/game_repository.py:43:1
+   |
+41 |         """
+42 |         Save current game state and play history to database.
+43 |
+   | ^^^^^^^^
+44 |         Args:
+45 |             game_id: The game's database ID
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> backend/app/orchestrator/game_repository.py:78:1
+   |
+76 |         """
+77 |         Mark game as complete in database.
+78 |
+   | ^^^^^^^^
+79 |         Args:
+80 |             game_id: The game's database ID
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+  --> backend/app/orchestrator/game_repository.py:81:1
+   |
+79 |         Args:
+80 |             game_id: The game's database ID
+81 |
+   | ^^^^^^^^^^^^
+82 |         Returns:
+83 |             The updated Game object, or None if not found
+   |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/game_repository.py:108:1
+    |
+106 |         """
+107 |         Aggregate and save player stats from game history.
+108 |
+    | ^^^^^^^^
+109 |         Args:
+110 |             game: The Game object
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/game_repository.py:113:1
+    |
+111 |             history: List of PlayResult objects
+112 |             player_team_map: Mapping of player_id -> team_id
+113 |
+    | ^^^^^^^^^^^^
+114 |         Returns:
+115 |             Number of player stat records saved
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/game_repository.py:167:1
+    |
+165 |         """
+166 |         Aggregate player statistics from play history.
+167 |
+    | ^^^^^^^^
+168 |         Args:
+169 |             history: List of PlayResult objects
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/game_repository.py:170:1
+    |
+168 |         Args:
+169 |             history: List of PlayResult objects
+170 |
+    | ^^^^^^^^^^^^
+171 |         Returns:
+172 |             Dictionary mapping player_id to stat dictionary
+    |
+help: Remove whitespace from blank line
+
+B007 Loop control variable `pid` not used within loop body
+  --> backend/app/orchestrator/kernels/genesis_kernel.py:81:13
+   |
+79 |     def reset_all_fatigue(self) -> None:
+80 |         """Reset fatigue for all players (e.g. halftime)."""
+81 |         for pid, state in self.player_states.items():
+   |             ^^^
+82 |             state["fatigue"].lactic_acid = 0.0
+83 |             state["fatigue"].hrv = 100.0
+   |
+help: Rename unused `pid` to `_pid`
+
+B007 Loop control variable `pid` not used within loop body
+  --> backend/app/orchestrator/kernels/genesis_kernel.py:88:13
+   |
+86 |     def recover_all_fatigue(self, amount: float) -> None:
+87 |         """Recover fatigue for all players (e.g. timeout)."""
+88 |         for pid, state in self.player_states.items():
+   |             ^^^
+89 |             state["fatigue"].recover(amount)
+   |
+help: Rename unused `pid` to `_pid`
+
+F841 Local variable `needed` is assigned to but never used
+   --> backend/app/orchestrator/match_context.py:122:13
+    |
+120 |         # Fallback mechanism
+121 |         if len(players) < 11:
+122 |             needed = 11 - len(players)
+    |             ^^^^^^
+123 |             current_ids = {p.id for p in players}
+    |
+help: Remove assignment to unused variable `needed`
+
+F821 Undefined name `Player`
+   --> backend/app/orchestrator/play_caller.py:156:14
+    |
+154 |     def call_audible(
+155 |         self,
+156 |         qb: "Player",
+    |              ^^^^^^
+157 |         current_play: str,
+158 |         new_play: str,
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/play_commands.py:179:33
+    |
+177 |                  penalty = (wind_speed - 10) * 1.5
+178 |                  base_success -= penalty
+179 |                  if penalty > 10: weather_desc = " battling strong winds"
+    |                                 ^
+180 |
+181 |              # Cold penalty
+    |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/orchestrator/play_resolver.py:63:19
+   |
+62 |         play_id = getattr(command, "play_id", "")
+63 |         if play_id: play_id = play_id.upper()
+   |                   ^
+64 |
+65 |         if not play_id or play_id not in SPECIAL_PLAYS:
+   |
+
+F601 Dictionary key literal `"ball_skills"` repeated
+   --> backend/app/orchestrator/play_resolver.py:353:13
+    |
+351 |             "ball_skills": getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
+352 |             "play_recognition": getattr(db, "play_recognition", 78),
+353 |             "ball_skills": getattr(db, "ball_skills", 75),
+    |             ^^^^^^^^^^^^^
+354 |             "change_of_direction": getattr(db, "change_of_direction", 80),
+355 |             "strength": getattr(db, "strength", 60)
+    |
+help: Remove repeated key literal `"ball_skills"`
+
+F841 Local variable `idx` is assigned to but never used
+   --> backend/app/orchestrator/play_resolver.py:640:13
+    |
+638 |         if BlockingResult.PANCAKE in block_results:
+639 |             is_sack = True
+640 |             idx = block_results.index(BlockingResult.PANCAKE)
+    |             ^^^
+641 |             # Find corresponding sacker (approximate since we don't track idx in lists perfectly aligned if skips happen)
+642 |             # But sackers list only contains winners.
+    |
+help: Remove assignment to unused variable `idx`
+
+F841 Local variable `beaten_ol` is assigned to but never used
+   --> backend/app/orchestrator/play_resolver.py:676:21
+    |
+674 |                 if sackers:
+675 |                     sacker = sackers[0]
+676 |                     beaten_ol = beaten_ols[0]
+    |                     ^^^^^^^^^
+677 |             elif outcome == "PRESSURE_AVOIDED":
+678 |                  # Maybe Log "Pressure Avoided" narrative?
+    |
+help: Remove assignment to unused variable `beaten_ol`
+
+F841 Local variable `intimidation_factor` is assigned to but never used
+   --> backend/app/orchestrator/play_resolver.py:692:29
+    |
+690 |                     for trait in sacker.traits:
+691 |                         if trait.name == "Intimidation":
+692 |                             intimidation_factor = 1.5
+    |                             ^^^^^^^^^^^^^^^^^^^
+693 |                             break
+    |
+help: Remove assignment to unused variable `intimidation_factor`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/play_resolver.py:833:26
+    |
+831 |         else:
+832 |              # Fallback legacy logic
+833 |              if temp < 32: weather_penalty = 0.05
+    |                          ^
+834 |              elif temp > 90: weather_penalty = 0.02
+835 |              base_prob = throw_accuracy / 100.0
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/play_resolver.py:834:28
+    |
+832 |              # Fallback legacy logic
+833 |              if temp < 32: weather_penalty = 0.05
+834 |              elif temp > 90: weather_penalty = 0.02
+    |                            ^
+835 |              base_prob = throw_accuracy / 100.0
+    |
+
+F841 Local variable `closer_active` is assigned to but never used
+   --> backend/app/orchestrator/play_resolver.py:890:25
+    |
+888 |                     # Check if crunch time is active
+889 |                     if TraitService.check_crunch_time(crunch_context):
+890 |                         closer_active = True
+    |                         ^^^^^^^^^^^^^
+891 |                         logger.info(f"🧊 THE CLOSER ACTIVATED: {qb.last_name} - Pressure & Fatigue immunity!")
+    |
+help: Remove assignment to unused variable `closer_active`
+
+F841 Local variable `temp` is assigned to but never used
+    --> backend/app/orchestrator/play_resolver.py:1170:9
+     |
+1169 |         # 2. Genesis Kernel: Fatigue
+1170 |         temp = self._get_weather_temp()
+     |         ^^^^
+1171 |         # print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
+1172 |         # Use get_current_fatigue (read-only)
+     |
+help: Remove assignment to unused variable `temp`
+
+F841 Local variable `interaction_narratives` is assigned to but never used
+    --> backend/app/orchestrator/play_resolver.py:1196:9
+     |
+1195 |         interaction_yards_bonus = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boos…
+1196 |         interaction_narratives = interaction_results.get("narratives", [])
+     |         ^^^^^^^^^^^^^^^^^^^^^^
+1197 |
+1198 |         # SPECIAL PLAYS INTEGRATION
+     |
+help: Remove assignment to unused variable `interaction_narratives`
+
+F841 Local variable `effective_vision` is assigned to but never used
+    --> backend/app/orchestrator/play_resolver.py:1212:9
+     |
+1211 |         # Apply familiarity to vision (affects hole recognition)
+1212 |         effective_vision = (getattr(rb, "carrying_vision", None) or 50) * rb_familiarity_modifier
+     |         ^^^^^^^^^^^^^^^^
+1213 |
+1214 |         logger.debug(f"Run Familiarity: RB={rb_familiarity_modifier:.2f} for play {play_id}")
+     |
+help: Remove assignment to unused variable `effective_vision`
+
+F841 Local variable `physics_tackle_result` is assigned to but never used
+    --> backend/app/orchestrator/play_resolver.py:1232:13
+     |
+1231 |             # Resolve tackle with physics
+1232 |             physics_tackle_result = rb_physics.resolve_tackle_attempt(
+     |             ^^^^^^^^^^^^^^^^^^^^^
+1233 |                 state=rb_state,
+1234 |                 tackle=tackle_attempt,
+     |
+help: Remove assignment to unused variable `physics_tackle_result`
+
+E701 Multiple statements on one line (colon)
+    --> backend/app/orchestrator/play_resolver.py:1359:32
+     |
+1357 |         # Increased by fatigue and big hits (high defender strength)
+1358 |         fumble_chance = 0.01 * tribe_fumble_mult
+1359 |         if current_fatigue > 70: fumble_chance += 0.02
+     |                                ^
+1360 |         hit_power = getattr(defender, "hit_power", None) or 50
+1361 |         if hit_power > 85: fumble_chance += 0.01
+     |
+
+E701 Multiple statements on one line (colon)
+    --> backend/app/orchestrator/play_resolver.py:1361:26
+     |
+1359 |         if current_fatigue > 70: fumble_chance += 0.02
+1360 |         hit_power = getattr(defender, "hit_power", None) or 50
+1361 |         if hit_power > 85: fumble_chance += 0.01
+     |                          ^
+1362 |         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
+     |
+
+E701 Multiple statements on one line (colon)
+    --> backend/app/orchestrator/play_resolver.py:1362:66
+     |
+1360 |         hit_power = getattr(defender, "hit_power", None) or 50
+1361 |         if hit_power > 85: fumble_chance += 0.01
+1362 |         if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
+     |                                                                  ^
+1363 |
+1364 |         # Weather Fumble Modifier
+     |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/simulation_orchestrator.py:286:20
+    |
+284 |              game = result.scalar_one_or_none()
+285 |
+286 |         if not game: return
+    |                    ^
+287 |
+288 |         logger.info("Saving player stats", extra={"game_id": game.id})
+    |
+
+B007 Loop control variable `p` not used within loop body
+   --> backend/app/orchestrator/simulation_orchestrator.py:293:22
+    |
+291 |         player_team_map = {}
+292 |         if self.match_context:
+293 |             for pid, p in self.match_context.home_roster.items():
+    |                      ^
+294 |                 player_team_map[pid] = game.home_team_id
+295 |             for pid, p in self.match_context.away_roster.items():
+    |
+help: Rename unused `p` to `_p`
+
+B007 Loop control variable `p` not used within loop body
+   --> backend/app/orchestrator/simulation_orchestrator.py:295:22
+    |
+293 |             for pid, p in self.match_context.home_roster.items():
+294 |                 player_team_map[pid] = game.home_team_id
+295 |             for pid, p in self.match_context.away_roster.items():
+    |                      ^
+296 |                 player_team_map[pid] = game.away_team_id
+    |
+help: Rename unused `p` to `_p`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/simulation_orchestrator.py:417:33
+    |
+415 |             minutes, seconds = map(int, self.time_left.split(":"))
+416 |             total_seconds = minutes * 60 + seconds - 15 # 15 seconds per play
+417 |             if total_seconds < 0: total_seconds = 0
+    |                                 ^
+418 |             self.time_left = f"{total_seconds // 60:02d}:{total_seconds % 60:02d}"
+419 |         except ValueError:
+    |
+
+B007 Loop control variable `play_num` not used within loop body
+   --> backend/app/orchestrator/simulation_orchestrator.py:453:13
+    |
+451 |         logger.info("Starting continuous simulation", extra={"num_plays": num_plays})
+452 |
+453 |         for play_num in range(num_plays):
+    |             ^^^^^^^^
+454 |             if not self.is_running:
+455 |                 logger.info("Simulation stopped by user")
+    |
+help: Rename unused `play_num` to `_play_num`
+
+F841 Local variable `is_audible` is assigned to but never used
+   --> backend/app/orchestrator/simulation_orchestrator.py:629:9
+    |
+627 |         # Randomly check if an audible is called (simulated for now)
+628 |         # in a real game, this would be an API signal or AI decision
+629 |         is_audible = False # Default off
+    |         ^^^^^^^^^^
+630 |         # If we had an "audible_probability" in context or AI output, we'd use it.
+631 |         # For simulation purposes, let's assume no random audibles to keep flow simple for now,
+    |
+help: Remove assignment to unused variable `is_audible`
+
+F841 Local variable `temp` is assigned to but never used
+   --> backend/app/orchestrator/simulation_orchestrator.py:746:9
+    |
+744 |             return
+745 |
+746 |         temp = self.match_context.weather_config.get("temperature", 70)
+    |         ^^^^
+747 |
+748 |         # Identify key players who exerted more energy
+    |
+help: Remove assignment to unused variable `temp`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/simulation_orchestrator.py:750:28
+    |
+748 |         # Identify key players who exerted more energy
+749 |         key_players = set()
+750 |         if result.passer_id: key_players.add(result.passer_id)
+    |                            ^
+751 |         if result.rusher_id: key_players.add(result.rusher_id)
+752 |         if result.receiver_id: key_players.add(result.receiver_id)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/simulation_orchestrator.py:751:28
+    |
+749 |         key_players = set()
+750 |         if result.passer_id: key_players.add(result.passer_id)
+751 |         if result.rusher_id: key_players.add(result.rusher_id)
+    |                            ^
+752 |         if result.receiver_id: key_players.add(result.receiver_id)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/orchestrator/simulation_orchestrator.py:752:30
+    |
+750 |         if result.passer_id: key_players.add(result.passer_id)
+751 |         if result.rusher_id: key_players.add(result.rusher_id)
+752 |         if result.receiver_id: key_players.add(result.receiver_id)
+    |                              ^
+753 |
+754 |         # Update Offense
+    |
+
+F841 Local variable `start_score_diff` is assigned to but never used
+   --> backend/app/orchestrator/simulation_orchestrator.py:918:17
+    |
+917 | …     # Score diff from defense perspective
+918 | …     start_score_diff = self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
+    |       ^^^^^^^^^^^^^^^^
+919 | …     # Add points from this play
+920 | …     # result already processed into scores above? Yes (lines 619/621)
+    |
+help: Remove assignment to unused variable `start_score_diff`
+
+UP042 Class GameState inherits from both `str` and `enum.Enum`
+  --> backend/app/orchestrator/state_machine.py:14:7
+   |
+14 | class GameState(str, Enum):
+   |       ^^^^^^^^^
+15 |     """All possible game states"""
+16 |     PRE_GAME = "PRE_GAME"
+   |
+help: Inherit from `enum.StrEnum`
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/state_machine.py:98:1
+    |
+ 96 |         """
+ 97 |         Attempt to transition to a new state
+ 98 |
+    | ^^^^^^^^
+ 99 |         Args:
+100 |             new_state: The state to transition to
+    |
+help: Remove whitespace from blank line
+
+W293 Blank line contains whitespace
+   --> backend/app/orchestrator/state_machine.py:102:1
+    |
+100 |             new_state: The state to transition to
+101 |             context: Optional updated game context
+102 |
+    | ^^^^^^^^^^^^
+103 |         Returns:
+104 |             bool: True if transition succeeded, False otherwise
+    |
+help: Remove whitespace from blank line
+
+UP042 Class AbilityStatus inherits from both `str` and `enum.Enum`
+  --> backend/app/rpg/abilities.py:16:7
+   |
+16 | class AbilityStatus(str, Enum):
+   |       ^^^^^^^^^^^^^
+17 |     """Status of an ability for a player."""
+18 |     LOCKED = "LOCKED"           # Requirements not met
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `skill` not used within loop body
+  --> backend/app/rpg/coach.py:25:13
+   |
+23 |         """
+24 |         # Mock implementation
+25 |         for skill, level in coach_skills.items():
+   |             ^^^^^
+26 |             # Logic to lookup effect and apply
+27 |             pass
+   |
+help: Rename unused `skill` to `_skill`
+
+B007 Loop control variable `level` not used within loop body
+  --> backend/app/rpg/coach.py:25:20
+   |
+23 |         """
+24 |         # Mock implementation
+25 |         for skill, level in coach_skills.items():
+   |                    ^^^^^
+26 |             # Logic to lookup effect and apply
+27 |             pass
+   |
+help: Rename unused `level` to `_level`
+
+F841 Local variable `injury_system` is assigned to but never used
+   --> backend/app/rpg/injury_system.py:537:5
+    |
+535 |     """
+536 |     injuries = []
+537 |     injury_system = InjurySystem(seed=rng.randint(0, 1000000) if rng else None)
+    |     ^^^^^^^^^^^^^
+538 |
+539 |     for player in players_on_field:
+    |
+help: Remove assignment to unused variable `injury_system`
+
+UP042 Class PlayerArchetype inherits from both `str` and `enum.Enum`
+  --> backend/app/rpg/player_archetypes.py:22:7
+   |
+22 | class PlayerArchetype(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+23 |     """7 core player archetypes."""
+24 |     FIELD_GENERAL = "FIELD_GENERAL"   # QB: Cerebral leader
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `bonus` not used within loop body
+   --> backend/app/rpg/player_archetypes.py:296:23
+    |
+295 |             # Check for stat bonuses - player should already be good at these
+296 |             for stat, bonus in definition.stat_bonuses.items():
+    |                       ^^^^^
+297 |                 if stat in ratings:
+298 |                     # Higher rating = better match
+    |
+help: Rename unused `bonus` to `_bonus`
+
+UP042 Class PositionType inherits from both `str` and `enum.Enum`
+ --> backend/app/schemas/expanded_stats.py:6:7
+  |
+6 | class PositionType(str, Enum):
+  |       ^^^^^^^^^^^^
+7 |     """NFL Position Types"""
+8 |     QB = "Quarterback"
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TradeDecision inherits from both `str` and `enum.Enum`
+  --> backend/app/schemas/trade.py:8:7
+   |
+ 8 | class TradeDecision(str, Enum):
+   |       ^^^^^^^^^^^^^
+ 9 |     """Possible GM trade decisions."""
+10 |     ACCEPT = "ACCEPT"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TradeOfferStatus inherits from both `str` and `enum.Enum`
+   --> backend/app/schemas/trade.py:124:7
+    |
+124 | class TradeOfferStatus(str, Enum):
+    |       ^^^^^^^^^^^^^^^^
+125 |     """Status of a trade offer."""
+126 |     PENDING = "PENDING"
+    |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `team_id` not used within loop body
+  --> backend/app/scripts/download_logos.py:41:9
+   |
+39 |     urllib.request.install_opener(opener)
+40 |
+41 |     for team_id, team_data in TEAM_DB.items():
+   |         ^^^^^^^
+42 |         abbr = team_data.abbreviation
+43 |         espn_code = espn_mapping.get(abbr, abbr.lower())
+   |
+help: Rename unused `team_id` to `_team_id`
+
+B007 Loop control variable `team_id` not used within loop body
+  --> backend/app/scripts/seed_teams.py:18:13
+   |
+16 |     try:
+17 |         print("Seeding teams...")
+18 |         for team_id, data in TEAM_DB.items():
+   |             ^^^^^^^
+19 |             # Check if team exists
+20 |             team = db.query(Team).filter(Team.abbreviation == data.abbreviation).first()
+   |
+help: Rename unused `team_id` to `_team_id`
+
+UP042 Class TaskComplexity inherits from both `str` and `enum.Enum`
+  --> backend/app/services/ai_research_service.py:21:7
+   |
+21 | class TaskComplexity(str, Enum):
+   |       ^^^^^^^^^^^^^^
+22 |     """Estimated complexity level for a task."""
+23 |     LOW = "Low"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BroadcastStyle inherits from both `str` and `enum.Enum`
+  --> backend/app/services/broadcasting_service.py:18:7
+   |
+18 | class BroadcastStyle(str, Enum):
+   |       ^^^^^^^^^^^^^^
+19 |     """Broadcasting style/network flavor."""
+20 |     ESPN = "ESPN"           # High energy, modern stats
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class MomentType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/broadcasting_service.py:26:7
+   |
+26 | class MomentType(str, Enum):
+   |       ^^^^^^^^^^
+27 |     """Types of significant moments."""
+28 |     TOUCHDOWN = "TOUCHDOWN"
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `stmt` is assigned to but never used
+  --> backend/app/services/chemistry_service.py:53:13
+   |
+51 |             # We need the hash of the last game's unit.
+52 |
+53 |             stmt = (
+   |             ^^^^
+54 |                 select(PlayerGameStarts.teammates_hash)
+55 |                 .join(PlayerGameStarts.game) # Assuming Game model has date/season link
+   |
+help: Remove assignment to unused variable `stmt`
+
+UP042 Class CoachingPersonality inherits from both `str` and `enum.Enum`
+  --> backend/app/services/coaching_personality.py:18:7
+   |
+18 | class CoachingPersonality(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^^^
+19 |     """Game-day coaching personality types."""
+20 |     CEO = "CEO"                    # Leader, Balanced
+   |
+help: Inherit from `enum.StrEnum`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:258:19
+    |
+257 |     # Expanded 7-Archetype Logic
+258 |     if score >= 90: return CoachingPersonality.ANALYTICS
+    |                   ^
+259 |     elif score >= 80: return CoachingPersonality.GAMBLER
+260 |     elif score >= 70: return CoachingPersonality.GURU_OFF
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:259:21
+    |
+257 |     # Expanded 7-Archetype Logic
+258 |     if score >= 90: return CoachingPersonality.ANALYTICS
+259 |     elif score >= 80: return CoachingPersonality.GAMBLER
+    |                     ^
+260 |     elif score >= 70: return CoachingPersonality.GURU_OFF
+261 |     elif score >= 50: return CoachingPersonality.CEO
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:260:21
+    |
+258 |     if score >= 90: return CoachingPersonality.ANALYTICS
+259 |     elif score >= 80: return CoachingPersonality.GAMBLER
+260 |     elif score >= 70: return CoachingPersonality.GURU_OFF
+    |                     ^
+261 |     elif score >= 50: return CoachingPersonality.CEO
+262 |     elif score >= 40: return CoachingPersonality.BALANCED
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:261:21
+    |
+259 |     elif score >= 80: return CoachingPersonality.GAMBLER
+260 |     elif score >= 70: return CoachingPersonality.GURU_OFF
+261 |     elif score >= 50: return CoachingPersonality.CEO
+    |                     ^
+262 |     elif score >= 40: return CoachingPersonality.BALANCED
+263 |     elif score >= 30: return CoachingPersonality.GURU_DEF
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:262:21
+    |
+260 |     elif score >= 70: return CoachingPersonality.GURU_OFF
+261 |     elif score >= 50: return CoachingPersonality.CEO
+262 |     elif score >= 40: return CoachingPersonality.BALANCED
+    |                     ^
+263 |     elif score >= 30: return CoachingPersonality.GURU_DEF
+264 |     elif score >= 20: return CoachingPersonality.OLD_SCHOOL
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:263:21
+    |
+261 |     elif score >= 50: return CoachingPersonality.CEO
+262 |     elif score >= 40: return CoachingPersonality.BALANCED
+263 |     elif score >= 30: return CoachingPersonality.GURU_DEF
+    |                     ^
+264 |     elif score >= 20: return CoachingPersonality.OLD_SCHOOL
+265 |     else: return CoachingPersonality.ROOKIE
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:264:21
+    |
+262 |     elif score >= 40: return CoachingPersonality.BALANCED
+263 |     elif score >= 30: return CoachingPersonality.GURU_DEF
+264 |     elif score >= 20: return CoachingPersonality.OLD_SCHOOL
+    |                     ^
+265 |     else: return CoachingPersonality.ROOKIE
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/coaching_personality.py:265:9
+    |
+263 |     elif score >= 30: return CoachingPersonality.GURU_DEF
+264 |     elif score >= 20: return CoachingPersonality.OLD_SCHOOL
+265 |     else: return CoachingPersonality.ROOKIE
+    |         ^
+    |
+
+UP042 Class NoiseLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/services/crowd_noise.py:16:7
+   |
+16 | class NoiseLevel(str, Enum):
+   |       ^^^^^^^^^^
+17 |     """Stadium noise levels in decibels (approximate)."""
+18 |     QUIET = "QUIET"           # ~50 dB - Empty/low attendance
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `effective_db` is assigned to but never used
+   --> backend/app/services/crowd_noise.py:102:5
+    |
+100 |         return effects
+101 |
+102 |     effective_db = noise_state.get_effective_db()
+    |     ^^^^^^^^^^^^
+103 |     noise_level = noise_state.noise_level
+    |
+help: Remove assignment to unused variable `effective_db`
+
+UP042 Class DataSource inherits from both `str` and `enum.Enum`
+  --> backend/app/services/data_sync_service.py:38:7
+   |
+38 | class DataSource(str, Enum):
+   |       ^^^^^^^^^^
+39 |     """Available data sources from nflverse."""
+40 |     ROSTERS = "rosters"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class UpdateFrequency inherits from both `str` and `enum.Enum`
+  --> backend/app/services/data_sync_service.py:53:7
+   |
+53 | class UpdateFrequency(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+54 |     """How often each data source should be refreshed."""
+55 |     REALTIME = "realtime"  # Every request
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class MigrationStatus inherits from both `str` and `enum.Enum`
+  --> backend/app/services/database/migrations.py:18:7
+   |
+18 | class MigrationStatus(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+19 |     """Migration execution status."""
+20 |     PENDING = "PENDING"
+   |
+help: Inherit from `enum.StrEnum`
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:47:73
+   |
+45 |                 return chart[pos][rank]
+46 |             # Fallback logic
+47 |             if pos == "OT" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank]
+   |                                                                         ^
+48 |             if pos == "OG" and "C" in chart and len(chart["C"]) > rank: return chart["C"][rank] # Fallback C to OG
+49 |             if pos == "C" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank] # Fallback OG to C
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:48:71
+   |
+46 |             # Fallback logic
+47 |             if pos == "OT" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank]
+48 |             if pos == "OG" and "C" in chart and len(chart["C"]) > rank: return chart["C"][rank] # Fallback C to OG
+   |                                                                       ^
+49 |             if pos == "C" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank] # Fallback OG to C
+50 |             if pos == "TE" and "WR" in chart and len(chart["WR"]) > rank: return chart["WR"][rank] # WR as TE
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:49:72
+   |
+47 |             if pos == "OT" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank]
+48 |             if pos == "OG" and "C" in chart and len(chart["C"]) > rank: return chart["C"][rank] # Fallback C to OG
+49 |             if pos == "C" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank] # Fallback OG to C
+   |                                                                        ^
+50 |             if pos == "TE" and "WR" in chart and len(chart["WR"]) > rank: return chart["WR"][rank] # WR as TE
+51 |             if pos == "FB" and "RB" in chart and len(chart["RB"]) > rank: return chart["RB"][rank] # RB as FB
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:50:73
+   |
+48 |             if pos == "OG" and "C" in chart and len(chart["C"]) > rank: return chart["C"][rank] # Fallback C to OG
+49 |             if pos == "C" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank] # Fallback OG to C
+50 |             if pos == "TE" and "WR" in chart and len(chart["WR"]) > rank: return chart["WR"][rank] # WR as TE
+   |                                                                         ^
+51 |             if pos == "FB" and "RB" in chart and len(chart["RB"]) > rank: return chart["RB"][rank] # RB as FB
+52 |             if pos == "WR" and "TE" in chart and len(chart["TE"]) > rank: return chart["TE"][rank] # TE as WR
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:51:73
+   |
+49 |             if pos == "C" and "OG" in chart and len(chart["OG"]) > rank: return chart["OG"][rank] # Fallback OG to C
+50 |             if pos == "TE" and "WR" in chart and len(chart["WR"]) > rank: return chart["WR"][rank] # WR as TE
+51 |             if pos == "FB" and "RB" in chart and len(chart["RB"]) > rank: return chart["RB"][rank] # RB as FB
+   |                                                                         ^
+52 |             if pos == "WR" and "TE" in chart and len(chart["TE"]) > rank: return chart["TE"][rank] # TE as WR
+53 |             return None
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/depth_chart_service.py:52:73
+   |
+50 |             if pos == "TE" and "WR" in chart and len(chart["WR"]) > rank: return chart["WR"][rank] # WR as TE
+51 |             if pos == "FB" and "RB" in chart and len(chart["RB"]) > rank: return chart["RB"][rank] # RB as FB
+52 |             if pos == "WR" and "TE" in chart and len(chart["TE"]) > rank: return chart["TE"][rank] # TE as WR
+   |                                                                         ^
+53 |             return None
+   |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/depth_chart_service.py:122:73
+    |
+120 |                 return chart[pos][rank]
+121 |             # Fallback
+122 |             if pos == "DE" and "LB" in chart and len(chart["LB"]) > rank: return chart["LB"][rank] # LB as DE
+    |                                                                         ^
+123 |             if pos == "DT" and "DE" in chart and len(chart["DE"]) > rank: return chart["DE"][rank] # DE as DT
+124 |             if pos == "LB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as LB
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/depth_chart_service.py:123:73
+    |
+121 |             # Fallback
+122 |             if pos == "DE" and "LB" in chart and len(chart["LB"]) > rank: return chart["LB"][rank] # LB as DE
+123 |             if pos == "DT" and "DE" in chart and len(chart["DE"]) > rank: return chart["DE"][rank] # DE as DT
+    |                                                                         ^
+124 |             if pos == "LB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as LB
+125 |             if pos == "CB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as CB
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/depth_chart_service.py:124:71
+    |
+122 |             if pos == "DE" and "LB" in chart and len(chart["LB"]) > rank: return chart["LB"][rank] # LB as DE
+123 |             if pos == "DT" and "DE" in chart and len(chart["DE"]) > rank: return chart["DE"][rank] # DE as DT
+124 |             if pos == "LB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as LB
+    |                                                                       ^
+125 |             if pos == "CB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as CB
+126 |             if pos == "S" and "CB" in chart and len(chart["CB"]) > rank: return chart["CB"][rank] # CB as S
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/depth_chart_service.py:125:71
+    |
+123 |             if pos == "DT" and "DE" in chart and len(chart["DE"]) > rank: return chart["DE"][rank] # DE as DT
+124 |             if pos == "LB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as LB
+125 |             if pos == "CB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as CB
+    |                                                                       ^
+126 |             if pos == "S" and "CB" in chart and len(chart["CB"]) > rank: return chart["CB"][rank] # CB as S
+127 |             return None
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/depth_chart_service.py:126:72
+    |
+124 |             if pos == "LB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as LB
+125 |             if pos == "CB" and "S" in chart and len(chart["S"]) > rank: return chart["S"][rank] # S as CB
+126 |             if pos == "S" and "CB" in chart and len(chart["CB"]) > rank: return chart["CB"][rank] # CB as S
+    |                                                                        ^
+127 |             return None
+    |
+
+UP042 Class TeamPhilosophy inherits from both `str` and `enum.Enum`
+  --> backend/app/services/empire/gm_ai.py:22:7
+   |
+20 | # ============================================================================
+21 |
+22 | class TeamPhilosophy(str, Enum):
+   |       ^^^^^^^^^^^^^^
+23 |     """GM team-building philosophy."""
+24 |     WIN_NOW = "WIN_NOW"           # Maximize current roster
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TradeAssetType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/empire/gm_ai.py:30:7
+   |
+30 | class TradeAssetType(str, Enum):
+   |       ^^^^^^^^^^^^^^
+31 |     """Types of trade assets."""
+32 |     PLAYER = "PLAYER"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class NeedPriority inherits from both `str` and `enum.Enum`
+  --> backend/app/services/empire/gm_ai.py:37:7
+   |
+37 | class NeedPriority(str, Enum):
+   |       ^^^^^^^^^^^^
+38 |     """Priority levels for roster needs."""
+39 |     CRITICAL = "CRITICAL"    # Must address immediately
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ContractType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/empire/salary_cap.py:23:7
+   |
+21 | # ============================================================================
+22 |
+23 | class ContractType(str, Enum):
+   |       ^^^^^^^^^^^^
+24 |     """Types of player contracts."""
+25 |     ROOKIE = "ROOKIE"          # Slotted rookie deal
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CapChargeType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/empire/salary_cap.py:33:7
+   |
+33 | class CapChargeType(str, Enum):
+   |       ^^^^^^^^^^^^^
+34 |     """Types of cap charges."""
+35 |     BASE_SALARY = "BASE_SALARY"
+   |
+help: Inherit from `enum.StrEnum`
+
+E402 Module level import not at top of file
+  --> backend/app/services/enhanced_chemistry_service.py:79:1
+   |
+79 | from app.core.redis_cache import chemistry_cache
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+
+E712 Avoid equality comparisons to `True`; use `Game.is_played:` for truth checks
+   --> backend/app/services/enhanced_chemistry_service.py:248:17
+    |
+246 |             .filter(
+247 |                 (Game.home_team_id == team_id) | (Game.away_team_id == team_id),
+248 |                 Game.is_played == True,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^
+249 |                 PlayerGameStart.team_id == team_id,
+250 |                 PlayerGameStart.position.in_(self.OL_POSITIONS)
+    |
+help: Replace with `Game.is_played`
+
+B007 Loop control variable `week` not used within loop body
+   --> backend/app/services/enhanced_chemistry_service.py:264:22
+    |
+262 |         # OPTIMIZATION 2: Group by game_id in memory (no additional queries)
+263 |         games_data = {}
+264 |         for game_id, week, position, player_id in rows:
+    |                      ^^^^
+265 |             if game_id not in games_data:
+266 |                 games_data[game_id] = {}
+    |
+help: Rename unused `week` to `_week`
+
+UP042 Class CleatType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/equipment.py:14:7
+   |
+14 | class CleatType(str, Enum):
+   |       ^^^^^^^^^
+15 |     """Types of cleats with different trade-offs."""
+16 |     STANDARD = "STANDARD"           # Balanced
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class GloveType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/equipment.py:22:7
+   |
+22 | class GloveType(str, Enum):
+   |       ^^^^^^^^^
+23 |     """Types of gloves with different trade-offs."""
+24 |     RECEIVER = "RECEIVER"      # +Catching, standard
+   |
+help: Inherit from `enum.StrEnum`
+
+B006 Do not use mutable data structures for argument defaults
+  --> backend/app/services/gm_agent.py:45:56
+   |
+43 |                            offered_players_ids: list[int],
+44 |                            requested_players_ids: list[int],
+45 |                            offered_picks: list[dict] = [],
+   |                                                        ^^
+46 |                            requested_picks: list[dict] = []) -> dict[str, Any]:
+47 |         """
+   |
+help: Replace with `None`; initialize within function
+
+B006 Do not use mutable data structures for argument defaults
+  --> backend/app/services/gm_agent.py:46:58
+   |
+44 |                            requested_players_ids: list[int],
+45 |                            offered_picks: list[dict] = [],
+46 |                            requested_picks: list[dict] = []) -> dict[str, Any]:
+   |                                                          ^^
+47 |         """
+48 |         Evaluate a trade proposal based on value, team needs, and GM personality.
+   |
+help: Replace with `None`; initialize within function
+
+F841 Local variable `target_value` is assigned to but never used
+   --> backend/app/services/gm_agent.py:160:9
+    |
+158 |         # Determine what to offer (picks or players)
+159 |         # Simple logic: Offer a draft pick of roughly equal value
+160 |         target_value = self._calculate_package_value([target_player], [], is_acquiring=True)
+    |         ^^^^^^^^^^^^
+161 |
+162 |         # Find a pick that matches value
+    |
+help: Remove assignment to unused variable `target_value`
+
+F841 Local variable `cap_hit_pct` is assigned to but never used
+   --> backend/app/services/gm_agent.py:210:9
+    |
+208 |         years_remaining = getattr(player, 'contract_years', 1)
+209 |         contract_salary = getattr(player, 'contract_salary', 0) or 0
+210 |         cap_hit_pct = contract_salary / 250_000_000  # Assume 250M cap for now
+    |         ^^^^^^^^^^^
+211 |
+212 |         # Rookie deals are premium assets
+    |
+help: Remove assignment to unused variable `cap_hit_pct`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:229:39
+    |
+227 |         # Starter (75+): $5M+
+228 |         expected_salary = 0
+229 |         if player.overall_rating >= 90: expected_salary = 25_000_000
+    |                                       ^
+230 |         elif player.overall_rating >= 80: expected_salary = 15_000_000
+231 |         elif player.overall_rating >= 75: expected_salary = 5_000_000
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:230:41
+    |
+228 |         expected_salary = 0
+229 |         if player.overall_rating >= 90: expected_salary = 25_000_000
+230 |         elif player.overall_rating >= 80: expected_salary = 15_000_000
+    |                                         ^
+231 |         elif player.overall_rating >= 75: expected_salary = 5_000_000
+232 |         else: expected_salary = 1_000_000
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:231:41
+    |
+229 |         if player.overall_rating >= 90: expected_salary = 25_000_000
+230 |         elif player.overall_rating >= 80: expected_salary = 15_000_000
+231 |         elif player.overall_rating >= 75: expected_salary = 5_000_000
+    |                                         ^
+232 |         else: expected_salary = 1_000_000
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:232:13
+    |
+230 |         elif player.overall_rating >= 80: expected_salary = 15_000_000
+231 |         elif player.overall_rating >= 75: expected_salary = 5_000_000
+232 |         else: expected_salary = 1_000_000
+    |             ^
+233 |
+234 |         # Ratio of Actual / Expected
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:237:32
+    |
+235 |         # If paying 20M for 5M player -> Ratio 4.0 (Bad)
+236 |         # If paying 5M for 20M player -> Ratio 0.25 (Good)
+237 |         if expected_salary == 0: ratio = 10.0 # avoid div/0
+    |                                ^
+238 |         else: ratio = contract_salary / expected_salary
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:238:13
+    |
+236 |         # If paying 5M for 20M player -> Ratio 0.25 (Good)
+237 |         if expected_salary == 0: ratio = 10.0 # avoid div/0
+238 |         else: ratio = contract_salary / expected_salary
+    |             ^
+239 |
+240 |         if ratio < 0.5: return 1.20  # Steal (Team Friendly)
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:240:23
+    |
+238 |         else: ratio = contract_salary / expected_salary
+239 |
+240 |         if ratio < 0.5: return 1.20  # Steal (Team Friendly)
+    |                       ^
+241 |         if ratio < 0.9: return 1.10  # Good Value
+242 |         if ratio < 1.1: return 1.00  # Fair Market
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:241:23
+    |
+240 |         if ratio < 0.5: return 1.20  # Steal (Team Friendly)
+241 |         if ratio < 0.9: return 1.10  # Good Value
+    |                       ^
+242 |         if ratio < 1.1: return 1.00  # Fair Market
+243 |         if ratio < 1.5: return 0.85  # Overpaid
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:242:23
+    |
+240 |         if ratio < 0.5: return 1.20  # Steal (Team Friendly)
+241 |         if ratio < 0.9: return 1.10  # Good Value
+242 |         if ratio < 1.1: return 1.00  # Fair Market
+    |                       ^
+243 |         if ratio < 1.5: return 0.85  # Overpaid
+244 |         return 0.60                  # Albatross
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:243:23
+    |
+241 |         if ratio < 0.9: return 1.10  # Good Value
+242 |         if ratio < 1.1: return 1.00  # Fair Market
+243 |         if ratio < 1.5: return 0.85  # Overpaid
+    |                       ^
+244 |         return 0.60                  # Albatross
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:258:35
+    |
+256 |         # Dump if we are paying Elite money for non-Elite play
+257 |         startable_rating = 80
+258 |         if player.position == "QB": startable_rating = 85
+    |                                   ^
+259 |
+260 |         if player.overall_rating < startable_rating and contract_salary > 15_000_000:
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:366:42
+    |
+364 |         multiplier = 1.0
+365 |
+366 |         if position == "QB" and count < 2: multiplier += 0.2
+    |                                          ^
+367 |         if position in ["WR", "CB"] and count < 5: multiplier += 0.1
+368 |         if position in ["OL", "DL"] and count < 7: multiplier += 0.1
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:367:50
+    |
+366 |         if position == "QB" and count < 2: multiplier += 0.2
+367 |         if position in ["WR", "CB"] and count < 5: multiplier += 0.1
+    |                                                  ^
+368 |         if position in ["OL", "DL"] and count < 7: multiplier += 0.1
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:368:50
+    |
+366 |         if position == "QB" and count < 2: multiplier += 0.2
+367 |         if position in ["WR", "CB"] and count < 5: multiplier += 0.1
+368 |         if position in ["OL", "DL"] and count < 7: multiplier += 0.1
+    |                                                  ^
+369 |
+370 |         if avg_rating < 70: multiplier += 0.2
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:370:27
+    |
+368 |         if position in ["OL", "DL"] and count < 7: multiplier += 0.1
+369 |
+370 |         if avg_rating < 70: multiplier += 0.2
+    |                           ^
+371 |         if avg_rating > 85: multiplier -= 0.1
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:371:27
+    |
+370 |         if avg_rating < 70: multiplier += 0.2
+371 |         if avg_rating > 85: multiplier -= 0.1
+    |                           ^
+372 |
+373 |         return multiplier
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:382:31
+    |
+381 |         if philosophy == "WIN_NOW":
+382 |             if offered_players: score += 5
+    |                               ^
+383 |             if offered_picks: score -= 5
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:383:29
+    |
+381 |         if philosophy == "WIN_NOW":
+382 |             if offered_players: score += 5
+383 |             if offered_picks: score -= 5
+    |                             ^
+384 |
+385 |         elif philosophy == "REBUILD":
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/gm_agent.py:386:29
+    |
+385 |         elif philosophy == "REBUILD":
+386 |             if offered_picks: score += 10
+    |                             ^
+387 |             young_players = [p for p in offered_players if p.age < 25]
+388 |             score += len(young_players) * 3
+    |
+
+W291 Trailing whitespace
+  --> backend/app/services/news_feed_service.py:55:31
+   |
+53 |     def handle_event(self, payload: dict[str, Any]):
+54 |         """
+55 |         Callback for EventBus.
+   |                               ^
+56 |         Note: This runs in the context of the publisher (synchronous usually).
+57 |         We need to be careful about DB sessions here.
+   |
+help: Remove trailing whitespace
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/news_feed_service.py:92:34
+   |
+91 |         category = NewsCategory.GAME_RESULT
+92 |         if "INJURY" in event_type: category = NewsCategory.INJURY
+   |                                  ^
+93 |         elif "TRADE" in event_type: category = NewsCategory.TRANSACTION
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/news_feed_service.py:93:35
+   |
+91 |         category = NewsCategory.GAME_RESULT
+92 |         if "INJURY" in event_type: category = NewsCategory.INJURY
+93 |         elif "TRADE" in event_type: category = NewsCategory.TRANSACTION
+   |                                   ^
+94 |
+95 |         news_item = NewsItem(
+   |
+
+F841 Local variable `cols_to_mean` is assigned to but never used
+   --> backend/app/services/nflverse_service.py:311:18
+    |
+309 |                  # Let's check columns... usually has 'player_gsis_id'.
+310 |                  # Aggregating...
+311 |                  cols_to_mean = [c for c in ngs_df.columns if c not in ['player_gsis_id', 'season', 'week']]
+    |                  ^^^^^^^^^^^^
+312 |                  ngs_agg = ngs_df.group_by("player_gsis_id").mean()
+313 |                  ngs_map = {
+    |
+help: Remove assignment to unused variable `cols_to_mean`
+
+E711 Comparison to `None` should be `cond is not None`
+  --> backend/app/services/offseason_service.py:62:55
+   |
+60 |         """Simulate player progression and regression based on age and experience."""
+61 |         # Query only active roster players
+62 |         stmt = select(Player).where(Player.team_id != None)
+   |                                                       ^^^^
+63 |         players = list(self.db.execute(stmt).scalars().all())
+64 |         progression_results = []
+   |
+help: Replace with `cond is not None`
+
+E711 Comparison to `None` should be `cond is not None`
+   --> backend/app/services/offseason_service.py:170:55
+    |
+168 |     def process_contract_expirations(self) -> None:
+169 |         """Decrement contract years and release expired players."""
+170 |         stmt = select(Player).where(Player.team_id != None)
+    |                                                       ^^^^
+171 |         players = list(self.db.execute(stmt).scalars().all())
+172 |         for player in players:
+    |
+help: Replace with `cond is not None`
+
+F841 Local variable `teams` is assigned to but never used
+   --> backend/app/services/offseason_service.py:192:13
+    |
+190 |             # Let's try to fetch teams and give them default stats so we don't crash
+191 |             stmt = select(Team)
+192 |             teams = list(self.db.execute(stmt).scalars().all())
+    |             ^^^^^
+193 |             # Create dummy standings objects or just use team IDs
+194 |             # But the code below expects objects with win_pct, etc.
+    |
+help: Remove assignment to unused variable `teams`
+
+E712 Avoid equality comparisons to `True`; use `Player.is_rookie:` for truth checks
+   --> backend/app/services/offseason_service.py:280:13
+    |
+278 |         """Get top available rookie prospects."""
+279 |         stmt = select(Player).where(
+280 |             Player.is_rookie == True,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^
+281 |             Player.team_id == None
+282 |         ).order_by(Player.overall_rating.desc()).limit(limit)
+    |
+help: Replace with `Player.is_rookie`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/services/offseason_service.py:281:31
+    |
+279 |         stmt = select(Player).where(
+280 |             Player.is_rookie == True,
+281 |             Player.team_id == None
+    |                               ^^^^
+282 |         ).order_by(Player.overall_rating.desc()).limit(limit)
+283 |         rookies = list(self.db.execute(stmt).scalars().all())
+    |
+help: Replace with `cond is None`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/services/offseason_service.py:298:36
+    |
+296 |         stmt = select(DraftPick).where(
+297 |             DraftPick.season_id == season_id,
+298 |             DraftPick.player_id == None
+    |                                    ^^^^
+299 |         ).order_by(DraftPick.pick_number)
+300 |         return self.db.execute(stmt).scalars().first()
+    |
+help: Replace with `cond is None`
+
+E712 Avoid equality comparisons to `True`; use `Player.is_rookie:` for truth checks
+   --> backend/app/services/offseason_service.py:342:13
+    |
+340 |         # Optimization: Just get top 20 to choose from
+341 |         stmt = select(Player).where(
+342 |             Player.is_rookie == True,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^
+343 |             Player.team_id == None
+344 |         ).order_by(Player.overall_rating.desc()).limit(20)
+    |
+help: Replace with `Player.is_rookie`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/services/offseason_service.py:343:31
+    |
+341 |         stmt = select(Player).where(
+342 |             Player.is_rookie == True,
+343 |             Player.team_id == None
+    |                               ^^^^
+344 |         ).order_by(Player.overall_rating.desc()).limit(20)
+345 |         rookies = list(self.db.execute(stmt).scalars().all())
+    |
+help: Replace with `cond is None`
+
+E711 Comparison to `None` should be `cond is None`
+   --> backend/app/services/offseason_service.py:414:58
+    |
+413 |         # Get available FAs
+414 |         stmt_fa = select(Player).where(Player.team_id == None).order_by(Player.overall_rating.desc())
+    |                                                          ^^^^
+415 |         free_agents = list(self.db.execute(stmt_fa).scalars().all())
+416 |         fa_pool = list(free_agents)
+    |
+help: Replace with `cond is None`
+
+E712 Avoid equality comparisons to `False`; use `not Player.is_retired:` for false checks
+   --> backend/app/services/offseason_service.py:444:13
+    |
+443 |         stmt = select(Player).where(
+444 |             Player.is_retired == False,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+445 |             Player.team_id != None
+446 |         )
+    |
+help: Replace with `not Player.is_retired`
+
+E711 Comparison to `None` should be `cond is not None`
+   --> backend/app/services/offseason_service.py:445:31
+    |
+443 |         stmt = select(Player).where(
+444 |             Player.is_retired == False,
+445 |             Player.team_id != None
+    |                               ^^^^
+446 |         )
+447 |         players = list(self.db.execute(stmt).scalars().all())
+    |
+help: Replace with `cond is not None`
+
+UP042 Class ClockStrategy inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/clock_management.py:8:7
+   |
+ 8 | class ClockStrategy(str, Enum):
+   |       ^^^^^^^^^^^^^
+ 9 |     NORMAL = "NORMAL"
+10 |     CHEW_CLOCK = "CHEW_CLOCK"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class UrgencyLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/clock_management.py:16:7
+   |
+16 | class UrgencyLevel(str, Enum):
+   |       ^^^^^^^^^^^^
+17 |     """Granular urgency levels for 2-minute drill scenarios."""
+18 |     LOW = "LOW"          # >4 min, normal play
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `aggression` is assigned to but never used
+   --> backend/app/services/playbook/coaching_ai.py:153:9
+    |
+151 |             return False
+152 |
+153 |         aggression = getattr(self.philosophy, 'timeout_aggressiveness', 50)
+    |         ^^^^^^^^^^
+154 |
+155 |         if is_offense:
+    |
+help: Remove assignment to unused variable `aggression`
+
+UP042 Class CoverageType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/defensive_ai.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class CoverageType(str, Enum):
+   |       ^^^^^^^^^^^^
+22 |     """Pass coverage schemes."""
+23 |     COVER_0 = "COVER_0"  # All-out blitz, man
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class BlitzPackage inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/defensive_ai.py:31:7
+   |
+31 | class BlitzPackage(str, Enum):
+   |       ^^^^^^^^^^^^
+32 |     """Pressure types."""
+33 |     NONE = "NONE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class FamiliarityTier inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/familiarity.py:52:7
+   |
+52 | class FamiliarityTier(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+53 |     """Familiarity tier for display purposes."""
+54 |     UNKNOWN = "UNKNOWN"
+   |
+help: Inherit from `enum.StrEnum`
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/playbook/play_caller.py:43:56
+   |
+41 |             # Backward compatibility
+42 |             val = 50
+43 |             if aggression == AggressionLevel.AGGRESSIVE: val = 75
+   |                                                        ^
+44 |             elif aggression == AggressionLevel.CONSERVATIVE: val = 25
+45 |             self.philosophy = CoachingPhilosophy(aggressiveness=val)
+   |
+
+E701 Multiple statements on one line (colon)
+  --> backend/app/services/playbook/play_caller.py:44:60
+   |
+42 |             val = 50
+43 |             if aggression == AggressionLevel.AGGRESSIVE: val = 75
+44 |             elif aggression == AggressionLevel.CONSERVATIVE: val = 25
+   |                                                            ^
+45 |             self.philosophy = CoachingPhilosophy(aggressiveness=val)
+   |
+
+UP042 Class PlayType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/playbook.py:20:7
+   |
+18 | # ============================================================================
+19 |
+20 | class PlayType(str, Enum):
+   |       ^^^^^^^^
+21 |     """Category of play."""
+22 |     RUN = "RUN"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Formation inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/playbook.py:29:7
+   |
+29 | class Formation(str, Enum):
+   |       ^^^^^^^^^
+30 |     """Offensive formations."""
+31 |     SINGLEBACK = "SINGLEBACK"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DefensiveScheme inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/playbook.py:39:7
+   |
+39 | class DefensiveScheme(str, Enum):
+   |       ^^^^^^^^^^^^^^^
+40 |     """Defensive alignments."""
+41 |     BASE_4_3 = "4-3"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class Concept inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/playbook.py:49:7
+   |
+49 | class Concept(str, Enum):
+   |       ^^^^^^^
+50 |     """Offensive philosophies."""
+51 |     WEST_COAST = "WEST_COAST"      # Short, timing routes
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `personnel_12` is assigned to but never used
+   --> backend/app/services/playbook/playbook.py:150:9
+    |
+148 |         # Personnel groups
+149 |         personnel_11 = Personnel("11 Personnel", 1, 1, 3)
+150 |         personnel_12 = Personnel("12 Personnel", 1, 2, 2)
+    |         ^^^^^^^^^^^^
+151 |
+152 |         # Example Plays
+    |
+help: Remove assignment to unused variable `personnel_12`
+
+UP042 Class AggressionLevel inherits from both `str` and `enum.Enum`
+ --> backend/app/services/playbook/types.py:7:7
+  |
+7 | class AggressionLevel(str, Enum):
+  |       ^^^^^^^^^^^^^^^
+8 |     """Offensive coordinator aggression."""
+9 |     CONSERVATIVE = "CONSERVATIVE"
+  |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class GameScript inherits from both `str` and `enum.Enum`
+  --> backend/app/services/playbook/types.py:14:7
+   |
+14 | class GameScript(str, Enum):
+   |       ^^^^^^^^^^
+15 |     """Game flow state."""
+16 |     TRAILING = "TRAILING"
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `div` not used within loop body
+   --> backend/app/services/playoff_service.py:106:13
+    |
+104 |         wild_card_candidates = []
+105 |
+106 |         for div, teams in divisions.items():
+    |             ^^^
+107 |             # Sort by win pct, then wins, then point diff
+108 |             sorted_teams = sorted(teams, key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
+    |
+help: Rename unused `div` to `_div`
+
+F841 Local variable `next_round` is assigned to but never used
+   --> backend/app/services/playoff_service.py:279:9
+    |
+278 |         current_week = season.current_week
+279 |         next_round = None
+    |         ^^^^^^^^^^
+280 |
+281 |         if current_week == 19: # Wild Card -> Divisional
+    |
+help: Remove assignment to unused variable `next_round`
+
+E712 Avoid equality comparisons to `True`; use `Game.is_played:` for truth checks
+   --> backend/app/services/pre_game_service.py:142:13
+    |
+140 |         stmt = select(Game).filter(
+141 |             (Game.home_team_id == team_id) | (Game.away_team_id == team_id),
+142 |             Game.is_played == True
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+143 |         ).order_by(desc(Game.season), desc(Game.week)).limit(5)
+    |
+help: Replace with `Game.is_played`
+
+B007 Loop control variable `pos` not used within loop body
+   --> backend/app/services/pre_game_service.py:186:17
+    |
+184 |         if consecutive_games >= 5:
+185 |             logger.info(f"Applying OL Chemistry Boost for Team {team_id} (Streak: {consecutive_games})")
+186 |             for pos, player_id in current_ol_ids.items():
+    |                 ^^^
+187 |                 player = roster.get(player_id)
+188 |                 if player:
+    |
+help: Rename unused `pos` to `_pos`
+
+E402 Module level import not at top of file
+  --> backend/app/services/ratings_generator.py:14:1
+   |
+14 | from app.data.career_accomplishments import CareerAccolades
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 | from app.services.age_curves import get_age_modifier, get_experience_bonus
+   |
+
+E402 Module level import not at top of file
+  --> backend/app/services/ratings_generator.py:15:1
+   |
+14 | from app.data.career_accomplishments import CareerAccolades
+15 | from app.services.age_curves import get_age_modifier, get_experience_bonus
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+16 |
+17 | # =============================================================================
+   |
+
+F841 Local variable `three_cone` is assigned to but never used
+   --> backend/app/services/ratings_generator.py:323:5
+    |
+322 |     forty = player_data.get("forty_yard_dash", 4.7)
+323 |     three_cone = player_data.get("three_cone_drill", 7.0)
+    |     ^^^^^^^^^^
+324 |
+325 |     tackles = stats.get("solo_tackles", 0) + stats.get("assist_tackles", 0)
+    |
+help: Remove assignment to unused variable `three_cone`
+
+F841 Local variable `generated_count` is assigned to but never used
+  --> backend/app/services/rookie_generator.py:45:9
+   |
+43 |             print(f"MCP Warning: Could not fetch league averages: {e}")
+44 |
+45 |         generated_count = 0
+   |         ^^^^^^^^^^^^^^^
+46 |         players = []
+   |
+help: Remove assignment to unused variable `generated_count`
+
+UP042 Class ScoutRegion inherits from both `str` and `enum.Enum`
+  --> backend/app/services/scouting/scout.py:23:7
+   |
+21 | # ============================================================================
+22 |
+23 | class ScoutRegion(str, Enum):
+   |       ^^^^^^^^^^^
+24 |     NATIONAL = "NATIONAL"
+25 |     EAST = "EAST"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class KnowledgeTier inherits from both `str` and `enum.Enum`
+  --> backend/app/services/scouting/scout.py:30:7
+   |
+28 |     MIDWEST = "MIDWEST"
+29 |
+30 | class KnowledgeTier(str, Enum):
+   |       ^^^^^^^^^^^^^
+31 |     UNKNOWN = "UNKNOWN"    # "???"
+32 |     VAGUE = "VAGUE"        # "C- to B+" (Wide range)
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ScoutSpecialty inherits from both `str` and `enum.Enum`
+  --> backend/app/services/scouting/scout.py:37:7
+   |
+35 |     EXACT = "EXACT"        # "85" (True value)
+36 |
+37 | class ScoutSpecialty(str, Enum):
+   |       ^^^^^^^^^^^^^^
+38 |     GENERALIST = "GENERALIST"
+39 |     QB_GURU = "QB_GURU"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ScoutBias inherits from both `str` and `enum.Enum`
+  --> backend/app/services/scouting/scout.py:44:7
+   |
+42 |     ATHLETICISM = "ATHLETICISM"
+43 |
+44 | class ScoutBias(str, Enum):
+   |       ^^^^^^^^^
+45 |     NEUTRAL = "NEUTRAL"
+46 |     OLD_SCHOOL = "OLD_SCHOOL"     # Overvalues Size/Strength, underrates Spread QBs
+   |
+help: Inherit from `enum.StrEnum`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:187:50
+    |
+186 |     def _is_specialty_match(self, attribute: str, specialty: ScoutSpecialty) -> bool:
+187 |         if specialty == ScoutSpecialty.GENERALIST: return False
+    |                                                  ^
+188 |         if specialty == ScoutSpecialty.ATHLETICISM: return attribute in ["speed", "strength", "agility"]
+189 |         if specialty == ScoutSpecialty.QB_GURU: return attribute in ["throw_power", "throw_accuracy_mid"]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:188:51
+    |
+186 |     def _is_specialty_match(self, attribute: str, specialty: ScoutSpecialty) -> bool:
+187 |         if specialty == ScoutSpecialty.GENERALIST: return False
+188 |         if specialty == ScoutSpecialty.ATHLETICISM: return attribute in ["speed", "strength", "agility"]
+    |                                                   ^
+189 |         if specialty == ScoutSpecialty.QB_GURU: return attribute in ["throw_power", "throw_accuracy_mid"]
+190 |         if specialty == ScoutSpecialty.TRENCHES: return attribute in ["run_block", "pass_block", "power_moves"]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:189:47
+    |
+187 |         if specialty == ScoutSpecialty.GENERALIST: return False
+188 |         if specialty == ScoutSpecialty.ATHLETICISM: return attribute in ["speed", "strength", "agility"]
+189 |         if specialty == ScoutSpecialty.QB_GURU: return attribute in ["throw_power", "throw_accuracy_mid"]
+    |                                               ^
+190 |         if specialty == ScoutSpecialty.TRENCHES: return attribute in ["run_block", "pass_block", "power_moves"]
+191 |         if specialty == ScoutSpecialty.SKILL_POS: return attribute in ["catching", "route_running", "man_coverage"]
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:190:48
+    |
+188 |         if specialty == ScoutSpecialty.ATHLETICISM: return attribute in ["speed", "strength", "agility"]
+189 |         if specialty == ScoutSpecialty.QB_GURU: return attribute in ["throw_power", "throw_accuracy_mid"]
+190 |         if specialty == ScoutSpecialty.TRENCHES: return attribute in ["run_block", "pass_block", "power_moves"]
+    |                                                ^
+191 |         if specialty == ScoutSpecialty.SKILL_POS: return attribute in ["catching", "route_running", "man_coverage"]
+192 |         return False
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:191:49
+    |
+189 |         if specialty == ScoutSpecialty.QB_GURU: return attribute in ["throw_power", "throw_accuracy_mid"]
+190 |         if specialty == ScoutSpecialty.TRENCHES: return attribute in ["run_block", "pass_block", "power_moves"]
+191 |         if specialty == ScoutSpecialty.SKILL_POS: return attribute in ["catching", "route_running", "man_coverage"]
+    |                                                 ^
+192 |         return False
+    |
+
+B007 Loop control variable `err` not used within loop body
+   --> backend/app/services/scouting/scout.py:196:25
+    |
+194 |     def format_for_display(self, report: ScoutingReport) -> dict[str, str]:
+195 |         display = {}
+196 |         for attr, (val, err, tier) in report.attributes.items():
+    |                         ^^^
+197 |             if tier == KnowledgeTier.UNKNOWN:
+198 |                 display[attr] = "???"
+    |
+help: Rename unused `err` to `_err`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:210:21
+    |
+209 |     def _val_to_grade(self, val: int) -> str:
+210 |         if val >= 90: return "A"
+    |                     ^
+211 |         if val >= 80: return "B"
+212 |         if val >= 70: return "C"
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:211:21
+    |
+209 |     def _val_to_grade(self, val: int) -> str:
+210 |         if val >= 90: return "A"
+211 |         if val >= 80: return "B"
+    |                     ^
+212 |         if val >= 70: return "C"
+213 |         if val >= 60: return "D"
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:212:21
+    |
+210 |         if val >= 90: return "A"
+211 |         if val >= 80: return "B"
+212 |         if val >= 70: return "C"
+    |                     ^
+213 |         if val >= 60: return "D"
+214 |         return "F"
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/scouting/scout.py:213:21
+    |
+211 |         if val >= 80: return "B"
+212 |         if val >= 70: return "C"
+213 |         if val >= 60: return "D"
+    |                     ^
+214 |         return "F"
+    |
+
+UP042 Class MomentumState inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/momentum.py:20:7
+   |
+18 | # ============================================================================
+19 |
+20 | class MomentumState(str, Enum):
+   |       ^^^^^^^^^^^^^
+21 |     """Overall momentum state."""
+22 |     COLD = "COLD"             # Struggling
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class MomentumEvent inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/momentum.py:29:7
+   |
+29 | class MomentumEvent(str, Enum):
+   |       ^^^^^^^^^^^^^
+30 |     """Events that shift momentum."""
+31 |     TOUCHDOWN = "TOUCHDOWN"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class RivalryType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/nemesis.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class RivalryType(str, Enum):
+   |       ^^^^^^^^^^^
+22 |     """Types of nemesis relationships."""
+23 |     PERSONAL = "PERSONAL"       # History of conflict
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class NemesisEvent inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/nemesis.py:29:7
+   |
+29 | class NemesisEvent(str, Enum):
+   |       ^^^^^^^^^^^^
+30 |     """Events that trigger/escalate rivalries."""
+31 |     DIRTY_HIT = "DIRTY_HIT"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class RelationshipType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/social_graph.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class RelationshipType(str, Enum):
+   |       ^^^^^^^^^^^^^^^^
+22 |     """Types of social connections."""
+23 |     FRIEND = "FRIEND"           # Boosts morale, chemistry
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CliqueType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/society/social_graph.py:30:7
+   |
+30 | class CliqueType(str, Enum):
+   |       ^^^^^^^^^^
+31 |     """Types of social cliques."""
+32 |     OFFENSE = "OFFENSE"
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `node` not used within loop body
+   --> backend/app/services/society/social_graph.py:200:18
+    |
+198 |         """
+199 |         resolutions = []
+200 |         for pid, node in self.nodes.items():
+    |                  ^^^^
+201 |             # Check for Enemy relationships
+202 |             rels = self.edges.get(pid, [])
+    |
+help: Rename unused `node` to `_node`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/society/social_graph.py:223:22
+    |
+221 |         # Simplified: Find highest leadership node in same clique
+222 |         target = self.nodes.get(target_pid)
+223 |         if not target: return None
+    |                      ^
+224 |
+225 |         best_leader = None
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/society/social_graph.py:229:33
+    |
+228 |         for pid, node in self.nodes.items():
+229 |             if pid == target_pid: continue
+    |                                 ^
+230 |
+231 |             # Check shared clique
+    |
+
+UP042 Class CrowdMood inherits from both `str` and `enum.Enum`
+  --> backend/app/services/stadium/crowd.py:18:7
+   |
+18 | class CrowdMood(str, Enum):
+   |       ^^^^^^^^^
+19 |     """Overall crowd emotional state."""
+20 |     ELECTRIC = "ELECTRIC"
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `passion_factor` is assigned to but never used
+  --> backend/app/services/stadium/crowd.py:81:9
+   |
+80 |         net = positive_count - negative_count
+81 |         passion_factor = self.base_passion / 100.0
+   |         ^^^^^^^^^^^^^^
+82 |
+83 |         if is_positive:
+   |
+help: Remove assignment to unused variable `passion_factor`
+
+UP042 Class StadiumType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/stadium/stadium.py:20:7
+   |
+18 | # ============================================================================
+19 |
+20 | class StadiumType(str, Enum):
+   |       ^^^^^^^^^^^
+21 |     """Type of stadium."""
+22 |     OPEN_AIR = "OPEN_AIR"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class SurfaceType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/stadium/stadium.py:27:7
+   |
+27 | class SurfaceType(str, Enum):
+   |       ^^^^^^^^^^^
+28 |     """Playing surface."""
+29 |     NATURAL_GRASS = "NATURAL_GRASS"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class NoiseLevel inherits from both `str` and `enum.Enum`
+  --> backend/app/services/stadium/stadium.py:34:7
+   |
+34 | class NoiseLevel(str, Enum):
+   |       ^^^^^^^^^^
+35 |     """Crowd noise intensity."""
+36 |     QUIET = "QUIET"           # <70 dB
+   |
+help: Inherit from `enum.StrEnum`
+
+B007 Loop control variable `team_id` not used within loop body
+   --> backend/app/services/standings_calculator.py:176:13
+    |
+175 |         # Calculate Strength of Schedule (SOS)
+176 |         for team_id, stats in team_stats.items():
+    |             ^^^^^^^
+177 |             opponents = stats['opponents']
+178 |             if not opponents:
+    |
+help: Rename unused `team_id` to `_team_id`
+
+UP042 Class StorylineType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/storyline_service.py:22:7
+   |
+22 | class StorylineType(str, Enum):
+   |       ^^^^^^^^^^^^^
+23 |     QB_CONTROVERSY = "QB_CONTROVERSY"
+24 |     HOT_STREAK = "HOT_STREAK"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DrillType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/camp.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class DrillType(str, Enum):
+   |       ^^^^^^^^^
+22 |     """Types of training drills."""
+23 |     OKLAHOMA = "OKLAHOMA"          # High intensity, tackling/blocking
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TrainingIntensity inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/camp.py:31:7
+   |
+31 | class TrainingIntensity(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^
+32 |     """Intensity levels for drills."""
+33 |     WALKTHROUGH = "WALKTHROUGH"    # Minimal risk, low gain
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CoachArchetype inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/coach_expertise.py:70:7
+   |
+68 | # ============================================================================
+69 |
+70 | class CoachArchetype(str, Enum):
+   |       ^^^^^^^^^^^^^^
+71 |     """Coach specialization archetypes."""
+72 |     GENERALIST = "GENERALIST"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class CoachingStyleName inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/coaching_philosophy.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class CoachingStyleName(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^
+22 |     """Available coaching styles (B-022)."""
+23 |     VOLUME = "volume"          # B-023: High reps, moderate gains
+   |
+help: Inherit from `enum.StrEnum`
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> backend/app/services/training/coaching_philosophy.py:165:9
+    |
+163 |         return COACHING_STYLES[style_enum]
+164 |     except (ValueError, KeyError):
+165 |         raise ValueError(f"Unknown coaching style: {name}. Valid styles: {list(CoachingStyleName)}")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+
+UP042 Class CoachRole inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/coaching_tree.py:20:7
+   |
+18 | # ============================================================================
+19 |
+20 | class CoachRole(str, Enum):
+   |       ^^^^^^^^^
+21 |     """Coaching staff roles."""
+22 |     HEAD_COACH = "HEAD_COACH"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class SkillCategory inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/coaching_tree.py:29:7
+   |
+29 | class SkillCategory(str, Enum):
+   |       ^^^^^^^^^^^^^
+30 |     """Category of coaching skills."""
+31 |     OFFENSE = "OFFENSE"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class SeasonPhase inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/drills.py:22:7
+   |
+20 | # ============================================================================
+21 |
+22 | class SeasonPhase(str, Enum):
+   |       ^^^^^^^^^^^
+23 |     """When a drill is available."""
+24 |     OFFSEASON = "offseason"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DrillCategory inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/drills.py:29:7
+   |
+29 | class DrillCategory(str, Enum):
+   |       ^^^^^^^^^^^^^
+30 |     """Categories of drills."""
+31 |     STRENGTH = "STRENGTH"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class DevTrait inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/progression.py:21:7
+   |
+19 | # ============================================================================
+20 |
+21 | class DevTrait(str, Enum):
+   |       ^^^^^^^^
+22 |     """Development potential trait."""
+23 |     NORMAL = "NORMAL"
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class ProgressionPhase inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/progression.py:29:7
+   |
+29 | class ProgressionPhase(str, Enum):
+   |       ^^^^^^^^^^^^^^^^
+30 |     """Career phase for progression logic."""
+31 |     ROOKIE = "ROOKIE"          # Rapid initial growth
+   |
+help: Inherit from `enum.StrEnum`
+
+F841 Local variable `generic_peak` is assigned to but never used
+   --> backend/app/services/training/progression.py:163:9
+    |
+161 |         # Let's use a generic generic_peak = (25, 29) for now to allow age effect.
+162 |
+163 |         generic_peak = (25, 29)
+    |         ^^^^^^^^^^^^
+164 |         age = state.age
+165 |         age_mult = 1.0
+    |
+help: Remove assignment to unused variable `generic_peak`
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/training/progression.py:166:20
+    |
+164 |         age = state.age
+165 |         age_mult = 1.0
+166 |         if age < 25: age_mult = 1.2
+    |                    ^
+167 |         elif age > 31: age_mult = 0.6
+168 |         elif age > 29: age_mult = 0.8
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/training/progression.py:167:22
+    |
+165 |         age_mult = 1.0
+166 |         if age < 25: age_mult = 1.2
+167 |         elif age > 31: age_mult = 0.6
+    |                      ^
+168 |         elif age > 29: age_mult = 0.8
+    |
+
+E701 Multiple statements on one line (colon)
+   --> backend/app/services/training/progression.py:168:22
+    |
+166 |         if age < 25: age_mult = 1.2
+167 |         elif age > 31: age_mult = 0.6
+168 |         elif age > 29: age_mult = 0.8
+    |                      ^
+169 |
+170 |         adjusted_xp = int(xp_gained * multiplier * age_mult)
+    |
+
+B007 Loop control variable `val` not used within loop body
+   --> backend/app/services/training/progression.py:219:19
+    |
+217 |         regressed_attrs = {}
+218 |
+219 |         for attr, val in attributes.items():
+    |                   ^^^
+220 |             if attr in ["speed", "acceleration", "agility", "jumping"]:
+221 |                 # Physical traits hit hardest
+    |
+help: Rename unused `val` to `_val`
+
+UP042 Class SeasonPhase inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/training_programs.py:22:7
+   |
+22 | class SeasonPhase(str, Enum):
+   |       ^^^^^^^^^^^
+23 |     """Training intensity varies by season phase."""
+24 |     OFFSEASON = "OFFSEASON"     # High intensity, high volume
+   |
+help: Inherit from `enum.StrEnum`
+
+UP042 Class TrainingPhilosophy inherits from both `str` and `enum.Enum`
+  --> backend/app/services/training/training_programs.py:30:7
+   |
+30 | class TrainingPhilosophy(str, Enum):
+   |       ^^^^^^^^^^^^^^^^^^
+31 |     """Different coaching philosophies affect outcomes."""
+32 |     VOLUME = "VOLUME"           # +30% XP, +80% injury risk
+   |
+help: Inherit from `enum.StrEnum`
+
+F811 Redefinition of unused `get_player_traits` from line 632
+   --> backend/app/services/trait_service.py:745:15
+    |
+743 |     # -------------------------------------------------------------------------
+744 |
+745 |     async def get_player_traits(self, player_id: int) -> list[TraitDefinition]:
+    |               ^^^^^^^^^^^^^^^^^ `get_player_traits` redefined here
+746 |         """
+747 |         Async instance method wrapper for get_player_traits.
+    |
+   ::: backend/app/services/trait_service.py:632:9
+    |
+631 |     @staticmethod
+632 |     def get_player_traits(db: Session, player_id: int) -> list[TraitDefinition]:
+    |         ----------------- previous definition of `get_player_traits` here
+633 |         """
+634 |         Get all traits assigned to a specific player.
+    |
+help: Remove definition: `get_player_traits`
+
+UP042 Class ActionType inherits from both `str` and `enum.Enum`
+  --> backend/app/services/use_based_progression.py:27:7
+   |
+25 | # =============================================================================
+26 |
+27 | class ActionType(str, Enum):
+   |       ^^^^^^^^^^
+28 |     """Types of in-game actions that award attribute XP."""
+29 |     # Passing Actions
+   |
+help: Inherit from `enum.StrEnum`
+
+E712 Avoid equality comparisons to `False`; use `not Game.is_played:` for false checks
+  --> backend/app/services/week_simulator.py:93:13
+   |
+91 |             Game.season_id == season_id,
+92 |             Game.week == week,
+93 |             Game.is_played == False
+   |             ^^^^^^^^^^^^^^^^^^^^^^^
+94 |         )
+95 |         result = await self.db.execute(stmt)
+   |
+help: Replace with `not Game.is_played`
+
+B007 Loop control variable `play_num` not used within loop body
+   --> backend/app/services/week_simulator.py:256:13
+    |
+254 |         orchestrator.reset_game_state()
+255 |
+256 |         for play_num in range(num_plays):
+    |             ^^^^^^^^
+257 |             if not orchestrator.is_running:
+258 |                 break
+    |
+help: Rename unused `play_num` to `_play_num`
+
+F841 Local variable `result` is assigned to but never used
+   --> backend/app/services/week_simulator.py:261:13
+    |
+260 |             # Execute play
+261 |             result = await orchestrator._execute_single_play()
+    |             ^^^^^^
+262 |
+263 |             # Check if game should end (could add more sophisticated logic here)
+    |
+help: Remove assignment to unused variable `result`
+
+Found 3337 errors (2878 fixed, 459 remaining).
+No fixes available (237 hidden fixes can be enabled with the `--unsafe-fixes` option).

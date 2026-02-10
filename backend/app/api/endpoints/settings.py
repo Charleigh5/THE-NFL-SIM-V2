@@ -1,19 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.models.settings import SystemSettings
-from app.core.error_decorators import handle_errors
+
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.core.error_decorators import handle_errors
+from app.models.settings import SystemSettings
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 
 class SettingsUpdate(BaseModel):
-    user_team_id: Optional[int] = None
-    difficulty_level: Optional[str] = None
+    user_team_id: int | None = None
+    difficulty_level: str | None = None
 
 class SettingsResponse(BaseModel):
-    user_team_id: Optional[int] = None
+    user_team_id: int | None = None
     difficulty_level: str
 
     class Config:
@@ -38,12 +39,12 @@ def update_settings(update: SettingsUpdate, db: Session = Depends(get_db)):
     if not settings:
         settings = SystemSettings()
         db.add(settings)
-    
+
     if update.user_team_id is not None:
         settings.user_team_id = update.user_team_id
     if update.difficulty_level is not None:
         settings.difficulty_level = update.difficulty_level
-        
+
     db.commit()
     db.refresh(settings)
     return settings

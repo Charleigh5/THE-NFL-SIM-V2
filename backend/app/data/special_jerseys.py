@@ -6,13 +6,13 @@ Defines special/throwback uniforms for NFL teams, particularly for
 Thanksgiving Day games and other special occasions.
 """
 
-from typing import Dict, Any
+from typing import Any
 
 # ============================================================================
 # THANKSGIVING JERSEYS
 # ============================================================================
 
-THANKSGIVING_JERSEYS: Dict[str, Dict[str, Any]] = {
+THANKSGIVING_JERSEYS: dict[str, dict[str, Any]] = {
     "DET": {
         "name": "Lions 1950s Throwback",
         "description": "Classic Honolulu blue with silver accents, worn annually on Thanksgiving",
@@ -121,7 +121,7 @@ THANKSGIVING_HOSTS = {
 # HELPER FUNCTIONS
 # ============================================================================
 
-def get_thanksgiving_jersey(team_abbr: str, year: int = None) -> Dict[str, Any]:
+def get_thanksgiving_jersey(team_abbr: str, year: int = None) -> dict[str, Any]:
     """
     Get the Thanksgiving jersey for a team.
 

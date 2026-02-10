@@ -1,13 +1,15 @@
 import sys
 from pathlib import Path
+
 from sqlalchemy.orm import Session
 
 # Add backend directory to path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from app.core.database import SessionLocal
-from app.models.team import Team
 from app.data.teams import TEAM_DB
+from app.models.team import Team
+
 
 def seed_teams():
     db: Session = SessionLocal()
@@ -16,9 +18,9 @@ def seed_teams():
         for team_id, data in TEAM_DB.items():
             # Check if team exists
             team = db.query(Team).filter(Team.abbreviation == data.abbreviation).first()
-            
+
             logo_url = f"/logos/{data.abbreviation}.png"
-            
+
             if not team:
                 print(f"Creating {data.city} {data.mascot}...")
                 team = Team(
@@ -43,10 +45,10 @@ def seed_teams():
                 team.primary_color = data.colors.primary_hex
                 team.secondary_color = data.colors.secondary_hex
                 # Update other fields if needed
-            
+
         db.commit()
         print("Teams seeded successfully!")
-        
+
     except Exception as e:
         print(f"Error seeding teams: {e}")
         db.rollback()

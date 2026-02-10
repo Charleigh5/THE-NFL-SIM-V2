@@ -5,18 +5,16 @@ Manages player ability unlocks, eligibility checks, and XP costs.
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Tuple
-
 from sqlalchemy.orm import Session
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
 from app.rpg.abilities import (
     ABILITY_CATALOG,
     AbilityDefinition,
     AbilityStatus,
-    get_ability_definition,
     check_ability_eligibility,
+    get_ability_definition,
 )
 
 logger = get_logger(__name__)
@@ -36,17 +34,17 @@ class AbilityService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def get_catalog() -> Dict[str, AbilityDefinition]:
+    def get_catalog() -> dict[str, AbilityDefinition]:
         """Return the full ability catalog."""
         return ABILITY_CATALOG
 
     @staticmethod
-    def get_ability_definition(ability_key: str) -> Optional[AbilityDefinition]:
+    def get_ability_definition(ability_key: str) -> AbilityDefinition | None:
         """Get a specific ability definition by key."""
         return get_ability_definition(ability_key)
 
     @staticmethod
-    def get_abilities_for_position(position: str) -> List[AbilityDefinition]:
+    def get_abilities_for_position(position: str) -> list[AbilityDefinition]:
         """Get all abilities available for a specific position."""
         return [
             ability for ability in ABILITY_CATALOG.values()
@@ -57,7 +55,7 @@ class AbilityService:
     # PLAYER ABILITY METHODS
     # -------------------------------------------------------------------------
 
-    def get_player_abilities(self, player_id: int) -> List[AbilityDefinition]:
+    def get_player_abilities(self, player_id: int) -> list[AbilityDefinition]:
         """
         Get all unlocked abilities for a player.
 
@@ -83,7 +81,7 @@ class AbilityService:
         self,
         player_id: int,
         ability_key: str
-    ) -> Tuple[bool, str, AbilityStatus]:
+    ) -> tuple[bool, str, AbilityStatus]:
         """
         Check if a player is eligible to unlock a specific ability.
 
@@ -110,7 +108,7 @@ class AbilityService:
         self,
         player_id: int,
         ability_key: str
-    ) -> Tuple[bool, str, Optional[Player]]:
+    ) -> tuple[bool, str, Player | None]:
         """
         Unlock an ability for a player, deducting XP cost.
 
@@ -186,7 +184,7 @@ class AbilityService:
     def get_player_ability_status(
         self,
         player_id: int
-    ) -> Dict[str, Dict]:
+    ) -> dict[str, dict]:
         """
         Get the status of all abilities for a player.
 

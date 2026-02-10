@@ -1,4 +1,5 @@
-from typing import Dict, Any
+from typing import Any
+
 
 class EmpireKernel:
     """
@@ -8,7 +9,7 @@ class EmpireKernel:
     def __init__(self) -> None:
         pass
 
-    def process_play_result(self, play_result: Dict[str, Any]) -> Dict[str, Any]:
+    def process_play_result(self, play_result: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze play result for XP awards and morale shifts.
         """
@@ -16,6 +17,6 @@ class EmpireKernel:
         xp_gained = 0
         if play_result.get("yards_gained", 0) > 10:
             xp_gained = 50
-        
+
         # Return dict mapping player_id (1 for dummy) to XP
         return {"xp_awards": {1: xp_gained} if xp_gained > 0 else {}}

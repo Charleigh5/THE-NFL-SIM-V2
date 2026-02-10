@@ -10,10 +10,9 @@ Phase 10: Hyper-Immersion
 - Statistical callouts
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
 import random
+from dataclasses import dataclass
+from enum import Enum
 
 
 class BroadcastStyle(str, Enum):
@@ -52,7 +51,7 @@ class GameContext:
     possession_team: str
     is_redzone: bool = False
     is_two_minute: bool = False
-    momentum_team: Optional[str] = None
+    momentum_team: str | None = None
 
     @property
     def score_diff(self) -> int:
@@ -198,7 +197,7 @@ class BroadcastingService:
     def generate_play_commentary(
         self,
         play_type: str,
-        play_data: Dict,
+        play_data: dict,
         context: GameContext
     ) -> str:
         """
@@ -293,7 +292,7 @@ class BroadcastingService:
         }
         return endings.get(self.style, endings[BroadcastStyle.ESPN])
 
-    def generate_big_moment(self, moment_type: MomentType, data: Dict, context: GameContext) -> str:
+    def generate_big_moment(self, moment_type: MomentType, data: dict, context: GameContext) -> str:
         """Generate commentary for significant moments."""
         if moment_type == MomentType.TOUCHDOWN:
             return self.generate_play_commentary("TOUCHDOWN", data, context)
@@ -308,7 +307,7 @@ class BroadcastingService:
             templates = SITUATIONAL_TEMPLATES["CLUTCH_DRIVE"]
             return self.rng.choice(templates).format(qb=qb, team=context.possession_team)
         else:
-            return f"A significant moment in this contest!"
+            return "A significant moment in this contest!"
 
     def generate_stat_callout(self, player: str, stat: str, value: int) -> str:
         """Generate statistical highlight commentary."""

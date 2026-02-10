@@ -10,11 +10,10 @@ Context7 Best Practices:
 - Clear type definitions
 """
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +23,17 @@ class AnnotationElement:
     """Element metadata from annotation."""
     selector: str
     tagName: str
-    textContent: Optional[str] = ""
-    className: Optional[str] = None
+    textContent: str | None = ""
+    className: str | None = None
 
 
 @dataclass
 class AIResearchData:
     """AI research data for an annotation."""
     summary: str
-    codeExamples: List[str]
+    codeExamples: list[str]
     complexity: str
-    sources: List[str]
+    sources: list[str]
 
 
 @dataclass
@@ -44,7 +43,7 @@ class AnnotationData:
     timestamp: str
     note: str
     element: AnnotationElement
-    aiResearch: Optional[AIResearchData] = None
+    aiResearch: AIResearchData | None = None
 
 
 def format_annotation_markdown(index: int, annotation: AnnotationData) -> str:
@@ -92,7 +91,7 @@ def format_annotation_markdown(index: int, annotation: AnnotationData) -> str:
     return "\n".join(lines)
 
 
-def generate_artifact_content(annotations: List[AnnotationData]) -> str:
+def generate_artifact_content(annotations: list[AnnotationData]) -> str:
     """
     Generate the full markdown content for a task list artifact.
     """
@@ -137,7 +136,7 @@ class ArtifactGeneratorService:
     Service for generating task list artifacts.
     """
 
-    def __init__(self, output_dir: Optional[Path] = None):
+    def __init__(self, output_dir: Path | None = None):
         if output_dir is None:
             # Default to .gemini artifacts directory
             self.output_dir = Path.home() / ".gemini" / "antigravity" / "artifacts" / "task_lists"
@@ -148,7 +147,7 @@ class ArtifactGeneratorService:
         """Create output directory if it doesn't exist."""
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def generate_artifact(self, annotations: List[AnnotationData]) -> Path:
+    def generate_artifact(self, annotations: list[AnnotationData]) -> Path:
         """
         Generate a task list artifact from annotations.
 
@@ -174,7 +173,7 @@ class ArtifactGeneratorService:
         logger.info(f"Generated task list artifact: {filepath}")
         return filepath
 
-    async def generate_artifact_async(self, annotations: List[AnnotationData]) -> Path:
+    async def generate_artifact_async(self, annotations: list[AnnotationData]) -> Path:
         """
         Async version of generate_artifact.
         """
