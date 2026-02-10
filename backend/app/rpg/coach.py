@@ -15,7 +15,7 @@ class CoachRPG:
             "TrenchWarfare": {"level": 1, "effect": {"ol_dl_xp_gain": 1.2}}
         }
     }
-    
+
     @staticmethod
     def apply_coach_bonuses(team_stats: dict, coach_skills: dict) -> dict:
         """

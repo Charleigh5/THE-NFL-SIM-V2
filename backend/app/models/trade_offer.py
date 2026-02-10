@@ -2,8 +2,10 @@
 
 from datetime import datetime, timedelta
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Enum, Text
+
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
+
 from app.models.base import Base
 
 

@@ -1,19 +1,20 @@
-from sqlalchemy.orm import Session
-from app.models.season import Season, SeasonStatus
-from app.models.team import Team
-from app.models.player import Player, DevelopmentTrait
-from app.models.coach import Coach
-from app.models.draft import DraftPick
-from app.models.playoff import PlayoffMatchup, PlayoffRound
-from app.services.standings_calculator import StandingsCalculator
-from app.services.rookie_generator import RookieGenerator
 import random
-from typing import List, Optional
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
-from app.models.hall_of_fame import HallOfFame
-from app.models.stats import PlayerGameStats
+
 from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
 from app.core.random_utils import DeterministicRNG
+from app.models.draft import DraftPick
+from app.models.hall_of_fame import HallOfFame
+from app.models.player import DevelopmentTrait, Player
+from app.models.playoff import PlayoffMatchup, PlayoffRound
+from app.models.season import Season, SeasonStatus
+from app.models.stats import PlayerGameStats
+from app.models.team import Team
+from app.schemas.offseason import DraftPickSummary, PlayerProgressionResult, Prospect, TeamNeed
+from app.services.rookie_generator import RookieGenerator
+from app.services.standings_calculator import StandingsCalculator
+
 
 class OffseasonService:
     def __init__(self, db: Session, seed: int = None):
@@ -55,7 +56,7 @@ class OffseasonService:
             self.db.rollback()
             raise e
 
-    def simulate_player_progression(self, season_id: int) -> List[PlayerProgressionResult]:
+    def simulate_player_progression(self, season_id: int) -> list[PlayerProgressionResult]:
         """Simulate player progression and regression based on age and experience."""
         # Query only active roster players
         stmt = select(Player).where(Player.team_id != None)
@@ -249,7 +250,7 @@ class OffseasonService:
             position_counts[p.position] = position_counts.get(p.position, 0) + 1
         return position_counts
 
-    def get_team_needs(self, team_id: int) -> List[TeamNeed]:
+    def get_team_needs(self, team_id: int) -> list[TeamNeed]:
         """Get structured team needs analysis."""
         needs_dict = self._get_team_needs(team_id)
         TARGET_COUNTS = {
@@ -273,7 +274,7 @@ class OffseasonService:
         result.sort(key=lambda x: x.need_score, reverse=True)
         return result
 
-    def get_top_prospects(self, limit: int = 50) -> List[Prospect]:
+    def get_top_prospects(self, limit: int = 50) -> list[Prospect]:
         """Get top available rookie prospects."""
         stmt = select(Player).where(
             Player.is_rookie == True,
@@ -290,7 +291,7 @@ class OffseasonService:
             ) for p in rookies
         ]
 
-    def get_current_pick(self, season_id: int) -> Optional[DraftPick]:
+    def get_current_pick(self, season_id: int) -> DraftPick | None:
         """Get the next available draft pick."""
         stmt = select(DraftPick).where(
             DraftPick.season_id == season_id,
@@ -329,7 +330,7 @@ class OffseasonService:
         self.db.commit()
         return pick
 
-    def simulate_next_pick(self, season_id: int) -> Optional[DraftPickSummary]:
+    def simulate_next_pick(self, season_id: int) -> DraftPickSummary | None:
         """Simulate the next single pick in the draft."""
         pick = self.get_current_pick(season_id)
         if not pick:
@@ -393,7 +394,7 @@ class OffseasonService:
             player_overall=player.overall_rating
         )
 
-    def simulate_draft(self, season_id: int) -> List[DraftPickSummary]:
+    def simulate_draft(self, season_id: int) -> list[DraftPickSummary]:
         """Simulate the remainder of the draft."""
         summary = []
         while True:
@@ -433,7 +434,7 @@ class OffseasonService:
         self.db.commit()
         return {"message": "Free Agency simulated."}
 
-    def process_retirements(self, season_id: int) -> List[str]:
+    def process_retirements(self, season_id: int) -> list[str]:
         """Process player retirements based on age and rating."""
         season = self.db.get(Season, season_id)
         if not season:

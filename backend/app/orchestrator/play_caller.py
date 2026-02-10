@@ -1,8 +1,15 @@
-from dataclasses import dataclass, field
-from typing import List, Any, Optional, Dict
+from dataclasses import dataclass
+from typing import Any, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.player import Player
+
 from app.orchestrator.play_commands import (
-    PlayCommand, PassPlayCommand, RunPlayCommand,
-    PuntCommand, FieldGoalCommand
+    FieldGoalCommand,
+    PassPlayCommand,
+    PlayCommand,
+    PuntCommand,
+    RunPlayCommand,
 )
 
 
@@ -14,15 +21,15 @@ class PlayCallingContext:
     time_left_seconds: int
     score_diff: int  # Positive means winning, negative means losing
     possession: str  # "home" or "away"
-    offense_players: List[Any]
-    defense_players: List[Any]
+    offense_players: list[Any]
+    defense_players: list[Any]
     is_hurry_up: bool = False
     # 2-Minute Drill AI (AI-005) - adjustments from ClockManagementAI
-    two_minute_adjustments: Optional[Dict[str, Any]] = None
+    two_minute_adjustments: dict[str, Any] | None = None
 
 class PlayCaller:
     """
-    Handles situation-aware play selection based on game state and coach personality.
+    Handles situation-aware play selection based on the current game state and coach personality.
     """
     def __init__(self, rng: Any, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
         """

@@ -1,13 +1,14 @@
-from app.kernels.core.ecs_manager import Component
-from typing import List, Dict, Tuple
+
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
 
 
 class TurfGrid(Component):
     # Directive 1: Turf Degradation Grid (10x10)
     # 100 zones, each with a wear level (0.0 - 1.0)
-    grid_resolution: Tuple[int, int] = (10, 10)
-    degradation_map: List[List[float]] = Field(default_factory=lambda: [[0.0 for _ in range(10)] for _ in range(10)])
+    grid_resolution: tuple[int, int] = (10, 10)
+    degradation_map: list[list[float]] = Field(default_factory=lambda: [[0.0 for _ in range(10)] for _ in range(10)])
 
     # Directive 17: Geophysical Data
     surface_type: str = "Grass" # Grass or Turf

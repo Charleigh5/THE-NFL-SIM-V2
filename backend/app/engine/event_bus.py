@@ -1,5 +1,6 @@
-from typing import Callable, Dict, List, Any, TypedDict, Optional
+from collections.abc import Callable
 from enum import Enum
+from typing import Any, TypedDict
 
 # ==============================================================================
 # Event Payloads (TypedDict for Type Safety)
@@ -8,7 +9,7 @@ from enum import Enum
 class BaseEventPayload(TypedDict):
     season_id: int
     week: int
-    game_id: Optional[str]
+    game_id: str | None
 
 class SackEventPayload(BaseEventPayload):
     play_id: str
@@ -27,7 +28,7 @@ class TurnoverEventPayload(BaseEventPayload):
     play_id: str
     turnover_type: str # "INTERCEPTION", "FUMBLE"
     player_id: int # Who committed the turnover
-    forced_by_player_id: Optional[int]
+    forced_by_player_id: int | None
 
 class TradeCompletedPayload(TypedDict):
     season_id: int
@@ -87,16 +88,16 @@ class EventType(str, Enum):
     ROOKIE_WALL_HIT = "ROOKIE_WALL_HIT"
 
 class EventBus:
-    _subscribers: Dict[EventType, List[Callable[[Dict[str, Any]], None]]] = {}
+    _subscribers: dict[EventType, list[Callable[[dict[str, Any]], None]]] = {}
 
     @classmethod
-    def subscribe(cls, event_type: EventType, callback: Callable[[Dict[str, Any]], None]):
+    def subscribe(cls, event_type: EventType, callback: Callable[[dict[str, Any]], None]):
         if event_type not in cls._subscribers:
             cls._subscribers[event_type] = []
         cls._subscribers[event_type].append(callback)
 
     @classmethod
-    def publish(cls, event_type: EventType, payload: Dict[str, Any]):
+    def publish(cls, event_type: EventType, payload: dict[str, Any]):
         if event_type in cls._subscribers:
             for callback in cls._subscribers[event_type]:
                 callback(payload)

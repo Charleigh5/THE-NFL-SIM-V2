@@ -12,9 +12,9 @@ Archetypes:
 - TRENCH_WARLORD: OL/DL with 85+ strength, dominance
 """
 
-from enum import Enum
-from typing import Any, Dict, Optional, List
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 
 class PlayerArchetype(Enum):
@@ -29,9 +29,9 @@ class PlayerArchetype(Enum):
 @dataclass
 class ArchetypeThresholds:
     """Rating thresholds required to unlock an archetype."""
-    required_ratings: Dict[str, int]
-    required_position: Optional[str] = None
-    required_dna: Optional[List[str]] = None
+    required_ratings: dict[str, int]
+    required_position: str | None = None
+    required_dna: list[str] | None = None
 
 
 @dataclass
@@ -45,7 +45,7 @@ class ArchetypeEffect:
 
 
 # Archetype definitions with thresholds
-ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeThresholds] = {
+ARCHETYPE_DEFINITIONS: dict[PlayerArchetype, ArchetypeThresholds] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeThresholds(
         required_ratings={"throw_accuracy_short": 90, "throw_accuracy_mid": 90},
         required_position="QB"
@@ -66,7 +66,7 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeThresholds] = {
 }
 
 # Effects for each archetype
-ARCHETYPE_EFFECTS: Dict[PlayerArchetype, ArchetypeEffect] = {
+ARCHETYPE_EFFECTS: dict[PlayerArchetype, ArchetypeEffect] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeEffect(
         conversion_boost=0.20,  # +20% on 3rd down
         audible_unlock=True,
@@ -97,7 +97,7 @@ class ArchetypeClassifier:
     """
 
     @classmethod
-    def classify(cls, player: Any, dna_traits: Optional[List[str]] = None) -> PlayerArchetype:
+    def classify(cls, player: Any, dna_traits: list[str] | None = None) -> PlayerArchetype:
         """
         Classify a player into their archetype.
 
@@ -123,7 +123,7 @@ class ArchetypeClassifier:
         cls,
         player: Any,
         position: str,
-        dna: List[str],
+        dna: list[str],
         thresholds: ArchetypeThresholds
     ) -> bool:
         """Check if player meets all thresholds for an archetype."""
@@ -161,9 +161,9 @@ class ArchetypeEffectApplicator:
     def apply_modifiers(
         cls,
         player: Any,
-        game_context: Dict[str, Any],
-        dna_traits: Optional[List[str]] = None
-    ) -> Dict[str, Any]:
+        game_context: dict[str, Any],
+        dna_traits: list[str] | None = None
+    ) -> dict[str, Any]:
         """
         Calculate and return all archetype-based modifiers for a play.
 
@@ -214,9 +214,9 @@ class ArchetypeEffectApplicator:
 
 def get_archetype_modifiers(
     player: Any,
-    game_context: Dict[str, Any],
-    dna_traits: Optional[List[str]] = None
-) -> Dict[str, Any]:
+    game_context: dict[str, Any],
+    dna_traits: list[str] | None = None
+) -> dict[str, Any]:
     """
     Convenience function to get all archetype modifiers.
 

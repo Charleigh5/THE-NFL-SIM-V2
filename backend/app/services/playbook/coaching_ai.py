@@ -1,6 +1,8 @@
+import random
+
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation
-import random
+
 
 class CoachingAIService:
     """

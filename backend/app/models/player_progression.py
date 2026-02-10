@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Integer, ForeignKey, String, JSON
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.models.base import Base
+
 import enum
+from typing import TYPE_CHECKING
+
+from sqlalchemy import JSON, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.player import Player
@@ -25,7 +28,7 @@ class PlayerProgression(Base):
     player_id: Mapped[int] = mapped_column(Integer, ForeignKey("player.id"), unique=True, index=True)
 
     # Back relation
-    player: Mapped["Player"] = relationship("Player", back_populates="progression")
+    player: Mapped[Player] = relationship("Player", back_populates="progression")
 
     # RPG Stats
     xp: Mapped[int] = mapped_column(Integer, default=0)
@@ -34,5 +37,5 @@ class PlayerProgression(Base):
     development_trait: Mapped[str] = mapped_column(String, default=DevelopmentTrait.NORMAL)
 
     # Detailed Tracking
-    abilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
-    attribute_xp: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
+    abilities: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)
+    attribute_xp: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)

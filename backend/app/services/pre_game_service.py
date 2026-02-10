@@ -1,13 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
-from app.models.stats import PlayerGameStart
-from app.models.player import Player
-from app.models.game import Game
-from app.services.depth_chart_service import DepthChartService
-from app.orchestrator.match_context import MatchContext
-from app.services.enhanced_chemistry_service import EnhancedChemistryService
-from app.services.trait_service import TraitService, TRAIT_CATALOG
 import logging
+
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStart
+from app.orchestrator.match_context import MatchContext
+from app.services.depth_chart_service import DepthChartService
+from app.services.enhanced_chemistry_service import EnhancedChemistryService
+from app.services.trait_service import TraitService
 
 logger = logging.getLogger(__name__)
 

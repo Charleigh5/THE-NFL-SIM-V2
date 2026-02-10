@@ -1,13 +1,15 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, List, Optional
+
 from pydantic import Field
+
 from app.core.random_utils import DeterministicRNG
+from app.kernels.core.ecs_manager import Component
+
 
 class ProgressionSys(Component):
     # Directive 3: Tiered XP Abilities
     current_xp: int = 0
     level: int = 1
-    abilities: List[str] = Field(default_factory=list)
+    abilities: list[str] = Field(default_factory=list)
 
     # Directive 5: Work Ethic Modulator
     work_ethic: float = 1.0 # 0.5 (Lazy) to 1.5 (Gym Rat)
@@ -26,7 +28,7 @@ class ProgressionSys(Component):
         self.current_xp = 0
         # Unlock ability logic would go here
 
-    def apply_regression(self, age: int, rng: Optional[DeterministicRNG] = None):
+    def apply_regression(self, age: int, rng: DeterministicRNG | None = None):
         """
         Directive 16: Gradual Regression.
         One trait per season based on age.
