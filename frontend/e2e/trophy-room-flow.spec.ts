@@ -147,9 +147,16 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Check for team colors or logo
-    const teamBranding = page.locator('[data-testid="team-logo"], .team-banner, text=/Cardinals/i');
-    if (await teamBranding.isVisible({ timeout: 2000 })) {
-      await expect(teamBranding).toBeVisible();
-    }
+    // Split the check to be more specific and avoid complex selector issues in WebKit
+    const logo = page.locator('[data-testid="team-logo"]');
+    const banner = page.locator('.team-banner');
+    const text = page.getByText(/Cardinals/i).first();
+
+    const isLogoVisible = await logo.isVisible().catch(() => false);
+    const isBannerVisible = await banner.isVisible().catch(() => false);
+    const isTextVisible = await text.isVisible().catch(() => false);
+
+    // Expect at least one branding element to be visible
+    expect(isLogoVisible || isBannerVisible || isTextVisible).toBeTruthy();
   });
 });
