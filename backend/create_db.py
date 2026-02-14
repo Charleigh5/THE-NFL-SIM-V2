@@ -1,7 +1,7 @@
-from app.core.database import engine
-from app.models.base import Base
 # Import all models to register them with Base
-import app.models
+from app.core.database import engine
+from app.models import *  # noqa: F403, F401
+from app.models.base import Base
 
 # Create all tables
 print(f"Creating tables in: {engine.url}")

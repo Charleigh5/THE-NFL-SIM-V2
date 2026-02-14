@@ -10,12 +10,11 @@ Usage:
     python test_models.py
 """
 
-import time
 import os
-from typing import Dict, List
+import time
+
 import vertexai
-from vertexai.generative_models import GenerativeModel, GenerationConfig
-from google.cloud import aiplatform
+from vertexai.generative_models import GenerationConfig, GenerativeModel
 
 # Initialize Vertex AI
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "your-project-id")
@@ -35,7 +34,7 @@ class ModelTester:
         }
         self.results = []
 
-    def test_commentary_generation(self, model_name: str) -> Dict:
+    def test_commentary_generation(self, model_name: str) -> dict:
         """Test model for play-by-play commentary generation."""
         model = GenerativeModel(self.models[model_name])
 
@@ -67,7 +66,7 @@ class ModelTester:
             "output_tokens": response.usage_metadata.candidates_token_count,
         }
 
-    def test_gm_trade_logic(self, model_name: str) -> Dict:
+    def test_gm_trade_logic(self, model_name: str) -> dict:
         """Test model for complex GM trade evaluation."""
         model = GenerativeModel(self.models[model_name])
 
@@ -110,7 +109,7 @@ class ModelTester:
             "output_tokens": response.usage_metadata.candidates_token_count,
         }
 
-    def calculate_cost(self, result: Dict) -> float:
+    def calculate_cost(self, result: dict) -> float:
         """Calculate estimated cost for the request."""
         model = result["model"]
 

@@ -9,15 +9,16 @@ Usage:
 
 import sys
 from pathlib import Path
+
 from sqlalchemy.orm import Session
 
 # Add backend directory to path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from app.core.database import SessionLocal
-from app.models.team import Team
-from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
+from app.models.coach import Coach
+from app.models.team import Team
 
 
 def seed_coaches():
@@ -94,7 +95,7 @@ def seed_coaches():
                   f"{staff_data.defensive_coordinator.last_name} (DC)")
 
         db.commit()
-        print(f"\n✅ Coaches seeded successfully!")
+        print("\n✅ Coaches seeded successfully!")
         print(f"   Created: {coaches_created}")
         print(f"   Updated: {coaches_updated}")
 

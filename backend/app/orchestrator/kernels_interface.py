@@ -1,7 +1,12 @@
 from app.orchestrator.kernels import (
-    GenesisKernel, EmpireKernel, HiveKernel, 
-    SocietyKernel, CortexKernel, RPGKernel
+    CortexKernel,
+    EmpireKernel,
+    GenesisKernel,
+    HiveKernel,
+    RPGKernel,
+    SocietyKernel,
 )
+
 
 class KernelInterface:
     """

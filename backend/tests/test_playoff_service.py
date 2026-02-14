@@ -10,11 +10,13 @@ Note: Due to the playoff_service calling a non-existent `get_season_standings` m
 we simplified these tests to focus on what can be tested with current implementation.
 """
 
-import pytest
 from unittest.mock import MagicMock, patch
-from app.services.playoff_service import PlayoffService
+
+import pytest
+
 from app.models.playoff import PlayoffMatchup, PlayoffRound
-from app.models.season import Season, SeasonStatus
+from app.models.season import SeasonStatus
+from app.services.playoff_service import PlayoffService
 
 
 class MockTeam:

@@ -9,8 +9,8 @@ Tests follow industry best practices:
 - Edge case coverage
 """
 import pytest
-from app.rpg.progression import ProgressionEngine
 
+from app.rpg.progression import ProgressionEngine
 
 # =============================================================================
 # FIXTURE: Common stats dictionaries for testing

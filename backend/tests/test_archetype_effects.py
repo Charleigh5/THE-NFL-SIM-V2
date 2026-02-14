@@ -4,14 +4,12 @@ Tests for Archetype Effects System
 Tests the NFL Identity Blueprint archetype classification and game impact cascades.
 """
 
-import pytest
 from unittest.mock import MagicMock
+
 from app.engine.archetype_effects import (
-    PlayerArchetype,
     ArchetypeClassifier,
-    ArchetypeEffectApplicator,
+    PlayerArchetype,
     get_archetype_modifiers,
-    ARCHETYPE_EFFECTS
 )
 
 

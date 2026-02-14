@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import Optional, Dict, Any
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, DateTime, Boolean
-from sqlalchemy.orm import mapped_column, Mapped
+
 from datetime import datetime
+from typing import Any
+
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
+
 
 class RPGEvent(Base):
     """
@@ -19,17 +22,17 @@ class RPGEvent(Base):
     event_type: Mapped[str] = mapped_column(String, nullable=False) # e.g. "SACK_EVENT"
 
     # Who was involved? Primary subject.
-    player_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("player.id"), nullable=True)
-    team_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("team.id"), nullable=True)
+    player_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("player.id"), nullable=True)
+    team_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("team.id"), nullable=True)
 
     # Context
-    season_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
-    week: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
-    game_id: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    season_id: Mapped[int | None] = mapped_column(Integer, nullable=False)
+    week: Mapped[int | None] = mapped_column(Integer, nullable=False)
+    game_id: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # The full payload from the EventBus
     # We store the raw JSON so we can reconstruct the exact event details later
-    payload: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
 
     # Has this event been "consumed" by the narrative engine?
     # False = Needs to be processed into news/storylines

@@ -5,12 +5,13 @@ Issue Logger Tests
 Unit tests for IssueLoggerService.
 """
 
-import pytest
-from pathlib import Path
-import tempfile
 import os
+import tempfile
+from pathlib import Path
 
-from app.services.issue_logger import IssueLoggerService, IssueEntry, format_issue_entry
+import pytest
+
+from app.services.issue_logger import IssueEntry, IssueLoggerService, format_issue_entry
 
 
 class TestFormatIssueEntry:

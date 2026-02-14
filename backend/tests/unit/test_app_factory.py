@@ -2,7 +2,6 @@
 Unit tests for the app factory pattern.
 """
 
-import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 

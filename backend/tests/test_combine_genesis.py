@@ -5,13 +5,12 @@ Test Suite for Enhanced Combine with GENESIS Integration (B-045)
 Tests for Phase 2 combine modernization and biometric reveals.
 """
 
-import pytest
+from app.engine.genesis.biometrics import BiometricProfile
 from app.services.scouting.combine import (
     CombineResults,
     CombineSimulation,
     GenesisRevealData,
 )
-from app.engine.genesis.biometrics import BiometricProfile, generate_biometrics_for_position
 
 
 class TestCombineResultsModernization:

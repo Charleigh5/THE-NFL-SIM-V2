@@ -34,9 +34,13 @@ export const useWebSocket = (url: string | null) => {
         distance: status.distance,
         yardLine: status.yardLine,
       });
-      console.log("Game state synchronized");
+      if (process.env.NODE_ENV === "development") {
+        console.log("Game state synchronized");
+      }
     } catch (error) {
-      console.error("Failed to sync game state:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Failed to sync game state:", error);
+      }
     }
   }, [updateGameState]);
 
@@ -52,7 +56,9 @@ export const useWebSocket = (url: string | null) => {
       socketRef.current = socket;
 
       socket.onopen = () => {
-        console.log("WebSocket connected");
+        if (process.env.NODE_ENV === "development") {
+          console.log("WebSocket connected");
+        }
         reconnectAttempts.current = 0;
         syncState();
       };
@@ -141,10 +147,14 @@ export const useWebSocket = (url: string | null) => {
               // Handle pong if needed
               break;
             default:
-              console.warn("Unknown message type:", message.type);
+              if (process.env.NODE_ENV === "development") {
+                console.warn("Unknown message type:", message.type);
+              }
           }
         } catch (error) {
-          console.error("Failed to parse WebSocket message:", error);
+          if (process.env.NODE_ENV === "development") {
+            console.error("Failed to parse WebSocket message:", error);
+          }
         }
       };
 
@@ -152,14 +162,18 @@ export const useWebSocket = (url: string | null) => {
         if (!isMounted) return;
 
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), maxReconnectDelay);
-        console.log(`WebSocket disconnected. Reconnecting in ${delay}ms...`);
+        if (process.env.NODE_ENV === "development") {
+          console.log(`WebSocket disconnected. Reconnecting in ${delay}ms...`);
+        }
 
         reconnectAttempts.current += 1;
         reconnectTimeout = window.setTimeout(connect, delay);
       };
 
       socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        if (process.env.NODE_ENV === "development") {
+          console.error("WebSocket error:", error);
+        }
         socket.close();
       };
     };
@@ -185,7 +199,9 @@ export const useWebSocket = (url: string | null) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type, payload }));
     } else {
-      console.warn("WebSocket is not connected");
+      if (process.env.NODE_ENV === "development") {
+        console.warn("WebSocket is not connected");
+      }
     }
   };
 

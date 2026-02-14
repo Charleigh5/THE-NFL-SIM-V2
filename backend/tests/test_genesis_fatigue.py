@@ -1,5 +1,5 @@
-import pytest
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
+
 
 def test_genesis_fatigue_system():
     kernel = GenesisKernel()

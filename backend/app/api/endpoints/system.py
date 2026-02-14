@@ -1,9 +1,10 @@
-from fastapi import APIRouter
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
+
+from fastapi import APIRouter
+from sqlalchemy import text
 
 from app.core.database import engine
-from sqlalchemy import text
 from app.core.error_decorators import handle_errors
 
 router = APIRouter(prefix="/api/system", tags=["system"])
@@ -17,7 +18,7 @@ def health_check():
     logger.debug("Health check requested")
     return {
         "status": "healthy",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "service": "Stellar Sagan NFL Simulation Engine"
     }
 
@@ -28,7 +29,7 @@ def system_status():
     """Get system status including database and engine availability."""
     logger.info("System status check requested")
     db_status = "disconnected"
-    
+
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
@@ -36,10 +37,10 @@ def system_status():
     except Exception as e:
         logger.error(f"Database connection failed: {str(e)}")
         db_status = f"error: {str(e)}"
-    
+
     return {
         "status": "operational" if db_status == "connected" else "degraded",
         "database": db_status,
         "engine": "ready",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }

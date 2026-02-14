@@ -43,9 +43,13 @@ export const LiveSim = () => {
       }
 
       setLiveStatus(true);
-      console.log("Live simulation started - receiving WebSocket updates");
+      if (process.env.NODE_ENV === "development") {
+        console.log("Live simulation started - receiving WebSocket updates");
+      }
     } catch (error) {
-      console.error("Failed to start simulation:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Failed to start simulation:", error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -55,9 +59,13 @@ export const LiveSim = () => {
     try {
       await simulationService.stopSimulation();
       setLiveStatus(false);
-      console.log("Simulation stopped");
+      if (process.env.NODE_ENV === "development") {
+        console.log("Simulation stopped");
+      }
     } catch (error) {
-      console.error("Failed to stop simulation:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Failed to stop simulation:", error);
+      }
     }
   };
 

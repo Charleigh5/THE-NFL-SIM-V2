@@ -4,15 +4,9 @@ Tests for RB Tribes System
 Tests the NFL Identity Blueprint RB classification and variance profiles.
 """
 
-import pytest
 from unittest.mock import MagicMock
-from app.engine.rb_tribes import (
-    RBTribe,
-    RBTribeClassifier,
-    TribeProfile,
-    TRIBE_PROFILES,
-    get_tribe_modifiers
-)
+
+from app.engine.rb_tribes import TRIBE_PROFILES, RBTribe, RBTribeClassifier, get_tribe_modifiers
 
 
 class TestRBTribeClassification:

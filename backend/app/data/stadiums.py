@@ -1,16 +1,17 @@
+
 from pydantic import BaseModel
-from typing import List, Optional
+
 
 class StadiumModel(BaseModel):
     rank: int
     name: str
-    team_ids: List[str]
+    team_ids: list[str]
     capacity: int
     year_built: int
     roof_type: str # Retractable, Fixed, Open, Translucent
     surface: str # Turf, Grass, Hybrid
     cost_billions: float
-    features: List[str]
+    features: list[str]
 
 # Complete 30 Stadium Database (Ranked by Capacity)
 STADIUM_DB = {

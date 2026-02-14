@@ -17,26 +17,21 @@ Run tests:
 """
 
 import asyncio
+
 import pytest
-import pytest_asyncio
-from pathlib import Path
-from typing import Dict, List, Optional, Set
-from unittest.mock import AsyncMock, MagicMock, patch
 
 # Import from master_orchestrator
 from master_orchestrator import (
     AgentTask,
-    Phase,
-    PhaseStatus,
-    TaskStatus,
     DependencyGraph,
-    SimulatedAgentExecutor,
-    PhaseOrchestrator,
     MasterOrchestrator,
-    ExecutionResult,
+    Phase,
+    PhaseOrchestrator,
+    PhaseStatus,
+    SimulatedAgentExecutor,
+    TaskStatus,
     create_nfl_sim_phases,
 )
-
 
 # ============================================================================
 # FIXTURES (Context7 Pattern: Factory with Cleanup)
@@ -50,8 +45,8 @@ def make_task():
     def _make_task(
         id: str = "test_task",
         name: str = "Test Task",
-        dependencies: Optional[List[str]] = None,
-        outputs: Optional[List[str]] = None,
+        dependencies: list[str] | None = None,
+        outputs: list[str] | None = None,
         **kwargs
     ) -> AgentTask:
         task = AgentTask(
@@ -77,8 +72,8 @@ def make_phase(make_task):
     def _make_phase(
         id: str = "test_phase",
         name: str = "Test Phase",
-        tasks: Optional[List[AgentTask]] = None,
-        phase_dependencies: Optional[List[str]] = None,
+        tasks: list[AgentTask] | None = None,
+        phase_dependencies: list[str] | None = None,
         **kwargs
     ) -> Phase:
         if tasks is None:

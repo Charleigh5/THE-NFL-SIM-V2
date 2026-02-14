@@ -1,5 +1,5 @@
-import pytest
 from app.orchestrator.kernels.cortex_kernel import CortexKernel, GameSituation
+
 
 def test_cortex_4th_down_logic():
     cortex = CortexKernel()

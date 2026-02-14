@@ -1,10 +1,11 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, ANY
-from app.services.offseason_service import OffseasonService
-from app.models.player import Player
-from app.models.season import Season
+
 from app.models.hall_of_fame import HallOfFame
-from app.models.stats import PlayerGameStats
+from app.models.season import Season
+from app.services.offseason_service import OffseasonService
+
 
 class MockPlayer:
     def __init__(self, id, first_name, last_name, age, overall_rating, team_id=1, is_retired=False, legacy_score=0):

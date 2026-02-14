@@ -1,8 +1,11 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.coaching_ai import CoachingAIService
 from app.services.playbook.types import GameSituation
+
 
 class TestCoachingAIService:
     @pytest.fixture

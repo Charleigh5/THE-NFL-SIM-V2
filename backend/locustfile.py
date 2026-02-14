@@ -10,10 +10,10 @@ Run with:
 Or with web UI:
   locust -f backend/locustfile.py --host http://localhost:8000
 """
-from locust import HttpUser, task, between, events
-import random
-import json
 import logging
+import random
+
+from locust import HttpUser, between, events, task
 
 logger = logging.getLogger(__name__)
 

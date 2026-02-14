@@ -1,10 +1,11 @@
-import pytest
 import asyncio
-from unittest.mock import MagicMock, patch
-from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.orchestrator.match_context import MatchContext
+from unittest.mock import MagicMock
+
 from app.orchestrator.kernels.cortex_kernel import CortexKernel, GameSituation
-from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand, PuntCommand
+from app.orchestrator.match_context import MatchContext
+from app.orchestrator.play_commands import PassPlayCommand, PuntCommand
+from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 
 def test_orchestrator_uses_cortex():
     orch = SimulationOrchestrator()

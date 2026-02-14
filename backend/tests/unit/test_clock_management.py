@@ -1,9 +1,11 @@
+
 import pytest
-from unittest.mock import MagicMock
-from app.services.playbook.types import GameSituation
+
+from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.clock_management import ClockManagementAI, ClockStrategy
 from app.services.playbook.coaching_ai import CoachingAIService
-from app.data.coaches import CoachingPhilosophy
+from app.services.playbook.types import GameSituation
+
 
 class TestClockManagementAI:
     @pytest.fixture

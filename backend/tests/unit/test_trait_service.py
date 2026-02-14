@@ -2,10 +2,12 @@
 Unit tests for Trait Service
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
-from app.services.trait_service import TraitService, TRAIT_CATALOG
+
+import pytest
+
 from app.models.player import Player
+from app.services.trait_service import TRAIT_CATALOG, TraitService
 
 
 @pytest.mark.asyncio

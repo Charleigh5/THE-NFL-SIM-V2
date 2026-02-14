@@ -1,5 +1,5 @@
-import pytest
 from backend.mcp_servers.weather_server.server import get_game_weather, get_historical_conditions
+
 
 def test_get_game_weather_lambeau_winter():
     weather = get_game_weather("Lambeau Field", "2024-12-25T13:00:00")

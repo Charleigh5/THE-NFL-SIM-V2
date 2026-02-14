@@ -1,7 +1,7 @@
 
-import sys
 import os
-import pytest
+import sys
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,8 +10,8 @@ from sqlalchemy.pool import StaticPool
 # Add backend to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from app.main import app
 from app.core.database import get_db
+from app.main import app
 from app.models.base import Base
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
@@ -39,7 +39,7 @@ client = TestClient(app)
 def setup_module(module):
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
-    
+
     # Create dummy team
     team = Team(
         id=1,
@@ -50,7 +50,7 @@ def setup_module(module):
         division="North"
     )
     db.add(team)
-    
+
     # Create dummy season
     season = Season(
         id=1,

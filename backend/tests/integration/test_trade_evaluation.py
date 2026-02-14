@@ -1,10 +1,12 @@
-import pytest
 from unittest.mock import AsyncMock, patch
-from app.models.team import Team
-from app.models.player import Player, Position
-from app.core.mcp_registry import registry
+
+import pytest
 
 from app.core.mcp_cache import mcp_cache
+from app.core.mcp_registry import registry
+from app.models.player import Player, Position
+from app.models.team import Team
+
 
 @pytest.fixture(autouse=True)
 def clear_cache():

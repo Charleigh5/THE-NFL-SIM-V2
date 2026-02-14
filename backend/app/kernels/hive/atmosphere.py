@@ -1,6 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 from enum import Enum
-from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class CrowdSentiment(Enum):
     EUPHORIC = "Euphoric"
@@ -16,7 +17,7 @@ class CrowdNet(Component):
 
     def update_sentiment(self, home_score: int, away_score: int, big_play: bool):
         score_diff = home_score - away_score
-        
+
         if big_play:
             self.decibel_level = min(120.0, self.decibel_level + 15.0)
             self.momentum_meter += 10.0

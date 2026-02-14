@@ -1,7 +1,10 @@
-import pytest
 from unittest.mock import MagicMock
-from app.orchestrator.play_caller import PlayCaller
+
+import pytest
+
 from app.models.player import Player
+from app.orchestrator.play_caller import PlayCaller
+
 
 class TestAudibleMaster:
     @pytest.fixture

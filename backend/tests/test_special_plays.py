@@ -1,9 +1,10 @@
-import pytest
-import random
 from unittest.mock import MagicMock, patch
-from app.orchestrator.play_resolver import PlayResolver
+
+import pytest
+
 from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
-from app.schemas.play import PlayResult
+from app.orchestrator.play_resolver import PlayResolver
+
 
 class TestSpecialPlays:
     """Test suite for Special Plays integration (Tush Push, Flea Flicker, etc.)"""

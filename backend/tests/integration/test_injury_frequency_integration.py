@@ -10,20 +10,18 @@ This test simulates 100 full games (~6,500 plays each) to verify:
 3. Play type multipliers work correctly (SACK > STANDARD)
 4. QB_KNOCKDOWN injuries are tracked separately from SACK
 """
-import pytest
-import random
 from collections import defaultdict
-from typing import Dict, List, Any
+from typing import Any
 from unittest.mock import MagicMock
 
-from app.models.player import Player, InjuryStatus
+import pytest
+
+from app.core.random_utils import DeterministicRNG
+from app.models.player import InjuryStatus, Player
 from app.rpg.injury_system import (
     PlayContext,
     evaluate_post_play_injuries,
-    InjuryEvent,
 )
-from app.core.random_utils import DeterministicRNG
-from app.core import injury_config as InjuryConfig
 
 
 class TestInjuryFrequencyIntegration:
@@ -55,7 +53,7 @@ class TestInjuryFrequencyIntegration:
         player.toughness = toughness
         return player
 
-    def create_full_roster(self, team_id: int) -> List[Player]:
+    def create_full_roster(self, team_id: int) -> list[Player]:
         """Create a full 53-man roster with realistic positions."""
         roster = []
         positions = [
@@ -93,11 +91,11 @@ class TestInjuryFrequencyIntegration:
 
     def simulate_game_plays(
         self,
-        home_roster: List[Player],
-        away_roster: List[Player],
+        home_roster: list[Player],
+        away_roster: list[Player],
         rng: DeterministicRNG,
         plays_per_game: int = 65
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Simulate a game's worth of plays and track injuries.
 
@@ -251,12 +249,12 @@ class TestInjuryFrequencyIntegration:
         print(f"Average Injuries per Game: {avg_injuries_per_game:.2f}")
         print(f"Min/Max Injuries per Game: {min_injuries_in_game}/{max_injuries_in_game}")
 
-        print(f"\nInjuries by Play Type:")
+        print("\nInjuries by Play Type:")
         for ptype in sorted(total_injuries_by_type.keys()):
             count = total_injuries_by_type[ptype]
             print(f"  {ptype}: {count}")
 
-        print(f"\nInjuries by Position (Top 10):")
+        print("\nInjuries by Position (Top 10):")
         sorted_positions = sorted(total_injuries_by_position.items(), key=lambda x: x[1], reverse=True)
         for pos, count in sorted_positions[:10]:
             print(f"  {pos}: {count}")
@@ -276,7 +274,7 @@ class TestInjuryFrequencyIntegration:
         assert games_with_injuries >= 5, \
             f"Too few games with injuries: {games_with_injuries}. RNG may be broken."
 
-        print(f"\n✓ All assertions passed!")
+        print("\n✓ All assertions passed!")
 
     @pytest.mark.slow
     def test_position_injury_distribution(self, rng):

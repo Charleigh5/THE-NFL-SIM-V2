@@ -1,15 +1,11 @@
-import pytest
-from datetime import datetime
-from unittest.mock import MagicMock, patch
-from app.models.game import GameType
-from app.engine.venue_effects import VenueEffects, get_thanksgiving_atmosphere
 from app.data.special_jerseys import (
+    get_thanksgiving_boost,
     get_thanksgiving_jersey,
     is_thanksgiving_host,
-    get_thanksgiving_boost,
-    THANKSGIVING_JERSEYS,
-    THANKSGIVING_HOSTS
 )
+from app.engine.venue_effects import VenueEffects, get_thanksgiving_atmosphere
+from app.models.game import GameType
+
 
 class TestThanksgivingFeatures:
     """Test suite for Thanksgiving Day game features."""

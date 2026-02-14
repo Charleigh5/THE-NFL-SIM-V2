@@ -1,8 +1,11 @@
-import pytest
 import asyncio
 import os
 import sys
+
+import pytest
+
 from app.core.mcp_client import MCPHostClient
+
 
 # Helper to get absolute path to server file
 def get_server_path(server_name):
@@ -79,7 +82,7 @@ async def test_error_handling():
         try:
             result = await client.call_tool("non_existent_tool", {})
             assert result.isError is True
-        except Exception as e:
+        except Exception:
             # Some implementations might raise, but FastMCP usually returns error result
             # If it raised, that's also acceptable error handling
             pass

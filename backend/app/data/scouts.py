@@ -7,8 +7,9 @@ Each team gets 3 scouts:
 - Specialist Scout (Position specialty, stronger bias)
 """
 from dataclasses import dataclass
-from typing import List
-from app.models.scout import ScoutBias, Region
+
+from app.models.scout import Region, ScoutBias
+
 
 @dataclass
 class ScoutData:
@@ -16,14 +17,14 @@ class ScoutData:
     name: str
     region: str
     bias: str
-    specialty: str
+    specialty: str | None
     evaluation_ability: int
     efficiency: int
     reputation: int
 
 
 # Scout Templates by Region
-TEAM_SCOUTS: List[ScoutData] = [
+TEAM_SCOUTS: list[ScoutData] = [
     # AFC EAST
     ScoutData("BUF", "Marcus Williamson", Region.EAST, ScoutBias.ANALYTICS, None, 75, 70, 65),
     ScoutData("BUF", "Tom Polley", Region.MIDWEST, ScoutBias.OLD_SCHOOL, "OL", 80, 60, 70),
@@ -162,6 +163,6 @@ TEAM_SCOUTS: List[ScoutData] = [
 ]
 
 
-def get_scouts_for_team(abbr: str) -> List[ScoutData]:
+def get_scouts_for_team(abbr: str) -> list[ScoutData]:
     """Get all scouts for a specific team."""
     return [s for s in TEAM_SCOUTS if s.team_abbr == abbr]

@@ -1,6 +1,8 @@
 import pytest
-from app.engine.probability_engine import ProbabilityEngine
+
 from app.core.random_utils import DeterministicRNG
+from app.engine.probability_engine import ProbabilityEngine
+
 
 def test_compare_speed():
     # Fast attacker vs Slow defender

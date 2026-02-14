@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 import enum
+
+from sqlalchemy import Boolean, Column, Integer
+from sqlalchemy import Enum as SQLEnum
+
+from app.models.base import Base
+
 
 class SeasonStatus(str, enum.Enum):
     """Enum for season status."""
