@@ -1,13 +1,14 @@
+
+
 from app.kernels.core.ecs_manager import Component
-from typing import Dict
-from pydantic import Field
+
 
 class LogisticsEngine(Component):
     # Directive 7: Jock Tax Algorithm
-    state_tax_rates: Dict[str, float] = {
+    state_tax_rates: dict[str, float] = {
         "CA": 0.133, "NY": 0.109, "FL": 0.0, "TX": 0.0, "IL": 0.0495
     }
-    
+
     # Directive 11: Jet Lag
     current_location: str = "Home"
     accumulated_travel_miles: float = 0.0
@@ -32,7 +33,7 @@ class StadiumManager(Component):
     # Directive 9: Stadium Renovation & Upgrades
     stadium_condition: float = 100.0
     renovation_budget: float = 0.0
-    
+
     def perform_renovation(self, cost: float, quality_boost: float):
         if self.renovation_budget >= cost:
             self.renovation_budget -= cost

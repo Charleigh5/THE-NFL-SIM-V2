@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import random
-from typing import Optional
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
 
 logger = get_logger(__name__)

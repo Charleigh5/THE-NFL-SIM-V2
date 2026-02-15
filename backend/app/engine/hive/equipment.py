@@ -11,10 +11,8 @@ Phase 4: HIVE Environment Physics
 - Weather interaction
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -103,7 +101,7 @@ class EquipmentPhysics:
     - High grip gloves = better catching, worse in wet weather
     """
 
-    def __init__(self, config: Optional[EquipmentConfig] = None):
+    def __init__(self, config: EquipmentConfig | None = None):
         self.config = config or EquipmentConfig()
 
     def get_grip_modifier(

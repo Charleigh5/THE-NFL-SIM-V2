@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON, Boolean, DateTime
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from app.models.base import Base
 import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class BodyPart(Base):
     """

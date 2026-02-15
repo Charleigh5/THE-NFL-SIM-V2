@@ -1,9 +1,11 @@
 """
 Player Game Starts model for tracking OL continuity
 """
-from sqlalchemy import Column, Integer, ForeignKey, Boolean, DateTime
-from sqlalchemy.orm import relationship
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer
+from sqlalchemy.orm import relationship
+
 from app.models.base import Base
 
 

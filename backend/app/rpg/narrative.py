@@ -1,5 +1,6 @@
 import random
 
+
 class NarrativeEngine:
     EVENTS = [
         {
@@ -22,7 +23,7 @@ class NarrativeEngine:
             ]
         }
     ]
-    
+
     @staticmethod
     def generate_weekly_event(team_morale: int, win_streak: int) -> dict:
         """
@@ -30,8 +31,8 @@ class NarrativeEngine:
         """
         if team_morale < 30:
             return NarrativeEngine.EVENTS[0] # Drama likely
-        
+
         if random.random() < 0.1:
             return random.choice(NarrativeEngine.EVENTS)
-            
+
         return None

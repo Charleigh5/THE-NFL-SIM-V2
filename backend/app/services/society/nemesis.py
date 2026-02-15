@@ -12,9 +12,7 @@ Phase 6: SOCIETY Locker Room Dynamics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -48,7 +46,7 @@ class Rivalry:
     target_id: str
     type: RivalryType
     intensity: float = 0.0          # 0-100 scale
-    history: List[str] = field(default_factory=list)
+    history: list[str] = field(default_factory=list)
     active: bool = True
 
     def escalate(self, amount: float, reason: str) -> None:
@@ -64,9 +62,9 @@ class Rivalry:
 @dataclass
 class NemesisState:
     """State of all rivalries for a context."""
-    rivalries: Dict[str, Rivalry] = field(default_factory=dict)
+    rivalries: dict[str, Rivalry] = field(default_factory=dict)
 
-    def get_rivalry(self, id1: str, id2: str) -> Optional[Rivalry]:
+    def get_rivalry(self, id1: str, id2: str) -> Rivalry | None:
         """Get rivalry between two IDs (direction agnostic)."""
         key1 = f"{id1}_{id2}"
         key2 = f"{id2}_{id1}"
@@ -128,7 +126,7 @@ class NemesisEngine:
         rivalry.escalate(intensity_boost, f"Event: {event.value}")
         return rivalry
 
-    def get_matchup_heat(self, team1_ids: List[str], team2_ids: List[str]) -> float:
+    def get_matchup_heat(self, team1_ids: list[str], team2_ids: list[str]) -> float:
         """
         Calculate the total "Heat" of a matchup roughly 0-100.
 

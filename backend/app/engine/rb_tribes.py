@@ -10,9 +10,9 @@ NFL Identity Blueprint. Each tribe has distinct variance profiles:
 - STANDARD: Default for players not meeting tribe thresholds
 """
 
-from enum import Enum
-from typing import Any, Optional, Dict
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 
 class RBTribe(Enum):
@@ -34,7 +34,7 @@ class TribeProfile:
 
 
 # Tribe-specific variance profiles
-TRIBE_PROFILES: Dict[RBTribe, TribeProfile] = {
+TRIBE_PROFILES: dict[RBTribe, TribeProfile] = {
     RBTribe.FEAST_OR_FAMINE: TribeProfile(
         base_yards=3.0,
         std_dev=8.0,  # High variance
@@ -128,7 +128,7 @@ class RBTribeClassifier:
         return tribe, profile
 
 
-def get_tribe_modifiers(player: Any) -> Dict[str, float]:
+def get_tribe_modifiers(player: Any) -> dict[str, float]:
     """
     Get all tribe-based modifiers for a player.
 

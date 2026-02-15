@@ -12,10 +12,10 @@ Key Mechanics:
 - Diminishing returns at higher attribute levels
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
-from enum import Enum
 import logging
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class ActionType(str, Enum):
 
 
 # XP awards per action type -> {attribute_name: base_xp}
-ACTION_XP_AWARDS: Dict[str, Dict[str, int]] = {
+ACTION_XP_AWARDS: dict[str, dict[str, int]] = {
     # Passing
     ActionType.PASS_COMPLETION_SHORT: {
         "throw_accuracy_short": 3,
@@ -263,7 +263,7 @@ class AttributeXPGain:
     attribute_name: str
     base_xp: int
     final_xp: int
-    multipliers_applied: Dict[str, float]
+    multipliers_applied: dict[str, float]
 
 
 @dataclass
@@ -294,8 +294,8 @@ class UseBasedProgression:
     def award_action_xp(
         player: Any,
         action_type: str,
-        context: Optional[Dict[str, Any]] = None
-    ) -> List[AttributeXPGain]:
+        context: dict[str, Any] | None = None
+    ) -> list[AttributeXPGain]:
         """
         Award XP to player attributes based on a successful action.
 
@@ -365,7 +365,7 @@ class UseBasedProgression:
         return gains
 
     @staticmethod
-    def check_and_apply_levelups(player: Any) -> List[ProgressionEvent]:
+    def check_and_apply_levelups(player: Any) -> list[ProgressionEvent]:
         """
         Check if any attributes have enough XP to level up, and apply if so.
 
@@ -418,7 +418,7 @@ class UseBasedProgression:
         return levelups
 
     @staticmethod
-    def get_progression_summary(player: Any) -> Dict[str, Dict]:
+    def get_progression_summary(player: Any) -> dict[str, dict]:
         """
         Get a summary of player's attribute XP progress.
 

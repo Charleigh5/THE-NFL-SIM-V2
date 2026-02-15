@@ -12,17 +12,14 @@ Phase 3: Position-Specific Physics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
 
 from .base import (
-    Vector2, PhysicsState,
+    PhysicsState,
+    Vector2,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_change_of_direction_time,
 )
-
 
 # ============================================================================
 # ENUMS
@@ -92,13 +89,13 @@ class WRState:
     physics: PhysicsState = field(default_factory=PhysicsState)
 
     # Route progress
-    route_type: Optional[RouteType] = None
+    route_type: RouteType | None = None
     route_depth: float = 0.0  # Yards from LOS
     route_phase: int = 0  # 0=stem, 1=break, 2=separation
 
     # Separation tracking
     separation: float = 0.0
-    defender_id: Optional[str] = None
+    defender_id: str | None = None
 
     # Catch readiness
     hands_ready: bool = False
@@ -121,7 +118,7 @@ class WideReceiverPhysics:
 
     def __init__(
         self,
-        config: Optional[WRPhysicsConfig] = None,
+        config: WRPhysicsConfig | None = None,
         speed_rating: int = 90,
         acceleration_rating: int = 88,
         agility_rating: int = 85,
@@ -274,7 +271,7 @@ class WideReceiverPhysics:
         player_position: Vector2,
         ball_position: Vector2,
         jumping: bool = False,
-    ) -> Tuple[bool, float]:
+    ) -> tuple[bool, float]:
         """
         Check if ball is within catch radius.
 
