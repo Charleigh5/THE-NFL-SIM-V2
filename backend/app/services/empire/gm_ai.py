@@ -12,10 +12,8 @@ Phase 5: EMPIRE Economic Simulation
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
@@ -68,7 +66,7 @@ class DraftPick:
     """A draft pick asset."""
     year: int
     round: int
-    pick_number: Optional[int] = None  # Known after lottery
+    pick_number: int | None = None  # Known after lottery
     original_team: str = ""
 
     @property
@@ -109,10 +107,10 @@ class GMState:
 
     # Assets
     cap_space: int = 0
-    draft_picks: List[DraftPick] = field(default_factory=list)
+    draft_picks: list[DraftPick] = field(default_factory=list)
 
     # Needs
-    roster_needs: List[RosterNeed] = field(default_factory=list)
+    roster_needs: list[RosterNeed] = field(default_factory=list)
 
     # Performance
     expected_wins: float = 8.0
@@ -127,11 +125,11 @@ class GMState:
 class GOAPAction:
     """A potential GM action."""
     name: str
-    preconditions: Dict[str, Any]
-    effects: Dict[str, Any]
+    preconditions: dict[str, Any]
+    effects: dict[str, Any]
     cost: float  # Lower = more desirable
 
-    def can_execute(self, state: Dict[str, Any]) -> bool:
+    def can_execute(self, state: dict[str, Any]) -> bool:
         """Check if preconditions are met."""
         for key, required in self.preconditions.items():
             if key not in state:
@@ -140,7 +138,7 @@ class GOAPAction:
                 return False
         return True
 
-    def apply(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def apply(self, state: dict[str, Any]) -> dict[str, Any]:
         """Apply effects to state."""
         new_state = state.copy()
         new_state.update(self.effects)
@@ -164,7 +162,7 @@ class GMAI:
 
     def __init__(
         self,
-        config: Optional[GMAIConfig] = None,
+        config: GMAIConfig | None = None,
         team_id: str = "",
     ):
         self.config = config or GMAIConfig()
@@ -196,9 +194,9 @@ class GMAI:
 
     def evaluate_trade(
         self,
-        giving: List[Tuple[TradeAssetType, Any]],
-        receiving: List[Tuple[TradeAssetType, Any]],
-    ) -> Tuple[bool, float]:
+        giving: list[tuple[TradeAssetType, Any]],
+        receiving: list[tuple[TradeAssetType, Any]],
+    ) -> tuple[bool, float]:
         """
         Evaluate a potential trade.
 
@@ -257,15 +255,15 @@ class GMAI:
 
     def rank_draft_prospects(
         self,
-        prospects: List[Dict[str, Any]],
-        team_needs: List[RosterNeed],
-    ) -> List[Dict[str, Any]]:
+        prospects: list[dict[str, Any]],
+        team_needs: list[RosterNeed],
+    ) -> list[dict[str, Any]]:
         """
         Rank draft prospects based on value and fit.
         """
         need_positions = {n.position: n.priority for n in team_needs}
 
-        def score_prospect(p: Dict) -> float:
+        def score_prospect(p: dict) -> float:
             base = p.get("grade", 50)
 
             # Need bonus
@@ -290,7 +288,7 @@ class GMAI:
 
         return sorted(prospects, key=score_prospect, reverse=True)
 
-    def generate_actions(self) -> List[GOAPAction]:
+    def generate_actions(self) -> list[GOAPAction]:
         """Generate available GOAP actions based on current state."""
         actions = []
 
@@ -332,10 +330,10 @@ class GMAI:
 
     def plan(
         self,
-        current_state: Dict[str, Any],
-        goal_state: Dict[str, Any],
+        current_state: dict[str, Any],
+        goal_state: dict[str, Any],
         max_depth: int = 5,
-    ) -> List[GOAPAction]:
+    ) -> list[GOAPAction]:
         """
         Create action plan to reach goal state.
 
@@ -378,7 +376,7 @@ class GMAI:
 
         return plan
 
-    def get_recommendation(self) -> Dict[str, Any]:
+    def get_recommendation(self) -> dict[str, Any]:
         """Get GM's recommended next action."""
         # Build goal state based on philosophy
         if self.state.philosophy == TeamPhilosophy.WIN_NOW:

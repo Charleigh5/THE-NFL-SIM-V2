@@ -1,31 +1,36 @@
-from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
-from app.schemas.play import PlayResult
-from app.orchestrator.kernels_interface import KernelInterface
-from app.engine.probability_engine import ProbabilityEngine, OutcomeType
+import logging
+from typing import Any
+
+from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
 from app.engine.blocking import BlockingEngine, BlockingResult
 from app.engine.event_bus import EventBus, EventType
 from app.engine.offensive_line_ai import OffensiveLineAI
-from app.engine.weather_effects import WeatherEffects
-from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
-from app.models.weather import GameWeather
-from app.engine.sack_calculator import SackCalculator
-from app.engine.rb_tribes import RBTribeClassifier, get_tribe_modifiers
-from app.services.chemistry_service import ChemistryService
-from app.services.weather_service import WeatherService
-from app.engine.trait_effects import TraitEffectResolver
-from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
-from app.services.use_based_progression import UseBasedProgression, ActionType
-from app.services.playbook.familiarity import FamiliarityManager
+
 # Phase 2: Position-Specific Physics Integration
 from app.engine.position_physics import (
-    QuarterbackPhysics, QBState, QBPhysicsConfig, ThrowResult, PocketState,
-    RunningBackPhysics, RBState, RBPhysicsConfig, TackleAttempt, CutMove, CutType, ContactType,
-    WideReceiverPhysics, WRState, WRPhysicsConfig, CatchAttempt, RouteType,
-    DefensiveBackPhysics, DBState, DBPhysicsConfig, CoverageType,
-    Vector2,
+    ContactType,
+    DefensiveBackPhysics,
+    QuarterbackPhysics,
+    RBState,
+    RouteType,
+    RunningBackPhysics,
+    TackleAttempt,
+    WideReceiverPhysics,
+    WRState,
 )
-from typing import Optional, Any, List, Tuple, Dict
-import logging
+from app.engine.probability_engine import OutcomeType, ProbabilityEngine
+from app.engine.rb_tribes import get_tribe_modifiers
+from app.engine.sack_calculator import SackCalculator
+from app.engine.trait_effects import TraitEffectResolver
+from app.engine.weather_effects import WeatherEffects
+from app.models.weather import GameWeather
+from app.orchestrator.kernels_interface import KernelInterface
+from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries
+from app.schemas.play import PlayResult
+from app.services.playbook.familiarity import FamiliarityManager
+from app.services.use_based_progression import ActionType, UseBasedProgression
+
+from .play_commands import PassPlayCommand, PlayCommand, RunPlayCommand
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +38,7 @@ class PlayResolver:
     """
     Resolves a PlayCommand by orchestrating the various simulation kernels.
     """
-    def __init__(self, rng: Any, kernels: Optional[KernelInterface] = None) -> None:
+    def __init__(self, rng: Any, kernels: KernelInterface | None = None) -> None:
         self.rng = rng
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
@@ -44,7 +49,7 @@ class PlayResolver:
         # B-055: Playbook Familiarity (Phase 3)
         self.familiarity_manager = FamiliarityManager()
 
-    def _resolve_special_play_modifiers(self, command: PlayCommand) -> Dict[str, Any]:
+    def _resolve_special_play_modifiers(self, command: PlayCommand) -> dict[str, Any]:
         """
         RESOLVE SPECIAL PLAYS (Tush Push, Flea Flicker, etc.)
         Returns a dictionary of modifiers:
@@ -52,7 +57,7 @@ class PlayResolver:
         - epa_bonus: float
         - risk_modifier: float
         """
-        from app.core.nfl_reference_data import SPECIAL_PLAYS, PlayReference
+        from app.core.nfl_reference_data import SPECIAL_PLAYS
 
         play_id = getattr(command, "play_id", "")
         if play_id: play_id = play_id.upper()
@@ -156,7 +161,7 @@ class PlayResolver:
         self.offensive_line_ai.decrement_debuffs()
         return result
 
-    def _get_player_by_position(self, players: list, position_prefix: str) -> Optional[Any]:
+    def _get_player_by_position(self, players: list, position_prefix: str) -> Any | None:
         """Helper to find a player by position prefix (e.g., 'QB', 'WR')."""
         if not players:
             return None
@@ -217,7 +222,7 @@ class PlayResolver:
             week=getattr(self.current_match_context, "week", 0),
         )
 
-    def _get_weather_effects(self) -> Optional[WeatherEffects]:
+    def _get_weather_effects(self) -> WeatherEffects | None:
         if not self.current_match_context or not self.current_match_context.weather_config:
             return None
 
@@ -250,7 +255,7 @@ class PlayResolver:
 
     def _apply_familiarity_learning(
         self,
-        players: List[Any],
+        players: list[Any],
         play_id: str,
         success: bool
     ) -> None:
@@ -379,7 +384,7 @@ class PlayResolver:
         return separation
 
 
-    def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Optional[Dict[str, float]] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
+    def _resolve_line_battle(self, offense: list[Any], defense: list[Any], trait_modifiers: dict[str, float] | None = None) -> tuple[list[BlockingResult], list[Any], list[Any]]:
         """
         Simulate the battle between OL and DL.
         Returns (results, winning_defenders, beaten_linemen)
@@ -855,7 +860,7 @@ class PlayResolver:
         # ======================================================================
         closer_active = False
         if qb and hasattr(qb, "player_traits"):
-            from app.services.trait_service import TraitService, TRAIT_CATALOG
+            from app.services.trait_service import TRAIT_CATALOG, TraitService
 
             # Build crunch time context from match context
             crunch_context = {}

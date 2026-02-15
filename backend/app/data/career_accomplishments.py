@@ -1,6 +1,6 @@
 
-from dataclasses import dataclass, field
-from typing import List, Dict
+from dataclasses import dataclass
+
 
 @dataclass
 class CareerAccolades:
@@ -15,7 +15,7 @@ class CareerAccolades:
 
 # Mapping of (First Name, Last Name) -> Accolades
 # Focused on active stars who deserve a "Legacy Boost" in ratings
-PLAYER_ACCOMPLISHMENTS: Dict[tuple, CareerAccolades] = {
+PLAYER_ACCOMPLISHMENTS: dict[tuple, CareerAccolades] = {
     ("Patrick", "Mahomes"): CareerAccolades(pro_bowls=6, all_pros_1st=2, all_pros_2nd=1, mvps=2, super_bowl_mvps=3, offensive_player_of_year=1),
     ("Lamar", "Jackson"): CareerAccolades(pro_bowls=3, all_pros_1st=2, mvps=2),
     ("Josh", "Allen"): CareerAccolades(pro_bowls=2, all_pros_2nd=1),

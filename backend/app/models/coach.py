@@ -1,7 +1,11 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 from enum import Enum
+
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class CoachTier(str, Enum):
     """Coach tier based on combined ratings and experience."""

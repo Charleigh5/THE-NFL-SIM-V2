@@ -5,17 +5,18 @@ This service extends the existing PreGameService with sophisticated chemistry
 calculations, progressive bonuses, and advanced gameplay modifiers.
 """
 
-import math
 import hashlib
-from typing import Dict, List, Tuple, Optional, Any
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
-from app.models.player import Player
-from app.models.game import Game
-from app.models.stats import PlayerGameStart
-from app.services.depth_chart_service import DepthChartService
-from app.orchestrator.match_context import MatchContext
 import logging
+import math
+
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStart
+from app.orchestrator.match_context import MatchContext
+from app.services.depth_chart_service import DepthChartService
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +29,10 @@ class ChemistryMetadata:
         self,
         chemistry_level: float,
         consecutive_games: int,
-        player_ids: List[int],
-        position_map: Dict[str, int],
-        bonuses: Dict[str, float],
-        advanced_effects: Dict[str, float]
+        player_ids: list[int],
+        position_map: dict[str, int],
+        bonuses: dict[str, float],
+        advanced_effects: dict[str, float]
     ):
         self.chemistry_level = chemistry_level
         self.consecutive_games = consecutive_games
@@ -48,7 +49,7 @@ class ChemistryMetadata:
         )
         return hashlib.md5(lineup_string.encode()).hexdigest()[:12]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Serialize for API response"""
         return {
             "chemistry_level": round(self.chemistry_level, 2),
@@ -76,6 +77,7 @@ class ChemistryMetadata:
 
 
 from app.core.redis_cache import chemistry_cache
+
 
 class EnhancedChemistryService:
     """
@@ -126,7 +128,7 @@ class EnhancedChemistryService:
 
         return min(1.0, chemistry_level)
 
-    def calculate_scaled_bonuses(self, chemistry_level: float) -> Dict[str, float]:
+    def calculate_scaled_bonuses(self, chemistry_level: float) -> dict[str, float]:
         """
         Calculate attribute bonuses based on chemistry level.
 
@@ -144,7 +146,7 @@ class EnhancedChemistryService:
             "awareness": chemistry_level * base_multiplier
         }
 
-    def calculate_advanced_effects(self, chemistry_level: float) -> Dict[str, float]:
+    def calculate_advanced_effects(self, chemistry_level: float) -> dict[str, float]:
         """
         Calculate advanced gameplay effects based on chemistry level.
 
@@ -168,7 +170,7 @@ class EnhancedChemistryService:
     async def get_team_chemistry_metadata(
         self,
         team_id: int,
-        current_starters: Dict[str, int],
+        current_starters: dict[str, int],
         season_id: int = 2025, # Default for now
         week: int = 1 # Default for now
     ) -> ChemistryMetadata:
@@ -223,7 +225,7 @@ class EnhancedChemistryService:
     async def get_team_chemistry_metadata_optimized(
         self,
         team_id: int,
-        current_starters: Dict[str, int]
+        current_starters: dict[str, int]
     ) -> ChemistryMetadata:
         """
         OPTIMIZED: Single-query chemistry calculation.
@@ -297,8 +299,8 @@ class EnhancedChemistryService:
 
     def _lineups_match(
         self,
-        lineup_a: Dict[str, int],
-        lineup_b: Dict[str, int]
+        lineup_a: dict[str, int],
+        lineup_b: dict[str, int]
     ) -> bool:
         """Check if two OL lineups are identical"""
         if len(lineup_a) != len(lineup_b):
@@ -333,7 +335,7 @@ class EnhancedChemistryService:
     async def apply_chemistry_to_match_context(
         self,
         match_context: MatchContext
-    ) -> Tuple[Optional[ChemistryMetadata], Optional[ChemistryMetadata]]:
+    ) -> tuple[ChemistryMetadata | None, ChemistryMetadata | None]:
         """
         Apply chemistry bonuses to both teams in match context.
 
@@ -362,8 +364,8 @@ class EnhancedChemistryService:
     async def _apply_team_chemistry(
         self,
         team_id: int,
-        roster: Dict[int, Player]
-    ) -> Optional[ChemistryMetadata]:
+        roster: dict[int, Player]
+    ) -> ChemistryMetadata | None:
         """Apply chemistry bonuses to one team"""
         roster_list = list(roster.values())
 

@@ -1,20 +1,29 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.core.database import get_db
 from app.models.feedback import UserFeedback
 from app.schemas.feedback import (
-    FeedbackCreate, FeedbackResponse,
-    IssueReportRequest, IssueReportResponse,
-    ResearchRequest, ResearchResponse,
-    BatchSubmitRequest, BatchSubmitResponse
+    BatchSubmitRequest,
+    BatchSubmitResponse,
+    FeedbackCreate,
+    FeedbackResponse,
+    IssueReportRequest,
+    IssueReportResponse,
+    ResearchRequest,
+    ResearchResponse,
 )
-from app.services.issue_logger import IssueLoggerService, IssueEntry
 from app.services.ai_research_service import ai_research_service
 from app.services.artifact_generator import (
-    artifact_generator, AnnotationData, AnnotationElement, AIResearchData,
-    ArtifactGeneratorService
+    AIResearchData,
+    AnnotationData,
+    AnnotationElement,
+    ArtifactGeneratorService,
+    artifact_generator,
 )
-import logging
+from app.services.issue_logger import IssueEntry, IssueLoggerService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -185,8 +194,8 @@ async def export_updates(request: BatchSubmitRequest):
             ))
 
         # Use absolute path to docs/updates_and_enhancements
-        from pathlib import Path
         import os
+        from pathlib import Path
 
         # Get project root (assuming we are in app/api/endpoints)
         # ../../../..

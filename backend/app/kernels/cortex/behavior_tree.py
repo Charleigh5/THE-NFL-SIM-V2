@@ -1,5 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 import enum
+
+from app.kernels.core.ecs_manager import Component
+
 
 class NodeStatus(str, enum.Enum):
     SUCCESS = "Success"

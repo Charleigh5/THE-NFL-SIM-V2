@@ -1,5 +1,5 @@
-import math
 from app.engine.physics import BallPhysics
+
 
 class SpecialTeamsEngine:
     @staticmethod
