@@ -220,7 +220,10 @@ class PlayCaller:
         return PassPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            depth=selected_depth
+            depth=selected_depth,
+            down=context.down,
+            distance=context.distance,
+            possession=context.possession
         )
 
     def _create_run_play(self, context: PlayCallingContext) -> RunPlayCommand:
@@ -232,5 +235,8 @@ class PlayCaller:
         return RunPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            run_direction=selected_dir
+            run_direction=selected_dir,
+            down=context.down,
+            distance=context.distance,
+            possession=context.possession
         )

@@ -7,7 +7,7 @@ Each team gets 3 scouts:
 - Specialist Scout (Position specialty, stronger bias)
 """
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 from app.models.scout import ScoutBias, Region
 
 @dataclass
@@ -16,7 +16,7 @@ class ScoutData:
     name: str
     region: str
     bias: str
-    specialty: str
+    specialty: Optional[str]
     evaluation_ability: int
     efficiency: int
     reputation: int

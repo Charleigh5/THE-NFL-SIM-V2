@@ -1,6 +1,6 @@
 from app.kernels.core.ecs_manager import Component
 from app.kernels.core.ecs_manager import Component
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 
 class CoverageNet(Component):
     """
@@ -9,7 +9,7 @@ class CoverageNet(Component):
     Here, we simulate the logic.
     """
     
-    def identify_targeted_defender(self, pass_trajectory: Dict, defenders: List[Dict]) -> str:
+    def identify_targeted_defender(self, pass_trajectory: Dict, defenders: List[Dict]) -> Optional[str]:
         """
         Model 1: Targeted Defender Identification.
         Finds the defender most responsible for the catch point.

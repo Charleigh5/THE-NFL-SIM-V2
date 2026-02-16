@@ -38,7 +38,7 @@ class AbilityInfo(BaseModel):
     effects: Dict[str, float]
 
 
-class AbilityStatus(BaseModel):
+class AbilityStatusResponse(BaseModel):
     """Status of an ability for a player."""
     key: str
     name: str
@@ -100,7 +100,7 @@ async def get_ability_catalog():
     ]
 
 
-@router.get("/players/{player_id}", response_model=Dict[str, AbilityStatus])
+@router.get("/players/{player_id}", response_model=Dict[str, AbilityStatusResponse])
 async def get_player_ability_status(player_id: int, db: Session = Depends(get_db)):
     """
     Get the status of all abilities for a player.

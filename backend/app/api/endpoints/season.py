@@ -1171,7 +1171,7 @@ def get_enhanced_team_needs(season_id: int, team_id: int, db: Session = Depends(
 
 @router.post("/draft/suggest-pick", response_model=draft_schemas.DraftSuggestionResponse)
 @handle_errors
-async def suggest_draft_pick(
+async def suggest_draft_pick_generic(
     request: draft_schemas.DraftSuggestionRequest,
     db: AsyncSession = Depends(get_async_db)
 ):

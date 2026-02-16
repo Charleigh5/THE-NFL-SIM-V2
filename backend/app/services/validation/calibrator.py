@@ -85,7 +85,7 @@ class SimulationCalibrator:
         avg_error = 0.0  # Initialize to handle empty targets case
 
         for iteration in range(max_iterations):
-            total_error = 0
+            total_error = 0.0
 
             for name, target in self.targets.items():
                 adjustment = self.calculate_adjustment(target)

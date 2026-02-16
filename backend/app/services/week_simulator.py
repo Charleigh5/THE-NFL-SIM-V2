@@ -269,7 +269,7 @@ class WeekSimulator:
                 break
 
         orchestrator.is_running = False
-        orchestrator.save_game_result()
+        await orchestrator.save_game_result()
 
     async def simulate_full_season(
         self,

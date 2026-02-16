@@ -383,7 +383,7 @@ class SimulationOrchestrator:
         await self.db_session.commit()
         logger.info("Player stats saved", extra={"game_id": game.id, "player_count": count})
 
-    def run_simulation(self) -> PlayResult:
+    async def run_simulation(self) -> PlayResult:
         """
         Sets up and runs a simple simulation of a single pass play.
         (Legacy method for backward compatibility)
@@ -422,7 +422,7 @@ class SimulationOrchestrator:
 
         logger.debug("Play resolved")
 
-        self._save_progress()
+        await self._save_progress()
 
         return result
 
