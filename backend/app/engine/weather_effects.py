@@ -1,5 +1,6 @@
-from app.models.weather import GameWeather, PrecipitationType, FieldCondition
-from typing import Tuple
+
+from app.models.weather import FieldCondition, GameWeather, PrecipitationType
+
 
 class WeatherEffects:
     """
@@ -16,7 +17,7 @@ class WeatherEffects:
     def __init__(self, weather: GameWeather):
         self.weather = weather
 
-    def get_passing_modifiers(self) -> Tuple[float, float]:
+    def get_passing_modifiers(self) -> tuple[float, float]:
         """
         Returns (accuracy_multiplier, distance_multiplier)
 
@@ -48,7 +49,7 @@ class WeatherEffects:
 
         return max(0.5, accuracy), max(0.5, distance)
 
-    def get_kicking_modifiers(self) -> Tuple[float, float]:
+    def get_kicking_modifiers(self) -> tuple[float, float]:
         """
         Returns (accuracy_multiplier, distance_multiplier)
 

@@ -1,8 +1,10 @@
-from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Integer, ForeignKey, Float, String, JSON, Boolean
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.models.base import Base
 import enum
+from typing import TYPE_CHECKING
+
+from sqlalchemy import JSON, Boolean, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.player import Player
@@ -29,11 +31,11 @@ class PlayerInjury(Base):
 
     # Injury State
     injury_status: Mapped[str] = mapped_column(String, default=InjuryStatus.ACTIVE)
-    injury_type: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    injury_type: Mapped[str | None] = mapped_column(String, nullable=True)
     weeks_to_recovery: Mapped[int] = mapped_column(Integer, default=0)
     injury_severity: Mapped[int] = mapped_column(Integer, default=0)
     injury_recurrence_risk: Mapped[float] = mapped_column(Float, default=0.0)
 
     # Medical Profile
-    medical_flags: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True) # e.g. ["ACL Tear (2022)"]
+    medical_flags: Mapped[dict | None] = mapped_column(JSON, nullable=True) # e.g. ["ACL Tear (2022)"]
     genesis_revealed: Mapped[bool] = mapped_column(Boolean, default=False) # Revealed true potential/injury risk

@@ -9,9 +9,8 @@ CITATION: ENHANCEMENT_REFERENCE.md - Crowd Noise Impact
 - Momentum swings affect crowd intensity
 """
 
-from enum import Enum
-from typing import Dict, Optional
 from dataclasses import dataclass
+from enum import Enum
 
 
 class NoiseLevel(str, Enum):
@@ -23,7 +22,7 @@ class NoiseLevel(str, Enum):
 
 
 # Noise level thresholds in decibels
-NOISE_DB_THRESHOLDS: Dict[NoiseLevel, int] = {
+NOISE_DB_THRESHOLDS: dict[NoiseLevel, int] = {
     NoiseLevel.QUIET: 50,
     NoiseLevel.MODERATE: 70,
     NoiseLevel.LOUD: 90,
@@ -181,7 +180,7 @@ def update_crowd_noise_from_momentum(
     return noise_state
 
 
-def get_stadium_base_noise(stadium_name: Optional[str] = None) -> float:
+def get_stadium_base_noise(stadium_name: str | None = None) -> float:
     """
     Get baseline noise level for a stadium.
 
