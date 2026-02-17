@@ -11,39 +11,36 @@ Phase 2: Biological Systems
 """
 
 from .biometrics import (
+    POSITION_BIOMETRIC_RANGES,
     BiometricProfile,
     BodyType,
     FiberType,
-    POSITION_BIOMETRIC_RANGES,
     generate_biometrics_for_position,
 )
-
 from .cognition import (
     CognitionEngine,
     CognitiveProfile,
     CognitiveState,
-    ReadPhase,
     OODAState,
+    ReadPhase,
     VisionCone,
 )
-
 from .fatigue import (
-    FatigueEngine,
-    FatigueState,
-    FatigueLevel,
     ActivityLevel,
     EnergyCompartment,
+    FatigueEngine,
+    FatigueLevel,
+    FatigueState,
 )
-
 from .injury import (
-    InjuryEngine,
-    InjuryProfile,
-    Injury,
-    InjuryType,
-    InjurySeverity,
     BodyPart,
     BodyRegion,
     ChronicWear,
+    Injury,
+    InjuryEngine,
+    InjuryProfile,
+    InjurySeverity,
+    InjuryType,
 )
 
 __all__ = [

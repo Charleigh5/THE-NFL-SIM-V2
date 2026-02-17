@@ -1,6 +1,5 @@
 import enum
-from pydantic import BaseModel
-from typing import List
+
 
 class PassRushMove(str, enum.Enum):
     BULL_RUSH = "Bull Rush"

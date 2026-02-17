@@ -9,9 +9,8 @@ Based on industry research:
 - Key attributes for each position carry higher weights
 - Speed/Awareness are important across positions but vary in weight
 """
-from typing import Dict, Optional
-from app.models.player import Player
 
+from app.models.player import Player
 
 # =============================================================================
 # POSITION WEIGHT DEFINITIONS (Madden-inspired)
@@ -19,7 +18,7 @@ from app.models.player import Player
 # Weights are normalized to sum to 1.0 for each position
 # Based on research: https://dexalytics.com/madden-nfl-player-ratings-explained
 
-POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
+POSITION_WEIGHTS: dict[str, dict[str, float]] = {
     # -------------------------------------------------------------------------
     # QUARTERBACK
     # -------------------------------------------------------------------------
@@ -326,7 +325,7 @@ class RatingCalculator:
         return int(max(40, min(99, total / len(core_attrs))))
 
     @staticmethod
-    def get_position_weights(position: str) -> Optional[Dict[str, float]]:
+    def get_position_weights(position: str) -> dict[str, float] | None:
         """
         Get the weight configuration for a position.
 

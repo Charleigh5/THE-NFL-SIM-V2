@@ -16,18 +16,17 @@ Context7 Best Practices:
 - No magic numbers (all configurable)
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 from .base import (
-    Vector2, Vector3, PhysicsState,
+    PhysicsState,
+    Vector2,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_acceleration,
 )
-
 
 # ============================================================================
 # ENUMS
@@ -113,7 +112,7 @@ class QBState:
     # Throw preparation
     is_throwing: bool = False
     throw_windup_ms: float = 0.0
-    target_receiver_id: Optional[str] = None
+    target_receiver_id: str | None = None
 
     # Scramble
     has_left_pocket: bool = False
@@ -136,7 +135,7 @@ class QuarterbackPhysics:
 
     def __init__(
         self,
-        config: Optional[QBPhysicsConfig] = None,
+        config: QBPhysicsConfig | None = None,
         throw_power_rating: int = 80,
         throw_accuracy_rating: int = 80,
         awareness_rating: int = 80,
@@ -329,8 +328,8 @@ class QuarterbackPhysics:
         self,
         state: QBState,
         elapsed_ms: float,
-        receiver_openness: List[float],
-    ) -> Tuple[int, bool]:
+        receiver_openness: list[float],
+    ) -> tuple[int, bool]:
         """
         Process read progression.
 
@@ -366,8 +365,8 @@ class QuarterbackPhysics:
     def calculate_scramble_decision(
         self,
         state: QBState,
-        run_lanes: List[float],  # Openness of run lanes
-    ) -> Tuple[bool, Optional[int]]:
+        run_lanes: list[float],  # Openness of run lanes
+    ) -> tuple[bool, int | None]:
         """
         Determine if QB should scramble.
 

@@ -1,5 +1,6 @@
 from app.kernels.core.ecs_manager import Component
 
+
 class CapPhysicist(Component):
     salary_cap: float = 255.0 # In Millions
     dead_money: float = 0.0

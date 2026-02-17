@@ -9,11 +9,9 @@ Hyper-Immersive Update:
 - Added Region (National vs Regional)
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, NewType
-from enum import Enum
 import random
-import math
+from dataclasses import dataclass, field
+from enum import Enum
 
 PlayerID = str
 ScoutID = str
@@ -74,10 +72,10 @@ class ScoutingReport:
     completion_percentage: float = 0.0
 
     # Map of Attribute Name -> (Perceived Value, Error Margin, Tier)
-    attributes: Dict[str, Tuple[int, int, KnowledgeTier]] = field(default_factory=dict)
+    attributes: dict[str, tuple[int, int, KnowledgeTier]] = field(default_factory=dict)
 
-    strengths: List[str] = field(default_factory=list)
-    weaknesses: List[str] = field(default_factory=list)
+    strengths: list[str] = field(default_factory=list)
+    weaknesses: list[str] = field(default_factory=list)
 
 # ============================================================================
 # SCOUTING ENGINE
@@ -90,7 +88,7 @@ class ScoutingEngine:
 
     def generate_report(
         self,
-        true_attributes: Dict[str, int],
+        true_attributes: dict[str, int],
         scout: ScoutProfile,
         visits: int = 1
     ) -> ScoutingReport:
@@ -193,7 +191,7 @@ class ScoutingEngine:
         if specialty == ScoutSpecialty.SKILL_POS: return attribute in ["catching", "route_running", "man_coverage"]
         return False
 
-    def format_for_display(self, report: ScoutingReport) -> Dict[str, str]:
+    def format_for_display(self, report: ScoutingReport) -> dict[str, str]:
         display = {}
         for attr, (val, err, tier) in report.attributes.items():
             if tier == KnowledgeTier.UNKNOWN:
