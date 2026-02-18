@@ -1,7 +1,7 @@
 import asyncio
-import time
 import statistics
 import sys
+import time
 
 try:
     import aiohttp
@@ -15,7 +15,7 @@ async def make_request(session, url):
         async with session.get(url) as response:
             await response.text()
             return time.time() - start, response.status
-    except Exception as e:
+    except Exception:
         return time.time() - start, 0
 
 async def load_test():

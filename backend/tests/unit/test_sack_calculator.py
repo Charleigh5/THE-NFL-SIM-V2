@@ -1,6 +1,5 @@
-import pytest
 from app.engine.sack_calculator import SackCalculator
-from app.models.player import Player
+
 
 class MockPlayer:
     def __init__(self, pocket_presence=50, speed=50, acceleration=50, agility=50, first_name="Test", last_name="QB"):

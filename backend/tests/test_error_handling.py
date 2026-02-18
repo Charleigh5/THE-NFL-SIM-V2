@@ -1,6 +1,7 @@
-from app.main import app
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 from sqlalchemy.exc import OperationalError
+
 
 def test_404_error_format(client):
     """
@@ -21,13 +22,13 @@ def test_value_error_handling(client):
     with patch("app.api.endpoints.season.PlayoffService") as MockService:
         instance = MockService.return_value
         instance.generate_playoffs.side_effect = ValueError("Test Value Error")
-        
+
         # Call the endpoint
         response = client.post("/api/season/1/playoffs/generate")
-        
+
         assert response.status_code == 400
         data = response.json()
-        
+
         # Should have structured error format
         assert "detail" in data
         assert isinstance(data["detail"], dict)
@@ -50,7 +51,7 @@ def test_operational_error_handling(client):
     with patch("app.api.endpoints.season.Season") as MockSeason:
         # This mocks the class, but SQLAlchemy usage is db.query(Season)
         pass
-        
+
     # Let's try patching the session query
     with patch("sqlalchemy.orm.Session.query", side_effect=OperationalError("statement", "params", "orig")):
         # This might be too broad and break other things, but let's try on a specific endpoint

@@ -1,31 +1,32 @@
 """Trade API endpoints for trade evaluation and proposals."""
 
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
-from sqlalchemy.orm import Session, selectinload
-from starlette.concurrency import run_in_threadpool
 import logging
+from datetime import datetime, timedelta
 
-from app.core.database import get_async_db, SessionLocal
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.core.database import SessionLocal, get_async_db
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.models.team import Team
-from app.models.trade_offer import TradeOffer, TradeOfferStatus as DBTradeOfferStatus
-from app.services.gm_agent import GMAgent
+from app.models.trade_offer import TradeOffer
+from app.models.trade_offer import TradeOfferStatus as DBTradeOfferStatus
 from app.schemas.trade import (
+    PendingOffersResponse,
+    TradeAssetRead,
+    TradeDecision,
     TradeEvaluationRequest,
     TradeEvaluationResponse,
+    TradeOfferRead,
     TradeOfferRequest,
     TradeOfferResponse,
-    TradeDecision,
-    TradeOfferRead,
-    TradeAssetRead,
-    PendingOffersResponse,
-    TradeRespondRequest,
     TradeOfferStatus,
+    TradeRespondRequest,
 )
+from app.services.gm_agent import GMAgent
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 logger = logging.getLogger(__name__)

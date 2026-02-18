@@ -1,18 +1,19 @@
 
-import sys
 import os
 import random
-from typing import List, Any
-from dataclasses import dataclass
+import sys
 
 # Add backend to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
 from app.orchestrator.play_commands import (
-    PlayCommand, PassPlayCommand, RunPlayCommand,
-    PuntCommand, FieldGoalCommand
+    FieldGoalCommand,
+    PassPlayCommand,
+    PuntCommand,
+    RunPlayCommand,
 )
+
 
 def get_rng(seed: int = 42) -> random.Random:
     """Get a seeded RNG for deterministic testing."""

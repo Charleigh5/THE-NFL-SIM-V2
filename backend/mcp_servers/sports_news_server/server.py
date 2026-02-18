@@ -1,10 +1,10 @@
-from typing import Dict, List
+
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("sports_news")
 
 @mcp.tool()
-def get_player_news(player_name: str) -> List[Dict[str, str]]:
+def get_player_news(player_name: str) -> list[dict[str, str]]:
     """
     Get recent news headlines for a player.
 
@@ -25,7 +25,7 @@ def get_player_news(player_name: str) -> List[Dict[str, str]]:
     ]
 
 @mcp.tool()
-def get_team_news(team_name: str) -> List[Dict[str, str]]:
+def get_team_news(team_name: str) -> list[dict[str, str]]:
     """
     Get recent news for a team.
 
@@ -41,7 +41,7 @@ def get_team_news(team_name: str) -> List[Dict[str, str]]:
     ]
 
 @mcp.tool()
-def get_injury_reports(week: int) -> Dict[str, List[str]]:
+def get_injury_reports(week: int) -> dict[str, list[str]]:
     """
     Get injury reports for a specific week.
 

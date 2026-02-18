@@ -1,7 +1,6 @@
-import pytest
-from unittest.mock import MagicMock
 from app.engine.trait_effects import TraitEffectResolver
 from app.models.player import Player
+
 
 class TestTraitEffectResolver:
     """Test trait effect resolution logic."""

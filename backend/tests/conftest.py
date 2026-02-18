@@ -24,8 +24,9 @@ TEST_DB_FILE = "test.db"
 TEST_DATABASE_URL = f"sqlite:///{TEST_DB_FILE}"
 TEST_ASYNC_DATABASE_URL = f"sqlite+aiosqlite:///{TEST_DB_FILE}"
 
-from sqlalchemy import event
 import logging
+
+from sqlalchemy import event
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -198,7 +199,7 @@ async def async_client(async_db_session):
     """
     Fixture for httpx AsyncClient.
     """
-    from httpx import AsyncClient, ASGITransport
+    from httpx import ASGITransport, AsyncClient
 
     async def override_get_async_db():
         yield async_db_session

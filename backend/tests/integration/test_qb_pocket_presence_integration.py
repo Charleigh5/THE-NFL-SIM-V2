@@ -2,13 +2,15 @@
 Integration test for QB Pocket Presence feature.
 Tests the actual implementation rather than mocking internals.
 """
-import pytest
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_commands import PassPlayCommand
-from app.models.player import Player, Position
-from app.engine.blocking import BlockingResult
-from app.core.random_utils import DeterministicRNG
 from unittest.mock import MagicMock, patch
+
+import pytest
+
+from app.core.random_utils import DeterministicRNG
+from app.engine.blocking import BlockingResult
+from app.models.player import Player
+from app.orchestrator.play_commands import PassPlayCommand
+from app.orchestrator.play_resolver import PlayResolver
 
 
 def create_test_player(position: str, **attributes):

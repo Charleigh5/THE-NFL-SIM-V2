@@ -10,18 +10,22 @@ Context7 Best Practices:
 - Fog of War mechanics
 """
 
+
 import pytest
-from typing import List
 
 from app.services.scouting import (
-    # Scout
-    ScoutingEngine, ScoutProfile, ScoutRegion, ScoutSpecialty, KnowledgeTier,
     # Combine
     CombineSimulation,
     # Draft
-    DraftBoard, Prospect,
+    DraftBoard,
+    KnowledgeTier,
+    Prospect,
+    # Scout
+    ScoutingEngine,
+    ScoutProfile,
+    ScoutRegion,
+    ScoutSpecialty,
 )
-
 
 # ============================================================================
 # SCOUTING ENGINE TESTS

@@ -1,36 +1,22 @@
-from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-from alembic import context
-
 # Import app config and models
 import os
 import sys
+from logging.config import fileConfig
+
 from dotenv import load_dotenv
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context
 
 sys.path.append(os.getcwd())
 load_dotenv()
 
 from app.core.config import settings
 from app.models.base import Base
-# Import all models to ensure they are registered with Base.metadata
-from app.models.team import Team
-from app.models.player import Player
-from app.models.coach import Coach
-from app.models.gm import GM
-from app.models.game import Game
-from app.models.stats import PlayerGameStats
-from app.models.feedback import UserFeedback
-from app.models.trait import Trait, PlayerTrait
-from app.models.player_game_starts import PlayerGameStarts
+
 # New Player Decomposition Models
-from app.models.player_attributes import PlayerAttributes
-from app.models.player_contract import PlayerContract
-from app.models.player_physics import PlayerPhysics
-from app.models.player_injury import PlayerInjury
-from app.models.player_progression import PlayerProgression
+
+# Import all models to ensure they are registered with Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

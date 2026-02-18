@@ -1,10 +1,12 @@
 
-import pytest
 from unittest.mock import MagicMock
-from app.services.salary_cap_service import SalaryCapService
+
+import pytest
+
 from app.models.player import Player
 from app.models.team import Team
-from sqlalchemy import select
+from app.services.salary_cap_service import SalaryCapService
+
 
 def test_get_team_cap_breakdown():
     # Setup

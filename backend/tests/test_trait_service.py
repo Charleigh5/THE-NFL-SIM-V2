@@ -7,11 +7,9 @@ Tests follow industry best practices:
 - Fixtures for trait definitions
 - Parameterized tests for multiple trait scenarios
 """
-import pytest
-from unittest.mock import Mock, MagicMock
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
 
+import pytest
 
 # =============================================================================
 # MOCK TRAIT DEFINITIONS (avoid database dependency)
@@ -22,9 +20,9 @@ class MockTraitDefinition:
     """Mock trait definition for testing."""
     name: str
     description: str
-    position_requirements: List[str]
-    activation_triggers: List[str]
-    effects: Dict[str, float]
+    position_requirements: list[str]
+    activation_triggers: list[str]
+    effects: dict[str, float]
     tier: str = "GOLD"
 
 

@@ -1,5 +1,6 @@
+
 from pydantic import BaseModel
-from typing import Dict
+
 
 class TeamColors(BaseModel):
     primary_hex: str
@@ -22,7 +23,7 @@ TEAM_DB = {
     "MIA": TeamIdentity(id="MIA", city="Miami", mascot="Dolphins", abbreviation="MIA", conference="AFC", division="East", colors=TeamColors(primary_hex="#008E97", secondary_hex="#FC4C02", accent_hex="#005778")),
     "NE": TeamIdentity(id="NE", city="New England", mascot="Patriots", abbreviation="NE", conference="AFC", division="East", colors=TeamColors(primary_hex="#002244", secondary_hex="#C60C30", accent_hex="#B0B7BC")),
     "NYJ": TeamIdentity(id="NYJ", city="New York", mascot="Jets", abbreviation="NYJ", conference="AFC", division="East", colors=TeamColors(primary_hex="#125740", secondary_hex="#000000", accent_hex="#FFFFFF")),
-    
+
     # AFC NORTH
     "BAL": TeamIdentity(id="BAL", city="Baltimore", mascot="Ravens", abbreviation="BAL", conference="AFC", division="North", colors=TeamColors(primary_hex="#241773", secondary_hex="#000000", accent_hex="#9E7C0C")),
     "CIN": TeamIdentity(id="CIN", city="Cincinnati", mascot="Bengals", abbreviation="CIN", conference="AFC", division="North", colors=TeamColors(primary_hex="#FB4F14", secondary_hex="#000000")),

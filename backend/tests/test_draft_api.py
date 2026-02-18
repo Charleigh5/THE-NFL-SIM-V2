@@ -1,13 +1,12 @@
 import pytest
 from httpx import AsyncClient
-from app.schemas.draft import DraftSuggestionRequest
 
 
 @pytest.mark.asyncio
 async def test_suggest_draft_pick_success(async_client: AsyncClient, async_db_session):
     """Test draft suggestion endpoint returns valid async recommendation."""
-    from app.models.team import Team
     from app.models.player import Player
+    from app.models.team import Team
 
     # Create team
     team = Team(city="Test", name="Team", abbreviation="TST", conference="AFC", division="North")

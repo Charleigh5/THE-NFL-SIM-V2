@@ -1,7 +1,9 @@
 import pytest
 from httpx import AsyncClient
+
 from app.models.season import Season
 from app.models.team import Team
+
 
 @pytest.mark.asyncio
 async def test_initialize_season(async_client: AsyncClient, async_db_session):

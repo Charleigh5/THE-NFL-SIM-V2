@@ -4,11 +4,9 @@ Tests the complete draft suggestion workflow including historical comparisons.
 """
 import pytest
 from httpx import AsyncClient
-from app.main import app
+
 from app.models.player import Player
 from app.models.team import Team
-from app.core.database import get_async_db
-from sqlalchemy import select
 
 
 @pytest.mark.asyncio
@@ -23,7 +21,7 @@ async def test_draft_suggest_pick_endpoint(async_client: AsyncClient, async_db_s
     players = [
         Player(
             id=i,
-            first_name=f"Player",
+            first_name="Player",
             last_name=f"{i}",
             position="QB" if i == 1 else "WR",
             overall_rating=85 - i,

@@ -5,17 +5,17 @@ Revises: d28b1ad1af95
 Create Date: 2025-11-25 11:20:18.791271
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'db3fab50bb95'
-down_revision: Union[str, Sequence[str], None] = 'd28b1ad1af95'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = 'd28b1ad1af95'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -34,7 +34,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_season_id'), 'season', ['id'], unique=False)
     op.create_index(op.f('ix_season_is_active'), 'season', ['is_active'], unique=False)
     op.create_index(op.f('ix_season_year'), 'season', ['year'], unique=True)
-    
+
     # Use batch mode for SQLite compatibility
     with op.batch_alter_table('game', schema=None) as batch_op:
         batch_op.add_column(sa.Column('season_id', sa.Integer(), nullable=True))
@@ -50,7 +50,7 @@ def downgrade() -> None:
         batch_op.drop_constraint('fk_game_season_id', type_='foreignkey')
         batch_op.drop_index(batch_op.f('ix_game_season_id'))
         batch_op.drop_column('season_id')
-    
+
     op.drop_index(op.f('ix_season_year'), table_name='season')
     op.drop_index(op.f('ix_season_is_active'), table_name='season')
     op.drop_index(op.f('ix_season_id'), table_name='season')

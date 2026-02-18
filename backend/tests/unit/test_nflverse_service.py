@@ -1,7 +1,8 @@
 
-import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+
 import polars as pl
+
 from app.services.nflverse_service import NflverseService, calculate_age
 
 # Mock data

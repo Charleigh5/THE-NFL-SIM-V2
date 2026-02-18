@@ -1,5 +1,9 @@
-import pytest
-from backend.mcp_servers.sports_news_server.server import get_player_news, get_team_news, get_injury_reports
+from backend.mcp_servers.sports_news_server.server import (
+    get_injury_reports,
+    get_player_news,
+    get_team_news,
+)
+
 
 def test_get_player_news():
     news = get_player_news("Patrick Mahomes")

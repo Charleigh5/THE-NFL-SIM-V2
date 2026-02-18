@@ -1,17 +1,12 @@
 
-import pytest
 from app.services.ratings_generator import (
-    generate_qb_ratings,
-    generate_rb_ratings,
-    generate_wr_ratings,
-    generate_te_ratings,
-    generate_ol_ratings,
     generate_dl_ratings,
-    generate_lb_ratings,
-    generate_db_ratings,
+    generate_qb_ratings,
+    generate_wr_ratings,
+    inverse_scale,
     scale_percentile,
-    inverse_scale
 )
+
 
 def test_scale_helper():
     assert scale_percentile(50, 0, 100) == 70  # Midpoint ~70

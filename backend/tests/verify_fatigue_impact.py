@@ -1,13 +1,14 @@
-import sys
 import os
-from unittest.mock import MagicMock, patch
+import sys
+from unittest.mock import MagicMock
 
 # Add backend to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_commands import PassPlayCommand
 from app.models.player import Player
+from app.orchestrator.play_commands import PassPlayCommand
+from app.orchestrator.play_resolver import PlayResolver
+
 
 def create_balanced_player(position, **kwargs):
     """Creates a mock player with specific stats."""

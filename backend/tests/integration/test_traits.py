@@ -1,7 +1,8 @@
 import pytest
-from app.services.trait_service import TraitService
-from app.models.trait import Trait, PlayerTrait, TraitSource, TraitEffectType
+
 from app.models.player import Player
+from app.models.trait import Trait, TraitEffectType, TraitSource
+from app.services.trait_service import TraitService
 
 # Mock DB Session if needed or use real test DB fixture
 # Assuming standard pytest-asyncio and conftest setup for db_session fixture

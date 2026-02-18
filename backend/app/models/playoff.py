@@ -1,7 +1,11 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum as SQLEnum, Index
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 import enum
+
+from sqlalchemy import Column, ForeignKey, Index, Integer, String
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class PlayoffRound(str, enum.Enum):
     WILD_CARD = "WILD_CARD"
@@ -22,26 +26,26 @@ class PlayoffMatchup(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     season_id = Column(Integer, ForeignKey("season.id"), nullable=False, index=True)
-    
+
     # Bracket Info
     round = Column(SQLEnum(PlayoffRound), nullable=False)
     conference = Column(SQLEnum(PlayoffConference), nullable=False)
     matchup_code = Column(String, nullable=False) # e.g., "NFC_WC_1", "SB"
-    
+
     # Teams (Nullable because they might not be determined yet)
     home_team_id = Column(Integer, ForeignKey("team.id"), nullable=True)
     away_team_id = Column(Integer, ForeignKey("team.id"), nullable=True)
-    
+
     # Seeding (to track who is playing whom)
     home_team_seed = Column(Integer, nullable=True)
     away_team_seed = Column(Integer, nullable=True)
 
     # Result
     winner_id = Column(Integer, ForeignKey("team.id"), nullable=True)
-    
+
     # The actual game record (created when matchup is set)
     game_id = Column(Integer, ForeignKey("game.id"), nullable=True)
-    
+
     # Relationships
     season = relationship("Season")
     home_team = relationship("Team", foreign_keys=[home_team_id])

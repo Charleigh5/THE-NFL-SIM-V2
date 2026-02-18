@@ -5,11 +5,16 @@ Phase 12: Database Tests
 Unit tests for database modules.
 """
 
+from datetime import timedelta
+
 import pytest
-from datetime import datetime, timedelta
+
 from app.services.database import (
-    MigrationManager, Migration, MigrationStatus,
-    QueryCache, QueryOptimizer,
+    Migration,
+    MigrationManager,
+    MigrationStatus,
+    QueryCache,
+    QueryOptimizer,
 )
 
 
@@ -96,7 +101,6 @@ class TestQueryCache:
         entry = cache.cache[cache._generate_key("SELECT 1")]
 
         # Force expiry by backdating
-        from datetime import timedelta
         entry.created_at = entry.created_at - timedelta(seconds=10)
 
         result = cache.get("SELECT 1")
