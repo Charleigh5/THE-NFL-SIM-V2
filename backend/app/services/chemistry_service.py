@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import hashlib
 
+from app.models.player_game_starts import PlayerGameStarts
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
-from app.models.player_game_starts import PlayerGameStarts
 
 logger = get_logger(__name__)
 

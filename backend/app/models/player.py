@@ -10,9 +10,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
 if TYPE_CHECKING:
+    from app.models.player_game_starts import PlayerGameStarts
+
     from app.models.player_attributes import PlayerAttributes
     from app.models.player_contract import PlayerContract
-    from app.models.player_game_starts import PlayerGameStarts
     from app.models.player_injury import PlayerInjury
     from app.models.player_physics import PlayerPhysics
     from app.models.player_progression import PlayerProgression
