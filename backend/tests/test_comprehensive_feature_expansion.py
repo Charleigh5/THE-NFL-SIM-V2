@@ -3,16 +3,13 @@ Comprehensive test suite for the NFL Simulation Feature Expansion Plan
 Tests all major components of the expanded simulation system
 """
 
-import pytest
 import asyncio
 from unittest.mock import MagicMock, patch
-from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
-from app.orchestrator.kernels.cortex_kernel import CortexKernel, GameSituation
-from app.orchestrator.kernels.genesis_kernel import GenesisKernel
-from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand, PuntCommand, FieldGoalCommand
+
 from app.models.player import Player
-from app.models.game import Game
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
+from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 
 class TestAdvancedRosterManagement:
     """Test advanced roster management features"""

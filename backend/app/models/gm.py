@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, DateTime
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 from datetime import datetime
+
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class GM(Base):
     __tablename__ = "gm"

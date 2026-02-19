@@ -1,8 +1,11 @@
 
-import pytest
 from unittest.mock import MagicMock
-from app.models.player import Player
+
+import pytest
+
 from app.engine.trait_effects import TraitEffectResolver
+from app.models.player import Player
+
 
 class TestRPGTraitEffects:
 
@@ -27,7 +30,7 @@ class TestRPGTraitEffects:
 
         # Verify
         assert results["team_play_recognition_boost"] == 5.0
-        assert getattr(player2, "play_recognition_boosted") == 75
+        assert player2.play_recognition_boosted == 75
         # Captain doesn't boost himself in this simplified logic, or maybe he does?
         # The code says `if player.id != captain.id`. So he is NOT boosted.
         assert not hasattr(captain, "play_recognition_boosted")

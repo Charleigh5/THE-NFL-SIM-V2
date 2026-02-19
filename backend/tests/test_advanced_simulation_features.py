@@ -1,12 +1,11 @@
-import pytest
 import asyncio
-from unittest.mock import MagicMock, patch
-from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+from unittest.mock import MagicMock
+
+from app.orchestrator.kernels.cortex_kernel import CortexKernel
 from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
-from app.orchestrator.kernels.cortex_kernel import CortexKernel, GameSituation
 from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
-from app.models.player import Player
-from app.models.game import Game
+from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 
 def test_advanced_coach_personality_system():
     """Test the new coach personality system with different play calling styles"""

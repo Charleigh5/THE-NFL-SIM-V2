@@ -1,8 +1,7 @@
 
-from typing import Dict, Tuple
 
 # Format: (peak_start, peak_end, decline_rate_per_year)
-POSITION_CURVES: Dict[str, Tuple[int, int, float]] = {
+POSITION_CURVES: dict[str, tuple[int, int, float]] = {
     "QB":  (26, 30, 0.02),   # Slow decline, mental peak late
     "RB":  (23, 27, 0.06),   # Steep decline, early peak
     "WR":  (25, 29, 0.04),   # Moderate decline
@@ -24,7 +23,7 @@ POSITION_CURVES: Dict[str, Tuple[int, int, float]] = {
 
 # Age-based LEARNING rate modifiers (how fast players improve)
 # Different from performance curves - this is about skill acquisition
-AGE_DEVELOPMENT_MODIFIERS: Dict[Tuple[int, int], float] = {
+AGE_DEVELOPMENT_MODIFIERS: dict[tuple[int, int], float] = {
     (21, 24): 1.2,   # Peak learning years - young brain, high neural plasticity
     (25, 27): 1.0,   # Steady state - established patterns
     (28, 30): 0.8,   # Slower gains - harder to learn new skills

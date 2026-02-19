@@ -4,29 +4,21 @@ Tests for 60Hz Frame Physics Engine (B-075)
 Unit tests for the frame-based physics simulation.
 """
 
-import pytest
 import random
 from dataclasses import dataclass
-import math
+
+import pytest
 
 from app.engine.frame_physics import (
-    FramePhysicsEngine,
-    Vector2D,
-    PhysicsPlayer,
-    PhysicsBall,
-    PhysicsFrame,
-    PlayOutcome,
-    PlayerState,
-    Collision,
-    FRAMES_PER_SECOND,
-    MAX_PLAY_DURATION,
     DELTA_T,
+    FRAMES_PER_SECOND,
     MAX_FRAMES,
-    TACKLE_RADIUS,
-    FIELD_LENGTH,
-    FIELD_WIDTH,
+    MAX_PLAY_DURATION,
+    FramePhysicsEngine,
+    PlayerState,
+    PlayOutcome,
+    Vector2D,
 )
-
 
 # =============================================================================
 # FIXTURES

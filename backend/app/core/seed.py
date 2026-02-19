@@ -1,20 +1,25 @@
 import logging
 import os
+import random
+
 from sqlalchemy.orm import Session
+
 from app.core.database import SessionLocal
-from app.models.team import Team
-from app.models.player import Player
-from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
 from app.data.scouts import TEAM_SCOUTS
+from app.models.coach import Coach
+from app.models.player import Player
 from app.models.scout import Scout
-import random
+from app.models.team import Team
 
 # NFL Data Integration (optional)
 try:
-    from app.services.nflverse_service import NflverseService
-    from app.services.ratings_generator import generate_player_ratings, calculate_overall_rating_modifier
     from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS
+    from app.services.nflverse_service import NflverseService
+    from app.services.ratings_generator import (
+        calculate_overall_rating_modifier,
+        generate_player_ratings,
+    )
     HAS_NFLVERSE = True
 except ImportError:
     HAS_NFLVERSE = False
@@ -100,8 +105,9 @@ def generate_player(position: str, team_id: int) -> Player:
         experience=random.randint(0, 15)
     )
 
-from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.models.trait import Trait, TraitSource, TraitEffectType
+from app.models.trait import Trait, TraitEffectType, TraitSource
+from app.services.trait_service import TRAIT_CATALOG, TraitService
+
 
 def seed_traits(db: Session):
     """Seed traits from the catalog into the database."""

@@ -1,5 +1,5 @@
-import requests
 import pytest
+import requests
 
 BASE_URL = "http://localhost:8000/api"
 
@@ -16,11 +16,11 @@ def test_api_endpoints(name, method, url, expected_status):
     print(f"\n{'='*60}")
     print(f"Testing: {name}")
     print(f"URL: {url}")
-    
+
     if method == "GET":
         response = requests.get(url)
     else:
         response = requests.post(url)
-    
+
     assert response.status_code == expected_status
 

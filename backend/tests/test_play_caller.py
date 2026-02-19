@@ -1,8 +1,15 @@
-import pytest
 import random
+
+import pytest
+
 from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
-from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand, FieldGoalCommand, PuntCommand
-from app.orchestrator.kernels.cortex_kernel import CortexKernel
+from app.orchestrator.play_commands import (
+    FieldGoalCommand,
+    PassPlayCommand,
+    PuntCommand,
+    RunPlayCommand,
+)
+
 
 @pytest.fixture
 def rng():

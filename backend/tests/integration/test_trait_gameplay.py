@@ -2,12 +2,13 @@
 Integration tests for Trait System gameplay integration (Phase 2)
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from app.services.pre_game_service import PreGameService
-from app.services.trait_service import TraitService, TRAIT_CATALOG
+
+import pytest
+
 from app.models.player import Player
-from app.orchestrator.match_context import MatchContext
+from app.services.pre_game_service import PreGameService
+from app.services.trait_service import TRAIT_CATALOG, TraitService
 
 
 @pytest.mark.asyncio
@@ -59,9 +60,9 @@ async def test_field_general_team_boost():
 @pytest.mark.asyncio
 async def test_possession_receiver_bonus():
     """Test Possession Receiver applies contested catch bonus"""
-    from app.orchestrator.play_resolver import PlayResolver
-    from app.orchestrator.play_commands import PassPlayCommand
     from app.core.random_utils import DeterministicRNG
+    from app.orchestrator.play_commands import PassPlayCommand
+    from app.orchestrator.play_resolver import PlayResolver
 
     rng = DeterministicRNG("test_possession")
     resolver = PlayResolver(rng)

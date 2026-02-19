@@ -1,6 +1,8 @@
 import pytest
-from app.models.weather import GameWeather, PrecipitationType, FieldCondition
+
 from app.engine.weather_effects import WeatherEffects
+from app.models.weather import FieldCondition, GameWeather, PrecipitationType
+
 
 def test_passing_modifiers_clear_weather():
     weather = GameWeather(

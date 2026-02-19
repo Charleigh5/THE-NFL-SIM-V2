@@ -13,15 +13,15 @@ Tier Multipliers:
 - ROOKIE: 0.90x development
 """
 
-from typing import Dict, List, Optional
 from enum import Enum
+
 from app.models.coach import CoachTier
 
 # ============================================================================
 # TIER DEVELOPMENT MULTIPLIERS
 # ============================================================================
 
-TIER_MULTIPLIERS: Dict[CoachTier, float] = {
+TIER_MULTIPLIERS: dict[CoachTier, float] = {
     CoachTier.LEGEND: 1.50,
     CoachTier.ELITE: 1.30,
     CoachTier.VETERAN: 1.10,
@@ -43,7 +43,7 @@ TIER_THRESHOLDS = [
 # ============================================================================
 
 # Maps offensive/defensive schemes to position bonuses
-SCHEME_EXPERTISE: Dict[str, Dict[str, float]] = {
+SCHEME_EXPERTISE: dict[str, dict[str, float]] = {
     # Offensive Schemes
     "West Coast": {"QB": 0.15, "WR": 0.15, "TE": 0.12, "RB": 0.08},
     "Air Raid": {"QB": 0.20, "WR": 0.18, "TE": 0.10},
@@ -80,7 +80,7 @@ class CoachArchetype(str, Enum):
     SPECIAL_TEAMS_ACE = "SPECIAL_TEAMS_ACE"
 
 # Archetype bonuses: (primary positions, primary bonus, secondary positions, secondary bonus)
-ARCHETYPE_BONUSES: Dict[CoachArchetype, Dict[str, float]] = {
+ARCHETYPE_BONUSES: dict[CoachArchetype, dict[str, float]] = {
     CoachArchetype.GENERALIST: {},  # No specific bonuses, balanced
     CoachArchetype.QB_GURU: {"QB": 0.25, "WR": 0.10, "TE": 0.08},
     CoachArchetype.OL_MASTER: {"OL": 0.25, "C": 0.25, "G": 0.25, "T": 0.25, "RB": 0.10},
@@ -158,8 +158,8 @@ def get_archetype_bonus(archetype: CoachArchetype, position: str) -> float:
 
 def calculate_development_bonus(
     coach_tier: CoachTier,
-    offensive_scheme: Optional[str],
-    defensive_scheme: Optional[str],
+    offensive_scheme: str | None,
+    defensive_scheme: str | None,
     archetype: CoachArchetype,
     player_position: str,
     cap_total: float = 2.0
@@ -200,10 +200,10 @@ def calculate_development_bonus(
 
 def get_position_development_summary(
     coach_tier: CoachTier,
-    offensive_scheme: Optional[str],
-    defensive_scheme: Optional[str],
+    offensive_scheme: str | None,
+    defensive_scheme: str | None,
     archetype: CoachArchetype
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Get development bonuses for all positions under this coach.
 

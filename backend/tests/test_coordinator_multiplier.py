@@ -5,10 +5,11 @@ Tests the NFL Identity Blueprint coordinator IQ formula and integration.
 """
 
 import pytest
+
 from app.orchestrator.kernels.cortex_kernel import (
-    CortexKernel,
     CoordinatorMultiplier,
-    GameSituation
+    CortexKernel,
+    GameSituation,
 )
 
 

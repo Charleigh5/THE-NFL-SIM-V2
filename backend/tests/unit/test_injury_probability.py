@@ -2,20 +2,20 @@
 Tests for the per-play injury probability system (FRAN-022).
 Based on INJURY_SYSTEM_RESEARCH document and NFL/AWS Digital Athlete data.
 """
-import pytest
 from unittest.mock import MagicMock
-from app.models.player import Player, InjuryStatus
+
+import pytest
+
+from app.core.random_utils import DeterministicRNG
+from app.models.player import InjuryStatus, Player
 from app.rpg.injury_system import (
-    InjurySystem,
     PlayContext,
+    apply_playing_injured_risk,
+    calculate_injured_performance_penalty,
     compute_play_injury_probability,
     generate_injury_severity,
     player_has_ragknow,
-    calculate_injured_performance_penalty,
-    apply_playing_injured_risk,
 )
-from app.core import injury_config as InjuryConfig
-from app.core.random_utils import DeterministicRNG
 
 
 class TestComputePlayInjuryProbability:

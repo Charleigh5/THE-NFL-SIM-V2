@@ -1,5 +1,5 @@
-import pytest
 from app.core.random_utils import DeterministicRNG
+
 
 def test_deterministic_behavior():
     """Test that the same seed produces the same sequence of numbers."""

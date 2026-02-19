@@ -16,22 +16,20 @@ Context7 Best Practices:
 - Physics-based outcomes
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState, CollisionResult,
+    CollisionResult,
+    PhysicsState,
+    Vector2,
+    calculate_change_of_direction_time,
+    calculate_g_force,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_acceleration,
-    calculate_deceleration,
-    calculate_change_of_direction_time,
-    resolve_momentum_collision,
-    calculate_g_force,
 )
-
 
 # ============================================================================
 # ENUMS
@@ -112,7 +110,7 @@ class RBState:
     # Contact tracking
     contacts_absorbed: int = 0
     yards_after_contact: float = 0.0
-    first_contact_position: Optional[Vector2] = None
+    first_contact_position: Vector2 | None = None
 
     # Move cooldowns
     last_cut_time_ms: float = 0.0
@@ -139,7 +137,7 @@ class RunningBackPhysics:
 
     def __init__(
         self,
-        config: Optional[RBPhysicsConfig] = None,
+        config: RBPhysicsConfig | None = None,
         speed_rating: int = 85,
         acceleration_rating: int = 85,
         agility_rating: int = 85,
@@ -331,7 +329,7 @@ class RunningBackPhysics:
         surface_traction: float = 1.0,  # 1.0 = normal, <1 = slippery
         fatigue: float = 0.0,
         rng: Any = None,
-    ) -> Tuple[bool, float, float]:
+    ) -> tuple[bool, float, float]:
         """
         Execute a cut move.
 

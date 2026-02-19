@@ -1,12 +1,14 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, List, Optional
+
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class RecruitingProfile(Component):
     # Directive 14: Pre-Draft Interviews (Scheme Fit)
     scheme_fit_score: float = 0.0 # 0.0 - 1.0
-    interview_notes: List[str] = Field(default_factory=list)
-    
+    interview_notes: list[str] = Field(default_factory=list)
+
     # Directive 19: Qualitative Scouting Reports
     scouting_report: str = ""
 
@@ -19,16 +21,16 @@ class RecruitingProfile(Component):
             fit = 1.0
         elif team_scheme == "Spread" and player_archetype == "Power":
             fit = 0.2
-            
+
         self.scheme_fit_score = fit
         self.interview_notes.append(f"Scheme Fit assessed as {fit:.2f}")
         return fit
 
 class WorkoutEngine(Component):
     # Directive 13: Specialized Recruiting Workouts
-    workout_results: Dict[str, float] = {}
+    workout_results: dict[str, float] = {}
 
-    def run_workout(self, drill_type: str, player_attributes: Dict[str, float]):
+    def run_workout(self, drill_type: str, player_attributes: dict[str, float]):
         """
         Directive 13: Simulates a workout to reveal true attributes.
         """

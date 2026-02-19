@@ -1,12 +1,11 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch
 from sqlalchemy.orm import Session
+
 from app.models.player import Player
-from app.models.game import Game
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.orchestrator.match_context import MatchContext
-from app.orchestrator.kernels.cortex_kernel import CortexKernel
-from app.orchestrator.kernels.genesis_kernel import GenesisKernel
+
 
 def create_full_team(session: Session, team_id: int):
     """
@@ -57,7 +56,8 @@ def create_full_team(session: Session, team_id: int):
 
 @pytest.mark.asyncio
 async def test_full_game_simulation_with_fatigue_mocked():
-    from unittest.mock import AsyncMock, MagicMock
+    from unittest.mock import AsyncMock
+
     from app.orchestrator.play_commands import RunPlayCommand
 
     # 1. Setup Mocks

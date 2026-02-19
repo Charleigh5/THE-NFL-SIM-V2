@@ -9,7 +9,7 @@ class GMRPG:
             "Charismatic": {"level": 1, "effect": {"free_agent_interest": 1.2}}
         }
     }
-    
+
     @staticmethod
     def calculate_owner_trust(wins: int, profit: float, expectations: int) -> int:
         """
@@ -20,5 +20,5 @@ class GMRPG:
             trust_change += (wins - expectations) * 5
         else:
             trust_change -= (expectations - wins) * 10
-            
+
         return trust_change

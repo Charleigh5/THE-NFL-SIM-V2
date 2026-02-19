@@ -6,11 +6,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.models.base import Base
-from app.models.news_item import NewsItem, NewsCategory
-from app.models.weekly_recap import WeeklyRecap
-from app.models.rpg_event import RPGEvent
 from app.engine.event_bus import EventBus, EventType
+from app.models.base import Base
+from app.models.news_item import NewsCategory, NewsItem
+from app.models.rpg_event import RPGEvent
 from app.services.news_feed_service import NewsFeedService
 from app.services.weekly_recap_service import WeeklyRecapService
 

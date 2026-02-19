@@ -5,17 +5,15 @@ Revises: 3dc5f2df700e
 Create Date: 2025-11-30 00:00:00.000000
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision: str = '4a1b2c3d4e5f'
-down_revision: Union[str, Sequence[str], None] = '3dc5f2df700e'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = '3dc5f2df700e'
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -33,7 +31,7 @@ def upgrade() -> None:
         ['game_id', 'team_id'],
         unique=False
     )
-    
+
     # Game composite index for week simulation queries
     op.create_index(
         'ix_game_season_week_played',
@@ -41,7 +39,7 @@ def upgrade() -> None:
         ['season_id', 'week', 'is_played'],
         unique=False
     )
-    
+
     # Game index for team matchup queries
     op.create_index(
         'ix_game_teams',
@@ -49,7 +47,7 @@ def upgrade() -> None:
         ['home_team_id', 'away_team_id'],
         unique=False
     )
-    
+
     # Player composite index for roster queries
     op.create_index(
         'ix_player_team_position',

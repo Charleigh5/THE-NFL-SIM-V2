@@ -6,9 +6,12 @@ Unit tests for validation and calibration modules.
 """
 
 import pytest
+
 from app.services.validation import (
-    ValidationEngine, ValidationResult, NFLBenchmarks,
-    SimulationCalibrator, CalibrationTarget,
+    CalibrationTarget,
+    SimulationCalibrator,
+    ValidationEngine,
+    ValidationResult,
 )
 
 

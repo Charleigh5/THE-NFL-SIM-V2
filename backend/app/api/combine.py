@@ -9,13 +9,12 @@ Endpoints:
 - GET /combine/genesis-reveal/{player_id} - Reveal GENESIS biometric data (B-047)
 """
 
-from fastapi import APIRouter, HTTPException, Query, Path
+
+from fastapi import APIRouter, HTTPException, Path, Query
 from pydantic import BaseModel, Field
-from typing import List, Optional
+
 from app.services.scouting.combine import (
-    CombineResults,
     CombineSimulation,
-    GenesisRevealData,
 )
 
 router = APIRouter(prefix="/combine", tags=["Combine"])
@@ -41,7 +40,7 @@ class CombineResultsResponse(BaseModel):
     # Metadata
     participated: bool
     injury_flag: bool
-    medical_flags: List[str]
+    medical_flags: list[str]
 
 
 class GenesisRevealResponse(BaseModel):
@@ -63,7 +62,7 @@ class GenesisRevealResponse(BaseModel):
     body_fat_percentage: float
 
     # Medical screening results
-    medical_flags: List[str]
+    medical_flags: list[str]
 
 
 class SimulateCombineRequest(BaseModel):

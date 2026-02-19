@@ -10,31 +10,50 @@ Context7 Best Practices:
 - Integration tests for position interactions
 """
 
-import pytest
-import math
-from typing import List
 
-from app.engine.position_physics import (
-    # Base
-    Vector2, Vector3, PhysicsState, CollisionResult,
-    forty_to_yards_per_second, speed_rating_to_forty,
-    calculate_acceleration, resolve_momentum_collision, calculate_g_force,
-    # QB
-    QuarterbackPhysics, QBState, ThrowType, PocketState,
-    # RB
-    RunningBackPhysics, RBState, TackleAttempt, CutMove, CutType, ContactType,
-    # WR
-    WideReceiverPhysics, WRState, CatchAttempt, RouteType, CatchType,
-    # DB
-    DefensiveBackPhysics, DBState, CoverageType, BreakType,
-    # DL
-    PassRushPhysics, PassRushRep, RushMove,
-    # OL
-    OffensiveLinePhysics, BlockerState, BlockType,
-)
+import pytest
 
 from app.engine.core import DeterministicRNG
-
+from app.engine.position_physics import (
+    BlockerState,
+    BreakType,
+    CatchAttempt,
+    CatchType,
+    CollisionResult,
+    ContactType,
+    CoverageType,
+    CutMove,
+    CutType,
+    DBState,
+    # DB
+    DefensiveBackPhysics,
+    # OL
+    OffensiveLinePhysics,
+    # DL
+    PassRushPhysics,
+    PassRushRep,
+    PocketState,
+    QBState,
+    # QB
+    QuarterbackPhysics,
+    RBState,
+    RouteType,
+    # RB
+    RunningBackPhysics,
+    RushMove,
+    TackleAttempt,
+    ThrowType,
+    # Base
+    Vector2,
+    Vector3,
+    # WR
+    WideReceiverPhysics,
+    WRState,
+    calculate_g_force,
+    forty_to_yards_per_second,
+    resolve_momentum_collision,
+    speed_rating_to_forty,
+)
 
 # ============================================================================
 # VECTOR TESTS

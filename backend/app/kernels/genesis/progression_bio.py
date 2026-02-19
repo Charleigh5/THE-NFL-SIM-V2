@@ -1,34 +1,35 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, List
 import math
+
+from app.kernels.core.ecs_manager import Component
+
 
 class BioProgression(Component):
     # Directive 10: Stat-based Progression (Meritocracy)
     # Directive 11: Position/Age Decline Curves
     # Directive 16: Gradual Regression
-    
+
     age: int = 22
     position: str = "RB"
-    
+
     # Base decline start ages by position
-    decline_starts: Dict[str, int] = {
+    decline_starts: dict[str, int] = {
         "RB": 26, "WR": 29, "QB": 35, "OL": 32, "DL": 30, "LB": 29, "DB": 29, "K": 38
     }
 
-    def calculate_regression_impact(self) -> Dict[str, float]:
+    def calculate_regression_impact(self) -> dict[str, float]:
         """
         Directive 11 & 16: Calculates attribute penalties based on age curves.
         """
         decline_age = self.decline_starts.get(self.position, 30)
-        
+
         if self.age <= decline_age:
             return {}
-            
+
         years_over = self.age - decline_age
-        
+
         # Exponential decay for physical traits
         physical_decay = -1.0 * (math.exp(years_over * 0.15) - 1.0)
-        
+
         return {
             "Speed": physical_decay,
             "Acceleration": physical_decay,

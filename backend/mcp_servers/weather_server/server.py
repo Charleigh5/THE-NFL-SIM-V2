@@ -1,10 +1,9 @@
-from typing import Dict, Optional
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("weather")
 
 @mcp.tool()
-def get_game_weather(stadium_location: str, date_time: str) -> Dict[str, str]:
+def get_game_weather(stadium_location: str, date_time: str) -> dict[str, str]:
     """
     Get weather forecast or historical weather for a game.
 

@@ -13,37 +13,37 @@ Tests:
 """
 
 import pytest
+
+from app.kernels.rpg.training import TrainingEngine
+from app.services.training.coaching_philosophy import (
+    COACHING_STYLES,
+    INTENSITY_STYLE,
+    OLD_SCHOOL_STYLE,
+    SMART_STYLE,
+    VOLUME_STYLE,
+    CoachingStyleName,
+    calculate_training_modifiers,
+    get_coaching_style,
+    get_seasonal_intensity_cap,
+)
 from app.services.training.drills import (
+    ALL_DRILLS,
+    DB_DRILLS,
+    DL_DRILLS,
+    LB_DRILLS,
+    OL_DRILLS,
+    POSITION_DRILL_MAP,
+    QB_DRILLS,
+    RB_DRILLS,
+    ST_DRILLS,
+    WR_DRILLS,
     Drill,
     DrillCategory,
     SeasonPhase,
-    QB_DRILLS,
-    RB_DRILLS,
-    WR_DRILLS,
-    OL_DRILLS,
-    DL_DRILLS,
-    DB_DRILLS,
-    LB_DRILLS,
-    ST_DRILLS,
-    ALL_DRILLS,
-    POSITION_DRILL_MAP,
+    get_drills_by_category,
     get_drills_for_position,
     get_drills_for_season,
-    get_drills_by_category,
 )
-from app.services.training.coaching_philosophy import (
-    CoachingStyle,
-    CoachingStyleName,
-    COACHING_STYLES,
-    VOLUME_STYLE,
-    INTENSITY_STYLE,
-    SMART_STYLE,
-    OLD_SCHOOL_STYLE,
-    get_coaching_style,
-    calculate_training_modifiers,
-    get_seasonal_intensity_cap,
-)
-from app.kernels.rpg.training import TrainingEngine
 
 
 class TestDrillCatalog:

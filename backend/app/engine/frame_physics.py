@@ -15,13 +15,13 @@ Architecture:
 - Frame data can be exported for replay/validation
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple, Any
-from enum import Enum
-import math
 import hashlib
 import json
 import logging
+import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +116,7 @@ class PhysicsPlayer:
     player_id: int
     position: Vector2D
     velocity: Vector2D = field(default_factory=lambda: Vector2D(0, 0))
-    target_position: Optional[Vector2D] = None
+    target_position: Vector2D | None = None
     state: PlayerState = PlayerState.IDLE
     has_ball: bool = False
     is_offense: bool = True
@@ -147,7 +147,7 @@ class PhysicsBall:
     height: float = 0.0  # Yards above ground
     is_in_air: bool = False
     is_loose: bool = False  # Fumble
-    carrier_id: Optional[int] = None
+    carrier_id: int | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -164,9 +164,9 @@ class PhysicsFrame:
     """Single frame of physics state."""
     frame_id: int
     timestamp: float  # Seconds since play start
-    players: List[PhysicsPlayer]
+    players: list[PhysicsPlayer]
     ball: PhysicsBall
-    events: List[str] = field(default_factory=list)
+    events: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -193,8 +193,8 @@ class PhysicsPlayResult:
     """Final result of physics simulation."""
     outcome: PlayOutcome
     yards_gained: float
-    frames: List[PhysicsFrame]
-    collisions: List[Collision]
+    frames: list[PhysicsFrame]
+    collisions: list[Collision]
     duration: float  # Actual play duration
     checksum: str  # Merkle tree hash for validation
 
@@ -223,21 +223,21 @@ class FramePhysicsEngine:
 
     def __init__(self, rng: Any):
         self.rng = rng
-        self.frames: List[PhysicsFrame] = []
-        self.collisions: List[Collision] = []
+        self.frames: list[PhysicsFrame] = []
+        self.collisions: list[Collision] = []
         self.current_frame = 0
         self.elapsed_time = 0.0
         self.play_outcome = PlayOutcome.IN_PROGRESS
         self.line_of_scrimmage = 0.0
 
         # Player registry
-        self.players: Dict[int, PhysicsPlayer] = {}
+        self.players: dict[int, PhysicsPlayer] = {}
         self.ball = PhysicsBall()
 
     def initialize_play(
         self,
-        offense: List[Any],
-        defense: List[Any],
+        offense: list[Any],
+        defense: list[Any],
         line_of_scrimmage: float,
         play_type: str = "PASS"
     ) -> None:
@@ -463,7 +463,7 @@ class FramePhysicsEngine:
     # COLLISION DETECTION (B-064)
     # =========================================================================
 
-    def _detect_collisions(self) -> List[Collision]:
+    def _detect_collisions(self) -> list[Collision]:
         """
         Detect player-to-player collisions this frame.
 
@@ -501,7 +501,7 @@ class FramePhysicsEngine:
 
         return collisions
 
-    def _process_collisions(self, collisions: List[Collision]) -> List[str]:
+    def _process_collisions(self, collisions: list[Collision]) -> list[str]:
         """Process collisions and update player states."""
         events = []
 
@@ -572,7 +572,7 @@ class FramePhysicsEngine:
 
         return False
 
-    def _record_frame(self, events: Optional[List[str]] = None) -> None:
+    def _record_frame(self, events: list[str] | None = None) -> None:
         """Record current state as a frame."""
         frame = PhysicsFrame(
             frame_id=self.current_frame,

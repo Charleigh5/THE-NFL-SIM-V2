@@ -2,6 +2,7 @@
 
 import pytest
 
+
 class TestTradeEvaluateEndpoint:
     """Tests for POST /api/trades/evaluate endpoint."""
 

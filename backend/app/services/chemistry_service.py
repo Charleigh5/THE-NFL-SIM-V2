@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import hashlib
-from typing import List, Optional
 
-from sqlalchemy import select, func, desc
+from app.models.player_game_starts import PlayerGameStarts
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
-from app.models.player_game_starts import PlayerGameStarts
-from app.models.player import Player, Position
+from app.core.logging_config import ErrorCategory, get_logger, log_error
+from app.models.player import Player
 
 logger = get_logger(__name__)
 
@@ -75,7 +74,7 @@ class ChemistryService:
         return 0
 
     @staticmethod
-    def get_projected_ol_hash(db: Session, team_id: int) -> Optional[str]:
+    def get_projected_ol_hash(db: Session, team_id: int) -> str | None:
         """
         Get the hash for the projected starting OL based on depth chart.
         """
@@ -140,14 +139,14 @@ class ChemistryService:
             return 0
 
     @staticmethod
-    def generate_lineup_hash(player_ids: List[int]) -> str:
+    def generate_lineup_hash(player_ids: list[int]) -> str:
         """Generate a consistent hash for a set of player IDs."""
         sorted_ids = sorted(player_ids)
         id_string = "-".join(map(str, sorted_ids))
         return hashlib.sha256(id_string.encode()).hexdigest()
 
     @staticmethod
-    def record_game_starts(db: Session, game_id: int, team_id: int, starters: List[int]) -> None:
+    def record_game_starts(db: Session, game_id: int, team_id: int, starters: list[int]) -> None:
         """
         Record the starts for a game to build history.
         Must be called after game simulation.

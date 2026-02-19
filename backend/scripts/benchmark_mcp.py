@@ -1,14 +1,14 @@
 import asyncio
-import time
 import statistics
 import sys
-import os
+import time
 from pathlib import Path
 
 # Add backend directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from app.core.mcp_client import MCPHostClient
+
 
 async def benchmark_mcp():
     print("Starting MCP Benchmark...")

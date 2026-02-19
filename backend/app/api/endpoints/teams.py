@@ -1,18 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List
 import logging
 
-from app.core.database import get_async_db
-from app.core.db_helpers import get_object_or_404_async, get_all_paginated_async
-from app.core.error_decorators import handle_errors
-from app.models.team import Team
-from app.models.player import Player
-from app.schemas.pagination import PaginatedResponse
-from app.services.enhanced_chemistry_service import EnhancedChemistryService
-from app.services.depth_chart_service import DepthChartService
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_async_db
+from app.core.db_helpers import get_all_paginated_async, get_object_or_404_async
+from app.core.error_decorators import handle_errors
+from app.models.player import Player
+from app.models.team import Team
+from app.schemas.pagination import PaginatedResponse
+from app.services.depth_chart_service import DepthChartService
+from app.services.enhanced_chemistry_service import EnhancedChemistryService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ async def read_team(team_id: int, db: AsyncSession = Depends(get_async_db)):
     logger.info(f"Fetching team {team_id}")
     return await get_object_or_404_async(db, Team, team_id)
 
-@router.get("/{team_id}/roster", response_model=List[PlayerSchema])
+@router.get("/{team_id}/roster", response_model=list[PlayerSchema])
 @handle_errors
 async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """
@@ -86,7 +86,7 @@ async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db
 
 class DepthChartUpdate(BaseModel):
     position: str
-    player_ids: List[int]
+    player_ids: list[int]
 
 @router.put("/{team_id}/depth-chart")
 @handle_errors

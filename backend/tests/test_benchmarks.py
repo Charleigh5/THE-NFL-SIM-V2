@@ -6,14 +6,16 @@ of critical simulation components over time.
 
 Run with: pytest backend/tests/test_benchmarks.py -v --benchmark-only
 """
-import pytest
 import random
-from unittest.mock import Mock, MagicMock
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
+from unittest.mock import Mock
+
+import pytest
+
 from app.engine.probability_engine import ProbabilityEngine
 from app.models.player import Player
 from app.models.team import Team
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
+from app.orchestrator.play_resolver import PlayResolver
 
 
 @pytest.fixture
@@ -81,7 +83,7 @@ class TestPlayResolutionBenchmarks:
 
     def test_pass_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark pass play resolution time."""
-        from app.orchestrator.play_commands import PlayCommand, PassPlayCommand
+        from app.orchestrator.play_commands import PassPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
@@ -105,7 +107,7 @@ class TestPlayResolutionBenchmarks:
 
     def test_run_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark run play resolution time."""
-        from app.orchestrator.play_commands import PlayCommand, RunPlayCommand
+        from app.orchestrator.play_commands import RunPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams

@@ -9,7 +9,7 @@ Best Practices Applied:
 - Separate request/response models per FastAPI conventions
 """
 
-from typing import List, Optional
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -36,13 +36,13 @@ class ScoutingReportAI(BaseModel):
         ...,
         description="2-3 sentence overview of the player's profile and potential"
     )
-    strengths: List[str] = Field(
+    strengths: list[str] = Field(
         ...,
         min_length=2,
         max_length=6,
         description="3-5 key strengths that translate to the NFL"
     )
-    weaknesses: List[str] = Field(
+    weaknesses: list[str] = Field(
         ...,
         min_length=1,
         max_length=4,
@@ -93,7 +93,7 @@ class PlayerBackstory(BaseModel):
         ...,
         description="2-3 paragraph biographical background story"
     )
-    personality_traits: List[str] = Field(
+    personality_traits: list[str] = Field(
         ...,
         min_length=2,
         max_length=5,
@@ -103,11 +103,11 @@ class PlayerBackstory(BaseModel):
         ...,
         description="What drives this player - personal motivation story"
     )
-    notable_college_moments: List[str] = Field(
+    notable_college_moments: list[str] = Field(
         default_factory=list,
         description="Memorable college career highlights"
     )
-    adversity_overcome: Optional[str] = Field(
+    adversity_overcome: str | None = Field(
         None,
         description="Challenge or hardship the player has overcome (optional)"
     )
@@ -116,7 +116,7 @@ class PlayerBackstory(BaseModel):
 class ScoutingReportRequest(BaseModel):
     """Request body for generating a scouting report."""
     player_id: int
-    team_id: Optional[int] = Field(
+    team_id: int | None = Field(
         None,
         description="Team ID to tailor fit analysis (optional)"
     )
@@ -135,7 +135,7 @@ class ScoutingReportResponse(BaseModel):
     position: str
     overall_rating: int
     report: ScoutingReportAI
-    backstory: Optional[PlayerBackstory] = None
+    backstory: PlayerBackstory | None = None
     generated_at: str = Field(
         ...,
         description="ISO 8601 timestamp of generation"
@@ -148,18 +148,18 @@ class ScoutingReportResponse(BaseModel):
 
 class BatchScoutingRequest(BaseModel):
     """Request body for batch generating scouting reports."""
-    player_ids: List[int] = Field(
+    player_ids: list[int] = Field(
         ...,
         min_length=1,
         max_length=50,
         description="List of player IDs to generate reports for"
     )
-    team_id: Optional[int] = None
+    team_id: int | None = None
 
 
 class BatchScoutingResponse(BaseModel):
     """Response for batch scouting report generation."""
     generated_count: int
     failed_count: int
-    player_ids_generated: List[int]
-    player_ids_failed: List[int]
+    player_ids_generated: list[int]
+    player_ids_failed: list[int]
