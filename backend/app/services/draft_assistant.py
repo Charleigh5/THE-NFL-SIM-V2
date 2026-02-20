@@ -1,17 +1,18 @@
-from typing import List, Dict, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-from app.models.player import Player, Position
-from app.models.team import Team
-from app.core.mcp_registry import registry
-from app.core.mcp_cache import mcp_cache
-from app.schemas.draft import (
-    DraftSuggestionResponse,
-    AlternativePick,
-    HistoricalComparison,
-    RosterGapAnalysis
-)
 import logging
+
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.mcp_cache import mcp_cache
+from app.core.mcp_registry import registry
+from app.models.player import Player
+from app.models.team import Team
+from app.schemas.draft import (
+    AlternativePick,
+    DraftSuggestionResponse,
+    HistoricalComparison,
+    RosterGapAnalysis,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class DraftAssistant:
         self,
         team_id: int,
         pick_number: int,
-        available_players: List[int],
+        available_players: list[int],
         db: AsyncSession,
         include_historical_data: bool = True
     ) -> DraftSuggestionResponse:
@@ -198,8 +199,8 @@ class DraftAssistant:
 
     def _calculate_needs_and_gaps(
         self,
-        position_stats: Dict[str, Dict]
-    ) -> tuple[Dict[str, float], List[RosterGapAnalysis]]:
+        position_stats: dict[str, dict]
+    ) -> tuple[dict[str, float], list[RosterGapAnalysis]]:
         """Calculate team needs and detailed roster gap analysis."""
         targets = {
             'QB': 3, 'RB': 4, 'WR': 6, 'TE': 3,
@@ -293,8 +294,8 @@ class DraftAssistant:
 
     async def _get_historical_comparison(
         self,
-        player_data: Dict
-    ) -> tuple[Optional[HistoricalComparison], bool]:
+        player_data: dict
+    ) -> tuple[HistoricalComparison | None, bool]:
         """
         Fetch historical player comparison using NFL Stats MCP.
         Returns (comparison, mcp_data_used)
@@ -341,9 +342,9 @@ class DraftAssistant:
 
     async def _build_reasoning_from_data(
         self,
-        player_data: Dict,
-        team_needs: Dict[str, float],
-        historical_comparison: Optional[HistoricalComparison],
+        player_data: dict,
+        team_needs: dict[str, float],
+        historical_comparison: HistoricalComparison | None,
         pick_number: int
     ) -> str:
         """Build comprehensive reasoning with MCP enhancement."""
@@ -412,9 +413,9 @@ class DraftAssistant:
 
     def _build_alternative_reasoning(
         self,
-        player_data: Dict,
-        team_needs: Dict[str, float],
-        historical_comparison: Optional[HistoricalComparison]
+        player_data: dict,
+        team_needs: dict[str, float],
+        historical_comparison: HistoricalComparison | None
     ) -> str:
         """Build concise reasoning for alternative picks."""
         position_need = team_needs.get(player_data['position'], 0.5)

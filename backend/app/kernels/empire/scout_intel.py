@@ -1,10 +1,11 @@
-from app.kernels.core.ecs_manager import Component
+
 from app.core.random_utils import DeterministicRNG
-from typing import Dict, Optional
+from app.kernels.core.ecs_manager import Component
+
 
 class FogOfWarSystem(Component):
     scouting_points: int = 0
-    confidence_levels: Dict[str, float] = {
+    confidence_levels: dict[str, float] = {
         "speed": 0.2, # Low confidence (wide range)
         "strength": 0.2
     }
@@ -19,7 +20,7 @@ class FogOfWarSystem(Component):
         return f"{min_val}-{max_val} (Conf: {int(confidence*100)}%)"
 
 class PsychProfiler(Component):
-    def generate_archetype(self, rng: Optional[DeterministicRNG] = None) -> str:
+    def generate_archetype(self, rng: DeterministicRNG | None = None) -> str:
         if rng is None:
             rng = DeterministicRNG(0)
         archetypes = ["Mercenary", "Hometown Hero", "Ring Chaser", "Secure Bag"]

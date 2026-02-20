@@ -1,8 +1,6 @@
-import asyncio
 import json
 import logging
 import os
-from typing import Dict, List, Optional
 
 from app.core.mcp_client import MCPHostClient
 
@@ -15,8 +13,8 @@ class MCPRegistry:
 
     def __init__(self, config_path: str = "mcp_config.json"):
         self.config_path = config_path
-        self.clients: Dict[str, MCPHostClient] = {}
-        self.config: Dict = {}
+        self.clients: dict[str, MCPHostClient] = {}
+        self.config: dict = {}
 
     def load_config(self):
         """Load configuration from JSON file."""
@@ -26,7 +24,7 @@ class MCPRegistry:
             logger.warning(f"MCP config file not found at {self.config_path}")
             return
 
-        with open(self.config_path, "r") as f:
+        with open(self.config_path) as f:
             self.config = json.load(f)
         print(f"Loaded config: {self.config}")
 
@@ -62,7 +60,7 @@ class MCPRegistry:
                 print(f"Failed to initialize MCP server {name}: {e}")
                 logger.error(f"Failed to initialize MCP server {name}: {e}")
 
-    def _resolve_env_vars(self, config: Dict):
+    def _resolve_env_vars(self, config: dict):
         """Recursively resolve environment variables in configuration values."""
         for key, value in config.items():
             if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
@@ -93,7 +91,7 @@ class MCPRegistry:
             # Check for unresolved environment variables
             self._check_unresolved(server)
 
-    def _check_unresolved(self, config: Dict):
+    def _check_unresolved(self, config: dict):
         """Recursively check for unresolved environment variables."""
         for key, value in config.items():
             if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
@@ -112,10 +110,10 @@ class MCPRegistry:
             await client.disconnect()
         self.clients.clear()
 
-    def get_client(self, name: str) -> Optional[MCPHostClient]:
+    def get_client(self, name: str) -> MCPHostClient | None:
         return self.clients.get(name)
 
-    async def get_all_tools(self) -> Dict[str, List]:
+    async def get_all_tools(self) -> dict[str, list]:
         """Get all tools from all connected servers."""
         all_tools = {}
         for name, client in self.clients.items():

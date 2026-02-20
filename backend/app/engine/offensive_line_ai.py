@@ -1,12 +1,14 @@
-from typing import Dict, List, Any
+from typing import Any
+
 from app.engine.event_bus import EventBus, EventType
+
 
 class OffensiveLineAI:
     def __init__(self):
-        self.active_debuffs: Dict[str, Dict[str, Any]] = {} # player_id -> {value: int, duration: int}
+        self.active_debuffs: dict[str, dict[str, Any]] = {} # player_id -> {value: int, duration: int}
         EventBus.subscribe(EventType.SACK_EVENT, self.handle_sack_event)
 
-    def handle_sack_event(self, payload: Dict[str, Any]):
+    def handle_sack_event(self, payload: dict[str, Any]):
         """
         Handle SACK_EVENT by applying intimidation debuffs to beaten linemen.
         """

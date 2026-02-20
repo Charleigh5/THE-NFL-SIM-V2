@@ -1,5 +1,7 @@
-from typing import Dict, Any
-from app.kernels.society import TrustGraph, DirectorAI
+from typing import Any
+
+from app.kernels.society import DirectorAI, TrustGraph
+
 
 class SocietyKernel:
     """
@@ -10,6 +12,6 @@ class SocietyKernel:
         self.trust_graph = TrustGraph()
         self.director = DirectorAI()
 
-    def update_narrative(self, event_data: Dict[str, Any]):
+    def update_narrative(self, event_data: dict[str, Any]):
         if hasattr(self.director, 'process_event'):
             self.director.process_event(event_data)

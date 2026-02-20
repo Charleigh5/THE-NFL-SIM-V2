@@ -1,5 +1,6 @@
+
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
+
 
 class TeamNeed(BaseModel):
     position: str
@@ -12,7 +13,7 @@ class Prospect(BaseModel):
     name: str
     position: str
     overall_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 class DraftPickSummary(BaseModel):
@@ -30,8 +31,8 @@ class DraftPickDetail(BaseModel):
     original_team_id: int
     round: int
     pick_number: int
-    player_id: Optional[int] = None
-    
+    player_id: int | None = None
+
     model_config = ConfigDict(from_attributes=True)
 
 class PlayerProgressionResult(BaseModel):
@@ -41,7 +42,7 @@ class PlayerProgressionResult(BaseModel):
     change: int
     old_rating: int
     new_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 class PlayerProgressionSummary(BaseModel):

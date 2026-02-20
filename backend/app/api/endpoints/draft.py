@@ -2,22 +2,23 @@
 Draft API Endpoints
 Provides AI-powered draft assistance and team evaluation.
 """
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_async_db
-from app.services.draft_assistant import DraftAssistant
-from app.schemas.draft import DraftSuggestionRequest, DraftSuggestionResponse, DraftProspect
-from app.models.player import Player
-from sqlalchemy import select
-from typing import List
 import logging
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_async_db
+from app.models.player import Player
+from app.schemas.draft import DraftProspect, DraftSuggestionRequest, DraftSuggestionResponse
+from app.services.draft_assistant import DraftAssistant
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/draft", tags=["draft"])
 
 
-@router.get("/board", response_model=List[DraftProspect])
+@router.get("/board", response_model=list[DraftProspect])
 async def get_draft_board(
     db: AsyncSession = Depends(get_async_db)
 ):

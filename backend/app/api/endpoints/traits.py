@@ -1,16 +1,17 @@
-from typing import List, Any
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api import deps
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.schemas import trait as schemas
 from app.services.trait_service import TraitService
-from app.core.logging_config import get_logger, log_error, ErrorCategory
 
 router = APIRouter()
 logger = get_logger(__name__)
 
-@router.get("/", response_model=List[schemas.Trait])
+@router.get("/", response_model=list[schemas.Trait])
 async def read_traits(
     skip: int = 0,
     limit: int = 100,
@@ -26,7 +27,7 @@ async def read_traits(
         log_error(logger, ErrorCategory.API_ERROR, "Failed to retrieve traits", exc_info=e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.get("/players/{player_id}", response_model=List[schemas.Trait])
+@router.get("/players/{player_id}", response_model=list[schemas.Trait])
 async def read_player_traits(
     player_id: int,
     db: Session = Depends(deps.get_db)
