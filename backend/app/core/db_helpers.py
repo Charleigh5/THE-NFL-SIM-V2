@@ -1,12 +1,13 @@
-from typing import Type, TypeVar, Any, List, Optional, Tuple
-from sqlalchemy import select, func
-from sqlalchemy.orm import Session
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, TypeVar
+
 from fastapi import HTTPException
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 T = TypeVar("T")
 
-def get_object_or_404(db: Session, model: Type[T], object_id: Any, detail: str = None) -> T:
+def get_object_or_404(db: Session, model: type[T], object_id: Any, detail: str = None) -> T:
     """
     Get a record by ID or raise 404.
     """
@@ -20,7 +21,7 @@ def get_object_or_404(db: Session, model: Type[T], object_id: Any, detail: str =
     return obj
 
 
-async def get_object_or_404_async(db: AsyncSession, model: Type[T], object_id: Any, detail: str = None) -> T:
+async def get_object_or_404_async(db: AsyncSession, model: type[T], object_id: Any, detail: str = None) -> T:
     """
     Get a record by ID or raise 404 (Async).
     """
@@ -39,7 +40,7 @@ def get_paginated_results(
     stmt: Any,
     page: int,
     page_size: int
-) -> Tuple[List[Any], int]:
+) -> tuple[list[Any], int]:
     """
     Execute a select statement with pagination.
     Returns (items, total_count).
@@ -75,7 +76,7 @@ async def get_paginated_results_async(
     stmt: Any,
     page: int,
     page_size: int
-) -> Tuple[List[Any], int]:
+) -> tuple[list[Any], int]:
     """
     Execute a select statement with pagination (Async).
     Returns (items, total_count).
@@ -92,11 +93,11 @@ async def get_paginated_results_async(
 
 def get_all_paginated(
     db: Session,
-    model: Type[T],
+    model: type[T],
     page: int,
     page_size: int,
     order_by: Any = None
-) -> Tuple[List[T], int]:
+) -> tuple[list[T], int]:
     """
     Simple helper for "get all" on a model with pagination.
     """
@@ -109,11 +110,11 @@ def get_all_paginated(
 
 async def get_all_paginated_async(
     db: AsyncSession,
-    model: Type[T],
+    model: type[T],
     page: int,
     page_size: int,
     order_by: Any = None
-) -> Tuple[List[T], int]:
+) -> tuple[list[T], int]:
     """
     Simple helper for "get all" on a model with pagination (Async).
     """

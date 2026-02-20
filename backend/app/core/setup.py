@@ -6,22 +6,22 @@ and routes. Used by the app factory to build the FastAPI application.
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from sqlalchemy.exc import IntegrityError, OperationalError
+from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import ValidationError
 from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from prometheus_fastapi_instrumentator import Instrumentator
+from slowapi.util import get_remote_address
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.core.config import settings
 from app.core.error_handlers import (
     database_exception_handler,
     database_operational_error_handler,
-    validation_exception_handler,
+    generic_exception_handler,
     pydantic_validation_handler,
-    generic_exception_handler
+    validation_exception_handler,
 )
 from app.middlewares.logging_middleware import LoggingMiddleware
 
@@ -66,11 +66,29 @@ def configure_routes(app: FastAPI) -> None:
     """Register all API routers."""
     # Import routers here to avoid circular imports
     from app.api.endpoints import (
-        system, simulation, data, websocket, teams, players, season,
-        genesis, feedback, draft, settings as settings_endpoint, traits,
-        news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api, training
+        abilities,
+        agent_tasks,
+        data,
+        draft,
+        feedback,
+        gameplans,
+        genesis,
+        medical,
+        news,
+        physics_api,
+        playbook,
+        players,
+        scouts,
+        season,
+        simulation,
+        system,
+        teams,
+        trades,
+        training,
+        traits,
+        websocket,
     )
+    from app.api.endpoints import settings as settings_endpoint
 
     # Core system routes
     app.include_router(system.router)

@@ -28,10 +28,10 @@ import logging
 import logging.handlers
 import sys
 import uuid
+from collections.abc import Callable
 from contextvars import ContextVar
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from structlog.types import EventDict, WrappedLogger

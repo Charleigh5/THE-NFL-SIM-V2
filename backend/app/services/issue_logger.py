@@ -10,12 +10,11 @@ Context7 Best Practices:
 - Clear typing
 """
 
+import asyncio
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
-import logging
-import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +24,8 @@ class IssueEntry:
     """Represents a single issue report."""
     message: str
     context: str = "Frontend"
-    page: Optional[str] = None
-    timestamp: Optional[datetime] = None
+    page: str | None = None
+    timestamp: datetime | None = None
 
     def __post_init__(self):
         if self.timestamp is None:
@@ -57,7 +56,7 @@ class IssueLoggerService:
     Service for logging user-reported issues to a markdown file.
     """
 
-    def __init__(self, output_path: Optional[Path] = None):
+    def __init__(self, output_path: Path | None = None):
         if output_path is None:
             # Default to project root ISSUES.md
             self.output_path = Path(__file__).parent.parent.parent.parent / "ISSUES.md"

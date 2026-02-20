@@ -4,11 +4,10 @@ Agent Generator Service
 Generates implementation plans from task lists using MCP infrastructure.
 """
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class TaskItem:
     id: str
     note: str
     element_type: str
-    screenshot_path: Optional[str] = None
+    screenshot_path: str | None = None
     has_research: bool = False
 
 
@@ -37,7 +36,7 @@ class AgentGeneratorService:
     Uses MCP infrastructure for AI-powered plan generation.
     """
 
-    def __init__(self, output_dir: Optional[Path] = None):
+    def __init__(self, output_dir: Path | None = None):
         if output_dir is None:
             self.output_dir = Path.home() / ".gemini" / "antigravity" / "artifacts" / "implementation_plans"
         else:
@@ -61,7 +60,7 @@ class AgentGeneratorService:
         lines.append("")
         return "\n".join(lines)
 
-    def _generate_plan_content(self, tasks: List[TaskItem], context: Optional[str] = None) -> str:
+    def _generate_plan_content(self, tasks: list[TaskItem], context: str | None = None) -> str:
         """Generate the full implementation plan markdown."""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -127,8 +126,8 @@ Final polish, edge cases, and testing.
 
     async def generate_plan(
         self,
-        tasks: List,
-        project_context: Optional[str] = None
+        tasks: list,
+        project_context: str | None = None
     ) -> GenerationResult:
         """
         Generate an implementation plan from task items.

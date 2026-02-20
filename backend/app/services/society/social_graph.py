@@ -12,9 +12,7 @@ Phase 6: SOCIETY Locker Room Dynamics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -62,7 +60,7 @@ class Relationship:
 class SocialNode:
     """A node in the social graph (Player/Coach)."""
     entity_id: str
-    cliques: Set[CliqueType] = field(default_factory=set)
+    cliques: set[CliqueType] = field(default_factory=set)
     leadership_score: float = 50.0  # 0-100 influence
     morale: float = 50.0            # 0-100 happiness
 
@@ -87,8 +85,8 @@ class SocialGraph:
 
     def __init__(self, team_id: str):
         self.team_id = team_id
-        self.nodes: Dict[str, SocialNode] = {}
-        self.edges: Dict[str, List[Relationship]] = {}  # Adjacency list
+        self.nodes: dict[str, SocialNode] = {}
+        self.edges: dict[str, list[Relationship]] = {}  # Adjacency list
 
     def add_node(
         self,
@@ -163,7 +161,7 @@ class SocialGraph:
 
         return max(0, min(100, avg_morale + rel_mod))
 
-    def assign_cliques(self, member_traits: Dict[str, List[str]]) -> None:
+    def assign_cliques(self, member_traits: dict[str, list[str]]) -> None:
         """
         Assign cliques based on traits.
 
@@ -191,7 +189,7 @@ class SocialGraph:
             elif "Defense" in traits:
                 node.cliques.add(CliqueType.DEFENSE)
 
-    def resolve_conflicts(self) -> List[str]:
+    def resolve_conflicts(self) -> list[str]:
         """
         Identify and resolve locker room conflicts.
 
@@ -218,7 +216,7 @@ class SocialGraph:
                     resolutions.append(f"Leader {leader.entity_id} {status} beef between {pid} and {enemy_rel.target_id}")
         return resolutions
 
-    def _find_influential_leader(self, target_pid: str) -> Optional[SocialNode]:
+    def _find_influential_leader(self, target_pid: str) -> SocialNode | None:
         """Find a leader who can influence the target."""
         # Simplified: Find highest leadership node in same clique
         target = self.nodes.get(target_pid)

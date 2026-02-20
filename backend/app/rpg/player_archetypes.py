@@ -15,10 +15,8 @@ Archetypes:
 7. The Workhorse (RB) - +Durability, +Carry volume
 """
 
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
-from pydantic import BaseModel, Field
 
 
 class PlayerArchetype(str, Enum):
@@ -39,11 +37,11 @@ class ArchetypeDefinition:
     display_name: str
     description: str
     icon: str
-    primary_positions: List[str]
-    secondary_positions: List[str]
-    stat_bonuses: Dict[str, int]      # +/- to ratings
-    xp_bonuses: Dict[str, float]      # Multipliers for skill categories
-    special_abilities: List[str]
+    primary_positions: list[str]
+    secondary_positions: list[str]
+    stat_bonuses: dict[str, int]      # +/- to ratings
+    xp_bonuses: dict[str, float]      # Multipliers for skill categories
+    special_abilities: list[str]
     development_rate: float = 1.0     # Multiplier for XP gains
     consistency_modifier: float = 0.0  # Variance in performance
     durability_modifier: float = 0.0   # Injury resistance
@@ -53,7 +51,7 @@ class ArchetypeDefinition:
 # ARCHETYPE DEFINITIONS
 # =============================================================================
 
-ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
+ARCHETYPE_DEFINITIONS: dict[PlayerArchetype, ArchetypeDefinition] = {
 
     PlayerArchetype.FIELD_GENERAL: ArchetypeDefinition(
         name="FIELD_GENERAL",
@@ -258,9 +256,9 @@ class ArchetypeService:
     def detect_archetype(
         self,
         position: str,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         age: int,
-    ) -> Optional[PlayerArchetype]:
+    ) -> PlayerArchetype | None:
         """
         Detect which archetype best fits a player based on their ratings.
 
@@ -310,9 +308,9 @@ class ArchetypeService:
 
     def apply_archetype_bonuses(
         self,
-        base_ratings: Dict[str, int],
+        base_ratings: dict[str, int],
         archetype: PlayerArchetype,
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Apply archetype stat bonuses to base ratings.
 
@@ -364,11 +362,11 @@ class ArchetypeService:
 
     def can_evolve_archetype(
         self,
-        current_archetype: Optional[PlayerArchetype],
+        current_archetype: PlayerArchetype | None,
         position: str,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         years_in_league: int,
-    ) -> Optional[PlayerArchetype]:
+    ) -> PlayerArchetype | None:
         """
         Check if a player can evolve their archetype over their career.
 
@@ -398,7 +396,7 @@ class ArchetypeService:
     def get_all_archetypes_for_position(
         self,
         position: str,
-    ) -> List[Tuple[PlayerArchetype, ArchetypeDefinition]]:
+    ) -> list[tuple[PlayerArchetype, ArchetypeDefinition]]:
         """Get all archetypes available for a position."""
         result = []
         for archetype, definition in self.definitions.items():

@@ -1,5 +1,7 @@
-from typing import Dict, Any, List
+from typing import Any
+
 from app.kernels.genesis.bio_metrics import AnatomyModel, FatigueRegulator
+
 
 class GenesisKernel:
     """
@@ -8,9 +10,9 @@ class GenesisKernel:
     """
     def __init__(self) -> None:
         # In a real system, this would load from a DB or state manager
-        self.player_states: Dict[int, Dict[str, Any]] = {}
+        self.player_states: dict[int, dict[str, Any]] = {}
 
-    def register_player(self, player_id: int, profile_data: Dict[str, Any]) -> None:
+    def register_player(self, player_id: int, profile_data: dict[str, Any]) -> None:
         """Initialize biological components for a player."""
         self.player_states[player_id] = {
             "anatomy": AnatomyModel(**profile_data.get("anatomy", {})),
@@ -40,7 +42,7 @@ class GenesisKernel:
         state = self.player_states[player_id]["fatigue"]
         return state.lactic_acid
 
-    def check_injury_risk(self, player_id: int, impact_force: float, body_part: str) -> Dict[str, Any]:
+    def check_injury_risk(self, player_id: int, impact_force: float, body_part: str) -> dict[str, Any]:
         """
         Evaluate injury risk based on impact.
         Returns: Dict with 'is_injured', 'injury_type', 'severity'
