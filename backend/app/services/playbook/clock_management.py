@@ -1,8 +1,8 @@
-from enum import Enum
 from dataclasses import dataclass
-from typing import List, Optional
-from app.services.playbook.types import GameSituation
+from enum import Enum
+
 from app.services.playbook.coaching_ai import CoachingAIService
+from app.services.playbook.types import GameSituation
 
 
 class ClockStrategy(str, Enum):

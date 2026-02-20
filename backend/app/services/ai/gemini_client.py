@@ -13,11 +13,12 @@ Best Practices Applied:
 Reference: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/inference
 """
 
-import os
 import asyncio
 import logging
-from typing import Type, TypeVar, Optional, Any
+import os
 from functools import lru_cache
+from typing import Any, Optional, TypeVar
+
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ class GeminiClient:
         prompt: str,
         temperature: float = 0.7,
         max_tokens: int = 2048
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Generate plain text response.
 
@@ -129,10 +130,10 @@ class GeminiClient:
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
         max_tokens: int = 2048
-    ) -> Optional[T]:
+    ) -> T | None:
         """
         Generate structured JSON response conforming to Pydantic schema.
 
@@ -179,10 +180,10 @@ class GeminiClient:
     async def generate_with_retry(
         self,
         prompt: str,
-        response_schema: Optional[Type[T]] = None,
+        response_schema: type[T] | None = None,
         max_retries: int = 3,
         temperature: float = 0.7
-    ) -> Optional[Any]:
+    ) -> Any | None:
         """
         Generate with exponential backoff retry.
 

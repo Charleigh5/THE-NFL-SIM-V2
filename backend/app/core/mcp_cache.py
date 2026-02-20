@@ -1,8 +1,9 @@
-from typing import Optional, Dict, Any, Tuple
-import time
-import logging
 import json
+import logging
 import os
+import time
+from typing import Any
+
 try:
     import redis
 except ImportError:
@@ -16,7 +17,7 @@ class MCPCache:
     """
 
     def __init__(self):
-        self.memory_cache: Dict[str, Tuple[Any, float]] = {}
+        self.memory_cache: dict[str, tuple[Any, float]] = {}
         self.ttl_config = {
             "league_averages": 3600,  # 1 hour
             "player_news": 900,       # 15 minutes
@@ -35,7 +36,7 @@ class MCPCache:
                 logger.warning(f"Redis connection failed, using in-memory cache: {e}")
                 self.redis_client = None
 
-    def get(self, key: str, cache_type: str) -> Optional[Any]:
+    def get(self, key: str, cache_type: str) -> Any | None:
         """
         Retrieve item from cache if it exists and hasn't expired.
         """

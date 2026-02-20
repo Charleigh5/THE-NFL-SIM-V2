@@ -10,12 +10,9 @@ Phase 7: Training & Development
 - Dev Trait (Star, Superstar) influence
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
-import math
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS
@@ -134,7 +131,7 @@ class ProgressionEngine:
         self,
         state: PlayerProgressionState,
         xp_gained: int,
-    ) -> Tuple[PlayerProgressionState, int]:
+    ) -> tuple[PlayerProgressionState, int]:
         """
         Apply XP and handle leveling.
 
@@ -190,8 +187,8 @@ class ProgressionEngine:
         self,
         position: str,
         age: int,
-        attributes: Dict[str, int],
-    ) -> Dict[str, int]:
+        attributes: dict[str, int],
+    ) -> dict[str, int]:
         """
         Calculate attribute regression for declining players.
 

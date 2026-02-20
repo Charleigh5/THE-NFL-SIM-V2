@@ -12,17 +12,15 @@ Phase 3: Position-Specific Physics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState,
+    PhysicsState,
+    Vector2,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_change_of_direction_time,
 )
-
 
 # ============================================================================
 # ENUMS
@@ -60,8 +58,8 @@ class DBState:
 
     # Coverage
     coverage_type: CoverageType = CoverageType.MAN_OFF
-    assigned_receiver_id: Optional[str] = None
-    zone_position: Optional[Vector2] = None
+    assigned_receiver_id: str | None = None
+    zone_position: Vector2 | None = None
 
     # Tracking
     receiver_distance: float = 5.0
@@ -105,7 +103,7 @@ class DefensiveBackPhysics:
 
     def __init__(
         self,
-        config: Optional[DBPhysicsConfig] = None,
+        config: DBPhysicsConfig | None = None,
         speed_rating: int = 90,
         acceleration_rating: int = 88,
         agility_rating: int = 88,
@@ -135,7 +133,7 @@ class DefensiveBackPhysics:
         receiver_release_rating: int,
         receiver_strength: int,
         rng: Any = None,
-    ) -> Tuple[bool, float]:
+    ) -> tuple[bool, float]:
         """
         Execute press jam at line of scrimmage.
 
@@ -202,7 +200,7 @@ class DefensiveBackPhysics:
         self,
         state: DBState,
         receiver_direction: float,  # Degrees relative to DB
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Execute hip-flip to turn and run with receiver.
 

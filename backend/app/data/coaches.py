@@ -10,9 +10,9 @@ Data includes:
 - Coaching philosophy traits
 """
 
-from pydantic import BaseModel
-from typing import Dict, Optional
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class OffensiveScheme(str, Enum):
@@ -66,7 +66,7 @@ class TeamCoachingStaff(BaseModel):
 # 2025 NFL COACHING STAFF DATABASE
 # =============================================================================
 
-COACHES_DB: Dict[str, TeamCoachingStaff] = {
+COACHES_DB: dict[str, TeamCoachingStaff] = {
     # AFC EAST
     "BUF": TeamCoachingStaff(
         head_coach=CoachData(first_name="Sean", last_name="McDermott"),

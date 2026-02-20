@@ -5,14 +5,14 @@ Converts real-world NFL data (Next Gen Stats, Combine, FTN) into
 our 0-100 attribute scale using the 3-Tier positional matrix.
 """
 import logging
-from typing import Dict, Any, Optional
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-from app.services.age_curves import get_age_modifier, get_experience_bonus, get_physical_regression
-from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS, CareerAccolades
+from app.data.career_accomplishments import CareerAccolades
+from app.services.age_curves import get_age_modifier, get_experience_bonus
 
 # =============================================================================
 # TIER WEIGHTS CONFIGURATION
@@ -62,7 +62,7 @@ def inverse_scale(value: float, low: float, high: float) -> int:
 # POSITION-SPECIFIC RATING GENERATORS
 # =============================================================================
 
-def generate_qb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_qb_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     ratings = {}
 
     # Tier 1
@@ -104,7 +104,7 @@ def generate_qb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_rb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_rb_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """Generate RB ratings."""
     ratings = {}
 
@@ -134,7 +134,7 @@ def generate_rb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_wr_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_wr_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """Generate WR ratings."""
     ratings = {}
 
@@ -166,7 +166,7 @@ def generate_wr_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_te_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_te_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """
     Generate TE ratings.
 
@@ -198,7 +198,7 @@ def generate_te_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_ol_ratings(player_data: Dict[str, Any], position: str) -> Dict[str, int]:
+def generate_ol_ratings(player_data: dict[str, Any], position: str) -> dict[str, int]:
     """
     Generate OL ratings (LT, LG, C, RG, RT).
 
@@ -234,7 +234,7 @@ def generate_ol_ratings(player_data: Dict[str, Any], position: str) -> Dict[str,
     return ratings
 
 
-def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_dl_ratings(player_data: dict[str, Any], position: str, stats: dict[str, Any]) -> dict[str, int]:
     """
     Generate DL ratings (DT, NT, DE, EDGE).
 
@@ -310,7 +310,7 @@ def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
     return ratings
 
 
-def generate_lb_ratings(player_data: Dict[str, Any], stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_lb_ratings(player_data: dict[str, Any], stats: dict[str, Any]) -> dict[str, int]:
     """
     Generate LB ratings.
 
@@ -340,7 +340,7 @@ def generate_lb_ratings(player_data: Dict[str, Any], stats: Dict[str, Any]) -> D
     return ratings
 
 
-def generate_db_ratings(player_data: Dict[str, Any], position: str, stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_db_ratings(player_data: dict[str, Any], position: str, stats: dict[str, Any]) -> dict[str, int]:
     """
     Generate DB ratings (CB, S).
 
@@ -381,10 +381,10 @@ def generate_db_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
 # =============================================================================
 
 def generate_player_ratings(
-    player_data: Dict[str, Any],
-    ngstats: Optional[Dict[str, Any]] = None,
-    standard_stats: Optional[Dict[str, Any]] = None,
-) -> Dict[str, int]:
+    player_data: dict[str, Any],
+    ngstats: dict[str, Any] | None = None,
+    standard_stats: dict[str, Any] | None = None,
+) -> dict[str, int]:
     """
     Generate all ratings for a player based on their position.
 
@@ -426,8 +426,8 @@ def generate_player_ratings(
 
 def calculate_overall_rating_modifier(
     base_rating: int,
-    player_data: Dict[str, Any],
-    accolades: Optional[CareerAccolades] = None
+    player_data: dict[str, Any],
+    accolades: CareerAccolades | None = None
 ) -> int:
     """
     Calculate the final overall rating by applying Age, Experience, and Accolade modifiers.

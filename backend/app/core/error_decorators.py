@@ -1,10 +1,11 @@
-from functools import wraps
-from fastapi import HTTPException, Request
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError, OperationalError
-from pydantic import ValidationError
-from datetime import datetime, timezone
-import logging
 import asyncio
+import logging
+from datetime import UTC, datetime
+from functools import wraps
+
+from fastapi import HTTPException, Request
+from pydantic import ValidationError
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,7 @@ def handle_errors(func):
                     "error": "Integrity Error",
                     "message": "Operation conflicts with existing data",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             )
 
@@ -77,7 +78,7 @@ def handle_errors(func):
                     "error": "Service Unavailable",
                     "message": "Database connection error. Please try again later.",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             )
 
@@ -97,7 +98,7 @@ def handle_errors(func):
                     "message": "Invalid data provided",
                     "details": e.errors(),
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             )
 
@@ -116,7 +117,7 @@ def handle_errors(func):
                     "error": "Bad Request",
                     "message": str(e),
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             )
 
@@ -141,7 +142,7 @@ def handle_errors(func):
                     "error": "Internal Server Error",
                     "message": "An unexpected error occurred",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
+                    "timestamp": datetime.now(UTC).isoformat()
                 }
             )
 
