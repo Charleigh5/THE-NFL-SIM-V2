@@ -10,9 +10,7 @@ Phase 8: Scouting & Draft
 - Picking logic
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from enum import Enum
+from dataclasses import dataclass
 
 # Import just for typing reference
 from .scout import ScoutingReport
@@ -37,13 +35,13 @@ class DraftBoard:
     """
 
     def __init__(self):
-        self.prospects: Dict[str, Prospect] = {}
-        self.team_boards: Dict[str, List[str]] = {} # TeamID -> List[ProspectID] ordered
+        self.prospects: dict[str, Prospect] = {}
+        self.team_boards: dict[str, list[str]] = {} # TeamID -> List[ProspectID] ordered
 
     def add_prospect(self, prospect: Prospect):
         self.prospects[prospect.prospect_id] = prospect
 
-    def generate_team_board(self, team_id: str, needs: List[str], reports: Dict[str, ScoutingReport]):
+    def generate_team_board(self, team_id: str, needs: list[str], reports: dict[str, ScoutingReport]):
         """
         Create a ranked list for a team based on their needs and scouting info.
         """
@@ -68,7 +66,7 @@ class DraftBoard:
 
         self.team_boards[team_id] = [pid for _, pid in scored_prospects]
 
-    def make_pick(self, team_id: str) -> Optional[Prospect]:
+    def make_pick(self, team_id: str) -> Prospect | None:
         """
         Execute a pick for a team (Auto-pick top of board).
         """

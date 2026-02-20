@@ -1,11 +1,9 @@
-from typing import List, Dict, Optional
+import structlog
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.models.player import Player
 from app.models.stats import PlayerSeasonStats
 from app.services.trait_service import TraitService
-from app.services.gm_agent import GMAgent
-import structlog
 
 logger = structlog.get_logger()
 
@@ -64,7 +62,7 @@ class TraitAcquisitionService:
         return granted_count
 
     @staticmethod
-    def check_stat_thresholds(player: Player, stats: PlayerSeasonStats) -> List[str]:
+    def check_stat_thresholds(player: Player, stats: PlayerSeasonStats) -> list[str]:
         """
         Checks if player stats meet thresholds for specific traits.
         Returns list of trait names to grant.

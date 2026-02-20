@@ -1,7 +1,7 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, Optional, List, Any, ClassVar
-from pydantic import Field
 import random
+from typing import Any, ClassVar
+
+from app.kernels.core.ecs_manager import Component
 
 
 class TrainingEngine(Component):
@@ -22,7 +22,7 @@ class TrainingEngine(Component):
     weekly_load: float = 0.0      # B-029: Weekly training load
 
     # B-028: Seasonal periodization multipliers (ClassVar so Pydantic ignores it)
-    SEASONAL_INTENSITY: ClassVar[Dict[str, float]] = {
+    SEASONAL_INTENSITY: ClassVar[dict[str, float]] = {
         "offseason": 0.85,
         "preseason": 0.70,
         "regular": 0.50,
@@ -30,7 +30,7 @@ class TrainingEngine(Component):
     }
 
     # Directive 9: Real-World Weekly Periodization
-    intensity_schedule: Dict[str, float] = {
+    intensity_schedule: dict[str, float] = {
         "Monday": 0.0,    # Recovery
         "Tuesday": 0.0,   # Recovery
         "Wednesday": 0.8, # Practice
@@ -46,8 +46,8 @@ class TrainingEngine(Component):
         player_age: int,
         coaching_style: Any = None,  # CoachingStyle from coaching_philosophy.py
         season_phase: str = "regular",
-        rng_seed: Optional[int] = None
-    ) -> Dict[str, Any]:
+        rng_seed: int | None = None
+    ) -> dict[str, Any]:
         """
         B-027: Execute a specific drill from the catalog.
 

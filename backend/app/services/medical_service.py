@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Session
-from app.models.medical import BodyPart, InjuryEvent
-from app.models.player import Player, InjuryStatus
 import random
+
+from sqlalchemy.orm import Session
+
+from app.models.medical import BodyPart
+from app.models.player import Player
+
 
 class MedicalService:
     def __init__(self, db: Session):

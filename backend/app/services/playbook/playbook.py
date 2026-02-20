@@ -11,9 +11,7 @@ Phase 9: Playbook & AI
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
@@ -100,7 +98,7 @@ class Play:
 class Playbook:
     """Collection of plays for a team."""
     team_id: str
-    plays: Dict[str, Play] = field(default_factory=dict)
+    plays: dict[str, Play] = field(default_factory=dict)
     primary_concept: Concept = Concept.WEST_COAST
 
     def add_play(self, play: Play):
@@ -111,7 +109,7 @@ class Playbook:
         down: int,
         distance: int,
         field_position: int
-    ) -> List[Play]:
+    ) -> list[Play]:
         """
         Filter plays suitable for the situation.
         """

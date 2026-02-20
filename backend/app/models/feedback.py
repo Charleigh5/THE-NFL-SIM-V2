@@ -1,6 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+
 from app.models.base import Base
+
 
 class UserFeedback(Base):
     __tablename__ = "user_feedback"

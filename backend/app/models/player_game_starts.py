@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import ForeignKey, String, Index
+from sqlalchemy import ForeignKey, Index, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
+
 
 class PlayerGameStarts(Base):
     __tablename__ = 'player_game_starts'
@@ -24,8 +24,8 @@ class PlayerGameStarts(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     # Relationships
-    player: Mapped["Player"] = relationship(back_populates="game_starts")
-    game: Mapped["Game"] = relationship(back_populates="player_starts")
+    player: Mapped[Player] = relationship(back_populates="game_starts")
+    game: Mapped[Game] = relationship(back_populates="player_starts")
 
     __table_args__ = (
         Index('idx_player_game', 'player_id', 'game_id', unique=True),

@@ -6,7 +6,6 @@ Source: NFL Financial Thresholds and Salary Cap Performance Metrics.
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional, List
 from enum import Enum
 
 # ============================================================================
@@ -15,7 +14,7 @@ from enum import Enum
 
 # Historical Salary Cap Maximums (1994-2025)
 # Note: 2010 was an uncapped year.
-HISTORICAL_SALARY_CAPS: Dict[int, Optional[int]] = {
+HISTORICAL_SALARY_CAPS: dict[int, int | None] = {
     2025: 279_200_000,
     2024: 255_400_000,
     2023: 224_800_000,
@@ -71,15 +70,15 @@ class PlayReference:
     epa_value: float
     risk_level: RiskLevel
     description: str
-    prerequisites: Optional[str] = None
-    personnel: Optional[str] = None
-    frequency_per_game: Optional[float] = None
+    prerequisites: str | None = None
+    personnel: str | None = None
+    frequency_per_game: float | None = None
 
     @property
     def success_rate_avg(self) -> float:
         return (self.success_rate_min + self.success_rate_max) / 2.0
 
-SPECIAL_PLAYS: Dict[str, PlayReference] = {
+SPECIAL_PLAYS: dict[str, PlayReference] = {
     "TUSH_PUSH": PlayReference(
         name="Tush Push",
         success_rate_min=0.81,
@@ -151,7 +150,7 @@ class PositionCareerData:
     peak_age_end: int
     decline_rate_post_30: float
 
-POSITION_CAREER_DATA: Dict[str, PositionCareerData] = {
+POSITION_CAREER_DATA: dict[str, PositionCareerData] = {
     "QB": PositionCareerData(avg_length_games=62, peak_age_start=26, peak_age_end=32, decline_rate_post_30=0.03),
     "RB": PositionCareerData(avg_length_games=30, peak_age_start=22, peak_age_end=27, decline_rate_post_30=0.15),
     "WR": PositionCareerData(avg_length_games=38, peak_age_start=24, peak_age_end=29, decline_rate_post_30=0.08),
