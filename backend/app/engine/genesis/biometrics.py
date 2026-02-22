@@ -16,35 +16,37 @@ Context7 Best Practices:
 - Dataclasses for computed properties
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class BodyType(str, Enum):
     """Player body type classification."""
-    LEAN = "LEAN"           # Low body fat, explosive
-    ATHLETIC = "ATHLETIC"   # Balanced build
-    STOCKY = "STOCKY"       # Lower center of gravity
-    POWER = "POWER"         # High muscle mass
-    LANKY = "LANKY"         # Long limbs, tall
+
+    LEAN = "LEAN"  # Low body fat, explosive
+    ATHLETIC = "ATHLETIC"  # Balanced build
+    STOCKY = "STOCKY"  # Lower center of gravity
+    POWER = "POWER"  # High muscle mass
+    LANKY = "LANKY"  # Long limbs, tall
 
 
 class FiberType(str, Enum):
     """Muscle fiber dominance."""
-    FAST_TWITCH = "FAST_TWITCH"   # Explosive, quick fatigue
-    BALANCED = "BALANCED"          # Mixed fiber type
-    SLOW_TWITCH = "SLOW_TWITCH"   # Endurance, slow fatigue
+
+    FAST_TWITCH = "FAST_TWITCH"  # Explosive, quick fatigue
+    BALANCED = "BALANCED"  # Mixed fiber type
+    SLOW_TWITCH = "SLOW_TWITCH"  # Endurance, slow fatigue
 
 
 # ============================================================================
 # BIOMETRIC DATA
 # ============================================================================
+
 
 @dataclass
 class BiometricProfile:
@@ -53,18 +55,19 @@ class BiometricProfile:
 
     These attributes affect physics calculations and fatigue modeling.
     """
+
     # Physical Measurements (additional to height/weight)
-    hand_size: float = 9.5          # inches (NFL average: 9.5")
-    wingspan: float = 76.0          # inches (fingertip to fingertip)
-    arm_length: float = 32.0        # inches (shoulder to wrist)
-    vertical_jump: float = 32.0     # inches
-    broad_jump: float = 108.0       # inches
-    three_cone: float = 7.2         # seconds
+    hand_size: float = 9.5  # inches (NFL average: 9.5")
+    wingspan: float = 76.0  # inches (fingertip to fingertip)
+    arm_length: float = 32.0  # inches (shoulder to wrist)
+    vertical_jump: float = 32.0  # inches
+    broad_jump: float = 108.0  # inches
+    three_cone: float = 7.2  # seconds
     twenty_yard_shuttle: float = 4.3  # seconds
 
     # Body Composition
-    body_fat_percentage: float = 12.0   # percent (NFL range: 5-25%)
-    lean_mass_lbs: float = 200.0        # calculated from weight - fat
+    body_fat_percentage: float = 12.0  # percent (NFL range: 5-25%)
+    lean_mass_lbs: float = 200.0  # calculated from weight - fat
     body_type: BodyType = BodyType.ATHLETIC
 
     # Muscle Fiber Composition (affects explosiveness vs endurance)
@@ -72,19 +75,19 @@ class BiometricProfile:
     fiber_type: FiberType = FiberType.BALANCED
 
     # Cognitive Attributes (hidden from UI, affects decision making)
-    s2_cognition_score: float = 100.0   # Standard score (mean=100, std=15)
-    reaction_time_ms: float = 250.0     # milliseconds
-    processing_speed: float = 100.0     # percentile
+    s2_cognition_score: float = 100.0  # Standard score (mean=100, std=15)
+    reaction_time_ms: float = 250.0  # milliseconds
+    processing_speed: float = 100.0  # percentile
 
     # Thermoregulation
-    sweat_rate: float = 1.5             # liters per hour
-    heat_tolerance: float = 50.0        # 0-100 scale
-    cold_tolerance: float = 50.0        # 0-100 scale
+    sweat_rate: float = 1.5  # liters per hour
+    heat_tolerance: float = 50.0  # 0-100 scale
+    cold_tolerance: float = 50.0  # 0-100 scale
 
     # Recovery Factors
-    vo2_max: float = 50.0               # ml/kg/min (NFL range: 40-60)
-    resting_heart_rate: float = 60.0    # bpm
-    hrv_score: float = 70.0             # Heart rate variability (higher = better recovery)
+    vo2_max: float = 50.0  # ml/kg/min (NFL range: 40-60)
+    resting_heart_rate: float = 60.0  # bpm
+    hrv_score: float = 70.0  # Heart rate variability (higher = better recovery)
 
     @property
     def relative_wingspan(self) -> float:
@@ -141,7 +144,7 @@ class BiometricProfile:
         sweat_factor = self.sweat_rate / 2.0  # Normalize to ~0.75-1.25
         return (base_impact / 100.0) * sweat_factor
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to dictionary for database storage."""
         return {
             "hand_size": self.hand_size,
@@ -168,7 +171,7 @@ class BiometricProfile:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'BiometricProfile':
+    def from_dict(cls, data: dict[str, Any]) -> "BiometricProfile":
         """Deserialize from dictionary."""
         return cls(
             hand_size=data.get("hand_size", 9.5),
@@ -305,7 +308,7 @@ def generate_biometrics_for_position(
     """
     ranges = POSITION_BIOMETRIC_RANGES.get(position, POSITION_BIOMETRIC_RANGES["LB"])
 
-    def sample_range(key: str, default: Tuple[float, float]) -> float:
+    def sample_range(key: str, default: tuple[float, float]) -> float:
         """Sample from range, biased by talent level."""
         low, high = ranges.get(key, default)
         # Higher talent = closer to high end

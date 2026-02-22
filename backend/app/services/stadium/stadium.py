@@ -10,17 +10,17 @@ Phase 10: Stadium Effects
 - Crowd noise levels
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class StadiumType(str, Enum):
     """Type of stadium."""
+
     OPEN_AIR = "OPEN_AIR"
     DOME = "DOME"
     RETRACTABLE = "RETRACTABLE"
@@ -28,6 +28,7 @@ class StadiumType(str, Enum):
 
 class SurfaceType(str, Enum):
     """Playing surface."""
+
     NATURAL_GRASS = "NATURAL_GRASS"
     FIELD_TURF = "FIELD_TURF"
     HYBRID = "HYBRID"
@@ -35,9 +36,10 @@ class SurfaceType(str, Enum):
 
 class NoiseLevel(str, Enum):
     """Crowd noise intensity."""
-    QUIET = "QUIET"           # <70 dB
-    MODERATE = "MODERATE"     # 70-85 dB
-    LOUD = "LOUD"            # 85-100 dB
+
+    QUIET = "QUIET"  # <70 dB
+    MODERATE = "MODERATE"  # 70-85 dB
+    LOUD = "LOUD"  # 85-100 dB
     DEAFENING = "DEAFENING"  # >100 dB (Arrowhead, CenturyLink)
 
 
@@ -45,40 +47,45 @@ class NoiseLevel(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class StadiumConfig:
     """Stadium configuration."""
+
     stadium_id: str
     name: str
     team_id: str
     capacity: int
     stadium_type: StadiumType
     surface: SurfaceType
-    altitude: int = 0          # Feet above sea level (Denver = 5280)
+    altitude: int = 0  # Feet above sea level (Denver = 5280)
     base_noise_rating: int = 70  # 1-100 scale
 
 
 @dataclass
 class CrowdState:
     """Current crowd conditions."""
+
     attendance: int
-    attendance_pct: float      # 0.0 - 1.0
+    attendance_pct: float  # 0.0 - 1.0
     noise_level: NoiseLevel
-    energy: float = 0.5        # 0.0 - 1.0 (momentum-based)
+    energy: float = 0.5  # 0.0 - 1.0 (momentum-based)
 
 
 @dataclass
 class HomeFieldBonus:
     """Calculated home field effects."""
-    false_start_modifier: float   # Increases opponent false starts
-    snap_count_modifier: float    # Makes it harder to hear snap
-    fatigue_modifier: float       # Altitude effect
-    crowd_energy_bonus: float     # Performance boost
+
+    false_start_modifier: float  # Increases opponent false starts
+    snap_count_modifier: float  # Makes it harder to hear snap
+    fatigue_modifier: float  # Altitude effect
+    crowd_energy_bonus: float  # Performance boost
 
 
 # ============================================================================
 # STADIUM ENGINE
 # ============================================================================
+
 
 class StadiumEngine:
     """
@@ -113,8 +120,11 @@ class StadiumEngine:
 
         # Dome / Known Loud Stadium Bonus
         dome_bonus = 0
-        if self.config.stadium_type == StadiumType.DOME or self.config.stadium_id in self.LOUD_STADIUMS:
-            dome_bonus = 10 # Reflective acoustics
+        if (
+            self.config.stadium_type == StadiumType.DOME
+            or self.config.stadium_id in self.LOUD_STADIUMS
+        ):
+            dome_bonus = 10  # Reflective acoustics
 
         total = base + attendance_mod + situation_mod + energy_mod + dome_bonus
 
@@ -157,7 +167,7 @@ class StadiumEngine:
             false_start_modifier=noise_factor,
             snap_count_modifier=snap_mod,
             fatigue_modifier=altitude_factor,
-            crowd_energy_bonus=energy_bonus
+            crowd_energy_bonus=energy_bonus,
         )
 
     def update_crowd_energy(self, current: CrowdState, event: str) -> CrowdState:
@@ -184,5 +194,5 @@ class StadiumEngine:
             attendance=current.attendance,
             attendance_pct=current.attendance_pct,
             noise_level=new_noise,
-            energy=new_energy
+            energy=new_energy,
         )

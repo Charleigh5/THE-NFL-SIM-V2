@@ -10,43 +10,46 @@ Phase 9: Playbook & AI
 - Aggression settings
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from enum import Enum
 import random
-
-from .playbook import Play, Playbook, PlayType, Concept
-
 
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.coaching_ai import CoachingAIService
 
+from .playbook import Play, Playbook, PlayType
+
 # ============================================================================
 # ENUMS
 # ============================================================================
-
 from .types import AggressionLevel, GameScript, GameSituation, PlayCallResult
 
 # ============================================================================
 # PLAY CALLER AI
 # ============================================================================
 
+
 class PlayCallerAI:
     """
     Offensive Coordinator AI.
     """
 
-    def __init__(self, playbook: Playbook, philosophy: Optional[CoachingPhilosophy] = None, aggression: AggressionLevel = AggressionLevel.BALANCED):
+    def __init__(
+        self,
+        playbook: Playbook,
+        philosophy: CoachingPhilosophy | None = None,
+        aggression: AggressionLevel = AggressionLevel.BALANCED,
+    ):
         self.playbook = playbook
-        self.tendency_history: List[PlayType] = []
+        self.tendency_history: list[PlayType] = []
 
         if philosophy:
             self.philosophy = philosophy
         else:
             # Backward compatibility
             val = 50
-            if aggression == AggressionLevel.AGGRESSIVE: val = 75
-            elif aggression == AggressionLevel.CONSERVATIVE: val = 25
+            if aggression == AggressionLevel.AGGRESSIVE:
+                val = 75
+            elif aggression == AggressionLevel.CONSERVATIVE:
+                val = 25
             self.philosophy = CoachingPhilosophy(aggressiveness=val)
 
         self.coaching_service = CoachingAIService(self.philosophy)
@@ -96,7 +99,7 @@ class PlayCallerAI:
         return PlayCallResult(
             selected_play=selected,
             confidence=0.8,
-            reasoning=f"Selected {selected.name} for {situation.down} and {situation.distance}"
+            reasoning=f"Selected {selected.name} for {situation.down} and {situation.distance}",
         )
 
     def _determine_script(self, situation: GameSituation) -> GameScript:
@@ -150,14 +153,14 @@ class PlayCallerAI:
             else:
                 score -= (50 - skew) * 0.5  # Penalize up to -25
         elif play.play_type == PlayType.PASS:
-             if skew < 50:
-                 score += (50 - skew) * 0.5 # Boost up to +25
-             else:
-                 score -= (skew - 50) * 0.5 # Penalize up to -25
+            if skew < 50:
+                score += (50 - skew) * 0.5  # Boost up to +25
+            else:
+                score -= (skew - 50) * 0.5  # Penalize up to -25
 
         # Tendency balance: Avoid being too predictable
         recent_passes = sum(1 for t in self.tendency_history[-5:] if t == PlayType.PASS)
         if recent_passes >= 4 and play.play_type == PlayType.RUN:
-            score += 10 # Mix it up
+            score += 10  # Mix it up
 
         return score

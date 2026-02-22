@@ -17,32 +17,32 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class ActivityLevel(str, Enum):
     """Current activity level."""
-    REST = "REST"               # Sideline, huddle
-    WALK = "WALK"               # Walking to position
-    JOG = "JOG"                 # Light movement
-    RUN = "RUN"                 # Standard running
-    SPRINT = "SPRINT"           # Maximum effort
-    EXPLOSIVE = "EXPLOSIVE"     # Jumps, cuts, tackles
+
+    REST = "REST"  # Sideline, huddle
+    WALK = "WALK"  # Walking to position
+    JOG = "JOG"  # Light movement
+    RUN = "RUN"  # Standard running
+    SPRINT = "SPRINT"  # Maximum effort
+    EXPLOSIVE = "EXPLOSIVE"  # Jumps, cuts, tackles
 
 
 class FatigueLevel(str, Enum):
     """Overall fatigue state."""
-    FRESH = "FRESH"             # Full energy
-    NORMAL = "NORMAL"           # Sustainable effort
-    TIRED = "TIRED"             # Performance degradation begins
-    EXHAUSTED = "EXHAUSTED"     # Significant impairment
-    GASSED = "GASSED"           # Risk of injury, major impairment
+
+    FRESH = "FRESH"  # Full energy
+    NORMAL = "NORMAL"  # Sustainable effort
+    TIRED = "TIRED"  # Performance degradation begins
+    EXHAUSTED = "EXHAUSTED"  # Significant impairment
+    GASSED = "GASSED"  # Risk of injury, major impairment
 
 
 # ============================================================================
@@ -73,11 +73,13 @@ AEROBIC_RECOVERY_RATE = 0.02
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class EnergyCompartment:
     """
     Single energy compartment with capacity and current level.
     """
+
     name: str
     capacity: float
     current: float
@@ -126,6 +128,7 @@ class FatigueState:
     3. Aerobic - Long-term energy, essentially unlimited but slow
     4. Neural - Mental fatigue, affects reaction time and decisions
     """
+
     # Compartment 1: ATP-PC (explosive burst)
     atp_pc: EnergyCompartment = field(
         default_factory=lambda: EnergyCompartment(
@@ -261,6 +264,7 @@ class FatigueState:
 # FATIGUE ENGINE
 # ============================================================================
 
+
 class FatigueEngine:
     """
     Engine for processing player fatigue over time.
@@ -274,7 +278,7 @@ class FatigueEngine:
 
     def __init__(
         self,
-        state: Optional[FatigueState] = None,
+        state: FatigueState | None = None,
         stamina_rating: int = 80,
         injury_resistance: int = 80,
     ):
@@ -373,7 +377,7 @@ class FatigueEngine:
         # Partial glycolytic recovery
         self.process_recovery(huddle_ticks)
 
-    def get_attribute_modifiers(self) -> Dict[str, float]:
+    def get_attribute_modifiers(self) -> dict[str, float]:
         """
         Get all attribute modifiers based on current fatigue.
 
@@ -394,8 +398,6 @@ class FatigueEngine:
 
     def should_be_subbed(self) -> bool:
         """Check if player should be substituted due to fatigue."""
-        return (
-            self.state.fatigue_level == FatigueLevel.GASSED or
-            (self.state.fatigue_level == FatigueLevel.EXHAUSTED and
-             self.state.lactate_level > 70)
+        return self.state.fatigue_level == FatigueLevel.GASSED or (
+            self.state.fatigue_level == FatigueLevel.EXHAUSTED and self.state.lactate_level > 70
         )

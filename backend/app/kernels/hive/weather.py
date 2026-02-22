@@ -1,23 +1,19 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Tuple
-from pydantic import Field
-import math
-import math
-from typing import Optional
 from app.core.random_utils import DeterministicRNG
+from app.kernels.core.ecs_manager import Component
+
 
 class WeatherSys(Component):
     # Directive 5: Dynamic Weather
     temperature_f: float = 72.0
     wind_speed_mph: float = 0.0
-    wind_direction_deg: float = 0.0 # 0 = North
-    precipitation_intensity: float = 0.0 # 0.0 - 1.0 (Rain/Snow)
+    wind_direction_deg: float = 0.0  # 0 = North
+    precipitation_intensity: float = 0.0  # 0.0 - 1.0 (Rain/Snow)
     is_snowing: bool = False
 
     # Directive 14: Altitude
-    altitude_ft: float = 0.0 # Sea level default
+    altitude_ft: float = 0.0  # Sea level default
 
-    def get_ballistic_modifiers(self) -> Tuple[float, float]:
+    def get_ballistic_modifiers(self) -> tuple[float, float]:
         """
         Directive 6: Ballistics Trajectory.
         Returns (DistanceMultiplier, DriftMultiplier).
@@ -33,7 +29,7 @@ class WeatherSys(Component):
         Directive 12: Snowfall Obscuration.
         """
         if self.is_snowing:
-            return self.precipitation_intensity * 0.4 # Max 40% vision loss
+            return self.precipitation_intensity * 0.4  # Max 40% vision loss
         return 0.0
 
     def get_sun_glare_vector(self, time_of_day: str, stadium_orientation: float) -> float:
@@ -41,11 +37,14 @@ class WeatherSys(Component):
         Directive 5: Sun Glare.
         Simplified: Returns glare intensity 0.0 - 1.0.
         """
-    # Directive 5: Dynamic Weather Generation
-    forecast: str = "Clear" # "Rain", "Snow", "Heavy Snow"
-    fog_density: float = 0.0 # 0.0 - 1.0
 
-    def generate_forecast(self, month: int, location_climate: str, rng: Optional[DeterministicRNG] = None):
+    # Directive 5: Dynamic Weather Generation
+    forecast: str = "Clear"  # "Rain", "Snow", "Heavy Snow"
+    fog_density: float = 0.0  # 0.0 - 1.0
+
+    def generate_forecast(
+        self, month: int, location_climate: str, rng: DeterministicRNG | None = None
+    ):
         """
         Generates a forecast based on season and location.
         """
@@ -60,7 +59,7 @@ class WeatherSys(Component):
             self.forecast = "Rain" if rng.random() > 0.7 else "Clear"
             self.temperature_f = 75.0
 
-    def get_ballistic_modifiers(self) -> Tuple[float, float, float]:
+    def get_ballistic_modifiers(self) -> tuple[float, float, float]:
         """
         Directive 6: Ballistics Trajectory.
         Returns (DistanceMultiplier, DriftMultiplier, WeightMultiplier).
@@ -71,7 +70,7 @@ class WeatherSys(Component):
         # Snow Weight: Heavy snow weighs down the ball
         weight_multiplier = 1.0
         if self.is_snowing and self.precipitation_intensity > 0.5:
-            weight_multiplier = 0.9 # 10% range reduction
+            weight_multiplier = 0.9  # 10% range reduction
 
         return (altitude_boost, self.wind_speed_mph * 0.5, weight_multiplier)
 
@@ -84,7 +83,7 @@ class WeatherSys(Component):
             penalty += self.precipitation_intensity * 0.4
 
         if self.fog_density > 0.0:
-            penalty += self.fog_density * 0.5 # Fog is dense
+            penalty += self.fog_density * 0.5  # Fog is dense
 
         return min(0.9, penalty)
 
@@ -102,7 +101,7 @@ class WeatherSys(Component):
         Directive: Weekly Weather Forecast Top Story.
         """
         if self.forecast == "Clear":
-            return f"Clear skies expected, perfect for passing."
+            return "Clear skies expected, perfect for passing."
         elif self.forecast == "Snow":
-            return f"Snow forecast! Expect reduced visibility and slippery conditions."
+            return "Snow forecast! Expect reduced visibility and slippery conditions."
         return f"Weather Alert: {self.forecast} conditions may impact game strategy."

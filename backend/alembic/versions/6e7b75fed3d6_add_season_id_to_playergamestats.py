@@ -26,8 +26,8 @@ def upgrade() -> None:
         batch_op.create_index(batch_op.f('ix_playergamestats_season_id'), ['season_id'], unique=False)
         batch_op.create_foreign_key('fk_playergamestats_season_id', 'season', ['season_id'], ['id'])
 
-    with op.batch_alter_table('team', schema=None) as batch_op:
-        batch_op.create_foreign_key('fk_team_stadium_id', 'stadium', ['stadium_id'], ['id'])
+    # with op.batch_alter_table('team', schema=None) as batch_op:
+    #     batch_op.create_foreign_key('fk_team_stadium_id', 'stadium', ['stadium_id'], ['id'])
 
     # ### end Alembic commands ###
 

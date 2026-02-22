@@ -1,19 +1,21 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from app.models.player import Player, DevelopmentTrait, InjuryStatus
-from app.models.team import Team
-from app.models.coach import Coach
 import random
-from typing import List, Dict
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.core.random_utils import DeterministicRNG
+from app.models.player import DevelopmentTrait, Player
+from app.models.team import Team
 from app.rpg.injury_system import InjurySystem
+
 
 class TrainingFocus(str):
     GENERAL = "GENERAL"
-    CONDITIONING = "CONDITIONING" # Recovery + Stamina
-    FILM_STUDY = "FILM_STUDY" # Awareness + Play Rec
-    DRILLS = "DRILLS" # Skill specific
+    CONDITIONING = "CONDITIONING"  # Recovery + Stamina
+    FILM_STUDY = "FILM_STUDY"  # Awareness + Play Rec
+    DRILLS = "DRILLS"  # Skill specific
+
 
 class PlayerDevelopmentService:
     def __init__(self, db: AsyncSession, seed: int = None):
@@ -26,10 +28,7 @@ class PlayerDevelopmentService:
         Main entry point for weekly player updates during the season.
         Handles training XP, injury recovery, and morale updates.
         """
-        stmt = select(Team).options(
-            selectinload(Team.players),
-            selectinload(Team.coaches)
-        )
+        stmt = select(Team).options(selectinload(Team.players), selectinload(Team.coaches))
         result = await self.db.execute(stmt)
         teams = result.scalars().all()
 
@@ -66,7 +65,7 @@ class PlayerDevelopmentService:
         if head_coach:
             # 0-100 rating -> 0.5 - 1.5 multiplier or flat bonus?
             # Let's say rating 50 is baseline.
-            coach_bonus = (head_coach.development_rating - 50) / 100.0 # -0.5 to +0.5
+            coach_bonus = (head_coach.development_rating - 50) / 100.0  # -0.5 to +0.5
 
         players = team.players
         for player in players:
@@ -82,7 +81,7 @@ class PlayerDevelopmentService:
                 xp_gain *= 2.0
 
             # Coach Bonus
-            xp_gain *= (1.0 + coach_bonus)
+            xp_gain *= 1.0 + coach_bonus
 
             # Age Penalty/Bonus
             if player.age > 30:
@@ -125,10 +124,15 @@ class PlayerDevelopmentService:
             # But we need overall to change for the user to see progress.
             player.overall_rating = min(99, player.overall_rating + 1)
 
-    def _get_relevant_stats(self, position: str) -> List[str]:
+    def _get_relevant_stats(self, position: str) -> list[str]:
         common = ["speed", "agility", "awareness", "strength"]
         if position == "QB":
-            return common + ["throw_power", "throw_accuracy_short", "throw_accuracy_mid", "throw_accuracy_deep"]
+            return common + [
+                "throw_power",
+                "throw_accuracy_short",
+                "throw_accuracy_mid",
+                "throw_accuracy_deep",
+            ]
         elif position in ["RB", "WR", "TE"]:
             return common + ["catching", "route_running"]
         elif position in ["OT", "OG", "C"]:

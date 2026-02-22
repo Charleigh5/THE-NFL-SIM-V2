@@ -16,10 +16,9 @@ NFL Reality:
 - Execution degrades with unfamiliar plays
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, Optional
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +51,7 @@ INITIAL_FAMILIARITY = 0.10  # 10% base familiarity
 
 class FamiliarityTier(str, Enum):
     """Familiarity tier for display purposes."""
+
     UNKNOWN = "UNKNOWN"
     BASIC = "BASIC"
     COMPETENT = "COMPETENT"
@@ -62,6 +62,7 @@ class FamiliarityTier(str, Enum):
 @dataclass
 class PlayFamiliarity:
     """Familiarity data for a single play."""
+
     play_id: str
     familiarity: float = INITIAL_FAMILIARITY
     times_executed: int = 0
@@ -101,8 +102,8 @@ class PlaybookFamiliarity:
     """
 
     player_id: int
-    play_knowledge: Dict[str, PlayFamiliarity] = field(default_factory=dict)
-    current_scheme: Optional[str] = None
+    play_knowledge: dict[str, PlayFamiliarity] = field(default_factory=dict)
+    current_scheme: str | None = None
     experience_years: int = 0
 
     # --- Core Methods ---
@@ -139,12 +140,7 @@ class PlaybookFamiliarity:
 
         return min(MAX_EXECUTION_PENALTY, max(MIN_EXECUTION_PENALTY, penalty))
 
-    def learn_play(
-        self,
-        play_id: str,
-        success: bool = True,
-        practice_bonus: float = 1.0
-    ) -> float:
+    def learn_play(self, play_id: str, success: bool = True, practice_bonus: float = 1.0) -> float:
         """
         Increase familiarity with a play after execution.
 
@@ -215,17 +211,13 @@ class PlaybookFamiliarity:
         if new_scheme == self.current_scheme:
             return
 
-        logger.info(
-            f"Player {self.player_id} scheme change: "
-            f"{self.current_scheme} -> {new_scheme}"
-        )
+        logger.info(f"Player {self.player_id} scheme change: {self.current_scheme} -> {new_scheme}")
 
         # Apply penalty to all plays
         for play_data in self.play_knowledge.values():
             old_familiarity = play_data.familiarity
             play_data.familiarity = max(
-                INITIAL_FAMILIARITY,
-                old_familiarity * (1.0 - SCHEME_CHANGE_PENALTY)
+                INITIAL_FAMILIARITY, old_familiarity * (1.0 - SCHEME_CHANGE_PENALTY)
             )
 
         self.current_scheme = new_scheme
@@ -235,14 +227,14 @@ class PlaybookFamiliarity:
     def get_total_plays_known(self) -> int:
         """Count plays with at least basic familiarity."""
         return sum(
-            1 for p in self.play_knowledge.values()
-            if p.familiarity >= FAMILIARITY_THRESHOLD_BASIC
+            1 for p in self.play_knowledge.values() if p.familiarity >= FAMILIARITY_THRESHOLD_BASIC
         )
 
     def get_mastered_plays(self) -> list[str]:
         """Get list of mastered play IDs."""
         return [
-            play_id for play_id, data in self.play_knowledge.items()
+            play_id
+            for play_id, data in self.play_knowledge.items()
             if data.familiarity >= FAMILIARITY_THRESHOLD_MASTERY
         ]
 
@@ -270,7 +262,7 @@ class PlaybookFamiliarity:
                     "success_rate": data.success_rate,
                 }
                 for play_id, data in self.play_knowledge.items()
-            }
+            },
         }
 
 
@@ -282,26 +274,17 @@ class FamiliarityManager:
     """
 
     def __init__(self):
-        self._players: Dict[int, PlaybookFamiliarity] = {}
+        self._players: dict[int, PlaybookFamiliarity] = {}
 
-    def get_or_create(
-        self,
-        player_id: int,
-        experience_years: int = 0
-    ) -> PlaybookFamiliarity:
+    def get_or_create(self, player_id: int, experience_years: int = 0) -> PlaybookFamiliarity:
         """Get existing familiarity or create new instance."""
         if player_id not in self._players:
             self._players[player_id] = PlaybookFamiliarity(
-                player_id=player_id,
-                experience_years=experience_years
+                player_id=player_id, experience_years=experience_years
             )
         return self._players[player_id]
 
-    def calculate_team_execution_modifier(
-        self,
-        player_ids: list[int],
-        play_id: str
-    ) -> float:
+    def calculate_team_execution_modifier(self, player_ids: list[int], play_id: str) -> float:
         """
         Calculate average execution modifier for a group of players.
 
@@ -312,18 +295,14 @@ class FamiliarityManager:
             return 1.0
 
         total = sum(
-            self._players.get(pid, PlaybookFamiliarity(player_id=pid))
-            .calculate_execution_penalty(play_id)
+            self._players.get(pid, PlaybookFamiliarity(player_id=pid)).calculate_execution_penalty(
+                play_id
+            )
             for pid in player_ids
         )
         return total / len(player_ids)
 
-    def apply_learning_batch(
-        self,
-        player_ids: list[int],
-        play_id: str,
-        success: bool
-    ) -> None:
+    def apply_learning_batch(self, player_ids: list[int], play_id: str, success: bool) -> None:
         """Apply learning to multiple players after a play."""
         for pid in player_ids:
             if pid in self._players:

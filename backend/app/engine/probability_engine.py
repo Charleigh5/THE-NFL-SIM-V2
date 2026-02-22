@@ -1,15 +1,14 @@
-
-from typing import Optional
 from enum import Enum
-import math
 
 from app.core.gameplay_constants import GAMEPLAY
+
 
 class OutcomeType(Enum):
     CRITICAL_FAILURE = "critical_failure"
     FAILURE = "failure"
     SUCCESS = "success"
     CRITICAL_SUCCESS = "critical_success"
+
 
 class ProbabilityEngine:
     """
@@ -18,7 +17,9 @@ class ProbabilityEngine:
     """
 
     @staticmethod
-    def compare_attributes(attacker_val: int, defender_val: int, scale: float = 0.01, max_mod: float = 0.3) -> float:
+    def compare_attributes(
+        attacker_val: int, defender_val: int, scale: float = 0.01, max_mod: float = 0.3
+    ) -> float:
         """
         Generic attribute comparison.
         Returns a probability modifier (e.g., 0.10 for +10% chance).
@@ -38,7 +39,7 @@ class ProbabilityEngine:
         diff = attacker_speed - defender_speed
         return max(
             GAMEPLAY.attributes.SPEED_MIN_MOD,
-            min(GAMEPLAY.attributes.SPEED_MAX_MOD, diff * GAMEPLAY.attributes.SPEED_SCALE)
+            min(GAMEPLAY.attributes.SPEED_MAX_MOD, diff * GAMEPLAY.attributes.SPEED_SCALE),
         )
 
     @staticmethod
@@ -48,9 +49,10 @@ class ProbabilityEngine:
         Returns a value between -STRENGTH_MAX_MOD and +STRENGTH_MAX_MOD.
         """
         return ProbabilityEngine.compare_attributes(
-            attacker_str, defender_str,
+            attacker_str,
+            defender_str,
             scale=GAMEPLAY.attributes.STRENGTH_SCALE,
-            max_mod=GAMEPLAY.attributes.STRENGTH_MAX_MOD
+            max_mod=GAMEPLAY.attributes.STRENGTH_MAX_MOD,
         )
 
     @staticmethod
@@ -60,9 +62,10 @@ class ProbabilityEngine:
         Returns a value between -SKILL_MAX_MOD and +SKILL_MAX_MOD.
         """
         return ProbabilityEngine.compare_attributes(
-            attacker_skill, defender_skill,
+            attacker_skill,
+            defender_skill,
             scale=GAMEPLAY.attributes.SKILL_SCALE,
-            max_mod=GAMEPLAY.attributes.SKILL_MAX_MOD
+            max_mod=GAMEPLAY.attributes.SKILL_MAX_MOD,
         )
 
     @staticmethod
@@ -72,7 +75,7 @@ class ProbabilityEngine:
         context_modifiers: float = 0.0,
         fatigue_penalty: float = 0.0,
         min_chance: float = 0.05,
-        max_chance: float = 0.95
+        max_chance: float = 0.95,
     ) -> float:
         """
         Calculate final success probability.
@@ -88,7 +91,7 @@ class ProbabilityEngine:
         context: dict,  # Game context for conditional trait activation
         fatigue_penalty: float = 0.0,
         min_chance: float = 0.05,
-        max_chance: float = 0.95
+        max_chance: float = 0.95,
     ) -> tuple[float, list]:
         """
         Calculate success probability with trait modifiers applied.
@@ -162,7 +165,9 @@ class ProbabilityEngine:
         return rng.random() < probability
 
     @staticmethod
-    def resolve_tiered_outcome(rng, probability: float, critical_threshold: float = 0.10) -> OutcomeType:
+    def resolve_tiered_outcome(
+        rng, probability: float, critical_threshold: float = 0.10
+    ) -> OutcomeType:
         """
         Resolve an outcome into 4 tiers:
         - Critical Failure: Roll > Probability + (1 - Probability) * (1 - Critical Threshold)? No.
@@ -199,10 +204,7 @@ class ProbabilityEngine:
 
     @staticmethod
     def calculate_variable_outcome(
-        rng,
-        base_value: float,
-        variance: float,
-        modifiers: float = 0.0
+        rng, base_value: float, variance: float, modifiers: float = 0.0
     ) -> float:
         """
         Calculate a scalar outcome (e.g., yards gained) with uniform variance.
@@ -212,11 +214,7 @@ class ProbabilityEngine:
 
     @staticmethod
     def calculate_normal_outcome(
-        rng,
-        mean: float,
-        std_dev: float,
-        min_val: float = 0.0,
-        max_val: float = 100.0
+        rng, mean: float, std_dev: float, min_val: float = 0.0, max_val: float = 100.0
     ) -> float:
         """
         Calculate a scalar outcome using a normal distribution (bell curve).

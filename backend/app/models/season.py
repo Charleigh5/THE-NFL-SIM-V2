@@ -1,14 +1,19 @@
-from sqlalchemy import Column, Integer, String, Boolean, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 import enum
+
+from sqlalchemy import Boolean, Column, Integer
+from sqlalchemy import Enum as SQLEnum
+
+from app.models.base import Base
+
 
 class SeasonStatus(str, enum.Enum):
     """Enum for season status."""
+
     PRE_SEASON = "PRE_SEASON"
     REGULAR_SEASON = "REGULAR_SEASON"
     POST_SEASON = "POST_SEASON"
     OFF_SEASON = "OFF_SEASON"
+
 
 class Season(Base):
     """
@@ -17,6 +22,7 @@ class Season(Base):
     A season contains multiple weeks of games, tracks the current week,
     and manages the overall state of the season (preseason, regular, playoffs, offseason).
     """
+
     __tablename__ = "season"
 
     id = Column(Integer, primary_key=True, index=True)

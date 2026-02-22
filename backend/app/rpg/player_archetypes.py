@@ -15,46 +15,45 @@ Archetypes:
 7. The Workhorse (RB) - +Durability, +Carry volume
 """
 
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
-from pydantic import BaseModel, Field
 
 
 class PlayerArchetype(str, Enum):
     """7 core player archetypes."""
-    FIELD_GENERAL = "FIELD_GENERAL"   # QB: Cerebral leader
-    SORCERER = "SORCERER"              # QB: Magic arm, improviser
-    ALPHA_DOG = "ALPHA_DOG"            # WR/CB: Dominant competitor
-    WEAPON = "WEAPON"                  # RB/WR: Versatile threat
-    FREAK = "FREAK"                    # EDGE/LB: Physical marvel
-    TECHNICIAN = "TECHNICIAN"          # OL/DL: Precise craftsman
-    WORKHORSE = "WORKHORSE"            # RB: Iron man
+
+    FIELD_GENERAL = "FIELD_GENERAL"  # QB: Cerebral leader
+    SORCERER = "SORCERER"  # QB: Magic arm, improviser
+    ALPHA_DOG = "ALPHA_DOG"  # WR/CB: Dominant competitor
+    WEAPON = "WEAPON"  # RB/WR: Versatile threat
+    FREAK = "FREAK"  # EDGE/LB: Physical marvel
+    TECHNICIAN = "TECHNICIAN"  # OL/DL: Precise craftsman
+    WORKHORSE = "WORKHORSE"  # RB: Iron man
 
 
 @dataclass
 class ArchetypeDefinition:
     """Definition of an archetype with all its attributes."""
+
     name: str
     display_name: str
     description: str
     icon: str
-    primary_positions: List[str]
-    secondary_positions: List[str]
-    stat_bonuses: Dict[str, int]      # +/- to ratings
-    xp_bonuses: Dict[str, float]      # Multipliers for skill categories
-    special_abilities: List[str]
-    development_rate: float = 1.0     # Multiplier for XP gains
+    primary_positions: list[str]
+    secondary_positions: list[str]
+    stat_bonuses: dict[str, int]  # +/- to ratings
+    xp_bonuses: dict[str, float]  # Multipliers for skill categories
+    special_abilities: list[str]
+    development_rate: float = 1.0  # Multiplier for XP gains
     consistency_modifier: float = 0.0  # Variance in performance
-    durability_modifier: float = 0.0   # Injury resistance
+    durability_modifier: float = 0.0  # Injury resistance
 
 
 # =============================================================================
 # ARCHETYPE DEFINITIONS
 # =============================================================================
 
-ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
-
+ARCHETYPE_DEFINITIONS: dict[PlayerArchetype, ArchetypeDefinition] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeDefinition(
         name="FIELD_GENERAL",
         display_name="The Field General",
@@ -71,18 +70,17 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "throw_accuracy_mid": 3,
         },
         xp_bonuses={
-            "mental": 1.3,      # 30% faster mental skill development
+            "mental": 1.3,  # 30% faster mental skill development
             "accuracy": 1.15,
         },
         special_abilities=[
-            "pre_snap_read",        # Reveal defensive play call pre-snap
-            "protection_audible",   # Perfect protection adjustments
-            "morale_boost",         # Team morale +5 in 4th quarter
+            "pre_snap_read",  # Reveal defensive play call pre-snap
+            "protection_audible",  # Perfect protection adjustments
+            "morale_boost",  # Team morale +5 in 4th quarter
         ],
         development_rate=1.1,
         consistency_modifier=-0.15,  # More consistent performance
     ),
-
     PlayerArchetype.SORCERER: ArchetypeDefinition(
         name="SORCERER",
         display_name="The Sorcerer",
@@ -102,14 +100,13 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "playmaking": 1.25,
         },
         special_abilities=[
-            "no_look_pass",         # Occasional no-look throw for style points
-            "pocket_escape",        # +20% escape rate under pressure
-            "deep_ball_magician",   # +10yd on deep ball accuracy threshold
+            "no_look_pass",  # Occasional no-look throw for style points
+            "pocket_escape",  # +20% escape rate under pressure
+            "deep_ball_magician",  # +10yd on deep ball accuracy threshold
         ],
         development_rate=1.0,
-        consistency_modifier=0.2,    # More variance (boom or bust)
+        consistency_modifier=0.2,  # More variance (boom or bust)
     ),
-
     PlayerArchetype.ALPHA_DOG: ArchetypeDefinition(
         name="ALPHA_DOG",
         display_name="The Alpha Dog",
@@ -129,13 +126,12 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "catching": 1.2,
         },
         special_abilities=[
-            "demoralize",           # Lower opponent morale after big plays
-            "contested_catch_king", # +15% win rate on 50/50 balls
-            "alpha_swagger",        # Intimidate young players (awareness -3)
+            "demoralize",  # Lower opponent morale after big plays
+            "contested_catch_king",  # +15% win rate on 50/50 balls
+            "alpha_swagger",  # Intimidate young players (awareness -3)
         ],
         development_rate=1.05,
     ),
-
     PlayerArchetype.WEAPON: ArchetypeDefinition(
         name="WEAPON",
         display_name="The Weapon",
@@ -154,13 +150,12 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "rushing": 1.1,
         },
         special_abilities=[
-            "flex_position",        # Can play multiple positions in game
-            "mismatch_hunter",      # +5 ratings vs linebackers in coverage
-            "trick_play_master",    # +25% chance of trick play success
+            "flex_position",  # Can play multiple positions in game
+            "mismatch_hunter",  # +5 ratings vs linebackers in coverage
+            "trick_play_master",  # +25% chance of trick play success
         ],
         development_rate=1.15,
     ),
-
     PlayerArchetype.FREAK: ArchetypeDefinition(
         name="FREAK",
         display_name="The Freak",
@@ -176,17 +171,16 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "block_shedding": 5,
         },
         xp_bonuses={
-            "physical": 0.5,       # Physicals HARDER to improve (already elite)
-            "technique": 1.5,      # Technique improves much faster
+            "physical": 0.5,  # Physicals HARDER to improve (already elite)
+            "technique": 1.5,  # Technique improves much faster
         },
         special_abilities=[
-            "combine_warrior",      # Always win combine drills
-            "splash_play_threat",   # +15% chance for strip sack/pick 6
-            "wear_down",            # Late-game bonus as opponents tire
+            "combine_warrior",  # Always win combine drills
+            "splash_play_threat",  # +15% chance for strip sack/pick 6
+            "wear_down",  # Late-game bonus as opponents tire
         ],
-        development_rate=1.25,     # Fastest overall development
+        development_rate=1.25,  # Fastest overall development
     ),
-
     PlayerArchetype.TECHNICIAN: ArchetypeDefinition(
         name="TECHNICIAN",
         display_name="The Technician",
@@ -206,14 +200,13 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "technique": 1.3,
         },
         special_abilities=[
-            "zero_false_starts",    # Immune to crowd noise false starts
-            "perfect_set",          # First step always wins
-            "ironclad_hands",       # Holding penalty chance -50%
+            "zero_false_starts",  # Immune to crowd noise false starts
+            "perfect_set",  # First step always wins
+            "ironclad_hands",  # Holding penalty chance -50%
         ],
         development_rate=1.0,
         consistency_modifier=-0.25,  # Very consistent
     ),
-
     PlayerArchetype.WORKHORSE: ArchetypeDefinition(
         name="WORKHORSE",
         display_name="The Workhorse",
@@ -231,11 +224,11 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
             "durability": 1.5,
         },
         special_abilities=[
-            "heavy_load",           # No fumble rate increase from carries
+            "heavy_load",  # No fumble rate increase from carries
             "fourth_quarter_back",  # +3 all ratings in 4th quarter
-            "iron_legs",            # Injury chance -40%
+            "iron_legs",  # Injury chance -40%
         ],
-        development_rate=0.9,      # Slower development (physical style)
+        development_rate=0.9,  # Slower development (physical style)
         durability_modifier=-0.40,  # 40% less injury risk
     ),
 }
@@ -244,6 +237,7 @@ ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeDefinition] = {
 # =============================================================================
 # ARCHETYPE SERVICE
 # =============================================================================
+
 
 class ArchetypeService:
     """Service for managing player archetypes."""
@@ -258,9 +252,9 @@ class ArchetypeService:
     def detect_archetype(
         self,
         position: str,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         age: int,
-    ) -> Optional[PlayerArchetype]:
+    ) -> PlayerArchetype | None:
         """
         Detect which archetype best fits a player based on their ratings.
 
@@ -310,9 +304,9 @@ class ArchetypeService:
 
     def apply_archetype_bonuses(
         self,
-        base_ratings: Dict[str, int],
+        base_ratings: dict[str, int],
         archetype: PlayerArchetype,
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Apply archetype stat bonuses to base ratings.
 
@@ -364,11 +358,11 @@ class ArchetypeService:
 
     def can_evolve_archetype(
         self,
-        current_archetype: Optional[PlayerArchetype],
+        current_archetype: PlayerArchetype | None,
         position: str,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         years_in_league: int,
-    ) -> Optional[PlayerArchetype]:
+    ) -> PlayerArchetype | None:
         """
         Check if a player can evolve their archetype over their career.
 
@@ -398,7 +392,7 @@ class ArchetypeService:
     def get_all_archetypes_for_position(
         self,
         position: str,
-    ) -> List[Tuple[PlayerArchetype, ArchetypeDefinition]]:
+    ) -> list[tuple[PlayerArchetype, ArchetypeDefinition]]:
         """Get all archetypes available for a position."""
         result = []
         for archetype, definition in self.definitions.items():

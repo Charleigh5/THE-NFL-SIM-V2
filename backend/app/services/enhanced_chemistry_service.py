@@ -5,17 +5,18 @@ This service extends the existing PreGameService with sophisticated chemistry
 calculations, progressive bonuses, and advanced gameplay modifiers.
 """
 
-import math
 import hashlib
-from typing import Dict, List, Tuple, Optional, Any
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
-from app.models.player import Player
-from app.models.game import Game
-from app.models.stats import PlayerGameStart
-from app.services.depth_chart_service import DepthChartService
-from app.orchestrator.match_context import MatchContext
 import logging
+import math
+
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStart
+from app.orchestrator.match_context import MatchContext
+from app.services.depth_chart_service import DepthChartService
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +25,15 @@ class ChemistryMetadata:
     """
     Data class representing chemistry state for an OL unit.
     """
+
     def __init__(
         self,
         chemistry_level: float,
         consecutive_games: int,
-        player_ids: List[int],
-        position_map: Dict[str, int],
-        bonuses: Dict[str, float],
-        advanced_effects: Dict[str, float]
+        player_ids: list[int],
+        position_map: dict[str, int],
+        bonuses: dict[str, float],
+        advanced_effects: dict[str, float],
     ):
         self.chemistry_level = chemistry_level
         self.consecutive_games = consecutive_games
@@ -43,12 +45,10 @@ class ChemistryMetadata:
 
     def _calculate_lineup_hash(self) -> str:
         """Generate deterministic hash for current OL lineup"""
-        lineup_string = ",".join(
-            f"{pos}:{pid}" for pos, pid in sorted(self.position_map.items())
-        )
+        lineup_string = ",".join(f"{pos}:{pid}" for pos, pid in sorted(self.position_map.items()))
         return hashlib.md5(lineup_string.encode()).hexdigest()[:12]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Serialize for API response"""
         return {
             "chemistry_level": round(self.chemistry_level, 2),
@@ -58,7 +58,7 @@ class ChemistryMetadata:
             "position_map": self.position_map,
             "bonuses": self.bonuses,
             "advanced_effects": self.advanced_effects,
-            "status": self._get_status_label()
+            "status": self._get_status_label(),
         }
 
     def _get_status_label(self) -> str:
@@ -76,6 +76,7 @@ class ChemistryMetadata:
 
 
 from app.core.redis_cache import chemistry_cache
+
 
 class EnhancedChemistryService:
     """
@@ -115,9 +116,9 @@ class EnhancedChemistryService:
             return 1.0
 
         # Normalize to 0.0-1.0 range between threshold and max
-        normalized = (
-            (consecutive_games - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES) /
-            (EnhancedChemistryService.CHEMISTRY_MAX_GAMES - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES)
+        normalized = (consecutive_games - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES) / (
+            EnhancedChemistryService.CHEMISTRY_MAX_GAMES
+            - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES
         )
 
         # Logarithmic curve: fast growth early, slower later
@@ -126,7 +127,7 @@ class EnhancedChemistryService:
 
         return min(1.0, chemistry_level)
 
-    def calculate_scaled_bonuses(self, chemistry_level: float) -> Dict[str, float]:
+    def calculate_scaled_bonuses(self, chemistry_level: float) -> dict[str, float]:
         """
         Calculate attribute bonuses based on chemistry level.
 
@@ -141,10 +142,10 @@ class EnhancedChemistryService:
         return {
             "pass_block": chemistry_level * base_multiplier,
             "run_block": chemistry_level * base_multiplier,
-            "awareness": chemistry_level * base_multiplier
+            "awareness": chemistry_level * base_multiplier,
         }
 
-    def calculate_advanced_effects(self, chemistry_level: float) -> Dict[str, float]:
+    def calculate_advanced_effects(self, chemistry_level: float) -> dict[str, float]:
         """
         Calculate advanced gameplay effects based on chemistry level.
 
@@ -156,9 +157,9 @@ class EnhancedChemistryService:
         """
         return {
             "stunt_pickup_bonus": chemistry_level * 0.25,  # Up to +25% stunt recognition
-            "penalty_reduction": chemistry_level * 0.20,   # Up to -20% penalties
+            "penalty_reduction": chemistry_level * 0.20,  # Up to -20% penalties
             "communication_boost": chemistry_level * 10.0,  # Up to +10 communication
-            "blitz_pickup_improvement": chemistry_level * 0.30  # Up to +30% blitz pickup
+            "blitz_pickup_improvement": chemistry_level * 0.30,  # Up to +30% blitz pickup
         }
 
     # ========================================================================
@@ -168,9 +169,9 @@ class EnhancedChemistryService:
     async def get_team_chemistry_metadata(
         self,
         team_id: int,
-        current_starters: Dict[str, int],
-        season_id: int = 2025, # Default for now
-        week: int = 1 # Default for now
+        current_starters: dict[str, int],
+        season_id: int = 2025,  # Default for now
+        week: int = 1,  # Default for now
     ) -> ChemistryMetadata:
         """
         Analyze team's OL chemistry based on historical starts.
@@ -187,27 +188,22 @@ class EnhancedChemistryService:
         """
         # TRY CACHE FIRST
         cached = await chemistry_cache.get(
-            team_id=team_id,
-            season_id=season_id,
-            week=week,
-            lineup=current_starters
+            team_id=team_id, season_id=season_id, week=week, lineup=current_starters
         )
 
         if cached:
             # Cache hit! Reconstruct metadata from cached data
             return ChemistryMetadata(
-                chemistry_level=cached['chemistry_level'],
-                consecutive_games=cached['consecutive_games'],
-                player_ids=cached['player_ids'],
-                position_map=cached['position_map'],
-                bonuses=cached['bonuses'],
-                advanced_effects=cached['advanced_effects']
+                chemistry_level=cached["chemistry_level"],
+                consecutive_games=cached["consecutive_games"],
+                player_ids=cached["player_ids"],
+                position_map=cached["position_map"],
+                bonuses=cached["bonuses"],
+                advanced_effects=cached["advanced_effects"],
             )
 
         # Cache miss - calculate using optimized query
-        metadata = await self.get_team_chemistry_metadata_optimized(
-            team_id, current_starters
-        )
+        metadata = await self.get_team_chemistry_metadata_optimized(team_id, current_starters)
 
         # Store in cache for next time
         await chemistry_cache.set(
@@ -215,15 +211,13 @@ class EnhancedChemistryService:
             season_id=season_id,
             week=week,
             lineup=current_starters,
-            metadata=metadata.to_dict()
+            metadata=metadata.to_dict(),
         )
 
         return metadata
 
     async def get_team_chemistry_metadata_optimized(
-        self,
-        team_id: int,
-        current_starters: Dict[str, int]
+        self, team_id: int, current_starters: dict[str, int]
     ) -> ChemistryMetadata:
         """
         OPTIMIZED: Single-query chemistry calculation.
@@ -245,7 +239,7 @@ class EnhancedChemistryService:
                 (Game.home_team_id == team_id) | (Game.away_team_id == team_id),
                 Game.is_played == True,
                 PlayerGameStart.team_id == team_id,
-                PlayerGameStart.position.in_(self.OL_POSITIONS)
+                PlayerGameStart.position.in_(self.OL_POSITIONS),
             )
             .order_by(desc(Game.season), desc(Game.week))
             .limit(self.CHEMISTRY_MAX_GAMES * 5)  # 10 games × 5 positions
@@ -292,14 +286,10 @@ class EnhancedChemistryService:
             player_ids=list(current_starters.values()),
             position_map=current_starters,
             bonuses=bonuses,
-            advanced_effects=advanced_effects
+            advanced_effects=advanced_effects,
         )
 
-    def _lineups_match(
-        self,
-        lineup_a: Dict[str, int],
-        lineup_b: Dict[str, int]
-    ) -> bool:
+    def _lineups_match(self, lineup_a: dict[str, int], lineup_b: dict[str, int]) -> bool:
         """Check if two OL lineups are identical"""
         if len(lineup_a) != len(lineup_b):
             return False
@@ -322,8 +312,8 @@ class EnhancedChemistryService:
                 "stunt_pickup_bonus": 0.0,
                 "penalty_reduction": 0.0,
                 "communication_boost": 0.0,
-                "blitz_pickup_improvement": 0.0
-            }
+                "blitz_pickup_improvement": 0.0,
+            },
         )
 
     # ========================================================================
@@ -331,9 +321,8 @@ class EnhancedChemistryService:
     # ========================================================================
 
     async def apply_chemistry_to_match_context(
-        self,
-        match_context: MatchContext
-    ) -> Tuple[Optional[ChemistryMetadata], Optional[ChemistryMetadata]]:
+        self, match_context: MatchContext
+    ) -> tuple[ChemistryMetadata | None, ChemistryMetadata | None]:
         """
         Apply chemistry bonuses to both teams in match context.
 
@@ -344,13 +333,11 @@ class EnhancedChemistryService:
             Tuple of (home_chemistry, away_chemistry) metadata
         """
         home_chemistry = await self._apply_team_chemistry(
-            match_context.home_team_id,
-            match_context.home_roster
+            match_context.home_team_id, match_context.home_roster
         )
 
         away_chemistry = await self._apply_team_chemistry(
-            match_context.away_team_id,
-            match_context.away_roster
+            match_context.away_team_id, match_context.away_roster
         )
 
         # Store metadata in match context for PlayResolver access
@@ -360,10 +347,8 @@ class EnhancedChemistryService:
         return home_chemistry, away_chemistry
 
     async def _apply_team_chemistry(
-        self,
-        team_id: int,
-        roster: Dict[int, Player]
-    ) -> Optional[ChemistryMetadata]:
+        self, team_id: int, roster: dict[int, Player]
+    ) -> ChemistryMetadata | None:
         """Apply chemistry bonuses to one team"""
         roster_list = list(roster.values())
 
@@ -388,8 +373,8 @@ class EnhancedChemistryService:
                 extra={
                     "chemistry_level": chemistry.chemistry_level,
                     "consecutive_games": chemistry.consecutive_games,
-                    "bonuses": chemistry.bonuses
-                }
+                    "bonuses": chemistry.bonuses,
+                },
             )
 
             # Apply bonuses to players
@@ -401,9 +386,7 @@ class EnhancedChemistryService:
 
                     # Apply scaled bonuses
                     for attr, bonus in chemistry.bonuses.items():
-                        player.active_modifiers[attr] = (
-                            player.active_modifiers.get(attr, 0) + bonus
-                        )
+                        player.active_modifiers[attr] = player.active_modifiers.get(attr, 0) + bonus
 
                     # Store advanced effects metadata
                     if not hasattr(player, "chemistry_effects"):

@@ -28,10 +28,10 @@ import logging
 import logging.handlers
 import sys
 import uuid
+from collections.abc import Callable
 from contextvars import ContextVar
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from structlog.types import EventDict, WrappedLogger
@@ -63,6 +63,7 @@ DEFAULT_BACKUP_COUNT = 5
 # ERROR CATEGORIES
 # ==============================================================================
 
+
 class ErrorCategory:
     """
     Standardized error categories for consistent error classification.
@@ -70,6 +71,7 @@ class ErrorCategory:
     Use these categories when logging errors to enable easy filtering
     and aggregation in log management systems.
     """
+
     # Game Engine Errors
     CHEMISTRY_ERROR = "CHEMISTRY_ERROR"
     SACK_CALC_ERROR = "SACK_CALC_ERROR"
@@ -97,10 +99,9 @@ class ErrorCategory:
 # PROCESSORS
 # ==============================================================================
 
+
 def add_request_context(
-    logger: WrappedLogger,
-    method_name: str,
-    event_dict: EventDict
+    logger: WrappedLogger, method_name: str, event_dict: EventDict
 ) -> EventDict:
     """
     Add request context from contextvars to log events.
@@ -127,9 +128,7 @@ def add_request_context(
 
 
 def add_service_context(
-    logger: WrappedLogger,
-    method_name: str,
-    event_dict: EventDict
+    logger: WrappedLogger, method_name: str, event_dict: EventDict
 ) -> EventDict:
     """Add service metadata to log events."""
     event_dict["service"] = "nfl-sim-engine"
@@ -140,14 +139,11 @@ def add_service_context(
 def _get_environment() -> str:
     """Get the current environment from environment variables."""
     import os
+
     return os.getenv("ENVIRONMENT", os.getenv("ENV", "development"))
 
 
-def format_exception(
-    logger: WrappedLogger,
-    method_name: str,
-    event_dict: EventDict
-) -> EventDict:
+def format_exception(logger: WrappedLogger, method_name: str, event_dict: EventDict) -> EventDict:
     """
     Format exceptions for structured logging.
 
@@ -167,10 +163,11 @@ def format_exception(
 
         if exc_type is not None:
             import traceback
+
             event_dict["exception"] = {
                 "type": exc_type.__name__,
                 "message": str(exc_value),
-                "traceback": "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+                "traceback": "".join(traceback.format_exception(exc_type, exc_value, exc_tb)),
             }
 
     return event_dict
@@ -179,6 +176,7 @@ def format_exception(
 # ==============================================================================
 # CONFIGURATION FUNCTIONS
 # ==============================================================================
+
 
 def configure_logging(
     log_level: str = DEFAULT_LOG_LEVEL,
@@ -225,10 +223,7 @@ def configure_logging(
     if log_file:
         log_path = LOGS_DIR / log_file
         file_handler = logging.handlers.RotatingFileHandler(
-            log_path,
-            maxBytes=max_bytes,
-            backupCount=backup_count,
-            encoding="utf-8"
+            log_path, maxBytes=max_bytes, backupCount=backup_count, encoding="utf-8"
         )
         file_handler.setLevel(logging.DEBUG)  # Log everything to file
         handlers.append(file_handler)
@@ -238,7 +233,7 @@ def configure_logging(
         level=getattr(logging, log_level.upper()),
         handlers=handlers,
         format="%(message)s",
-        force=True  # Override any existing configuration
+        force=True,  # Override any existing configuration
     )
 
     # Disable noisy third-party loggers
@@ -263,20 +258,19 @@ def configure_logging(
     else:
         # Development: Pretty console output with structlog's built-in exception handling
         # Note: Don't use format_exception here - it conflicts with dev.set_exc_info
-        shared_processors.extend([
-            structlog.dev.set_exc_info,
-            structlog.dev.ConsoleRenderer(
-                colors=True,
-                exception_formatter=structlog.dev.rich_traceback
-            )
-        ])
+        shared_processors.extend(
+            [
+                structlog.dev.set_exc_info,
+                structlog.dev.ConsoleRenderer(
+                    colors=True, exception_formatter=structlog.dev.rich_traceback
+                ),
+            ]
+        )
 
     # Configure structlog
     structlog.configure(
         processors=shared_processors,
-        wrapper_class=structlog.make_filtering_bound_logger(
-            getattr(logging, log_level.upper())
-        ),
+        wrapper_class=structlog.make_filtering_bound_logger(getattr(logging, log_level.upper())),
         context_class=dict,
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=True,
@@ -303,6 +297,7 @@ def get_logger(name: str) -> structlog.BoundLogger:
 # ==============================================================================
 # FASTAPI MIDDLEWARE
 # ==============================================================================
+
 
 def create_logging_middleware() -> Callable:
     """
@@ -385,12 +380,13 @@ def create_logging_middleware() -> Callable:
 # HELPER FUNCTIONS
 # ==============================================================================
 
+
 def log_error(
     logger: structlog.BoundLogger,
     category: str,
     message: str,
     exc_info: bool | BaseException = True,
-    **context: Any
+    **context: Any,
 ) -> None:
     """
     Log an error with standardized category and context.
@@ -409,12 +405,7 @@ def log_error(
         ...     log_error(logger, ErrorCategory.CHEMISTRY_ERROR,
         ...               "Failed to calculate chemistry", exc_info=e, team_id=team_id)
     """
-    logger.error(
-        message,
-        error_category=category,
-        exc_info=exc_info,
-        **context
-    )
+    logger.error(message, error_category=category, exc_info=exc_info, **context)
 
 
 def set_user_context(user_id: str | None, session_id: str | None = None) -> None:

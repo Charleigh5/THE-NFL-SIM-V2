@@ -1,20 +1,23 @@
-from typing import Dict, Any, List
+from typing import Any
+
 from app.kernels.genesis.bio_metrics import AnatomyModel, FatigueRegulator
+
 
 class GenesisKernel:
     """
     Facade for the Genesis (Biological/Injury) Engine.
     Manages player health, fatigue, and injury risks.
     """
+
     def __init__(self) -> None:
         # In a real system, this would load from a DB or state manager
-        self.player_states: Dict[int, Dict[str, Any]] = {}
+        self.player_states: dict[int, dict[str, Any]] = {}
 
-    def register_player(self, player_id: int, profile_data: Dict[str, Any]) -> None:
+    def register_player(self, player_id: int, profile_data: dict[str, Any]) -> None:
         """Initialize biological components for a player."""
         self.player_states[player_id] = {
             "anatomy": AnatomyModel(**profile_data.get("anatomy", {})),
-            "fatigue": FatigueRegulator(**profile_data.get("fatigue", {}))
+            "fatigue": FatigueRegulator(**profile_data.get("fatigue", {})),
         }
 
     def calculate_fatigue(self, player_id: int, exertion: float, temperature: float) -> float:
@@ -40,7 +43,9 @@ class GenesisKernel:
         state = self.player_states[player_id]["fatigue"]
         return state.lactic_acid
 
-    def check_injury_risk(self, player_id: int, impact_force: float, body_part: str) -> Dict[str, Any]:
+    def check_injury_risk(
+        self, player_id: int, impact_force: float, body_part: str
+    ) -> dict[str, Any]:
         """
         Evaluate injury risk based on impact.
         Returns: Dict with 'is_injured', 'injury_type', 'severity'
@@ -52,11 +57,7 @@ class GenesisKernel:
         state.apply_stress(impact_force, body_part)
 
         if state.current_health < 80.0:
-             return {
-                 "is_injured": True,
-                 "injury_type": "Ligament Sprain",
-                 "severity": "Low"
-             }
+            return {"is_injured": True, "injury_type": "Ligament Sprain", "severity": "Low"}
         return {"is_injured": False}
 
     def update_fatigue(self, player_id: int, delta: float) -> None:

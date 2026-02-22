@@ -11,16 +11,16 @@ Phase 7: Training & Development
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CoachRole(str, Enum):
     """Coaching staff roles."""
+
     HEAD_COACH = "HEAD_COACH"
     OFFENSIVE_COORD = "OFFENSIVE_COORD"
     DEFENSIVE_COORD = "DEFENSIVE_COORD"
@@ -30,6 +30,7 @@ class CoachRole(str, Enum):
 
 class SkillCategory(str, Enum):
     """Category of coaching skills."""
+
     OFFENSE = "OFFENSE"
     DEFENSE = "DEFENSE"
     TEAM_MANAGEMENT = "TEAM_MANAGEMENT"
@@ -41,9 +42,11 @@ class SkillCategory(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class CoachSkill:
     """A specific unlockable skill."""
+
     id: str
     name: str
     category: SkillCategory
@@ -61,21 +64,23 @@ class CoachSkill:
 @dataclass
 class CoachState:
     """Coach's career state."""
+
     coach_id: str
     role: CoachRole
     level: int = 1
     xp: int = 0
     xp_to_next: int = 1000
     points_available: int = 0
-    skills: Dict[str, CoachSkill] = field(default_factory=dict)
+    skills: dict[str, CoachSkill] = field(default_factory=dict)
 
     # Track specialty
-    archetype: str = "Standard" # e.g. "QB Guru"
+    archetype: str = "Standard"  # e.g. "QB Guru"
 
 
 # ============================================================================
 # COACHING ENGINE
 # ============================================================================
+
 
 class CoachingEngine:
     """
@@ -91,27 +96,27 @@ class CoachingEngine:
             "QB_WHISPERER": {
                 "name": "QB Whisperer",
                 "category": SkillCategory.OFFENSE,
-                "desc": "Increases QB XP gain in training."
+                "desc": "Increases QB XP gain in training.",
             },
             "TRENCH_WARFARE": {
                 "name": "Trench Warfare",
                 "category": SkillCategory.OFFENSE,
-                "desc": "Boosts OL/DL blocking/shedding."
+                "desc": "Boosts OL/DL blocking/shedding.",
             },
             "SECONDARY_GURU": {
                 "name": "Secondary Guru",
                 "category": SkillCategory.DEFENSE,
-                "desc": "Increases DB coverage ratings."
+                "desc": "Increases DB coverage ratings.",
             },
             "SCOUTING_EYE": {
                 "name": "Eagle Eye",
                 "category": SkillCategory.SCOUTING,
-                "desc": "Unlocks 50% more scouting info."
+                "desc": "Unlocks 50% more scouting info.",
             },
             "MASTER_MOTIVATOR": {
                 "name": "Master Motivator",
                 "category": SkillCategory.TEAM_MANAGEMENT,
-                "desc": "Reduces morale penalties from losses."
+                "desc": "Reduces morale penalties from losses.",
             },
         }
 
@@ -125,7 +130,7 @@ class CoachingEngine:
                 name=data["name"],
                 category=data["category"],
                 max_rank=3,
-                description=data["desc"]
+                description=data["desc"],
             )
         return coach
 
@@ -162,7 +167,7 @@ class CoachingEngine:
         coach.points_available -= 1
         return True
 
-    def get_staff_bonuses(self, staff: List[CoachState]) -> Dict[str, float]:
+    def get_staff_bonuses(self, staff: list[CoachState]) -> dict[str, float]:
         """
         Aggregate bonuses from entire coaching staff.
 

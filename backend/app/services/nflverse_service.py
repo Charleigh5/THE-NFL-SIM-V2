@@ -4,13 +4,15 @@ NFL Verse Data Service
 Bridge between nflreadpy library and THE NFL SIM's Player model.
 Fetches real-world NFL data and converts it to our internal formats.
 """
+
 import logging
-from typing import Optional, Dict, Any, List
 from datetime import date
+from typing import Any
 
 try:
     import nflreadpy as nfl
     import polars as pl
+
     HAS_NFLREADPY = True
 except ImportError:
     HAS_NFLREADPY = False
@@ -22,8 +24,8 @@ logger = logging.getLogger(__name__)
 TEAM_ABBR_MAP = {
     "JAX": "JAC",  # Jacksonville
     "WSH": "WAS",  # Washington
-    "LA": "LAR",   # LA Rams
-    "LV": "LVR",   # Las Vegas (sometimes abbreviated differently)
+    "LA": "LAR",  # LA Rams
+    "LV": "LVR",  # Las Vegas (sometimes abbreviated differently)
 }
 
 
@@ -69,7 +71,7 @@ def map_position(nfl_position: str) -> str:
     return POSITION_MAP.get(nfl_position, nfl_position)
 
 
-def calculate_age(birth_date_str: Optional[str]) -> int:
+def calculate_age(birth_date_str: str | None) -> int:
     """Calculate age from birth date string (YYYY-MM-DD format)."""
     if not birth_date_str:
         return 25  # Default age
@@ -92,16 +94,15 @@ class NflverseService:
     def __init__(self, season: int = 2024):
         if not HAS_NFLREADPY:
             raise ImportError(
-                "nflreadpy and polars are required. "
-                "Install with: pip install nflreadpy polars"
+                "nflreadpy and polars are required. Install with: pip install nflreadpy polars"
             )
         self.season = season
-        self._rosters_cache: Optional[pl.DataFrame] = None
-        self._nextgen_cache: Optional[pl.DataFrame] = None
-        self._combine_cache: Optional[pl.DataFrame] = None
-        self._ftn_cache: Optional[pl.DataFrame] = None
-        self._contracts_cache: Optional[pl.DataFrame] = None
-        self._player_stats_cache: Optional[pl.DataFrame] = None
+        self._rosters_cache: pl.DataFrame | None = None
+        self._nextgen_cache: pl.DataFrame | None = None
+        self._combine_cache: pl.DataFrame | None = None
+        self._ftn_cache: pl.DataFrame | None = None
+        self._contracts_cache: pl.DataFrame | None = None
+        self._player_stats_cache: pl.DataFrame | None = None
 
     def import_rosters(self) -> pl.DataFrame:
         """
@@ -219,7 +220,7 @@ class NflverseService:
             logger.warning(f"Could not load contracts: {e}")
             return pl.DataFrame()
 
-    def get_player_data(self, gsis_id: str) -> Optional[Dict[str, Any]]:
+    def get_player_data(self, gsis_id: str) -> dict[str, Any] | None:
         """
         Get all available data for a specific player by GSIS ID.
 
@@ -250,7 +251,7 @@ class NflverseService:
         # NOTE: This method is less efficient than get_all_active_players for bulk ops
         return player_dict
 
-    def get_all_active_players(self) -> List[Dict[str, Any]]:
+    def get_all_active_players(self) -> list[dict[str, Any]]:
         """
         Get all active players from the roster with normalized data,
         enriched with Contracts, Next Gen Stats, and Player Stats.
@@ -261,7 +262,9 @@ class NflverseService:
         rosters = self.import_rosters()
         contract_df = self.import_contracts()
         combine_df = self.import_combine_data()
-        ngs_df = self.import_nextgen_stats()  # Caution: NGS data is player-season based, mostly for QBs/RBs/Rec
+        ngs_df = (
+            self.import_nextgen_stats()
+        )  # Caution: NGS data is player-season based, mostly for QBs/RBs/Rec
         stats_df = self.import_player_stats()
 
         if rosters.is_empty():
@@ -274,11 +277,9 @@ class NflverseService:
             try:
                 # Filter for active contracts where possible or just take latest
                 # Simplified: group by gsis_id, take last (latest contract)
-               contracts_map = {
-                   r['gsis_id']: r
-                   for r in contract_df.to_dicts()
-                   if r.get('gsis_id')
-               }
+                contracts_map = {
+                    r["gsis_id"]: r for r in contract_df.to_dicts() if r.get("gsis_id")
+                }
             except Exception as e:
                 logger.warning(f"Error Mapping contracts: {e}")
 
@@ -286,11 +287,7 @@ class NflverseService:
         combine_map = {}
         if not combine_df.is_empty():
             try:
-                 combine_map = {
-                   r['gsis_id']: r
-                   for r in combine_df.to_dicts()
-                   if r.get('gsis_id')
-               }
+                combine_map = {r["gsis_id"]: r for r in combine_df.to_dicts() if r.get("gsis_id")}
             except Exception:
                 pass
 
@@ -300,32 +297,28 @@ class NflverseService:
         # OR we need to join on names. nflreadpy documentation says NGS has 'player_gsis_id'.
         ngs_map = {}
         if not ngs_df.is_empty():
-             # NGS might have multiple rows per player? No, load_nextgen_stats returns season aggregates usually?
-             # Actually load_nextgen_stats returns WEEKLY data. We need to aggregate it.
-             # Or just use the season totals if available? Pffft.
-             # Let's aggregate CPOE, avg_separation, etc. by taking the mean.
-             try:
-                 # Group by player_gsis_id (if exists) or player_display_name?
-                 # Let's check columns... usually has 'player_gsis_id'.
-                 # Aggregating...
-                 cols_to_mean = [c for c in ngs_df.columns if c not in ['player_gsis_id', 'season', 'week']]
-                 ngs_agg = ngs_df.group_by("player_gsis_id").mean()
-                 ngs_map = {
-                     r['player_gsis_id']: r
-                     for r in ngs_agg.to_dicts()
-                     if r.get('player_gsis_id')
-                 }
-             except Exception as e:
-                 logger.warning(f"Error aggregating NGS: {e}")
+            # NGS might have multiple rows per player? No, load_nextgen_stats returns season aggregates usually?
+            # Actually load_nextgen_stats returns WEEKLY data. We need to aggregate it.
+            # Or just use the season totals if available? Pffft.
+            # Let's aggregate CPOE, avg_separation, etc. by taking the mean.
+            try:
+                # Group by player_gsis_id (if exists) or player_display_name?
+                # Let's check columns... usually has 'player_gsis_id'.
+                # Aggregating...
+                cols_to_mean = [
+                    c for c in ngs_df.columns if c not in ["player_gsis_id", "season", "week"]
+                ]
+                ngs_agg = ngs_df.group_by("player_gsis_id").mean()
+                ngs_map = {
+                    r["player_gsis_id"]: r for r in ngs_agg.to_dicts() if r.get("player_gsis_id")
+                }
+            except Exception as e:
+                logger.warning(f"Error aggregating NGS: {e}")
 
         stats_map = {}
         if not stats_df.is_empty():
             try:
-                stats_map = {
-                    r['player_id']: r
-                    for r in stats_df.to_dicts()
-                    if r.get('player_id')
-                }
+                stats_map = {r["player_id"]: r for r in stats_df.to_dicts() if r.get("player_id")}
             except Exception:
                 pass
 
@@ -358,7 +351,9 @@ class NflverseService:
                 c_data = contracts_map[gsis_id]
                 player["contract_years"] = int(c_data.get("years", 1)) if c_data.get("years") else 1
                 # APY is in float, convert to int
-                player["contract_salary"] = int(c_data.get("apy", 1000000)) if c_data.get("apy") else 1000000
+                player["contract_salary"] = (
+                    int(c_data.get("apy", 1000000)) if c_data.get("apy") else 1000000
+                )
 
             # Pack Stats for Ratings Generator
             player["ngs"] = ngs_map.get(gsis_id, {})

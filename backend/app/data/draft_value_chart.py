@@ -1,6 +1,5 @@
-from typing import Dict, Tuple, Optional
-from datetime import datetime
 from app.core.trade_config import trade_config
+
 
 class DraftValueChart:
     """
@@ -13,25 +12,51 @@ class DraftValueChart:
     # Key anchor points for the 2024 Fitzgerald-Spielberger chart
     # We interpolate between these points for full coverage
     _ANCHOR_VALUES = {
-        1: 3000, 2: 2649, 3: 2443, 4: 2297, 5: 2184,
-        6: 2091, 7: 2011, 8: 1941, 9: 1878, 10: 1821,
-        11: 1769, 12: 1721, 16: 1595, 20: 1492, 24: 1403, 32: 1244,
+        1: 3000,
+        2: 2649,
+        3: 2443,
+        4: 2297,
+        5: 2184,
+        6: 2091,
+        7: 2011,
+        8: 1941,
+        9: 1878,
+        10: 1821,
+        11: 1769,
+        12: 1721,
+        16: 1595,
+        20: 1492,
+        24: 1403,
+        32: 1244,
         # Round 2
-        33: 1234, 48: 1047, 64: 895,
+        33: 1234,
+        48: 1047,
+        64: 895,
         # Round 3
-        65: 885, 80: 765, 96: 668,
+        65: 885,
+        80: 765,
+        96: 668,
         # Round 4
-        97: 661, 112: 580, 128: 510,
+        97: 661,
+        112: 580,
+        128: 510,
         # Round 5
-        129: 506, 144: 437, 160: 380,
+        129: 506,
+        144: 437,
+        160: 380,
         # Round 6
-        161: 377, 176: 317, 192: 268,
+        161: 377,
+        176: 317,
+        192: 268,
         # Round 7
-        193: 264, 208: 218, 224: 177, 256: 100
+        193: 264,
+        208: 218,
+        224: 177,
+        256: 100,
     }
 
     # Cache for interpolated values
-    _FULL_CHART: Dict[int, int] = {}
+    _FULL_CHART: dict[int, int] = {}
 
     @classmethod
     def _initialize_chart(cls):
@@ -43,7 +68,7 @@ class DraftValueChart:
 
         for i in range(len(sorted_picks) - 1):
             start_pick = sorted_picks[i]
-            end_pick = sorted_picks[i+1]
+            end_pick = sorted_picks[i + 1]
             start_val = cls._ANCHOR_VALUES[start_pick]
             end_val = cls._ANCHOR_VALUES[end_pick]
 
@@ -82,7 +107,9 @@ class DraftValueChart:
         return base_value
 
     @classmethod
-    def get_future_pick_value(cls, round_num: int, years_in_future: int, team_standing_rank: int = 16) -> int:
+    def get_future_pick_value(
+        cls, round_num: int, years_in_future: int, team_standing_rank: int = 16
+    ) -> int:
         """
         Calculate value for a future draft pick.
 
@@ -94,10 +121,12 @@ class DraftValueChart:
         """
         # Rule: Restrict trading > 3 years out
         if years_in_future > trade_config.MAX_FUTURE_PICK_YEARS:
-             raise ValueError(f"Cannot value picks more than {trade_config.MAX_FUTURE_PICK_YEARS} years out.")
+            raise ValueError(
+                f"Cannot value picks more than {trade_config.MAX_FUTURE_PICK_YEARS} years out."
+            )
 
         if years_in_future < 0:
-             years_in_future = 0
+            years_in_future = 0
 
         # Effective round calculation (The "One Round Per Year" Rule)
         # e.g. A 2026 1st (1 year out) ~= 2025 2nd
@@ -118,7 +147,7 @@ class DraftValueChart:
 
         effective_round = round_num + years_in_future
         if effective_round > 7:
-            return 15 # Minimal value for distant late picks
+            return 15  # Minimal value for distant late picks
 
         # Get base value for mid-round pick of that effective round
         # Est. Pick # = ((Round-1) * 32) + 16
@@ -131,4 +160,3 @@ class DraftValueChart:
     def validate_trade_eligibility(pick_year: int, current_year: int = 2025) -> bool:
         """Validates if a pick is within the allowed trading window."""
         return (pick_year - current_year) <= trade_config.MAX_FUTURE_PICK_YEARS
-

@@ -1,8 +1,9 @@
-from typing import Optional, Dict, Any, Tuple
-import time
-import logging
 import json
+import logging
 import os
+import time
+from typing import Any
+
 try:
     import redis
 except ImportError:
@@ -10,17 +11,18 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 class MCPCache:
     """
     Hybrid cache for MCP responses using Redis with in-memory fallback.
     """
 
     def __init__(self):
-        self.memory_cache: Dict[str, Tuple[Any, float]] = {}
+        self.memory_cache: dict[str, tuple[Any, float]] = {}
         self.ttl_config = {
             "league_averages": 3600,  # 1 hour
-            "player_news": 900,       # 15 minutes
-            "weather": 1800,          # 30 minutes
+            "player_news": 900,  # 15 minutes
+            "weather": 1800,  # 30 minutes
         }
 
         self.redis_client = None
@@ -35,7 +37,7 @@ class MCPCache:
                 logger.warning(f"Redis connection failed, using in-memory cache: {e}")
                 self.redis_client = None
 
-    def get(self, key: str, cache_type: str) -> Optional[Any]:
+    def get(self, key: str, cache_type: str) -> Any | None:
         """
         Retrieve item from cache if it exists and hasn't expired.
         """
@@ -52,7 +54,7 @@ class MCPCache:
         # Fallback to memory
         if key in self.memory_cache:
             data, timestamp = self.memory_cache[key]
-            ttl = self.ttl_config.get(cache_type, 600) # Default 10 mins
+            ttl = self.ttl_config.get(cache_type, 600)  # Default 10 mins
 
             if time.time() - timestamp < ttl:
                 logger.debug(f"MCP Memory Cache HIT: {key}")
@@ -89,6 +91,7 @@ class MCPCache:
             except Exception as e:
                 logger.error(f"Redis clear error: {e}")
         self.memory_cache.clear()
+
 
 # Global cache instance
 mcp_cache = MCPCache()

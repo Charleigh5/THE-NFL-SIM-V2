@@ -1,19 +1,20 @@
-from sqlalchemy.orm import Session
-from app.models.season import Season, SeasonStatus
-from app.models.team import Team
-from app.models.player import Player, DevelopmentTrait
-from app.models.coach import Coach
-from app.models.draft import DraftPick
-from app.models.playoff import PlayoffMatchup, PlayoffRound
-from app.services.standings_calculator import StandingsCalculator
-from app.services.rookie_generator import RookieGenerator
 import random
-from typing import List, Optional
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult
-from app.models.hall_of_fame import HallOfFame
-from app.models.stats import PlayerGameStats
+
 from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
 from app.core.random_utils import DeterministicRNG
+from app.models.draft import DraftPick
+from app.models.hall_of_fame import HallOfFame
+from app.models.player import DevelopmentTrait, Player
+from app.models.playoff import PlayoffMatchup, PlayoffRound
+from app.models.season import Season, SeasonStatus
+from app.models.stats import PlayerGameStats
+from app.models.team import Team
+from app.schemas.offseason import DraftPickSummary, PlayerProgressionResult, Prospect, TeamNeed
+from app.services.rookie_generator import RookieGenerator
+from app.services.standings_calculator import StandingsCalculator
+
 
 class OffseasonService:
     def __init__(self, db: Session, seed: int = None):
@@ -49,13 +50,15 @@ class OffseasonService:
             await self.rookie_generator.generate_draft_class(season_id)
 
             self.db.commit()
-            return {"message": "Offseason started. Contracts processed, Draft order set, Rookies generated."}
+            return {
+                "message": "Offseason started. Contracts processed, Draft order set, Rookies generated."
+            }
         except Exception as e:
             print(f"Error starting offseason: {e}")
             self.db.rollback()
             raise e
 
-    def simulate_player_progression(self, season_id: int) -> List[PlayerProgressionResult]:
+    def simulate_player_progression(self, season_id: int) -> list[PlayerProgressionResult]:
         """Simulate player progression and regression based on age and experience."""
         # Query only active roster players
         stmt = select(Player).where(Player.team_id != None)
@@ -64,19 +67,40 @@ class OffseasonService:
 
         # Position-specific decline start ages (RPG-003)
         DECLINE_STARTS = {
-            "RB": 26, "FB": 27,  # Speed positions decline earliest
-            "WR": 29, "TE": 30,  # Receivers slightly later
-            "CB": 28, "S": 29,   # DBs rely on speed
-            "LB": 29, "DE": 30, "DT": 31,  # Front 7 varies
-            "OT": 32, "OG": 32, "C": 32,   # OL peak late
-            "QB": 35, "K": 38, "P": 38     # Mental/technique positions
+            "RB": 26,
+            "FB": 27,  # Speed positions decline earliest
+            "WR": 29,
+            "TE": 30,  # Receivers slightly later
+            "CB": 28,
+            "S": 29,  # DBs rely on speed
+            "LB": 29,
+            "DE": 30,
+            "DT": 31,  # Front 7 varies
+            "OT": 32,
+            "OG": 32,
+            "C": 32,  # OL peak late
+            "QB": 35,
+            "K": 38,
+            "P": 38,  # Mental/technique positions
         }
 
         # Position-specific peak ages (optimal development window)
         PEAK_STARTS = {
-            "RB": 24, "FB": 25, "WR": 26, "TE": 26,
-            "CB": 25, "S": 26, "LB": 26, "DE": 26, "DT": 27,
-            "OT": 27, "OG": 27, "C": 27, "QB": 28, "K": 30, "P": 30
+            "RB": 24,
+            "FB": 25,
+            "WR": 26,
+            "TE": 26,
+            "CB": 25,
+            "S": 26,
+            "LB": 26,
+            "DE": 26,
+            "DT": 27,
+            "OT": 27,
+            "OG": 27,
+            "C": 27,
+            "QB": 28,
+            "K": 30,
+            "P": 30,
         }
 
         for player in players:
@@ -157,7 +181,7 @@ class OffseasonService:
                     position=player.position,
                     change=actual_change,
                     old_rating=old_rating,
-                    new_rating=new_rating
+                    new_rating=new_rating,
                 )
             )
 
@@ -171,7 +195,7 @@ class OffseasonService:
         for player in players:
             player.contract_years -= 1
             if player.contract_years <= 0:
-                player.team_id = None # Released to Free Agency
+                player.team_id = None  # Released to Free Agency
                 player.contract_years = 0
 
     def generate_draft_order(self, season_id: int) -> None:
@@ -206,8 +230,7 @@ class OffseasonService:
 
         # Find SB Winner and Loser to move to end
         stmt = select(PlayoffMatchup).where(
-            PlayoffMatchup.season_id == season_id,
-            PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
+            PlayoffMatchup.season_id == season_id, PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
         )
         sb_matchup = self.db.execute(stmt).scalar_one_or_none()
 
@@ -215,15 +238,19 @@ class OffseasonService:
 
         if sb_matchup and sb_matchup.winner_id:
             winner_id = sb_matchup.winner_id
-            loser_id = sb_matchup.home_team_id if sb_matchup.winner_id == sb_matchup.away_team_id else sb_matchup.away_team_id
+            loser_id = (
+                sb_matchup.home_team_id
+                if sb_matchup.winner_id == sb_matchup.away_team_id
+                else sb_matchup.away_team_id
+            )
 
             if winner_id in ordered_team_ids:
                 ordered_team_ids.remove(winner_id)
-                ordered_team_ids.append(winner_id) # Last
+                ordered_team_ids.append(winner_id)  # Last
 
             if loser_id in ordered_team_ids:
                 ordered_team_ids.remove(loser_id)
-                ordered_team_ids.insert(len(ordered_team_ids)-1, loser_id) # Second to last
+                ordered_team_ids.insert(len(ordered_team_ids) - 1, loser_id)  # Second to last
         elif not sb_matchup:
             print("Warning: No Super Bowl matchup found for draft order generation.")
 
@@ -236,7 +263,7 @@ class OffseasonService:
                     original_team_id=team_id,
                     round=round_num,
                     pick_number=(round_num - 1) * 32 + (i + 1),
-                    player_id=None
+                    player_id=None,
                 )
                 self.db.add(pick)
 
@@ -249,12 +276,24 @@ class OffseasonService:
             position_counts[p.position] = position_counts.get(p.position, 0) + 1
         return position_counts
 
-    def get_team_needs(self, team_id: int) -> List[TeamNeed]:
+    def get_team_needs(self, team_id: int) -> list[TeamNeed]:
         """Get structured team needs analysis."""
         needs_dict = self._get_team_needs(team_id)
         TARGET_COUNTS = {
-            "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
-            "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
+            "QB": 3,
+            "RB": 4,
+            "WR": 6,
+            "TE": 3,
+            "OT": 4,
+            "OG": 4,
+            "C": 2,
+            "DE": 4,
+            "DT": 4,
+            "LB": 6,
+            "CB": 6,
+            "S": 4,
+            "K": 1,
+            "P": 1,
         }
 
         result = []
@@ -263,22 +302,26 @@ class OffseasonService:
             diff = target - current
             score = max(0, diff)
 
-            result.append(TeamNeed(
-                position=pos,
-                current_count=current,
-                target_count=target,
-                need_score=float(score)
-            ))
+            result.append(
+                TeamNeed(
+                    position=pos,
+                    current_count=current,
+                    target_count=target,
+                    need_score=float(score),
+                )
+            )
 
         result.sort(key=lambda x: x.need_score, reverse=True)
         return result
 
-    def get_top_prospects(self, limit: int = 50) -> List[Prospect]:
+    def get_top_prospects(self, limit: int = 50) -> list[Prospect]:
         """Get top available rookie prospects."""
-        stmt = select(Player).where(
-            Player.is_rookie == True,
-            Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).limit(limit)
+        stmt = (
+            select(Player)
+            .where(Player.is_rookie == True, Player.team_id == None)
+            .order_by(Player.overall_rating.desc())
+            .limit(limit)
+        )
         rookies = list(self.db.execute(stmt).scalars().all())
 
         return [
@@ -286,16 +329,18 @@ class OffseasonService:
                 id=p.id,
                 name=f"{p.first_name} {p.last_name}",
                 position=p.position,
-                overall_rating=p.overall_rating
-            ) for p in rookies
+                overall_rating=p.overall_rating,
+            )
+            for p in rookies
         ]
 
-    def get_current_pick(self, season_id: int) -> Optional[DraftPick]:
+    def get_current_pick(self, season_id: int) -> DraftPick | None:
         """Get the next available draft pick."""
-        stmt = select(DraftPick).where(
-            DraftPick.season_id == season_id,
-            DraftPick.player_id == None
-        ).order_by(DraftPick.pick_number)
+        stmt = (
+            select(DraftPick)
+            .where(DraftPick.season_id == season_id, DraftPick.player_id == None)
+            .order_by(DraftPick.pick_number)
+        )
         return self.db.execute(stmt).scalars().first()
 
     def make_pick(self, season_id: int, player_id: int) -> DraftPick:
@@ -308,7 +353,7 @@ class OffseasonService:
         if not player:
             raise ValueError("Player not found.")
         if player.team_id is not None:
-             raise ValueError("Player already on a team.")
+            raise ValueError("Player already on a team.")
 
         # Assign player to team
         pick.player_id = player.id
@@ -329,7 +374,7 @@ class OffseasonService:
         self.db.commit()
         return pick
 
-    def simulate_next_pick(self, season_id: int) -> Optional[DraftPickSummary]:
+    def simulate_next_pick(self, season_id: int) -> DraftPickSummary | None:
         """Simulate the next single pick in the draft."""
         pick = self.get_current_pick(season_id)
         if not pick:
@@ -337,10 +382,12 @@ class OffseasonService:
 
         # Get available rookies
         # Optimization: Just get top 20 to choose from
-        stmt = select(Player).where(
-            Player.is_rookie == True,
-            Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).limit(20)
+        stmt = (
+            select(Player)
+            .where(Player.is_rookie == True, Player.team_id == None)
+            .order_by(Player.overall_rating.desc())
+            .limit(20)
+        )
         rookies = list(self.db.execute(stmt).scalars().all())
 
         if not rookies:
@@ -350,8 +397,20 @@ class OffseasonService:
         team_needs = self._get_team_needs(pick.team_id)
 
         TARGET_COUNTS = {
-            "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OT": 4, "OG": 4, "C": 2,
-            "DE": 4, "DT": 4, "LB": 6, "CB": 6, "S": 4, "K": 1, "P": 1
+            "QB": 3,
+            "RB": 4,
+            "WR": 6,
+            "TE": 3,
+            "OT": 4,
+            "OG": 4,
+            "C": 2,
+            "DE": 4,
+            "DT": 4,
+            "LB": 6,
+            "CB": 6,
+            "S": 4,
+            "K": 1,
+            "P": 1,
         }
 
         selected_player = None
@@ -390,10 +449,10 @@ class OffseasonService:
             team_id=pick.team_id,
             player_name=f"{player.first_name} {player.last_name}",
             player_position=player.position,
-            player_overall=player.overall_rating
+            player_overall=player.overall_rating,
         )
 
-    def simulate_draft(self, season_id: int) -> List[DraftPickSummary]:
+    def simulate_draft(self, season_id: int) -> list[DraftPickSummary]:
         """Simulate the remainder of the draft."""
         summary = []
         while True:
@@ -410,7 +469,9 @@ class OffseasonService:
         teams = list(self.db.execute(stmt).scalars().all())
 
         # Get available FAs
-        stmt_fa = select(Player).where(Player.team_id == None).order_by(Player.overall_rating.desc())
+        stmt_fa = (
+            select(Player).where(Player.team_id == None).order_by(Player.overall_rating.desc())
+        )
         free_agents = list(self.db.execute(stmt_fa).scalars().all())
         fa_pool = list(free_agents)
 
@@ -433,16 +494,13 @@ class OffseasonService:
         self.db.commit()
         return {"message": "Free Agency simulated."}
 
-    def process_retirements(self, season_id: int) -> List[str]:
+    def process_retirements(self, season_id: int) -> list[str]:
         """Process player retirements based on age and rating."""
         season = self.db.get(Season, season_id)
         if not season:
             return []
 
-        stmt = select(Player).where(
-            Player.is_retired == False,
-            Player.team_id != None
-        )
+        stmt = select(Player).where(Player.is_retired == False, Player.team_id != None)
         players = list(self.db.execute(stmt).scalars().all())
 
         retired_names = []
@@ -479,7 +537,7 @@ class OffseasonService:
         """Check if a retired player qualifies for the Hall of Fame."""
         # Simple criteria for MVP: High Overall or High Legacy Score
         is_hof = False
-        if player.overall_rating >= 90: # Lowered slightly for MVP testing
+        if player.overall_rating >= 90:  # Lowered slightly for MVP testing
             is_hof = True
         elif player.legacy_score >= 1000:
             is_hof = True
@@ -487,9 +545,7 @@ class OffseasonService:
         if is_hof:
             stats = self._calculate_career_stats(player.id)
             hof_entry = HallOfFame(
-                player_id=player.id,
-                year_inducted=year,
-                career_stats_snapshot=stats
+                player_id=player.id, year_inducted=year, career_stats_snapshot=stats
             )
             self.db.add(hof_entry)
 
@@ -502,7 +558,7 @@ class OffseasonService:
             func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
             func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
             func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
-            func.count(PlayerGameStats.id).label("games_played")
+            func.count(PlayerGameStats.id).label("games_played"),
         ).where(PlayerGameStats.player_id == player_id)
 
         stats = self.db.execute(stmt).first()
@@ -514,5 +570,5 @@ class OffseasonService:
             "rush_yards": stats.rush_yards or 0,
             "rush_tds": stats.rush_tds or 0,
             "rec_yards": stats.rec_yards or 0,
-            "rec_tds": stats.rec_tds or 0
+            "rec_tds": stats.rec_tds or 0,
         }

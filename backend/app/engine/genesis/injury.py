@@ -17,17 +17,17 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # BODY PART HIERARCHY
 # ============================================================================
 
+
 class BodyRegion(str, Enum):
     """Top-level body regions."""
+
     HEAD = "HEAD"
     TORSO = "TORSO"
     UPPER_EXTREMITY = "UPPER_EXTREMITY"
@@ -36,6 +36,7 @@ class BodyRegion(str, Enum):
 
 class BodyPart(str, Enum):
     """Specific body parts for injury tracking."""
+
     # Head Region
     HEAD = "HEAD"
     NECK = "NECK"
@@ -83,6 +84,7 @@ class BodyPart(str, Enum):
 
 class InjuryType(str, Enum):
     """Types of injuries."""
+
     # Muscle/Soft Tissue
     STRAIN = "STRAIN"
     SPRAIN = "SPRAIN"
@@ -114,19 +116,20 @@ class InjuryType(str, Enum):
 
 class InjurySeverity(int, Enum):
     """Severity levels."""
-    MINOR = 1       # 0-1 weeks
-    MODERATE = 3    # 2-4 weeks
-    SERIOUS = 5     # 5-8 weeks
-    SEVERE = 7      # 9-12 weeks
-    MAJOR = 9       # Season-ending
-    CAREER = 10     # Career-threatening
+
+    MINOR = 1  # 0-1 weeks
+    MODERATE = 3  # 2-4 weeks
+    SERIOUS = 5  # 5-8 weeks
+    SEVERE = 7  # 9-12 weeks
+    MAJOR = 9  # Season-ending
+    CAREER = 10  # Career-threatening
 
 
 # ============================================================================
 # BODY PART HIERARCHY MAPPING
 # ============================================================================
 
-BODY_PART_REGIONS: Dict[BodyPart, BodyRegion] = {
+BODY_PART_REGIONS: dict[BodyPart, BodyRegion] = {
     BodyPart.HEAD: BodyRegion.HEAD,
     BodyPart.NECK: BodyRegion.HEAD,
     BodyPart.CHEST: BodyRegion.TORSO,
@@ -168,7 +171,7 @@ BODY_PART_REGIONS: Dict[BodyPart, BodyRegion] = {
 }
 
 # Recovery times in weeks by injury type
-BASE_RECOVERY_WEEKS: Dict[InjuryType, Tuple[int, int]] = {
+BASE_RECOVERY_WEEKS: dict[InjuryType, tuple[int, int]] = {
     InjuryType.CRAMP: (0, 0),
     InjuryType.CONTUSION: (0, 1),
     InjuryType.STRAIN: (1, 4),
@@ -194,9 +197,11 @@ BASE_RECOVERY_WEEKS: Dict[InjuryType, Tuple[int, int]] = {
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class Injury:
     """Individual injury record."""
+
     body_part: BodyPart
     injury_type: InjuryType
     severity: InjurySeverity
@@ -204,7 +209,7 @@ class Injury:
     weeks_elapsed: int = 0
     season: int = 0
     week: int = 0
-    play_id: Optional[str] = None
+    play_id: str | None = None
     g_force: float = 0.0  # Impact force that caused injury
 
     @property
@@ -232,9 +237,10 @@ class Injury:
 @dataclass
 class ChronicWear:
     """Chronic wear/damage to a body part."""
+
     body_part: BodyPart
     wear_level: float = 0.0  # 0-100
-    injury_history: List[Injury] = field(default_factory=list)
+    injury_history: list[Injury] = field(default_factory=list)
 
     @property
     def re_injury_risk_modifier(self) -> float:
@@ -266,14 +272,15 @@ class ChronicWear:
 @dataclass
 class InjuryProfile:
     """Complete injury profile for a player."""
+
     # Current injuries
-    active_injuries: List[Injury] = field(default_factory=list)
+    active_injuries: list[Injury] = field(default_factory=list)
 
     # Injury history
-    injury_history: List[Injury] = field(default_factory=list)
+    injury_history: list[Injury] = field(default_factory=list)
 
     # Chronic wear by body part
-    chronic_wear: Dict[BodyPart, ChronicWear] = field(default_factory=dict)
+    chronic_wear: dict[BodyPart, ChronicWear] = field(default_factory=dict)
 
     # CTE risk tracking (head impacts)
     head_impact_count: int = 0
@@ -310,7 +317,7 @@ class InjuryProfile:
         force_factor = min(100, self.cumulative_head_g_force / 100)
         return (impact_factor + force_factor) / 2
 
-    def get_worst_injury(self) -> Optional[Injury]:
+    def get_worst_injury(self) -> Injury | None:
         """Get the most severe active injury."""
         if not self.active_injuries:
             return None
@@ -327,6 +334,7 @@ class InjuryProfile:
 # INJURY ENGINE
 # ============================================================================
 
+
 class InjuryEngine:
     """
     Engine for processing injuries and calculating injury probabilities.
@@ -334,7 +342,7 @@ class InjuryEngine:
 
     def __init__(
         self,
-        profile: Optional[InjuryProfile] = None,
+        profile: InjuryProfile | None = None,
         rng: Any = None,
     ):
         self.profile = profile or InjuryProfile()
@@ -393,7 +401,7 @@ class InjuryEngine:
         is_contact: bool = True,
         season: int = 0,
         week: int = 0,
-    ) -> Optional[Injury]:
+    ) -> Injury | None:
         """
         Check if an impact causes an injury.
 
@@ -409,6 +417,7 @@ class InjuryEngine:
             roll = self.rng.next_float()
         else:
             import random
+
             roll = random.random()
 
         if roll >= probability:
@@ -451,8 +460,12 @@ class InjuryEngine:
                 injury_type = InjuryType.SPRAIN
         elif body_part in [BodyPart.ANKLE_LEFT, BodyPart.ANKLE_RIGHT]:
             injury_type = InjuryType.SPRAIN
-        elif body_part in [BodyPart.THIGH_LEFT, BodyPart.THIGH_RIGHT,
-                          BodyPart.CALF_LEFT, BodyPart.CALF_RIGHT]:
+        elif body_part in [
+            BodyPart.THIGH_LEFT,
+            BodyPart.THIGH_RIGHT,
+            BodyPart.CALF_LEFT,
+            BodyPart.CALF_RIGHT,
+        ]:
             injury_type = InjuryType.STRAIN
         elif body_part in [BodyPart.SHOULDER_LEFT, BodyPart.SHOULDER_RIGHT]:
             injury_type = InjuryType.DISLOCATION if g_force > 20 else InjuryType.CONTUSION
@@ -477,6 +490,7 @@ class InjuryEngine:
             recovery = self.rng.next_int(min_weeks, max_weeks)
         else:
             import random
+
             recovery = random.randint(min_weeks, max_weeks)
 
         return Injury(
@@ -494,7 +508,7 @@ class InjuryEngine:
         self.profile.head_impact_count += 1
         self.profile.cumulative_head_g_force += g_force
 
-    def process_week(self) -> List[Injury]:
+    def process_week(self) -> list[Injury]:
         """
         Process healing for one week.
 

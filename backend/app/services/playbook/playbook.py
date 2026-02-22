@@ -11,16 +11,16 @@ Phase 9: Playbook & AI
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class PlayType(str, Enum):
     """Category of play."""
+
     RUN = "RUN"
     PASS = "PASS"
     PLAY_ACTION = "PLAY_ACTION"
@@ -30,6 +30,7 @@ class PlayType(str, Enum):
 
 class Formation(str, Enum):
     """Offensive formations."""
+
     SINGLEBACK = "SINGLEBACK"
     I_FORM = "I_FORM"
     SHOTGUN = "SHOTGUN"
@@ -40,6 +41,7 @@ class Formation(str, Enum):
 
 class DefensiveScheme(str, Enum):
     """Defensive alignments."""
+
     BASE_4_3 = "4-3"
     BASE_3_4 = "3-4"
     NICKEL = "NICKEL"
@@ -50,20 +52,23 @@ class DefensiveScheme(str, Enum):
 
 class Concept(str, Enum):
     """Offensive philosophies."""
-    WEST_COAST = "WEST_COAST"      # Short, timing routes
-    AIR_RAID = "AIR_RAID"          # Spread, vertical
-    POWER_RUN = "POWER_RUN"        # Physical, downhill
-    ZONE_RUN = "ZONE_RUN"          # Stretch, cutback
-    RPO = "RPO"                    # Run-Pass Option
+
+    WEST_COAST = "WEST_COAST"  # Short, timing routes
+    AIR_RAID = "AIR_RAID"  # Spread, vertical
+    POWER_RUN = "POWER_RUN"  # Physical, downhill
+    ZONE_RUN = "ZONE_RUN"  # Stretch, cutback
+    RPO = "RPO"  # Run-Pass Option
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class Personnel:
     """Personnel grouping (e.g., 11 = 1 RB, 1 TE)."""
+
     name: str
     rb_count: int
     te_count: int
@@ -78,6 +83,7 @@ class Personnel:
 @dataclass
 class Play:
     """A single play in the playbook."""
+
     play_id: str
     name: str
     play_type: PlayType
@@ -96,22 +102,19 @@ class Play:
     hurry_up_compatible: bool = False
     clock_saving: bool = False
 
+
 @dataclass
 class Playbook:
     """Collection of plays for a team."""
+
     team_id: str
-    plays: Dict[str, Play] = field(default_factory=dict)
+    plays: dict[str, Play] = field(default_factory=dict)
     primary_concept: Concept = Concept.WEST_COAST
 
     def add_play(self, play: Play):
         self.plays[play.play_id] = play
 
-    def get_plays_by_situation(
-        self,
-        down: int,
-        distance: int,
-        field_position: int
-    ) -> List[Play]:
+    def get_plays_by_situation(self, down: int, distance: int, field_position: int) -> list[Play]:
         """
         Filter plays suitable for the situation.
         """
@@ -130,12 +133,13 @@ class Playbook:
             else:
                 suitable.append(play)
 
-        return suitable[:10] # Return top 10
+        return suitable[:10]  # Return top 10
 
 
 # ============================================================================
 # PLAYBOOK GENERATOR
 # ============================================================================
+
 
 class PlaybookGenerator:
     """
@@ -154,22 +158,40 @@ class PlaybookGenerator:
         # Example Plays
         plays = [
             Play(
-                "WC_SLANT_FLAT", "Slant-Flat Combo", PlayType.PASS,
-                Formation.SHOTGUN, Concept.WEST_COAST, personnel_11,
-                vs_man_coverage=70, vs_zone_coverage=60, avg_yards=6.5,
-                hurry_up_compatible=True
+                "WC_SLANT_FLAT",
+                "Slant-Flat Combo",
+                PlayType.PASS,
+                Formation.SHOTGUN,
+                Concept.WEST_COAST,
+                personnel_11,
+                vs_man_coverage=70,
+                vs_zone_coverage=60,
+                avg_yards=6.5,
+                hurry_up_compatible=True,
             ),
             Play(
-                "INSIDE_ZONE", "Inside Zone", PlayType.RUN,
-                Formation.SHOTGUN, Concept.ZONE_RUN, personnel_11,
-                vs_man_coverage=50, vs_zone_coverage=55, avg_yards=4.2,
-                hurry_up_compatible=True
+                "INSIDE_ZONE",
+                "Inside Zone",
+                PlayType.RUN,
+                Formation.SHOTGUN,
+                Concept.ZONE_RUN,
+                personnel_11,
+                vs_man_coverage=50,
+                vs_zone_coverage=55,
+                avg_yards=4.2,
+                hurry_up_compatible=True,
             ),
             Play(
-                "MESH_CONCEPT", "Mesh Cross", PlayType.PASS,
-                Formation.SHOTGUN, Concept.WEST_COAST, personnel_11,
-                vs_man_coverage=80, vs_zone_coverage=50, avg_yards=7.0,
-                hurry_up_compatible=True
+                "MESH_CONCEPT",
+                "Mesh Cross",
+                PlayType.PASS,
+                Formation.SHOTGUN,
+                Concept.WEST_COAST,
+                personnel_11,
+                vs_man_coverage=80,
+                vs_zone_coverage=50,
+                avg_yards=7.0,
+                hurry_up_compatible=True,
             ),
         ]
 
@@ -187,15 +209,29 @@ class PlaybookGenerator:
 
         plays = [
             Play(
-                "FOUR_VERTS", "Four Verticals", PlayType.PASS,
-                Formation.SHOTGUN, Concept.AIR_RAID, personnel_10,
-                vs_man_coverage=65, vs_zone_coverage=85, avg_yards=12.0, risk_level=7,
-                hurry_up_compatible=True, clock_saving=True
+                "FOUR_VERTS",
+                "Four Verticals",
+                PlayType.PASS,
+                Formation.SHOTGUN,
+                Concept.AIR_RAID,
+                personnel_10,
+                vs_man_coverage=65,
+                vs_zone_coverage=85,
+                avg_yards=12.0,
+                risk_level=7,
+                hurry_up_compatible=True,
+                clock_saving=True,
             ),
             Play(
-                "SHALLOW_CROSS", "Shallow Cross", PlayType.PASS,
-                Formation.SHOTGUN, Concept.AIR_RAID, personnel_10,
-                vs_man_coverage=75, vs_zone_coverage=55, avg_yards=8.5
+                "SHALLOW_CROSS",
+                "Shallow Cross",
+                PlayType.PASS,
+                Formation.SHOTGUN,
+                Concept.AIR_RAID,
+                personnel_10,
+                vs_man_coverage=75,
+                vs_zone_coverage=55,
+                avg_yards=8.5,
             ),
         ]
 

@@ -10,43 +10,46 @@ Phase 6: SOCIETY Locker Room Dynamics
 - "Flow State" mechanics
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class MomentumState(str, Enum):
     """Overall momentum state."""
-    COLD = "COLD"             # Struggling
+
+    COLD = "COLD"  # Struggling
     NEUTRAL = "NEUTRAL"
-    HEATING_UP = "HEATING_UP" # Stringing plays together
-    ON_FIRE = "ON_FIRE"       # Unstoppable (Flow State)
-    ICE_COLD = "ICE_COLD"     # Demoralized
+    HEATING_UP = "HEATING_UP"  # Stringing plays together
+    ON_FIRE = "ON_FIRE"  # Unstoppable (Flow State)
+    ICE_COLD = "ICE_COLD"  # Demoralized
 
 
 class MomentumEvent(str, Enum):
     """Events that shift momentum."""
+
     TOUCHDOWN = "TOUCHDOWN"
     TURNOVER = "TURNOVER"
     SACK = "SACK"
-    BIG_PLAY_OFFENSE = "BIG_PLAY_OFFENSE" # 20+ yards
+    BIG_PLAY_OFFENSE = "BIG_PLAY_OFFENSE"  # 20+ yards
     THRD_DOWN_STOP = "THRD_DOWN_STOP"
     MISSED_FG = "MISSED_FG"
-    TIMEOUT = "TIMEOUT" # Can freeze momentum
-    SAFETY = "SAFETY" # Safety scored
+    TIMEOUT = "TIMEOUT"  # Can freeze momentum
+    SAFETY = "SAFETY"  # Safety scored
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class TeamMomentum:
     """Momentum state for a team."""
+
     team_id: str
     score: float = 50.0  # 0-100 scale, 50 neutral
     consecutive_successes: int = 0
@@ -74,6 +77,7 @@ class TeamMomentum:
 # MOMENTUM ENGINE
 # ============================================================================
 
+
 class MomentumEngine:
     """
     Tracks and applies momentum effects.
@@ -82,7 +86,7 @@ class MomentumEngine:
     """
 
     def __init__(self):
-        self.teams: Dict[str, TeamMomentum] = {}
+        self.teams: dict[str, TeamMomentum] = {}
 
     def get_team_momentum(self, team_id: str) -> TeamMomentum:
         """Get or create team momentum state."""
@@ -99,12 +103,12 @@ class MomentumEngine:
         # Base modifiers
         shifts = {
             MomentumEvent.TOUCHDOWN: 15.0,
-            MomentumEvent.TURNOVER: -20.0, # Huge swing
+            MomentumEvent.TURNOVER: -20.0,  # Huge swing
             MomentumEvent.SACK: -5.0,
             MomentumEvent.BIG_PLAY_OFFENSE: 8.0,
             MomentumEvent.THRD_DOWN_STOP: 5.0,
             MomentumEvent.MISSED_FG: -10.0,
-            MomentumEvent.TIMEOUT: 0.0, # Special logic
+            MomentumEvent.TIMEOUT: 0.0,  # Special logic
             MomentumEvent.SAFETY: 12.0,
         }
 
@@ -154,4 +158,3 @@ class MomentumEngine:
         """Reset momentum to neutral (e.g. halftime)."""
         if team_id in self.teams:
             self.teams[team_id] = TeamMomentum(team_id=team_id)
-

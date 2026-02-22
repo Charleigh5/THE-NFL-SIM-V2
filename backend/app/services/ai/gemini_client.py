@@ -13,11 +13,12 @@ Best Practices Applied:
 Reference: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/inference
 """
 
-import os
 import asyncio
 import logging
-from typing import Type, TypeVar, Optional, Any
+import os
 from functools import lru_cache
+from typing import Any, Optional, TypeVar
+
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -68,17 +69,13 @@ class GeminiClient:
 
             # Initialize client with API key
             self._client = genai.Client(
-                api_key=self._api_key,
-                http_options=HttpOptions(api_version="v1")
+                api_key=self._api_key, http_options=HttpOptions(api_version="v1")
             )
             logger.info(f"Gemini client initialized with model: {self._model_name}")
             return True
 
         except ImportError:
-            logger.error(
-                "google-genai package not installed. "
-                "Run: pip install google-genai"
-            )
+            logger.error("google-genai package not installed. Run: pip install google-genai")
             return False
         except Exception as e:
             logger.error(f"Failed to initialize Gemini client: {e}")
@@ -90,11 +87,8 @@ class GeminiClient:
         return self._ensure_initialized()
 
     async def generate_text(
-        self,
-        prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[str]:
+        self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
+    ) -> str | None:
         """
         Generate plain text response.
 
@@ -115,10 +109,7 @@ class GeminiClient:
             response = self._client.models.generate_content(
                 model=self._model_name,
                 contents=prompt,
-                config=GenerateContentConfig(
-                    temperature=temperature,
-                    max_output_tokens=max_tokens
-                )
+                config=GenerateContentConfig(temperature=temperature, max_output_tokens=max_tokens),
             )
             return response.text
 
@@ -129,10 +120,10 @@ class GeminiClient:
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[T]:
+        max_tokens: int = 2048,
+    ) -> T | None:
         """
         Generate structured JSON response conforming to Pydantic schema.
 
@@ -163,14 +154,24 @@ class GeminiClient:
                     temperature=temperature,
                     max_output_tokens=max_tokens,
                     response_mime_type="application/json",
-                    response_schema=json_schema
-                )
+                    response_schema=json_schema,
+                ),
             )
 
             # Parse response into Pydantic model
             import json
-            data = json.loads(response.text)
-            return response_schema.model_validate(data)
+
+            try:
+                if not response.text:
+                    raise ValueError("Empty response from Gemini")
+                data = json.loads(response.text)
+                return response_schema.model_validate(data)
+            except json.JSONDecodeError:
+                logger.error(f"Failed to decode JSON from Gemini: {response.text}")
+                return None
+            except Exception as e:
+                logger.error(f"Validation failed: {e}")
+                return None
 
         except Exception as e:
             logger.error(f"Structured generation failed: {e}")
@@ -179,10 +180,10 @@ class GeminiClient:
     async def generate_with_retry(
         self,
         prompt: str,
-        response_schema: Optional[Type[T]] = None,
+        response_schema: type[T] | None = None,
         max_retries: int = 3,
-        temperature: float = 0.7
-    ) -> Optional[Any]:
+        temperature: float = 0.7,
+    ) -> Any | None:
         """
         Generate with exponential backoff retry.
 
@@ -198,9 +199,7 @@ class GeminiClient:
         for attempt in range(max_retries):
             try:
                 if response_schema:
-                    result = await self.generate_structured(
-                        prompt, response_schema, temperature
-                    )
+                    result = await self.generate_structured(prompt, response_schema, temperature)
                 else:
                     result = await self.generate_text(prompt, temperature)
 
@@ -212,7 +211,7 @@ class GeminiClient:
 
             # Exponential backoff
             if attempt < max_retries - 1:
-                wait_time = 2 ** attempt
+                wait_time = 2**attempt
                 await asyncio.sleep(wait_time)
 
         logger.error(f"All {max_retries} attempts failed")

@@ -1,14 +1,18 @@
-from app.kernels.core.ecs_manager import Component
 import enum
+
+from app.kernels.core.ecs_manager import Component
+
 
 class NodeStatus(str, enum.Enum):
     SUCCESS = "Success"
     FAILURE = "Failure"
     RUNNING = "Running"
 
+
 class BehaviorNode:
     def tick(self, context: dict) -> NodeStatus:
         raise NotImplementedError
+
 
 class BehaviorTree(Component):
     def __init__(self, root_node: BehaviorNode):
@@ -17,6 +21,7 @@ class BehaviorTree(Component):
 
     def update(self):
         self.root.tick(self.context)
+
 
 class Selector(BehaviorNode):
     def __init__(self, children: list):
@@ -28,6 +33,7 @@ class Selector(BehaviorNode):
             if status != NodeStatus.FAILURE:
                 return status
         return NodeStatus.FAILURE
+
 
 class Sequence(BehaviorNode):
     def __init__(self, children: list):

@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, DateTime
-from sqlalchemy.orm import relationship
-from app.models.base import Base
 from datetime import datetime
+
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.models.base import Base
+
 
 class GM(Base):
     __tablename__ = "gm"
@@ -29,12 +32,12 @@ class GM(Base):
     level = Column(Integer, default=1)
 
     # Philosophy & Strategy
-    philosophy = Column(String, default="BALANCED") # WIN_NOW, REBUILD, etc.
-    aggression = Column(Integer, default=50) # 0-100, trade frequency
-    patience = Column(Integer, default=50) # 0-100, tolerance for losing
+    philosophy = Column(String, default="BALANCED")  # WIN_NOW, REBUILD, etc.
+    aggression = Column(Integer, default=50)  # 0-100, trade frequency
+    patience = Column(Integer, default=50)  # 0-100, tolerance for losing
 
     # Traits
-    traits = Column(JSON, default=list) # e.g. ["ScoutingGuru", "CapWizard"]
+    traits = Column(JSON, default=list)  # e.g. ["ScoutingGuru", "CapWizard"]
 
     # History
     decisions = relationship("GMDecision", back_populates="gm")
@@ -44,9 +47,9 @@ class GMDecision(Base):
     __tablename__ = "gm_decisions"
     id = Column(Integer, primary_key=True, index=True)
     gm_id = Column(Integer, ForeignKey("gm.id"))
-    decision_type = Column(String) # TRADE, CONTRACT, DRAFT
+    decision_type = Column(String)  # TRADE, CONTRACT, DRAFT
     details = Column(JSON)
-    outcome = Column(String) # ACCEPTED, REJECTED
+    outcome = Column(String)  # ACCEPTED, REJECTED
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     gm = relationship("GM", back_populates="decisions")

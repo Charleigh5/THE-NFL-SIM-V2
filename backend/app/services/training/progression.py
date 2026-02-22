@@ -10,19 +10,18 @@ Phase 7: Training & Development
 - Dev Trait (Star, Superstar) influence
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
-import math
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class DevTrait(str, Enum):
     """Development potential trait."""
+
     NORMAL = "NORMAL"
     STAR = "STAR"
     SUPERSTAR = "SUPERSTAR"
@@ -31,10 +30,11 @@ class DevTrait(str, Enum):
 
 class ProgressionPhase(str, Enum):
     """Career phase for progression logic."""
-    ROOKIE = "ROOKIE"          # Rapid initial growth
-    PRIME = "PRIME"            # Peak performance
+
+    ROOKIE = "ROOKIE"  # Rapid initial growth
+    PRIME = "PRIME"  # Peak performance
     POST_PRIME = "POST_PRIME"  # Mental growth, physical plateau
-    DECLINE = "DECLINE"        # Physical regression
+    DECLINE = "DECLINE"  # Physical regression
     RETIREMENT = "RETIREMENT"
 
 
@@ -42,9 +42,11 @@ class ProgressionPhase(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class PlayerProgressionState:
     """Current progression status."""
+
     player_id: str
     age: int
     current_xp: int
@@ -57,6 +59,7 @@ class PlayerProgressionState:
 # ============================================================================
 # PROGRESSION ENGINE
 # ============================================================================
+
 
 class ProgressionEngine:
     """
@@ -134,7 +137,7 @@ class ProgressionEngine:
         self,
         state: PlayerProgressionState,
         xp_gained: int,
-    ) -> Tuple[PlayerProgressionState, int]:
+    ) -> tuple[PlayerProgressionState, int]:
         """
         Apply XP and handle leveling.
 
@@ -166,9 +169,12 @@ class ProgressionEngine:
         generic_peak = (25, 29)
         age = state.age
         age_mult = 1.0
-        if age < 25: age_mult = 1.2
-        elif age > 31: age_mult = 0.6
-        elif age > 29: age_mult = 0.8
+        if age < 25:
+            age_mult = 1.2
+        elif age > 31:
+            age_mult = 0.6
+        elif age > 29:
+            age_mult = 0.8
 
         adjusted_xp = int(xp_gained * multiplier * age_mult)
 
@@ -178,7 +184,7 @@ class ProgressionEngine:
         # Level up loop
         while new_xp >= state.xp_to_next_level:
             new_xp -= state.xp_to_next_level
-            state.level += 1 # In real system, this would trigger attribute upgrade point
+            state.level += 1  # In real system, this would trigger attribute upgrade point
             levels_gained += 1
             # Recalculate threshold for next level
             state.xp_to_next_level = self.calculate_xp_threshold(state.level)
@@ -190,8 +196,8 @@ class ProgressionEngine:
         self,
         position: str,
         age: int,
-        attributes: Dict[str, int],
-    ) -> Dict[str, int]:
+        attributes: dict[str, int],
+    ) -> dict[str, int]:
         """
         Calculate attribute regression for declining players.
 
@@ -202,7 +208,7 @@ class ProgressionEngine:
         """
         phase = self.determine_phase(position, age)
         if phase != ProgressionPhase.DECLINE:
-            return {} # No regression
+            return {}  # No regression
 
         start_peak, end_peak = self.PEAK_AGES.get(position, (25, 29))
         years_past_prime = age - end_peak

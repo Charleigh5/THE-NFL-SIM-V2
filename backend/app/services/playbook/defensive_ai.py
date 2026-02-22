@@ -10,18 +10,18 @@ Phase 9: Playbook & AI
 - Situational adjustments
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from enum import Enum
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CoverageType(str, Enum):
     """Pass coverage schemes."""
+
     COVER_0 = "COVER_0"  # All-out blitz, man
     COVER_1 = "COVER_1"  # Single high safety, man
     COVER_2 = "COVER_2"  # Two deep safeties, zone
@@ -32,6 +32,7 @@ class CoverageType(str, Enum):
 
 class BlitzPackage(str, Enum):
     """Pressure types."""
+
     NONE = "NONE"
     LB_BLITZ = "LB_BLITZ"
     CB_BLITZ = "CB_BLITZ"
@@ -43,9 +44,11 @@ class BlitzPackage(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class DefensiveCall:
     """A defensive playcall."""
+
     coverage: CoverageType
     blitz: BlitzPackage
     description: str
@@ -54,6 +57,7 @@ class DefensiveCall:
 @dataclass
 class DefensiveGameplan:
     """DC's strategy settings."""
+
     base_coverage: CoverageType = CoverageType.COVER_3
     blitz_frequency: float = 0.20  # 20% of plays
     man_coverage_pct: float = 0.30
@@ -62,6 +66,7 @@ class DefensiveGameplan:
 # ============================================================================
 # DEFENSIVE COORDINATOR AI
 # ============================================================================
+
 
 class DefensiveCoordinatorAI:
     """
@@ -72,10 +77,7 @@ class DefensiveCoordinatorAI:
         self.gameplan = gameplan
 
     def call_defense(
-        self,
-        down: int,
-        distance: int,
-        predicted_pass_pct: float = 0.5
+        self, down: int, distance: int, predicted_pass_pct: float = 0.5
     ) -> DefensiveCall:
         """
         Select defensive coverage and pressure.
@@ -93,9 +95,7 @@ class DefensiveCoordinatorAI:
             blitz = BlitzPackage.NONE
 
         return DefensiveCall(
-            coverage=coverage,
-            blitz=blitz,
-            description=f"{coverage.value} with {blitz.value}"
+            coverage=coverage, blitz=blitz, description=f"{coverage.value} with {blitz.value}"
         )
 
     def _should_blitz(self, down: int, distance: int, pass_pct: float) -> bool:
@@ -112,11 +112,7 @@ class DefensiveCoordinatorAI:
         return roll < threshold
 
     def _select_coverage(
-        self,
-        down: int,
-        distance: int,
-        pass_pct: float,
-        blitzing: bool
+        self, down: int, distance: int, pass_pct: float, blitzing: bool
     ) -> CoverageType:
         """Choose coverage shell."""
 
@@ -126,11 +122,11 @@ class DefensiveCoordinatorAI:
 
         # Long yardage: Prevent deep balls
         if distance >= 15:
-            return CoverageType.COVER_2 # Two deep safeties
+            return CoverageType.COVER_2  # Two deep safeties
 
         # Short yardage: Press, aggressive
         if distance <= 3:
-            return CoverageType.COVER_1 # Man coverage
+            return CoverageType.COVER_1  # Man coverage
 
         # Default to base
         return self.gameplan.base_coverage

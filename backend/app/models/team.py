@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from app.models.base import Base
+
 
 class Team(Base):
     id = Column(Integer, primary_key=True, index=True)
@@ -17,8 +19,8 @@ class Team(Base):
     scouts = relationship("Scout", back_populates="team")
 
     # Division/Conference
-    conference = Column(String, index=True) # AFC/NFC
-    division = Column(String, index=True) # North/South/East/West
+    conference = Column(String, index=True)  # AFC/NFC
+    division = Column(String, index=True)  # North/South/East/West
 
     # Stats/Record
     wins = Column(Integer, default=0)
@@ -34,9 +36,9 @@ class Team(Base):
     fan_support = Column(Integer, default=50)
 
     # Medical & Staff
-    medical_rating = Column(Integer, default=50) # 0-100, affects recovery speed
-    training_staff_quality = Column(Integer, default=50) # 0-100, affects injury prevention
-    medical_budget = Column(Float, default=10.0) # In millions, affects ratings dynamically
+    medical_rating = Column(Integer, default=50)  # 0-100, affects recovery speed
+    training_staff_quality = Column(Integer, default=50)  # 0-100, affects injury prevention
+    medical_budget = Column(Float, default=10.0)  # In millions, affects ratings dynamically
 
     # Nano Banana
     logo_url = Column(String, nullable=True)
@@ -51,4 +53,3 @@ class Team(Base):
 
     # History
     season_history = relationship("TeamSeasonStats", back_populates="team")
-

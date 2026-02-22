@@ -6,21 +6,16 @@ Exposes 60Hz frame physics data for frontend visualization.
 Includes REST endpoints for play data and WebSocket for real-time streaming.
 """
 
-from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, Depends
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
-from sqlalchemy.orm import Session
 import asyncio
-import json
 import random
 
-from app.core.database import get_db
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from pydantic import BaseModel, Field
+
 from app.engine.frame_physics import (
-    FramePhysicsEngine,
-    PhysicsPlayResult,
-    PlayOutcome,
+    DELTA_T,
     FRAMES_PER_SECOND,
-    DELTA_T
+    FramePhysicsEngine,
 )
 
 router = APIRouter(prefix="/physics", tags=["Physics"])
@@ -30,8 +25,10 @@ router = APIRouter(prefix="/physics", tags=["Physics"])
 # SCHEMAS
 # =============================================================================
 
+
 class PlayerPosition(BaseModel):
     """Player position in a frame."""
+
     player_id: int
     x: float
     y: float
@@ -44,73 +41,78 @@ class PlayerPosition(BaseModel):
 
 class BallPosition(BaseModel):
     """Ball position in a frame."""
+
     x: float
     y: float
     height: float = 0.0
     is_in_air: bool = False
-    carrier_id: Optional[int] = None
+    carrier_id: int | None = None
 
 
 class PhysicsFrame(BaseModel):
     """Single frame of physics data."""
+
     frame_id: int
     timestamp: float
-    players: List[PlayerPosition]
+    players: list[PlayerPosition]
     ball: BallPosition
-    events: List[str] = []
+    events: list[str] = []
 
 
 class SimulatePlayRequest(BaseModel):
     """Request to simulate a play."""
+
     play_type: str = Field(default="PASS", pattern="^(PASS|RUN)$")
     line_of_scrimmage: int = Field(default=50, ge=1, le=99)
-    seed: Optional[int] = None
+    seed: int | None = None
 
 
 class SimulatePlayResponse(BaseModel):
     """Response from play simulation."""
+
     outcome: str
     yards_gained: float
     duration: float
     frame_count: int
     checksum: str
-    frames: List[PhysicsFrame]
+    frames: list[PhysicsFrame]
 
 
 # =============================================================================
 # REST ENDPOINTS
 # =============================================================================
 
+
 @router.post("/simulate", response_model=SimulatePlayResponse)
 async def simulate_play(request: SimulatePlayRequest):
     """
     Simulate a single play and return all frames.
-    
+
     Returns complete frame data for replay/visualization.
     """
     # Create RNG
     seed = request.seed or random.randint(0, 999999)
     rng = random.Random(seed)
-    
+
     # Create mock players (in production, fetch from DB)
     offense = _create_mock_offense()
     defense = _create_mock_defense()
-    
+
     # Run simulation
     engine = FramePhysicsEngine(rng)
     engine.initialize_play(
         offense=offense,
         defense=defense,
         line_of_scrimmage=request.line_of_scrimmage,
-        play_type=request.play_type
+        play_type=request.play_type,
     )
-    
+
     # Set player targets for realistic movement
     _set_play_targets(engine, request.play_type, rng)
-    
+
     # Execute play
     result = engine.execute_play()
-    
+
     # Convert frames to response format
     frames = [
         PhysicsFrame(
@@ -125,7 +127,7 @@ async def simulate_play(request: SimulatePlayRequest):
                     velocity_y=p.velocity.y,
                     state=p.state.value,
                     has_ball=p.has_ball,
-                    is_offense=p.is_offense
+                    is_offense=p.is_offense,
                 )
                 for p in f.players
             ],
@@ -134,20 +136,20 @@ async def simulate_play(request: SimulatePlayRequest):
                 y=f.ball.position.y,
                 height=f.ball.height,
                 is_in_air=f.ball.is_in_air,
-                carrier_id=f.ball.carrier_id
+                carrier_id=f.ball.carrier_id,
             ),
-            events=f.events
+            events=f.events,
         )
         for f in result.frames
     ]
-    
+
     return SimulatePlayResponse(
         outcome=result.outcome.value,
         yards_gained=result.yards_gained,
         duration=result.duration,
         frame_count=len(frames),
         checksum=result.checksum,
-        frames=frames
+        frames=frames,
     )
 
 
@@ -159,7 +161,7 @@ async def get_physics_constants():
         "delta_t": DELTA_T,
         "field_length": 100.0,
         "field_width": 53.33,
-        "max_play_duration": 10.0
+        "max_play_duration": 10.0,
     }
 
 
@@ -167,46 +169,44 @@ async def get_physics_constants():
 # WEBSOCKET STREAMING
 # =============================================================================
 
+
 @router.websocket("/stream")
 async def physics_stream(websocket: WebSocket):
     """
     WebSocket endpoint for streaming physics frames in real-time.
-    
+
     Protocol:
     1. Client sends: {"action": "simulate", "play_type": "PASS", "los": 50}
     2. Server streams frames at 60fps
     3. Final message: {"action": "complete", "outcome": "...", "yards": ...}
     """
     await websocket.accept()
-    
+
     try:
         while True:
             # Wait for simulation request
             data = await websocket.receive_json()
-            
+
             action = data.get("action")
-            
+
             if action == "simulate":
                 play_type = data.get("play_type", "PASS")
                 los = data.get("los", 50)
                 seed = data.get("seed", random.randint(0, 999999))
-                
+
                 # Run simulation
                 rng = random.Random(seed)
                 offense = _create_mock_offense()
                 defense = _create_mock_defense()
-                
+
                 engine = FramePhysicsEngine(rng)
                 engine.initialize_play(
-                    offense=offense,
-                    defense=defense,
-                    line_of_scrimmage=los,
-                    play_type=play_type
+                    offense=offense, defense=defense, line_of_scrimmage=los, play_type=play_type
                 )
                 _set_play_targets(engine, play_type, rng)
-                
+
                 result = engine.execute_play()
-                
+
                 # Stream frames at 60fps
                 for frame in result.frames:
                     frame_data = {
@@ -219,35 +219,37 @@ async def physics_stream(websocket: WebSocket):
                                 "x": round(p.position.x, 2),
                                 "y": round(p.position.y, 2),
                                 "state": p.state.value,
-                                "has_ball": p.has_ball
+                                "has_ball": p.has_ball,
                             }
                             for p in frame.players
                         ],
                         "ball": {
                             "x": round(frame.ball.position.x, 2),
                             "y": round(frame.ball.position.y, 2),
-                            "carrier_id": frame.ball.carrier_id
+                            "carrier_id": frame.ball.carrier_id,
                         },
-                        "events": frame.events
+                        "events": frame.events,
                     }
-                    
+
                     await websocket.send_json(frame_data)
                     await asyncio.sleep(DELTA_T)  # 60fps pacing
-                
+
                 # Send completion
-                await websocket.send_json({
-                    "action": "complete",
-                    "outcome": result.outcome.value,
-                    "yards_gained": round(result.yards_gained, 1),
-                    "checksum": result.checksum
-                })
-            
+                await websocket.send_json(
+                    {
+                        "action": "complete",
+                        "outcome": result.outcome.value,
+                        "yards_gained": round(result.yards_gained, 1),
+                        "checksum": result.checksum,
+                    }
+                )
+
             elif action == "ping":
                 await websocket.send_json({"action": "pong"})
-            
+
             elif action == "close":
                 break
-                
+
     except WebSocketDisconnect:
         pass
 
@@ -256,10 +258,19 @@ async def physics_stream(websocket: WebSocket):
 # HELPER FUNCTIONS
 # =============================================================================
 
+
 class MockPlayer:
     """Mock player for physics simulation."""
-    def __init__(self, id: int, position: str, speed: int = 80, 
-                 acceleration: int = 75, agility: int = 75, tackle: int = 70):
+
+    def __init__(
+        self,
+        id: int,
+        position: str,
+        speed: int = 80,
+        acceleration: int = 75,
+        agility: int = 75,
+        tackle: int = 70,
+    ):
         self.id = id
         self.position = position
         self.speed = speed
@@ -304,8 +315,8 @@ def _create_mock_defense():
 
 def _set_play_targets(engine: FramePhysicsEngine, play_type: str, rng: random.Random):
     """Set player movement targets based on play type."""
-    from app.engine.frame_physics import Vector2D, PlayerState, FIELD_WIDTH
-    
+    from app.engine.frame_physics import FIELD_WIDTH, PlayerState, Vector2D
+
     for player in engine.players.values():
         if player.is_offense:
             if play_type == "PASS":
@@ -315,8 +326,7 @@ def _set_play_targets(engine: FramePhysicsEngine, play_type: str, rng: random.Ra
                     depth = rng.randint(8, 20)
                     lateral = rng.choice([-10, -5, 0, 5, 10])
                     player.target_position = Vector2D(
-                        engine.line_of_scrimmage + depth,
-                        FIELD_WIDTH / 2 + lateral
+                        engine.line_of_scrimmage + depth, FIELD_WIDTH / 2 + lateral
                     )
             else:  # RUN
                 if player.player_id == 2:  # RB
@@ -325,14 +335,11 @@ def _set_play_targets(engine: FramePhysicsEngine, play_type: str, rng: random.Ra
                     engine.ball.carrier_id = 2
                     player.target_position = Vector2D(
                         engine.line_of_scrimmage + rng.randint(5, 15),
-                        FIELD_WIDTH / 2 + rng.choice([-5, 0, 5])
+                        FIELD_WIDTH / 2 + rng.choice([-5, 0, 5]),
                     )
         else:
             # Defense pursues
             player.state = PlayerState.RUSHING
             # Find ball carrier or QB
             target_x = engine.line_of_scrimmage - 3
-            player.target_position = Vector2D(
-                target_x,
-                FIELD_WIDTH / 2 + rng.uniform(-5, 5)
-            )
+            player.target_position = Vector2D(target_x, FIELD_WIDTH / 2 + rng.uniform(-5, 5))

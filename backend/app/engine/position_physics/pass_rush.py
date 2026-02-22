@@ -11,38 +11,39 @@ Phase 3: Position-Specific Physics
 - Sack/TFL physics
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState, CollisionResult,
+    Vector2,
+    calculate_g_force,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_g_force,
 )
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class RushMove(str, Enum):
     """Types of pass rush moves."""
-    BULL_RUSH = "BULL_RUSH"       # Power move straight ahead
-    SPEED_RUSH = "SPEED_RUSH"     # Speed around the edge
-    SPIN_MOVE = "SPIN_MOVE"       # Inside spin
-    RIP_MOVE = "RIP_MOVE"         # Rip under arm
-    SWIM_MOVE = "SWIM_MOVE"       # Swim over arm
-    CLUB_SWIPE = "CLUB_SWIPE"     # Club arm, swipe by
-    STUNT = "STUNT"               # Cross with another DL
+
+    BULL_RUSH = "BULL_RUSH"  # Power move straight ahead
+    SPEED_RUSH = "SPEED_RUSH"  # Speed around the edge
+    SPIN_MOVE = "SPIN_MOVE"  # Inside spin
+    RIP_MOVE = "RIP_MOVE"  # Rip under arm
+    SWIM_MOVE = "SWIM_MOVE"  # Swim over arm
+    CLUB_SWIPE = "CLUB_SWIPE"  # Club arm, swipe by
+    STUNT = "STUNT"  # Cross with another DL
 
 
 class BlockerStance(str, Enum):
     """Blocker's current stance."""
-    SET = "SET"           # Ready position
-    LUNGING = "LUNGING"   # Overcommitted
+
+    SET = "SET"  # Ready position
+    LUNGING = "LUNGING"  # Overcommitted
     RECOVERING = "RECOVERING"  # Off balance
 
 
@@ -50,15 +51,17 @@ class BlockerStance(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class PassRushRep:
     """Single pass rush rep state."""
+
     rusher_position: Vector2
     blocker_position: Vector2
     qb_position: Vector2
 
     # Battle state
-    rush_move: Optional[RushMove] = None
+    rush_move: RushMove | None = None
     blocker_stance: BlockerStance = BlockerStance.SET
     leverage_score: float = 0.0  # -1 to 1- = blocker winning, + = rusher winning
 
@@ -74,6 +77,7 @@ class PassRushRep:
 @dataclass(frozen=True)
 class PassRushConfig:
     """Configuration for pass rush physics."""
+
     # Timing
     typical_pass_time_ms: float = 2500.0
     first_step_window_ms: float = 200.0
@@ -86,6 +90,7 @@ class PassRushConfig:
 # ============================================================================
 # PASS RUSH PHYSICS
 # ============================================================================
+
 
 class PassRushPhysics:
     """
@@ -100,7 +105,7 @@ class PassRushPhysics:
 
     def __init__(
         self,
-        config: Optional[PassRushConfig] = None,
+        config: PassRushConfig | None = None,
         speed_rating: int = 80,
         acceleration_rating: int = 85,
         strength_rating: int = 85,
@@ -149,25 +154,29 @@ class PassRushPhysics:
         options = []
 
         if power_advantage > 0:
-            options.extend([
-                (RushMove.BULL_RUSH, 30 + power_advantage),
-                (RushMove.CLUB_SWIPE, 15 + power_advantage * 0.5),
-            ])
+            options.extend(
+                [
+                    (RushMove.BULL_RUSH, 30 + power_advantage),
+                    (RushMove.CLUB_SWIPE, 15 + power_advantage * 0.5),
+                ]
+            )
 
         if finesse_advantage > 0:
-            options.extend([
-                (RushMove.SPEED_RUSH, 25 + finesse_advantage),
-                (RushMove.SPIN_MOVE, 15 + finesse_advantage * 0.8),
-                (RushMove.RIP_MOVE, 20 + finesse_advantage * 0.5),
-                (RushMove.SWIM_MOVE, 15 + finesse_advantage * 0.7),
-            ])
+            options.extend(
+                [
+                    (RushMove.SPEED_RUSH, 25 + finesse_advantage),
+                    (RushMove.SPIN_MOVE, 15 + finesse_advantage * 0.8),
+                    (RushMove.RIP_MOVE, 20 + finesse_advantage * 0.5),
+                    (RushMove.SWIM_MOVE, 15 + finesse_advantage * 0.7),
+                ]
+            )
 
         if not options:
             options = [(RushMove.BULL_RUSH, 50), (RushMove.SPEED_RUSH, 50)]
 
         # Weighted random selection
         total = sum(w for _, w in options)
-        roll = (rng.next_float() if rng else __import__('random').random()) * total
+        roll = (rng.next_float() if rng else __import__("random").random()) * total
 
         cumulative = 0
         for move, weight in options:
@@ -194,9 +203,7 @@ class PassRushPhysics:
 
         # First step advantage (first 200ms)
         if rep.elapsed_ms < self.config.first_step_window_ms:
-            first_step_bonus = self._calculate_first_step_advantage(
-                rep.rush_move, tick_ms
-            )
+            first_step_bonus = self._calculate_first_step_advantage(rep.rush_move, tick_ms)
             rep.leverage_score += first_step_bonus
 
         # Move execution
@@ -221,7 +228,7 @@ class PassRushPhysics:
 
     def _calculate_first_step_advantage(
         self,
-        rush_move: Optional[RushMove],
+        rush_move: RushMove | None,
         tick_ms: float,
     ) -> float:
         """Calculate first-step explosion advantage."""
@@ -247,16 +254,23 @@ class PassRushPhysics:
 
         # Power moves: strength vs strength
         if move in [RushMove.BULL_RUSH, RushMove.CLUB_SWIPE]:
-            strength_diff = (self.strength + self.power_move - blocker_strength - blocker_pass_block) / 200.0
+            strength_diff = (
+                self.strength + self.power_move - blocker_strength - blocker_pass_block
+            ) / 200.0
             return strength_diff * 0.01 * (tick_ms / 16.67)
 
         # Finesse moves: agility/finesse vs pass block technique
-        elif move in [RushMove.SPEED_RUSH, RushMove.SPIN_MOVE, RushMove.RIP_MOVE, RushMove.SWIM_MOVE]:
+        elif move in [
+            RushMove.SPEED_RUSH,
+            RushMove.SPIN_MOVE,
+            RushMove.RIP_MOVE,
+            RushMove.SWIM_MOVE,
+        ]:
             finesse_diff = (self.finesse_move + self.speed - blocker_pass_block) / 200.0
 
             # Spin/swim have higher variance
             if move in [RushMove.SPIN_MOVE, RushMove.SWIM_MOVE]:
-                roll = rng.next_float() if rng else __import__('random').random()
+                roll = rng.next_float() if rng else __import__("random").random()
                 if roll > 0.7:
                     finesse_diff *= 2.0  # Big win
                 elif roll < 0.2:
@@ -270,7 +284,7 @@ class PassRushPhysics:
         self,
         rusher_speed: float,
         qb_weight: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate sack outcome using momentum.
 

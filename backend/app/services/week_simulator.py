@@ -1,19 +1,19 @@
 """
 Batch simulation service for simulating entire weeks of games.
 """
-from typing import List, Dict, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+
+import logging
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.game import Game
 from app.models.season import Season
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.schemas.play import PlayResult
-import asyncio
-import logging
-
 from app.services.player_development_service import PlayerDevelopmentService
 
 logger = logging.getLogger(__name__)
+
 
 class WeekSimulator:
     """
@@ -27,24 +27,28 @@ class WeekSimulator:
         self.db = db
         self.player_development_service = PlayerDevelopmentService(db)
 
-    async def _fetch_weather(self, game: Game) -> Optional[Dict]:
+    async def _fetch_weather(self, game: Game) -> dict | None:
         """Fetch weather for a game using MCP."""
         try:
             from app.core.mcp_registry import registry
+
             client = registry.get_client("weather")
             if client:
                 # Get stadium location
                 location = "Unknown"
                 if game.home_team and game.home_team.city:
-                     location = f"{game.home_team.city}, {game.home_team.name}"
+                    location = f"{game.home_team.city}, {game.home_team.name}"
                 elif game.home_team:
-                     location = game.home_team.name
+                    location = game.home_team.name
 
                 # Call MCP tool
-                weather_data = await client.call_tool("get_game_weather", arguments={
-                    "stadium_location": location,
-                    "date_time": game.date.isoformat() if game.date else "2024-09-01T13:00:00"
-                })
+                weather_data = await client.call_tool(
+                    "get_game_weather",
+                    arguments={
+                        "stadium_location": location,
+                        "date_time": game.date.isoformat() if game.date else "2024-09-01T13:00:00",
+                    },
+                )
 
                 if isinstance(weather_data, dict):
                     return weather_data
@@ -52,11 +56,15 @@ class WeekSimulator:
             logger.warning("Could not fetch weather from MCP", exc_info=e)
         return None
 
-    def _parse_weather(self, weather_data: Dict) -> Dict:
+    def _parse_weather(self, weather_data: dict) -> dict:
         """Parse weather strings into numeric values."""
         try:
             temp_str = weather_data.get("temperature", "70 F")
-            temp = int(temp_str.split()[0]) if temp_str and temp_str[0].isdigit() or temp_str[0] == '-' else 70
+            temp = (
+                int(temp_str.split()[0])
+                if temp_str and temp_str[0].isdigit() or temp_str[0] == "-"
+                else 70
+            )
 
             wind_str = weather_data.get("wind", "0 mph")
             wind = int(wind_str.split()[0]) if wind_str and wind_str[0].isdigit() else 0
@@ -64,18 +72,14 @@ class WeekSimulator:
             return {
                 "temperature": temp,
                 "wind_speed": wind,
-                "condition": weather_data.get("condition", "Clear")
+                "condition": weather_data.get("condition", "Clear"),
             }
         except Exception:
             return {"temperature": 70, "wind_speed": 0, "condition": "Clear"}
 
     async def simulate_week(
-        self,
-        season_id: int,
-        week: int,
-        play_count: int = 100,
-        use_fast_sim: bool = True
-    ) -> Dict[int, Dict]:
+        self, season_id: int, week: int, play_count: int = 100, use_fast_sim: bool = True
+    ) -> dict[int, dict]:
         """
         Simulate all games in a specific week.
 
@@ -90,9 +94,7 @@ class WeekSimulator:
         """
         # Get all games for this week
         stmt = select(Game).filter(
-            Game.season_id == season_id,
-            Game.week == week,
-            Game.is_played == False
+            Game.season_id == season_id, Game.week == week, Game.is_played == False
         )
         result = await self.db.execute(stmt)
         games = result.scalars().all()
@@ -133,7 +135,7 @@ class WeekSimulator:
                 home_team_id=game.home_team_id,
                 away_team_id=game.away_team_id,
                 config={"fast_sim": use_fast_sim, "weather": weather_config},
-                db_session=self.db
+                db_session=self.db,
             )
 
             # Run simulation asynchronously
@@ -146,7 +148,7 @@ class WeekSimulator:
             game.game_data = {
                 "final_score": f"{orchestrator.home_score}-{orchestrator.away_score}",
                 "plays": len(orchestrator.history),
-                "quarters": orchestrator.current_quarter
+                "quarters": orchestrator.current_quarter,
             }
             await self.db.commit()
 
@@ -156,7 +158,7 @@ class WeekSimulator:
                 "home_score": orchestrator.home_score,
                 "away_score": orchestrator.away_score,
                 "total_plays": len(orchestrator.history),
-                "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away"
+                "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away",
             }
 
             logger.info(
@@ -169,16 +171,16 @@ class WeekSimulator:
             )
 
         # Process weekly development (Training, Injuries, Morale)
-        logger.info("Processing weekly player development", extra={"season_id": season_id, "week": week})
+        logger.info(
+            "Processing weekly player development", extra={"season_id": season_id, "week": week}
+        )
         await self.player_development_service.process_weekly_development(season_id, week)
 
-        return {
-            "week": week,
-            "games_simulated": len(results),
-            "results": results
-        }
+        return {"week": week, "games_simulated": len(results), "results": results}
 
-    async def simulate_game(self, game_id: int, play_count: int = 100, use_fast_sim: bool = True) -> Dict:
+    async def simulate_game(
+        self, game_id: int, play_count: int = 100, use_fast_sim: bool = True
+    ) -> dict:
         """
         Simulate a single game.
         """
@@ -218,7 +220,7 @@ class WeekSimulator:
             home_team_id=game.home_team_id,
             away_team_id=game.away_team_id,
             config={"fast_sim": use_fast_sim, "weather": weather_config},
-            db_session=self.db
+            db_session=self.db,
         )
 
         await self._run_simulation(orchestrator, play_count)
@@ -229,7 +231,7 @@ class WeekSimulator:
         game.game_data = {
             "final_score": f"{orchestrator.home_score}-{orchestrator.away_score}",
             "plays": len(orchestrator.history),
-            "quarters": orchestrator.current_quarter
+            "quarters": orchestrator.current_quarter,
         }
         await self.db.commit()
 
@@ -239,7 +241,7 @@ class WeekSimulator:
             "away_team_id": game.away_team_id,
             "home_score": orchestrator.home_score,
             "away_score": orchestrator.away_score,
-            "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away"
+            "winner": "home" if orchestrator.home_score > orchestrator.away_score else "away",
         }
 
     async def _run_simulation(self, orchestrator: SimulationOrchestrator, num_plays: int) -> None:
@@ -272,11 +274,8 @@ class WeekSimulator:
         orchestrator.save_game_result()
 
     async def simulate_full_season(
-        self,
-        season_id: int,
-        start_week: int = 1,
-        end_week: Optional[int] = None
-    ) -> Dict:
+        self, season_id: int, start_week: int = 1, end_week: int | None = None
+    ) -> dict:
         """
         Simulate multiple weeks at once.
 
@@ -312,5 +311,5 @@ class WeekSimulator:
         return {
             "season_id": season_id,
             "weeks_simulated": list(range(start_week, end_week + 1)),
-            "results": all_results
+            "results": all_results,
         }

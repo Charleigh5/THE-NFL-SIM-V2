@@ -1,6 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 from pydantic import Field
-from typing import Tuple
+
+from app.kernels.core.ecs_manager import Component
+
 
 class S2Processor(Component):
     # Directive 3: S2 Score drives ProcessingLatency
@@ -16,25 +17,27 @@ class S2Processor(Component):
         # 100 score = 0ms, 50 score = 200ms, 0 score = 400ms
         self.processing_latency_ms = int((100 - self.s2_score) * 4)
 
+
 class AttributeMasking(Component):
     # Directive 5: Attribute Masking (Fog of War)
     true_ratings: dict = Field(default_factory=dict)
-    scouted_confidence: float = Field(default=0.5, ge=0.0, le=1.0) # 0.0 = Blind, 1.0 = Omniscient
+    scouted_confidence: float = Field(default=0.5, ge=0.0, le=1.0)  # 0.0 = Blind, 1.0 = Omniscient
 
-    def get_rating_range(self, attribute: str) -> Tuple[int, int]:
+    def get_rating_range(self, attribute: str) -> tuple[int, int]:
         """
         Returns a Confidence Interval [Min, Max] instead of a single grade.
         """
         true_val = self.true_ratings.get(attribute, 70)
-        uncertainty = int((1.0 - self.scouted_confidence) * 20) # Max +/- 20 variance
-        
+        uncertainty = int((1.0 - self.scouted_confidence) * 20)  # Max +/- 20 variance
+
         min_rating = max(0, true_val - uncertainty)
         max_rating = min(99, true_val + uncertainty)
-        
+
         return (min_rating, max_rating)
 
+
 class FocusMonitor(Component):
-    cognitive_load: float = 0.0 # 0-100%
+    cognitive_load: float = 0.0  # 0-100%
     bandwidth: float = 100.0
 
     def apply_noise_pressure(self, decibels: float):

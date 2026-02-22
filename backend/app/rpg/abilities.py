@@ -7,18 +7,19 @@ Abilities are distinct from Traits:
 
 This module defines the Ability catalog and status tracking.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional
 from enum import Enum
 
 
 class AbilityStatus(str, Enum):
     """Status of an ability for a player."""
-    LOCKED = "LOCKED"           # Requirements not met
-    AVAILABLE = "AVAILABLE"     # Requirements met, not purchased
-    UNLOCKED = "UNLOCKED"       # Purchased and active
+
+    LOCKED = "LOCKED"  # Requirements not met
+    AVAILABLE = "AVAILABLE"  # Requirements met, not purchased
+    UNLOCKED = "UNLOCKED"  # Purchased and active
 
 
 @dataclass
@@ -26,14 +27,15 @@ class AbilityDefinition:
     """
     Defines an unlockable ability's properties, requirements, and effects.
     """
+
     name: str
     description: str
-    position_requirements: List[str]
+    position_requirements: list[str]
     level_requirement: int
     xp_cost: int
-    effects: Dict[str, float]
+    effects: dict[str, float]
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary for API responses."""
         return {
             "name": self.name,
@@ -49,7 +51,7 @@ class AbilityDefinition:
 # ABILITY CATALOG
 # =============================================================================
 
-ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
+ABILITY_CATALOG: dict[str, AbilityDefinition] = {
     # -------------------------------------------------------------------------
     # QB ABILITIES
     # -------------------------------------------------------------------------
@@ -60,9 +62,9 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         level_requirement=10,
         xp_cost=5000,
         effects={
-            "awareness_boost": 15,              # Bonus awareness for read calculation
-            "pre_snap_read_accuracy": 0.90,     # Base 90% accuracy (modified by matchup)
-            "audible_time_reduction": 2.0,      # Seconds saved on audibles
+            "awareness_boost": 15,  # Bonus awareness for read calculation
+            "pre_snap_read_accuracy": 0.90,  # Base 90% accuracy (modified by matchup)
+            "audible_time_reduction": 2.0,  # Seconds saved on audibles
         },
     ),
     "audible_master": AbilityDefinition(
@@ -72,9 +74,9 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         level_requirement=8,
         xp_cost=3000,
         effects={
-            "audible_time": 2.0,                # Seconds (vs normal 8s)
-            "false_start_immunity": 1.0,        # Boolean: OL won't false start on audibles
-            "hot_route_count": 2,               # Can hot route 2 receivers
+            "audible_time": 2.0,  # Seconds (vs normal 8s)
+            "false_start_immunity": 1.0,  # Boolean: OL won't false start on audibles
+            "hot_route_count": 2,  # Can hot route 2 receivers
         },
     ),
     "red_zone_assassin": AbilityDefinition(
@@ -89,7 +91,6 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
             "red_zone_int_reduction": 0.20,
         },
     ),
-
     # -------------------------------------------------------------------------
     # RB ABILITIES
     # -------------------------------------------------------------------------
@@ -101,11 +102,10 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         xp_cost=3500,
         effects={
             "vision_boost": 15,
-            "pre_snap_hole_detection": 1.0,     # Boolean: Can see blocking assignments
+            "pre_snap_hole_detection": 1.0,  # Boolean: Can see blocking assignments
             "backfield_evasion_boost": 0.20,
         },
     ),
-
     # -------------------------------------------------------------------------
     # WR ABILITIES
     # -------------------------------------------------------------------------
@@ -117,11 +117,10 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         xp_cost=4500,
         effects={
             "route_running_boost": 10,
-            "route_adjustment": 1.0,            # Boolean: Can adjust mid-route
-            "option_route_success": 0.25,       # 25% better on option routes
+            "route_adjustment": 1.0,  # Boolean: Can adjust mid-route
+            "option_route_success": 0.25,  # 25% better on option routes
         },
     ),
-
     # -------------------------------------------------------------------------
     # DEFENSIVE ABILITIES
     # -------------------------------------------------------------------------
@@ -132,7 +131,7 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         level_requirement=8,
         xp_cost=3000,
         effects={
-            "play_prediction_accuracy": 0.75,   # 75% accurate run/pass prediction
+            "play_prediction_accuracy": 0.75,  # 75% accurate run/pass prediction
             "play_recognition_boost": 10,
             "reaction_time_boost": 0.10,
         },
@@ -146,7 +145,7 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
         effects={
             "man_coverage_boost": 8,
             "zone_coverage_boost": 8,
-            "coverage_switch_reaction": 0.15,   # Faster transition between coverages
+            "coverage_switch_reaction": 0.15,  # Faster transition between coverages
         },
     ),
 }
@@ -156,12 +155,13 @@ ABILITY_CATALOG: Dict[str, AbilityDefinition] = {
 # ABILITY HELPER FUNCTIONS
 # =============================================================================
 
-def get_ability_definition(ability_key: str) -> Optional[AbilityDefinition]:
+
+def get_ability_definition(ability_key: str) -> AbilityDefinition | None:
     """Get an ability definition by its key."""
     return ABILITY_CATALOG.get(ability_key)
 
 
-def get_ability_by_name(name: str) -> Optional[AbilityDefinition]:
+def get_ability_by_name(name: str) -> AbilityDefinition | None:
     """Get an ability definition by its display name."""
     for ability_def in ABILITY_CATALOG.values():
         if ability_def.name == name:
@@ -169,19 +169,17 @@ def get_ability_by_name(name: str) -> Optional[AbilityDefinition]:
     return None
 
 
-def get_abilities_for_position(position: str) -> List[AbilityDefinition]:
+def get_abilities_for_position(position: str) -> list[AbilityDefinition]:
     """Get all abilities available for a specific position."""
     return [
-        ability for ability in ABILITY_CATALOG.values()
+        ability
+        for ability in ABILITY_CATALOG.values()
         if position in ability.position_requirements or "ALL" in ability.position_requirements
     ]
 
 
 def check_ability_eligibility(
-    player_level: int,
-    player_xp: int,
-    player_position: str,
-    ability_key: str
+    player_level: int, player_xp: int, player_position: str, ability_key: str
 ) -> tuple[bool, str, AbilityStatus]:
     """
     Check if a player is eligible to unlock a specific ability.
@@ -197,14 +195,26 @@ def check_ability_eligibility(
     # Check position requirement
     if "ALL" not in ability_def.position_requirements:
         if player_position not in ability_def.position_requirements:
-            return False, f"Position {player_position} cannot unlock {ability_def.name}", AbilityStatus.LOCKED
+            return (
+                False,
+                f"Position {player_position} cannot unlock {ability_def.name}",
+                AbilityStatus.LOCKED,
+            )
 
     # Check level requirement
     if player_level < ability_def.level_requirement:
-        return False, f"Requires Level {ability_def.level_requirement} (currently {player_level})", AbilityStatus.LOCKED
+        return (
+            False,
+            f"Requires Level {ability_def.level_requirement} (currently {player_level})",
+            AbilityStatus.LOCKED,
+        )
 
     # Check XP cost
     if player_xp < ability_def.xp_cost:
-        return False, f"Requires {ability_def.xp_cost} XP (currently {player_xp})", AbilityStatus.AVAILABLE
+        return (
+            False,
+            f"Requires {ability_def.xp_cost} XP (currently {player_xp})",
+            AbilityStatus.AVAILABLE,
+        )
 
     return True, "Eligible to unlock", AbilityStatus.AVAILABLE

@@ -11,22 +11,22 @@ Phase 4: HIVE Environment Physics
 - Combined environment calculations
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
+from typing import Any
 
 from .turf_grid import WeatherEffect
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class WindDirection(str, Enum):
     """Wind direction relative to play direction."""
-    HEADWIND = "HEADWIND"       # Against play direction
-    TAILWIND = "TAILWIND"       # With play direction
+
+    HEADWIND = "HEADWIND"  # Against play direction
+    TAILWIND = "TAILWIND"  # With play direction
     CROSSWIND_LEFT = "CROSSWIND_LEFT"
     CROSSWIND_RIGHT = "CROSSWIND_RIGHT"
     NONE = "NONE"
@@ -34,6 +34,7 @@ class WindDirection(str, Enum):
 
 class PrecipitationType(str, Enum):
     """Type of precipitation."""
+
     NONE = "NONE"
     LIGHT_RAIN = "LIGHT_RAIN"
     HEAVY_RAIN = "HEAVY_RAIN"
@@ -46,9 +47,11 @@ class PrecipitationType(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class WeatherConfig:
     """Configuration for weather physics."""
+
     # Wind effects on passes (yards adjustment per 10mph)
     wind_pass_distance_factor: float = 1.5
     wind_pass_accuracy_penalty: float = 0.3
@@ -74,6 +77,7 @@ class WeatherConfig:
 @dataclass
 class GameWeather:
     """Complete weather state for a game."""
+
     temperature_f: float = 70.0
     wind_speed_mph: float = 0.0
     wind_direction: WindDirection = WindDirection.NONE
@@ -105,6 +109,7 @@ class GameWeather:
 # WEATHER PHYSICS ENGINE
 # ============================================================================
 
+
 class WeatherPhysics:
     """
     Calculate weather effects on gameplay.
@@ -116,15 +121,15 @@ class WeatherPhysics:
     - Combined modifiers for equipment
     """
 
-    def __init__(self, config: Optional[WeatherConfig] = None):
+    def __init__(self, config: WeatherConfig | None = None):
         self.config = config or WeatherConfig()
 
     def calculate_pass_wind_effect(
         self,
         weather: GameWeather,
         throw_direction: float,  # Degrees, 0 = upfield/north
-        throw_distance: float,   # Yards intended
-    ) -> Tuple[float, float]:
+        throw_distance: float,  # Yards intended
+    ) -> tuple[float, float]:
         """
         Calculate wind effect on pass.
 
@@ -143,7 +148,10 @@ class WeatherPhysics:
             distance_adj = -wind_factor * (throw_distance / 40)  # Longer throws more affected
         elif weather.wind_direction == WindDirection.TAILWIND:
             distance_adj = wind_factor * (throw_distance / 40) * 0.7  # Less boost than penalty
-        elif weather.wind_direction in [WindDirection.CROSSWIND_LEFT, WindDirection.CROSSWIND_RIGHT]:
+        elif weather.wind_direction in [
+            WindDirection.CROSSWIND_LEFT,
+            WindDirection.CROSSWIND_RIGHT,
+        ]:
             distance_adj = 0  # Crosswind affects accuracy, not distance
         else:
             distance_adj = 0
@@ -162,7 +170,7 @@ class WeatherPhysics:
         weather: GameWeather,
         kick_distance: float,
         is_field_goal: bool = True,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate wind effect on kicks.
 
@@ -302,7 +310,7 @@ class WeatherPhysics:
     def get_combined_modifiers(
         self,
         weather: GameWeather,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Get all weather modifiers in one call.
 
@@ -316,7 +324,7 @@ class WeatherPhysics:
             "kick_accuracy_penalty": self.calculate_kick_wind_effect(weather, 40)[1],
         }
 
-    def to_dict(self, weather: GameWeather) -> Dict[str, Any]:
+    def to_dict(self, weather: GameWeather) -> dict[str, Any]:
         """Serialize weather state with modifiers."""
         return {
             "temperature_f": weather.temperature_f,

@@ -1,37 +1,40 @@
 """Trade API endpoints for trade evaluation and proposals."""
 
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
-from sqlalchemy.orm import Session, selectinload
-from starlette.concurrency import run_in_threadpool
 import logging
+from datetime import datetime, timedelta
 
-from app.core.database import get_async_db, SessionLocal
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.core.database import SessionLocal, get_async_db
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.models.team import Team
-from app.models.trade_offer import TradeOffer, TradeOfferStatus as DBTradeOfferStatus
-from app.services.gm_agent import GMAgent
+from app.models.trade_offer import TradeOffer
+from app.models.trade_offer import TradeOfferStatus as DBTradeOfferStatus
 from app.schemas.trade import (
+    PendingOffersResponse,
+    TradeAssetRead,
+    TradeDecision,
     TradeEvaluationRequest,
     TradeEvaluationResponse,
+    TradeOfferRead,
     TradeOfferRequest,
     TradeOfferResponse,
-    TradeDecision,
-    TradeOfferRead,
-    TradeAssetRead,
-    PendingOffersResponse,
-    TradeRespondRequest,
     TradeOfferStatus,
+    TradeRespondRequest,
 )
+from app.services.gm_agent import GMAgent
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 logger = logging.getLogger(__name__)
 
 
-async def _build_asset_list(db: AsyncSession, player_ids: list, team_id: int) -> list[TradeAssetRead]:
+async def _build_asset_list(
+    db: AsyncSession, player_ids: list, team_id: int
+) -> list[TradeAssetRead]:
     """Build a list of TradeAssetRead from player IDs."""
     assets = []
     for pid in player_ids:
@@ -39,21 +42,29 @@ async def _build_asset_list(db: AsyncSession, player_ids: list, team_id: int) ->
         result = await db.execute(stmt)
         player = result.scalar_one_or_none()
         if player:
-            assets.append(TradeAssetRead(
-                id=player.id,
-                type="player",
-                name=f"{player.first_name} {player.last_name}",
-                value=player.overall_rating,
-                team_id=player.team_id,
-                position=player.position.value if hasattr(player.position, 'value') else str(player.position)
-            ))
+            assets.append(
+                TradeAssetRead(
+                    id=player.id,
+                    type="player",
+                    name=f"{player.first_name} {player.last_name}",
+                    value=player.overall_rating,
+                    team_id=player.team_id,
+                    position=player.position.value
+                    if hasattr(player.position, "value")
+                    else str(player.position),
+                )
+            )
     return assets
 
 
 async def _offer_to_read(db: AsyncSession, offer: TradeOffer) -> TradeOfferRead:
     """Convert a TradeOffer model to TradeOfferRead schema."""
-    offered_assets = await _build_asset_list(db, offer.offered_player_ids or [], offer.offering_team_id)
-    requested_assets = await _build_asset_list(db, offer.requested_player_ids or [], offer.receiving_team_id)
+    offered_assets = await _build_asset_list(
+        db, offer.offered_player_ids or [], offer.offering_team_id
+    )
+    requested_assets = await _build_asset_list(
+        db, offer.requested_player_ids or [], offer.receiving_team_id
+    )
 
     return TradeOfferRead(
         id=offer.id,
@@ -66,16 +77,13 @@ async def _offer_to_read(db: AsyncSession, offer: TradeOffer) -> TradeOfferRead:
         gm_response=offer.gm_response,
         created_at=offer.created_at.isoformat() if offer.created_at else "",
         expires_at=offer.expires_at.isoformat() if offer.expires_at else None,
-        parent_offer_id=offer.parent_offer_id
+        parent_offer_id=offer.parent_offer_id,
     )
 
 
 @router.post("/evaluate", response_model=TradeEvaluationResponse)
 @handle_errors
-async def evaluate_trade(
-    request: TradeEvaluationRequest,
-    db: AsyncSession = Depends(get_async_db)
-):
+async def evaluate_trade(request: TradeEvaluationRequest, db: AsyncSession = Depends(get_async_db)):
     """
     Evaluate a trade proposal from the perspective of the target team's GM.
 
@@ -99,8 +107,7 @@ async def evaluate_trade(
     target_team = result.scalar_one_or_none()
     if not target_team:
         raise HTTPException(
-            status_code=404,
-            detail=f"Target team {request.target_team_id} not found"
+            status_code=404, detail=f"Target team {request.target_team_id} not found"
         )
 
     # Validate all offered player IDs exist
@@ -110,10 +117,7 @@ async def evaluate_trade(
             result = await db.execute(stmt)
             player = result.scalar_one_or_none()
             if not player:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"Offered player {player_id} not found"
-                )
+                raise HTTPException(status_code=404, detail=f"Offered player {player_id} not found")
 
     # Validate all requested player IDs exist and belong to target team
     if request.requested_player_ids:
@@ -123,51 +127,37 @@ async def evaluate_trade(
             player = result.scalar_one_or_none()
             if not player:
                 raise HTTPException(
-                    status_code=404,
-                    detail=f"Requested player {player_id} not found"
+                    status_code=404, detail=f"Requested player {player_id} not found"
                 )
             if player.team_id != request.target_team_id:
                 raise HTTPException(
-                    status_code=400,
-                    detail=f"Player {player_id} does not belong to target team"
+                    status_code=400, detail=f"Player {player_id} does not belong to target team"
                 )
 
     # Validate trade has at least one asset on each side
     has_offered = bool(request.offered_player_ids) or bool(request.offered_picks)
     has_requested = bool(request.requested_player_ids) or bool(request.requested_picks)
     if not has_offered or not has_requested:
-        raise HTTPException(
-            status_code=400,
-            detail="Trade must include assets on both sides"
-        )
+        raise HTTPException(status_code=400, detail="Trade must include assets on both sides")
 
     # Convert picks to dict format for GMAgent
     offered_picks_dict = []
     if request.offered_picks:
-        offered_picks_dict = [
-            {"round": p.round, "year": p.year}
-            for p in request.offered_picks
-        ]
+        offered_picks_dict = [{"round": p.round, "year": p.year} for p in request.offered_picks]
 
     requested_picks_dict = []
     if request.requested_picks:
-        requested_picks_dict = [
-            {"round": p.round, "year": p.year}
-            for p in request.requested_picks
-        ]
+        requested_picks_dict = [{"round": p.round, "year": p.year} for p in request.requested_picks]
 
     # Run GMAgent evaluation in sync context (it uses sync Session)
     async def evaluate_sync():
         with SessionLocal() as sync_db:
-            gm_agent = GMAgent(
-                db=sync_db,
-                team_id=request.target_team_id
-            )
+            gm_agent = GMAgent(db=sync_db, team_id=request.target_team_id)
             return await gm_agent.evaluate_trade(
                 offered_players_ids=request.offered_player_ids or [],
                 requested_players_ids=request.requested_player_ids or [],
                 offered_picks=offered_picks_dict,
-                requested_picks=requested_picks_dict
+                requested_picks=requested_picks_dict,
             )
 
     # GMAgent.evaluate_trade is async, but uses sync db internally
@@ -175,24 +165,20 @@ async def evaluate_trade(
     evaluation = await evaluate_sync()
 
     logger.info(
-        f"Trade evaluation complete: {evaluation['decision']} "
-        f"(score: {evaluation['score']:.1f})"
+        f"Trade evaluation complete: {evaluation['decision']} (score: {evaluation['score']:.1f})"
     )
 
     return TradeEvaluationResponse(
         decision=TradeDecision(evaluation["decision"]),
         score=evaluation["score"],
         reasoning=evaluation["reasoning"],
-        gm_philosophy=target_team.gm.philosophy if target_team and target_team.gm else None
+        gm_philosophy=target_team.gm.philosophy if target_team and target_team.gm else None,
     )
 
 
 @router.post("/offer", response_model=TradeOfferResponse)
 @handle_errors
-async def submit_trade_offer(
-    request: TradeOfferRequest,
-    db: AsyncSession = Depends(get_async_db)
-):
+async def submit_trade_offer(request: TradeOfferRequest, db: AsyncSession = Depends(get_async_db)):
     """
     Submit a formal trade offer to another team.
 
@@ -213,8 +199,7 @@ async def submit_trade_offer(
     target_team = result.scalar_one_or_none()
     if not target_team:
         raise HTTPException(
-            status_code=404,
-            detail=f"Target team {request.target_team_id} not found"
+            status_code=404, detail=f"Target team {request.target_team_id} not found"
         )
 
     # Determine offering team (first offered player's team, or first requested player's team for receiving)
@@ -227,10 +212,7 @@ async def submit_trade_offer(
             offering_team_id = player.team_id
 
     if not offering_team_id:
-        raise HTTPException(
-            status_code=400,
-            detail="Could not determine offering team from offer"
-        )
+        raise HTTPException(status_code=400, detail="Could not determine offering team from offer")
 
     # Create the trade offer
     trade_offer = TradeOffer(
@@ -238,11 +220,15 @@ async def submit_trade_offer(
         receiving_team_id=request.target_team_id,
         offered_player_ids=request.offered_player_ids or [],
         requested_player_ids=request.requested_player_ids or [],
-        offered_picks=[{"round": p.round, "year": p.year} for p in request.offered_picks] if request.offered_picks else None,
-        requested_picks=[{"round": p.round, "year": p.year} for p in request.requested_picks] if request.requested_picks else None,
+        offered_picks=[{"round": p.round, "year": p.year} for p in request.offered_picks]
+        if request.offered_picks
+        else None,
+        requested_picks=[{"round": p.round, "year": p.year} for p in request.requested_picks]
+        if request.requested_picks
+        else None,
         status=DBTradeOfferStatus.PENDING,
         message=request.message,
-        expires_at=datetime.utcnow() + timedelta(days=3)
+        expires_at=datetime.utcnow() + timedelta(days=3),
     )
 
     db.add(trade_offer)
@@ -254,16 +240,13 @@ async def submit_trade_offer(
     return TradeOfferResponse(
         offer_id=trade_offer.id,
         status="PENDING",
-        message="Trade offer submitted. The GM will review your proposal."
+        message="Trade offer submitted. The GM will review your proposal.",
     )
 
 
 @router.get("/pending/{team_id}", response_model=PendingOffersResponse)
 @handle_errors
-async def get_pending_offers(
-    team_id: int,
-    db: AsyncSession = Depends(get_async_db)
-):
+async def get_pending_offers(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Get all pending trade offers for a team.
 
@@ -271,16 +254,14 @@ async def get_pending_offers(
     """
     # Get incoming offers (where this team is receiving)
     incoming_stmt = select(TradeOffer).where(
-        TradeOffer.receiving_team_id == team_id,
-        TradeOffer.status == DBTradeOfferStatus.PENDING
+        TradeOffer.receiving_team_id == team_id, TradeOffer.status == DBTradeOfferStatus.PENDING
     )
     incoming_result = await db.execute(incoming_stmt)
     incoming_offers = incoming_result.scalars().all()
 
     # Get outgoing offers (where this team is offering)
     outgoing_stmt = select(TradeOffer).where(
-        TradeOffer.offering_team_id == team_id,
-        TradeOffer.status == DBTradeOfferStatus.PENDING
+        TradeOffer.offering_team_id == team_id, TradeOffer.status == DBTradeOfferStatus.PENDING
     )
     outgoing_result = await db.execute(outgoing_stmt)
     outgoing_offers = outgoing_result.scalars().all()
@@ -289,18 +270,13 @@ async def get_pending_offers(
     incoming_reads = [await _offer_to_read(db, o) for o in incoming_offers]
     outgoing_reads = [await _offer_to_read(db, o) for o in outgoing_offers]
 
-    return PendingOffersResponse(
-        incoming=incoming_reads,
-        outgoing=outgoing_reads
-    )
+    return PendingOffersResponse(incoming=incoming_reads, outgoing=outgoing_reads)
 
 
 @router.post("/respond/{offer_id}")
 @handle_errors
 async def respond_to_offer(
-    offer_id: int,
-    request: TradeRespondRequest,
-    db: AsyncSession = Depends(get_async_db)
+    offer_id: int, request: TradeRespondRequest, db: AsyncSession = Depends(get_async_db)
 ):
     """
     Respond to a trade offer (accept, reject, or auto).
@@ -318,13 +294,16 @@ async def respond_to_offer(
         raise HTTPException(status_code=404, detail=f"Trade offer {offer_id} not found")
 
     if offer.status != DBTradeOfferStatus.PENDING:
-        raise HTTPException(status_code=400, detail=f"Trade offer is not pending (status: {offer.status.value})")
+        raise HTTPException(
+            status_code=400, detail=f"Trade offer is not pending (status: {offer.status.value})"
+        )
 
     action = request.action
     gm_reasoning = None
 
     # Auto-response: Use GMAgent to decide
     if request.action == "auto":
+
         async def evaluate_auto():
             with SessionLocal() as sync_db:
                 gm_agent = GMAgent(db=sync_db, team_id=offer.receiving_team_id)
@@ -335,13 +314,15 @@ async def respond_to_offer(
                     offered_players_ids=offer.offered_player_ids or [],
                     requested_players_ids=offer.requested_player_ids or [],
                     offered_picks=offered_picks,
-                    requested_picks=requested_picks
+                    requested_picks=requested_picks,
                 )
 
         evaluation = await evaluate_auto()
         action = "accept" if evaluation["decision"] == "ACCEPT" else "reject"
         gm_reasoning = evaluation.get("reasoning", "")
-        logger.info(f"GMAgent auto-response for offer {offer_id}: {action} (score: {evaluation['score']:.1f})")
+        logger.info(
+            f"GMAgent auto-response for offer {offer_id}: {action} (score: {evaluation['score']:.1f})"
+        )
 
     if action == "accept":
         # Execute the trade: swap player team IDs
@@ -371,19 +352,23 @@ async def respond_to_offer(
         logger.info(f"Trade offer {offer_id} REJECTED")
 
     else:
-        raise HTTPException(status_code=400, detail="Invalid action. Use 'accept', 'reject', or 'auto'.")
+        raise HTTPException(
+            status_code=400, detail="Invalid action. Use 'accept', 'reject', or 'auto'."
+        )
 
     await db.commit()
 
-    return {"success": True, "message": f"Trade offer {action}ed successfully", "gm_reasoning": gm_reasoning}
+    return {
+        "success": True,
+        "message": f"Trade offer {action}ed successfully",
+        "gm_reasoning": gm_reasoning,
+    }
 
 
 @router.post("/counter/{offer_id}", response_model=TradeOfferResponse)
 @handle_errors
 async def counter_trade_offer(
-    offer_id: int,
-    counter_request: TradeOfferRequest,
-    db: AsyncSession = Depends(get_async_db)
+    offer_id: int, counter_request: TradeOfferRequest, db: AsyncSession = Depends(get_async_db)
 ):
     """
     Submit a counter-offer to an existing trade proposal.
@@ -415,12 +400,18 @@ async def counter_trade_offer(
         receiving_team_id=counter_receiving_team_id,
         offered_player_ids=counter_request.offered_player_ids or [],
         requested_player_ids=counter_request.requested_player_ids or [],
-        offered_picks=[{"round": p.round, "year": p.year} for p in counter_request.offered_picks] if counter_request.offered_picks else None,
-        requested_picks=[{"round": p.round, "year": p.year} for p in counter_request.requested_picks] if counter_request.requested_picks else None,
+        offered_picks=[{"round": p.round, "year": p.year} for p in counter_request.offered_picks]
+        if counter_request.offered_picks
+        else None,
+        requested_picks=[
+            {"round": p.round, "year": p.year} for p in counter_request.requested_picks
+        ]
+        if counter_request.requested_picks
+        else None,
         status=DBTradeOfferStatus.PENDING,
         message=counter_request.message,
         expires_at=datetime.utcnow() + timedelta(days=3),
-        parent_offer_id=offer_id
+        parent_offer_id=offer_id,
     )
 
     db.add(counter_offer)
@@ -432,6 +423,5 @@ async def counter_trade_offer(
     return TradeOfferResponse(
         offer_id=counter_offer.id,
         status="PENDING",
-        message="Counter-offer submitted. Awaiting response."
+        message="Counter-offer submitted. Awaiting response.",
     )
-

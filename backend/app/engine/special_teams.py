@@ -1,5 +1,5 @@
-import math
 from app.engine.physics import BallPhysics
+
 
 class SpecialTeamsEngine:
     @staticmethod
@@ -13,20 +13,22 @@ class SpecialTeamsEngine:
         # Angle
         angle = 45.0
         if kick_type == "Punt":
-            angle = 55.0 # Higher angle for hangtime
+            angle = 55.0  # Higher angle for hangtime
 
         # Accuracy affects lateral deviation (wind/hook)
-        accuracy_error = (100 - accuracy) * 0.5 # Degrees off center
+        accuracy_error = (100 - accuracy) * 0.5  # Degrees off center
         deviation = rng.uniform(-accuracy_error, accuracy_error)
 
         # Spiral Efficiency
-        spiral = 0.1 if kick_type == "FieldGoal" else 0.9 # FG is end-over-end (wobbly aerodynamics), Punt is spiral
+        spiral = (
+            0.1 if kick_type == "FieldGoal" else 0.9
+        )  # FG is end-over-end (wobbly aerodynamics), Punt is spiral
 
         trajectory = BallPhysics.calculate_trajectory(v0, angle, spiral_efficiency=spiral)
 
         return {
             "trajectory": trajectory,
-            "distance": trajectory[-1]['x'],
-            "hang_time": trajectory[-1]['t'],
-            "deviation": deviation
+            "distance": trajectory[-1]["x"],
+            "hang_time": trajectory[-1]["t"],
+            "deviation": deviation,
         }

@@ -12,13 +12,14 @@ Archetypes:
 - TRENCH_WARLORD: OL/DL with 85+ strength, dominance
 """
 
-from enum import Enum
-from typing import Any, Dict, Optional, List
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 
 class PlayerArchetype(Enum):
     """Player archetypes with distinct game effects."""
+
     FIELD_GENERAL = "Field General"
     TRAILER_PARK_TERMINATOR = "Trailer Park Terminator"
     SPEED_MERCHANT = "Speed Merchant"
@@ -29,14 +30,16 @@ class PlayerArchetype(Enum):
 @dataclass
 class ArchetypeThresholds:
     """Rating thresholds required to unlock an archetype."""
-    required_ratings: Dict[str, int]
-    required_position: Optional[str] = None
-    required_dna: Optional[List[str]] = None
+
+    required_ratings: dict[str, int]
+    required_position: str | None = None
+    required_dna: list[str] | None = None
 
 
 @dataclass
 class ArchetypeEffect:
     """Effects applied when archetype conditions are met."""
+
     conversion_boost: float = 0.0  # Multiplier for conversions
     breakaway_boost: float = 0.0  # Multiplier for big plays
     audible_unlock: bool = False  # Can change plays at line
@@ -45,45 +48,45 @@ class ArchetypeEffect:
 
 
 # Archetype definitions with thresholds
-ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeThresholds] = {
+ARCHETYPE_DEFINITIONS: dict[PlayerArchetype, ArchetypeThresholds] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeThresholds(
         required_ratings={"throw_accuracy_short": 90, "throw_accuracy_mid": 90},
-        required_position="QB"
+        required_position="QB",
     ),
     PlayerArchetype.TRAILER_PARK_TERMINATOR: ArchetypeThresholds(
         required_ratings={"strength": 85, "tackle": 80},
         required_position="DT",
-        required_dna=["Run Stopper", "Blue Collar"]
+        required_dna=["Run Stopper", "Blue Collar"],
     ),
     PlayerArchetype.SPEED_MERCHANT: ArchetypeThresholds(
         required_ratings={"speed": 90, "acceleration": 88},
-        required_position=None  # WR, RB, CB
+        required_position=None,  # WR, RB, CB
     ),
     PlayerArchetype.TRENCH_WARLORD: ArchetypeThresholds(
         required_ratings={"strength": 85, "awareness": 80},
-        required_position=None  # OL, DL positions
+        required_position=None,  # OL, DL positions
     ),
 }
 
 # Effects for each archetype
-ARCHETYPE_EFFECTS: Dict[PlayerArchetype, ArchetypeEffect] = {
+ARCHETYPE_EFFECTS: dict[PlayerArchetype, ArchetypeEffect] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeEffect(
         conversion_boost=0.20,  # +20% on 3rd down
         audible_unlock=True,
-        description="Elite accuracy unlocks pre-snap reads and audibles."
+        description="Elite accuracy unlocks pre-snap reads and audibles.",
     ),
     PlayerArchetype.TRAILER_PARK_TERMINATOR: ArchetypeEffect(
         intimidation_factor=1.5,  # 50% more intimidating
-        description="4th gen coal miner. Limited between-the-ears, unlimited motor."
+        description="4th gen coal miner. Limited between-the-ears, unlimited motor.",
     ),
     PlayerArchetype.SPEED_MERCHANT: ArchetypeEffect(
         breakaway_boost=0.25,  # +25% breakaway chance
-        description="Home run threat. Breaks free on any touch."
+        description="Home run threat. Breaks free on any touch.",
     ),
     PlayerArchetype.TRENCH_WARLORD: ArchetypeEffect(
         intimidation_factor=1.3,
         conversion_boost=0.10,  # Run game boost
-        description="Dominates the trenches. Pancakes for breakfast."
+        description="Dominates the trenches. Pancakes for breakfast.",
     ),
     PlayerArchetype.STANDARD: ArchetypeEffect(
         description="Standard player without elite archetype traits."
@@ -97,7 +100,7 @@ class ArchetypeClassifier:
     """
 
     @classmethod
-    def classify(cls, player: Any, dna_traits: Optional[List[str]] = None) -> PlayerArchetype:
+    def classify(cls, player: Any, dna_traits: list[str] | None = None) -> PlayerArchetype:
         """
         Classify a player into their archetype.
 
@@ -120,11 +123,7 @@ class ArchetypeClassifier:
 
     @classmethod
     def _meets_thresholds(
-        cls,
-        player: Any,
-        position: str,
-        dna: List[str],
-        thresholds: ArchetypeThresholds
+        cls, player: Any, position: str, dna: list[str], thresholds: ArchetypeThresholds
     ) -> bool:
         """Check if player meets all thresholds for an archetype."""
         # Check position requirement
@@ -159,11 +158,8 @@ class ArchetypeEffectApplicator:
 
     @classmethod
     def apply_modifiers(
-        cls,
-        player: Any,
-        game_context: Dict[str, Any],
-        dna_traits: Optional[List[str]] = None
-    ) -> Dict[str, Any]:
+        cls, player: Any, game_context: dict[str, Any], dna_traits: list[str] | None = None
+    ) -> dict[str, Any]:
         """
         Calculate and return all archetype-based modifiers for a play.
 
@@ -189,14 +185,16 @@ class ArchetypeEffectApplicator:
             "breakaway_modifier": 1.0,
             "has_audible": effects.audible_unlock,
             "intimidation": effects.intimidation_factor,
-            "narrative": None
+            "narrative": None,
         }
 
         # Apply 3rd down boost for Field General
         if archetype == PlayerArchetype.FIELD_GENERAL:
             if game_context.get("down") == 3:
                 result["conversion_modifier"] = 1.0 + effects.conversion_boost
-                result["narrative"] = f"{getattr(player, 'last_name', 'QB')} reads the defense pre-snap."
+                result["narrative"] = (
+                    f"{getattr(player, 'last_name', 'QB')} reads the defense pre-snap."
+                )
 
         # Apply breakaway boost for Speed Merchant
         if archetype == PlayerArchetype.SPEED_MERCHANT:
@@ -213,10 +211,8 @@ class ArchetypeEffectApplicator:
 
 
 def get_archetype_modifiers(
-    player: Any,
-    game_context: Dict[str, Any],
-    dna_traits: Optional[List[str]] = None
-) -> Dict[str, Any]:
+    player: Any, game_context: dict[str, Any], dna_traits: list[str] | None = None
+) -> dict[str, Any]:
     """
     Convenience function to get all archetype modifiers.
 

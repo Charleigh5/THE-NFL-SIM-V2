@@ -12,24 +12,24 @@ Phase 3: Position-Specific Physics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState,
+    PhysicsState,
+    Vector2,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_change_of_direction_time,
 )
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CoverageType(str, Enum):
     """Types of coverage."""
+
     MAN_PRESS = "MAN_PRESS"
     MAN_OFF = "MAN_OFF"
     ZONE_DEEP = "ZONE_DEEP"
@@ -40,28 +40,31 @@ class CoverageType(str, Enum):
 
 class BreakType(str, Enum):
     """Route break recognition."""
-    SLANT = "SLANT"       # 45° inside
-    OUT = "OUT"           # 90° outside
-    IN = "IN"             # 90° inside
-    CORNER = "CORNER"     # 45° up and out
-    POST = "POST"         # 45° up and in
-    CURL = "CURL"         # Stop and turn
-    COMEBACK = "COMEBACK" # Stop and come back
+
+    SLANT = "SLANT"  # 45° inside
+    OUT = "OUT"  # 90° outside
+    IN = "IN"  # 90° inside
+    CORNER = "CORNER"  # 45° up and out
+    POST = "POST"  # 45° up and in
+    CURL = "CURL"  # Stop and turn
+    COMEBACK = "COMEBACK"  # Stop and come back
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class DBState:
     """Current DB state during play."""
+
     physics: PhysicsState = field(default_factory=PhysicsState)
 
     # Coverage
     coverage_type: CoverageType = CoverageType.MAN_OFF
-    assigned_receiver_id: Optional[str] = None
-    zone_position: Optional[Vector2] = None
+    assigned_receiver_id: str | None = None
+    zone_position: Vector2 | None = None
 
     # Tracking
     receiver_distance: float = 5.0
@@ -76,6 +79,7 @@ class DBState:
 @dataclass(frozen=True)
 class DBPhysicsConfig:
     """Configuration for DB physics."""
+
     # Press coverage
     jam_window_yards: float = 5.0
     jam_success_base: float = 0.5
@@ -92,6 +96,7 @@ class DBPhysicsConfig:
 # DEFENSIVE BACK PHYSICS
 # ============================================================================
 
+
 class DefensiveBackPhysics:
     """
     Physics engine for cornerbacks and safeties.
@@ -105,7 +110,7 @@ class DefensiveBackPhysics:
 
     def __init__(
         self,
-        config: Optional[DBPhysicsConfig] = None,
+        config: DBPhysicsConfig | None = None,
         speed_rating: int = 90,
         acceleration_rating: int = 88,
         agility_rating: int = 88,
@@ -135,7 +140,7 @@ class DefensiveBackPhysics:
         receiver_release_rating: int,
         receiver_strength: int,
         rng: Any = None,
-    ) -> Tuple[bool, float]:
+    ) -> tuple[bool, float]:
         """
         Execute press jam at line of scrimmage.
 
@@ -154,7 +159,7 @@ class DefensiveBackPhysics:
         success_prob = base_success - release_counter * 0.3 + strength_diff
         success_prob = min(0.9, max(0.1, success_prob))
 
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
         success = roll < success_prob
 
         # Calculate delay yards (how far WR got before jam ended)
@@ -175,10 +180,8 @@ class DefensiveBackPhysics:
         Higher play recognition = faster recognition.
         """
         # Base time from play rec rating
-        base_time = (
-            self.config.break_recognition_max_ms -
-            (self.play_recognition / 100.0) *
-            (self.config.break_recognition_max_ms - self.config.break_recognition_min_ms)
+        base_time = self.config.break_recognition_max_ms - (self.play_recognition / 100.0) * (
+            self.config.break_recognition_max_ms - self.config.break_recognition_min_ms
         )
 
         # Route sharpness affects recognition
@@ -202,7 +205,7 @@ class DefensiveBackPhysics:
         self,
         state: DBState,
         receiver_direction: float,  # Degrees relative to DB
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Execute hip-flip to turn and run with receiver.
 
@@ -216,7 +219,7 @@ class DefensiveBackPhysics:
 
         # Sharper turns take longer
         angle_factor = abs(receiver_direction) / 180.0
-        flip_time *= (1.0 + angle_factor * 0.5)
+        flip_time *= 1.0 + angle_factor * 0.5
 
         # Speed loss during flip
         speed_loss = 0.3 + angle_factor * 0.2

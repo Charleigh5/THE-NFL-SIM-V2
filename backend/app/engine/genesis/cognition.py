@@ -16,38 +16,40 @@ Context7 Best Practices:
 - No side effects in core logic
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
-
+from dataclasses import dataclass, field
+from enum import Enum
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CognitiveState(str, Enum):
     """Current cognitive state of a player."""
-    RELAXED = "RELAXED"         # Pre-snap, no pressure
-    FOCUSED = "FOCUSED"         # Normal play conditions
-    STRESSED = "STRESSED"       # Under moderate pressure
-    PANICKED = "PANICKED"       # Extreme pressure, mistakes likely
-    FLOW = "FLOW"               # Peak performance state
+
+    RELAXED = "RELAXED"  # Pre-snap, no pressure
+    FOCUSED = "FOCUSED"  # Normal play conditions
+    STRESSED = "STRESSED"  # Under moderate pressure
+    PANICKED = "PANICKED"  # Extreme pressure, mistakes likely
+    FLOW = "FLOW"  # Peak performance state
 
 
 class ReadPhase(str, Enum):
     """Current phase of read progression."""
-    PRE_SNAP = "PRE_SNAP"       # Reading defense alignment
-    POST_SNAP = "POST_SNAP"     # Initial read after snap
-    FIRST_READ = "FIRST_READ"   # Looking at primary receiver
-    SECOND_READ = "SECOND_READ" # Checking second option
-    SCRAMBLE = "SCRAMBLE"       # Looking to run or dump off
-    PANIC = "PANIC"             # Throwing it away or taking sack
+
+    PRE_SNAP = "PRE_SNAP"  # Reading defense alignment
+    POST_SNAP = "POST_SNAP"  # Initial read after snap
+    FIRST_READ = "FIRST_READ"  # Looking at primary receiver
+    SECOND_READ = "SECOND_READ"  # Checking second option
+    SCRAMBLE = "SCRAMBLE"  # Looking to run or dump off
+    PANIC = "PANIC"  # Throwing it away or taking sack
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
+
 
 @dataclass
 class OODAState:
@@ -56,27 +58,23 @@ class OODAState:
 
     Each phase has a time cost in milliseconds.
     """
-    observe_time_ms: float = 100.0    # Time to gather visual info
-    orient_time_ms: float = 80.0      # Time to process and understand
-    decide_time_ms: float = 60.0      # Time to make decision
-    act_time_ms: float = 40.0         # Time to initiate action
+
+    observe_time_ms: float = 100.0  # Time to gather visual info
+    orient_time_ms: float = 80.0  # Time to process and understand
+    decide_time_ms: float = 60.0  # Time to make decision
+    act_time_ms: float = 40.0  # Time to initiate action
 
     @property
     def total_loop_time_ms(self) -> float:
         """Total time for one OODA loop iteration."""
-        return (
-            self.observe_time_ms +
-            self.orient_time_ms +
-            self.decide_time_ms +
-            self.act_time_ms
-        )
+        return self.observe_time_ms + self.orient_time_ms + self.decide_time_ms + self.act_time_ms
 
     @property
     def total_loop_time_s(self) -> float:
         """Total time in seconds."""
         return self.total_loop_time_ms / 1000.0
 
-    def apply_cognition_modifier(self, s2_score: float) -> 'OODAState':
+    def apply_cognition_modifier(self, s2_score: float) -> "OODAState":
         """
         Apply S2 cognition score modifier to OODA times.
 
@@ -97,16 +95,15 @@ class VisionCone:
     """
     Player's field of vision for awareness calculations.
     """
-    fov_degrees: float = 120.0       # Field of view in degrees
+
+    fov_degrees: float = 120.0  # Field of view in degrees
     focus_zone_degrees: float = 20.0  # High-detail central zone
     peripheral_degradation: float = 0.7  # Accuracy outside focus zone
-    facing_angle: float = 0.0        # Current facing direction (0 = upfield)
+    facing_angle: float = 0.0  # Current facing direction (0 = upfield)
 
     def can_see_target(
-        self,
-        player_pos: Tuple[float, float],
-        target_pos: Tuple[float, float]
-    ) -> Tuple[bool, float]:
+        self, player_pos: tuple[float, float], target_pos: tuple[float, float]
+    ) -> tuple[bool, float]:
         """
         Check if target is within vision cone.
 
@@ -136,7 +133,9 @@ class VisionCone:
             # Linear degradation in peripheral vision
             peripheral_range = half_fov - (self.focus_zone_degrees / 2)
             peripheral_distance = relative_angle - (self.focus_zone_degrees / 2)
-            quality = 1.0 - (peripheral_distance / peripheral_range) * (1 - self.peripheral_degradation)
+            quality = 1.0 - (peripheral_distance / peripheral_range) * (
+                1 - self.peripheral_degradation
+            )
 
         return True, max(0.0, min(1.0, quality))
 
@@ -146,6 +145,7 @@ class CognitiveProfile:
     """
     Complete cognitive model for a player.
     """
+
     # Base attributes (from BiometricProfile)
     s2_cognition_score: float = 100.0
     reaction_time_ms: float = 250.0
@@ -214,6 +214,7 @@ class CognitiveProfile:
 # COGNITION ENGINE
 # ============================================================================
 
+
 class CognitionEngine:
     """
     Engine for processing player cognitive decisions.
@@ -225,7 +226,7 @@ class CognitionEngine:
     - Vision-based awareness
     """
 
-    def __init__(self, profile: Optional[CognitiveProfile] = None):
+    def __init__(self, profile: CognitiveProfile | None = None):
         self.profile = profile or CognitiveProfile()
 
     def calculate_decision_delay(
@@ -262,8 +263,8 @@ class CognitionEngine:
         self,
         elapsed_ms: float,
         defenders_nearby: int = 0,
-        open_receiver_quality: Optional[List[float]] = None,
-    ) -> Tuple[ReadPhase, int, bool]:
+        open_receiver_quality: list[float] | None = None,
+    ) -> tuple[ReadPhase, int, bool]:
         """
         Process QB read progression for one time step.
 
@@ -309,7 +310,7 @@ class CognitionEngine:
         should_throw = False
         if self.profile.reads_completed > 0 and open_receiver_quality:
             # Look at receivers up to current read
-            available = open_receiver_quality[:self.profile.reads_completed]
+            available = open_receiver_quality[: self.profile.reads_completed]
             if available:
                 best_option = max(available)
                 # Throw if receiver is clearly open or under heavy pressure
@@ -336,9 +337,9 @@ class CognitionEngine:
 
     def can_see_player(
         self,
-        own_position: Tuple[float, float],
-        target_position: Tuple[float, float],
-    ) -> Tuple[bool, float]:
+        own_position: tuple[float, float],
+        target_position: tuple[float, float],
+    ) -> tuple[bool, float]:
         """
         Check if this player can see another player.
 

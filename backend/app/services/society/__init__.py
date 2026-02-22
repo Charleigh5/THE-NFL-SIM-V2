@@ -9,37 +9,43 @@ Phase 6: SOCIETY Locker Room Dynamics
 - Momentum Engine (Streaks, Morale)
 """
 
-from .social_graph import (
-    SocialGraph,
-    SocialNode,
-    Relationship,
-    RelationshipType,
-    CliqueType,
+from .momentum import (
+    MomentumEngine,
+    MomentumEvent,
+    MomentumState,
+    TeamMomentum,
 )
-
 from .nemesis import (
     NemesisEngine,
+    NemesisEvent,
     NemesisState,
     Rivalry,
     RivalryType,
-    NemesisEvent,
 )
-
-from .momentum import (
-    MomentumEngine,
-    TeamMomentum,
-    MomentumState,
-    MomentumEvent,
+from .social_graph import (
+    CliqueType,
+    Relationship,
+    RelationshipType,
+    SocialGraph,
+    SocialNode,
 )
 
 __all__ = [
     # Social Graph
-    "SocialGraph", "SocialNode", "Relationship",
-    "RelationshipType", "CliqueType",
+    "SocialGraph",
+    "SocialNode",
+    "Relationship",
+    "RelationshipType",
+    "CliqueType",
     # Nemesis
-    "NemesisEngine", "NemesisState", "Rivalry",
-    "RivalryType", "NemesisEvent",
+    "NemesisEngine",
+    "NemesisState",
+    "Rivalry",
+    "RivalryType",
+    "NemesisEvent",
     # Momentum
-    "MomentumEngine", "TeamMomentum", "MomentumState",
+    "MomentumEngine",
+    "TeamMomentum",
+    "MomentumState",
     "MomentumEvent",
 ]

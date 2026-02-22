@@ -11,27 +11,28 @@ Phase 4: HIVE Environment Physics
 - Weather interaction
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CleatType(str, Enum):
     """Types of football cleats."""
-    MOLDED = "MOLDED"           # Standard, all-around
-    DETACHABLE = "DETACHABLE"   # Customizable studs
-    TURF = "TURF"               # Short rubber studs
-    LOW_CUT = "LOW_CUT"         # Speed focused
-    MID_CUT = "MID_CUT"         # Balanced
-    HIGH_CUT = "HIGH_CUT"       # Ankle support
+
+    MOLDED = "MOLDED"  # Standard, all-around
+    DETACHABLE = "DETACHABLE"  # Customizable studs
+    TURF = "TURF"  # Short rubber studs
+    LOW_CUT = "LOW_CUT"  # Speed focused
+    MID_CUT = "MID_CUT"  # Balanced
+    HIGH_CUT = "HIGH_CUT"  # Ankle support
 
 
 class GloveType(str, Enum):
     """Types of receiver gloves."""
+
     STANDARD = "STANDARD"
     HIGH_GRIP = "HIGH_GRIP"
     ALL_WEATHER = "ALL_WEATHER"
@@ -41,6 +42,7 @@ class GloveType(str, Enum):
 
 class HelmetType(str, Enum):
     """Helmet protection levels."""
+
     STANDARD = "STANDARD"
     ENHANCED = "ENHANCED"
     REVOLUTION = "REVOLUTION"
@@ -50,9 +52,11 @@ class HelmetType(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class EquipmentConfig:
     """Configuration for equipment physics."""
+
     # Cleat grip modifiers
     molded_grip: float = 1.0
     detachable_grip: float = 1.1
@@ -78,6 +82,7 @@ class EquipmentConfig:
 @dataclass
 class PlayerEquipment:
     """Equipment loadout for a player."""
+
     cleat_type: CleatType = CleatType.MOLDED
     cleat_cut: str = "MID"  # LOW, MID, HIGH
     glove_type: GloveType = GloveType.STANDARD
@@ -93,6 +98,7 @@ class PlayerEquipment:
 # EQUIPMENT PHYSICS ENGINE
 # ============================================================================
 
+
 class EquipmentPhysics:
     """
     Calculate equipment effects on player performance.
@@ -103,7 +109,7 @@ class EquipmentPhysics:
     - High grip gloves = better catching, worse in wet weather
     """
 
-    def __init__(self, config: Optional[EquipmentConfig] = None):
+    def __init__(self, config: EquipmentConfig | None = None):
         self.config = config or EquipmentConfig()
 
     def get_grip_modifier(
@@ -168,9 +174,9 @@ class EquipmentPhysics:
         Higher cut = more protection = lower modifier.
         """
         cut_mods = {
-            "LOW": 1.3,   # Higher ankle injury risk
-            "MID": 1.0,   # Normal
-            "HIGH": 0.75, # Protected
+            "LOW": 1.3,  # Higher ankle injury risk
+            "MID": 1.0,  # Normal
+            "HIGH": 0.75,  # Protected
         }
         return cut_mods.get(equipment.cleat_cut, 1.0)
 

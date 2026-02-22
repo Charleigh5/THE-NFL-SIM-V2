@@ -17,17 +17,17 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class TurfType(str, Enum):
     """Types of playing surfaces."""
+
     NATURAL_GRASS = "NATURAL_GRASS"
     BERMUDA = "BERMUDA"
     KENTUCKY_BLUEGRASS = "KENTUCKY_BLUEGRASS"
@@ -38,15 +38,17 @@ class TurfType(str, Enum):
 
 class TurfCondition(str, Enum):
     """Condition states of turf."""
-    PRISTINE = "PRISTINE"    # 90-100%
-    GOOD = "GOOD"            # 70-89%
-    WORN = "WORN"            # 50-69%
-    DAMAGED = "DAMAGED"      # 30-49%
+
+    PRISTINE = "PRISTINE"  # 90-100%
+    GOOD = "GOOD"  # 70-89%
+    WORN = "WORN"  # 50-69%
+    DAMAGED = "DAMAGED"  # 30-49%
     DESTROYED = "DESTROYED"  # 0-29%
 
 
 class WeatherEffect(str, Enum):
     """Weather effects on turf."""
+
     DRY = "DRY"
     WET = "WET"
     MUDDY = "MUDDY"
@@ -58,9 +60,11 @@ class WeatherEffect(str, Enum):
 # CONFIGURATION
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class TurfGridConfig:
     """Configuration for turf grid."""
+
     grid_width: int = 10  # Zones across field width
     grid_length: int = 10  # Zones along field length
 
@@ -81,9 +85,11 @@ class TurfGridConfig:
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class TurfZone:
     """Single zone of the turf grid."""
+
     row: int
     col: int
     integrity: float = 100.0  # 0-100%
@@ -114,9 +120,10 @@ class TurfZone:
 @dataclass
 class TurfGridState:
     """State of the entire turf grid."""
+
     turf_type: TurfType = TurfType.NATURAL_GRASS
     weather_effect: WeatherEffect = WeatherEffect.DRY
-    zones: List[List[TurfZone]] = field(default_factory=list)
+    zones: list[list[TurfZone]] = field(default_factory=list)
     games_played: int = 0
 
     @property
@@ -132,6 +139,7 @@ class TurfGridState:
 # TURF GRID ENGINE
 # ============================================================================
 
+
 class TurfGrid:
     """
     10x10 field grid for tracking turf conditions.
@@ -143,7 +151,7 @@ class TurfGrid:
 
     def __init__(
         self,
-        config: Optional[TurfGridConfig] = None,
+        config: TurfGridConfig | None = None,
         turf_type: TurfType = TurfType.NATURAL_GRASS,
     ):
         self.config = config or TurfGridConfig()
@@ -161,7 +169,7 @@ class TurfGrid:
         self,
         yard_line: float,
         lateral_position: float,
-    ) -> Tuple[int, int]:
+    ) -> tuple[int, int]:
         """
         Convert field position to grid zone.
 
@@ -203,7 +211,11 @@ class TurfGrid:
             TurfType.BERMUDA,
             TurfType.KENTUCKY_BLUEGRASS,
         ]
-        base = self.config.natural_base_friction if is_natural else self.config.artificial_base_friction
+        base = (
+            self.config.natural_base_friction
+            if is_natural
+            else self.config.artificial_base_friction
+        )
 
         # Integrity modifier (damaged turf = less grip)
         integrity_mod = 0.7 + (zone.integrity / 100.0) * 0.3
@@ -248,7 +260,7 @@ class TurfGrid:
         lateral_start: float,
         lateral_end: float,
         is_run_play: bool = False,
-    ) -> List[Tuple[int, int]]:
+    ) -> list[tuple[int, int]]:
         """
         Record a play and degrade affected zones.
 
@@ -257,9 +269,7 @@ class TurfGrid:
         affected = []
 
         # Get zones along play path
-        zones_crossed = self._get_zones_in_path(
-            start_yard, end_yard, lateral_start, lateral_end
-        )
+        zones_crossed = self._get_zones_in_path(start_yard, end_yard, lateral_start, lateral_end)
 
         # Determine degradation rate
         is_natural = self.state.turf_type in [
@@ -267,7 +277,11 @@ class TurfGrid:
             TurfType.BERMUDA,
             TurfType.KENTUCKY_BLUEGRASS,
         ]
-        base_degrade = self.config.natural_degradation_rate if is_natural else self.config.artificial_degradation_rate
+        base_degrade = (
+            self.config.natural_degradation_rate
+            if is_natural
+            else self.config.artificial_degradation_rate
+        )
 
         # Run plays cause more wear
         if is_run_play:
@@ -287,9 +301,11 @@ class TurfGrid:
 
     def _get_zones_in_path(
         self,
-        y1: float, y2: float,
-        x1: float, x2: float,
-    ) -> List[Tuple[int, int]]:
+        y1: float,
+        y2: float,
+        x1: float,
+        x2: float,
+    ) -> list[tuple[int, int]]:
         """Get all zones crossed by a path."""
         zones = set()
 
@@ -324,7 +340,11 @@ class TurfGrid:
             TurfType.BERMUDA,
             TurfType.KENTUCKY_BLUEGRASS,
         ]
-        rate = self.config.natural_recovery_rate if is_natural else self.config.artificial_recovery_rate
+        rate = (
+            self.config.natural_recovery_rate
+            if is_natural
+            else self.config.artificial_recovery_rate
+        )
 
         for row in self.state.zones:
             for zone in row:
@@ -334,12 +354,12 @@ class TurfGrid:
         """Set current weather effect."""
         self.state.weather_effect = weather
 
-    def get_worst_zones(self, n: int = 5) -> List[TurfZone]:
+    def get_worst_zones(self, n: int = 5) -> list[TurfZone]:
         """Get the n most damaged zones."""
         all_zones = [z for row in self.state.zones for z in row]
         return sorted(all_zones, key=lambda z: z.integrity)[:n]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize grid state."""
         return {
             "turf_type": self.state.turf_type.value,
@@ -347,8 +367,7 @@ class TurfGrid:
             "games_played": self.state.games_played,
             "average_integrity": round(self.state.average_integrity, 1),
             "zones": [
-                [{"row": z.row, "col": z.col, "integrity": round(z.integrity, 1)}
-                 for z in row]
+                [{"row": z.row, "col": z.col, "integrity": round(z.integrity, 1)} for z in row]
                 for row in self.state.zones
             ],
         }

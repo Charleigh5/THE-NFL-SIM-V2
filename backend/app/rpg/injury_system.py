@@ -1,12 +1,14 @@
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
-from app.models.player import Player, InjuryStatus
-from app.core.random_utils import DeterministicRNG
-from app.core import injury_config as InjuryConfig
-import random
 import logging
+import random
+from dataclasses import dataclass
+from typing import Any
+
+from app.core import injury_config as InjuryConfig
+from app.core.random_utils import DeterministicRNG
+from app.models.player import InjuryStatus, Player
 
 logger = logging.getLogger(__name__)
+
 
 class InjurySystem:
     def __init__(self, seed: int = None):
@@ -34,7 +36,7 @@ class InjurySystem:
 
         if severity_roll <= 50:
             severity = self.rng.randint(1, 3)
-            player.injury_type = "Minor Sprain" # Placeholder, could be more specific
+            player.injury_type = "Minor Sprain"  # Placeholder, could be more specific
             player.injury_status = InjuryStatus.QUESTIONABLE
         elif severity_roll <= 80:
             severity = self.rng.randint(4, 7)
@@ -42,7 +44,7 @@ class InjurySystem:
             player.injury_status = InjuryStatus.OUT
         else:
             severity = self.rng.randint(8, 10)
-            player.injury_type = "Major Fracture" # or Ligament Tear
+            player.injury_type = "Major Fracture"  # or Ligament Tear
             player.injury_status = InjuryStatus.IR
 
         player.injury_severity = severity
@@ -53,11 +55,17 @@ class InjurySystem:
 
         # Initial Recurrence Risk (Setback probability)
         # Higher severity = higher risk
-        player.injury_recurrence_risk = severity * 0.02 # 2% per severity point initially (e.g. 20% for severity 10)
+        player.injury_recurrence_risk = (
+            severity * 0.02
+        )  # 2% per severity point initially (e.g. 20% for severity 10)
 
-        logger.info(f"Player {player.id} injured: {player.injury_type} (Severity {severity}), Out for {weeks} weeks")
+        logger.info(
+            f"Player {player.id} injured: {player.injury_type} (Severity {severity}), Out for {weeks} weeks"
+        )
 
-    def calculate_recovery_weeks(self, player: Player, severity: int, medical_rating: int = 50) -> int:
+    def calculate_recovery_weeks(
+        self, player: Player, severity: int, medical_rating: int = 50
+    ) -> int:
         """
         Calculate recovery time based on severity, age, and durability.
         """
@@ -72,7 +80,7 @@ class InjurySystem:
         # Age Factor: Players over 30 recover slower
         age_factor = 1.0
         if player.age > 30:
-            age_factor = 1.0 + ((player.age - 30) * 0.1) # +10% per year over 30
+            age_factor = 1.0 + ((player.age - 30) * 0.1)  # +10% per year over 30
 
         # Durability Factor (Injury Resistance 0-100)
         # 100 resistance -> 0.5x time (Fast healer)
@@ -111,7 +119,9 @@ class InjurySystem:
             player.weeks_to_recovery += added_weeks
             # Increase recurrence risk for future checks
             player.injury_recurrence_risk += 0.05
-            logger.info(f"Player {player.id} suffered a setback in rehab. Added {added_weeks} weeks.")
+            logger.info(
+                f"Player {player.id} suffered a setback in rehab. Added {added_weeks} weeks."
+            )
             return
 
         # Progress Recovery
@@ -128,7 +138,7 @@ class InjurySystem:
         if player.weeks_to_recovery <= 0:
             return False
 
-        roll = self.rng.random() # 0.0 to 1.0
+        roll = self.rng.random()  # 0.0 to 1.0
         return roll < (player.injury_recurrence_risk * risk_modifier)
 
     def clear_injury(self, player: Player):
@@ -156,7 +166,9 @@ class InjurySystem:
         if player.injury_severity >= risk_threshold:
             # Chance of degradation
             # Higher severity = higher chance
-            chance = (player.injury_severity - risk_threshold + 1) * 0.2 # 20% per point over threshold
+            chance = (
+                player.injury_severity - risk_threshold + 1
+            ) * 0.2  # 20% per point over threshold
 
             if self.rng.random() < chance:
                 logger.info(f"Player {player.id} suffered permanent attribute degradation.")
@@ -202,9 +214,9 @@ class InjurySystem:
 
     def evaluate_post_play_injuries(
         self,
-        play_context: Dict[str, Any],
-        players_on_field: List[Player],
-    ) -> List[Dict[str, Any]]:
+        play_context: dict[str, Any],
+        players_on_field: list[Player],
+    ) -> list[dict[str, Any]]:
         """
         Evaluate all players for injury after a play (class method).
 
@@ -237,14 +249,16 @@ class InjurySystem:
                 has_ragknow = player_has_ragknow(player)
                 can_play = InjuryConfig.can_play_through_injury(severity, toughness, has_ragknow)
 
-                results.append({
-                    "player_id": player.id,
-                    "play_type": player_play_type,
-                    "severity": severity,
-                    "injury_type": injury_type,
-                    "weeks_to_recovery": weeks,
-                    "can_play_through": can_play,
-                })
+                results.append(
+                    {
+                        "player_id": player.id,
+                        "play_type": player_play_type,
+                        "severity": severity,
+                        "injury_type": injury_type,
+                        "weeks_to_recovery": weeks,
+                        "can_play_through": can_play,
+                    }
+                )
 
         return results
 
@@ -252,7 +266,7 @@ class InjurySystem:
         self,
         player: Player,
         has_ragknow: bool = False,
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Calculate performance penalties for playing through injury (class method).
         """
@@ -294,18 +308,20 @@ class InjurySystem:
 # PLAY CONTEXT & INJURY EVENT DATACLASSES
 # ============================================================================
 
+
 @dataclass
 class PlayContext:
     """
     Context information for a play, used for injury probability calculation.
     """
-    play_type: str = "STANDARD"          # PASS_PLAY, RUN_PLAY, SACK, etc.
-    fatigue: float = 0.0                  # Player's current fatigue (0-100)
-    medical_staff_rating: int = 50        # Team's medical staff quality
-    is_contact: bool = True               # Whether this was a contact play
+
+    play_type: str = "STANDARD"  # PASS_PLAY, RUN_PLAY, SACK, etc.
+    fatigue: float = 0.0  # Player's current fatigue (0-100)
+    medical_staff_rating: int = 50  # Team's medical staff quality
+    is_contact: bool = True  # Whether this was a contact play
     season: int = 0
     week: int = 0
-    play_id: Optional[str] = None
+    play_id: str | None = None
 
 
 @dataclass
@@ -313,13 +329,14 @@ class InjuryEvent:
     """
     Represents an injury that occurred during a play.
     """
+
     player_id: int
-    severity: int                         # 1-10 severity scale
+    severity: int  # 1-10 severity scale
     injury_type: str = "Unknown"
     body_part: str = "Unknown"
     weeks_to_recovery: int = 0
-    can_play_through: bool = False        # Based on toughness/Ragknow
-    performance_penalties: Dict[str, int] = None
+    can_play_through: bool = False  # Based on toughness/Ragknow
+    performance_penalties: dict[str, int] = None
 
     def __post_init__(self):
         if self.performance_penalties is None:
@@ -330,10 +347,9 @@ class InjuryEvent:
 # CORE PROBABILITY FUNCTIONS
 # ============================================================================
 
+
 def compute_play_injury_probability(
-    player: Player,
-    play_context: PlayContext,
-    rng: DeterministicRNG = None
+    player: Player, play_context: PlayContext, rng: DeterministicRNG = None
 ) -> float:
     """
     Calculate injury probability for a specific play using multiplicative formula.
@@ -371,13 +387,13 @@ def compute_play_injury_probability(
 
     # Combine all multipliers
     final_probability = (
-        base *
-        play_type_mult *
-        position_mult *
-        age_mult *
-        durability_mult *
-        fatigue_mult *
-        medical_mult
+        base
+        * play_type_mult
+        * position_mult
+        * age_mult
+        * durability_mult
+        * fatigue_mult
+        * medical_mult
     )
 
     # Cap at 95% maximum
@@ -435,10 +451,8 @@ def get_player_toughness(player: Player) -> int:
 
 
 def calculate_injured_performance_penalty(
-    severity: int,
-    toughness: int = 50,
-    has_ragknow: bool = False
-) -> Dict[str, int]:
+    severity: int, toughness: int = 50, has_ragknow: bool = False
+) -> dict[str, int]:
     """
     Calculate attribute penalties for playing through an injury.
 
@@ -474,10 +488,8 @@ def calculate_injured_performance_penalty(
 
 
 def apply_playing_injured_risk(
-    player: Player,
-    current_severity: int,
-    rng: DeterministicRNG = None
-) -> Optional[int]:
+    player: Player, current_severity: int, rng: DeterministicRNG = None
+) -> int | None:
     """
     Check if playing through an injury causes it to worsen.
 
@@ -505,19 +517,23 @@ def apply_playing_injured_risk(
 
     if roll < escalation_chance:
         # Injury worsened
-        increase = rng.randint(1, InjuryConfig.INJURY_ESCALATION_MAX_INCREASE) if rng else random.randint(1, 2)
+        increase = (
+            rng.randint(1, InjuryConfig.INJURY_ESCALATION_MAX_INCREASE)
+            if rng
+            else random.randint(1, 2)
+        )
         new_severity = min(10, current_severity + increase)
-        logger.info(f"Player {player.id} injury escalated from {current_severity} to {new_severity}")
+        logger.info(
+            f"Player {player.id} injury escalated from {current_severity} to {new_severity}"
+        )
         return new_severity
 
     return None
 
 
 def evaluate_post_play_injuries(
-    play_context: PlayContext,
-    players_on_field: List[Player],
-    rng: DeterministicRNG = None
-) -> List[InjuryEvent]:
+    play_context: PlayContext, players_on_field: list[Player], rng: DeterministicRNG = None
+) -> list[InjuryEvent]:
     """
     Evaluate all players on the field for potential injuries after a play.
 
@@ -556,9 +572,7 @@ def evaluate_post_play_injuries(
             # Calculate performance penalties if playing through
             penalties = {}
             if can_play_through:
-                penalties = calculate_injured_performance_penalty(
-                    severity, toughness, has_ragknow
-                )
+                penalties = calculate_injured_performance_penalty(severity, toughness, has_ragknow)
 
             # Determine injury type and recovery time
             injury_type, weeks = _determine_injury_details(severity, rng)
@@ -573,7 +587,7 @@ def evaluate_post_play_injuries(
                 injury_type=injury_type,
                 weeks_to_recovery=max(1, weeks),
                 can_play_through=can_play_through,
-                performance_penalties=penalties
+                performance_penalties=penalties,
             )
 
             injuries.append(injury_event)
@@ -586,10 +600,7 @@ def evaluate_post_play_injuries(
     return injuries
 
 
-def _determine_injury_details(
-    severity: int,
-    rng: DeterministicRNG = None
-) -> tuple:
+def _determine_injury_details(severity: int, rng: DeterministicRNG = None) -> tuple:
     """
     Determine injury type and recovery weeks based on severity.
 
@@ -623,7 +634,9 @@ def _determine_injury_details(
     return injury_type, weeks
 
 
-def apply_injury_event_to_player(player: Player, event: InjuryEvent, injury_system: InjurySystem = None):
+def apply_injury_event_to_player(
+    player: Player, event: InjuryEvent, injury_system: InjurySystem = None
+):
     """
     Apply an InjuryEvent to a player's status.
 

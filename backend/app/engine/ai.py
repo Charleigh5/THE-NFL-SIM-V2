@@ -1,8 +1,15 @@
 import math
 
+
 class CollisionSystem:
     @staticmethod
-    def resolve_tackle(runner_mass: float, runner_velocity: float, defender_mass: float, defender_velocity: float, angle_impact: float = 0.0) -> dict:
+    def resolve_tackle(
+        runner_mass: float,
+        runner_velocity: float,
+        defender_mass: float,
+        defender_velocity: float,
+        angle_impact: float = 0.0,
+    ) -> dict:
         """
         Physics-based tackle resolution using Momentum (p=mv).
         """
@@ -18,18 +25,23 @@ class CollisionSystem:
 
         # Thresholds
         broken_tackle = False
-        if impact_force > 50: # Arbitrary threshold for now
+        if impact_force > 50:  # Arbitrary threshold for now
             broken_tackle = True
 
         return {
             "impact_force": round(impact_force, 2),
             "broken_tackle": broken_tackle,
-            "runner_momentum_after": max(0, p_runner - effective_p_defender) if broken_tackle else 0
+            "runner_momentum_after": max(0, p_runner - effective_p_defender)
+            if broken_tackle
+            else 0,
         }
+
 
 class VisionAI:
     @staticmethod
-    def calculate_safety_score(lane_vector: dict, defenders: list, blockers: list, dist_to_goal: float) -> float:
+    def calculate_safety_score(
+        lane_vector: dict, defenders: list, blockers: list, dist_to_goal: float
+    ) -> float:
         """
         Calculate safety score for a running lane.
         Score = (GoalDist * W) - (DefProximity * W) + (BlockerLev * W)
@@ -41,17 +53,18 @@ class VisionAI:
 
         # Proximity to Defenders (Negative)
         for d in defenders:
-            dist = math.sqrt((d['x'] - lane_vector['x'])**2 + (d['y'] - lane_vector['y'])**2)
+            dist = math.sqrt((d["x"] - lane_vector["x"]) ** 2 + (d["y"] - lane_vector["y"]) ** 2)
             if dist < 5:
-                score -= (10 / (dist + 0.1)) # Inverse distance penalty
+                score -= 10 / (dist + 0.1)  # Inverse distance penalty
 
         # Blocker Leverage (Positive)
         for b in blockers:
-            dist = math.sqrt((b['x'] - lane_vector['x'])**2 + (b['y'] - lane_vector['y'])**2)
+            dist = math.sqrt((b["x"] - lane_vector["x"]) ** 2 + (b["y"] - lane_vector["y"]) ** 2)
             if dist < 3:
                 score += 5
 
         return round(score, 2)
+
 
 class QuarterbackAI:
     @staticmethod
@@ -67,24 +80,24 @@ class QuarterbackAI:
 
         for d in defenders:
             # Skip if blocked (assuming 'is_blocked' flag is set by blocking engine)
-            if isinstance(d, dict) and d.get('is_blocked', False):
+            if isinstance(d, dict) and d.get("is_blocked", False):
                 continue
-            elif hasattr(d, 'is_blocked') and d.is_blocked:
+            elif hasattr(d, "is_blocked") and d.is_blocked:
                 continue
 
             # Get coordinates
-            d_x = d['x'] if isinstance(d, dict) else getattr(d, 'x', 0)
-            d_y = d['y'] if isinstance(d, dict) else getattr(d, 'y', 0)
+            d_x = d["x"] if isinstance(d, dict) else getattr(d, "x", 0)
+            d_y = d["y"] if isinstance(d, dict) else getattr(d, "y", 0)
 
-            dist = math.sqrt((d_x - qb_pos['x'])**2 + (d_y - qb_pos['y'])**2)
+            dist = math.sqrt((d_x - qb_pos["x"]) ** 2 + (d_y - qb_pos["y"]) ** 2)
 
             # Only count significant pressure within 7 yards
             if dist < 7.0:
                 # Get pass rush power (default 50)
                 pr_power = 50
                 if isinstance(d, dict):
-                    pr_power = d.get('pass_rush_power', 50)
-                elif hasattr(d, 'pass_rush_power'):
+                    pr_power = d.get("pass_rush_power", 50)
+                elif hasattr(d, "pass_rush_power"):
                     pr_power = d.pass_rush_power
 
                 # Formula: (Power / 50) * (10 / (Distance + 1))
@@ -114,8 +127,8 @@ class QuarterbackAI:
             return "NORMAL"
 
         # QB Attributes
-        pocket_presence = getattr(qb, 'pocket_presence', 50)
-        scramble_willingness = getattr(qb, 'scramble_willingness', 50)
+        pocket_presence = getattr(qb, "pocket_presence", 50)
+        scramble_willingness = getattr(qb, "scramble_willingness", 50)
 
         # 1. Sense Check: Does the QB realize the pressure?
         # Higher pocket presence = better chance to sense
@@ -124,7 +137,7 @@ class QuarterbackAI:
         sense_chance = max(0.1, min(0.95, sense_chance))
 
         if rng.random() > sense_chance:
-            return "OBLIVIOUS" # Doesn't see it coming, high sack risk
+            return "OBLIVIOUS"  # Doesn't see it coming, high sack risk
 
         # 2. Reaction: Scramble vs Throw Away
         # Based on scramble willingness
@@ -134,4 +147,3 @@ class QuarterbackAI:
             return "SCRAMBLE"
         else:
             return "THROW_AWAY"
-

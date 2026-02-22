@@ -1,21 +1,21 @@
+from typing import Any
 
-
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, select
-from typing import List, Dict, Any, Optional
-from app.models.player import Player, Position
+
+from app.models.player import Player
 from app.models.team import Team
-from app.models.season import Season
 
 
 class SalaryCapService:
     """
     Service for calculating and analyzing team salary cap situations.
     """
+
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> Dict[str, Any]:
+    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> dict[str, Any]:
         """
         Get a detailed breakdown of a team's salary cap situation.
         """
@@ -39,7 +39,7 @@ class SalaryCapService:
                 "name": f"{p.first_name} {p.last_name}",
                 "position": p.position,
                 "salary": p.contract_salary,
-                "years_left": p.contract_years
+                "years_left": p.contract_years,
             }
             for p in top_contracts
         ]
@@ -53,7 +53,7 @@ class SalaryCapService:
             "DL": ["DE", "DT"],
             "LB": ["LB"],
             "DB": ["CB", "S"],
-            "ST": ["K", "P"]
+            "ST": ["K", "P"],
         }
 
         pos_breakdown = []
@@ -64,11 +64,13 @@ class SalaryCapService:
             else:
                 percentage = 0
 
-            pos_breakdown.append({
-                "group": group_name,
-                "total_salary": group_salary,
-                "percentage": round(percentage, 1)
-            })
+            pos_breakdown.append(
+                {
+                    "group": group_name,
+                    "total_salary": group_salary,
+                    "percentage": round(percentage, 1),
+                }
+            )
 
         # Sort breakdown by salary
         pos_breakdown.sort(key=lambda x: x["total_salary"], reverse=True)
@@ -81,7 +83,7 @@ class SalaryCapService:
 
         # Calculate projected rookie pool (simplified estimation based on draft picks)
         # In a real scenario, we'd look at specific draft picks owned
-        projected_rookie_impact = 10000000 # Placeholder $10M rookie pool
+        projected_rookie_impact = 10000000  # Placeholder $10M rookie pool
 
         return {
             "team_id": team.id,
@@ -89,9 +91,11 @@ class SalaryCapService:
             "total_cap": team.salary_cap_total,
             "used_cap": used_cap,
             "available_cap": team.salary_cap_space,
-            "cap_percentage": round((used_cap / team.salary_cap_total) * 100, 1) if team.salary_cap_total > 0 else 0,
+            "cap_percentage": round((used_cap / team.salary_cap_total) * 100, 1)
+            if team.salary_cap_total > 0
+            else 0,
             "top_contracts": top_contracts_data,
             "position_breakdown": pos_breakdown,
             "league_avg_available": int(league_avg_space),
-            "projected_rookie_impact": projected_rookie_impact
+            "projected_rookie_impact": projected_rookie_impact,
         }

@@ -9,9 +9,6 @@ All values are tunable for simulation balancing without code changes.
 Formula: Injury Probability = Base × PlayType × Position × (Age × Durability × Fatigue)
 """
 
-from dataclasses import dataclass
-from typing import Dict, Tuple, Optional
-
 
 # ============================================================================
 # BASE PROBABILITY
@@ -25,20 +22,20 @@ BASE_PLAY_INJURY_PROBABILITY = 0.0015
 # PLAY TYPE MULTIPLIERS
 # ============================================================================
 
-PLAY_TYPE_MULTIPLIERS: Dict[str, float] = {
+PLAY_TYPE_MULTIPLIERS: dict[str, float] = {
     "STANDARD": 1.0,
     "PASS_PLAY": 1.0,
     "RUN_PLAY": 1.1,
-    "QB_KNOCKDOWN": 1.2,           # QB hit while releasing ball (pressure throw)
-    "SACK": 1.5,                   # High-velocity collision
-    "HIP_DROP_TACKLE": 20.0,       # NFL/AWS Digital Athlete finding
-    "NON_CONTACT_CUT": 0.4,        # Lower extremity baseline
-    "SCRAMBLE": 1.2,               # QB exposed to hits
-    "DESIGNED_QB_RUN": 1.3,        # QB taking designed contact
-    "KICKOFF": 1.4,                # High-speed special teams
+    "QB_KNOCKDOWN": 1.2,  # QB hit while releasing ball (pressure throw)
+    "SACK": 1.5,  # High-velocity collision
+    "HIP_DROP_TACKLE": 20.0,  # NFL/AWS Digital Athlete finding
+    "NON_CONTACT_CUT": 0.4,  # Lower extremity baseline
+    "SCRAMBLE": 1.2,  # QB exposed to hits
+    "DESIGNED_QB_RUN": 1.3,  # QB taking designed contact
+    "KICKOFF": 1.4,  # High-speed special teams
     "PUNT_RETURN": 1.3,
     "KICK_RETURN": 1.3,
-    "FIELD_GOAL": 0.5,             # Limited contact
+    "FIELD_GOAL": 0.5,  # Limited contact
 }
 
 
@@ -47,14 +44,13 @@ PLAY_TYPE_MULTIPLIERS: Dict[str, float] = {
 # ============================================================================
 # Derived from 'Decoding NFL Injuries' and 'Epidemiology of Injuries at Combine'
 
-POSITION_MULTIPLIERS: Dict[str, float] = {
+POSITION_MULTIPLIERS: dict[str, float] = {
     # High-collision / high-velocity positions (1.3x)
     "RB": 1.3,
     "CB": 1.3,
     "S": 1.3,
     "FS": 1.3,
     "SS": 1.3,
-
     # Medium-contact positions (1.2x)
     "WR": 1.2,
     "TE": 1.2,
@@ -62,7 +58,6 @@ POSITION_MULTIPLIERS: Dict[str, float] = {
     "MLB": 1.2,
     "OLB": 1.2,
     "ILB": 1.2,
-
     # Line positions (1.1-1.15x)
     "OT": 1.15,
     "OG": 1.15,
@@ -72,7 +67,6 @@ POSITION_MULTIPLIERS: Dict[str, float] = {
     "DE": 1.1,
     "DL": 1.1,
     "EDGE": 1.1,
-
     # Protected positions (0.7-0.8x)
     "QB": 0.8,
     "K": 0.7,
@@ -88,22 +82,22 @@ DEFAULT_POSITION_MULTIPLIER = 1.0
 # ============================================================================
 
 # Age bands: (min_age, max_age): multiplier
-AGE_RISK_MULTIPLIERS: Dict[Tuple[int, int], float] = {
-    (0, 29): 1.0,      # Prime years
-    (30, 32): 1.05,    # Early decline
-    (33, 99): 1.15,    # Veteran wear
+AGE_RISK_MULTIPLIERS: dict[tuple[int, int], float] = {
+    (0, 29): 1.0,  # Prime years
+    (30, 32): 1.05,  # Early decline
+    (33, 99): 1.15,  # Veteran wear
 }
 
 # Durability rating bands (injury_resistance attribute)
-DURABILITY_RISK_MULTIPLIERS: Dict[Tuple[int, int], float] = {
-    (90, 100): 0.90,   # Elite durability
-    (80, 89): 0.95,    # Above average
-    (70, 79): 1.00,    # Average
-    (0, 69): 1.10,     # Below average
+DURABILITY_RISK_MULTIPLIERS: dict[tuple[int, int], float] = {
+    (90, 100): 0.90,  # Elite durability
+    (80, 89): 0.95,  # Above average
+    (70, 79): 1.00,  # Average
+    (0, 69): 1.10,  # Below average
 }
 
 # Medical staff rating bands
-MEDICAL_STAFF_RISK_MULTIPLIERS: Dict[Tuple[int, int], float] = {
+MEDICAL_STAFF_RISK_MULTIPLIERS: dict[tuple[int, int], float] = {
     (90, 100): 0.95,
     (80, 89): 0.98,
     (0, 79): 1.00,
@@ -129,14 +123,14 @@ MAX_FATIGUE_RISK_MULTIPLIER = 0.50  # +50% max risk at 100 fatigue
 # Base toughness thresholds for playing through injuries
 # Players with toughness >= threshold can play through that severity
 # Format: severity_level: required_toughness (0-100)
-TOUGHNESS_PLAY_THROUGH_THRESHOLDS: Dict[int, int] = {
-    1: 30,   # Minor injuries - most players can play through
+TOUGHNESS_PLAY_THROUGH_THRESHOLDS: dict[int, int] = {
+    1: 30,  # Minor injuries - most players can play through
     2: 45,
     3: 60,
     4: 75,
-    5: 85,   # Moderate injuries - only tough players
+    5: 85,  # Moderate injuries - only tough players
     6: 92,
-    7: 98,   # Near-elite toughness required (Ragknow bypasses)
+    7: 98,  # Near-elite toughness required (Ragknow bypasses)
 }
 
 # Performance penalty multiplier based on toughness
@@ -151,7 +145,7 @@ TOUGHNESS_PENALTY_REDUCTION_FACTOR = 0.3  # Up to 30% penalty reduction at 100 t
 
 # Attribute penalties when playing through an injury (by severity)
 # These are BASE penalties, reduced by toughness
-INJURY_PERFORMANCE_PENALTIES: Dict[int, Dict[str, int]] = {
+INJURY_PERFORMANCE_PENALTIES: dict[int, dict[str, int]] = {
     1: {"speed": -2, "agility": -2, "acceleration": -1},
     2: {"speed": -3, "agility": -3, "acceleration": -2},
     3: {"speed": -5, "agility": -4, "acceleration": -3},
@@ -179,14 +173,15 @@ INJURY_ESCALATION_MAX_INCREASE = 2
 # ============================================================================
 
 RAGKNOW_RECOVERY_MULTIPLIER = 0.90  # 10% faster recovery
-RAGKNOW_MAX_PLAYABLE_SEVERITY = 7   # Can play through up to Moderate
-RAGKNOW_IGNORE_PENALTIES = True     # No performance penalties when injured
-RAGKNOW_BLOCK_DEGRADATION = True    # No permanent attribute loss
+RAGKNOW_MAX_PLAYABLE_SEVERITY = 7  # Can play through up to Moderate
+RAGKNOW_IGNORE_PENALTIES = True  # No performance penalties when injured
+RAGKNOW_BLOCK_DEGRADATION = True  # No permanent attribute loss
 
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
 
 def get_play_type_multiplier(play_type: str) -> float:
     """Get the injury risk multiplier for a play type."""

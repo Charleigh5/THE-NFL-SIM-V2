@@ -12,25 +12,22 @@ Endpoints:
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
-from typing import List, Optional
-from app.services.training.drills import (
-    Drill,
-    SeasonPhase,
-    DrillCategory,
-    ALL_DRILLS,
-    POSITION_DRILL_MAP,
-    get_drills_for_position,
-    get_drills_for_season,
-    get_drills_by_category,
-)
+
+from app.kernels.rpg.training import TrainingEngine
 from app.services.training.coaching_philosophy import (
-    CoachingStyle,
-    CoachingStyleName,
     COACHING_STYLES,
     get_coaching_style,
     get_seasonal_intensity_cap,
 )
-from app.kernels.rpg.training import TrainingEngine
+from app.services.training.drills import (
+    ALL_DRILLS,
+    POSITION_DRILL_MAP,
+    DrillCategory,
+    SeasonPhase,
+    get_drills_by_category,
+    get_drills_for_position,
+    get_drills_for_season,
+)
 
 router = APIRouter(prefix="/training", tags=["Training"])
 
@@ -39,53 +36,59 @@ router = APIRouter(prefix="/training", tags=["Training"])
 # SCHEMAS
 # ============================================================================
 
+
 class DrillResponse(BaseModel):
     """Response model for a single drill."""
+
     name: str
     target_stat: str
-    secondary_stats: List[str]
+    secondary_stats: list[str]
     injury_risk: float
     xp_multiplier: float
     fatigue_cost: float
     category: str
     description: str
-    season_filter: List[str]
+    season_filter: list[str]
 
 
 class DrillListResponse(BaseModel):
     """Response for drill list endpoint."""
-    drills: List[DrillResponse]
+
+    drills: list[DrillResponse]
     total: int
-    position_filter: Optional[str] = None
-    season_filter: Optional[str] = None
-    category_filter: Optional[str] = None
+    position_filter: str | None = None
+    season_filter: str | None = None
+    category_filter: str | None = None
 
 
 class ExecuteTrainingRequest(BaseModel):
     """Request to execute a training session."""
+
     player_id: int = Field(..., description="Player ID to train")
     drill_name: str = Field(..., description="Name of the drill to execute")
-    coaching_style: Optional[str] = Field(None, description="Coaching style to use")
+    coaching_style: str | None = Field(None, description="Coaching style to use")
     season_phase: str = Field("regular", description="Current season phase")
     player_age: int = Field(25, ge=18, le=50, description="Player's age")
 
 
 class ExecuteTrainingResponse(BaseModel):
     """Response from training execution."""
+
     player_id: int
     drill_name: str
     xp_gained: float
     target_stat: str
-    secondary_stats: List[str]
+    secondary_stats: list[str]
     injury_occurred: bool
     fatigue_added: float
     final_injury_risk: float
     weekly_load: float
-    coaching_style_used: Optional[str] = None
+    coaching_style_used: str | None = None
 
 
 class ScheduleRecommendation(BaseModel):
     """Recommended training schedule."""
+
     day: str
     drill_name: str
     intensity: str
@@ -94,10 +97,11 @@ class ScheduleRecommendation(BaseModel):
 
 class ScheduleResponse(BaseModel):
     """Response for schedule recommendation."""
+
     position: str
     season_phase: str
     coaching_style: str
-    recommendations: List[ScheduleRecommendation]
+    recommendations: list[ScheduleRecommendation]
     seasonal_intensity_cap: float
 
 
@@ -105,11 +109,12 @@ class ScheduleResponse(BaseModel):
 # ENDPOINTS
 # ============================================================================
 
+
 @router.get("/drills", response_model=DrillListResponse)
 async def get_drills(
-    position: Optional[str] = Query(None, description="Filter by position (e.g., QB, WR)"),
-    season: Optional[str] = Query(None, description="Filter by season phase"),
-    category: Optional[str] = Query(None, description="Filter by drill category"),
+    position: str | None = Query(None, description="Filter by position (e.g., QB, WR)"),
+    season: str | None = Query(None, description="Filter by season phase"),
+    category: str | None = Query(None, description="Filter by drill category"),
 ) -> DrillListResponse:
     """
     B-034: Get available training drills.
@@ -124,7 +129,7 @@ async def get_drills(
         if not drills:
             raise HTTPException(
                 status_code=400,
-                detail=f"Unknown position: {position}. Valid positions: {list(POSITION_DRILL_MAP.keys())}"
+                detail=f"Unknown position: {position}. Valid positions: {list(POSITION_DRILL_MAP.keys())}",
             )
 
     # Filter by season
@@ -135,7 +140,7 @@ async def get_drills(
         except ValueError:
             raise HTTPException(
                 status_code=400,
-                detail=f"Unknown season phase: {season}. Valid phases: {[s.value for s in SeasonPhase]}"
+                detail=f"Unknown season phase: {season}. Valid phases: {[s.value for s in SeasonPhase]}",
             )
 
     # Filter by category
@@ -146,7 +151,7 @@ async def get_drills(
         except ValueError:
             raise HTTPException(
                 status_code=400,
-                detail=f"Unknown category: {category}. Valid categories: {[c.value for c in DrillCategory]}"
+                detail=f"Unknown category: {category}. Valid categories: {[c.value for c in DrillCategory]}",
             )
 
     # Convert to response format
@@ -189,10 +194,7 @@ async def execute_training(request: ExecuteTrainingRequest) -> ExecuteTrainingRe
             break
 
     if not drill:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Drill not found: {request.drill_name}"
-        )
+        raise HTTPException(status_code=404, detail=f"Drill not found: {request.drill_name}")
 
     # Get coaching style if specified
     coaching_style = None
@@ -239,10 +241,7 @@ async def get_training_schedule(
     # Validate inputs
     position_drills = get_drills_for_position(position.upper())
     if not position_drills:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown position: {position}"
-        )
+        raise HTTPException(status_code=400, detail=f"Unknown position: {position}")
 
     try:
         style = get_coaching_style(coaching_style)
@@ -258,58 +257,70 @@ async def get_training_schedule(
     for i, day in enumerate(days):
         if day == "Sunday":
             # Game day
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name="Game Day",
-                intensity="game",
-                notes="Rest and prepare for game"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name="Game Day",
+                    intensity="game",
+                    notes="Rest and prepare for game",
+                )
+            )
         elif day == "Monday":
             # Recovery
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name="Recovery/Film Study",
-                intensity="rest",
-                notes="Focus on mental reps and recovery"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name="Recovery/Film Study",
+                    intensity="rest",
+                    notes="Focus on mental reps and recovery",
+                )
+            )
         elif day in ["Tuesday", "Saturday"]:
             # Light days
             mental_drills = [d for d in position_drills if d.category == DrillCategory.MENTAL]
             drill = mental_drills[0] if mental_drills else position_drills[0]
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name=drill.name,
-                intensity="light",
-                notes="Mental preparation and light technique work"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name=drill.name,
+                    intensity="light",
+                    notes="Mental preparation and light technique work",
+                )
+            )
         elif day == "Wednesday":
             # Heavy day (if season allows)
             intensity = "heavy" if seasonal_cap >= 0.7 else "moderate"
             technique_drills = [d for d in position_drills if d.category == DrillCategory.TECHNIQUE]
             drill = technique_drills[0] if technique_drills else position_drills[0]
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name=drill.name,
-                intensity=intensity,
-                notes="Full practice - technique focus"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name=drill.name,
+                    intensity=intensity,
+                    notes="Full practice - technique focus",
+                )
+            )
         elif day == "Thursday":
             # Moderate day
             drill = position_drills[len(position_drills) // 2]  # Pick a middle drill
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name=drill.name,
-                intensity="moderate",
-                notes="Situational work and refinement"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name=drill.name,
+                    intensity="moderate",
+                    notes="Situational work and refinement",
+                )
+            )
         elif day == "Friday":
             # Walkthrough
-            recommendations.append(ScheduleRecommendation(
-                day=day,
-                drill_name="Walkthrough",
-                intensity="light",
-                notes="Light walkthrough and mental prep"
-            ))
+            recommendations.append(
+                ScheduleRecommendation(
+                    day=day,
+                    drill_name="Walkthrough",
+                    intensity="light",
+                    notes="Light walkthrough and mental prep",
+                )
+            )
 
     return ScheduleResponse(
         position=position.upper(),
@@ -320,8 +331,8 @@ async def get_training_schedule(
     )
 
 
-@router.get("/styles", response_model=List[dict])
-async def get_coaching_styles() -> List[dict]:
+@router.get("/styles", response_model=list[dict])
+async def get_coaching_styles() -> list[dict]:
     """Get available coaching styles and their properties."""
     return [
         {

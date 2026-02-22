@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional
-from pydantic import BaseModel
 from enum import Enum
+
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 from app.services.broadcasting_service import (
     BroadcastingService,
     BroadcastStyle,
     GameContext,
-    MomentType
+    MomentType,
 )
 
 router = APIRouter(prefix="/api/broadcast", tags=["broadcasting"])
@@ -16,6 +16,7 @@ router = APIRouter(prefix="/api/broadcast", tags=["broadcasting"])
 # =============================================================================
 # SCHEMAS
 # =============================================================================
+
 
 class BroadcastStyleEnum(str, Enum):
     ESPN = "ESPN"
@@ -37,12 +38,12 @@ class GameContextRequest(BaseModel):
     possession_team: str
     is_redzone: bool = False
     is_two_minute: bool = False
-    momentum_team: Optional[str] = None
+    momentum_team: str | None = None
 
 
 class PlayCommentaryRequest(BaseModel):
     play_type: str  # PASS_COMPLETE, RUN, TOUCHDOWN, SACK, INTERCEPTION, FUMBLE
-    play_data: Dict  # {qb, receiver, yards, etc.}
+    play_data: dict  # {qb, receiver, yards, etc.}
     context: GameContextRequest
     style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 
@@ -61,7 +62,7 @@ class StatCalloutRequest(BaseModel):
 
 class BigMomentRequest(BaseModel):
     moment_type: str  # TOUCHDOWN, TURNOVER, COMEBACK, CLUTCH
-    data: Dict
+    data: dict
     context: GameContextRequest
     style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 
@@ -69,6 +70,7 @@ class BigMomentRequest(BaseModel):
 # =============================================================================
 # ENDPOINTS
 # =============================================================================
+
 
 @router.post("/play", response_model=CommentaryResponse)
 async def generate_play_commentary(request: PlayCommentaryRequest):
@@ -92,9 +94,7 @@ async def generate_play_commentary(request: PlayCommentaryRequest):
     )
 
     commentary = service.generate_play_commentary(
-        play_type=request.play_type,
-        play_data=request.play_data,
-        context=context
+        play_type=request.play_type, play_data=request.play_data, context=context
     )
 
     return CommentaryResponse(commentary=commentary, style=request.style.value)
@@ -102,8 +102,7 @@ async def generate_play_commentary(request: PlayCommentaryRequest):
 
 @router.post("/intro", response_model=CommentaryResponse)
 async def generate_game_intro(
-    context: GameContextRequest,
-    style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
+    context: GameContextRequest, style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 ):
     """Generate pre-game introduction commentary."""
     service = BroadcastingService(style=BroadcastStyle(style.value))
@@ -127,8 +126,7 @@ async def generate_game_intro(
 
 @router.post("/halftime", response_model=CommentaryResponse)
 async def generate_halftime_summary(
-    context: GameContextRequest,
-    style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
+    context: GameContextRequest, style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 ):
     """Generate halftime summary commentary."""
     service = BroadcastingService(style=BroadcastStyle(style.value))
@@ -155,7 +153,7 @@ async def generate_game_winner(
     winner: str,
     final_home: int,
     final_away: int,
-    style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
+    style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN,
 ):
     """Generate game-ending victory commentary."""
     service = BroadcastingService(style=BroadcastStyle(style.value))
@@ -209,6 +207,10 @@ async def get_available_styles():
             {"id": "ESPN", "name": "ESPN", "description": "High energy, modern stats"},
             {"id": "CBS", "name": "CBS", "description": "Traditional, analytical"},
             {"id": "FOX", "name": "FOX", "description": "Dramatic, entertainment"},
-            {"id": "NFL_NETWORK", "name": "NFL Network", "description": "Insider knowledge, technical"},
+            {
+                "id": "NFL_NETWORK",
+                "name": "NFL Network",
+                "description": "Insider knowledge, technical",
+            },
         ]
     }

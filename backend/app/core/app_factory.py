@@ -9,16 +9,15 @@ import logging
 import logging.handlers
 import os
 import sys
-from typing import Optional
 
 from fastapi import FastAPI
 
 from app.core.config import settings
 from app.core.setup import (
-    configure_rate_limiting,
-    configure_prometheus,
-    configure_middleware,
     configure_exception_handlers,
+    configure_middleware,
+    configure_prometheus,
+    configure_rate_limiting,
     configure_routes,
 )
 
@@ -30,7 +29,7 @@ def configure_logging() -> None:
         os.makedirs(log_dir)
 
     log_format = (
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         if settings.LOG_FORMAT == "text"
         else '{"time":"%(asctime)s","name":"%(name)s","level":"%(levelname)s","message":"%(message)s"}'
     )
@@ -49,7 +48,7 @@ def configure_logging() -> None:
     )
 
 
-def create_app(config: Optional[dict] = None) -> FastAPI:
+def create_app(config: dict | None = None) -> FastAPI:
     """
     Factory function to create and configure the FastAPI application.
 

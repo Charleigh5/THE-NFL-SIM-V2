@@ -9,19 +9,16 @@ Includes in-memory caching for performance optimization.
 """
 
 import logging
-from typing import Optional, List, Dict, Tuple, Any
-from datetime import datetime
-from functools import lru_cache
 
-from app.schemas.scouting import ScoutingReportAI, PlayerBackstory  # type: ignore[import-not-found]
+from app.schemas.scouting import PlayerBackstory, ScoutingReportAI  # type: ignore[import-not-found]
 from app.services.ai.gemini_client import get_gemini_client  # type: ignore[import-not-found]
 
 logger = logging.getLogger(__name__)
 
 
 # In-memory cache for reports (cleared on season/game advance)
-_report_cache: Dict[Tuple[str, str, int], ScoutingReportAI] = {}
-_backstory_cache: Dict[Tuple[str, str], PlayerBackstory] = {}
+_report_cache: dict[tuple[str, str, int], ScoutingReportAI] = {}
+_backstory_cache: dict[tuple[str, str], PlayerBackstory] = {}
 
 
 class ScoutingAIService:
@@ -44,10 +41,10 @@ class ScoutingAIService:
         player_name: str,
         position: str,
         overall_rating: int,
-        college: Optional[str] = None,
-        attributes: Optional[dict] = None,
-        team_needs: Optional[List[str]] = None,
-        use_cache: bool = True
+        college: str | None = None,
+        attributes: dict | None = None,
+        team_needs: list[str] | None = None,
+        use_cache: bool = True,
     ) -> ScoutingReportAI:
         """
         Generate an AI-powered scouting report for a draft prospect.
@@ -78,10 +75,7 @@ class ScoutingAIService:
         # Try AI generation
         if self.client.is_available:
             result = await self.client.generate_with_retry(
-                prompt=prompt,
-                response_schema=ScoutingReportAI,
-                max_retries=2,
-                temperature=0.8
+                prompt=prompt, response_schema=ScoutingReportAI, max_retries=2, temperature=0.8
             )
             if result:
                 # Cache the result
@@ -90,9 +84,7 @@ class ScoutingAIService:
 
         # Fallback to template
         logger.info(f"Using fallback template for {player_name}")
-        report = self._generate_fallback_report(
-            player_name, position, overall_rating, team_needs
-        )
+        report = self._generate_fallback_report(player_name, position, overall_rating, team_needs)
         # Cache fallback too
         _report_cache[cache_key] = report
         return report
@@ -102,9 +94,9 @@ class ScoutingAIService:
         player_name: str,
         position: str,
         overall_rating: int,
-        college: Optional[str],
-        attributes: Optional[dict],
-        team_needs: Optional[List[str]]
+        college: str | None,
+        attributes: dict | None,
+        team_needs: list[str] | None,
     ) -> str:
         """Build the prompt for scouting report generation."""
 
@@ -159,7 +151,7 @@ Use vivid language like a real scout would. Include specific plays or tendencies
             "CB": "coverage, ball skills, press technique, tackling, recovery speed",
             "S": "range, tackling, coverage versatility, instincts, communication",
             "K": "leg strength, accuracy, clutch performance, consistency",
-            "P": "hangtime, directional kicking, consistency, coverage ability"
+            "P": "hangtime, directional kicking, consistency, coverage ability",
         }
         return criteria.get(position, "overall athleticism, technique, football IQ")
 
@@ -179,18 +171,14 @@ Use vivid language like a real scout would. Include specific plays or tendencies
             "CB": ["man_coverage", "zone_coverage", "speed", "press"],
             "S": ["zone_coverage", "tackle", "speed", "awareness"],
             "K": ["kick_power", "kick_accuracy"],
-            "P": ["kick_power", "hang_time", "coffin_corner"]
+            "P": ["kick_power", "hang_time", "coffin_corner"],
         }
 
         keys = position_attrs.get(position, ["overall_rating", "speed", "strength"])
         return {k: attributes.get(k, "N/A") for k in keys if k in attributes}
 
     def _generate_fallback_report(
-        self,
-        player_name: str,
-        position: str,
-        overall_rating: int,
-        team_needs: Optional[List[str]]
+        self, player_name: str, position: str, overall_rating: int, team_needs: list[str] | None
     ) -> ScoutingReportAI:
         """Generate a template-based fallback when AI is unavailable."""
 
@@ -229,15 +217,11 @@ Use vivid language like a real scout would. Include specific plays or tendencies
             ceiling_projection=ceiling,
             floor_projection=floor,
             draft_grade=grade,
-            fit_analysis=fit_text
+            fit_analysis=fit_text,
         )
 
     async def generate_backstory(
-        self,
-        player_name: str,
-        position: str,
-        college: Optional[str] = None,
-        use_cache: bool = True
+        self, player_name: str, position: str, college: str | None = None, use_cache: bool = True
     ) -> PlayerBackstory:
         """
         Generate an AI-powered biographical backstory for a player.
@@ -278,10 +262,7 @@ Make it feel authentic and human. Avoid clichés.
 
         if self.client.is_available:
             result = await self.client.generate_with_retry(
-                prompt=prompt,
-                response_schema=PlayerBackstory,
-                max_retries=2,
-                temperature=0.9
+                prompt=prompt, response_schema=PlayerBackstory, max_retries=2, temperature=0.9
             )
             if result:
                 _backstory_cache[cache_key] = result
@@ -293,10 +274,7 @@ Make it feel authentic and human. Avoid clichés.
         return backstory
 
     def _generate_fallback_backstory(
-        self,
-        player_name: str,
-        position: str,
-        college: Optional[str]
+        self, player_name: str, position: str, college: str | None
     ) -> PlayerBackstory:
         """Generate template-based backstory when AI unavailable."""
 
@@ -306,12 +284,12 @@ Make it feel authentic and human. Avoid clichés.
             personality_traits=["Competitive", "Team player", "Hard worker"],
             motivations="Inspired by family support and a desire to reach the highest level of competition.",
             notable_college_moments=["Conference championship game winner"],
-            adversity_overcome=None
+            adversity_overcome=None,
         )
 
 
 # Singleton instance
-_service_instance: Optional[ScoutingAIService] = None
+_service_instance: ScoutingAIService | None = None
 
 
 def get_scouting_ai_service() -> ScoutingAIService:
@@ -322,7 +300,7 @@ def get_scouting_ai_service() -> ScoutingAIService:
     return _service_instance
 
 
-def clear_scouting_cache() -> Dict[str, int]:
+def clear_scouting_cache() -> dict[str, int]:
     """
     Clear all cached scouting reports and backstories.
 
@@ -341,7 +319,4 @@ def clear_scouting_cache() -> Dict[str, int]:
 
     logger.info(f"Cleared scouting cache: {report_count} reports, {backstory_count} backstories")
 
-    return {
-        "reports_cleared": report_count,
-        "backstories_cleared": backstory_count
-    }
+    return {"reports_cleared": report_count, "backstories_cleared": backstory_count}

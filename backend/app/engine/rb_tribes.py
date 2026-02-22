@@ -10,13 +10,14 @@ NFL Identity Blueprint. Each tribe has distinct variance profiles:
 - STANDARD: Default for players not meeting tribe thresholds
 """
 
-from enum import Enum
-from typing import Any, Optional, Dict
 from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 
 class RBTribe(Enum):
     """Running back archetype tribes with distinct play styles."""
+
     FEAST_OR_FAMINE = "Feast or Famine"
     BLUE_COLLAR = "Blue Collar"
     CAUTIOUS_CARRIER = "Cautious Carrier"
@@ -26,6 +27,7 @@ class RBTribe(Enum):
 @dataclass
 class TribeProfile:
     """Variance profile for a tribe."""
+
     base_yards: float
     std_dev: float
     breakaway_multiplier: float
@@ -34,34 +36,34 @@ class TribeProfile:
 
 
 # Tribe-specific variance profiles
-TRIBE_PROFILES: Dict[RBTribe, TribeProfile] = {
+TRIBE_PROFILES: dict[RBTribe, TribeProfile] = {
     RBTribe.FEAST_OR_FAMINE: TribeProfile(
         base_yards=3.0,
         std_dev=8.0,  # High variance
         breakaway_multiplier=2.0,  # Double chance for big plays
         fumble_multiplier=1.2,  # Slightly higher fumble risk
-        description="Explosive playmaker with boom-or-bust tendencies."
+        description="Explosive playmaker with boom-or-bust tendencies.",
     ),
     RBTribe.BLUE_COLLAR: TribeProfile(
         base_yards=4.0,
         std_dev=1.5,  # Low variance, consistent
         breakaway_multiplier=0.5,  # Rare breakaways
         fumble_multiplier=0.8,  # Reliable ball carrier
-        description="Consistent workhorse who moves the chains."
+        description="Consistent workhorse who moves the chains.",
     ),
     RBTribe.CAUTIOUS_CARRIER: TribeProfile(
         base_yards=2.5,
         std_dev=2.0,  # Moderate variance
         breakaway_multiplier=0.3,  # Very few breakaways
         fumble_multiplier=0.6,  # Protects the ball
-        description="Veteran who prioritizes ball security over explosiveness."
+        description="Veteran who prioritizes ball security over explosiveness.",
     ),
     RBTribe.STANDARD: TribeProfile(
         base_yards=3.5,
         std_dev=3.0,  # Default variance
         breakaway_multiplier=1.0,
         fumble_multiplier=1.0,
-        description="Standard running back profile."
+        description="Standard running back profile.",
     ),
 }
 
@@ -128,7 +130,7 @@ class RBTribeClassifier:
         return tribe, profile
 
 
-def get_tribe_modifiers(player: Any) -> Dict[str, float]:
+def get_tribe_modifiers(player: Any) -> dict[str, float]:
     """
     Get all tribe-based modifiers for a player.
 
@@ -147,5 +149,5 @@ def get_tribe_modifiers(player: Any) -> Dict[str, float]:
         "std_dev": profile.std_dev,
         "breakaway_mult": profile.breakaway_multiplier,
         "fumble_mult": profile.fumble_multiplier,
-        "description": profile.description
+        "description": profile.description,
     }

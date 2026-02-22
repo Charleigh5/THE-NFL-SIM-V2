@@ -1,9 +1,10 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, func
-from typing import List, Optional, Dict, Any
-import logging
 
 from app.core.database import get_async_db
 from app.core.db_helpers import get_object_or_404_async
@@ -11,10 +12,10 @@ from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.models.stats import PlayerGameStats
 from app.services.trait_service import TraitService
-from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 class PlayerDetailSchema(BaseModel):
     id: int
@@ -38,6 +39,7 @@ class PlayerDetailSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 @router.get("/{player_id}", response_model=PlayerDetailSchema)
 @handle_errors
 async def read_player(player_id: int, db: AsyncSession = Depends(get_async_db)):
@@ -47,6 +49,7 @@ async def read_player(player_id: int, db: AsyncSession = Depends(get_async_db)):
     logger.info(f"Fetching player {player_id}")
     return await get_object_or_404_async(db, Player, player_id)
 
+
 class PlayerStatsSchema(BaseModel):
     games_played: int
     passing_yards: int
@@ -55,6 +58,7 @@ class PlayerStatsSchema(BaseModel):
     rushing_tds: int
     receiving_yards: int
     receiving_tds: int
+
 
 @router.get("/{player_id}/stats", response_model=PlayerStatsSchema)
 @handle_errors
@@ -69,7 +73,7 @@ async def read_player_stats(player_id: int, db: AsyncSession = Depends(get_async
         func.sum(PlayerGameStats.rush_yards).label("rushing_yards"),
         func.sum(PlayerGameStats.rush_tds).label("rushing_tds"),
         func.sum(PlayerGameStats.rec_yards).label("receiving_yards"),
-        func.sum(PlayerGameStats.rec_tds).label("receiving_tds")
+        func.sum(PlayerGameStats.rec_tds).label("receiving_tds"),
     ).where(PlayerGameStats.player_id == player_id)
 
     result = await db.execute(stmt)
@@ -90,8 +94,10 @@ async def read_player_stats(player_id: int, db: AsyncSession = Depends(get_async
 # ENHANCED PLAYER PROFILE (Task 8.3.2)
 # ============================================================================
 
+
 class TraitInfoBrief(BaseModel):
     """Brief trait information for player profile"""
+
     name: str
     description: str
     tier: str
@@ -99,14 +105,16 @@ class TraitInfoBrief(BaseModel):
 
 class PersonalityInfo(BaseModel):
     """Player personality and morale information"""
+
     morale: int
     morale_status: str  # "Ecstatic", "Happy", "Content", "Unhappy", "Disgruntled"
     development_trait: str
-    archetype: Optional[str] = None  # Future: "Mercenary", "Hometown Hero", etc.
+    archetype: str | None = None  # Future: "Mercenary", "Hometown Hero", etc.
 
 
 class EnhancedPlayerProfile(BaseModel):
     """Complete player profile with traits, morale, and comprehensive stats"""
+
     model_config = ConfigDict(from_attributes=True)
 
     # Basic Info
@@ -118,10 +126,10 @@ class EnhancedPlayerProfile(BaseModel):
     overall_rating: int
     age: int
     experience: int
-    college: Optional[str] = None
-    height: Optional[int] = None
-    weight: Optional[int] = None
-    team_id: Optional[int] = None
+    college: str | None = None
+    height: int | None = None
+    weight: int | None = None
+    team_id: int | None = None
 
     # Core Attributes
     speed: int
@@ -133,16 +141,16 @@ class EnhancedPlayerProfile(BaseModel):
     injury_resistance: int
 
     # Position-Specific Attributes (returned as dict for flexibility)
-    position_attributes: Dict[str, int]
+    position_attributes: dict[str, int]
 
     # Personality & Development
     personality: PersonalityInfo
 
     # Active Traits
-    traits: List[TraitInfoBrief]
+    traits: list[TraitInfoBrief]
 
     # Career Stats (aggregated)
-    career_stats: Dict[str, int]
+    career_stats: dict[str, int]
 
     # Contract Info
     contract_years: int
@@ -164,7 +172,7 @@ def _get_morale_status(morale: int) -> str:
         return "Disgruntled"
 
 
-def _get_position_attributes(player: Player) -> Dict[str, int]:
+def _get_position_attributes(player: Player) -> dict[str, int]:
     """Get position-specific attributes based on player position."""
     position = player.position
 
@@ -279,12 +287,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
     trait_service = TraitService(db)
     traits_data = await trait_service.get_player_traits(player_id)
     traits_brief = [
-        TraitInfoBrief(
-            name=t.name,
-            description=t.description,
-            tier=t.tier
-        )
-        for t in traits_data
+        TraitInfoBrief(name=t.name, description=t.description, tier=t.tier) for t in traits_data
     ]
 
     # Get career stats
@@ -295,7 +298,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         func.sum(PlayerGameStats.rush_yards).label("rushing_yards"),
         func.sum(PlayerGameStats.rush_tds).label("rushing_tds"),
         func.sum(PlayerGameStats.rec_yards).label("receiving_yards"),
-        func.sum(PlayerGameStats.rec_tds).label("receiving_tds")
+        func.sum(PlayerGameStats.rec_tds).label("receiving_tds"),
     ).where(PlayerGameStats.player_id == player_id)
 
     stats_result = await db.execute(stats_stmt)

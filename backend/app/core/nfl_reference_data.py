@@ -6,7 +6,6 @@ Source: NFL Financial Thresholds and Salary Cap Performance Metrics.
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional, List
 from enum import Enum
 
 # ============================================================================
@@ -15,7 +14,7 @@ from enum import Enum
 
 # Historical Salary Cap Maximums (1994-2025)
 # Note: 2010 was an uncapped year.
-HISTORICAL_SALARY_CAPS: Dict[int, Optional[int]] = {
+HISTORICAL_SALARY_CAPS: dict[int, int | None] = {
     2025: 279_200_000,
     2024: 255_400_000,
     2023: 224_800_000,
@@ -57,36 +56,40 @@ SALARY_CAP_CAGR = 0.0697  # 6.97%
 # SPECIAL PLAYS DATA
 # ============================================================================
 
+
 class RiskLevel(str, Enum):
     LOW = "Low"
     MODERATE = "Moderate"
     HIGH = "High"
 
+
 @dataclass(frozen=True)
 class PlayReference:
     """Statistical reference for a specific play type."""
+
     name: str
     success_rate_min: float
     success_rate_max: float
     epa_value: float
     risk_level: RiskLevel
     description: str
-    prerequisites: Optional[str] = None
-    personnel: Optional[str] = None
-    frequency_per_game: Optional[float] = None
+    prerequisites: str | None = None
+    personnel: str | None = None
+    frequency_per_game: float | None = None
 
     @property
     def success_rate_avg(self) -> float:
         return (self.success_rate_min + self.success_rate_max) / 2.0
 
-SPECIAL_PLAYS: Dict[str, PlayReference] = {
+
+SPECIAL_PLAYS: dict[str, PlayReference] = {
     "TUSH_PUSH": PlayReference(
         name="Tush Push",
         success_rate_min=0.81,
         success_rate_max=0.927,
         epa_value=0.25,
         risk_level=RiskLevel.LOW,
-        description="QB Sneak with pushers. Highly efficient in short yardage."
+        description="QB Sneak with pushers. Highly efficient in short yardage.",
     ),
     "FLEA_FLICKER": PlayReference(
         name="Flea Flicker",
@@ -94,7 +97,7 @@ SPECIAL_PLAYS: Dict[str, PlayReference] = {
         success_rate_max=0.55,
         epa_value=0.8,
         risk_level=RiskLevel.MODERATE,
-        description="RB flip back to QB for deep shot."
+        description="RB flip back to QB for deep shot.",
     ),
     "FAKE_PUNT": PlayReference(
         name="Fake Punt",
@@ -102,7 +105,7 @@ SPECIAL_PLAYS: Dict[str, PlayReference] = {
         success_rate_max=0.75,
         epa_value=0.4,
         risk_level=RiskLevel.HIGH,
-        description="Special teams trick play."
+        description="Special teams trick play.",
     ),
     "RPO": PlayReference(
         name="RPO",
@@ -110,32 +113,35 @@ SPECIAL_PLAYS: Dict[str, PlayReference] = {
         success_rate_max=0.68,
         epa_value=0.35,
         risk_level=RiskLevel.LOW,
-        description="Run-Pass Option. Modern offensive staple."
+        description="Run-Pass Option. Modern offensive staple.",
     ),
     "HAIL_MARY": PlayReference(
         name="Hail Mary",
         success_rate_min=0.04,
         success_rate_max=0.12,
-        epa_value=-0.5, # Usually low expected value due to incompletion prob
+        epa_value=-0.5,  # Usually low expected value due to incompletion prob
         risk_level=RiskLevel.HIGH,
         description="Desperation deep pass to end zone.",
-        prerequisites="End of half/game; long distance"
-    )
+        prerequisites="End of half/game; long distance",
+    ),
 }
 
 # ============================================================================
 # 4TH DOWN ANALYTICS
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class FourthDownAnalytics:
     """Parameters for 4th down decision making."""
-    always_go_distance: int = 1         # 4th & 1 is 95.2% optimal to go
-    consider_go_distance: int = 5       # 4th & 5 or less is often optimal
-    go_for_it_zone_start: int = 40      # Own 40
-    go_for_it_zone_end: int = 60        # Opponent's 40
-    win_prob_penalty_punt_4th_5: float = 0.03 # 3% WP forfeited by punting on 4th & 5
+
+    always_go_distance: int = 1  # 4th & 1 is 95.2% optimal to go
+    consider_go_distance: int = 5  # 4th & 5 or less is often optimal
+    go_for_it_zone_start: int = 40  # Own 40
+    go_for_it_zone_end: int = 60  # Opponent's 40
+    win_prob_penalty_punt_4th_5: float = 0.03  # 3% WP forfeited by punting on 4th & 5
     late_game_trailing_2scores_override: bool = True
+
 
 FOURTH_DOWN_ANALYTICS = FourthDownAnalytics()
 
@@ -143,18 +149,31 @@ FOURTH_DOWN_ANALYTICS = FourthDownAnalytics()
 # CAREER & PROGRESSION DATA
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class PositionCareerData:
     """Career longevity and peak data by position."""
+
     avg_length_games: int
     peak_age_start: int
     peak_age_end: int
     decline_rate_post_30: float
 
-POSITION_CAREER_DATA: Dict[str, PositionCareerData] = {
-    "QB": PositionCareerData(avg_length_games=62, peak_age_start=26, peak_age_end=32, decline_rate_post_30=0.03),
-    "RB": PositionCareerData(avg_length_games=30, peak_age_start=22, peak_age_end=27, decline_rate_post_30=0.15),
-    "WR": PositionCareerData(avg_length_games=38, peak_age_start=24, peak_age_end=29, decline_rate_post_30=0.08),
-    "OT": PositionCareerData(avg_length_games=45, peak_age_start=25, peak_age_end=31, decline_rate_post_30=0.05),
-    "DB": PositionCareerData(avg_length_games=38, peak_age_start=23, peak_age_end=28, decline_rate_post_30=0.10),
+
+POSITION_CAREER_DATA: dict[str, PositionCareerData] = {
+    "QB": PositionCareerData(
+        avg_length_games=62, peak_age_start=26, peak_age_end=32, decline_rate_post_30=0.03
+    ),
+    "RB": PositionCareerData(
+        avg_length_games=30, peak_age_start=22, peak_age_end=27, decline_rate_post_30=0.15
+    ),
+    "WR": PositionCareerData(
+        avg_length_games=38, peak_age_start=24, peak_age_end=29, decline_rate_post_30=0.08
+    ),
+    "OT": PositionCareerData(
+        avg_length_games=45, peak_age_start=25, peak_age_end=31, decline_rate_post_30=0.05
+    ),
+    "DB": PositionCareerData(
+        avg_length_games=38, peak_age_start=23, peak_age_end=28, decline_rate_post_30=0.10
+    ),
 }

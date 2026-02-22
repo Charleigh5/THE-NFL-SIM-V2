@@ -20,49 +20,52 @@ The system uses a context-aware calculation that considers:
 4. Trait synergies (traits can modify interaction outcomes)
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Tuple
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 class InteractionType(str, Enum):
     """Categories of attribute interactions."""
-    PRE_SNAP = "PRE_SNAP"           # Mind games before the play
-    LINE_OF_SCRIMMAGE = "LOS"       # Initial contact/release battles
-    PASS_PROTECTION = "PASS_PROT"   # OL vs DL blocking battles
-    ROUTE_VS_COVERAGE = "ROUTE_COV" # WR routes vs DB coverage
-    RUN_GAME = "RUN_GAME"           # RB vision vs LB gap integrity
-    BALL_CARRIER = "BALL_CARRIER"   # YAC battles after catch/handoff
-    SPECIAL_TEAMS = "SPECIAL"       # Kicking game interactions
-    LEADERSHIP = "LEADERSHIP"       # Team-wide influence effects
+
+    PRE_SNAP = "PRE_SNAP"  # Mind games before the play
+    LINE_OF_SCRIMMAGE = "LOS"  # Initial contact/release battles
+    PASS_PROTECTION = "PASS_PROT"  # OL vs DL blocking battles
+    ROUTE_VS_COVERAGE = "ROUTE_COV"  # WR routes vs DB coverage
+    RUN_GAME = "RUN_GAME"  # RB vision vs LB gap integrity
+    BALL_CARRIER = "BALL_CARRIER"  # YAC battles after catch/handoff
+    SPECIAL_TEAMS = "SPECIAL"  # Kicking game interactions
+    LEADERSHIP = "LEADERSHIP"  # Team-wide influence effects
 
 
 class InteractionOutcome(str, Enum):
     """Possible outcomes of an attribute interaction."""
-    DOMINANT_WIN = "DOMINANT_WIN"   # Clear victory (>15 point differential)
-    WIN = "WIN"                      # Standard win (5-15 point differential)
-    SLIGHT_WIN = "SLIGHT_WIN"       # Marginal win (1-5 point differential)
-    NEUTRAL = "NEUTRAL"              # Even matchup
-    SLIGHT_LOSS = "SLIGHT_LOSS"     # Marginal loss
-    LOSS = "LOSS"                    # Standard loss
-    DOMINANT_LOSS = "DOMINANT_LOSS" # Clear loss
+
+    DOMINANT_WIN = "DOMINANT_WIN"  # Clear victory (>15 point differential)
+    WIN = "WIN"  # Standard win (5-15 point differential)
+    SLIGHT_WIN = "SLIGHT_WIN"  # Marginal win (1-5 point differential)
+    NEUTRAL = "NEUTRAL"  # Even matchup
+    SLIGHT_LOSS = "SLIGHT_LOSS"  # Marginal loss
+    LOSS = "LOSS"  # Standard loss
+    DOMINANT_LOSS = "DOMINANT_LOSS"  # Clear loss
 
 
 @dataclass
 class InteractionResult:
     """Result of an attribute interaction calculation."""
+
     interaction_type: InteractionType
     outcome: InteractionOutcome
-    differential: float              # Raw rating differential after modifiers
-    winner_boost: float              # Bonus applied to winner
-    loser_penalty: float             # Penalty applied to loser
-    narrative: str                   # Human-readable description
-    modifiers_applied: Dict[str, float] = field(default_factory=dict)
+    differential: float  # Raw rating differential after modifiers
+    winner_boost: float  # Bonus applied to winner
+    loser_penalty: float  # Penalty applied to loser
+    narrative: str  # Human-readable description
+    modifiers_applied: dict[str, float] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "interaction_type": self.interaction_type.value,
             "outcome": self.outcome.value,
@@ -70,23 +73,24 @@ class InteractionResult:
             "winner_boost": round(self.winner_boost, 2),
             "loser_penalty": round(self.loser_penalty, 2),
             "narrative": self.narrative,
-            "modifiers_applied": self.modifiers_applied
+            "modifiers_applied": self.modifiers_applied,
         }
 
 
 @dataclass
 class InteractionDefinition:
     """Defines how two attributes interact."""
+
     name: str
     interaction_type: InteractionType
-    attacker_attr: str              # Primary attribute of the aggressor
-    defender_attr: str              # Primary attribute of the defender
-    secondary_attrs: List[str]      # Supporting attributes (weighted 25% each)
-    positions_attacker: List[str]   # Positions that can use this as attacker
-    positions_defender: List[str]   # Positions that can use this as defender
-    base_importance: float          # How impactful this interaction is (0.5-2.0)
-    situational_modifiers: Dict[str, float]  # Context-based adjustments
-    narrative_templates: Dict[str, str]      # Templates for outcome descriptions
+    attacker_attr: str  # Primary attribute of the aggressor
+    defender_attr: str  # Primary attribute of the defender
+    secondary_attrs: list[str]  # Supporting attributes (weighted 25% each)
+    positions_attacker: list[str]  # Positions that can use this as attacker
+    positions_defender: list[str]  # Positions that can use this as defender
+    base_importance: float  # How impactful this interaction is (0.5-2.0)
+    situational_modifiers: dict[str, float]  # Context-based adjustments
+    narrative_templates: dict[str, str]  # Templates for outcome descriptions
 
 
 class AttributeInteractionEngine:
@@ -99,7 +103,7 @@ class AttributeInteractionEngine:
     """
 
     # Interaction Catalog - All defined matchup types
-    INTERACTION_CATALOG: Dict[str, InteractionDefinition] = {}
+    INTERACTION_CATALOG: dict[str, InteractionDefinition] = {}
 
     def __init__(self, rng: Any = None):
         """
@@ -110,8 +114,10 @@ class AttributeInteractionEngine:
         """
         self.rng = rng
         self._initialize_catalog()
-        logger.info("AttributeInteractionEngine initialized with %d interactions",
-                   len(self.INTERACTION_CATALOG))
+        logger.info(
+            "AttributeInteractionEngine initialized with %d interactions",
+            len(self.INTERACTION_CATALOG),
+        )
 
     def _initialize_catalog(self) -> None:
         """Initialize all interaction definitions."""
@@ -123,18 +129,18 @@ class AttributeInteractionEngine:
         self.INTERACTION_CATALOG["hard_count_vs_discipline"] = InteractionDefinition(
             name="Hard Count vs Discipline",
             interaction_type=InteractionType.PRE_SNAP,
-            attacker_attr="awareness",      # QB's ability to sell the hard count
-            defender_attr="discipline",     # DL's ability to stay patient
+            attacker_attr="awareness",  # QB's ability to sell the hard count
+            defender_attr="discipline",  # DL's ability to stay patient
             secondary_attrs=["experience", "play_recognition"],
             positions_attacker=["QB"],
             positions_defender=["DE", "DT", "LB"],
-            base_importance=1.5,            # High impact - free play potential
+            base_importance=1.5,  # High impact - free play potential
             situational_modifiers={
-                "HOME": 0.10,               # QB gets crowd noise advantage
-                "AWAY": -0.05,              # Harder to sell on the road
-                "LOUD_STADIUM": 0.15,       # More effective in loud venues
-                "PLAYOFF": -0.10,           # Defenders more focused in playoffs
-                "4TH_QUARTER_CLOSE": -0.15, # High stakes = more discipline
+                "HOME": 0.10,  # QB gets crowd noise advantage
+                "AWAY": -0.05,  # Harder to sell on the road
+                "LOUD_STADIUM": 0.15,  # More effective in loud venues
+                "PLAYOFF": -0.10,  # Defenders more focused in playoffs
+                "4TH_QUARTER_CLOSE": -0.15,  # High stakes = more discipline
             },
             narrative_templates={
                 "DOMINANT_WIN": "{qb} masterfully draws {defender} offsides with an Oscar-worthy hard count!",
@@ -143,8 +149,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Both sides are locked in - no pre-snap advantage.",
                 "SLIGHT_LOSS": "{defender} times the snap perfectly.",
                 "LOSS": "{defender} blows through unblocked, anticipating the snap.",
-                "DOMINANT_LOSS": "{defender} reads the hard count and jumps the snap for a devastating hit!"
-            }
+                "DOMINANT_LOSS": "{defender} reads the hard count and jumps the snap for a devastating hit!",
+            },
         )
 
         self.INTERACTION_CATALOG["coverage_disguise_vs_pre_snap_read"] = InteractionDefinition(
@@ -157,9 +163,9 @@ class AttributeInteractionEngine:
             positions_defender=["QB"],
             base_importance=1.3,
             situational_modifiers={
-                "3RD_DOWN": 0.20,           # More complex coverages on 3rd
-                "RED_ZONE": 0.15,           # Condensed field = more deception
-                "2_MINUTE": -0.10,          # Less time for complex disguises
+                "3RD_DOWN": 0.20,  # More complex coverages on 3rd
+                "RED_ZONE": 0.15,  # Condensed field = more deception
+                "2_MINUTE": -0.10,  # Less time for complex disguises
             },
             narrative_templates={
                 "DOMINANT_WIN": "{defender} shows Tampa 2 but drops into a perfect trap coverage!",
@@ -168,8 +174,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{qb} reads the defense correctly.",
                 "SLIGHT_LOSS": "{qb} sees through the disguise.",
                 "LOSS": "{qb} correctly identifies the coverage and audibles to the perfect play.",
-                "DOMINANT_LOSS": "{qb} reads it like a book, finding the coverage hole immediately!"
-            }
+                "DOMINANT_LOSS": "{qb} reads it like a book, finding the coverage hole immediately!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -186,11 +192,11 @@ class AttributeInteractionEngine:
             positions_defender=["CB", "S"],
             base_importance=1.4,
             situational_modifiers={
-                "RAIN": -0.15,              # Slippery footing hurts release
-                "SNOW": -0.20,              # Even worse
-                "WIND": 0.05,               # Receiver might use wind for leverage
-                "MAN_COVERAGE": 0.20,       # Press more impactful in man
-                "ZONE": -0.10,              # Less direct matchup importance
+                "RAIN": -0.15,  # Slippery footing hurts release
+                "SNOW": -0.20,  # Even worse
+                "WIND": 0.05,  # Receiver might use wind for leverage
+                "MAN_COVERAGE": 0.20,  # Press more impactful in man
+                "ZONE": -0.10,  # Less direct matchup importance
             },
             narrative_templates={
                 "DOMINANT_WIN": "{wr} destroys {cb} with a filthy release - untouched into the route!",
@@ -199,8 +205,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Physical battle at the line - neither gains advantage.",
                 "SLIGHT_LOSS": "{cb}'s jam disrupts the timing.",
                 "LOSS": "{cb} reroutes {wr} significantly.",
-                "DOMINANT_LOSS": "{cb} absolutely smothers {wr} at the line - route is dead on arrival!"
-            }
+                "DOMINANT_LOSS": "{cb} absolutely smothers {wr} at the line - route is dead on arrival!",
+            },
         )
 
         self.INTERACTION_CATALOG["te_block_release_vs_lb_coverage"] = InteractionDefinition(
@@ -213,8 +219,8 @@ class AttributeInteractionEngine:
             positions_defender=["LB"],
             base_importance=1.2,
             situational_modifiers={
-                "PLAY_ACTION": 0.25,        # PA sells the block
-                "GOAL_LINE": -0.10,         # Less room to work
+                "PLAY_ACTION": 0.25,  # PA sells the block
+                "GOAL_LINE": -0.10,  # Less room to work
             },
             narrative_templates={
                 "DOMINANT_WIN": "{te} sells the block perfectly and slips out wide open!",
@@ -223,8 +229,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{lb} stays with {te} through the release.",
                 "SLIGHT_LOSS": "{lb} reads the play and sticks with {te}.",
                 "LOSS": "{lb} is all over {te} from the snap.",
-                "DOMINANT_LOSS": "{lb} blows up the play, denying any release!"
-            }
+                "DOMINANT_LOSS": "{lb} blows up the play, denying any release!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -239,12 +245,12 @@ class AttributeInteractionEngine:
             secondary_attrs=["strength", "agility", "pass_block", "pass_rush_power"],
             positions_attacker=["DE", "DT"],
             positions_defender=["OT", "OG", "C"],
-            base_importance=1.8,            # Critical for pass protection
+            base_importance=1.8,  # Critical for pass protection
             situational_modifiers={
-                "4TH_QUARTER": 0.10,        # DL gets boost from fatigue
-                "LONG_DRIVE": 0.15,         # OL tiring = worse anchor
-                "ROAD": 0.05,               # Crowd noise helps timing
-                "RAIN": -0.10,              # Slippery = worse first step
+                "4TH_QUARTER": 0.10,  # DL gets boost from fatigue
+                "LONG_DRIVE": 0.15,  # OL tiring = worse anchor
+                "ROAD": 0.05,  # Crowd noise helps timing
+                "RAIN": -0.10,  # Slippery = worse first step
             },
             narrative_templates={
                 "DOMINANT_WIN": "{dl} explodes off the line and is in the backfield instantly!",
@@ -253,8 +259,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Stalemate at the point of attack.",
                 "SLIGHT_LOSS": "{ol} absorbs the rush and holds ground.",
                 "LOSS": "{ol} stonewalls {dl} with perfect technique.",
-                "DOMINANT_LOSS": "{ol} pancakes {dl} into the turf - no pass rush at all!"
-            }
+                "DOMINANT_LOSS": "{ol} pancakes {dl} into the turf - no pass rush at all!",
+            },
         )
 
         self.INTERACTION_CATALOG["ol_discipline_vs_dl_inside_move"] = InteractionDefinition(
@@ -267,9 +273,9 @@ class AttributeInteractionEngine:
             positions_defender=["OT", "OG", "C"],
             base_importance=1.5,
             situational_modifiers={
-                "3RD_AND_LONG": 0.15,       # Rushers more creative
-                "DROP_BACK_PASS": 0.10,     # More time for counters
-                "QUICK_PASS": -0.20,        # No time for counter moves
+                "3RD_AND_LONG": 0.15,  # Rushers more creative
+                "DROP_BACK_PASS": 0.10,  # More time for counters
+                "QUICK_PASS": -0.20,  # No time for counter moves
             },
             narrative_templates={
                 "DOMINANT_WIN": "{dl} uses a devastating swim-rip combo to blow by {ol}!",
@@ -278,8 +284,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{ol} mirrors {dl}'s move effectively.",
                 "SLIGHT_LOSS": "{ol} recovers nicely from the initial move.",
                 "LOSS": "{ol} reads the counter and stays in front.",
-                "DOMINANT_LOSS": "{ol} bats away the move and drives {dl} into the ground!"
-            }
+                "DOMINANT_LOSS": "{ol} bats away the move and drives {dl} into the ground!",
+            },
         )
 
         self.INTERACTION_CATALOG["rb_chip_vs_blitz_timing"] = InteractionDefinition(
@@ -292,8 +298,8 @@ class AttributeInteractionEngine:
             positions_defender=["RB", "TE"],
             base_importance=1.3,
             situational_modifiers={
-                "MAX_PROTECT": 0.25,        # RB committed to blocking
-                "HOT_ROUTE": -0.15,         # RB releasing, less committed
+                "MAX_PROTECT": 0.25,  # RB committed to blocking
+                "HOT_ROUTE": -0.15,  # RB releasing, less committed
             },
             narrative_templates={
                 "DOMINANT_WIN": "{lb} times the blitz perfectly and flies by {rb} untouched!",
@@ -302,8 +308,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{rb} and {lb} collide - both affected.",
                 "SLIGHT_LOSS": "{rb} gets a solid chip on {lb}.",
                 "LOSS": "{rb} stonewalls {lb} completely.",
-                "DOMINANT_LOSS": "{rb} delivers a devastating chip that sends {lb} to the turf!"
-            }
+                "DOMINANT_LOSS": "{rb} delivers a devastating chip that sends {lb} to the turf!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -320,10 +326,10 @@ class AttributeInteractionEngine:
             positions_defender=["CB", "S", "LB"],
             base_importance=1.6,
             situational_modifiers={
-                "CONCEPT_DEEP": 0.10,       # More time for route to develop
-                "CONCEPT_SHORT": -0.10,     # Less separation opportunity
-                "PRESS": -0.15,             # Already calculated in LOS
-                "OFF_COVERAGE": 0.10,       # More room to work
+                "CONCEPT_DEEP": 0.10,  # More time for route to develop
+                "CONCEPT_SHORT": -0.10,  # Less separation opportunity
+                "PRESS": -0.15,  # Already calculated in LOS
+                "OFF_COVERAGE": 0.10,  # More room to work
             },
             narrative_templates={
                 "DOMINANT_WIN": "{wr} runs a clinic on {cb} - wide open by 5 yards!",
@@ -332,8 +338,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{cb} is stride for stride with {wr}.",
                 "SLIGHT_LOSS": "{cb} anticipates the break and closes.",
                 "LOSS": "{cb} blankets {wr} throughout the route.",
-                "DOMINANT_LOSS": "{cb} jumps the route for an interception opportunity!"
-            }
+                "DOMINANT_LOSS": "{cb} jumps the route for an interception opportunity!",
+            },
         )
 
         self.INTERACTION_CATALOG["ball_tracking_vs_throw_placement"] = InteractionDefinition(
@@ -346,9 +352,9 @@ class AttributeInteractionEngine:
             positions_defender=["CB", "S"],
             base_importance=1.4,
             situational_modifiers={
-                "SUN_IN_EYES": 0.15,        # DB has trouble tracking
-                "NIGHT_GAME": -0.05,        # Lighting more consistent
-                "WIND": 0.20,               # Ball tracking harder in wind
+                "SUN_IN_EYES": 0.15,  # DB has trouble tracking
+                "NIGHT_GAME": -0.05,  # Lighting more consistent
+                "WIND": 0.20,  # Ball tracking harder in wind
             },
             narrative_templates={
                 "DOMINANT_WIN": "{qb} throws a perfect back-shoulder fade - DB has no chance!",
@@ -357,8 +363,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Both the throw and coverage are contested.",
                 "SLIGHT_LOSS": "{db} tracks the ball well and is in position.",
                 "LOSS": "{db} reads the throw and makes a play on the ball.",
-                "DOMINANT_LOSS": "{db} high-points the ball for an incredible interception!"
-            }
+                "DOMINANT_LOSS": "{db} high-points the ball for an incredible interception!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -375,9 +381,9 @@ class AttributeInteractionEngine:
             positions_defender=["LB"],
             base_importance=1.5,
             situational_modifiers={
-                "INSIDE_RUN": 0.10,         # Patience more valuable inside
-                "OUTSIDE_RUN": -0.10,       # Speed more important outside
-                "GOAL_LINE": -0.20,         # No room for patience
+                "INSIDE_RUN": 0.10,  # Patience more valuable inside
+                "OUTSIDE_RUN": -0.10,  # Speed more important outside
+                "GOAL_LINE": -0.20,  # No room for patience
             },
             narrative_templates={
                 "DOMINANT_WIN": "{rb} waits for the hole to develop, then explodes through!",
@@ -386,8 +392,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Both {rb} and {lb} in position - contested yards.",
                 "SLIGHT_LOSS": "{lb} fills the gap before {rb} can react.",
                 "LOSS": "{lb} is in the hole immediately.",
-                "DOMINANT_LOSS": "{lb} reads it perfectly and blows up the play in the backfield!"
-            }
+                "DOMINANT_LOSS": "{lb} reads it perfectly and blows up the play in the backfield!",
+            },
         )
 
         self.INTERACTION_CATALOG["ol_pull_vs_dl_gap_integrity"] = InteractionDefinition(
@@ -400,9 +406,9 @@ class AttributeInteractionEngine:
             positions_defender=["DE", "DT", "LB"],
             base_importance=1.4,
             situational_modifiers={
-                "POWER_SCHEME": 0.15,       # Pull is central to the play
-                "ZONE_SCHEME": -0.10,       # Less pulling in zone
-                "TRAP": 0.20,               # Misdirection helps the pull
+                "POWER_SCHEME": 0.15,  # Pull is central to the play
+                "ZONE_SCHEME": -0.10,  # Less pulling in zone
+                "TRAP": 0.20,  # Misdirection helps the pull
             },
             narrative_templates={
                 "DOMINANT_WIN": "{ol} gets out and creates a massive lane - convoy blocking!",
@@ -411,8 +417,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{dl} and {ol} meet at the point of attack.",
                 "SLIGHT_LOSS": "{dl} stays in lane and forces a cut.",
                 "LOSS": "{dl} sheds the block and makes the tackle.",
-                "DOMINANT_LOSS": "{dl} blows through the pull and stuffs the play!"
-            }
+                "DOMINANT_LOSS": "{dl} blows through the pull and stuffs the play!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -429,9 +435,9 @@ class AttributeInteractionEngine:
             positions_defender=["CB", "S", "LB"],
             base_importance=1.3,
             situational_modifiers={
-                "OPEN_FIELD": 0.20,         # More room for moves
-                "SIDELINE": -0.15,          # Less room to operate
-                "FATIGUE_HIGH": 0.15,       # Tackler more likely to miss
+                "OPEN_FIELD": 0.20,  # More room for moves
+                "SIDELINE": -0.15,  # Less room to operate
+                "FATIGUE_HIGH": 0.15,  # Tackler more likely to miss
             },
             narrative_templates={
                 "DOMINANT_WIN": "{bc} puts {defender} on skates with a filthy juke!",
@@ -440,8 +446,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "{defender} slows {bc} but doesn't bring them down.",
                 "SLIGHT_LOSS": "{defender} wraps up but {bc} falls forward.",
                 "LOSS": "Solid open field tackle by {defender}.",
-                "DOMINANT_LOSS": "{defender} delivers a huge hit and forces a fumble!"
-            }
+                "DOMINANT_LOSS": "{defender} delivers a huge hit and forces a fumble!",
+            },
         )
 
         # ═══════════════════════════════════════════════════════════════════
@@ -451,11 +457,11 @@ class AttributeInteractionEngine:
         self.INTERACTION_CATALOG["field_general_influence"] = InteractionDefinition(
             name="Field General Leadership Boost",
             interaction_type=InteractionType.LEADERSHIP,
-            attacker_attr="awareness",      # QB's awareness creates the boost
-            defender_attr="awareness",      # Opposition awareness resists
+            attacker_attr="awareness",  # QB's awareness creates the boost
+            defender_attr="awareness",  # Opposition awareness resists
             secondary_attrs=["experience"],
             positions_attacker=["QB"],
-            positions_defender=["LB"],      # Defensive captain counters
+            positions_defender=["LB"],  # Defensive captain counters
             base_importance=1.0,
             situational_modifiers={
                 "HOME": 0.10,
@@ -469,8 +475,8 @@ class AttributeInteractionEngine:
                 "NEUTRAL": "Both units are playing disciplined football.",
                 "SLIGHT_LOSS": "The defense's intensity is disrupting rhythm.",
                 "LOSS": "{lb} has the defense playing with fire.",
-                "DOMINANT_LOSS": "The defense is swarming - offense can't get anything going!"
-            }
+                "DOMINANT_LOSS": "The defense is swarming - offense can't get anything going!",
+            },
         )
 
     def calculate_interaction(
@@ -478,7 +484,7 @@ class AttributeInteractionEngine:
         interaction_name: str,
         attacker: Any,
         defender: Any,
-        context: Optional[Dict[str, Any]] = None
+        context: dict[str, Any] | None = None,
     ) -> InteractionResult:
         """
         Calculate the result of an attribute interaction.
@@ -532,12 +538,20 @@ class AttributeInteractionEngine:
                 modifiers_applied[situation] = modifier
 
         # Step 4: Experience modifier (veterans have edge in complex interactions)
-        attacker_exp = getattr(attacker, 'experience', 0)
-        defender_exp = getattr(defender, 'experience', 0)
+        attacker_exp = getattr(attacker, "experience", 0)
+        defender_exp = getattr(defender, "experience", 0)
 
         # Safety: handle None and non-numeric values
-        attacker_exp = attacker_exp if (attacker_exp is not None and isinstance(attacker_exp, (int, float))) else 0
-        defender_exp = defender_exp if (defender_exp is not None and isinstance(defender_exp, (int, float))) else 0
+        attacker_exp = (
+            attacker_exp
+            if (attacker_exp is not None and isinstance(attacker_exp, (int, float)))
+            else 0
+        )
+        defender_exp = (
+            defender_exp
+            if (defender_exp is not None and isinstance(defender_exp, (int, float)))
+            else 0
+        )
 
         experience_modifier = (attacker_exp - defender_exp) * 0.5
         experience_modifier = max(-5, min(5, experience_modifier))
@@ -554,17 +568,14 @@ class AttributeInteractionEngine:
 
         # Step 6: Calculate final differential
         attacker_total = (
-            attacker_primary +
-            attacker_secondary_bonus +
-            (situational_modifier * 10) +  # Scale situational modifiers
-            experience_modifier +
-            variance
+            attacker_primary
+            + attacker_secondary_bonus
+            + (situational_modifier * 10)  # Scale situational modifiers
+            + experience_modifier
+            + variance
         )
 
-        defender_total = (
-            defender_primary +
-            defender_secondary_bonus
-        )
+        defender_total = defender_primary + defender_secondary_bonus
 
         raw_differential = attacker_total - defender_total
 
@@ -576,18 +587,11 @@ class AttributeInteractionEngine:
 
         # Step 8: Calculate boosts/penalties based on outcome and importance
         winner_boost, loser_penalty = self._calculate_effects(
-            outcome,
-            abs(scaled_differential),
-            definition.base_importance
+            outcome, abs(scaled_differential), definition.base_importance
         )
 
         # Step 9: Generate narrative
-        narrative = self._generate_narrative(
-            definition,
-            outcome,
-            attacker,
-            defender
-        )
+        narrative = self._generate_narrative(definition, outcome, attacker, defender)
 
         return InteractionResult(
             interaction_type=definition.interaction_type,
@@ -596,7 +600,7 @@ class AttributeInteractionEngine:
             winner_boost=winner_boost,
             loser_penalty=loser_penalty,
             narrative=narrative,
-            modifiers_applied=modifiers_applied
+            modifiers_applied=modifiers_applied,
         )
 
     def _differential_to_outcome(self, differential: float) -> InteractionOutcome:
@@ -617,11 +621,8 @@ class AttributeInteractionEngine:
             return InteractionOutcome.DOMINANT_LOSS
 
     def _calculate_effects(
-        self,
-        outcome: InteractionOutcome,
-        scaled_diff: float,
-        importance: float
-    ) -> Tuple[float, float]:
+        self, outcome: InteractionOutcome, scaled_diff: float, importance: float
+    ) -> tuple[float, float]:
         """
         Calculate winner boost and loser penalty based on outcome.
 
@@ -647,7 +648,7 @@ class AttributeInteractionEngine:
         definition: InteractionDefinition,
         outcome: InteractionOutcome,
         attacker: Any,
-        defender: Any
+        defender: Any,
     ) -> str:
         """Generate a human-readable narrative for the interaction."""
         template = definition.narrative_templates.get(outcome.value, "")
@@ -656,10 +657,12 @@ class AttributeInteractionEngine:
             return f"{outcome.value} in {definition.name}"
 
         # Get player names
-        attacker_name = getattr(attacker, 'last_name', None) or \
-                       getattr(attacker, 'name', 'Attacker')
-        defender_name = getattr(defender, 'last_name', None) or \
-                       getattr(defender, 'name', 'Defender')
+        attacker_name = getattr(attacker, "last_name", None) or getattr(
+            attacker, "name", "Attacker"
+        )
+        defender_name = getattr(defender, "last_name", None) or getattr(
+            defender, "name", "Defender"
+        )
 
         # Replace template placeholders
         narrative = template
@@ -687,10 +690,10 @@ class AttributeInteractionEngine:
             winner_boost=0.0,
             loser_penalty=0.0,
             narrative=f"Unknown interaction: {interaction_name}",
-            modifiers_applied={}
+            modifiers_applied={},
         )
 
-    def get_all_interactions(self) -> Dict[str, Dict[str, Any]]:
+    def get_all_interactions(self) -> dict[str, dict[str, Any]]:
         """Get summary of all available interactions."""
         return {
             name: {
@@ -700,16 +703,12 @@ class AttributeInteractionEngine:
                 "defender_attr": defn.defender_attr,
                 "importance": defn.base_importance,
                 "positions_attacker": defn.positions_attacker,
-                "positions_defender": defn.positions_defender
+                "positions_defender": defn.positions_defender,
             }
             for name, defn in self.INTERACTION_CATALOG.items()
         }
 
-    def get_interactions_for_situation(
-        self,
-        play_type: str,
-        phase: str
-    ) -> List[str]:
+    def get_interactions_for_situation(self, play_type: str, phase: str) -> list[str]:
         """
         Get relevant interactions for a given play type and phase.
 
@@ -728,8 +727,8 @@ class AttributeInteractionEngine:
             "POST_SNAP": [
                 InteractionType.ROUTE_VS_COVERAGE,
                 InteractionType.RUN_GAME,
-                InteractionType.BALL_CARRIER
-            ]
+                InteractionType.BALL_CARRIER,
+            ],
         }
 
         target_types = phase_map.get(phase, [])
@@ -747,10 +746,8 @@ class AttributeInteractionEngine:
         return relevant
 
     def batch_calculate_interactions(
-        self,
-        matchups: List[Tuple[str, Any, Any]],
-        context: Optional[Dict[str, Any]] = None
-    ) -> List[InteractionResult]:
+        self, matchups: list[tuple[str, Any, Any]], context: dict[str, Any] | None = None
+    ) -> list[InteractionResult]:
         """
         Calculate multiple interactions at once.
 
@@ -763,12 +760,7 @@ class AttributeInteractionEngine:
         """
         results = []
         for interaction_name, attacker, defender in matchups:
-            result = self.calculate_interaction(
-                interaction_name,
-                attacker,
-                defender,
-                context
-            )
+            result = self.calculate_interaction(interaction_name, attacker, defender, context)
             results.append(result)
 
         return results
@@ -778,11 +770,12 @@ class AttributeInteractionEngine:
 # HELPER FUNCTIONS FOR INTEGRATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 def apply_interaction_to_play(
     engine: AttributeInteractionEngine,
-    play_context: Dict[str, Any],
-    key_matchups: List[Tuple[str, Any, Any]]
-) -> Dict[str, Any]:
+    play_context: dict[str, Any],
+    key_matchups: list[tuple[str, Any, Any]],
+) -> dict[str, Any]:
     """
     Apply attribute interactions to modify a play's outcome.
 
@@ -801,15 +794,21 @@ def apply_interaction_to_play(
         "total_defense_boost": 0.0,
         "narratives": [],
         "dominant_events": [],
-        "all_events": []
+        "all_events": [],
     }
 
     for result in results:
-        if result.outcome in [InteractionOutcome.DOMINANT_WIN, InteractionOutcome.WIN,
-                              InteractionOutcome.SLIGHT_WIN]:
+        if result.outcome in [
+            InteractionOutcome.DOMINANT_WIN,
+            InteractionOutcome.WIN,
+            InteractionOutcome.SLIGHT_WIN,
+        ]:
             aggregate["total_offense_boost"] += result.winner_boost
-        elif result.outcome in [InteractionOutcome.DOMINANT_LOSS, InteractionOutcome.LOSS,
-                                InteractionOutcome.SLIGHT_LOSS]:
+        elif result.outcome in [
+            InteractionOutcome.DOMINANT_LOSS,
+            InteractionOutcome.LOSS,
+            InteractionOutcome.SLIGHT_LOSS,
+        ]:
             aggregate["total_defense_boost"] += result.loser_penalty
 
         aggregate["narratives"].append(result.narrative)

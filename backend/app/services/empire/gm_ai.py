@@ -12,25 +12,26 @@ Phase 5: EMPIRE Economic Simulation
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Set, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class TeamPhilosophy(str, Enum):
     """GM team-building philosophy."""
-    WIN_NOW = "WIN_NOW"           # Maximize current roster
-    REBUILD = "REBUILD"           # Accumulate assets/youth
-    BALANCED = "BALANCED"         # Steady improvement
-    DEVELOP = "DEVELOP"           # Focus on draft/development
+
+    WIN_NOW = "WIN_NOW"  # Maximize current roster
+    REBUILD = "REBUILD"  # Accumulate assets/youth
+    BALANCED = "BALANCED"  # Steady improvement
+    DEVELOP = "DEVELOP"  # Focus on draft/development
 
 
 class TradeAssetType(str, Enum):
     """Types of trade assets."""
+
     PLAYER = "PLAYER"
     DRAFT_PICK = "DRAFT_PICK"
     CAP_SPACE = "CAP_SPACE"
@@ -38,19 +39,22 @@ class TradeAssetType(str, Enum):
 
 class NeedPriority(str, Enum):
     """Priority levels for roster needs."""
-    CRITICAL = "CRITICAL"    # Must address immediately
-    HIGH = "HIGH"            # Address this year
-    MODERATE = "MODERATE"    # Nice to have
-    LOW = "LOW"              # Future concern
+
+    CRITICAL = "CRITICAL"  # Must address immediately
+    HIGH = "HIGH"  # Address this year
+    MODERATE = "MODERATE"  # Nice to have
+    LOW = "LOW"  # Future concern
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class GMAIConfig:
     """Configuration for GM AI."""
+
     # Philosophy thresholds
     playoff_contender_wins: int = 9
     rebuild_trigger_wins: int = 5
@@ -60,15 +64,16 @@ class GMAIConfig:
 
     # Trade preferences
     young_player_premium: float = 1.2  # Value boost for <25
-    veteran_discount: float = 0.9      # Value drop for >30
+    veteran_discount: float = 0.9  # Value drop for >30
 
 
 @dataclass
 class DraftPick:
     """A draft pick asset."""
+
     year: int
     round: int
-    pick_number: Optional[int] = None  # Known after lottery
+    pick_number: int | None = None  # Known after lottery
     original_team: str = ""
 
     @property
@@ -95,6 +100,7 @@ class DraftPick:
 @dataclass
 class RosterNeed:
     """A position of team need."""
+
     position: str
     priority: NeedPriority
     current_starter_rating: int
@@ -104,15 +110,16 @@ class RosterNeed:
 @dataclass
 class GMState:
     """GM's current state and goals."""
+
     team_id: str
     philosophy: TeamPhilosophy = TeamPhilosophy.BALANCED
 
     # Assets
     cap_space: int = 0
-    draft_picks: List[DraftPick] = field(default_factory=list)
+    draft_picks: list[DraftPick] = field(default_factory=list)
 
     # Needs
-    roster_needs: List[RosterNeed] = field(default_factory=list)
+    roster_needs: list[RosterNeed] = field(default_factory=list)
 
     # Performance
     expected_wins: float = 8.0
@@ -123,15 +130,17 @@ class GMState:
 # GOAP PLANNING
 # ============================================================================
 
+
 @dataclass
 class GOAPAction:
     """A potential GM action."""
+
     name: str
-    preconditions: Dict[str, Any]
-    effects: Dict[str, Any]
+    preconditions: dict[str, Any]
+    effects: dict[str, Any]
     cost: float  # Lower = more desirable
 
-    def can_execute(self, state: Dict[str, Any]) -> bool:
+    def can_execute(self, state: dict[str, Any]) -> bool:
         """Check if preconditions are met."""
         for key, required in self.preconditions.items():
             if key not in state:
@@ -140,7 +149,7 @@ class GOAPAction:
                 return False
         return True
 
-    def apply(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def apply(self, state: dict[str, Any]) -> dict[str, Any]:
         """Apply effects to state."""
         new_state = state.copy()
         new_state.update(self.effects)
@@ -150,6 +159,7 @@ class GOAPAction:
 # ============================================================================
 # GM AI ENGINE
 # ============================================================================
+
 
 class GMAI:
     """
@@ -164,7 +174,7 @@ class GMAI:
 
     def __init__(
         self,
-        config: Optional[GMAIConfig] = None,
+        config: GMAIConfig | None = None,
         team_id: str = "",
     ):
         self.config = config or GMAIConfig()
@@ -196,9 +206,9 @@ class GMAI:
 
     def evaluate_trade(
         self,
-        giving: List[Tuple[TradeAssetType, Any]],
-        receiving: List[Tuple[TradeAssetType, Any]],
-    ) -> Tuple[bool, float]:
+        giving: list[tuple[TradeAssetType, Any]],
+        receiving: list[tuple[TradeAssetType, Any]],
+    ) -> tuple[bool, float]:
         """
         Evaluate a potential trade.
 
@@ -257,15 +267,15 @@ class GMAI:
 
     def rank_draft_prospects(
         self,
-        prospects: List[Dict[str, Any]],
-        team_needs: List[RosterNeed],
-    ) -> List[Dict[str, Any]]:
+        prospects: list[dict[str, Any]],
+        team_needs: list[RosterNeed],
+    ) -> list[dict[str, Any]]:
         """
         Rank draft prospects based on value and fit.
         """
         need_positions = {n.position: n.priority for n in team_needs}
 
-        def score_prospect(p: Dict) -> float:
+        def score_prospect(p: dict) -> float:
             base = p.get("grade", 50)
 
             # Need bonus
@@ -290,52 +300,60 @@ class GMAI:
 
         return sorted(prospects, key=score_prospect, reverse=True)
 
-    def generate_actions(self) -> List[GOAPAction]:
+    def generate_actions(self) -> list[GOAPAction]:
         """Generate available GOAP actions based on current state."""
         actions = []
 
         # Sign free agent
         if self.state.cap_space > 5_000_000:
-            actions.append(GOAPAction(
-                name="sign_free_agent",
-                preconditions={"has_cap_space": True},
-                effects={"filled_need": True, "has_cap_space": False},
-                cost=1.0,
-            ))
+            actions.append(
+                GOAPAction(
+                    name="sign_free_agent",
+                    preconditions={"has_cap_space": True},
+                    effects={"filled_need": True, "has_cap_space": False},
+                    cost=1.0,
+                )
+            )
 
         # Make trade
         if self.state.draft_picks:
-            actions.append(GOAPAction(
-                name="trade_for_player",
-                preconditions={"has_picks": True},
-                effects={"acquired_player": True},
-                cost=1.5,
-            ))
+            actions.append(
+                GOAPAction(
+                    name="trade_for_player",
+                    preconditions={"has_picks": True},
+                    effects={"acquired_player": True},
+                    cost=1.5,
+                )
+            )
 
         # Restructure contract
-        actions.append(GOAPAction(
-            name="restructure_contract",
-            preconditions={"has_veteran": True},
-            effects={"has_cap_space": True},
-            cost=0.5,
-        ))
+        actions.append(
+            GOAPAction(
+                name="restructure_contract",
+                preconditions={"has_veteran": True},
+                effects={"has_cap_space": True},
+                cost=0.5,
+            )
+        )
 
         # Cut player
-        actions.append(GOAPAction(
-            name="cut_player",
-            preconditions={},
-            effects={"has_cap_space": True, "dead_money": True},
-            cost=2.0,
-        ))
+        actions.append(
+            GOAPAction(
+                name="cut_player",
+                preconditions={},
+                effects={"has_cap_space": True, "dead_money": True},
+                cost=2.0,
+            )
+        )
 
         return actions
 
     def plan(
         self,
-        current_state: Dict[str, Any],
-        goal_state: Dict[str, Any],
+        current_state: dict[str, Any],
+        goal_state: dict[str, Any],
         max_depth: int = 5,
-    ) -> List[GOAPAction]:
+    ) -> list[GOAPAction]:
         """
         Create action plan to reach goal state.
 
@@ -354,16 +372,13 @@ class GMAI:
 
             # Find best action
             best_action = None
-            best_score = float('inf')
+            best_score = float("inf")
 
             for action in actions:
                 if action.can_execute(state):
                     # Score by how many goals it satisfies + cost
                     new_state = action.apply(state)
-                    goals_met = sum(
-                        1 for k, v in goal_state.items()
-                        if new_state.get(k) == v
-                    )
+                    goals_met = sum(1 for k, v in goal_state.items() if new_state.get(k) == v)
                     score = action.cost - goals_met * 2
 
                     if score < best_score:
@@ -378,7 +393,7 @@ class GMAI:
 
         return plan
 
-    def get_recommendation(self) -> Dict[str, Any]:
+    def get_recommendation(self) -> dict[str, Any]:
         """Get GM's recommended next action."""
         # Build goal state based on philosophy
         if self.state.philosophy == TeamPhilosophy.WIN_NOW:
@@ -392,7 +407,10 @@ class GMAI:
         current = {
             "has_cap_space": self.state.cap_space > 10_000_000,
             "has_picks": len(self.state.draft_picks) >= 7,
-            "filled_need": len([n for n in self.state.roster_needs if n.priority == NeedPriority.CRITICAL]) == 0,
+            "filled_need": len(
+                [n for n in self.state.roster_needs if n.priority == NeedPriority.CRITICAL]
+            )
+            == 0,
         }
 
         plan = self.plan(current, goal)

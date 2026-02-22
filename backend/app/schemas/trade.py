@@ -1,12 +1,13 @@
 """Trade-related Pydantic schemas for API request/response validation."""
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional
 from enum import Enum
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TradeDecision(str, Enum):
     """Possible GM trade decisions."""
+
     ACCEPT = "ACCEPT"
     REJECT = "REJECT"
     COUNTER = "COUNTER"
@@ -14,41 +15,39 @@ class TradeDecision(str, Enum):
 
 class DraftPickInfo(BaseModel):
     """Draft pick information for trade proposals."""
+
     model_config = ConfigDict(from_attributes=True)
 
     round: int = Field(ge=1, le=7, description="Draft round (1-7)")
     year: int = Field(ge=2024, le=2030, description="Draft year")
-    original_team_id: Optional[int] = Field(
-        default=None,
-        description="Original team that owned the pick (if traded)"
+    original_team_id: int | None = Field(
+        default=None, description="Original team that owned the pick (if traded)"
     )
 
 
 class TradeEvaluationRequest(BaseModel):
     """Request body for trade evaluation endpoint."""
+
     model_config = ConfigDict(from_attributes=True)
 
-    offered_player_ids: List[int] = Field(
-        default_factory=list,
-        description="Player IDs being offered to the target team"
+    offered_player_ids: list[int] = Field(
+        default_factory=list, description="Player IDs being offered to the target team"
     )
-    requested_player_ids: List[int] = Field(
-        default_factory=list,
-        description="Player IDs being requested from the target team"
+    requested_player_ids: list[int] = Field(
+        default_factory=list, description="Player IDs being requested from the target team"
     )
     target_team_id: int = Field(description="Team ID to evaluate the trade for")
-    offered_picks: Optional[List[DraftPickInfo]] = Field(
-        default=None,
-        description="Draft picks being offered"
+    offered_picks: list[DraftPickInfo] | None = Field(
+        default=None, description="Draft picks being offered"
     )
-    requested_picks: Optional[List[DraftPickInfo]] = Field(
-        default=None,
-        description="Draft picks being requested"
+    requested_picks: list[DraftPickInfo] | None = Field(
+        default=None, description="Draft picks being requested"
     )
 
 
 class TradeEvaluationResponse(BaseModel):
     """Response from trade evaluation endpoint."""
+
     model_config = ConfigDict(from_attributes=True)
 
     decision: TradeDecision = Field(description="GM's decision on the trade")
@@ -56,50 +55,43 @@ class TradeEvaluationResponse(BaseModel):
     reasoning: str = Field(description="Explanation of the decision")
 
     # Additional context
-    offered_value: Optional[float] = Field(
-        default=None,
-        description="Calculated value of offered assets"
+    offered_value: float | None = Field(
+        default=None, description="Calculated value of offered assets"
     )
-    requested_value: Optional[float] = Field(
-        default=None,
-        description="Calculated value of requested assets"
+    requested_value: float | None = Field(
+        default=None, description="Calculated value of requested assets"
     )
-    gm_philosophy: Optional[str] = Field(
-        default=None,
-        description="Target team's GM philosophy that influenced decision"
+    gm_philosophy: str | None = Field(
+        default=None, description="Target team's GM philosophy that influenced decision"
     )
 
 
 class TradeOfferRequest(BaseModel):
     """Request body for submitting a formal trade offer."""
+
     model_config = ConfigDict(from_attributes=True)
 
-    offered_player_ids: List[int] = Field(
-        default_factory=list,
-        description="Player IDs being offered"
+    offered_player_ids: list[int] = Field(
+        default_factory=list, description="Player IDs being offered"
     )
-    requested_player_ids: List[int] = Field(
-        default_factory=list,
-        description="Player IDs being requested"
+    requested_player_ids: list[int] = Field(
+        default_factory=list, description="Player IDs being requested"
     )
     target_team_id: int = Field(description="Team to send the offer to")
-    offered_picks: Optional[List[DraftPickInfo]] = Field(
-        default=None,
-        description="Draft picks being offered"
+    offered_picks: list[DraftPickInfo] | None = Field(
+        default=None, description="Draft picks being offered"
     )
-    requested_picks: Optional[List[DraftPickInfo]] = Field(
-        default=None,
-        description="Draft picks being requested"
+    requested_picks: list[DraftPickInfo] | None = Field(
+        default=None, description="Draft picks being requested"
     )
-    message: Optional[str] = Field(
-        default=None,
-        max_length=500,
-        description="Optional message to include with offer"
+    message: str | None = Field(
+        default=None, max_length=500, description="Optional message to include with offer"
     )
 
 
 class TradeOfferResponse(BaseModel):
     """Response from submitting a trade offer."""
+
     model_config = ConfigDict(from_attributes=True)
 
     offer_id: int = Field(description="Unique ID for tracking the offer")
@@ -109,6 +101,7 @@ class TradeOfferResponse(BaseModel):
 
 class PlayerTradeInfo(BaseModel):
     """Simplified player info for trade displays."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -123,6 +116,7 @@ class PlayerTradeInfo(BaseModel):
 
 class TradeOfferStatus(str, Enum):
     """Status of a trade offer."""
+
     PENDING = "PENDING"
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
@@ -133,6 +127,7 @@ class TradeOfferStatus(str, Enum):
 
 class TradeAssetRead(BaseModel):
     """Simplified asset info for reading offers."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -140,38 +135,40 @@ class TradeAssetRead(BaseModel):
     name: str
     value: int
     team_id: int
-    position: Optional[str] = None
+    position: str | None = None
 
 
 class TradeOfferRead(BaseModel):
     """Schema for reading a trade offer from the database."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     offering_team_id: int
     receiving_team_id: int
-    offered_assets: List[TradeAssetRead] = Field(default_factory=list)
-    requested_assets: List[TradeAssetRead] = Field(default_factory=list)
+    offered_assets: list[TradeAssetRead] = Field(default_factory=list)
+    requested_assets: list[TradeAssetRead] = Field(default_factory=list)
     status: TradeOfferStatus
-    message: Optional[str] = None
-    gm_response: Optional[str] = None
+    message: str | None = None
+    gm_response: str | None = None
     created_at: str
-    expires_at: Optional[str] = None
-    parent_offer_id: Optional[int] = None
+    expires_at: str | None = None
+    parent_offer_id: int | None = None
 
 
 class PendingOffersResponse(BaseModel):
     """Response for pending offers endpoint."""
+
     model_config = ConfigDict(from_attributes=True)
 
-    incoming: List[TradeOfferRead] = Field(default_factory=list)
-    outgoing: List[TradeOfferRead] = Field(default_factory=list)
+    incoming: list[TradeOfferRead] = Field(default_factory=list)
+    outgoing: list[TradeOfferRead] = Field(default_factory=list)
 
 
 class TradeRespondRequest(BaseModel):
     """Request to respond to a trade offer."""
+
     model_config = ConfigDict(from_attributes=True)
 
     action: str = Field(description="'accept' or 'reject'")
-    message: Optional[str] = Field(default=None, max_length=500)
-
+    message: str | None = Field(default=None, max_length=500)

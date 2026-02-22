@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { useTick } from "@pixi/react";
 import type { Graphics as PixiGraphics } from "pixi.js";
+
 // We assume 'extend' was called in the parent or app root.
 // If needed, we can call it here too, but duplicate calls might be safe or warned.
 // To be safe, we won't call it here but assume <pixiGraphics> handles it.
@@ -41,8 +42,7 @@ export const PlayerSprite: React.FC<PlayerSpriteProps> = ({
   });
 
   const draw = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (g: any) => {
+    (g: PixiGraphics) => {
       g.clear();
 
       // Shadow

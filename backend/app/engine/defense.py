@@ -1,6 +1,5 @@
 import enum
-from pydantic import BaseModel
-from typing import List
+
 
 class PassRushMove(str, enum.Enum):
     BULL_RUSH = "Bull Rush"
@@ -8,13 +7,21 @@ class PassRushMove(str, enum.Enum):
     SPIN = "Spin"
     RIP = "Rip"
 
+
 class CoverageType(str, enum.Enum):
     MAN = "Man"
     ZONE = "Zone"
 
+
 class PassRushEngine:
     @staticmethod
-    def resolve_move(move: PassRushMove, rusher_rating: int, blocker_rating: int, blocker_weight: int, rusher_strength: int) -> dict:
+    def resolve_move(
+        move: PassRushMove,
+        rusher_rating: int,
+        blocker_rating: int,
+        blocker_weight: int,
+        rusher_strength: int,
+    ) -> dict:
         """
         Resolve a pass rush move based on physics and ratings.
         """
@@ -42,15 +49,19 @@ class PassRushEngine:
 
         return {"success": success, "momentum": momentum}
 
+
 class DefenseEngine:
     @staticmethod
-    def calculate_pursuit_angle(defender_pos: dict, ball_carrier_pos: dict, ball_carrier_velocity: dict) -> float:
+    def calculate_pursuit_angle(
+        defender_pos: dict, ball_carrier_pos: dict, ball_carrier_velocity: dict
+    ) -> float:
         """
         Calculate the optimal interception angle (Inside-Out).
         """
         import math
-        dx = ball_carrier_pos['x'] - defender_pos['x']
-        dy = ball_carrier_pos['y'] - defender_pos['y']
+
+        dx = ball_carrier_pos["x"] - defender_pos["x"]
+        dy = ball_carrier_pos["y"] - defender_pos["y"]
 
         # Simple pursuit vector
         angle = math.atan2(dy, dx)
@@ -62,8 +73,10 @@ class DefenseEngine:
         Check if defender reacts to ball entering zone.
         """
         # Check if ball is in zone
-        in_zone = (defender_zone['x_min'] <= ball_pos['x'] <= defender_zone['x_max'] and
-                   defender_zone['y_min'] <= ball_pos['y'] <= defender_zone['y_max'])
+        in_zone = (
+            defender_zone["x_min"] <= ball_pos["x"] <= defender_zone["x_max"]
+            and defender_zone["y_min"] <= ball_pos["y"] <= defender_zone["y_max"]
+        )
 
         if in_zone:
             # Reaction check

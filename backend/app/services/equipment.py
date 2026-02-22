@@ -7,23 +7,25 @@ CITATION: ENHANCEMENT_REFERENCE.md - Equipment Physics Modifiers
 """
 
 from enum import Enum
-from typing import Dict, Optional
+
 from pydantic import BaseModel, Field
 
 
 class CleatType(str, Enum):
     """Types of cleats with different trade-offs."""
-    STANDARD = "STANDARD"           # Balanced
-    HIGH_GRIP = "HIGH_GRIP"         # +Traction, -Speed
-    SPEED = "SPEED"                 # +Speed, -Traction
-    ANKLE_SUPPORT = "ANKLE_SUPPORT" # +Injury Prevention, -Agility
+
+    STANDARD = "STANDARD"  # Balanced
+    HIGH_GRIP = "HIGH_GRIP"  # +Traction, -Speed
+    SPEED = "SPEED"  # +Speed, -Traction
+    ANKLE_SUPPORT = "ANKLE_SUPPORT"  # +Injury Prevention, -Agility
 
 
 class GloveType(str, Enum):
     """Types of gloves with different trade-offs."""
-    RECEIVER = "RECEIVER"      # +Catching, standard
-    STICKY = "STICKY"          # +Catching in wet, -Durability
-    LINEMAN = "LINEMAN"        # +Grip for blocking
+
+    RECEIVER = "RECEIVER"  # +Catching, standard
+    STICKY = "STICKY"  # +Catching in wet, -Durability
+    LINEMAN = "LINEMAN"  # +Grip for blocking
     COLD_WEATHER = "COLD_WEATHER"  # Maintains grip in cold
 
 
@@ -33,6 +35,7 @@ class EquipmentModifiers(BaseModel):
 
     All modifiers are additive percentages (-1.0 to +1.0 = -100% to +100%).
     """
+
     cleat_type: CleatType = CleatType.STANDARD
     glove_type: GloveType = GloveType.RECEIVER
 
@@ -48,7 +51,7 @@ class EquipmentModifiers(BaseModel):
 
 
 # Equipment effect lookup tables
-CLEAT_EFFECTS: Dict[CleatType, Dict[str, float]] = {
+CLEAT_EFFECTS: dict[CleatType, dict[str, float]] = {
     CleatType.STANDARD: {
         "speed_modifier": 0.0,
         "traction_modifier": 0.0,
@@ -56,39 +59,39 @@ CLEAT_EFFECTS: Dict[CleatType, Dict[str, float]] = {
         "injury_risk_modifier": 0.0,
     },
     CleatType.HIGH_GRIP: {
-        "speed_modifier": -0.03,      # -3% speed
-        "traction_modifier": 0.12,    # +12% traction
+        "speed_modifier": -0.03,  # -3% speed
+        "traction_modifier": 0.12,  # +12% traction
         "agility_modifier": 0.0,
         "injury_risk_modifier": -0.05,  # -5% injury risk (better footing)
     },
     CleatType.SPEED: {
-        "speed_modifier": 0.05,       # +5% speed
-        "traction_modifier": -0.08,   # -8% traction (slip risk)
-        "agility_modifier": 0.02,     # +2% agility
+        "speed_modifier": 0.05,  # +5% speed
+        "traction_modifier": -0.08,  # -8% traction (slip risk)
+        "agility_modifier": 0.02,  # +2% agility
         "injury_risk_modifier": 0.03,  # +3% injury risk
     },
     CleatType.ANKLE_SUPPORT: {
-        "speed_modifier": -0.02,      # -2% speed
+        "speed_modifier": -0.02,  # -2% speed
         "traction_modifier": 0.0,
-        "agility_modifier": -0.05,    # -5% agility
+        "agility_modifier": -0.05,  # -5% agility
         "injury_risk_modifier": -0.15,  # -15% injury risk (major benefit)
     },
 }
 
-GLOVE_EFFECTS: Dict[GloveType, Dict[str, float]] = {
+GLOVE_EFFECTS: dict[GloveType, dict[str, float]] = {
     GloveType.RECEIVER: {
-        "catching_modifier": 0.05,    # +5% catching (baseline)
+        "catching_modifier": 0.05,  # +5% catching (baseline)
     },
     GloveType.STICKY: {
-        "catching_modifier": 0.10,    # +10% catching
+        "catching_modifier": 0.10,  # +10% catching
         # Note: durability handled separately
     },
     GloveType.LINEMAN: {
-        "catching_modifier": -0.05,   # -5% catching (not designed for it)
+        "catching_modifier": -0.05,  # -5% catching (not designed for it)
         # Blocking grip handled in OL physics
     },
     GloveType.COLD_WEATHER: {
-        "catching_modifier": 0.03,    # +3% catching
+        "catching_modifier": 0.03,  # +3% catching
         # Temperature modifier: maintains baseline in cold
     },
 }
@@ -97,7 +100,7 @@ GLOVE_EFFECTS: Dict[GloveType, Dict[str, float]] = {
 def calculate_equipment_modifiers(
     cleat_type: CleatType,
     glove_type: GloveType,
-    weather_temp: Optional[float] = None,
+    weather_temp: float | None = None,
     is_wet: bool = False,
 ) -> EquipmentModifiers:
     """
@@ -151,9 +154,9 @@ def calculate_equipment_modifiers(
 
 
 def apply_equipment_to_player_stats(
-    base_stats: Dict[str, float],
+    base_stats: dict[str, float],
     equipment: EquipmentModifiers,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Apply equipment modifiers to a player's base stats.
 
