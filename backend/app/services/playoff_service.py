@@ -1,12 +1,14 @@
-from sqlalchemy.orm import Session, joinedload
+import datetime
+
 from sqlalchemy import select
+from sqlalchemy.orm import Session, joinedload
+
+from app.models.game import Game
+from app.models.playoff import PlayoffMatchup, PlayoffRound
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
-from app.models.playoff import PlayoffMatchup, PlayoffRound, PlayoffConference
 from app.services.standings_calculator import StandingsCalculator
-from typing import List, Dict
-from app.models.game import Game
-import datetime
+
 
 class PlayoffService:
     """
@@ -16,6 +18,7 @@ class PlayoffService:
     matchup creation for each round (Wild Card, Divisional, Conference, Super Bowl), and advancing
     the playoffs as games are completed.
     """
+
     def __init__(self, db: Session):
         self.db = db
         self.standings_calculator = StandingsCalculator(db)
@@ -69,7 +72,7 @@ class PlayoffService:
 
         return self.get_bracket(season_id)
 
-    def _calculate_conference_seeds(self, season_id: int, conference: str) -> List[Team]:
+    def _calculate_conference_seeds(self, season_id: int, conference: str) -> list[Team]:
         """
         Calculate playoff seeds for a conference based on NFL rules.
 
@@ -103,15 +106,21 @@ class PlayoffService:
 
         for div, teams in divisions.items():
             # Sort by win pct, then wins, then point diff
-            sorted_teams = sorted(teams, key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
+            sorted_teams = sorted(
+                teams, key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True
+            )
             div_winners.append(sorted_teams[0])
             wild_card_candidates.extend(sorted_teams[1:])
 
         # Sort Division Winners (Seeds 1-4)
-        div_winners.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
+        div_winners.sort(
+            key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True
+        )
 
         # Sort Wild Cards (Seeds 5-7)
-        wild_card_candidates.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True)
+        wild_card_candidates.sort(
+            key=lambda x: (x.win_percentage, x.wins, x.point_differential), reverse=True
+        )
         top_wild_cards = wild_card_candidates[:3]
 
         # Combine
@@ -125,7 +134,7 @@ class PlayoffService:
 
         return ordered_teams
 
-    def _create_wild_card_round(self, season_id: int, conference: str, seeds: List[Team]):
+    def _create_wild_card_round(self, season_id: int, conference: str, seeds: list[Team]):
         """
         Create matchups for the Wild Card round.
 
@@ -143,16 +152,69 @@ class PlayoffService:
         # Seeds: 1 (Bye), 2vs7, 3vs6, 4vs5
 
         # 2 vs 7
-        self._create_matchup(season_id, PlayoffRound.WILD_CARD, conference, f"{conference}_WC_1", seeds[1], seeds[6], 2, 7, week=19)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.WILD_CARD,
+            conference,
+            f"{conference}_WC_1",
+            seeds[1],
+            seeds[6],
+            2,
+            7,
+            week=19,
+        )
         # 3 vs 6
-        self._create_matchup(season_id, PlayoffRound.WILD_CARD, conference, f"{conference}_WC_2", seeds[2], seeds[5], 3, 6, week=19)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.WILD_CARD,
+            conference,
+            f"{conference}_WC_2",
+            seeds[2],
+            seeds[5],
+            3,
+            6,
+            week=19,
+        )
         # 4 vs 5
-        self._create_matchup(season_id, PlayoffRound.WILD_CARD, conference, f"{conference}_WC_3", seeds[3], seeds[4], 4, 5, week=19)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.WILD_CARD,
+            conference,
+            f"{conference}_WC_3",
+            seeds[3],
+            seeds[4],
+            4,
+            5,
+            week=19,
+        )
 
         # Bye
-        self._create_matchup(season_id, PlayoffRound.WILD_CARD, conference, f"{conference}_BYE", seeds[0], None, 1, None, winner=seeds[0], week=19)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.WILD_CARD,
+            conference,
+            f"{conference}_BYE",
+            seeds[0],
+            None,
+            1,
+            None,
+            winner=seeds[0],
+            week=19,
+        )
 
-    def _create_matchup(self, season_id, round, conference, code, home, away, home_seed, away_seed, winner=None, week=None):
+    def _create_matchup(
+        self,
+        season_id,
+        round,
+        conference,
+        code,
+        home,
+        away,
+        home_seed,
+        away_seed,
+        winner=None,
+        week=None,
+    ):
         """
         Helper to create a PlayoffMatchup record and optionally a Game record.
 
@@ -176,12 +238,12 @@ class PlayoffService:
                 week=week,
                 home_team_id=home.id,
                 away_team_id=away.id,
-                date=datetime.datetime.utcnow(), # Placeholder
+                date=datetime.datetime.utcnow(),  # Placeholder
                 is_played=False,
-                is_playoff=True
+                is_playoff=True,
             )
             self.db.add(game)
-            self.db.flush() # Get ID
+            self.db.flush()  # Get ID
 
         matchup = PlayoffMatchup(
             season_id=season_id,
@@ -193,7 +255,7 @@ class PlayoffService:
             home_team_seed=home_seed,
             away_team_seed=away_seed,
             winner_id=winner.id if winner else None,
-            game_id=game.id if game else None
+            game_id=game.id if game else None,
         )
         self.db.add(matchup)
 
@@ -207,11 +269,15 @@ class PlayoffService:
         Returns:
             List[PlayoffMatchup]: All playoff matchups for the season.
         """
-        stmt = select(PlayoffMatchup).options(
-            joinedload(PlayoffMatchup.home_team),
-            joinedload(PlayoffMatchup.away_team),
-            joinedload(PlayoffMatchup.winner)
-        ).where(PlayoffMatchup.season_id == season_id)
+        stmt = (
+            select(PlayoffMatchup)
+            .options(
+                joinedload(PlayoffMatchup.home_team),
+                joinedload(PlayoffMatchup.away_team),
+                joinedload(PlayoffMatchup.winner),
+            )
+            .where(PlayoffMatchup.season_id == season_id)
+        )
         return list(self.db.execute(stmt).scalars().all())
 
     def advance_round(self, season_id: int):
@@ -238,7 +304,7 @@ class PlayoffService:
         stmt = select(PlayoffMatchup).where(PlayoffMatchup.season_id == season_id)
         matchups = list(self.db.execute(stmt).scalars().all())
         if not matchups:
-            return # No playoffs yet
+            return  # No playoffs yet
 
         # Check if current round is complete
         current_round_matchups = [m for m in matchups if not m.winner_id]
@@ -246,7 +312,9 @@ class PlayoffService:
         # Try to update winners from games
         for m in current_round_matchups:
             if m.game_id:
-                game = self.db.execute(select(Game).where(Game.id == m.game_id)).scalar_one_or_none()
+                game = self.db.execute(
+                    select(Game).where(Game.id == m.game_id)
+                ).scalar_one_or_none()
                 if game and game.is_played:
                     if game.home_score > game.away_score:
                         m.winner_id = m.home_team_id
@@ -276,21 +344,21 @@ class PlayoffService:
         current_week = season.current_week
         next_round = None
 
-        if current_week == 19: # Wild Card -> Divisional
+        if current_week == 19:  # Wild Card -> Divisional
             self._create_divisional_round(season_id, "AFC")
             self._create_divisional_round(season_id, "NFC")
             season.current_week = 20
 
-        elif current_week == 20: # Divisional -> Conference
+        elif current_week == 20:  # Divisional -> Conference
             self._create_conference_round(season_id, "AFC")
             self._create_conference_round(season_id, "NFC")
             season.current_week = 21
 
-        elif current_week == 21: # Conference -> Super Bowl
+        elif current_week == 21:  # Conference -> Super Bowl
             self._create_super_bowl(season_id)
             season.current_week = 22
 
-        elif current_week == 22: # Super Bowl -> Offseason
+        elif current_week == 22:  # Super Bowl -> Offseason
             # Season over, move to offseason
             season.status = SeasonStatus.OFF_SEASON
             # We don't advance week here, offseason starts at week 22 or resets?
@@ -315,7 +383,7 @@ class PlayoffService:
         stmt = select(PlayoffMatchup).where(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.WILD_CARD,
-            PlayoffMatchup.conference == conference
+            PlayoffMatchup.conference == conference,
         )
         wc_matchups = list(self.db.execute(stmt).scalars().all())
 
@@ -325,8 +393,12 @@ class PlayoffService:
                 # We need the seed to reseed
                 # If it was a bye (1 seed), seed is 1
                 # If it was a game, we need to find the seed of the winner
-                winner_seed = m.home_team_seed if m.winner_id == m.home_team_id else m.away_team_seed
-                team = self.db.execute(select(Team).where(Team.id == m.winner_id)).scalar_one_or_none()
+                winner_seed = (
+                    m.home_team_seed if m.winner_id == m.home_team_id else m.away_team_seed
+                )
+                team = self.db.execute(
+                    select(Team).where(Team.id == m.winner_id)
+                ).scalar_one_or_none()
                 remaining_teams.append({"team": team, "seed": winner_seed})
 
         # Sort by seed (1 is best)
@@ -340,11 +412,29 @@ class PlayoffService:
         middle_high = remaining_teams[1]
         middle_low = remaining_teams[2]
 
-        self._create_matchup(season_id, PlayoffRound.DIVISIONAL, conference, f"{conference}_DIV_1",
-                             top_seed["team"], lowest_seed["team"], top_seed["seed"], lowest_seed["seed"], week=20)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.DIVISIONAL,
+            conference,
+            f"{conference}_DIV_1",
+            top_seed["team"],
+            lowest_seed["team"],
+            top_seed["seed"],
+            lowest_seed["seed"],
+            week=20,
+        )
 
-        self._create_matchup(season_id, PlayoffRound.DIVISIONAL, conference, f"{conference}_DIV_2",
-                             middle_high["team"], middle_low["team"], middle_high["seed"], middle_low["seed"], week=20)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.DIVISIONAL,
+            conference,
+            f"{conference}_DIV_2",
+            middle_high["team"],
+            middle_low["team"],
+            middle_high["seed"],
+            middle_low["seed"],
+            week=20,
+        )
 
     def _create_conference_round(self, season_id: int, conference: str):
         """
@@ -360,7 +450,7 @@ class PlayoffService:
         stmt = select(PlayoffMatchup).where(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.DIVISIONAL,
-            PlayoffMatchup.conference == conference
+            PlayoffMatchup.conference == conference,
         )
         div_matchups = list(self.db.execute(stmt).scalars().all())
 
@@ -373,8 +463,17 @@ class PlayoffService:
         winners.sort(key=lambda x: x["seed"])
 
         # Higher seed hosts
-        self._create_matchup(season_id, PlayoffRound.CONFERENCE, conference, f"{conference}_CONF",
-                             winners[0]["team"], winners[1]["team"], winners[0]["seed"], winners[1]["seed"], week=21)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.CONFERENCE,
+            conference,
+            f"{conference}_CONF",
+            winners[0]["team"],
+            winners[1]["team"],
+            winners[0]["seed"],
+            winners[1]["seed"],
+            week=21,
+        )
 
     def _create_super_bowl(self, season_id: int):
         """
@@ -389,7 +488,7 @@ class PlayoffService:
         stmt_afc = select(PlayoffMatchup).where(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.CONFERENCE,
-            PlayoffMatchup.conference == "AFC"
+            PlayoffMatchup.conference == "AFC",
         )
         afc_conf = self.db.execute(stmt_afc).scalar_one_or_none()
 
@@ -397,16 +496,29 @@ class PlayoffService:
         stmt_nfc = select(PlayoffMatchup).where(
             PlayoffMatchup.season_id == season_id,
             PlayoffMatchup.round == PlayoffRound.CONFERENCE,
-            PlayoffMatchup.conference == "NFC"
+            PlayoffMatchup.conference == "NFC",
         )
         nfc_conf = self.db.execute(stmt_nfc).scalar_one_or_none()
 
-        afc_winner = self.db.execute(select(Team).where(Team.id == afc_conf.winner_id)).scalar_one_or_none()
-        nfc_winner = self.db.execute(select(Team).where(Team.id == nfc_conf.winner_id)).scalar_one_or_none()
+        afc_winner = self.db.execute(
+            select(Team).where(Team.id == afc_conf.winner_id)
+        ).scalar_one_or_none()
+        nfc_winner = self.db.execute(
+            select(Team).where(Team.id == nfc_conf.winner_id)
+        ).scalar_one_or_none()
 
         # Super Bowl (Home/Away arbitrary, let's say AFC is Home this year)
-        self._create_matchup(season_id, PlayoffRound.SUPER_BOWL, "SUPER_BOWL", "SB",
-                             afc_winner, nfc_winner, None, None, week=22)
+        self._create_matchup(
+            season_id,
+            PlayoffRound.SUPER_BOWL,
+            "SUPER_BOWL",
+            "SB",
+            afc_winner,
+            nfc_winner,
+            None,
+            None,
+            week=22,
+        )
 
     def get_champion(self, season_id: int):
         """
@@ -419,12 +531,10 @@ class PlayoffService:
             Team: The winning team, or None if not yet decided.
         """
         stmt = select(PlayoffMatchup).where(
-            PlayoffMatchup.season_id == season_id,
-            PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
+            PlayoffMatchup.season_id == season_id, PlayoffMatchup.round == PlayoffRound.SUPER_BOWL
         )
         sb = self.db.execute(stmt).scalar_one_or_none()
 
         if sb and sb.winner_id:
             return self.db.execute(select(Team).where(Team.id == sb.winner_id)).scalar_one_or_none()
         return None
-

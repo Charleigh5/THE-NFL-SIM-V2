@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Optional
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from app.services.training.drills import (
@@ -9,7 +8,6 @@ from app.services.training.drills import (
     get_drills_for_position,
     get_drills_for_season,
 )
-from app.services.training.coaching_philosophy import CoachingStyle, get_coaching_style, COACHING_STYLES
 from app.services.training.training_programs import (
     TrainingProgramsService,
     TrainingResult,
@@ -18,14 +16,17 @@ from app.services.training.training_programs import (
 router = APIRouter()
 training_service = TrainingProgramsService()
 
+
 class WeeklySchedule(BaseModel):
     """Weekly training schedule recommendation."""
+
     position: str
     season_phase: str
     coaching_style: str
-    recommended_drills: List[Drill] = Field(default_factory=list)
+    recommended_drills: list[Drill] = Field(default_factory=list)
     total_sessions_per_week: int = 5
-    notes: List[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
 
 class TrainingExecutionRequest(BaseModel):
     player_id: int
@@ -34,11 +35,12 @@ class TrainingExecutionRequest(BaseModel):
     season_phase: SeasonPhase = SeasonPhase.REGULAR
     player_age: int = 25
 
+
 @router.get("/drills", response_model=dict)
 def get_drills(
     position: str = "QB",
     season: SeasonPhase = SeasonPhase.REGULAR,
-    category: Optional[DrillCategory] = None
+    category: DrillCategory | None = None,
 ):
     """Get available drills filtered by position, season phase, and category."""
     position_drills = get_drills_for_position(position)
@@ -49,7 +51,8 @@ def get_drills(
 
     return {"drills": [d.model_dump() for d in drills]}
 
-@router.get("/styles", response_model=List[dict])
+
+@router.get("/styles", response_model=list[dict])
 def get_coaching_styles():
     """Get all available coaching styles."""
     return [
@@ -83,6 +86,7 @@ def get_coaching_styles():
         },
     ]
 
+
 @router.post("/execute", response_model=TrainingResult)
 def execute_training(request: TrainingExecutionRequest):
     """Execute a training drill for a player."""
@@ -97,17 +101,14 @@ def execute_training(request: TrainingExecutionRequest):
     # Note: This is a simplified implementation
     # Full implementation would require player data from database
     result = TrainingResult(
-        xp_gains={drill.target_stat: 50.0},
-        session_grade="B",
-        notes=[f"Completed {drill.name}"]
+        xp_gains={drill.target_stat: 50.0}, session_grade="B", notes=[f"Completed {drill.name}"]
     )
     return result
 
+
 @router.get("/schedule", response_model=WeeklySchedule)
 def get_schedule(
-    position: str,
-    season_phase: SeasonPhase = SeasonPhase.REGULAR,
-    coaching_style: str = "smart"
+    position: str, season_phase: SeasonPhase = SeasonPhase.REGULAR, coaching_style: str = "smart"
 ):
     """Get the recommended weekly training schedule."""
     position_drills = get_drills_for_position(position)
@@ -122,5 +123,5 @@ def get_schedule(
         coaching_style=coaching_style,
         recommended_drills=recommended,
         total_sessions_per_week=5,
-        notes=[f"Recommended {len(recommended)} drills for {position} in {season_phase.value}"]
+        notes=[f"Recommended {len(recommended)} drills for {position} in {season_phase.value}"],
     )

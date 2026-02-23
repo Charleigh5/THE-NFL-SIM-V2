@@ -16,25 +16,26 @@ Context7 Best Practices:
 - No magic numbers (all configurable)
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 from .base import (
-    Vector2, Vector3, PhysicsState,
+    PhysicsState,
+    Vector2,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_acceleration,
 )
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class ThrowType(str, Enum):
     """Types of throws."""
+
     SCREEN = "SCREEN"
     SLANT = "SLANT"
     BULLET = "BULLET"
@@ -46,6 +47,7 @@ class ThrowType(str, Enum):
 
 class PocketState(str, Enum):
     """Current state of the pocket."""
+
     CLEAN = "CLEAN"
     CLOSING = "CLOSING"
     COLLAPSED = "COLLAPSED"
@@ -56,16 +58,18 @@ class PocketState(str, Enum):
 # CONFIGURATION
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class QBPhysicsConfig:
     """Configuration for QB physics."""
+
     # Pocket timing
     clean_pocket_threshold_ms: float = 2500.0  # Time before pocket closes
-    collapse_threshold_ms: float = 3500.0      # Time to full collapse
+    collapse_threshold_ms: float = 3500.0  # Time to full collapse
 
     # Throw mechanics
-    min_throw_power: float = 25.0   # yards (dump-off)
-    max_throw_power: float = 70.0   # yards (elite arm)
+    min_throw_power: float = 25.0  # yards (dump-off)
+    max_throw_power: float = 70.0  # yards (elite arm)
     release_time_ms: float = 300.0  # Time from decision to release
 
     # Accuracy
@@ -82,12 +86,14 @@ class QBPhysicsConfig:
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class ThrowResult:
     """Result of a throw calculation."""
+
     target_position: Vector2
     actual_position: Vector2  # Where ball actually lands
-    velocity: float           # yards/second
+    velocity: float  # yards/second
     flight_time_ms: float
     accuracy_deviation: float  # yards from target
     is_catchable: bool
@@ -97,6 +103,7 @@ class ThrowResult:
 @dataclass
 class QBState:
     """Current QB state during play."""
+
     # Position and movement
     physics: PhysicsState = field(default_factory=PhysicsState)
 
@@ -113,7 +120,7 @@ class QBState:
     # Throw preparation
     is_throwing: bool = False
     throw_windup_ms: float = 0.0
-    target_receiver_id: Optional[str] = None
+    target_receiver_id: str | None = None
 
     # Scramble
     has_left_pocket: bool = False
@@ -122,6 +129,7 @@ class QBState:
 # ============================================================================
 # QUARTERBACK PHYSICS
 # ============================================================================
+
 
 class QuarterbackPhysics:
     """
@@ -136,7 +144,7 @@ class QuarterbackPhysics:
 
     def __init__(
         self,
-        config: Optional[QBPhysicsConfig] = None,
+        config: QBPhysicsConfig | None = None,
         throw_power_rating: int = 80,
         throw_accuracy_rating: int = 80,
         awareness_rating: int = 80,
@@ -173,7 +181,9 @@ class QuarterbackPhysics:
         # Calculate pressure level (0-100)
         distance_pressure = max(0, (5.0 - closest_defender_distance) / 5.0) * 50
         time_pressure = min(50, (state.time_in_pocket_ms / self.config.collapse_threshold_ms) * 50)
-        state.pressure_level = min(100, distance_pressure + time_pressure + defenders_in_pocket * 10)
+        state.pressure_level = min(
+            100, distance_pressure + time_pressure + defenders_in_pocket * 10
+        )
 
         # Update pocket state
         if state.has_left_pocket:
@@ -238,6 +248,7 @@ class QuarterbackPhysics:
             deviation = rng.next_float() * accuracy_radius
         else:
             import random
+
             angle = random.random() * 360.0
             deviation = random.random() * accuracy_radius
 
@@ -329,8 +340,8 @@ class QuarterbackPhysics:
         self,
         state: QBState,
         elapsed_ms: float,
-        receiver_openness: List[float],
-    ) -> Tuple[int, bool]:
+        receiver_openness: list[float],
+    ) -> tuple[int, bool]:
         """
         Process read progression.
 
@@ -366,8 +377,8 @@ class QuarterbackPhysics:
     def calculate_scramble_decision(
         self,
         state: QBState,
-        run_lanes: List[float],  # Openness of run lanes
-    ) -> Tuple[bool, Optional[int]]:
+        run_lanes: list[float],  # Openness of run lanes
+    ) -> tuple[bool, int | None]:
         """
         Determine if QB should scramble.
 

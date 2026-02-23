@@ -1,16 +1,16 @@
-from typing import Dict, List, Optional, Any
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.core.logging_config import get_logger
 from app.models.player import Player
 from app.models.trait import PlayerTrait
-from app.models.team import Team
-from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
-from app.core.logging_config import get_logger
+from app.services.depth_chart_service import DepthChartService
 from app.services.weather_service import WeatherService
 
 logger = get_logger(__name__)
+
 
 class MatchContext:
     """
@@ -22,7 +22,9 @@ class MatchContext:
     - Weather & Chemistry Context
     """
 
-    def __init__(self, home_team_id: int, away_team_id: int, db: AsyncSession, weather_config: Dict = None):
+    def __init__(
+        self, home_team_id: int, away_team_id: int, db: AsyncSession, weather_config: dict = None
+    ):
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
         self.db = db
@@ -33,19 +35,21 @@ class MatchContext:
         stadium_id = self.weather_config.get("stadium_id", 0)
         game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
 
-        self.weather_conditions: Dict[str, float] = WeatherService.get_weather_modifiers(stadium_id, game_time)
+        self.weather_conditions: dict[str, float] = WeatherService.get_weather_modifiers(
+            stadium_id, game_time
+        )
         self.home_ol_chemistry: int = 0
         self.away_ol_chemistry: int = 0
 
         # Rosters: player_id -> Player object
-        self.home_roster: Dict[int, Player] = {}
-        self.away_roster: Dict[int, Player] = {}
+        self.home_roster: dict[int, Player] = {}
+        self.away_roster: dict[int, Player] = {}
 
         # Fatigue: player_id -> fatigue_level (0.0 to 1.0, where 1.0 is exhausted)
-        self.fatigue_state: Dict[int, float] = {}
+        self.fatigue_state: dict[int, float] = {}
 
         # Systems
-        self.genesis: Optional[GenesisKernel] = None
+        self.genesis: GenesisKernel | None = None
         # self.cortex: Optional[CortexSystem] = None
 
         logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
@@ -95,12 +99,11 @@ class MatchContext:
             # In real app, Team model would have 'stadium_type' or 'climate'
             climate = "Neutral"
 
-            self.genesis.register_player(p.id, {
-                "fatigue": {"home_climate": climate},
-                "anatomy": {}
-            })
+            self.genesis.register_player(
+                p.id, {"fatigue": {"home_climate": climate}, "anatomy": {}}
+            )
 
-    def get_fielded_players(self, team_id: int, formation: str, side: str) -> List[Player]:
+    def get_fielded_players(self, team_id: int, formation: str, side: str) -> list[Player]:
         """
         Returns the 11 players on the field for a given team and formation.
         """
@@ -131,7 +134,7 @@ class MatchContext:
 
         return players
 
-    def update_fatigue(self, player_ids: List[int], fatigue_delta: float):
+    def update_fatigue(self, player_ids: list[int], fatigue_delta: float):
         """Updates fatigue for a list of players."""
         for pid in player_ids:
             if self.genesis:
@@ -139,7 +142,9 @@ class MatchContext:
                 self.genesis.update_fatigue(pid, fatigue_delta * 100.0)
             else:
                 if pid in self.fatigue_state:
-                    self.fatigue_state[pid] = min(1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta))
+                    self.fatigue_state[pid] = min(
+                        1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta)
+                    )
 
     def get_player_fatigue(self, player_id: int) -> float:
         if self.genesis:

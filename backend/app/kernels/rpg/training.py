@@ -1,7 +1,7 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, Optional, List, Any, ClassVar
-from pydantic import Field
 import random
+from typing import Any, ClassVar
+
+from app.kernels.core.ecs_manager import Component
 
 
 class TrainingEngine(Component):
@@ -19,10 +19,10 @@ class TrainingEngine(Component):
     # Fatigue tracking
     current_fatigue: float = 0.0  # 0-100
     chronic_fatigue: float = 0.0  # Accumulated wear
-    weekly_load: float = 0.0      # B-029: Weekly training load
+    weekly_load: float = 0.0  # B-029: Weekly training load
 
     # B-028: Seasonal periodization multipliers (ClassVar so Pydantic ignores it)
-    SEASONAL_INTENSITY: ClassVar[Dict[str, float]] = {
+    SEASONAL_INTENSITY: ClassVar[dict[str, float]] = {
         "offseason": 0.85,
         "preseason": 0.70,
         "regular": 0.50,
@@ -30,14 +30,14 @@ class TrainingEngine(Component):
     }
 
     # Directive 9: Real-World Weekly Periodization
-    intensity_schedule: Dict[str, float] = {
-        "Monday": 0.0,    # Recovery
-        "Tuesday": 0.0,   # Recovery
-        "Wednesday": 0.8, # Practice
+    intensity_schedule: dict[str, float] = {
+        "Monday": 0.0,  # Recovery
+        "Tuesday": 0.0,  # Recovery
+        "Wednesday": 0.8,  # Practice
         "Thursday": 0.6,  # Practice
-        "Friday": 0.3,    # Walkthrough
+        "Friday": 0.3,  # Walkthrough
         "Saturday": 0.0,  # Rest
-        "Sunday": 1.0     # Game Day
+        "Sunday": 1.0,  # Game Day
     }
 
     def train_with_drill(
@@ -46,8 +46,8 @@ class TrainingEngine(Component):
         player_age: int,
         coaching_style: Any = None,  # CoachingStyle from coaching_philosophy.py
         season_phase: str = "regular",
-        rng_seed: Optional[int] = None
-    ) -> Dict[str, Any]:
+        rng_seed: int | None = None,
+    ) -> dict[str, Any]:
         """
         B-027: Execute a specific drill from the catalog.
 
@@ -69,13 +69,13 @@ class TrainingEngine(Component):
             # Age-based bonus
             age_bonus = 0.0
             if player_age < 26:
-                age_bonus = getattr(coaching_style, 'young_player_bonus', 0.0)
+                age_bonus = getattr(coaching_style, "young_player_bonus", 0.0)
             elif player_age > 30:
-                age_bonus = getattr(coaching_style, 'veteran_bonus', 0.0)
+                age_bonus = getattr(coaching_style, "veteran_bonus", 0.0)
 
-            xp_mult = getattr(coaching_style, 'xp_multiplier', 1.0)
-            injury_mult = getattr(coaching_style, 'injury_risk_multiplier', 1.0)
-            fatigue_mult = getattr(coaching_style, 'fatigue_multiplier', 1.0)
+            xp_mult = getattr(coaching_style, "xp_multiplier", 1.0)
+            injury_mult = getattr(coaching_style, "injury_risk_multiplier", 1.0)
+            fatigue_mult = getattr(coaching_style, "fatigue_multiplier", 1.0)
 
             base_xp *= xp_mult * (1.0 + age_bonus)
             base_injury_risk *= injury_mult
@@ -152,7 +152,7 @@ class TrainingEngine(Component):
         """
         recovery_mult = 1.0
         if coaching_style:
-            recovery_mult = getattr(coaching_style, 'recovery_multiplier', 1.0)
+            recovery_mult = getattr(coaching_style, "recovery_multiplier", 1.0)
 
         recovery_amount = rest_quality * 20.0 * recovery_mult
         old_fatigue = self.current_fatigue
@@ -165,9 +165,7 @@ class TrainingEngine(Component):
         self.weekly_load = 0.0
 
     def get_training_recommendation(
-        self,
-        current_fatigue: float,
-        season_phase: str = "regular"
+        self, current_fatigue: float, season_phase: str = "regular"
     ) -> str:
         """
         Get recommended training intensity based on current state.
@@ -185,4 +183,3 @@ class TrainingEngine(Component):
             return "moderate" if season_cap >= 0.5 else "light"
         else:
             return "heavy" if season_cap >= 0.7 else "moderate"
-

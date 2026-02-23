@@ -1,5 +1,3 @@
-import math
-
 class ProgressionEngine:
     """
     RPG Progression Engine for player XP calculation and leveling.
@@ -127,7 +125,7 @@ class ProgressionEngine:
         if age < 29:
             return attributes
 
-        regression_factor = (age - 28) * 0.5 # -0.5 per year after 28
+        regression_factor = (age - 28) * 0.5  # -0.5 per year after 28
 
         for attr in ["speed", "acceleration", "agility"]:
             if attr in attributes:

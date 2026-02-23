@@ -15,49 +15,49 @@ Context7 Best Practices:
 - Pure functions for calculations
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol, Tuple, runtime_checkable
-from enum import Enum
 import math
-
+from dataclasses import dataclass, field
+from typing import Protocol, runtime_checkable
 
 # ============================================================================
 # VECTOR UTILITIES
 # ============================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class Vector2:
     """Immutable 2D vector for field positions."""
+
     x: float
     y: float
 
-    def __add__(self, other: 'Vector2') -> 'Vector2':
+    def __add__(self, other: "Vector2") -> "Vector2":
         return Vector2(self.x + other.x, self.y + other.y)
 
-    def __sub__(self, other: 'Vector2') -> 'Vector2':
+    def __sub__(self, other: "Vector2") -> "Vector2":
         return Vector2(self.x - other.x, self.y - other.y)
 
-    def __mul__(self, scalar: float) -> 'Vector2':
+    def __mul__(self, scalar: float) -> "Vector2":
         return Vector2(self.x * scalar, self.y * scalar)
 
     @property
     def magnitude(self) -> float:
-        return math.sqrt(self.x ** 2 + self.y ** 2)
+        return math.sqrt(self.x**2 + self.y**2)
 
     @property
-    def normalized(self) -> 'Vector2':
+    def normalized(self) -> "Vector2":
         mag = self.magnitude
         if mag == 0:
             return Vector2(0, 0)
         return Vector2(self.x / mag, self.y / mag)
 
-    def distance_to(self, other: 'Vector2') -> float:
+    def distance_to(self, other: "Vector2") -> float:
         return (self - other).magnitude
 
-    def dot(self, other: 'Vector2') -> float:
+    def dot(self, other: "Vector2") -> float:
         return self.x * other.x + self.y * other.y
 
-    def angle_to(self, other: 'Vector2') -> float:
+    def angle_to(self, other: "Vector2") -> float:
         """Angle to other vector in degrees."""
         delta = other - self
         return math.degrees(math.atan2(delta.y, delta.x))
@@ -66,24 +66,25 @@ class Vector2:
 @dataclass(frozen=True, slots=True)
 class Vector3:
     """Immutable 3D vector for trajectory calculations."""
+
     x: float
     y: float
     z: float
 
-    def __add__(self, other: 'Vector3') -> 'Vector3':
+    def __add__(self, other: "Vector3") -> "Vector3":
         return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
 
-    def __sub__(self, other: 'Vector3') -> 'Vector3':
+    def __sub__(self, other: "Vector3") -> "Vector3":
         return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
 
-    def __mul__(self, scalar: float) -> 'Vector3':
+    def __mul__(self, scalar: float) -> "Vector3":
         return Vector3(self.x * scalar, self.y * scalar, self.z * scalar)
 
     @property
     def magnitude(self) -> float:
-        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 
-    def cross(self, other: 'Vector3') -> 'Vector3':
+    def cross(self, other: "Vector3") -> "Vector3":
         return Vector3(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
@@ -95,9 +96,11 @@ class Vector3:
 # PHYSICS STATE
 # ============================================================================
 
+
 @dataclass
 class PhysicsState:
     """Current physics state for a player."""
+
     position: Vector2 = field(default_factory=lambda: Vector2(0, 0))
     velocity: Vector2 = field(default_factory=lambda: Vector2(0, 0))
     acceleration: Vector2 = field(default_factory=lambda: Vector2(0, 0))
@@ -113,6 +116,7 @@ class PhysicsState:
 @dataclass
 class CollisionResult:
     """Result of a collision/tackle attempt."""
+
     success: bool
     winner_id: str
     loser_id: str
@@ -124,6 +128,7 @@ class CollisionResult:
 # ============================================================================
 # PHYSICS PROTOCOL
 # ============================================================================
+
 
 @runtime_checkable
 class PositionPhysics(Protocol):
@@ -146,6 +151,7 @@ class PositionPhysics(Protocol):
 YARDS_PER_METER = 1.0936
 FIELD_LENGTH_YARDS = 100
 FIELD_WIDTH_YARDS = 53.33
+
 
 # Speed conversion: 40-yard dash to yards/second
 def forty_to_yards_per_second(forty_time: float) -> float:
@@ -178,7 +184,7 @@ def calculate_acceleration(
 
     # Reduce acceleration as approaching max speed
     speed_ratio = current_speed / max_speed if max_speed > 0 else 0
-    return base_accel * (1.0 - speed_ratio ** 2)
+    return base_accel * (1.0 - speed_ratio**2)
 
 
 def calculate_deceleration(
@@ -217,7 +223,7 @@ def resolve_momentum_collision(
     player2_weight: int,
     player2_speed: float,
     angle_degrees: float,
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Resolve collision using momentum conservation.
     Returns (player1_final_speed, player2_final_speed).

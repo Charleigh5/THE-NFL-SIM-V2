@@ -12,19 +12,19 @@ Personalities affect:
 """
 
 from dataclasses import dataclass
-from typing import Dict, Optional
 from enum import Enum
 
 
 class CoachingPersonality(str, Enum):
     """Game-day coaching personality types."""
-    CEO = "CEO"                    # Leader, Balanced
-    GURU_OFF = "GURU_OFF"          # Offensive Scheme
-    GURU_DEF = "GURU_DEF"          # Defensive Scheme
-    ANALYTICS = "ANALYTICS"        # Aggressive Logic
-    OLD_SCHOOL = "OLD_SCHOOL"      # Run heavy, conservative
-    RIVERBOAT = "RIVERBOAT"        # Gambler
-    ROOKIE = "ROOKIE"              # Basic
+
+    CEO = "CEO"  # Leader, Balanced
+    GURU_OFF = "GURU_OFF"  # Offensive Scheme
+    GURU_DEF = "GURU_DEF"  # Defensive Scheme
+    ANALYTICS = "ANALYTICS"  # Aggressive Logic
+    OLD_SCHOOL = "OLD_SCHOOL"  # Run heavy, conservative
+    RIVERBOAT = "RIVERBOAT"  # Gambler
+    ROOKIE = "ROOKIE"  # Basic
     # Deprecated mappings
     CONSERVATIVE = "CONSERVATIVE"
     BALANCED = "BALANCED"
@@ -46,6 +46,7 @@ class PersonalityProfile:
         two_point_threshold: Score difference to attempt 2-pt conversion
         timeout_aggression: How aggressively to use timeouts
     """
+
     name: str
     aggression: float
     run_pass_ratio: float
@@ -53,80 +54,80 @@ class PersonalityProfile:
     deep_pass_tendency: float
     two_point_threshold: int
     timeout_aggression: float
-    adaptive_score: float = 0.5        # How fast they change plans (New)
-    run_clock_urgency: float = 0.5     # Preference for running clock (New)
+    adaptive_score: float = 0.5  # How fast they change plans (New)
+    run_clock_urgency: float = 0.5  # Preference for running clock (New)
 
 
 # ============================================================================
 # PERSONALITY DEFINITIONS
 # ============================================================================
 
-PERSONALITY_PROFILES: Dict[CoachingPersonality, PersonalityProfile] = {
+PERSONALITY_PROFILES: dict[CoachingPersonality, PersonalityProfile] = {
     CoachingPersonality.CEO: PersonalityProfile(
         name="The CEO",
         aggression=0.40,
-        run_pass_ratio=0.50, # Balanced
+        run_pass_ratio=0.50,  # Balanced
         fourth_down_threshold=2,
         deep_pass_tendency=1.0,
         two_point_threshold=8,
         timeout_aggression=0.5,
         adaptive_score=0.8,
-        run_clock_urgency=0.6
+        run_clock_urgency=0.6,
     ),
     CoachingPersonality.GURU_OFF: PersonalityProfile(
         name="Offensive Guru",
         aggression=0.65,
-        run_pass_ratio=0.40, # Pass Lean
+        run_pass_ratio=0.40,  # Pass Lean
         fourth_down_threshold=2,
         deep_pass_tendency=1.1,
         two_point_threshold=6,
         timeout_aggression=0.6,
         adaptive_score=0.9,
-        run_clock_urgency=0.4
+        run_clock_urgency=0.4,
     ),
     CoachingPersonality.GURU_DEF: PersonalityProfile(
         name="Defensive Schemer",
         aggression=0.30,
-        run_pass_ratio=0.60, # Run Lean
+        run_pass_ratio=0.60,  # Run Lean
         fourth_down_threshold=1,
         deep_pass_tendency=0.7,
         two_point_threshold=14,
         timeout_aggression=0.4,
         adaptive_score=0.7,
-        run_clock_urgency=0.8
+        run_clock_urgency=0.8,
     ),
     CoachingPersonality.ANALYTICS: PersonalityProfile(
         name="Analytics Disciple",
         aggression=0.85,
         run_pass_ratio=0.42,
-        fourth_down_threshold=4, # Go for it often
+        fourth_down_threshold=4,  # Go for it often
         deep_pass_tendency=1.2,
-        two_point_threshold=1, # Chart says go? Go.
+        two_point_threshold=1,  # Chart says go? Go.
         timeout_aggression=0.8,
         adaptive_score=1.0,
-        run_clock_urgency=0.3
+        run_clock_urgency=0.3,
     ),
     CoachingPersonality.OLD_SCHOOL: PersonalityProfile(
         name="Old School",
         aggression=0.15,
-        run_pass_ratio=0.65, # Run Heavy
-        fourth_down_threshold=0, # Punt/FG almost always
+        run_pass_ratio=0.65,  # Run Heavy
+        fourth_down_threshold=0,  # Punt/FG almost always
         deep_pass_tendency=0.5,
         two_point_threshold=16,
         timeout_aggression=0.2,
-        adaptive_score=0.3, # Stubborn
-        run_clock_urgency=0.9
+        adaptive_score=0.3,  # Stubborn
+        run_clock_urgency=0.9,
     ),
     CoachingPersonality.RIVERBOAT: PersonalityProfile(
         name="The Gambler",
-        aggression=0.80, # High but random
+        aggression=0.80,  # High but random
         run_pass_ratio=0.45,
         fourth_down_threshold=3,
         deep_pass_tendency=1.4,
         two_point_threshold=4,
         timeout_aggression=0.7,
         adaptive_score=0.5,
-        run_clock_urgency=0.5
+        run_clock_urgency=0.5,
     ),
     CoachingPersonality.ROOKIE: PersonalityProfile(
         name="The Clipboard",
@@ -136,8 +137,8 @@ PERSONALITY_PROFILES: Dict[CoachingPersonality, PersonalityProfile] = {
         deep_pass_tendency=1.0,
         two_point_threshold=8,
         timeout_aggression=0.5,
-        adaptive_score=0.2, # Slow to adjust
-        run_clock_urgency=0.5
+        adaptive_score=0.2,  # Slow to adjust
+        run_clock_urgency=0.5,
     ),
 }
 
@@ -146,12 +147,10 @@ PERSONALITY_PROFILES: Dict[CoachingPersonality, PersonalityProfile] = {
 # SITUATIONAL MODIFIERS
 # ============================================================================
 
+
 def get_situational_modifiers(
-    score_diff: int,
-    time_remaining_seconds: int,
-    is_home: bool,
-    quarter: int
-) -> Dict[str, float]:
+    score_diff: int, time_remaining_seconds: int, is_home: bool, quarter: int
+) -> dict[str, float]:
     """
     Calculate situational modifiers to coaching behavior.
 
@@ -207,41 +206,30 @@ def get_situational_modifiers(
 
 
 def apply_personality_modifiers(
-    profile: PersonalityProfile,
-    score_diff: int,
-    time_remaining: int,
-    is_home: bool,
-    quarter: int
-) -> Dict[str, float]:
+    profile: PersonalityProfile, score_diff: int, time_remaining: int, is_home: bool, quarter: int
+) -> dict[str, float]:
     """
     Get final play-calling parameters with situational adjustments.
 
     Returns:
         Dict with final aggression, run_pass_ratio, etc.
     """
-    situational = get_situational_modifiers(
-        score_diff, time_remaining, is_home, quarter
-    )
+    situational = get_situational_modifiers(score_diff, time_remaining, is_home, quarter)
 
     # Apply modifiers with clamping
     return {
-        "aggression": max(0.0, min(1.0,
-            profile.aggression + situational["aggression"]
-        )),
-        "run_pass_ratio": max(0.10, min(0.90,
-            profile.run_pass_ratio + situational["run_ratio"]
-        )),
-        "deep_pass_tendency": max(0.3, min(2.0,
-            profile.deep_pass_tendency + situational["deep_tendency"]
-        )),
+        "aggression": max(0.0, min(1.0, profile.aggression + situational["aggression"])),
+        "run_pass_ratio": max(0.10, min(0.90, profile.run_pass_ratio + situational["run_ratio"])),
+        "deep_pass_tendency": max(
+            0.3, min(2.0, profile.deep_pass_tendency + situational["deep_tendency"])
+        ),
         "fourth_down_threshold": profile.fourth_down_threshold,
         "two_point_threshold": profile.two_point_threshold,
     }
 
 
 def get_personality_for_coach(
-    aggression_rating: int,
-    risk_tolerance: Optional[int] = None
+    aggression_rating: int, risk_tolerance: int | None = None
 ) -> CoachingPersonality:
     """
     Determine personality based on coach attributes.
@@ -256,27 +244,36 @@ def get_personality_for_coach(
     score = risk_tolerance if risk_tolerance is not None else aggression_rating
 
     # Expanded 7-Archetype Logic
-    if score >= 90: return CoachingPersonality.ANALYTICS
-    elif score >= 80: return CoachingPersonality.GAMBLER
-    elif score >= 70: return CoachingPersonality.GURU_OFF
-    elif score >= 50: return CoachingPersonality.CEO
-    elif score >= 40: return CoachingPersonality.BALANCED
-    elif score >= 30: return CoachingPersonality.GURU_DEF
-    elif score >= 20: return CoachingPersonality.OLD_SCHOOL
-    else: return CoachingPersonality.ROOKIE
+    if score >= 90:
+        return CoachingPersonality.ANALYTICS
+    elif score >= 80:
+        return CoachingPersonality.GAMBLER
+    elif score >= 70:
+        return CoachingPersonality.GURU_OFF
+    elif score >= 50:
+        return CoachingPersonality.CEO
+    elif score >= 40:
+        return CoachingPersonality.BALANCED
+    elif score >= 30:
+        return CoachingPersonality.GURU_DEF
+    elif score >= 20:
+        return CoachingPersonality.OLD_SCHOOL
+    else:
+        return CoachingPersonality.ROOKIE
 
 
 # ============================================================================
 # PLAYCALLER INTEGRATION
 # ============================================================================
 
+
 def create_playcaller_config(
     personality: CoachingPersonality,
     score_diff: int = 0,
     time_remaining: int = 3600,
     is_home: bool = True,
-    quarter: int = 1
-) -> Dict[str, float]:
+    quarter: int = 1,
+) -> dict[str, float]:
     """
     Generate PlayCaller initialization parameters from personality.
 
@@ -286,6 +283,4 @@ def create_playcaller_config(
     """
     profile = PERSONALITY_PROFILES[personality]
 
-    return apply_personality_modifiers(
-        profile, score_diff, time_remaining, is_home, quarter
-    )
+    return apply_personality_modifiers(profile, score_diff, time_remaining, is_home, quarter)

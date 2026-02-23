@@ -1,21 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List
 import logging
 
-from app.core.database import get_async_db
-from app.core.db_helpers import get_object_or_404_async, get_all_paginated_async
-from app.core.error_decorators import handle_errors
-from app.models.team import Team
-from app.models.player import Player
-from app.schemas.pagination import PaginatedResponse
-from app.services.enhanced_chemistry_service import EnhancedChemistryService
-from app.services.depth_chart_service import DepthChartService
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_async_db
+from app.core.db_helpers import get_all_paginated_async, get_object_or_404_async
+from app.core.error_decorators import handle_errors
+from app.models.player import Player
+from app.models.team import Team
+from app.schemas.pagination import PaginatedResponse
+from app.services.depth_chart_service import DepthChartService
+from app.services.enhanced_chemistry_service import EnhancedChemistryService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 # Pydantic models for responses (Simple versions)
 class TeamSchema(BaseModel):
@@ -33,6 +34,7 @@ class TeamSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class PlayerSchema(BaseModel):
     id: int
     first_name: str
@@ -45,6 +47,7 @@ class PlayerSchema(BaseModel):
     experience: int
 
     model_config = ConfigDict(from_attributes=True)
+
 
 @router.get("/", response_model=PaginatedResponse[TeamSchema])
 @handle_errors
@@ -60,6 +63,7 @@ async def read_teams(
     teams, total = await get_all_paginated_async(db, Team, page, page_size)
     return PaginatedResponse.create(items=teams, total=total, page=page, page_size=page_size)
 
+
 @router.get("/{team_id}", response_model=TeamSchema)
 @handle_errors
 async def read_team(team_id: int, db: AsyncSession = Depends(get_async_db)):
@@ -69,7 +73,8 @@ async def read_team(team_id: int, db: AsyncSession = Depends(get_async_db)):
     logger.info(f"Fetching team {team_id}")
     return await get_object_or_404_async(db, Team, team_id)
 
-@router.get("/{team_id}/roster", response_model=List[PlayerSchema])
+
+@router.get("/{team_id}/roster", response_model=list[PlayerSchema])
 @handle_errors
 async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """
@@ -84,16 +89,16 @@ async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db
     players.sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
     return players
 
+
 class DepthChartUpdate(BaseModel):
     position: str
-    player_ids: List[int]
+    player_ids: list[int]
+
 
 @router.put("/{team_id}/depth-chart")
 @handle_errors
 async def update_depth_chart(
-    team_id: int,
-    update: DepthChartUpdate,
-    db: AsyncSession = Depends(get_async_db)
+    team_id: int, update: DepthChartUpdate, db: AsyncSession = Depends(get_async_db)
 ):
     """
     Update the depth chart for a specific position.
@@ -105,7 +110,7 @@ async def update_depth_chart(
     stmt = select(Player).where(
         Player.team_id == team_id,
         Player.position == update.position,
-        Player.id.in_(update.player_ids)
+        Player.id.in_(update.player_ids),
     )
     result = await db.execute(stmt)
     players = list(result.scalars().all())
@@ -113,14 +118,17 @@ async def update_depth_chart(
     player_map = {p.id: p for p in players}
 
     if len(players) != len(update.player_ids):
-        raise HTTPException(status_code=400, detail="Some players not found or do not belong to this team/position")
+        raise HTTPException(
+            status_code=400, detail="Some players not found or do not belong to this team/position"
+        )
 
     for rank, player_id in enumerate(update.player_ids):
         player = player_map[player_id]
-        player.depth_chart_rank = rank + 1 # 1-based rank
+        player.depth_chart_rank = rank + 1  # 1-based rank
 
     await db.commit()
     return {"message": "Depth chart updated successfully"}
+
 
 @router.get("/{team_id}/chemistry")
 @handle_errors
@@ -152,6 +160,7 @@ async def get_team_chemistry(team_id: int, db: AsyncSession = Depends(get_async_
 
     return metadata.to_dict()
 
+
 class CoachSettingsUpdate(BaseModel):
     aggressiveness: int | None = None
     run_pass_ratio: int | None = None
@@ -162,11 +171,13 @@ class CoachSettingsUpdate(BaseModel):
     two_pt_conversion_threshold: int | None = None
     timeout_aggressiveness: int | None = None
 
+
 @router.get("/{team_id}/coach/settings")
 @handle_errors
 async def get_coach_settings(team_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get the head coach's philosophy/settings."""
     from app.models.coach import Coach
+
     stmt = select(Coach).where(Coach.team_id == team_id)
     result = await db.execute(stmt)
     coaches = result.scalars().all()
@@ -177,12 +188,11 @@ async def get_coach_settings(team_id: int, db: AsyncSession = Depends(get_async_
 
     return head_coach.philosophy or {}
 
+
 @router.put("/{team_id}/coach/settings")
 @handle_errors
 async def update_coach_settings(
-    team_id: int,
-    settings: CoachSettingsUpdate,
-    db: AsyncSession = Depends(get_async_db)
+    team_id: int, settings: CoachSettingsUpdate, db: AsyncSession = Depends(get_async_db)
 ):
     """
     Update the head coach's philosophy/settings.

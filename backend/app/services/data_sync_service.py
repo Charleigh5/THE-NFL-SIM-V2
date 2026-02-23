@@ -19,16 +19,17 @@ We're not just building a game - we're building THE definitive NFL experience.
 """
 
 import logging
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 # Check for nflreadpy availability
 try:
     import nflreadpy  # type: ignore[import-not-found]
+
     HAS_NFLVERSE = True
 except ImportError:
     HAS_NFLVERSE = False
@@ -37,6 +38,7 @@ except ImportError:
 
 class DataSource(str, Enum):
     """Available data sources from nflverse."""
+
     ROSTERS = "rosters"
     CONTRACTS = "contracts"
     NEXTGEN_STATS = "nextgen_stats"
@@ -52,6 +54,7 @@ class DataSource(str, Enum):
 
 class UpdateFrequency(str, Enum):
     """How often each data source should be refreshed."""
+
     REALTIME = "realtime"  # Every request
     HOURLY = "hourly"
     DAILY = "daily"
@@ -63,88 +66,89 @@ class UpdateFrequency(str, Enum):
 @dataclass
 class DataSourceConfig:
     """Configuration for a data source."""
+
     source: DataSource
     frequency: UpdateFrequency
     loader_func: str  # nflreadpy function name
     description: str
-    critical_periods: List[str]  # When this data is most important
-    last_updated: Optional[datetime] = None
+    critical_periods: list[str]  # When this data is most important
+    last_updated: datetime | None = None
 
 
 # =============================================================================
 # DATA SOURCE CONFIGURATION
 # =============================================================================
 
-DATA_SOURCE_CONFIGS: Dict[DataSource, DataSourceConfig] = {
+DATA_SOURCE_CONFIGS: dict[DataSource, DataSourceConfig] = {
     DataSource.ROSTERS: DataSourceConfig(
         source=DataSource.ROSTERS,
         frequency=UpdateFrequency.WEEKLY,
         loader_func="load_rosters",
         description="Full team rosters with player positions and status",
-        critical_periods=["roster_cutdown", "trade_deadline", "free_agency"]
+        critical_periods=["roster_cutdown", "trade_deadline", "free_agency"],
     ),
     DataSource.CONTRACTS: DataSourceConfig(
         source=DataSource.CONTRACTS,
         frequency=UpdateFrequency.DAILY,
         loader_func="load_contracts",
         description="Player contract details, APY, guaranteed money",
-        critical_periods=["free_agency", "trade_deadline", "extensions"]
+        critical_periods=["free_agency", "trade_deadline", "extensions"],
     ),
     DataSource.NEXTGEN_STATS: DataSourceConfig(
         source=DataSource.NEXTGEN_STATS,
         frequency=UpdateFrequency.WEEKLY,
         loader_func="load_nextgen_stats",
         description="Advanced analytics: completion %, separation, rush RYOE",
-        critical_periods=["regular_season", "playoffs"]
+        critical_periods=["regular_season", "playoffs"],
     ),
     DataSource.COMBINE: DataSourceConfig(
         source=DataSource.COMBINE,
         frequency=UpdateFrequency.ANNUALLY,
         loader_func="load_combine",
         description="NFL Combine results: 40yd, bench, 3-cone, etc.",
-        critical_periods=["combine", "draft"]
+        critical_periods=["combine", "draft"],
     ),
     DataSource.INJURIES: DataSourceConfig(
         source=DataSource.INJURIES,
         frequency=UpdateFrequency.DAILY,
         loader_func="load_injuries",
         description="Injury reports, practice participation, game status",
-        critical_periods=["regular_season", "playoffs"]
+        critical_periods=["regular_season", "playoffs"],
     ),
     DataSource.TRANSACTIONS: DataSourceConfig(
         source=DataSource.TRANSACTIONS,
         frequency=UpdateFrequency.DAILY,
         loader_func="load_transactions",
         description="Trades, signings, releases, waiver claims",
-        critical_periods=["free_agency", "trade_deadline", "roster_cutdown"]
+        critical_periods=["free_agency", "trade_deadline", "roster_cutdown"],
     ),
     DataSource.DRAFT_PICKS: DataSourceConfig(
         source=DataSource.DRAFT_PICKS,
         frequency=UpdateFrequency.ANNUALLY,
         loader_func="load_draft_picks",
         description="NFL Draft picks and selections",
-        critical_periods=["draft"]
+        critical_periods=["draft"],
     ),
     DataSource.PLAYER_STATS: DataSourceConfig(
         source=DataSource.PLAYER_STATS,
         frequency=UpdateFrequency.WEEKLY,
         loader_func="load_player_stats",
         description="Weekly and season player statistics",
-        critical_periods=["regular_season", "playoffs"]
+        critical_periods=["regular_season", "playoffs"],
     ),
     DataSource.SCHEDULES: DataSourceConfig(
         source=DataSource.SCHEDULES,
         frequency=UpdateFrequency.WEEKLY,
         loader_func="load_schedules",
         description="Game schedules, dates, times, locations",
-        critical_periods=["schedule_release", "regular_season"]
+        critical_periods=["schedule_release", "regular_season"],
     ),
     DataSource.FTN_CHARTING: DataSourceConfig(
         source=DataSource.FTN_CHARTING,
         frequency=UpdateFrequency.WEEKLY,
         loader_func="load_ftn_charting",
         description="Detailed play charting: formations, personnel, routes",
-        critical_periods=["regular_season"]
+        critical_periods=["regular_season"],
     ),
 }
 
@@ -184,8 +188,8 @@ class NFLDataSyncService:
 
     def __init__(self, season: int = 2025):
         self.season = season
-        self.cache: Dict[DataSource, Any] = {}
-        self.last_sync: Dict[DataSource, datetime] = {}
+        self.cache: dict[DataSource, Any] = {}
+        self.last_sync: dict[DataSource, datetime] = {}
 
         if not HAS_NFLVERSE:
             logger.warning("nflreadpy not installed. Using cached/static data only.")
@@ -235,7 +239,7 @@ class NFLDataSyncService:
 
         return (now - last) > delta_map[config.frequency]
 
-    def sync_data_source(self, source: DataSource, force: bool = False) -> Optional[Any]:
+    def sync_data_source(self, source: DataSource, force: bool = False) -> Any | None:
         """
         Sync a specific data source from nflverse.
 
@@ -280,7 +284,7 @@ class NFLDataSyncService:
             logger.error(f"Failed to sync {source.value}: {e}")
             return self.cache.get(source)
 
-    def sync_all(self, force: bool = False) -> Dict[DataSource, int]:
+    def sync_all(self, force: bool = False) -> dict[DataSource, int]:
         """
         Sync all data sources.
 
@@ -301,7 +305,7 @@ class NFLDataSyncService:
 
         return results
 
-    def get_data_freshness_report(self) -> Dict[str, Any]:
+    def get_data_freshness_report(self) -> dict[str, Any]:
         """
         Generate a report on data freshness.
 
@@ -311,7 +315,7 @@ class NFLDataSyncService:
         report = {
             "current_period": self.get_current_nfl_period(),
             "season": self.season,
-            "sources": {}
+            "sources": {},
         }
 
         for source, config in DATA_SOURCE_CONFIGS.items():
@@ -323,12 +327,12 @@ class NFLDataSyncService:
                 "update_frequency": config.frequency.value,
                 "needs_update": needs_update,
                 "entries_cached": len(self.cache.get(source, [])) if source in self.cache else 0,
-                "description": config.description
+                "description": config.description,
             }
 
         return report
 
-    def get_sync_recommendations(self) -> List[str]:
+    def get_sync_recommendations(self) -> list[str]:
         """
         Get recommendations for what data to sync based on current period.
 
@@ -381,7 +385,9 @@ class NFLDataSyncService:
             else:
                 last = self.last_sync.get(source)
                 if last:
-                    recommendations.append(f"  ✅ {source.value} - Updated {last.strftime('%Y-%m-%d %H:%M')}")
+                    recommendations.append(
+                        f"  ✅ {source.value} - Updated {last.strftime('%Y-%m-%d %H:%M')}"
+                    )
 
         return recommendations
 
@@ -390,18 +396,19 @@ class NFLDataSyncService:
 # CONVENIENCE FUNCTIONS
 # =============================================================================
 
+
 def create_sync_service(season: int = 2025) -> NFLDataSyncService:
     """Create a new sync service instance."""
     return NFLDataSyncService(season=season)
 
 
-def quick_sync(season: int = 2025) -> Dict[DataSource, int]:
+def quick_sync(season: int = 2025) -> dict[DataSource, int]:
     """Perform a quick sync of all data sources."""
     service = create_sync_service(season)
     return service.sync_all()
 
 
-def check_data_freshness(season: int = 2025) -> Dict[str, Any]:
+def check_data_freshness(season: int = 2025) -> dict[str, Any]:
     """Check the freshness of all cached data."""
     service = create_sync_service(season)
     return service.get_data_freshness_report()

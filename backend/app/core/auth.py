@@ -5,12 +5,12 @@ This module handles Firebase Admin SDK initialization and token verification
 for authenticating users in the NFL Sim Engine API.
 """
 
-import os
-from typing import Optional
-import firebase_admin
-from firebase_admin import credentials, auth
-from fastapi import HTTPException, Header
 import logging
+import os
+
+import firebase_admin
+from fastapi import Header, HTTPException
+from firebase_admin import auth, credentials
 
 logger = logging.getLogger(__name__)
 
@@ -74,8 +74,7 @@ def verify_token(token: str) -> dict:
     """
     if not _firebase_initialized:
         raise HTTPException(
-            status_code=500,
-            detail="Firebase not initialized. Server configuration error."
+            status_code=500, detail="Firebase not initialized. Server configuration error."
         )
 
     try:
@@ -90,7 +89,7 @@ def verify_token(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Authentication failed")
 
 
-async def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
+async def get_current_user(authorization: str | None = Header(None)) -> dict:
     """
     FastAPI dependency to extract and verify the current user from the Authorization header.
 
@@ -109,24 +108,19 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
         HTTPException: If authorization header is missing or invalid
     """
     if not authorization:
-        raise HTTPException(
-            status_code=401,
-            detail="Authorization header missing"
-        )
+        raise HTTPException(status_code=401, detail="Authorization header missing")
 
     try:
         # Extract token from "Bearer <token>" format
         scheme, token = authorization.split()
         if scheme.lower() != "bearer":
             raise HTTPException(
-                status_code=401,
-                detail="Invalid authentication scheme. Use 'Bearer <token>'"
+                status_code=401, detail="Invalid authentication scheme. Use 'Bearer <token>'"
             )
 
         return verify_token(token)
 
     except ValueError:
         raise HTTPException(
-            status_code=401,
-            detail="Invalid Authorization header format. Use 'Bearer <token>'"
+            status_code=401, detail="Invalid Authorization header format. Use 'Bearer <token>'"
         )

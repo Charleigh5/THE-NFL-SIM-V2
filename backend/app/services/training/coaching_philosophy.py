@@ -10,20 +10,21 @@ Phase 7: Advanced Training System
 - XP/Injury/Fatigue multipliers per style
 """
 
-from pydantic import BaseModel, Field
-from typing import Literal
 from enum import Enum
 
+from pydantic import BaseModel, Field
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CoachingStyleName(str, Enum):
     """Available coaching styles (B-022)."""
-    VOLUME = "volume"          # B-023: High reps, moderate gains
-    INTENSITY = "intensity"    # B-024: Max effort, high injury risk
-    SMART = "smart"            # B-025: Analytics-driven, balanced
+
+    VOLUME = "volume"  # B-023: High reps, moderate gains
+    INTENSITY = "intensity"  # B-024: Max effort, high injury risk
+    SMART = "smart"  # B-025: Analytics-driven, balanced
     OLD_SCHOOL = "old_school"  # B-026: Traditional, grit-focused
 
 
@@ -31,46 +32,39 @@ class CoachingStyleName(str, Enum):
 # PYDANTIC MODEL (B-022)
 # ============================================================================
 
+
 class CoachingStyle(BaseModel):
     """
     Coaching style configuration with trade-offs.
 
     Each style has multipliers that affect training outcomes.
     """
+
     name: CoachingStyleName = Field(..., description="Style identifier")
     display_name: str = Field(..., description="Human-readable name")
     description: str = Field(default="", description="Detailed explanation")
 
     # Multipliers (1.0 = baseline)
-    xp_multiplier: float = Field(
-        default=1.0, ge=0.5, le=2.0,
-        description="XP gain modifier"
-    )
+    xp_multiplier: float = Field(default=1.0, ge=0.5, le=2.0, description="XP gain modifier")
     injury_risk_multiplier: float = Field(
-        default=1.0, ge=0.5, le=3.0,
-        description="Injury risk modifier"
+        default=1.0, ge=0.5, le=3.0, description="Injury risk modifier"
     )
     fatigue_multiplier: float = Field(
-        default=1.0, ge=0.5, le=2.0,
-        description="Fatigue accumulation modifier"
+        default=1.0, ge=0.5, le=2.0, description="Fatigue accumulation modifier"
     )
     recovery_multiplier: float = Field(
-        default=1.0, ge=0.5, le=2.0,
-        description="Recovery rate modifier"
+        default=1.0, ge=0.5, le=2.0, description="Recovery rate modifier"
     )
 
     # Style-specific bonuses
     young_player_bonus: float = Field(
-        default=0.0, ge=-0.5, le=0.5,
-        description="Bonus XP for players under 26"
+        default=0.0, ge=-0.5, le=0.5, description="Bonus XP for players under 26"
     )
     veteran_bonus: float = Field(
-        default=0.0, ge=-0.5, le=0.5,
-        description="Bonus XP for players over 30"
+        default=0.0, ge=-0.5, le=0.5, description="Bonus XP for players over 30"
     )
     chemistry_effect: float = Field(
-        default=0.0, ge=-0.3, le=0.3,
-        description="Effect on team chemistry"
+        default=0.0, ge=-0.3, le=0.3, description="Effect on team chemistry"
     )
 
     class Config:
@@ -85,52 +79,52 @@ VOLUME_STYLE = CoachingStyle(
     name=CoachingStyleName.VOLUME,
     display_name="Volume Training",
     description="High repetition approach. Moderate gains across the board with lower injury risk. Best for younger players who need fundamental development.",
-    xp_multiplier=0.9,          # Slightly lower XP per drill
+    xp_multiplier=0.9,  # Slightly lower XP per drill
     injury_risk_multiplier=0.7,  # Much safer
-    fatigue_multiplier=1.3,      # More tiring (high reps)
-    recovery_multiplier=0.9,     # Slightly slower recovery
-    young_player_bonus=0.15,     # Great for rookies
-    veteran_bonus=-0.1,          # Veterans get less from reps
-    chemistry_effect=0.05,       # Builds camaraderie
+    fatigue_multiplier=1.3,  # More tiring (high reps)
+    recovery_multiplier=0.9,  # Slightly slower recovery
+    young_player_bonus=0.15,  # Great for rookies
+    veteran_bonus=-0.1,  # Veterans get less from reps
+    chemistry_effect=0.05,  # Builds camaraderie
 )
 
 INTENSITY_STYLE = CoachingStyle(
     name=CoachingStyleName.INTENSITY,
     display_name="High Intensity",
     description="Maximum effort on every rep. Massive gains but significant injury risk. Best for teams with deep rosters and star players to push.",
-    xp_multiplier=1.5,           # Huge XP gains
-    injury_risk_multiplier=2.0,   # Double injury risk
-    fatigue_multiplier=1.5,       # Very exhausting
-    recovery_multiplier=0.8,      # Slower recovery
-    young_player_bonus=0.0,       # Neutral for youth
-    veteran_bonus=0.2,            # Pushes veterans to peak
-    chemistry_effect=-0.1,        # Can cause tension
+    xp_multiplier=1.5,  # Huge XP gains
+    injury_risk_multiplier=2.0,  # Double injury risk
+    fatigue_multiplier=1.5,  # Very exhausting
+    recovery_multiplier=0.8,  # Slower recovery
+    young_player_bonus=0.0,  # Neutral for youth
+    veteran_bonus=0.2,  # Pushes veterans to peak
+    chemistry_effect=-0.1,  # Can cause tension
 )
 
 SMART_STYLE = CoachingStyle(
     name=CoachingStyleName.SMART,
     display_name="Smart Training",
     description="Analytics-driven approach. Targets weaknesses with optimal load management. Balanced gains with scientific injury prevention.",
-    xp_multiplier=1.1,            # Slightly above baseline
-    injury_risk_multiplier=0.8,   # Below average risk
-    fatigue_multiplier=0.9,       # Efficient, less fatigue
-    recovery_multiplier=1.2,      # Better recovery protocols
-    young_player_bonus=0.1,       # Good for development
-    veteran_bonus=0.1,            # Good for maintenance
-    chemistry_effect=0.0,         # Neutral
+    xp_multiplier=1.1,  # Slightly above baseline
+    injury_risk_multiplier=0.8,  # Below average risk
+    fatigue_multiplier=0.9,  # Efficient, less fatigue
+    recovery_multiplier=1.2,  # Better recovery protocols
+    young_player_bonus=0.1,  # Good for development
+    veteran_bonus=0.1,  # Good for maintenance
+    chemistry_effect=0.0,  # Neutral
 )
 
 OLD_SCHOOL_STYLE = CoachingStyle(
     name=CoachingStyleName.OLD_SCHOOL,
     display_name="Old School",
     description="Traditional, grit-focused approach. Builds mental toughness through adversity. High injury risk but develops clutch performers.",
-    xp_multiplier=1.2,            # Good gains
-    injury_risk_multiplier=1.5,   # Higher risk
-    fatigue_multiplier=1.2,       # Moderate fatigue
-    recovery_multiplier=0.85,     # 'Walk it off' mentality
-    young_player_bonus=-0.1,      # Tough on rookies
-    veteran_bonus=0.15,           # Vets thrive
-    chemistry_effect=0.1,         # Builds brotherhood
+    xp_multiplier=1.2,  # Good gains
+    injury_risk_multiplier=1.5,  # Higher risk
+    fatigue_multiplier=1.2,  # Moderate fatigue
+    recovery_multiplier=0.85,  # 'Walk it off' mentality
+    young_player_bonus=-0.1,  # Tough on rookies
+    veteran_bonus=0.15,  # Vets thrive
+    chemistry_effect=0.1,  # Builds brotherhood
 )
 
 
@@ -171,7 +165,7 @@ def calculate_training_modifiers(
     player_age: int,
     base_xp: float,
     base_injury_risk: float,
-    base_fatigue: float
+    base_fatigue: float,
 ) -> dict:
     """
     Calculate final training modifiers based on coaching style and player.
@@ -212,11 +206,11 @@ def calculate_training_modifiers(
 # ============================================================================
 
 SEASONAL_INTENSITY_CAPS = {
-    "offseason": 0.85,    # Offseason: Can go hard
-    "preseason": 0.70,    # Preseason: Start managing load
-    "regular": 0.50,      # Regular season: Recovery focus
-    "playoffs": 0.30,     # Playoffs: Maintenance only
-    "bye_week": 0.20,     # Bye: Recovery priority
+    "offseason": 0.85,  # Offseason: Can go hard
+    "preseason": 0.70,  # Preseason: Start managing load
+    "regular": 0.50,  # Regular season: Recovery focus
+    "playoffs": 0.30,  # Playoffs: Maintenance only
+    "bye_week": 0.20,  # Bye: Recovery priority
 }
 
 

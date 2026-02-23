@@ -1,6 +1,8 @@
+import random
+
 from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation
-import random
+
 
 class CoachingAIService:
     """
@@ -29,9 +31,9 @@ class CoachingAIService:
         # Adjust for urgency (4th quarter)
         if situation.quarter == 4:
             if situation.score_diff < 0:
-                base_aggression += 15 # Desperation
+                base_aggression += 15  # Desperation
             elif situation.score_diff > 0:
-                base_aggression -= 15 # Protect lead
+                base_aggression -= 15  # Protect lead
 
         return max(0, min(100, base_aggression))
 
@@ -58,7 +60,11 @@ class CoachingAIService:
         # === FIELD POSITION BONUS ===
         # Go-for-it zone: Opponent's 40 to midfield (4th-60 zone)
         position_bonus = 0
-        if analytics.go_for_it_zone_start <= situation.field_position <= analytics.go_for_it_zone_end:
+        if (
+            analytics.go_for_it_zone_start
+            <= situation.field_position
+            <= analytics.go_for_it_zone_end
+        ):
             position_bonus = 30  # Strong bonus in optimal zone
         elif situation.field_position > 80:  # Deep in opponent territory
             position_bonus = 10  # Consider FG range
@@ -71,17 +77,17 @@ class CoachingAIService:
 
         # === COACH AGGRESSION ===
         aggression_score = getattr(
-            self.philosophy,
-            'fourth_down_aggression',
-            self.philosophy.aggressiveness
+            self.philosophy, "fourth_down_aggression", self.philosophy.aggressiveness
         )
 
         # === SITUATIONAL OVERRIDES ===
         # Late game, trailing -> desperate times
         if analytics.late_game_trailing_2scores_override:
-            if (situation.quarter == 4 and
-                situation.score_diff < -8 and
-                situation.time_remaining < 300):
+            if (
+                situation.quarter == 4
+                and situation.score_diff < -8
+                and situation.time_remaining < 300
+            ):
                 return True
 
         # === MEDIUM YARDAGE: CONSIDER ANALYTICS ===
@@ -101,7 +107,7 @@ class CoachingAIService:
         """
         Decide whether to go for 2 points after a touchdown.
         """
-        threshold = getattr(self.philosophy, 'two_pt_conversion_threshold', 50)
+        threshold = getattr(self.philosophy, "two_pt_conversion_threshold", 50)
 
         # Standard chart logic approximation
         # Down by 2, 5, 16, 19 usually calls for 2
@@ -109,7 +115,9 @@ class CoachingAIService:
         # Implementation of "The Chart" is complex, we'll use a simplified version
         # influenced by the threshold.
 
-        score_diff = situation.score_diff # This is AFTER the TD code triggers this logic presumably?
+        score_diff = (
+            situation.score_diff
+        )  # This is AFTER the TD code triggers this logic presumably?
         # Usually this decision is made when score_diff is e.g. -2.
 
         # If the 'chart' suggests it, we check if personality allows it
@@ -119,7 +127,7 @@ class CoachingAIService:
 
         if chart_says_go:
             # Conservative coaches might still kick
-            if threshold > 70: # High threshold = conservative about 2pt (confusing naming?)
+            if threshold > 70:  # High threshold = conservative about 2pt (confusing naming?)
                 # Wait, 'threshold' usually means 'minimum value to trigger'.
                 # If we name it 'aggressiveness', high = go more.
                 # If we name it 'threshold', it might mean probability?
@@ -127,12 +135,12 @@ class CoachingAIService:
                 # "tendency to follow the analytics chart".
                 # For this MVP, let's treat it as "Probablity to go for it in marginal situations"
                 pass
-            return True # Simplified: Always follow chart for now
+            return True  # Simplified: Always follow chart for now
 
         # Random aggression override
         if self.philosophy.aggressiveness > 80:
-             if random.random() < 0.1: # 10% chance to go for it just because
-                 return True
+            if random.random() < 0.1:  # 10% chance to go for it just because
+                return True
 
         return False
 
@@ -145,10 +153,10 @@ class CoachingAIService:
             return False
 
         # Only if time is running out
-        if situation.time_remaining > 180: # 3 minutes
+        if situation.time_remaining > 180:  # 3 minutes
             return False
 
-        aggression = getattr(self.philosophy, 'timeout_aggressiveness', 50)
+        aggression = getattr(self.philosophy, "timeout_aggressiveness", 50)
 
         if is_offense:
             # Offense calls TO to save time when trailing or trying to score before half
@@ -159,8 +167,8 @@ class CoachingAIService:
                 return True
         else:
             # Defense calls TO to get ball back
-            if situation.score_diff < 0 and situation.score_diff > -9: # One score game
-                 if situation.quarter == 4:
-                     return True
+            if situation.score_diff < 0 and situation.score_diff > -9:  # One score game
+                if situation.quarter == 4:
+                    return True
 
         return False

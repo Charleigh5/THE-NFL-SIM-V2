@@ -11,20 +11,21 @@ Features:
 """
 
 import hashlib
-import struct
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-import time
 import math
-
+import struct
+import time
+from dataclasses import dataclass
+from typing import Any
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class RNGSeed:
     """Immutable seed for RNG initialization."""
+
     server_seed: bytes
     client_seed: bytes
     nonce: int = 0
@@ -41,11 +42,12 @@ class RNGSeed:
 @dataclass
 class RNGState:
     """Current state of the RNG."""
+
     seed: RNGSeed
     counter: int = 0
     values_generated: int = 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize for storage."""
         return {
             "server_seed_hash": hashlib.sha256(self.seed.server_seed).hexdigest(),
@@ -59,6 +61,7 @@ class RNGState:
 # ============================================================================
 # DETERMINISTIC RNG
 # ============================================================================
+
 
 class DeterministicRNG:
     """
@@ -89,14 +92,12 @@ class DeterministicRNG:
     def _generate_block(self) -> bytes:
         """Generate a 32-byte block of random data."""
         message = (
-            self.seed.client_seed +
-            struct.pack(">Q", self.seed.nonce) +
-            struct.pack(">Q", self.counter)
+            self.seed.client_seed
+            + struct.pack(">Q", self.seed.nonce)
+            + struct.pack(">Q", self.counter)
         )
 
-        block = hashlib.sha256(
-            self.seed.server_seed + message
-        ).digest()
+        block = hashlib.sha256(self.seed.server_seed + message).digest()
 
         self.counter += 1
         return block
@@ -104,13 +105,13 @@ class DeterministicRNG:
     def _ensure_buffer(self, needed: int) -> None:
         """Ensure buffer has enough bytes."""
         while len(self._buffer) - self._buffer_pos < needed:
-            self._buffer = self._buffer[self._buffer_pos:] + self._generate_block()
+            self._buffer = self._buffer[self._buffer_pos :] + self._generate_block()
             self._buffer_pos = 0
 
     def next_bytes(self, count: int) -> bytes:
         """Get next N random bytes."""
         self._ensure_buffer(count)
-        result = self._buffer[self._buffer_pos:self._buffer_pos + count]
+        result = self._buffer[self._buffer_pos : self._buffer_pos + count]
         self._buffer_pos += count
         self.values_generated += 1
         return result
@@ -156,13 +157,13 @@ class DeterministicRNG:
         z = math.sqrt(-2 * math.log(u1)) * math.cos(2 * math.pi * u2)
         return mean + std * z
 
-    def choice(self, items: List[Any]) -> Any:
+    def choice(self, items: list[Any]) -> Any:
         """Choose random item from list."""
         if not items:
             raise ValueError("Cannot choose from empty list")
         return items[self.next_int(0, len(items) - 1)]
 
-    def shuffle(self, items: List[Any]) -> List[Any]:
+    def shuffle(self, items: list[Any]) -> list[Any]:
         """Return shuffled copy of list (Fisher-Yates)."""
         result = list(items)
         for i in range(len(result) - 1, 0, -1):
@@ -170,7 +171,7 @@ class DeterministicRNG:
             result[i], result[j] = result[j], result[i]
         return result
 
-    def weighted_choice(self, items: List[Any], weights: List[float]) -> Any:
+    def weighted_choice(self, items: list[Any], weights: list[float]) -> Any:
         """Choose item based on weights."""
         if len(items) != len(weights):
             raise ValueError("Items and weights must have same length")
@@ -194,7 +195,7 @@ class DeterministicRNG:
             values_generated=self.values_generated,
         )
 
-    def fork(self, nonce: int) -> 'DeterministicRNG':
+    def fork(self, nonce: int) -> "DeterministicRNG":
         """Create new RNG with incremented nonce."""
         return DeterministicRNG(
             server_seed=self.seed.server_seed,
@@ -207,7 +208,7 @@ class DeterministicRNG:
         server_seed: bytes,
         client_seed: bytes,
         nonce: int,
-        expected_values: List[float],
+        expected_values: list[float],
     ) -> bool:
         """Verify that seeds produce expected sequence."""
         rng = DeterministicRNG(server_seed, client_seed, nonce)
@@ -224,7 +225,8 @@ class DeterministicRNG:
 # SEED GENERATION
 # ============================================================================
 
-def generate_server_seed(entropy: Optional[bytes] = None) -> bytes:
+
+def generate_server_seed(entropy: bytes | None = None) -> bytes:
     """Generate a cryptographically secure server seed."""
     import os
 

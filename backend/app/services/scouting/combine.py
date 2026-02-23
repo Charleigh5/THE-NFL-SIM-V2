@@ -15,10 +15,9 @@ Phase 2 Enhancement: GENESIS Integration
 - S2 cognition and medical flags exposure
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
 import random
-import math
+from dataclasses import dataclass, field
+from typing import Any
 
 from app.engine.genesis.biometrics import BiometricProfile, generate_biometrics_for_position
 
@@ -30,18 +29,19 @@ class CombineResults:
 
     B-037 to B-040: Modernized metrics replacing legacy bench_reps.
     """
+
     # Speed & Agility Drills
-    forty_yard: float           # seconds (e.g. 4.42)
-    vertical_jump: float        # inches (e.g. 36.5)
-    broad_jump: int             # inches (e.g. 125)
-    three_cone: float           # seconds (e.g. 6.95)
-    shuttle: float              # seconds (e.g. 4.10)
+    forty_yard: float  # seconds (e.g. 4.42)
+    vertical_jump: float  # inches (e.g. 36.5)
+    broad_jump: int  # inches (e.g. 125)
+    three_cone: float  # seconds (e.g. 6.95)
+    shuttle: float  # seconds (e.g. 4.10)
 
     # B-038: Modern Strength Metric (replaces bench_reps)
-    power_clean_max: int = 0    # lbs (e.g. 315) - functional explosive strength
+    power_clean_max: int = 0  # lbs (e.g. 315) - functional explosive strength
 
     # B-039: GPS-Tracked Speed (on-field measurement)
-    gps_tracked_speed: float = 0.0   # mph (e.g. 21.5) - max speed during drills
+    gps_tracked_speed: float = 0.0  # mph (e.g. 21.5) - max speed during drills
 
     # B-040: Position-Specific Agility Score
     position_agility_score: float = 0.0  # 0-100 composite score
@@ -51,7 +51,7 @@ class CombineResults:
     injury_flag: bool = False
 
     # B-044: Medical Flags (populated by GENESIS reveal)
-    medical_flags: List[str] = field(default_factory=list)
+    medical_flags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -59,21 +59,20 @@ class GenesisRevealData:
     """
     B-041 to B-043: Data revealed from GENESIS biometric system at combine.
     """
-    hand_size: float              # inches
-    wingspan: float               # inches
-    arm_length: float             # inches
-    s2_cognition_score: float     # Standard score (mean=100, std=15)
-    fast_twitch_percentage: float # 0-100
-    reaction_time_ms: float       # milliseconds
-    body_fat_percentage: float    # percent
-    medical_flags: List[str]      # List of medical concerns
+
+    hand_size: float  # inches
+    wingspan: float  # inches
+    arm_length: float  # inches
+    s2_cognition_score: float  # Standard score (mean=100, std=15)
+    fast_twitch_percentage: float  # 0-100
+    reaction_time_ms: float  # milliseconds
+    body_fat_percentage: float  # percent
+    medical_flags: list[str]  # List of medical concerns
 
     @classmethod
     def from_biometric_profile(
-        cls,
-        profile: BiometricProfile,
-        include_hidden: bool = True
-    ) -> 'GenesisRevealData':
+        cls, profile: BiometricProfile, include_hidden: bool = True
+    ) -> "GenesisRevealData":
         """Create reveal data from a BiometricProfile."""
         return cls(
             hand_size=profile.hand_size,
@@ -83,7 +82,7 @@ class GenesisRevealData:
             fast_twitch_percentage=profile.fast_twitch_percentage,
             reaction_time_ms=profile.reaction_time_ms,
             body_fat_percentage=profile.body_fat_percentage,
-            medical_flags=[]  # Populated separately by medical screening
+            medical_flags=[],  # Populated separately by medical screening
         )
 
 
@@ -95,9 +94,9 @@ class CombineSimulation:
     """
 
     def __init__(self):
-        self._biometric_cache: Dict[int, BiometricProfile] = {}
+        self._biometric_cache: dict[int, BiometricProfile] = {}
 
-    def run_combine(self, true_attributes: Dict[str, int], position: str) -> CombineResults:
+    def run_combine(self, true_attributes: dict[str, int], position: str) -> CombineResults:
         """
         Generate mock combine numbers derived from ratings.
 
@@ -161,8 +160,8 @@ class CombineSimulation:
         self,
         player_id: int,
         position: str,
-        biometric_profile: Optional[BiometricProfile] = None,
-        rng: Optional[Any] = None
+        biometric_profile: BiometricProfile | None = None,
+        rng: Any | None = None,
     ) -> GenesisRevealData:
         """
         B-041: Reveal hidden GENESIS biometric data at combine.
@@ -191,6 +190,7 @@ class CombineSimulation:
                 class SimpleRNG:
                     def next_float(self) -> float:
                         return random.random()
+
                 rng = SimpleRNG()
 
             profile = generate_biometrics_for_position(position, rng)
@@ -204,7 +204,7 @@ class CombineSimulation:
 
         return reveal
 
-    def _screen_medical_flags(self, profile: BiometricProfile) -> List[str]:
+    def _screen_medical_flags(self, profile: BiometricProfile) -> list[str]:
         """
         B-044: Generate medical flags based on biometric profile.
 
@@ -239,4 +239,3 @@ class CombineSimulation:
             flags.append("SLOW_REACTION_TIME")
 
         return flags
-

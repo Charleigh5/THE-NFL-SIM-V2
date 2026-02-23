@@ -12,18 +12,20 @@ Features:
 """
 
 import asyncio
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Set, TypeVar, Union
-from enum import Enum
 import time
-
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Union
 
 # ============================================================================
 # EVENT TYPES
 # ============================================================================
 
+
 class EventPriority(int, Enum):
     """Priority levels for event handlers."""
+
     CRITICAL = 0
     HIGH = 10
     NORMAL = 50
@@ -33,6 +35,7 @@ class EventPriority(int, Enum):
 
 class GameEventType(str, Enum):
     """All game event types."""
+
     # Play Events
     SNAP = "SNAP"
     HANDOFF = "HANDOFF"
@@ -76,15 +79,17 @@ class GameEventType(str, Enum):
 # EVENT DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class GameEvent:
     """Base class for all game events."""
+
     event_type: GameEventType
     tick: int
     timestamp: float = field(default_factory=time.time)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize event for storage/replay."""
         return {
             "event_type": self.event_type.value,
@@ -97,7 +102,8 @@ class GameEvent:
 @dataclass
 class PlayEvent(GameEvent):
     """Event during active play."""
-    ball_carrier_id: Optional[str] = None
+
+    ball_carrier_id: str | None = None
     position_x: float = 0.0
     position_y: float = 0.0
     yards_gained: float = 0.0
@@ -106,6 +112,7 @@ class PlayEvent(GameEvent):
 @dataclass
 class PlayerEvent(GameEvent):
     """Event related to a specific player."""
+
     player_id: str = ""
     team_id: str = ""
     severity: str = "minor"
@@ -114,6 +121,7 @@ class PlayerEvent(GameEvent):
 @dataclass
 class CollisionEvent(GameEvent):
     """Physics collision event."""
+
     entity1_id: str = ""
     entity2_id: str = ""
     impact_force: float = 0.0
@@ -126,16 +134,17 @@ class CollisionEvent(GameEvent):
 # ============================================================================
 
 SyncHandler = Callable[[GameEvent], None]
-AsyncHandler = Callable[[GameEvent], 'asyncio.Future[None]']
+AsyncHandler = Callable[[GameEvent], "asyncio.Future[None]"]
 Handler = Union[SyncHandler, AsyncHandler]
 
 
 @dataclass
 class HandlerRegistration:
     """Registration info for an event handler."""
+
     handler: Handler
     priority: EventPriority
-    event_types: Set[GameEventType]
+    event_types: set[GameEventType]
     is_async: bool
     once: bool = False
 
@@ -144,26 +153,27 @@ class HandlerRegistration:
 # ENHANCED EVENT BUS
 # ============================================================================
 
+
 class EnhancedEventBus:
     """
     Enhanced event bus with async support and typed events.
     """
 
     def __init__(self, history_size: int = 1000):
-        self._handlers: Dict[GameEventType, List[HandlerRegistration]] = {}
-        self._global_handlers: List[HandlerRegistration] = []
-        self._history: List[GameEvent] = []
+        self._handlers: dict[GameEventType, list[HandlerRegistration]] = {}
+        self._global_handlers: list[HandlerRegistration] = []
+        self._history: list[GameEvent] = []
         self._history_size = history_size
         self._paused = False
         self._event_count = 0
 
     def subscribe(
         self,
-        event_types: Union[GameEventType, List[GameEventType]],
+        event_types: GameEventType | list[GameEventType],
         handler: Handler,
         priority: EventPriority = EventPriority.NORMAL,
         once: bool = False,
-    ) -> 'HandlerRegistration':
+    ) -> "HandlerRegistration":
         """Subscribe to one or more event types."""
         if isinstance(event_types, GameEventType):
             event_types = [event_types]
@@ -239,7 +249,7 @@ class EnhancedEventBus:
         handlers.extend(self._global_handlers)
         handlers.sort(key=lambda r: r.priority)
 
-        to_remove: List[HandlerRegistration] = []
+        to_remove: list[HandlerRegistration] = []
 
         for reg in handlers:
             try:
@@ -281,8 +291,8 @@ class EnhancedEventBus:
         handlers.extend(self._global_handlers)
         handlers.sort(key=lambda r: r.priority)
 
-        to_remove: List[HandlerRegistration] = []
-        tasks: List[asyncio.Task] = []
+        to_remove: list[HandlerRegistration] = []
+        tasks: list[asyncio.Task] = []
 
         for reg in handlers:
             try:
@@ -323,9 +333,9 @@ class EnhancedEventBus:
 
     def get_history(
         self,
-        event_type: Optional[GameEventType] = None,
+        event_type: GameEventType | None = None,
         limit: int = 100,
-    ) -> List[GameEvent]:
+    ) -> list[GameEvent]:
         """Get recent event history."""
         if event_type:
             filtered = [e for e in self._history if e.event_type == event_type]
@@ -342,7 +352,7 @@ class EnhancedEventBus:
 # SINGLETON INSTANCE
 # ============================================================================
 
-_default_bus: Optional[EnhancedEventBus] = None
+_default_bus: EnhancedEventBus | None = None
 
 
 def get_event_bus() -> EnhancedEventBus:

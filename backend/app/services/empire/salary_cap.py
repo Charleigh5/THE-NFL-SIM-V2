@@ -12,27 +12,29 @@ Phase 5: EMPIRE Economic Simulation
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 from datetime import date
-
+from enum import Enum
+from typing import Any
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class ContractType(str, Enum):
     """Types of player contracts."""
-    ROOKIE = "ROOKIE"          # Slotted rookie deal
-    VETERAN = "VETERAN"        # Standard vet contract
+
+    ROOKIE = "ROOKIE"  # Slotted rookie deal
+    VETERAN = "VETERAN"  # Standard vet contract
     FRANCHISE_TAG = "FRANCHISE_TAG"
     TRANSITION_TAG = "TRANSITION_TAG"
-    MINIMUM = "MINIMUM"        # Veteran minimum
+    MINIMUM = "MINIMUM"  # Veteran minimum
     PRACTICE_SQUAD = "PRACTICE_SQUAD"
 
 
 class CapChargeType(str, Enum):
     """Types of cap charges."""
+
     BASE_SALARY = "BASE_SALARY"
     SIGNING_BONUS = "SIGNING_BONUS"
     ROSTER_BONUS = "ROSTER_BONUS"
@@ -45,9 +47,11 @@ class CapChargeType(str, Enum):
 # CONFIGURATION
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class SalaryCapConfig:
     """Configuration for salary cap engine."""
+
     # Cap floor (minimum spending requirement)
     cap_floor_percentage: float = 0.89  # 89% of cap
 
@@ -55,33 +59,37 @@ class SalaryCapConfig:
     rookie_contract_years: int = 4
 
     # Franchise tag percentages (by position)
-    franchise_tag_percentages: Dict[str, float] = field(default_factory=lambda: {
-        "QB": 0.08,
-        "RB": 0.06,
-        "WR": 0.07,
-        "TE": 0.065,
-        "OL": 0.065,
-        "DL": 0.065,
-        "LB": 0.06,
-        "CB": 0.065,
-        "S": 0.055,
-        "K": 0.03,
-        "P": 0.03,
-    })
+    franchise_tag_percentages: dict[str, float] = field(
+        default_factory=lambda: {
+            "QB": 0.08,
+            "RB": 0.06,
+            "WR": 0.07,
+            "TE": 0.065,
+            "OL": 0.065,
+            "DL": 0.065,
+            "LB": 0.06,
+            "CB": 0.065,
+            "S": 0.055,
+            "K": 0.03,
+            "P": 0.03,
+        }
+    )
 
     # Cap carryover limits
-    max_cap_carryover: float = float('inf')  # No max in NFL
+    max_cap_carryover: float = float("inf")  # No max in NFL
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class ContractYear:
     """Single year of a contract."""
-    year: int                    # 1, 2, 3, etc.
-    base_salary: int             # In dollars
+
+    year: int  # 1, 2, 3, etc.
+    base_salary: int  # In dollars
     signing_bonus_prorate: int = 0
     roster_bonus: int = 0
     option_bonus: int = 0
@@ -89,7 +97,7 @@ class ContractYear:
     incentives_likely: int = 0
     incentives_unlikely: int = 0
     is_guaranteed: bool = False
-    is_void: bool = False        # Void years for spreading bonus
+    is_void: bool = False  # Void years for spreading bonus
 
     @property
     def cap_hit(self) -> int:
@@ -97,12 +105,12 @@ class ContractYear:
         if self.is_void:
             return self.signing_bonus_prorate
         return (
-            self.base_salary +
-            self.signing_bonus_prorate +
-            self.roster_bonus +
-            self.option_bonus +
-            self.workout_bonus +
-            self.incentives_likely
+            self.base_salary
+            + self.signing_bonus_prorate
+            + self.roster_bonus
+            + self.option_bonus
+            + self.workout_bonus
+            + self.incentives_likely
         )
 
     @property
@@ -110,23 +118,19 @@ class ContractYear:
         """Actual cash paid this year."""
         if self.is_void:
             return 0
-        return (
-            self.base_salary +
-            self.roster_bonus +
-            self.option_bonus +
-            self.workout_bonus
-        )
+        return self.base_salary + self.roster_bonus + self.option_bonus + self.workout_bonus
 
 
 @dataclass
 class Contract:
     """Full player contract."""
+
     player_id: str
     contract_type: ContractType
-    total_value: int             # Total contract value
-    guaranteed: int              # Total guaranteed
-    years: List[ContractYear] = field(default_factory=list)
-    signed_date: Optional[date] = None
+    total_value: int  # Total contract value
+    guaranteed: int  # Total guaranteed
+    years: list[ContractYear] = field(default_factory=list)
+    signed_date: date | None = None
 
     @property
     def current_year(self) -> int:
@@ -143,17 +147,13 @@ class Contract:
     @property
     def remaining_guaranteed(self) -> int:
         """Guaranteed money remaining."""
-        return sum(
-            y.cap_hit for y in self.years
-            if y.is_guaranteed and y.year >= self.current_year
-        )
+        return sum(y.cap_hit for y in self.years if y.is_guaranteed and y.year >= self.current_year)
 
     def get_dead_money(self, cut_after_year: int) -> int:
         """Calculate dead money if cut after given year."""
         # All prorated signing bonus accelerates
         remaining_prorate = sum(
-            y.signing_bonus_prorate for y in self.years
-            if y.year > cut_after_year
+            y.signing_bonus_prorate for y in self.years if y.year > cut_after_year
         )
         return remaining_prorate
 
@@ -161,17 +161,18 @@ class Contract:
 @dataclass
 class TeamCapState:
     """Team's salary cap state."""
+
     team_id: str
     season_year: int
-    salary_cap: int              # This year's cap
+    salary_cap: int  # This year's cap
 
     # Spending breakdown
-    active_cap: int = 0          # Active roster cap
-    dead_money: int = 0          # Dead money from cuts
-    carryover: int = 0           # Unused cap from last year
+    active_cap: int = 0  # Active roster cap
+    dead_money: int = 0  # Dead money from cuts
+    carryover: int = 0  # Unused cap from last year
 
     # Contracts
-    contracts: Dict[str, Contract] = field(default_factory=dict)
+    contracts: dict[str, Contract] = field(default_factory=dict)
 
     @property
     def total_cap(self) -> int:
@@ -193,6 +194,7 @@ class TeamCapState:
 # SALARY CAP ENGINE
 # ============================================================================
 
+
 class SalaryCapEngine:
     """
     NFL salary cap management engine.
@@ -204,7 +206,7 @@ class SalaryCapEngine:
     - Cap projections
     """
 
-    def __init__(self, config: Optional[SalaryCapConfig] = None):
+    def __init__(self, config: SalaryCapConfig | None = None):
         self.config = config or SalaryCapConfig()
 
     def create_contract(
@@ -245,10 +247,7 @@ class SalaryCapEngine:
             weights = [1] * years
 
         total_weight = sum(weights)
-        base_salaries = [
-            int(remaining_value * w / total_weight)
-            for w in weights
-        ]
+        base_salaries = [int(remaining_value * w / total_weight) for w in weights]
 
         # Prorate signing bonus across years (max 5 years in NFL)
         prorate_years = min(years, 5)
@@ -263,12 +262,14 @@ class SalaryCapEngine:
             if year_guaranteed:
                 guaranteed_remaining -= base_salaries[i]
 
-            contract_years.append(ContractYear(
-                year=i + 1,
-                base_salary=base_salaries[i],
-                signing_bonus_prorate=prorate_per_year if i < prorate_years else 0,
-                is_guaranteed=year_guaranteed,
-            ))
+            contract_years.append(
+                ContractYear(
+                    year=i + 1,
+                    base_salary=base_salaries[i],
+                    signing_bonus_prorate=prorate_per_year if i < prorate_years else 0,
+                    is_guaranteed=year_guaranteed,
+                )
+            )
 
         return Contract(
             player_id=player_id,
@@ -321,7 +322,7 @@ class SalaryCapEngine:
         self,
         position: str,
         salary_cap: int,
-        top_5_avg: Optional[int] = None,
+        top_5_avg: int | None = None,
     ) -> int:
         """
         Calculate franchise tag value.
@@ -386,12 +387,14 @@ class SalaryCapEngine:
         prorate = actual_reduction // prorate_years
 
         # Add to signing bonus prorate of remaining years
-        for i in range(current_year - 1, min(current_year - 1 + prorate_years, len(contract.years))):
+        for i in range(
+            current_year - 1, min(current_year - 1 + prorate_years, len(contract.years))
+        ):
             contract.years[i].signing_bonus_prorate += prorate
 
         return contract
 
-    def get_historical_cap(self, year: int) -> Optional[int]:
+    def get_historical_cap(self, year: int) -> int | None:
         """
         Get the actual NFL salary cap for a historical year.
 
@@ -399,6 +402,7 @@ class SalaryCapEngine:
         Returns None for 2010 (uncapped year) or years before 1994.
         """
         from app.core.nfl_reference_data import HISTORICAL_SALARY_CAPS
+
         return HISTORICAL_SALARY_CAPS.get(year)
 
     def get_cap_for_season(self, year: int) -> int:
@@ -431,7 +435,7 @@ class SalaryCapEngine:
         self,
         current_cap: int,
         years_ahead: int,
-    ) -> List[int]:
+    ) -> list[int]:
         """
         Project future salary caps.
 
@@ -444,7 +448,7 @@ class SalaryCapEngine:
             caps.append(int(caps[-1] * (1 + SALARY_CAP_CAGR)))
         return caps[1:]
 
-    def get_cap_summary(self, state: TeamCapState) -> Dict[str, Any]:
+    def get_cap_summary(self, state: TeamCapState) -> dict[str, Any]:
         """Get summary of team's cap situation."""
         return {
             "team_id": state.team_id,
@@ -457,4 +461,3 @@ class SalaryCapEngine:
             "cap_space": state.cap_space,
             "contracts_count": len(state.contracts),
         }
-

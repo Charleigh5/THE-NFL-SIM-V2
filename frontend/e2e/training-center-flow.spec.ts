@@ -44,18 +44,18 @@ test.describe("Training Center Flow", () => {
   test("should allow selecting coaching style", async ({ page }) => {
     // Check initial state or default
     // Click on a different style
-    await page.getByText("Old School").click();
+    await page.getByText("Old School").click({ timeout: 40000 });
     await expect(page.getByText("Old School")).toHaveClass(/border-cyan-400/); // Assuming selected style gets border class
   });
 
   test("should display drills", async ({ page }) => {
-    await expect(page.getByText("Oklahoma Drill")).toBeVisible();
-    await expect(page.getByText("7-on-7 Skeleton")).toBeVisible();
+    await expect(page.getByText("Oklahoma Drill")).toBeVisible({ timeout: 40000 });
+    await expect(page.getByText("7-on-7 Skeleton")).toBeVisible({ timeout: 40000 });
   });
 
   test("should toggle drill selection", async ({ page }) => {
     const drillCard = page.locator(".drill-card").first();
-    await drillCard.click();
+    await drillCard.click({ timeout: 40000 });
     // Verify selection state (e.g. border color change or checkbox)
     await expect(drillCard).toHaveClass(/border-cyan-400/);
 

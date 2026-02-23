@@ -4,15 +4,16 @@ Ratings Generator Service
 Converts real-world NFL data (Next Gen Stats, Combine, FTN) into
 our 0-100 attribute scale using the 3-Tier positional matrix.
 """
+
 import logging
-from typing import Dict, Any, Optional
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-from app.services.age_curves import get_age_modifier, get_experience_bonus, get_physical_regression
-from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS, CareerAccolades
+from app.data.career_accomplishments import CareerAccolades
+from app.services.age_curves import get_age_modifier, get_experience_bonus
 
 # =============================================================================
 # TIER WEIGHTS CONFIGURATION
@@ -28,6 +29,7 @@ TIER_WEIGHTS = {
 # =============================================================================
 # HELPER FUNCTIONS: Stat -> Rating Converters
 # =============================================================================
+
 
 def clamp_rating(value: float) -> int:
     """Clamp a value to 40-99 range (NFL player floor)."""
@@ -62,7 +64,8 @@ def inverse_scale(value: float, low: float, high: float) -> int:
 # POSITION-SPECIFIC RATING GENERATORS
 # =============================================================================
 
-def generate_qb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+
+def generate_qb_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     ratings = {}
 
     # Tier 1
@@ -71,7 +74,9 @@ def generate_qb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     ratings["throw_accuracy_short"] = ratings["throw_accuracy_mid"]
 
     passer_rating = ngstats.get("passer_rating", 90)
-    ratings["awareness"] = scale_percentile(passer_rating, 70, 110) # Lowered ceiling for easier high rating
+    ratings["awareness"] = scale_percentile(
+        passer_rating, 70, 110
+    )  # Lowered ceiling for easier high rating
 
     ttt = ngstats.get("avg_time_to_throw", 2.7)
     sack_pct = ngstats.get("sack_pct", 6.0)
@@ -93,31 +98,33 @@ def generate_qb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
 
     # ... (Speed logic) ...
     forty = player_data.get("forty_yard_dash", 4.9)
-    ratings["speed"] = inverse_scale(forty, 4.5, 5.2) # Adjusted range for QBs
+    ratings["speed"] = inverse_scale(forty, 4.5, 5.2)  # Adjusted range for QBs
     ratings["agility"] = 55
 
     # Tier 1 corrections for test
     cpoe = ngstats.get("completion_percentage_above_expectation", 0)
-    ratings["throw_accuracy_mid"] = scale_percentile(cpoe, -4.0, 6.0) # Adjusted range
+    ratings["throw_accuracy_mid"] = scale_percentile(cpoe, -4.0, 6.0)  # Adjusted range
     ratings["throw_accuracy_short"] = ratings["throw_accuracy_mid"]
 
     return ratings
 
 
-def generate_rb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_rb_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """Generate RB ratings."""
     ratings = {}
 
     # Tier 1
     time_to_los = ngstats.get("time_to_line_of_scrimmage", 2.8)
-    ratings["acceleration"] = inverse_scale(time_to_los, 2.4, 3.2) # Normalized
+    ratings["acceleration"] = inverse_scale(time_to_los, 2.4, 3.2)  # Normalized
 
     ryoe = ngstats.get("rush_yards_over_expected_per_att", 0)
     ratings["vision"] = scale_percentile(ryoe, -1.0, 1.5)
     ratings["awareness"] = ratings["vision"]
 
     efficiency = ngstats.get("rushing_efficiency", 4.0)
-    ratings["agility"] = inverse_scale(efficiency, 3.0, 5.5) # Lower is better for efficiency (N/S runner)
+    ratings["agility"] = inverse_scale(
+        efficiency, 3.0, 5.5
+    )  # Lower is better for efficiency (N/S runner)
 
     # Tier 2
     stacked_box = ngstats.get("percent_attempts_gte_eight_defenders", 20)
@@ -134,13 +141,13 @@ def generate_rb_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_wr_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_wr_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """Generate WR ratings."""
     ratings = {}
 
     # Tier 1
     separation = ngstats.get("avg_separation", 2.5)
-    ratings["route_running"] = scale_percentile(separation, 1.8, 3.8) # Adjusted
+    ratings["route_running"] = scale_percentile(separation, 1.8, 3.8)  # Adjusted
 
     catch_pct = ngstats.get("catch_percentage", 65)
     ratings["catching"] = scale_percentile(catch_pct, 55, 80)
@@ -150,7 +157,7 @@ def generate_wr_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     base_speed = inverse_scale(forty, 4.25, 4.65)
 
     cushion = ngstats.get("avg_cushion", 6.0)
-    cushion_bonus = scale_percentile(cushion, 4.0, 8.0) # 4yds to 8yds
+    cushion_bonus = scale_percentile(cushion, 4.0, 8.0)  # 4yds to 8yds
 
     ratings["speed"] = clamp_rating(base_speed * 0.85 + cushion_bonus * 0.15)
 
@@ -166,7 +173,7 @@ def generate_wr_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_te_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) -> Dict[str, int]:
+def generate_te_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) -> dict[str, int]:
     """
     Generate TE ratings.
 
@@ -198,7 +205,7 @@ def generate_te_ratings(player_data: Dict[str, Any], ngstats: Dict[str, Any]) ->
     return ratings
 
 
-def generate_ol_ratings(player_data: Dict[str, Any], position: str) -> Dict[str, int]:
+def generate_ol_ratings(player_data: dict[str, Any], position: str) -> dict[str, int]:
     """
     Generate OL ratings (LT, LG, C, RG, RT).
 
@@ -234,7 +241,9 @@ def generate_ol_ratings(player_data: Dict[str, Any], position: str) -> Dict[str,
     return ratings
 
 
-def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_dl_ratings(
+    player_data: dict[str, Any], position: str, stats: dict[str, Any]
+) -> dict[str, int]:
     """
     Generate DL ratings (DT, NT, DE, EDGE).
 
@@ -269,8 +278,8 @@ def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
         agility_score = inverse_scale(three_cone, 6.8, 7.8)
 
         # Determine archetype: Speed > 80 & Agility > 75 = Speed, Power > 80 & Weight > 260 = Power, else Hybrid
-        is_speed = (speed_score >= 80 and agility_score >= 75 and forty <= 4.7)
-        is_power = (power_score >= 80 and weight >= 260)
+        is_speed = speed_score >= 80 and agility_score >= 75 and forty <= 4.7
+        is_power = power_score >= 80 and weight >= 260
 
         if is_speed and not is_power:
             archetype = "SPEED"
@@ -290,14 +299,18 @@ def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
         if archetype == "SPEED":
             # Speed Rushers: Elite finesse, bend, acceleration (Von Miller, Micah Parsons)
             ratings["pass_rush_finesse"] = clamp_rating(ratings["agility"] * 0.6 + sacks * 3)
-            ratings["pass_rush_power"] = clamp_rating(sacks * 2 + qb_hits * 1.5)  # Lower power emphasis
+            ratings["pass_rush_power"] = clamp_rating(
+                sacks * 2 + qb_hits * 1.5
+            )  # Lower power emphasis
             ratings["acceleration"] = min(99, ratings["acceleration"] + 5)  # Boost
             ratings["speed"] = min(99, ratings["speed"] + 3)
 
         elif archetype == "POWER":
             # Power Rushers: Elite strength, bull rush (Myles Garrett, Cameron Heyward)
             ratings["pass_rush_power"] = scale_percentile(sacks + qb_hits, 0, 22)  # Higher ceiling
-            ratings["pass_rush_finesse"] = clamp_rating(ratings["agility"] * 0.4 + sacks * 1.5)  # Lower finesse
+            ratings["pass_rush_finesse"] = clamp_rating(
+                ratings["agility"] * 0.4 + sacks * 1.5
+            )  # Lower finesse
             ratings["strength"] = min(99, ratings["strength"] + 5)  # Boost
             ratings["block_shed"] = scale_percentile(tfls, 0, 12)  # Strong vs run
 
@@ -310,7 +323,7 @@ def generate_dl_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
     return ratings
 
 
-def generate_lb_ratings(player_data: Dict[str, Any], stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_lb_ratings(player_data: dict[str, Any], stats: dict[str, Any]) -> dict[str, int]:
     """
     Generate LB ratings.
 
@@ -340,7 +353,9 @@ def generate_lb_ratings(player_data: Dict[str, Any], stats: Dict[str, Any]) -> D
     return ratings
 
 
-def generate_db_ratings(player_data: Dict[str, Any], position: str, stats: Dict[str, Any]) -> Dict[str, int]:
+def generate_db_ratings(
+    player_data: dict[str, Any], position: str, stats: dict[str, Any]
+) -> dict[str, int]:
     """
     Generate DB ratings (CB, S).
 
@@ -380,11 +395,12 @@ def generate_db_ratings(player_data: Dict[str, Any], position: str, stats: Dict[
 # MAIN GENERATOR FUNCTION
 # =============================================================================
 
+
 def generate_player_ratings(
-    player_data: Dict[str, Any],
-    ngstats: Optional[Dict[str, Any]] = None,
-    standard_stats: Optional[Dict[str, Any]] = None,
-) -> Dict[str, int]:
+    player_data: dict[str, Any],
+    ngstats: dict[str, Any] | None = None,
+    standard_stats: dict[str, Any] | None = None,
+) -> dict[str, int]:
     """
     Generate all ratings for a player based on their position.
 
@@ -424,10 +440,9 @@ def generate_player_ratings(
             "kick_accuracy": 70 + random.randint(-10, 20),
         }
 
+
 def calculate_overall_rating_modifier(
-    base_rating: int,
-    player_data: Dict[str, Any],
-    accolades: Optional[CareerAccolades] = None
+    base_rating: int, player_data: dict[str, Any], accolades: CareerAccolades | None = None
 ) -> int:
     """
     Calculate the final overall rating by applying Age, Experience, and Accolade modifiers.
@@ -453,11 +468,11 @@ def calculate_overall_rating_modifier(
         boost += min(0.10, accolades.pro_bowls * 0.02)
         boost += min(0.15, accolades.all_pros_1st * 0.05)
         boost += min(0.09, accolades.all_pros_2nd * 0.03)
-        boost += (accolades.mvps * 0.08)
-        boost += (accolades.super_bowl_mvps * 0.05)
-        boost += (accolades.defensive_player_of_year * 0.08)
-        boost += (accolades.offensive_player_of_year * 0.08)
-        boost += (accolades.rookie_of_year * 0.02)
+        boost += accolades.mvps * 0.08
+        boost += accolades.super_bowl_mvps * 0.05
+        boost += accolades.defensive_player_of_year * 0.08
+        boost += accolades.offensive_player_of_year * 0.08
+        boost += accolades.rookie_of_year * 0.02
 
         # Max accolade boost cap: 1.50x (Legacy Legend)
         accolade_mod = 1.0 + min(0.50, boost)
@@ -467,4 +482,3 @@ def calculate_overall_rating_modifier(
 
     # Clamp to 1-99
     return max(40, min(99, int(round(final_rating))))
-

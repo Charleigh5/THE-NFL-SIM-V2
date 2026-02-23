@@ -13,23 +13,23 @@ CITATION: ENHANCEMENT_REFERENCE.md - Position-Specific Physics Deep Dive
 """
 
 import math
-from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
-
 
 # =============================================================================
 # COMMON PHYSICS UTILITIES
 # =============================================================================
 
+
 @dataclass
 class Vector2D:
     """2D vector for positional calculations."""
+
     x: float = 0.0
     y: float = 0.0
 
-    def distance_to(self, other: 'Vector2D') -> float:
-        return math.sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
+    def distance_to(self, other: "Vector2D") -> float:
+        return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
 
     def magnitude(self) -> float:
         return math.sqrt(self.x**2 + self.y**2)
@@ -38,9 +38,10 @@ class Vector2D:
 @dataclass
 class PlayerPhysicsState:
     """Current physics state of a player."""
+
     position: Vector2D
     velocity: Vector2D
-    mass: float            # in lbs
+    mass: float  # in lbs
     momentum: float = 0.0  # mass * speed
     facing_angle: float = 0.0  # degrees, 0 = upfield
 
@@ -48,6 +49,7 @@ class PlayerPhysicsState:
 # =============================================================================
 # QUARTERBACK PHYSICS
 # =============================================================================
+
 
 class QuarterbackPhysics:
     """
@@ -62,7 +64,7 @@ class QuarterbackPhysics:
     VISION_CONE_ANGLE = 120  # degrees
     POCKET_COLLAPSE_THRESHOLD = 1.8  # seconds
 
-    def __init__(self, ratings: Dict[str, int]):
+    def __init__(self, ratings: dict[str, int]):
         self.arm_strength = ratings.get("throw_power", 80)
         self.awareness = ratings.get("awareness", 80)
         self.release_speed = ratings.get("release", 80)
@@ -102,7 +104,7 @@ class QuarterbackPhysics:
 
         return angle_diff <= (self.VISION_CONE_ANGLE / 2)
 
-    def calculate_ooda_delay(self, time_elapsed: float) -> Tuple[bool, float]:
+    def calculate_ooda_delay(self, time_elapsed: float) -> tuple[bool, float]:
         """
         Calculate OODA (Observe-Orient-Decide-Act) loop delay.
 
@@ -137,7 +139,7 @@ class QuarterbackPhysics:
 
         # Exponential decay beyond threshold
         excess_time = time_in_pocket - self.POCKET_COLLAPSE_THRESHOLD
-        base_penalty = 0.3 * (excess_time ** 2)
+        base_penalty = 0.3 * (excess_time**2)
 
         # Poise reduces penalty
         panic_modifier = self.panic_factor
@@ -166,8 +168,10 @@ class QuarterbackPhysics:
 # RUNNING BACK PHYSICS
 # =============================================================================
 
+
 class TackleOutcome(str, Enum):
     """Possible outcomes of a tackle attempt."""
+
     TACKLED = "TACKLED"
     BROKEN_TACKLE = "BROKEN_TACKLE"
     STIFF_ARM = "STIFF_ARM"
@@ -177,6 +181,7 @@ class TackleOutcome(str, Enum):
 @dataclass
 class TackleResult:
     """Result of a tackle attempt."""
+
     outcome: TackleOutcome
     yards_after_contact: float = 0.0
     velocity_retained: float = 0.0
@@ -194,7 +199,7 @@ class RunningBackPhysics:
     - G-force injury risk on sharp cuts
     """
 
-    def __init__(self, ratings: Dict[str, int], weight: float = 215.0):
+    def __init__(self, ratings: dict[str, int], weight: float = 215.0):
         self.mass = weight
         self.break_tackle = ratings.get("break_tackle", 75)
         self.balance = ratings.get("balance", 75)
@@ -241,7 +246,9 @@ class RunningBackPhysics:
         balance_threshold = (self.balance / 100) * 50
 
         # Net momentum
-        net_momentum = rb_momentum - (effective_defender_momentum * math.cos(math.radians(collision_angle)))
+        net_momentum = rb_momentum - (
+            effective_defender_momentum * math.cos(math.radians(collision_angle))
+        )
 
         # Tackle power calculation
         tackle_power = (defender_tackle_rating / 100) * defender_momentum * angle_modifier
@@ -284,23 +291,25 @@ class RunningBackPhysics:
     def _get_angle_modifier(self, angle: float) -> float:
         """Get tackle power modifier based on collision angle."""
         if angle < 30:
-            return 1.0        # Head-on, full tackle force
+            return 1.0  # Head-on, full tackle force
         elif angle < 60:
-            return 0.85       # Glancing blow
+            return 0.85  # Glancing blow
         elif angle < 120:
-            return 0.7        # Side tackle
+            return 0.7  # Side tackle
         else:
-            return 0.5        # Chase-down from behind
+            return 0.5  # Chase-down from behind
 
     def _simulate_stiff_arm_battle(self, defender_tackle: int) -> bool:
         """Simulate stiff arm success based on ratings."""
         import random
+
         stiff_arm_chance = self.stiff_arm / (self.stiff_arm + defender_tackle)
         return random.random() < stiff_arm_chance
 
     def _check_fumble(self, force_ratio: float) -> bool:
         """Check if big hit causes fumble."""
         import random
+
         # Base 2% fumble chance, increases with force ratio
         fumble_chance = 0.02 * force_ratio
         return random.random() < fumble_chance
@@ -329,7 +338,7 @@ class RunningBackPhysics:
 
         # Calculate lateral G-force
         effective_traction = field_traction * (1 - 0.3)  # Fatigue penalty
-        lateral_g_force = (current_speed ** 2) / (2 * effective_traction)
+        lateral_g_force = (current_speed**2) / (2 * effective_traction)
 
         # ACL injury probability (non-contact)
         # Risk increases above 2.5G
@@ -341,6 +350,7 @@ class RunningBackPhysics:
 # =============================================================================
 # WIDE RECEIVER PHYSICS
 # =============================================================================
+
 
 class WideReceiverPhysics:
     """
@@ -354,7 +364,7 @@ class WideReceiverPhysics:
 
     def __init__(
         self,
-        ratings: Dict[str, int],
+        ratings: dict[str, int],
         height_inches: int = 72,
         hand_size: float = 9.5,
     ):
@@ -451,7 +461,7 @@ class WideReceiverPhysics:
         ball_distance: float,
         defender_distance: float,
         is_contested: bool,
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Determine catch success.
 
@@ -499,6 +509,7 @@ class WideReceiverPhysics:
 # CORNERBACK PHYSICS
 # =============================================================================
 
+
 class CornerbackPhysics:
     """
     CB-specific physics: press, coverage, ball skills.
@@ -509,7 +520,7 @@ class CornerbackPhysics:
     - Interception timing window
     """
 
-    def __init__(self, ratings: Dict[str, int]):
+    def __init__(self, ratings: dict[str, int]):
         self.press = ratings.get("press", 75)
         self.man_coverage = ratings.get("man_coverage", 80)
         self.zone_coverage = ratings.get("zone_coverage", 78)
@@ -524,7 +535,7 @@ class CornerbackPhysics:
         self,
         wr_release: int,
         wr_strength: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate press jam result.
 
@@ -579,7 +590,7 @@ class CornerbackPhysics:
         ball_distance: float,
         wr_distance_to_ball: float,
         ball_flight_time: float,
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Attempt to intercept pass.
 

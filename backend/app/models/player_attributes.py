@@ -1,24 +1,31 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Integer, ForeignKey, Float
+
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Float, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.player import Player
+
 
 class PlayerAttributes(Base):
     """
     Player Attributes Model (1:1 with Player)
     Contains all skill ratings and combine metrics.
     """
-    __tablename__ = 'player_attributes'
+
+    __tablename__ = "player_attributes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    player_id: Mapped[int] = mapped_column(Integer, ForeignKey("player.id"), unique=True, index=True)
+    player_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("player.id"), unique=True, index=True
+    )
 
     # Back relation
-    player: Mapped["Player"] = relationship("Player", back_populates="attributes")
+    player: Mapped[Player] = relationship("Player", back_populates="attributes")
 
     # --- RPG Attributes (0-100 Scale) ---
     # General
@@ -95,14 +102,14 @@ class PlayerAttributes(Base):
     return_vision: Mapped[int] = mapped_column(Integer, default=50)
 
     # --- NFL Combine Metrics ---
-    forty_yard_dash: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    bench_press: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    vertical_jump: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    broad_jump: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    three_cone_drill: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    twenty_yard_shuttle: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    forty_yard_dash: Mapped[float | None] = mapped_column(Float, nullable=True)
+    bench_press: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    vertical_jump: Mapped[float | None] = mapped_column(Float, nullable=True)
+    broad_jump: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    three_cone_drill: Mapped[float | None] = mapped_column(Float, nullable=True)
+    twenty_yard_shuttle: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     # --- Genesis Data ---
-    power_clean_max: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    gps_speed_max: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    s2_cognition_score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    power_clean_max: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    gps_speed_max: Mapped[float | None] = mapped_column(Float, nullable=True)
+    s2_cognition_score: Mapped[int | None] = mapped_column(Integer, nullable=True)

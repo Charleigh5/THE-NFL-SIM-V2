@@ -10,15 +10,16 @@ Phase 12: Database Enhancements
 - Performance monitoring
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
 import hashlib
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Any
 
 
 @dataclass
 class CacheEntry:
     """Cached query result."""
+
     key: str
     value: Any
     created_at: datetime
@@ -34,11 +35,12 @@ class CacheEntry:
 @dataclass
 class QueryStats:
     """Statistics for a query pattern."""
+
     query_pattern: str
     execution_count: int = 0
     avg_duration_ms: float = 0.0
     max_duration_ms: float = 0.0
-    last_executed: Optional[datetime] = None
+    last_executed: datetime | None = None
 
 
 class QueryCache:
@@ -48,14 +50,14 @@ class QueryCache:
 
     def __init__(self, default_ttl: int = 300):
         self.default_ttl = default_ttl
-        self.cache: Dict[str, CacheEntry] = {}
+        self.cache: dict[str, CacheEntry] = {}
 
-    def _generate_key(self, query: str, params: Optional[Dict] = None) -> str:
+    def _generate_key(self, query: str, params: dict | None = None) -> str:
         """Generate cache key from query and params."""
         key_str = query + str(params or {})
         return hashlib.md5(key_str.encode()).hexdigest()
 
-    def get(self, query: str, params: Optional[Dict] = None) -> Optional[Any]:
+    def get(self, query: str, params: dict | None = None) -> Any | None:
         """Retrieve cached result."""
         key = self._generate_key(query, params)
         entry = self.cache.get(key)
@@ -68,14 +70,11 @@ class QueryCache:
 
         return None
 
-    def set(self, query: str, value: Any, params: Optional[Dict] = None, ttl: Optional[int] = None):
+    def set(self, query: str, value: Any, params: dict | None = None, ttl: int | None = None):
         """Cache a query result."""
         key = self._generate_key(query, params)
         self.cache[key] = CacheEntry(
-            key=key,
-            value=value,
-            created_at=datetime.now(),
-            ttl_seconds=ttl or self.default_ttl
+            key=key, value=value, created_at=datetime.now(), ttl_seconds=ttl or self.default_ttl
         )
 
     def invalidate(self, pattern: str = None):
@@ -90,7 +89,7 @@ class QueryCache:
             # Would use pattern matching
             pass
 
-    def get_stats(self) -> Dict:
+    def get_stats(self) -> dict:
         """Get cache statistics."""
         total_entries = len(self.cache)
         total_hits = sum(e.hits for e in self.cache.values())
@@ -108,7 +107,7 @@ class QueryOptimizer:
     """
 
     def __init__(self):
-        self.query_stats: Dict[str, QueryStats] = {}
+        self.query_stats: dict[str, QueryStats] = {}
 
     def record_query(self, query_pattern: str, duration_ms: float):
         """Record a query execution for analysis."""
@@ -124,11 +123,11 @@ class QueryOptimizer:
         stats.max_duration_ms = max(stats.max_duration_ms, duration_ms)
         stats.last_executed = datetime.now()
 
-    def get_slow_queries(self, threshold_ms: float = 100.0) -> List[QueryStats]:
+    def get_slow_queries(self, threshold_ms: float = 100.0) -> list[QueryStats]:
         """Get queries that exceed duration threshold."""
         return [s for s in self.query_stats.values() if s.avg_duration_ms > threshold_ms]
 
-    def recommend_indexes(self) -> List[str]:
+    def recommend_indexes(self) -> list[str]:
         """
         Recommend indexes based on query patterns.
         (Simplified - real implementation would analyze query structure)

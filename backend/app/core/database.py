@@ -1,10 +1,12 @@
-from sqlalchemy import create_engine, event
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.pool import QueuePool, StaticPool
-from app.core.config import settings
-from contextlib import contextmanager
 import logging
+from contextlib import contextmanager
+
+from sqlalchemy import create_engine, event
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import QueuePool, StaticPool
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -18,19 +20,21 @@ engine_args = {
 }
 
 if not is_sqlite:
-    engine_args.update({
-        "pool_size": settings.DB_POOL_SIZE,
-        "max_overflow": settings.DB_MAX_OVERFLOW,
-        "pool_timeout": settings.DB_POOL_TIMEOUT,
-        "pool_recycle": settings.DB_POOL_RECYCLE,
-    })
+    engine_args.update(
+        {
+            "pool_size": settings.DB_POOL_SIZE,
+            "max_overflow": settings.DB_MAX_OVERFLOW,
+            "pool_timeout": settings.DB_POOL_TIMEOUT,
+            "pool_recycle": settings.DB_POOL_RECYCLE,
+        }
+    )
 
 engine = create_engine(settings.DATABASE_URL, **engine_args)
 
 # Create async engine
 async_engine = create_async_engine(
     settings.async_database_url,
-    echo=False, # Overriding settings.DEBUG for async engine
+    echo=False,  # Overriding settings.DEBUG for async engine
     pool_size=20,  # Increased from default 5
     max_overflow=10,  # Allow temporary connections
     pool_pre_ping=True,  # Verify connections before use
@@ -39,6 +43,7 @@ async_engine = create_async_engine(
 
 # Enable SQLite foreign keys
 if is_sqlite:
+
     @event.listens_for(engine, "connect")
     def set_sqlite_pragma(dbapi_conn, connection_record):
         cursor = dbapi_conn.cursor()
@@ -51,10 +56,9 @@ if is_sqlite:
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-AsyncSessionLocal = async_sessionmaker(
-    async_engine, class_=AsyncSession, expire_on_commit=False
-)
+AsyncSessionLocal = async_sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
 
 def get_db():

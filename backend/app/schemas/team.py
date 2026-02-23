@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+
 
 class TeamBase(BaseModel):
     name: str
@@ -11,19 +11,21 @@ class TeamBase(BaseModel):
     losses: int = 0
     ties: int = 0
     elo_rating: float = 1500.0  # Power Ranking
-    logo_url: Optional[str] = None
-    primary_color: Optional[str] = None
-    secondary_color: Optional[str] = None
-    established_year: Optional[int] = None
-    stadium_id: Optional[int] = None
+    logo_url: str | None = None
+    primary_color: str | None = None
+    secondary_color: str | None = None
+    established_year: int | None = None
+    stadium_id: int | None = None
 
     # Medical & Staff
     medical_rating: int = 50
     training_staff_quality: int = 50
     medical_budget: float = 10.0
 
+
 class TeamCreate(TeamBase):
     pass
+
 
 class Team(TeamBase):
     id: int

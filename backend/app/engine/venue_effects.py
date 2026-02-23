@@ -6,8 +6,10 @@ Calculates atmosphere and home-field modifiers based on venue,
 game type, and special occasions (Thanksgiving, playoffs, etc).
 """
 
-from typing import Dict, Any, Optional
+from typing import Any
+
 from app.data.special_jerseys import THANKSGIVING_HOSTS, is_thanksgiving_host
+
 
 class VenueEffects:
     """
@@ -82,7 +84,7 @@ class VenueEffects:
         crowd = self.get_crowd_energy()
         return 1.0 + (crowd - 1.0) * 0.5  # 50% of crowd energy effect
 
-    def get_all_modifiers(self) -> Dict[str, float]:
+    def get_all_modifiers(self) -> dict[str, float]:
         """Get all venue modifiers as a dictionary."""
         return {
             "home_field_boost": self.get_home_field_modifier(),
@@ -90,11 +92,13 @@ class VenueEffects:
             "home_fatigue_modifier": self.get_fatigue_modifier(),
             "away_penalty_modifier": self.get_penalty_modifier(),
             "is_thanksgiving": self.game_type == "THANKSGIVING",
-            "is_traditional_host": is_thanksgiving_host(self.home_team) if self.game_type == "THANKSGIVING" else False,
+            "is_traditional_host": is_thanksgiving_host(self.home_team)
+            if self.game_type == "THANKSGIVING"
+            else False,
         }
 
 
-def get_thanksgiving_atmosphere(home_team: str) -> Dict[str, Any]:
+def get_thanksgiving_atmosphere(home_team: str) -> dict[str, Any]:
     """
     Get full Thanksgiving game atmosphere settings.
 

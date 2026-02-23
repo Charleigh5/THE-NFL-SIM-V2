@@ -12,42 +12,43 @@ Key Features:
 - Injury risk calculation per drill
 """
 
-from enum import Enum
-from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
-import math
 import random
+from dataclasses import dataclass
+from enum import Enum
 
 from pydantic import BaseModel, Field
 
 
 class SeasonPhase(str, Enum):
     """Training intensity varies by season phase."""
-    OFFSEASON = "OFFSEASON"     # High intensity, high volume
-    PRESEASON = "PRESEASON"     # Tapering, scheme focus
-    REGULAR = "REGULAR"         # Maintenance mode
-    POSTSEASON = "POSTSEASON"   # Recovery focus
+
+    OFFSEASON = "OFFSEASON"  # High intensity, high volume
+    PRESEASON = "PRESEASON"  # Tapering, scheme focus
+    REGULAR = "REGULAR"  # Maintenance mode
+    POSTSEASON = "POSTSEASON"  # Recovery focus
 
 
 class TrainingPhilosophy(str, Enum):
     """Different coaching philosophies affect outcomes."""
-    VOLUME = "VOLUME"           # +30% XP, +80% injury risk
-    INTENSITY = "INTENSITY"     # +50% XP, +100% fatigue
-    SMART = "SMART"             # Normal XP, -40% injury risk
-    OLD_SCHOOL = "OLD_SCHOOL"   # -10% XP, +5 toughness bonus
+
+    VOLUME = "VOLUME"  # +30% XP, +80% injury risk
+    INTENSITY = "INTENSITY"  # +50% XP, +100% fatigue
+    SMART = "SMART"  # Normal XP, -40% injury risk
+    OLD_SCHOOL = "OLD_SCHOOL"  # -10% XP, +5 toughness bonus
 
 
 @dataclass
 class PhaseConfig:
     """Configuration for a season phase."""
-    intensity: float = 0.5      # 0.0 - 1.0
-    skill_focus: float = 0.5    # % skill work vs physical
-    recovery_time: int = 24     # Hours between sessions
+
+    intensity: float = 0.5  # 0.0 - 1.0
+    skill_focus: float = 0.5  # % skill work vs physical
+    recovery_time: int = 24  # Hours between sessions
     risk_tolerance: float = 0.05
 
 
 # Phase-specific training parameters
-PHASE_CONFIGS: Dict[SeasonPhase, PhaseConfig] = {
+PHASE_CONFIGS: dict[SeasonPhase, PhaseConfig] = {
     SeasonPhase.OFFSEASON: PhaseConfig(
         intensity=0.85,
         skill_focus=0.60,
@@ -76,14 +77,14 @@ PHASE_CONFIGS: Dict[SeasonPhase, PhaseConfig] = {
 
 
 # Position-specific stat development rates (how fast each stat can improve)
-POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
+POSITION_DEVELOPMENT_RATES: dict[str, dict[str, float]] = {
     "QB": {
-        "throw_power": 0.3,          # Slow (physical limit)
+        "throw_power": 0.3,  # Slow (physical limit)
         "throw_accuracy_short": 0.8,
         "throw_accuracy_mid": 0.7,
         "throw_accuracy_deep": 0.6,
         "awareness": 0.85,
-        "play_recognition": 0.9,     # Mental stats develop fast
+        "play_recognition": 0.9,  # Mental stats develop fast
         "throw_on_run": 0.65,
         "speed": 0.2,
         "agility": 0.4,
@@ -93,7 +94,7 @@ POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
         "acceleration": 0.6,
         "agility": 0.7,
         "break_tackle": 0.8,
-        "carrying": 0.9,             # Ball security improves quickly
+        "carrying": 0.9,  # Ball security improves quickly
         "catching": 0.7,
         "route_running": 0.6,
         "pass_block": 0.75,
@@ -105,7 +106,7 @@ POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
         "speed": 0.3,
         "acceleration": 0.5,
         "agility": 0.7,
-        "route_running": 1.0,        # Pure technique - fastest development
+        "route_running": 1.0,  # Pure technique - fastest development
         "catching": 0.9,
         "catch_in_traffic": 0.8,
         "spectacular_catch": 0.6,
@@ -118,7 +119,7 @@ POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
         "acceleration": 0.5,
         "man_coverage": 0.9,
         "zone_coverage": 0.85,
-        "press": 1.0,                # Technique-based
+        "press": 1.0,  # Technique-based
         "change_of_direction": 0.6,
         "awareness": 0.8,
         "ball_skills": 0.7,
@@ -150,15 +151,16 @@ POSITION_DEVELOPMENT_RATES: Dict[str, Dict[str, float]] = {
 
 class TrainingResult(BaseModel):
     """Result of a training session."""
-    xp_gains: Dict[str, float] = Field(default_factory=dict)
-    stat_changes: Dict[str, int] = Field(default_factory=dict)
+
+    xp_gains: dict[str, float] = Field(default_factory=dict)
+    stat_changes: dict[str, int] = Field(default_factory=dict)
     fatigue_added: float = 0.0
     injury_occurred: bool = False
-    injury_type: Optional[str] = None
-    injury_severity: Optional[str] = None
+    injury_type: str | None = None
+    injury_severity: str | None = None
     weeks_out: int = 0
     session_grade: str = "B"
-    notes: List[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
 
 
 class TrainingProgramsService:
@@ -183,13 +185,12 @@ class TrainingProgramsService:
             90 rating → ~2500 XP needed
             99 rating → ~10000 XP needed
         """
-        return int(50 * (1.15 ** current_rating))
+        return int(50 * (1.15**current_rating))
 
     def get_development_rate(self, position: str, stat: str) -> float:
         """Get the development rate for a specific stat based on position."""
         position_rates = POSITION_DEVELOPMENT_RATES.get(
-            position,
-            POSITION_DEVELOPMENT_RATES["DEFAULT"]
+            position, POSITION_DEVELOPMENT_RATES["DEFAULT"]
         )
         return position_rates.get(stat, 0.5)
 
@@ -197,7 +198,7 @@ class TrainingProgramsService:
         self,
         player_age: int,
         player_position: str,
-        player_ratings: Dict[str, int],
+        player_ratings: dict[str, int],
         player_fatigue: float,
         drill_name: str,
         drill_target_stat: str,
@@ -293,7 +294,7 @@ class TrainingProgramsService:
         base_risk: float,
         fatigue: float,
         age: int,
-    ) -> Dict:
+    ) -> dict:
         """
         Calculate injury probability and determine outcome.
 
@@ -333,11 +334,11 @@ class TrainingProgramsService:
         """Determine injury severity based on overall risk."""
         roll = self.rng.random()
         if roll < 0.6:
-            return "minor"      # 1-2 weeks
+            return "minor"  # 1-2 weeks
         elif roll < 0.9:
-            return "moderate"   # 3-6 weeks
+            return "moderate"  # 3-6 weeks
         else:
-            return "severe"     # 8-16 weeks
+            return "severe"  # 8-16 weeks
 
     def _get_random_injury_type(self) -> str:
         """Get a random training injury type."""
@@ -365,9 +366,9 @@ class TrainingProgramsService:
     def recommend_drills_for_player(
         self,
         player_position: str,
-        player_ratings: Dict[str, int],
-        focus_area: Optional[str] = None,
-    ) -> List[str]:
+        player_ratings: dict[str, int],
+        focus_area: str | None = None,
+    ) -> list[str]:
         """
         Recommend drills based on player's weakest stats.
 
@@ -381,8 +382,7 @@ class TrainingProgramsService:
         """
         # Get development rates for position
         position_rates = POSITION_DEVELOPMENT_RATES.get(
-            player_position,
-            POSITION_DEVELOPMENT_RATES["DEFAULT"]
+            player_position, POSITION_DEVELOPMENT_RATES["DEFAULT"]
         )
 
         # Score each stat by: training_value = development_rate * (99 - current_rating)

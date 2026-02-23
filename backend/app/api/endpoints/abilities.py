@@ -7,18 +7,18 @@ Provides endpoints for:
 - Unlocking abilities (costs XP)
 - Pre-snap insight (Film Study / diagnostician read)
 """
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from typing import Dict, List, Optional
+
 import random
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.player import Player
 from app.models.coach import Coach
-from app.services.ability_service import AbilityService
+from app.models.player import Player
 from app.rpg.abilities import AbilityStatus, get_ability_definition
+from app.services.ability_service import AbilityService
 
 router = APIRouter(prefix="/abilities", tags=["RPG Abilities"])
 
@@ -27,19 +27,22 @@ router = APIRouter(prefix="/abilities", tags=["RPG Abilities"])
 # PYDANTIC SCHEMAS
 # =============================================================================
 
+
 class AbilityInfo(BaseModel):
     """Information about an ability."""
+
     key: str
     name: str
     description: str
-    position_requirements: List[str]
+    position_requirements: list[str]
     level_requirement: int
     xp_cost: int
-    effects: Dict[str, float]
+    effects: dict[str, float]
 
 
 class AbilityStatus(BaseModel):
     """Status of an ability for a player."""
+
     key: str
     name: str
     description: str
@@ -47,41 +50,46 @@ class AbilityStatus(BaseModel):
     level_required: int
     xp_cost: int
     reason: str
-    effects: Dict[str, float]
+    effects: dict[str, float]
 
 
 class UnlockAbilityRequest(BaseModel):
     """Request to unlock an ability."""
+
     ability_key: str
 
 
 class UnlockAbilityResponse(BaseModel):
     """Response after unlocking an ability."""
+
     success: bool
     message: str
-    remaining_xp: Optional[int] = None
+    remaining_xp: int | None = None
 
 
 class PreSnapInsightRequest(BaseModel):
     """Request for pre-snap defensive read."""
+
     qb_id: int
-    defensive_coordinator_id: Optional[int] = None
+    defensive_coordinator_id: int | None = None
 
 
 class PreSnapInsightResponse(BaseModel):
     """Pre-snap read result from Diagnostician ability."""
+
     has_ability: bool
-    predicted_coverage: Optional[str] = None
-    confidence: Optional[str] = None  # "High", "Medium", "Low"
-    key_read: Optional[str] = None
-    is_correct: Optional[bool] = None  # For debug/verification
+    predicted_coverage: str | None = None
+    confidence: str | None = None  # "High", "Medium", "Low"
+    key_read: str | None = None
+    is_correct: bool | None = None  # For debug/verification
 
 
 # =============================================================================
 # API ENDPOINTS
 # =============================================================================
 
-@router.get("/catalog", response_model=List[AbilityInfo])
+
+@router.get("/catalog", response_model=list[AbilityInfo])
 async def get_ability_catalog():
     """Get the full ability catalog."""
     from app.rpg.abilities import ABILITY_CATALOG
@@ -100,7 +108,7 @@ async def get_ability_catalog():
     ]
 
 
-@router.get("/players/{player_id}", response_model=Dict[str, AbilityStatus])
+@router.get("/players/{player_id}", response_model=dict[str, AbilityStatus])
 async def get_player_ability_status(player_id: int, db: Session = Depends(get_db)):
     """
     Get the status of all abilities for a player.
@@ -111,7 +119,7 @@ async def get_player_ability_status(player_id: int, db: Session = Depends(get_db
     return service.get_player_ability_status(player_id)
 
 
-@router.get("/players/{player_id}/unlocked", response_model=List[AbilityInfo])
+@router.get("/players/{player_id}/unlocked", response_model=list[AbilityInfo])
 async def get_player_unlocked_abilities(player_id: int, db: Session = Depends(get_db)):
     """Get list of abilities unlocked by a player."""
     service = AbilityService(db)
@@ -124,15 +132,17 @@ async def get_player_unlocked_abilities(player_id: int, db: Session = Depends(ge
     for ability in abilities:
         for key, val in ABILITY_CATALOG.items():
             if val.name == ability.name:
-                result.append(AbilityInfo(
-                    key=key,
-                    name=ability.name,
-                    description=ability.description,
-                    position_requirements=ability.position_requirements,
-                    level_requirement=ability.level_requirement,
-                    xp_cost=ability.xp_cost,
-                    effects=ability.effects,
-                ))
+                result.append(
+                    AbilityInfo(
+                        key=key,
+                        name=ability.name,
+                        description=ability.description,
+                        position_requirements=ability.position_requirements,
+                        level_requirement=ability.level_requirement,
+                        xp_cost=ability.xp_cost,
+                        effects=ability.effects,
+                    )
+                )
                 break
 
     return result
@@ -140,9 +150,7 @@ async def get_player_unlocked_abilities(player_id: int, db: Session = Depends(ge
 
 @router.post("/players/{player_id}/unlock", response_model=UnlockAbilityResponse)
 async def unlock_ability(
-    player_id: int,
-    request: UnlockAbilityRequest,
-    db: Session = Depends(get_db)
+    player_id: int, request: UnlockAbilityRequest, db: Session = Depends(get_db)
 ):
     """
     Unlock an ability for a player.
@@ -153,17 +161,12 @@ async def unlock_ability(
     success, message, player = service.unlock_ability(player_id, request.ability_key)
 
     return UnlockAbilityResponse(
-        success=success,
-        message=message,
-        remaining_xp=player.xp if player else None
+        success=success, message=message, remaining_xp=player.xp if player else None
     )
 
 
 @router.post("/match/insight", response_model=PreSnapInsightResponse)
-async def get_pre_snap_insight(
-    request: PreSnapInsightRequest,
-    db: Session = Depends(get_db)
-):
+async def get_pre_snap_insight(request: PreSnapInsightRequest, db: Session = Depends(get_db)):
     """
     Get pre-snap defensive insight if QB has Diagnostician ability.
 

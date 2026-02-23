@@ -10,17 +10,17 @@ Context7 Best Practices:
 - Dependency injection pattern
 """
 
-from dataclasses import dataclass, field
-from typing import List, Optional
-from enum import Enum
 import logging
 import re
+from dataclasses import dataclass, field
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
 
 class TaskComplexity(str, Enum):
     """Estimated complexity level for a task."""
+
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
@@ -29,12 +29,13 @@ class TaskComplexity(str, Enum):
 @dataclass
 class ResearchResult:
     """Result of AI research for a task."""
+
     summary: str
     recommended_approach: str
-    code_examples: List[str] = field(default_factory=list)
+    code_examples: list[str] = field(default_factory=list)
     complexity: TaskComplexity = TaskComplexity.MEDIUM
-    sources: List[str] = field(default_factory=list)
-    related_docs: List[str] = field(default_factory=list)
+    sources: list[str] = field(default_factory=list)
+    related_docs: list[str] = field(default_factory=list)
 
 
 class AIResearchService:
@@ -54,7 +55,7 @@ class AIResearchService:
             "examples": [
                 ".button { transition: all 0.2s ease; }\n.button:hover { transform: scale(1.02); }",
             ],
-            "sources": ["https://react.dev/reference/react-dom/components/button"]
+            "sources": ["https://react.dev/reference/react-dom/components/button"],
         },
         r"modal|dialog|popup": {
             "summary": "Modals require focus trapping and keyboard accessibility.",
@@ -63,7 +64,7 @@ class AIResearchService:
             "examples": [
                 "import { createPortal } from 'react-dom';\nreturn createPortal(<Modal />, document.body);",
             ],
-            "sources": ["https://react.dev/reference/react-dom/createPortal"]
+            "sources": ["https://react.dev/reference/react-dom/createPortal"],
         },
         r"form|input|validation": {
             "summary": "Form handling with controlled components and validation.",
@@ -72,7 +73,7 @@ class AIResearchService:
             "examples": [
                 "const [value, setValue] = useState('');\nconst handleChange = (e) => setValue(e.target.value);",
             ],
-            "sources": ["https://react.dev/learn/managing-state"]
+            "sources": ["https://react.dev/learn/managing-state"],
         },
         r"api|fetch|endpoint": {
             "summary": "API integration with proper error handling and loading states.",
@@ -81,7 +82,7 @@ class AIResearchService:
             "examples": [
                 "@router.post('/endpoint')\nasync def handler(request: Request):\n    return {'success': True}",
             ],
-            "sources": ["https://fastapi.tiangolo.com/tutorial/first-steps/"]
+            "sources": ["https://fastapi.tiangolo.com/tutorial/first-steps/"],
         },
         r"animation|transition|motion": {
             "summary": "CSS transitions and animations for smooth visual effects.",
@@ -90,7 +91,7 @@ class AIResearchService:
             "examples": [
                 "@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }\n.element { animation: fadeIn 0.3s ease; }",
             ],
-            "sources": ["https://developer.mozilla.org/en-US/docs/Web/CSS/animation"]
+            "sources": ["https://developer.mozilla.org/en-US/docs/Web/CSS/animation"],
         },
         r"layout|grid|flex": {
             "summary": "Modern CSS layout with Flexbox and Grid.",
@@ -99,7 +100,7 @@ class AIResearchService:
             "examples": [
                 ".container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }",
             ],
-            "sources": ["https://css-tricks.com/snippets/css/complete-guide-grid/"]
+            "sources": ["https://css-tricks.com/snippets/css/complete-guide-grid/"],
         },
         r"table|list|data": {
             "summary": "Data display with virtualization for large datasets.",
@@ -108,7 +109,7 @@ class AIResearchService:
             "examples": [
                 "import { FixedSizeList } from 'react-window';\n<FixedSizeList height={400} itemCount={1000} itemSize={35}>",
             ],
-            "sources": ["https://react.dev/learn/escape-hatches"]
+            "sources": ["https://react.dev/learn/escape-hatches"],
         },
     }
 
@@ -117,7 +118,7 @@ class AIResearchService:
         "approach": "Follow React best practices with proper component structure, state management, and accessibility.",
         "complexity": TaskComplexity.MEDIUM,
         "examples": [],
-        "sources": ["https://react.dev/learn"]
+        "sources": ["https://react.dev/learn"],
     }
 
     async def research_task(self, description: str) -> ResearchResult:
@@ -143,7 +144,7 @@ class AIResearchService:
                     code_examples=research.get("examples", []),
                     complexity=research["complexity"],
                     sources=research.get("sources", []),
-                    related_docs=[]
+                    related_docs=[],
                 )
 
         # Default fallback
@@ -153,7 +154,7 @@ class AIResearchService:
             code_examples=self.DEFAULT_RESEARCH["examples"],
             complexity=self.DEFAULT_RESEARCH["complexity"],
             sources=self.DEFAULT_RESEARCH["sources"],
-            related_docs=[]
+            related_docs=[],
         )
 
     def estimate_complexity(self, description: str) -> TaskComplexity:

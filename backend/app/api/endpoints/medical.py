@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional, Any
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -7,6 +6,7 @@ from app.core.database import get_db
 from app.services.medical_service import MedicalService
 
 router = APIRouter(prefix="/api/medical", tags=["medical"])
+
 
 class BodyHealthResponse(BaseModel):
     player_id: int
@@ -19,16 +19,19 @@ class BodyHealthResponse(BaseModel):
     general_wear: float
     is_injured: bool
 
+
 def get_medical_service(db: Session = Depends(get_db)) -> MedicalService:
     return MedicalService(db)
+
 
 @router.get("/player/{player_id}", response_model=BodyHealthResponse)
 async def get_player_health(
     player_id: int,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     from app.models.player import Player
+
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -48,21 +51,24 @@ async def get_player_health(
         right_leg_health=health.right_leg_health,
         left_leg_health=health.left_leg_health,
         general_wear=health.general_wear,
-        is_injured=player.injury_status != "HEALTHY"
+        is_injured=player.injury_status != "HEALTHY",
     )
+
 
 class ApplyWearRequest(BaseModel):
     player_id: int
     snaps: int
     position: str
 
+
 @router.post("/apply-wear")
 async def apply_wear(
     request: ApplyWearRequest,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     from app.models.player import Player
+
     player = db.query(Player).filter(Player.id == request.player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -75,19 +81,20 @@ class TreatmentDecisionRequest(BaseModel):
     player_id: int
     treatment: str  # "REST", "SURGERY", "PLAY_THROUGH"
 
+
 class TreatmentDecisionResponse(BaseModel):
     player_id: int
     treatment: str
     recovery_weeks: int
-    surgery_risk: Optional[float] = None
-    performance_penalty: Optional[Dict[str, int]] = None
+    surgery_risk: float | None = None
+    performance_penalty: dict[str, int] | None = None
 
 
 @router.post("/treatment", response_model=TreatmentDecisionResponse)
 async def apply_treatment(
     request: TreatmentDecisionRequest,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Apply a treatment decision to an injured player.
@@ -97,8 +104,9 @@ async def apply_treatment(
     - SURGERY: Faster recovery but surgery risk (5-15% complication)
     - PLAY_THROUGH: Player continues to play with performance penalties
     """
-    from app.models.player import Player, InjuryStatus
     import random
+
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == request.player_id).first()
     if not player:
@@ -146,9 +154,7 @@ async def apply_treatment(
 
         # Toughness reduces penalties
         toughness_reduction = toughness / 200.0  # Max 50% reduction
-        performance_penalty = {
-            k: int(v * (1 - toughness_reduction)) for k, v in penalties.items()
-        }
+        performance_penalty = {k: int(v * (1 - toughness_reduction)) for k, v in penalties.items()}
 
         player.injury_status = InjuryStatus.QUESTIONABLE
 
@@ -163,7 +169,7 @@ async def apply_treatment(
         treatment=treatment,
         recovery_weeks=recovery_weeks,
         surgery_risk=surgery_risk,
-        performance_penalty=performance_penalty
+        performance_penalty=performance_penalty,
     )
 
 
@@ -172,24 +178,22 @@ class InjuredPlayerResponse(BaseModel):
     first_name: str
     last_name: str
     position: str
-    injury_type: Optional[str]
+    injury_type: str | None
     injury_status: str
     severity: int
     weeks_remaining: int
 
 
-@router.get("/team/{team_id}/injuries", response_model=List[InjuredPlayerResponse])
-async def get_team_injuries(
-    team_id: int,
-    db: Session = Depends(get_db)
-):
+@router.get("/team/{team_id}/injuries", response_model=list[InjuredPlayerResponse])
+async def get_team_injuries(team_id: int, db: Session = Depends(get_db)):
     """Get all injured players for a team."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
-    injured_players = db.query(Player).filter(
-        Player.team_id == team_id,
-        Player.injury_status != InjuryStatus.ACTIVE
-    ).all()
+    injured_players = (
+        db.query(Player)
+        .filter(Player.team_id == team_id, Player.injury_status != InjuryStatus.ACTIVE)
+        .all()
+    )
 
     return [
         InjuredPlayerResponse(
@@ -198,9 +202,11 @@ async def get_team_injuries(
             last_name=p.last_name,
             position=p.position,
             injury_type=p.injury_type,
-            injury_status=p.injury_status.value if hasattr(p.injury_status, 'value') else str(p.injury_status),
+            injury_status=p.injury_status.value
+            if hasattr(p.injury_status, "value")
+            else str(p.injury_status),
             severity=p.injury_severity or 0,
-            weeks_remaining=p.weeks_to_recovery or 0
+            weeks_remaining=p.weeks_to_recovery or 0,
         )
         for p in injured_players
     ]
@@ -216,12 +222,9 @@ class SurgeryRiskResponse(BaseModel):
 
 
 @router.get("/surgery-risk/{player_id}", response_model=SurgeryRiskResponse)
-async def calculate_surgery_risk(
-    player_id: int,
-    db: Session = Depends(get_db)
-):
+async def calculate_surgery_risk(player_id: int, db: Session = Depends(get_db)):
     """Calculate surgery risk and potential recovery improvement for a player."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
@@ -250,6 +253,5 @@ async def calculate_surgery_risk(
         age_risk=age_risk,
         severity_risk=severity_risk,
         total_risk=total_risk,
-        estimated_recovery_reduction=estimated_reduction
+        estimated_recovery_reduction=estimated_reduction,
     )
-

@@ -10,22 +10,23 @@ Phase 10: Hyper-Immersion
 - Statistical callouts
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
 import random
+from dataclasses import dataclass
+from enum import Enum
 
 
 class BroadcastStyle(str, Enum):
     """Broadcasting style/network flavor."""
-    ESPN = "ESPN"           # High energy, modern stats
-    CBS = "CBS"             # Traditional, analytical
-    FOX = "FOX"             # Dramatic, entertainment
+
+    ESPN = "ESPN"  # High energy, modern stats
+    CBS = "CBS"  # Traditional, analytical
+    FOX = "FOX"  # Dramatic, entertainment
     NFL_NETWORK = "NFL_NETWORK"  # Insider knowledge, technical
 
 
 class MomentType(str, Enum):
     """Types of significant moments."""
+
     TOUCHDOWN = "TOUCHDOWN"
     TURNOVER = "TURNOVER"
     SACK = "SACK"
@@ -40,6 +41,7 @@ class MomentType(str, Enum):
 @dataclass
 class GameContext:
     """Current game situation for commentary context."""
+
     home_team: str
     away_team: str
     home_score: int
@@ -52,7 +54,7 @@ class GameContext:
     possession_team: str
     is_redzone: bool = False
     is_two_minute: bool = False
-    momentum_team: Optional[str] = None
+    momentum_team: str | None = None
 
     @property
     def score_diff(self) -> int:
@@ -186,6 +188,7 @@ SITUATIONAL_TEMPLATES = {
 # BROADCASTING SERVICE
 # =============================================================================
 
+
 class BroadcastingService:
     """
     Generates dynamic play-by-play commentary with context awareness.
@@ -196,10 +199,7 @@ class BroadcastingService:
         self.rng = random.Random(seed)
 
     def generate_play_commentary(
-        self,
-        play_type: str,
-        play_data: Dict,
-        context: GameContext
+        self, play_type: str, play_data: dict, context: GameContext
     ) -> str:
         """
         Generate commentary for a specific play.
@@ -293,7 +293,7 @@ class BroadcastingService:
         }
         return endings.get(self.style, endings[BroadcastStyle.ESPN])
 
-    def generate_big_moment(self, moment_type: MomentType, data: Dict, context: GameContext) -> str:
+    def generate_big_moment(self, moment_type: MomentType, data: dict, context: GameContext) -> str:
         """Generate commentary for significant moments."""
         if moment_type == MomentType.TOUCHDOWN:
             return self.generate_play_commentary("TOUCHDOWN", data, context)
@@ -308,7 +308,7 @@ class BroadcastingService:
             templates = SITUATIONAL_TEMPLATES["CLUTCH_DRIVE"]
             return self.rng.choice(templates).format(qb=qb, team=context.possession_team)
         else:
-            return f"A significant moment in this contest!"
+            return "A significant moment in this contest!"
 
     def generate_stat_callout(self, player: str, stat: str, value: int) -> str:
         """Generate statistical highlight commentary."""

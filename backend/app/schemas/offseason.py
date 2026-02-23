@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
+
 
 class TeamNeed(BaseModel):
     position: str
@@ -7,13 +7,15 @@ class TeamNeed(BaseModel):
     target_count: int
     need_score: float  # Higher means more needed
 
+
 class Prospect(BaseModel):
     id: int
     name: str
     position: str
     overall_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class DraftPickSummary(BaseModel):
     round: int
@@ -23,6 +25,7 @@ class DraftPickSummary(BaseModel):
     player_position: str
     player_overall: int
 
+
 class DraftPickDetail(BaseModel):
     id: int
     season_id: int
@@ -30,9 +33,10 @@ class DraftPickDetail(BaseModel):
     original_team_id: int
     round: int
     pick_number: int
-    player_id: Optional[int] = None
-    
+    player_id: int | None = None
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class PlayerProgressionResult(BaseModel):
     player_id: int
@@ -41,8 +45,9 @@ class PlayerProgressionResult(BaseModel):
     change: int
     old_rating: int
     new_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class PlayerProgressionSummary(BaseModel):
     player_id: int

@@ -1,35 +1,33 @@
-
-from typing import Dict, Tuple
-
 # Format: (peak_start, peak_end, decline_rate_per_year)
-POSITION_CURVES: Dict[str, Tuple[int, int, float]] = {
-    "QB":  (26, 30, 0.02),   # Slow decline, mental peak late
-    "RB":  (23, 27, 0.06),   # Steep decline, early peak
-    "WR":  (25, 29, 0.04),   # Moderate decline
-    "TE":  (26, 30, 0.03),   # Technique helps longevity
-    "OT":  (26, 32, 0.03),   # Long prime, technique reliant
-    "OG":  (26, 32, 0.03),
-    "C":   (26, 32, 0.02),   # Mental aspect extends career
-    "DE":  (25, 29, 0.04),
-    "DT":  (25, 30, 0.035),
-    "LB":  (25, 29, 0.04),   # Athleticism dependent
-    "EDGE": (25, 29, 0.045), # Burst dependent
-    "CB":  (24, 28, 0.05),   # Speed dependent, sharp falloff
-    "S":   (25, 30, 0.035),
-    "K":   (28, 38, 0.015),  # Very long prime
-    "P":   (28, 38, 0.015),
+POSITION_CURVES: dict[str, tuple[int, int, float]] = {
+    "QB": (26, 30, 0.02),  # Slow decline, mental peak late
+    "RB": (23, 27, 0.06),  # Steep decline, early peak
+    "WR": (25, 29, 0.04),  # Moderate decline
+    "TE": (26, 30, 0.03),  # Technique helps longevity
+    "OT": (26, 32, 0.03),  # Long prime, technique reliant
+    "OG": (26, 32, 0.03),
+    "C": (26, 32, 0.02),  # Mental aspect extends career
+    "DE": (25, 29, 0.04),
+    "DT": (25, 30, 0.035),
+    "LB": (25, 29, 0.04),  # Athleticism dependent
+    "EDGE": (25, 29, 0.045),  # Burst dependent
+    "CB": (24, 28, 0.05),  # Speed dependent, sharp falloff
+    "S": (25, 30, 0.035),
+    "K": (28, 38, 0.015),  # Very long prime
+    "P": (28, 38, 0.015),
     # Default for unknown positions
-    "DEFAULT": (25, 29, 0.04)
+    "DEFAULT": (25, 29, 0.04),
 }
 
 # Age-based LEARNING rate modifiers (how fast players improve)
 # Different from performance curves - this is about skill acquisition
-AGE_DEVELOPMENT_MODIFIERS: Dict[Tuple[int, int], float] = {
-    (21, 24): 1.2,   # Peak learning years - young brain, high neural plasticity
-    (25, 27): 1.0,   # Steady state - established patterns
-    (28, 30): 0.8,   # Slower gains - harder to learn new skills
-    (31, 99): 0.5,   # Veteran maintenance - mostly pattern recognition
+AGE_DEVELOPMENT_MODIFIERS: dict[tuple[int, int], float] = {
+    (21, 24): 1.2,  # Peak learning years - young brain, high neural plasticity
+    (25, 27): 1.0,  # Steady state - established patterns
+    (28, 30): 0.8,  # Slower gains - harder to learn new skills
+    (31, 99): 0.5,  # Veteran maintenance - mostly pattern recognition
 }
+
 
 def get_age_modifier(age: int, position: str) -> float:
     """
@@ -108,6 +106,7 @@ def get_experience_bonus(years_experience: int, position: str) -> float:
         # Purely physical positions benefit less
         return min(1.05, 1.0 + years_experience * 0.008)
 
+
 def get_physical_regression(age: int, position: str) -> float:
     """
     Specific modifier for physical stats (Speed, Acceleration)
@@ -125,4 +124,3 @@ def get_physical_regression(age: int, position: str) -> float:
     else:
         # Slower regression for linemen/QBs
         return max(0.85, 1.0 - (years_over * 0.008))
-

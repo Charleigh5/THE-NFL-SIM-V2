@@ -11,18 +11,18 @@ Phase 7: Advanced Training System
 - Seasonal availability
 """
 
-from dataclasses import dataclass, field
-from typing import List, Literal, Optional
 from enum import Enum
-from pydantic import BaseModel, Field
 
+from pydantic import BaseModel, Field
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class SeasonPhase(str, Enum):
     """When a drill is available."""
+
     OFFSEASON = "offseason"
     PRESEASON = "preseason"
     REGULAR = "regular"
@@ -30,6 +30,7 @@ class SeasonPhase(str, Enum):
 
 class DrillCategory(str, Enum):
     """Categories of drills."""
+
     STRENGTH = "STRENGTH"
     SPEED = "SPEED"
     TECHNIQUE = "TECHNIQUE"
@@ -42,21 +43,27 @@ class DrillCategory(str, Enum):
 # PYDANTIC MODELS (B-012)
 # ============================================================================
 
+
 class Drill(BaseModel):
     """
     Definition of a training drill (B-012).
 
     Follows UMAP principles: each drill has clear inputs and outputs.
     """
+
     name: str = Field(..., description="Display name of the drill")
     target_stat: str = Field(..., description="Primary stat improved by this drill")
-    secondary_stats: List[str] = Field(default_factory=list, description="Additional stats affected")
+    secondary_stats: list[str] = Field(
+        default_factory=list, description="Additional stats affected"
+    )
     injury_risk: float = Field(ge=0.0, le=1.0, default=0.05, description="Base injury risk (0-1)")
-    season_filter: List[SeasonPhase] = Field(
+    season_filter: list[SeasonPhase] = Field(
         default_factory=lambda: [SeasonPhase.OFFSEASON, SeasonPhase.PRESEASON, SeasonPhase.REGULAR]
     )
     xp_multiplier: float = Field(default=1.0, ge=0.1, le=3.0, description="XP gain multiplier")
-    fatigue_cost: float = Field(default=10.0, ge=0.0, le=50.0, description="Fatigue added per session")
+    fatigue_cost: float = Field(
+        default=10.0, ge=0.0, le=50.0, description="Fatigue added per session"
+    )
     category: DrillCategory = Field(default=DrillCategory.TECHNIQUE)
     description: str = Field(default="", description="Detailed description for UI")
 
@@ -78,7 +85,7 @@ QB_DRILLS = [
         fatigue_cost=8.0,
         category=DrillCategory.TECHNIQUE,
         season_filter=[SeasonPhase.OFFSEASON, SeasonPhase.PRESEASON],
-        description="Ladder drills and drop-back mechanics to improve throwing platform."
+        description="Ladder drills and drop-back mechanics to improve throwing platform.",
     ),
     Drill(
         name="Weighted Ball Throws",
@@ -89,7 +96,7 @@ QB_DRILLS = [
         fatigue_cost=15.0,
         category=DrillCategory.STRENGTH,
         season_filter=[SeasonPhase.OFFSEASON],
-        description="Overweighted football throws to build arm strength. High injury risk."
+        description="Overweighted football throws to build arm strength. High injury risk.",
     ),
     Drill(
         name="7-on-7 Passing",
@@ -99,7 +106,7 @@ QB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Live passing drills against coverage without pass rush."
+        description="Live passing drills against coverage without pass rush.",
     ),
     Drill(
         name="Film Study - Defenses",
@@ -109,7 +116,7 @@ QB_DRILLS = [
         xp_multiplier=0.8,
         fatigue_cost=0.0,
         category=DrillCategory.MENTAL,
-        description="Study opponent defensive schemes and tendencies."
+        description="Study opponent defensive schemes and tendencies.",
     ),
     Drill(
         name="Arm Care Program",
@@ -119,7 +126,7 @@ QB_DRILLS = [
         xp_multiplier=0.5,
         fatigue_cost=5.0,
         category=DrillCategory.RECOVERY,
-        description="Low-intensity arm maintenance and stretching routine."
+        description="Low-intensity arm maintenance and stretching routine.",
     ),
     Drill(
         name="Pocket Presence Drill",
@@ -129,7 +136,7 @@ QB_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=15.0,
         category=DrillCategory.TECHNIQUE,
-        description="Simulated pressure to improve pocket movement and awareness."
+        description="Simulated pressure to improve pocket movement and awareness.",
     ),
     Drill(
         name="Two-Minute Drill",
@@ -139,7 +146,7 @@ QB_DRILLS = [
         xp_multiplier=1.6,
         fatigue_cost=20.0,
         category=DrillCategory.MENTAL,
-        description="High-pressure clock management and quick decision making."
+        description="High-pressure clock management and quick decision making.",
     ),
 ]
 
@@ -157,7 +164,7 @@ RB_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=12.0,
         category=DrillCategory.SPEED,
-        description="5-10-5 shuttle and cone drills for lateral quickness."
+        description="5-10-5 shuttle and cone drills for lateral quickness.",
     ),
     Drill(
         name="Sled Push",
@@ -168,7 +175,7 @@ RB_DRILLS = [
         fatigue_cost=18.0,
         category=DrillCategory.STRENGTH,
         season_filter=[SeasonPhase.OFFSEASON, SeasonPhase.PRESEASON],
-        description="Heavy sled work to build power at contact."
+        description="Heavy sled work to build power at contact.",
     ),
     Drill(
         name="Ball Security Gauntlet",
@@ -178,7 +185,7 @@ RB_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Multiple defenders attempting to strip the ball while running."
+        description="Multiple defenders attempting to strip the ball while running.",
     ),
     Drill(
         name="Vision Drills",
@@ -188,7 +195,7 @@ RB_DRILLS = [
         xp_multiplier=1.0,
         fatigue_cost=8.0,
         category=DrillCategory.MENTAL,
-        description="Read holes and make cuts based on blocking alignments."
+        description="Read holes and make cuts based on blocking alignments.",
     ),
     Drill(
         name="Zone Blocking Reads",
@@ -198,7 +205,7 @@ RB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Reading zone blocks and making appropriate cuts."
+        description="Reading zone blocks and making appropriate cuts.",
     ),
     Drill(
         name="Pass Protection",
@@ -208,7 +215,7 @@ RB_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Blocking blitzing linebackers and picking up assignments."
+        description="Blocking blitzing linebackers and picking up assignments.",
     ),
     Drill(
         name="Route Running - RB",
@@ -218,7 +225,7 @@ RB_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Swing routes, wheel routes, and option routes from backfield."
+        description="Swing routes, wheel routes, and option routes from backfield.",
     ),
 ]
 
@@ -236,7 +243,7 @@ WR_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Full route tree execution against air and coverage."
+        description="Full route tree execution against air and coverage.",
     ),
     Drill(
         name="Contested Catch Drills",
@@ -246,7 +253,7 @@ WR_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Jump ball and contested situations against DBs."
+        description="Jump ball and contested situations against DBs.",
     ),
     Drill(
         name="Timing Routes",
@@ -256,7 +263,7 @@ WR_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Timing-based routes: slants, hitches, comebacks."
+        description="Timing-based routes: slants, hitches, comebacks.",
     ),
     Drill(
         name="Release vs Press",
@@ -266,7 +273,7 @@ WR_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Getting off the line against press coverage."
+        description="Getting off the line against press coverage.",
     ),
     Drill(
         name="Deep Ball Tracking",
@@ -276,7 +283,7 @@ WR_DRILLS = [
         xp_multiplier=1.5,
         fatigue_cost=15.0,
         category=DrillCategory.TECHNIQUE,
-        description="Tracking deep balls over the shoulder."
+        description="Tracking deep balls over the shoulder.",
     ),
     Drill(
         name="YAC Drills",
@@ -286,7 +293,7 @@ WR_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=14.0,
         category=DrillCategory.SPEED,
-        description="Making defenders miss after the catch."
+        description="Making defenders miss after the catch.",
     ),
     Drill(
         name="Hand Fighting",
@@ -296,7 +303,7 @@ WR_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Using hands to create separation at the line and in routes."
+        description="Using hands to create separation at the line and in routes.",
     ),
 ]
 
@@ -314,7 +321,7 @@ OL_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Kick slides and anchor drills against rushers."
+        description="Kick slides and anchor drills against rushers.",
     ),
     Drill(
         name="Run Blocking - Drive",
@@ -324,7 +331,7 @@ OL_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=18.0,
         category=DrillCategory.STRENGTH,
-        description="Driving defenders off the line with power."
+        description="Driving defenders off the line with power.",
     ),
     Drill(
         name="Pull and Lead",
@@ -334,7 +341,7 @@ OL_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=15.0,
         category=DrillCategory.TECHNIQUE,
-        description="Pulling across the formation and leading through holes."
+        description="Pulling across the formation and leading through holes.",
     ),
     Drill(
         name="Combo Blocks",
@@ -344,7 +351,7 @@ OL_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Double teams transitioning to linebacker blocks."
+        description="Double teams transitioning to linebacker blocks.",
     ),
     Drill(
         name="Anchor Drill",
@@ -355,7 +362,7 @@ OL_DRILLS = [
         fatigue_cost=20.0,
         category=DrillCategory.STRENGTH,
         season_filter=[SeasonPhase.OFFSEASON, SeasonPhase.PRESEASON],
-        description="Absorbing bull rushes without giving ground."
+        description="Absorbing bull rushes without giving ground.",
     ),
     Drill(
         name="Hand Placement",
@@ -365,7 +372,7 @@ OL_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=8.0,
         category=DrillCategory.TECHNIQUE,
-        description="Proper strike timing and placement in pass sets."
+        description="Proper strike timing and placement in pass sets.",
     ),
     Drill(
         name="Communication Drills",
@@ -375,7 +382,7 @@ OL_DRILLS = [
         xp_multiplier=0.8,
         fatigue_cost=5.0,
         category=DrillCategory.MENTAL,
-        description="Calling out protections and reading blitz packages."
+        description="Calling out protections and reading blitz packages.",
     ),
 ]
 
@@ -393,7 +400,7 @@ DL_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=16.0,
         category=DrillCategory.TECHNIQUE,
-        description="Speed rush, bull rush, and counter moves."
+        description="Speed rush, bull rush, and counter moves.",
     ),
     Drill(
         name="Gap Control",
@@ -403,7 +410,7 @@ DL_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Maintaining gap integrity in run defense."
+        description="Maintaining gap integrity in run defense.",
     ),
     Drill(
         name="Get-Off Drills",
@@ -413,7 +420,7 @@ DL_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=12.0,
         category=DrillCategory.SPEED,
-        description="First step explosiveness off the snap."
+        description="First step explosiveness off the snap.",
     ),
     Drill(
         name="Hand Combat",
@@ -423,7 +430,7 @@ DL_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=15.0,
         category=DrillCategory.TECHNIQUE,
-        description="Hand fighting and disengaging from blocks."
+        description="Hand fighting and disengaging from blocks.",
     ),
     Drill(
         name="Pursuit Angles",
@@ -433,7 +440,7 @@ DL_DRILLS = [
         xp_multiplier=1.0,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Taking proper angles in run pursuit."
+        description="Taking proper angles in run pursuit.",
     ),
     Drill(
         name="Bull Rush Power",
@@ -444,7 +451,7 @@ DL_DRILLS = [
         fatigue_cost=22.0,
         category=DrillCategory.STRENGTH,
         season_filter=[SeasonPhase.OFFSEASON],
-        description="High-intensity power rushing. Very high injury risk."
+        description="High-intensity power rushing. Very high injury risk.",
     ),
 ]
 
@@ -462,7 +469,7 @@ DB_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Smooth backpedaling while reading receiver routes."
+        description="Smooth backpedaling while reading receiver routes.",
     ),
     Drill(
         name="Ball Tracking",
@@ -472,7 +479,7 @@ DB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Locating and high-pointing the ball."
+        description="Locating and high-pointing the ball.",
     ),
     Drill(
         name="Press Coverage",
@@ -482,7 +489,7 @@ DB_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Jamming receivers at the line of scrimmage."
+        description="Jamming receivers at the line of scrimmage.",
     ),
     Drill(
         name="Zone Coverage Drops",
@@ -492,7 +499,7 @@ DB_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=8.0,
         category=DrillCategory.TECHNIQUE,
-        description="Zone drops and reading quarterback eyes."
+        description="Zone drops and reading quarterback eyes.",
     ),
     Drill(
         name="Tackling - Open Field",
@@ -502,7 +509,7 @@ DB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=16.0,
         category=DrillCategory.TECHNIQUE,
-        description="Breaking down and tackling in space."
+        description="Breaking down and tackling in space.",
     ),
     Drill(
         name="Hip Turn Drill",
@@ -512,7 +519,7 @@ DB_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=10.0,
         category=DrillCategory.SPEED,
-        description="Opening hips and flipping when receivers break."
+        description="Opening hips and flipping when receivers break.",
     ),
 ]
 
@@ -530,7 +537,7 @@ LB_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Hook, curl, and flat zone responsibilities."
+        description="Hook, curl, and flat zone responsibilities.",
     ),
     Drill(
         name="Blitz Timing",
@@ -540,7 +547,7 @@ LB_DRILLS = [
         xp_multiplier=1.4,
         fatigue_cost=15.0,
         category=DrillCategory.TECHNIQUE,
-        description="Firing through gaps at the snap."
+        description="Firing through gaps at the snap.",
     ),
     Drill(
         name="Shed and Tackle",
@@ -550,7 +557,7 @@ LB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Getting off blocks and making tackles in the hole."
+        description="Getting off blocks and making tackles in the hole.",
     ),
     Drill(
         name="Read and React",
@@ -560,7 +567,7 @@ LB_DRILLS = [
         xp_multiplier=1.0,
         fatigue_cost=8.0,
         category=DrillCategory.MENTAL,
-        description="Reading keys and reacting to run vs pass."
+        description="Reading keys and reacting to run vs pass.",
     ),
     Drill(
         name="Man Coverage - RB/TE",
@@ -570,7 +577,7 @@ LB_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=12.0,
         category=DrillCategory.TECHNIQUE,
-        description="Covering backs and tight ends in isolation."
+        description="Covering backs and tight ends in isolation.",
     ),
     Drill(
         name="Downhill Run Fits",
@@ -580,7 +587,7 @@ LB_DRILLS = [
         xp_multiplier=1.5,
         fatigue_cost=18.0,
         category=DrillCategory.STRENGTH,
-        description="Filling gaps and making tackles at the line."
+        description="Filling gaps and making tackles at the line.",
     ),
 ]
 
@@ -598,7 +605,7 @@ ST_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=18.0,
         category=DrillCategory.SPEED,
-        description="Full-speed coverage drills. High injury risk."
+        description="Full-speed coverage drills. High injury risk.",
     ),
     Drill(
         name="Punt Protection",
@@ -608,7 +615,7 @@ ST_DRILLS = [
         xp_multiplier=1.0,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Blocking for punt protection."
+        description="Blocking for punt protection.",
     ),
     Drill(
         name="Return Blocking",
@@ -618,7 +625,7 @@ ST_DRILLS = [
         xp_multiplier=1.1,
         fatigue_cost=14.0,
         category=DrillCategory.TECHNIQUE,
-        description="Setting up return lanes and blocking in space."
+        description="Setting up return lanes and blocking in space.",
     ),
     Drill(
         name="Field Goal Timing",
@@ -628,7 +635,7 @@ ST_DRILLS = [
         xp_multiplier=1.3,
         fatigue_cost=8.0,
         category=DrillCategory.TECHNIQUE,
-        description="Snap-hold-kick timing and mechanics."
+        description="Snap-hold-kick timing and mechanics.",
     ),
     Drill(
         name="Leg Strength - Kickers",
@@ -639,7 +646,7 @@ ST_DRILLS = [
         fatigue_cost=15.0,
         category=DrillCategory.STRENGTH,
         season_filter=[SeasonPhase.OFFSEASON],
-        description="Heavy leg work for kick distance."
+        description="Heavy leg work for kick distance.",
     ),
     Drill(
         name="Punt Hang Time",
@@ -649,7 +656,7 @@ ST_DRILLS = [
         xp_multiplier=1.2,
         fatigue_cost=10.0,
         category=DrillCategory.TECHNIQUE,
-        description="Maximizing hang time for coverage."
+        description="Maximizing hang time for coverage.",
     ),
 ]
 
@@ -684,12 +691,11 @@ POSITION_DRILL_MAP = {
 
 # All drills combined for catalog access
 ALL_DRILLS = (
-    QB_DRILLS + RB_DRILLS + WR_DRILLS + OL_DRILLS +
-    DL_DRILLS + DB_DRILLS + LB_DRILLS + ST_DRILLS
+    QB_DRILLS + RB_DRILLS + WR_DRILLS + OL_DRILLS + DL_DRILLS + DB_DRILLS + LB_DRILLS + ST_DRILLS
 )
 
 
-def get_drills_for_position(position: str) -> List[Drill]:
+def get_drills_for_position(position: str) -> list[Drill]:
     """
     Get available drills for a specific position.
 
@@ -702,7 +708,7 @@ def get_drills_for_position(position: str) -> List[Drill]:
     return POSITION_DRILL_MAP.get(position.upper(), [])
 
 
-def get_drills_for_season(drills: List[Drill], phase: SeasonPhase) -> List[Drill]:
+def get_drills_for_season(drills: list[Drill], phase: SeasonPhase) -> list[Drill]:
     """
     Filter drills available in a specific season phase.
 
@@ -716,7 +722,7 @@ def get_drills_for_season(drills: List[Drill], phase: SeasonPhase) -> List[Drill
     return [d for d in drills if phase in d.season_filter]
 
 
-def get_drills_by_category(drills: List[Drill], category: DrillCategory) -> List[Drill]:
+def get_drills_by_category(drills: list[Drill], category: DrillCategory) -> list[Drill]:
     """
     Filter drills by category.
 

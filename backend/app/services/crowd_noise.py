@@ -9,21 +9,21 @@ CITATION: ENHANCEMENT_REFERENCE.md - Crowd Noise Impact
 - Momentum swings affect crowd intensity
 """
 
-from enum import Enum
-from typing import Dict, Optional
 from dataclasses import dataclass
+from enum import Enum
 
 
 class NoiseLevel(str, Enum):
     """Stadium noise levels in decibels (approximate)."""
-    QUIET = "QUIET"           # ~50 dB - Empty/low attendance
-    MODERATE = "MODERATE"     # ~70 dB - Normal crowd
-    LOUD = "LOUD"             # ~90 dB - Big moment
-    DEAFENING = "DEAFENING"   # ~110+ dB - CenturyLink/Arrowhead level
+
+    QUIET = "QUIET"  # ~50 dB - Empty/low attendance
+    MODERATE = "MODERATE"  # ~70 dB - Normal crowd
+    LOUD = "LOUD"  # ~90 dB - Big moment
+    DEAFENING = "DEAFENING"  # ~110+ dB - CenturyLink/Arrowhead level
 
 
 # Noise level thresholds in decibels
-NOISE_DB_THRESHOLDS: Dict[NoiseLevel, int] = {
+NOISE_DB_THRESHOLDS: dict[NoiseLevel, int] = {
     NoiseLevel.QUIET: 50,
     NoiseLevel.MODERATE: 70,
     NoiseLevel.LOUD: 90,
@@ -36,9 +36,10 @@ class CrowdNoiseState:
     """
     Current state of crowd noise and its effects.
     """
-    current_db: float = 70.0           # Current decibel level
-    base_db: float = 70.0              # Stadium baseline
-    momentum_bonus: float = 0.0        # Bonus from momentum (-10 to +20 dB)
+
+    current_db: float = 70.0  # Current decibel level
+    base_db: float = 70.0  # Stadium baseline
+    momentum_bonus: float = 0.0  # Bonus from momentum (-10 to +20 dB)
     is_home_team_on_offense: bool = False
 
     @property
@@ -72,10 +73,11 @@ class CrowdNoiseEffects:
     """
     Gameplay effects caused by crowd noise on the AWAY team.
     """
-    audible_success_rate: float = 1.0      # Multiplier for audible success
-    false_start_probability: float = 0.0   # Added probability (0-0.15)
-    communication_drop_rate: float = 0.0   # % of verbal signals missed
-    awareness_penalty: int = 0             # Penalty to Awareness rating
+
+    audible_success_rate: float = 1.0  # Multiplier for audible success
+    false_start_probability: float = 0.0  # Added probability (0-0.15)
+    communication_drop_rate: float = 0.0  # % of verbal signals missed
+    awareness_penalty: int = 0  # Penalty to Awareness rating
 
 
 def calculate_crowd_noise_effects(
@@ -109,10 +111,10 @@ def calculate_crowd_noise_effects(
     # Calculate effects based on noise level
     if noise_level == NoiseLevel.DEAFENING:
         # Stadium is ROARING - significant penalties
-        base_audible_penalty = 0.40           # -40% audible success
-        base_false_start = 0.12               # +12% false start risk
-        base_comm_drop = 0.30                 # 30% signals dropped
-        base_awareness_penalty = 8            # -8 awareness
+        base_audible_penalty = 0.40  # -40% audible success
+        base_false_start = 0.12  # +12% false start risk
+        base_comm_drop = 0.30  # 30% signals dropped
+        base_awareness_penalty = 8  # -8 awareness
 
     elif noise_level == NoiseLevel.LOUD:
         # Big moment - moderate penalties
@@ -173,7 +175,7 @@ def update_crowd_noise_from_momentum(
     if touchdown_just_occurred:
         event_bonus += 15.0  # +15 dB spike
     if big_play_just_occurred:
-        event_bonus += 8.0   # +8 dB spike
+        event_bonus += 8.0  # +8 dB spike
 
     # Event bonus decays over time (handled elsewhere)
     noise_state.momentum_bonus = momentum_db + event_bonus
@@ -181,19 +183,19 @@ def update_crowd_noise_from_momentum(
     return noise_state
 
 
-def get_stadium_base_noise(stadium_name: Optional[str] = None) -> float:
+def get_stadium_base_noise(stadium_name: str | None = None) -> float:
     """
     Get baseline noise level for a stadium.
 
     Some stadiums are known for exceptional crowd noise.
     """
     LOUD_STADIUMS = {
-        "Arrowhead Stadium": 85,      # Chiefs - famously loud
-        "CenturyLink Field": 85,      # Seahawks - 12th Man
-        "Mercedes-Benz Superdome": 82, # Saints - indoor
-        "NRG Stadium": 78,            # Texans - retractable roof
-        "U.S. Bank Stadium": 80,      # Vikings - indoor
-        "SoFi Stadium": 75,           # Chargers/Rams - newer design
+        "Arrowhead Stadium": 85,  # Chiefs - famously loud
+        "CenturyLink Field": 85,  # Seahawks - 12th Man
+        "Mercedes-Benz Superdome": 82,  # Saints - indoor
+        "NRG Stadium": 78,  # Texans - retractable roof
+        "U.S. Bank Stadium": 80,  # Vikings - indoor
+        "SoFi Stadium": 75,  # Chargers/Rams - newer design
     }
 
     if stadium_name and stadium_name in LOUD_STADIUMS:

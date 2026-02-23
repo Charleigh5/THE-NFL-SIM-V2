@@ -1,14 +1,15 @@
-from typing import Dict, Any, List, Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from app.models.player import Player
-from app.models.team import Team
-from app.models.gm import GM, GMDecision
-from app.core.mcp_registry import registry
-from app.core.mcp_cache import mcp_cache
 import random
+from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from app.core.random_utils import DeterministicRNG
 from app.core.trade_config import trade_config  # Fix import to get instance
+from app.models.gm import GMDecision
+from app.models.player import Player
+from app.models.team import Team
+
 
 class GMAgent:
     def __init__(self, db: Session, team_id: int, seed: int = None):
@@ -27,7 +28,7 @@ class GMAgent:
                 "aggression": 50,
                 "patience": 50,
                 "negotiation": 50,
-                "scouting": 50
+                "scouting": 50,
             }
         else:
             self.gm_traits = {
@@ -35,14 +36,16 @@ class GMAgent:
                 "aggression": self.gm.aggression,
                 "patience": self.gm.patience,
                 "negotiation": self.gm.negotiation,
-                "scouting": self.gm.scouting
+                "scouting": self.gm.scouting,
             }
 
-    async def evaluate_trade(self,
-                           offered_players_ids: list[int],
-                           requested_players_ids: list[int],
-                           offered_picks: list[dict] = [],
-                           requested_picks: list[dict] = []) -> Dict[str, Any]:
+    async def evaluate_trade(
+        self,
+        offered_players_ids: list[int],
+        requested_players_ids: list[int],
+        offered_picks: list[dict] = [],
+        requested_picks: list[dict] = [],
+    ) -> dict[str, Any]:
         """
         Evaluate a trade proposal based on value, team needs, and GM personality.
         """
@@ -54,7 +57,7 @@ class GMAgent:
                 return {
                     "decision": "REJECT",
                     "score": 0,
-                    "reasoning": "Team not found in database."
+                    "reasoning": "Team not found in database.",
                 }
 
             # 1. Fetch Objects
@@ -67,35 +70,45 @@ class GMAgent:
 
             # 2. Financial & Roster Check
             # Calculate incoming salary
-            incoming_salary = sum([getattr(p, 'contract_salary', 0) or 0 for p in offered_players])
-            outgoing_salary = sum([getattr(p, 'contract_salary', 0) or 0 for p in requested_players])
+            incoming_salary = sum([getattr(p, "contract_salary", 0) or 0 for p in offered_players])
+            outgoing_salary = sum(
+                [getattr(p, "contract_salary", 0) or 0 for p in requested_players]
+            )
             net_salary_change = incoming_salary - outgoing_salary
 
             # Get salary cap space (default to large value if not set)
-            salary_cap_space = getattr(self.team, 'salary_cap_space', 50000000) or 50000000
+            salary_cap_space = getattr(self.team, "salary_cap_space", 50000000) or 50000000
 
             if salary_cap_space < net_salary_change:
                 result = {
                     "decision": "REJECT",
                     "score": -100,
-                    "reasoning": f"Cannot afford trade. Net change: ${net_salary_change/1000000:.2f}M, Cap Space: ${salary_cap_space/1000000:.2f}M"
+                    "reasoning": f"Cannot afford trade. Net change: ${net_salary_change / 1000000:.2f}M, Cap Space: ${salary_cap_space / 1000000:.2f}M",
                 }
                 self._log_decision("TRADE_EVALUATION", "REJECT", result)
                 return result
 
             # 3. Value Calculation
-            offered_value = self._calculate_package_value(offered_players, offered_picks, is_acquiring=True)
-            requested_value = self._calculate_package_value(requested_players, requested_picks, is_acquiring=False)
+            offered_value = self._calculate_package_value(
+                offered_players, offered_picks, is_acquiring=True
+            )
+            requested_value = self._calculate_package_value(
+                requested_players, requested_picks, is_acquiring=False
+            )
 
             # Base score is the difference in value
             raw_score = offered_value - requested_value
 
             # 4. Apply GM Personality Modifiers
-            modified_score = self._apply_gm_traits(raw_score, offered_players, requested_players, offered_picks, requested_picks)
+            modified_score = self._apply_gm_traits(
+                raw_score, offered_players, requested_players, offered_picks, requested_picks
+            )
 
             # 5. MCP/LLM Context (Mocked for now, but structured for integration)
             try:
-                llm_adjustment = await self._get_llm_trade_opinion(offered_players, requested_players)
+                llm_adjustment = await self._get_llm_trade_opinion(
+                    offered_players, requested_players
+                )
                 modified_score += llm_adjustment.get("score_modifier", 0)
                 if llm_adjustment.get("reasoning"):
                     reasoning.append(llm_adjustment["reasoning"])
@@ -114,7 +127,7 @@ class GMAgent:
             result = {
                 "decision": decision,
                 "score": modified_score,
-                "reasoning": "; ".join(reasoning)
+                "reasoning": "; ".join(reasoning),
             }
 
             self._log_decision("TRADE_EVALUATION", decision, result)
@@ -123,14 +136,15 @@ class GMAgent:
         except Exception as e:
             # Fallback for any unexpected errors
             import logging
+
             logging.getLogger(__name__).error(f"GMAgent.evaluate_trade error: {e}")
             return {
                 "decision": "REJECT",
                 "score": 0,
-                "reasoning": f"Trade evaluation failed: {str(e)}"
+                "reasoning": f"Trade evaluation failed: {str(e)}",
             }
 
-    def generate_trade_proposal(self, target_position: str = None) -> Dict[str, Any]:
+    def generate_trade_proposal(self, target_position: str = None) -> dict[str, Any]:
         """
         Propose a trade to address a team need.
         """
@@ -146,7 +160,12 @@ class GMAgent:
 
         # Mock: Find a random player from another team at this position
         # This is a placeholder for a complex query
-        stmt = select(Player).where(Player.position == target_position).where(Player.team_id != self.team_id).limit(5)
+        stmt = (
+            select(Player)
+            .where(Player.position == target_position)
+            .where(Player.team_id != self.team_id)
+            .limit(5)
+        )
         candidates = self.db.execute(stmt).scalars().all()
 
         if not candidates:
@@ -160,19 +179,19 @@ class GMAgent:
 
         # Find a pick that matches value
         # Mocking pick selection
-        offered_pick = {"round": 3, "year": 2025} # Placeholder
+        offered_pick = {"round": 3, "year": 2025}  # Placeholder
 
         proposal = {
             "target_team_id": target_player.team_id,
             "requested_players": [target_player.id],
             "offered_picks": [offered_pick],
-            "reasoning": f"Addressing need at {target_position}"
+            "reasoning": f"Addressing need at {target_position}",
         }
 
         self._log_decision("TRADE_PROPOSAL", "GENERATED", proposal)
         return proposal
 
-    def negotiate_contract(self, player: Player, demand: float) -> Dict[str, Any]:
+    def negotiate_contract(self, player: Player, demand: float) -> dict[str, Any]:
         """
         Simulate contract negotiation.
         """
@@ -187,13 +206,13 @@ class GMAgent:
         variance = self.rng.uniform(0.95, 1.05)
         counter_offer *= variance
 
-        accepted = counter_offer >= (demand * 0.9) # Player accepts if within 10% of demand
+        accepted = counter_offer >= (demand * 0.9)  # Player accepts if within 10% of demand
 
         result = {
             "accepted": accepted,
             "counter_offer": int(counter_offer),
             "original_demand": demand,
-            "gm_skill_impact": f"{(1-skill_factor)*100:.1f}% reduction"
+            "gm_skill_impact": f"{(1 - skill_factor) * 100:.1f}% reduction",
         }
 
         self._log_decision("CONTRACT_NEGOTIATION", "ACCEPTED" if accepted else "REJECTED", result)
@@ -204,14 +223,14 @@ class GMAgent:
         Assess contract efficiency relative to production.
         Returns a multiplier for trade value (1.0 = neutral/fair).
         """
-        years_remaining = getattr(player, 'contract_years', 1)
-        contract_salary = getattr(player, 'contract_salary', 0) or 0
+        years_remaining = getattr(player, "contract_years", 1)
+        contract_salary = getattr(player, "contract_salary", 0) or 0
         cap_hit_pct = contract_salary / 250_000_000  # Assume 250M cap for now
 
         # Rookie deals are premium assets
         if years_remaining >= 3 and player.age < 26:
-             # Basic check for rookie wage scale (low salary for age)
-             if contract_salary < 10_000_000:
+            # Basic check for rookie wage scale (low salary for age)
+            if contract_salary < 10_000_000:
                 return 1.25
 
         # Check for expiring contracts (rentals)
@@ -225,36 +244,47 @@ class GMAgent:
         # Good (80+): $15M+
         # Starter (75+): $5M+
         expected_salary = 0
-        if player.overall_rating >= 90: expected_salary = 25_000_000
-        elif player.overall_rating >= 80: expected_salary = 15_000_000
-        elif player.overall_rating >= 75: expected_salary = 5_000_000
-        else: expected_salary = 1_000_000
+        if player.overall_rating >= 90:
+            expected_salary = 25_000_000
+        elif player.overall_rating >= 80:
+            expected_salary = 15_000_000
+        elif player.overall_rating >= 75:
+            expected_salary = 5_000_000
+        else:
+            expected_salary = 1_000_000
 
         # Ratio of Actual / Expected
         # If paying 20M for 5M player -> Ratio 4.0 (Bad)
         # If paying 5M for 20M player -> Ratio 0.25 (Good)
-        if expected_salary == 0: ratio = 10.0 # avoid div/0
-        else: ratio = contract_salary / expected_salary
+        if expected_salary == 0:
+            ratio = 10.0  # avoid div/0
+        else:
+            ratio = contract_salary / expected_salary
 
-        if ratio < 0.5: return 1.20  # Steal (Team Friendly)
-        if ratio < 0.9: return 1.10  # Good Value
-        if ratio < 1.1: return 1.00  # Fair Market
-        if ratio < 1.5: return 0.85  # Overpaid
-        return 0.60                  # Albatross
+        if ratio < 0.5:
+            return 1.20  # Steal (Team Friendly)
+        if ratio < 0.9:
+            return 1.10  # Good Value
+        if ratio < 1.1:
+            return 1.00  # Fair Market
+        if ratio < 1.5:
+            return 0.85  # Overpaid
+        return 0.60  # Albatross
 
     def _is_contract_dump_candidate(self, player: Player) -> bool:
         """
         Determine if a player is a candidate for a salary dump.
         (High salary, low production, expiring or long term bad deal)
         """
-        contract_salary = getattr(player, 'contract_salary', 0) or 0
+        contract_salary = getattr(player, "contract_salary", 0) or 0
         if contract_salary < 10_000_000:
-            return False # Too cheap to be a "dump" usually
+            return False  # Too cheap to be a "dump" usually
 
         # Check rating vs salary
         # Dump if we are paying Elite money for non-Elite play
         startable_rating = 80
-        if player.position == "QB": startable_rating = 85
+        if player.position == "QB":
+            startable_rating = 85
 
         if player.overall_rating < startable_rating and contract_salary > 15_000_000:
             return True
@@ -265,16 +295,18 @@ class GMAgent:
         """
         Calculate discount factor for players likely to leave in free agency.
         """
-        years_remaining = getattr(player, 'contract_years', 1)
+        years_remaining = getattr(player, "contract_years", 1)
         if years_remaining > 1:
-            return 1.0 # Under contract
+            return 1.0  # Under contract
 
         # Expiring deal logic
         # If team is bad (not contender), likely to leave testing market
         # Simple heuristic for now:
-        return 0.85 # Rental discount
+        return 0.85  # Rental discount
 
-    def _calculate_package_value(self, players: List[Player], picks: List[dict], is_acquiring: bool) -> float:
+    def _calculate_package_value(
+        self, players: list[Player], picks: list[dict], is_acquiring: bool
+    ) -> float:
         total_value = 0.0
 
         for player in players:
@@ -305,7 +337,7 @@ class GMAgent:
             # If player is a dump candidate, their value is severely penalized
             dump_penalty = 1.0
             if self._is_contract_dump_candidate(player):
-                dump_penalty = 0.5 # 50% value reduction (or even negative in future)
+                dump_penalty = 0.5  # 50% value reduction (or even negative in future)
 
             # Calculate Player Value
             player_val = base_val * age_mult * pos_mult * contract_mult * risk_mult * dump_penalty
@@ -323,7 +355,7 @@ class GMAgent:
         # For this sprint, we keep logic internal or simple delegate?
         # Plan says "Draft Chart" is Sprint 1 task 1.3 (done)
         # So we should USE it.
-        from app.data.draft_value_chart import DraftValueChart # lazy import to avoid circle
+        from app.data.draft_value_chart import DraftValueChart  # lazy import to avoid circle
 
         for pick in picks:
             round_num = pick.get("round", 1)
@@ -340,10 +372,10 @@ class GMAgent:
                     pick_val = DraftValueChart.get_future_pick_value(round_num, years_out)
 
                 # Normalize to player value scale (approx /30 to match player ratings curve)
-                total_value += (pick_val / 30.0)
+                total_value += pick_val / 30.0
             except Exception:
                 # Fallback
-                total_value += (10 / 30.0)
+                total_value += 10 / 30.0
 
         return total_value
 
@@ -356,39 +388,56 @@ class GMAgent:
         count = len(players_at_pos)
 
         if not players_at_pos:
-            return 2.0 # Critical need
+            return 2.0  # Critical need
 
         avg_rating = sum(p.overall_rating for p in players_at_pos) / count
 
         multiplier = 1.0
 
-        if position == "QB" and count < 2: multiplier += 0.2
-        if position in ["WR", "CB"] and count < 5: multiplier += 0.1
-        if position in ["OL", "DL"] and count < 7: multiplier += 0.1
+        if position == "QB" and count < 2:
+            multiplier += 0.2
+        if position in ["WR", "CB"] and count < 5:
+            multiplier += 0.1
+        if position in ["OL", "DL"] and count < 7:
+            multiplier += 0.1
 
-        if avg_rating < 70: multiplier += 0.2
-        if avg_rating > 85: multiplier -= 0.1
+        if avg_rating < 70:
+            multiplier += 0.2
+        if avg_rating > 85:
+            multiplier -= 0.1
 
         return multiplier
 
-    def _apply_gm_traits(self, score: float, offered_players: List[Player], requested_players: List[Player], offered_picks: List[dict], requested_picks: List[dict]) -> float:
+    def _apply_gm_traits(
+        self,
+        score: float,
+        offered_players: list[Player],
+        requested_players: list[Player],
+        offered_picks: list[dict],
+        requested_picks: list[dict],
+    ) -> float:
         """
         Adjust score based on GM philosophy.
         """
         philosophy = self.gm_traits["philosophy"]
 
         if philosophy == "WIN_NOW":
-            if offered_players: score += 5
-            if offered_picks: score -= 5
+            if offered_players:
+                score += 5
+            if offered_picks:
+                score -= 5
 
         elif philosophy == "REBUILD":
-            if offered_picks: score += 10
+            if offered_picks:
+                score += 10
             young_players = [p for p in offered_players if p.age < 25]
             score += len(young_players) * 3
 
         return score
 
-    async def _get_llm_trade_opinion(self, offered: List[Player], requested: List[Player]) -> Dict[str, Any]:
+    async def _get_llm_trade_opinion(
+        self, offered: list[Player], requested: list[Player]
+    ) -> dict[str, Any]:
         """
         Mock LLM call to evaluate trade sentiment/intangibles.
         """
@@ -402,13 +451,10 @@ class GMAgent:
 
         return {"score_modifier": modifier, "reasoning": reasoning}
 
-    def _log_decision(self, decision_type: str, outcome: str, details: Dict[str, Any]):
+    def _log_decision(self, decision_type: str, outcome: str, details: dict[str, Any]):
         if self.gm:
             decision = GMDecision(
-                gm_id=self.gm.id,
-                decision_type=decision_type,
-                outcome=outcome,
-                details=details
+                gm_id=self.gm.id, decision_type=decision_type, outcome=outcome, details=details
             )
             self.db.add(decision)
             self.db.commit()

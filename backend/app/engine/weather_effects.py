@@ -1,5 +1,5 @@
-from app.models.weather import GameWeather, PrecipitationType, FieldCondition
-from typing import Tuple
+from app.models.weather import FieldCondition, GameWeather, PrecipitationType
+
 
 class WeatherEffects:
     """
@@ -16,7 +16,7 @@ class WeatherEffects:
     def __init__(self, weather: GameWeather):
         self.weather = weather
 
-    def get_passing_modifiers(self) -> Tuple[float, float]:
+    def get_passing_modifiers(self) -> tuple[float, float]:
         """
         Returns (accuracy_multiplier, distance_multiplier)
 
@@ -32,8 +32,8 @@ class WeatherEffects:
         # Wind (NFL: noticeable effect above 10 mph)
         if self.weather.wind_speed and self.weather.wind_speed > 10:
             wind_over = self.weather.wind_speed - 10
-            accuracy -= wind_over * 0.008   # -0.8% per mph over 10 (calibrated)
-            distance -= wind_over * 0.005   # -0.5% per mph over 10
+            accuracy -= wind_over * 0.008  # -0.8% per mph over 10 (calibrated)
+            distance -= wind_over * 0.005  # -0.5% per mph over 10
 
         # Precipitation (NFL: ~12% reduction in rain)
         if self.weather.precipitation_type == PrecipitationType.RAIN.value:
@@ -48,7 +48,7 @@ class WeatherEffects:
 
         return max(0.5, accuracy), max(0.5, distance)
 
-    def get_kicking_modifiers(self) -> Tuple[float, float]:
+    def get_kicking_modifiers(self) -> tuple[float, float]:
         """
         Returns (accuracy_multiplier, distance_multiplier)
 
@@ -63,8 +63,8 @@ class WeatherEffects:
         # Wind affects kicking more (NFL: significant above 5 mph)
         if self.weather.wind_speed and self.weather.wind_speed > 5:
             wind_over = self.weather.wind_speed - 5
-            accuracy -= wind_over * 0.015   # -1.5% per mph over 5
-            distance -= wind_over * 0.008   # -0.8% per mph over 5
+            accuracy -= wind_over * 0.015  # -1.5% per mph over 5
+            distance -= wind_over * 0.008  # -0.8% per mph over 5
 
         # Temperature (Dense cold air reduces distance)
         if self.weather.temperature and self.weather.temperature < 40:

@@ -1,8 +1,15 @@
-from dataclasses import dataclass, field
-from typing import List, Any, Optional, Dict
+from dataclasses import dataclass
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.player import Player
+
 from app.orchestrator.play_commands import (
-    PlayCommand, PassPlayCommand, RunPlayCommand,
-    PuntCommand, FieldGoalCommand
+    FieldGoalCommand,
+    PassPlayCommand,
+    PlayCommand,
+    PuntCommand,
+    RunPlayCommand,
 )
 
 
@@ -14,16 +21,18 @@ class PlayCallingContext:
     time_left_seconds: int
     score_diff: int  # Positive means winning, negative means losing
     possession: str  # "home" or "away"
-    offense_players: List[Any]
-    defense_players: List[Any]
+    offense_players: list[Any]
+    defense_players: list[Any]
     is_hurry_up: bool = False
     # 2-Minute Drill AI (AI-005) - adjustments from ClockManagementAI
-    two_minute_adjustments: Optional[Dict[str, Any]] = None
+    two_minute_adjustments: dict[str, Any] | None = None
+
 
 class PlayCaller:
     """
     Handles situation-aware play selection based on game state and coach personality.
     """
+
     def __init__(self, rng: Any, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
         """
         Initialize PlayCaller.
@@ -74,7 +83,7 @@ class PlayCaller:
             elif in_fg_range:
                 should_go_for_it = False
             else:
-                should_go_for_it = True # Must go for it if out of range
+                should_go_for_it = True  # Must go for it if out of range
 
         # Aggressive Coach Logic
         elif self.aggression > 0.7:
@@ -83,7 +92,7 @@ class PlayCaller:
 
         # Normal Logic
         else:
-            if context.distance_to_goal < 3: # Goal line stand
+            if context.distance_to_goal < 3:  # Goal line stand
                 should_go_for_it = True
 
         if should_go_for_it:
@@ -97,12 +106,11 @@ class PlayCaller:
             return FieldGoalCommand(
                 kicking_team=context.offense_players,
                 defense=context.defense_players,
-                distance=context.distance_to_goal + 17 # +17 for snap and hold
+                distance=context.distance_to_goal + 17,  # +17 for snap and hold
             )
         else:
             return PuntCommand(
-                punting_team=context.offense_players,
-                receiving_team=context.defense_players
+                punting_team=context.offense_players, receiving_team=context.defense_players
             )
 
     def _decide_run_vs_pass(self, context: PlayCallingContext) -> bool:
@@ -148,11 +156,7 @@ class PlayCaller:
         return self.rng.random() < pass_prob
 
     def call_audible(
-        self,
-        qb: "Player",
-        current_play: str,
-        new_play: str,
-        play_clock_remaining: float
+        self, qb: "Player", current_play: str, new_play: str, play_clock_remaining: float
     ) -> tuple[str, float, bool]:
         """
         Process an audible call.
@@ -162,9 +166,10 @@ class PlayCaller:
         """
         # Check for Audible Master ability
         from app.models.player import Player
+
         has_audible_master = False
         if isinstance(qb, Player):
-             has_audible_master = (qb.abilities or {}).get("audible_master", False)
+            has_audible_master = (qb.abilities or {}).get("audible_master", False)
 
         if has_audible_master:
             clock_cost = 2.0  # 2 seconds
@@ -220,7 +225,7 @@ class PlayCaller:
         return PassPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            depth=selected_depth
+            depth=selected_depth,
         )
 
     def _create_run_play(self, context: PlayCallingContext) -> RunPlayCommand:
@@ -232,5 +237,5 @@ class PlayCaller:
         return RunPlayCommand(
             offense_players=context.offense_players,
             defense_players=context.defense_players,
-            run_direction=selected_dir
+            run_direction=selected_dir,
         )

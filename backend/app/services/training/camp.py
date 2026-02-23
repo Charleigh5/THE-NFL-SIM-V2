@@ -10,43 +10,46 @@ Phase 7: Training & Development
 - Position-specific gains
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
 import random
-
+from dataclasses import dataclass
+from enum import Enum
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class DrillType(str, Enum):
     """Types of training drills."""
-    OKLAHOMA = "OKLAHOMA"          # High intensity, tackling/blocking
-    SEVEN_ON_SEVEN = "7_ON_7"      # Medium intensity, pass/coverage
-    INDIVIDUAL = "INDIVIDUAL"      # Low intensity, technique
-    FILM_STUDY = "FILM_STUDY"      # Zero physical, awareness gain
-    SCRIMMAGE = "SCRIMMAGE"        # Max intensity, all skills
+
+    OKLAHOMA = "OKLAHOMA"  # High intensity, tackling/blocking
+    SEVEN_ON_SEVEN = "7_ON_7"  # Medium intensity, pass/coverage
+    INDIVIDUAL = "INDIVIDUAL"  # Low intensity, technique
+    FILM_STUDY = "FILM_STUDY"  # Zero physical, awareness gain
+    SCRIMMAGE = "SCRIMMAGE"  # Max intensity, all skills
     CONDITIONING = "CONDITIONING"  # Stamina gain, fatigue risk
 
 
 class TrainingIntensity(str, Enum):
     """Intensity levels for drills."""
-    WALKTHROUGH = "WALKTHROUGH"    # Minimal risk, low gain
-    STANDARD = "STANDARD"          # Normal risk/gain
-    FULL_PADS = "FULL_PADS"        # High risk, high gain
+
+    WALKTHROUGH = "WALKTHROUGH"  # Minimal risk, low gain
+    STANDARD = "STANDARD"  # Normal risk/gain
+    FULL_PADS = "FULL_PADS"  # High risk, high gain
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class DrillConfig:
     """Configuration for a specific drill."""
+
     name: str
     type: DrillType
-    targeted_attributes: List[str]
+    targeted_attributes: list[str]
     xp_multiplier: float
     injury_risk_base: float
     fatigue_cost: float
@@ -55,6 +58,7 @@ class DrillConfig:
 @dataclass
 class CampDay:
     """A single day schedule in training camp."""
+
     morning_drill: DrillType
     afternoon_drill: DrillType
     intensity: TrainingIntensity
@@ -64,14 +68,16 @@ class CampDay:
 @dataclass
 class CampResult:
     """Outcome of a processed camp day/week."""
-    xp_gained: Dict[str, float]  # PlayerID -> XP
-    injuries: List[str]          # List of injury descriptions
-    fatigue_levels: Dict[str, float]
+
+    xp_gained: dict[str, float]  # PlayerID -> XP
+    injuries: list[str]  # List of injury descriptions
+    fatigue_levels: dict[str, float]
 
 
 # ============================================================================
 # TRAINING CAMP ENGINE
 # ============================================================================
+
 
 class TrainingCampEngine:
     """
@@ -102,7 +108,7 @@ class TrainingCampEngine:
         DrillType.INDIVIDUAL: DrillConfig(
             name="Individual Period",
             type=DrillType.INDIVIDUAL,
-            targeted_attributes=["technique"], # Generic placeholder for pos-specific
+            targeted_attributes=["technique"],  # Generic placeholder for pos-specific
             xp_multiplier=1.0,
             injury_risk_base=0.01,
             fatigue_cost=5.0,
@@ -136,8 +142,8 @@ class TrainingCampEngine:
     def process_day(
         self,
         day_schedule: CampDay,
-        roster: List[str],  # List of player IDs
-        rng_seed: int = 0
+        roster: list[str],  # List of player IDs
+        rng_seed: int = 0,
     ) -> CampResult:
         """
         Process a single day of training camp.
@@ -147,7 +153,7 @@ class TrainingCampEngine:
             return CampResult(
                 xp_gained={},
                 injuries=[],
-                fatigue_levels={pid: -20.0 for pid in roster} # Recover
+                fatigue_levels=dict.fromkeys(roster, -20.0),  # Recover
             )
 
         random.seed(rng_seed)
@@ -183,16 +189,16 @@ class TrainingCampEngine:
                 # Injury Check
                 risk = config.injury_risk_base * intensity_mod
                 # Simplistic roll - would normally check player health stats
-                if random.random() < (risk / 100.0): # Convert percent to probability
+                if random.random() < (risk / 100.0):  # Convert percent to probability
                     injuries.append(f"{pid} injured during {config.name}")
-                    player_total_xp *= 0.5 # Reduced gain if injured
+                    player_total_xp *= 0.5  # Reduced gain if injured
 
             xp_gained[pid] = player_total_xp
             fatigue_update[pid] = player_fatigue
 
         return CampResult(xp_gained, injuries, fatigue_update)
 
-    def recommend_schedule(self, team_needs: List[str]) -> List[CampDay]:
+    def recommend_schedule(self, team_needs: list[str]) -> list[CampDay]:
         """
         Generate a recommended weekly schedule based on team needs.
 
@@ -203,16 +209,24 @@ class TrainingCampEngine:
         # Standard 7 day camp week: 6 on, 1 off
 
         # Day 1: Acclimation
-        schedule.append(CampDay(DrillType.INDIVIDUAL, DrillType.SEVEN_ON_SEVEN, TrainingIntensity.STANDARD))
+        schedule.append(
+            CampDay(DrillType.INDIVIDUAL, DrillType.SEVEN_ON_SEVEN, TrainingIntensity.STANDARD)
+        )
 
         # Day 2: Install
-        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.INDIVIDUAL, TrainingIntensity.STANDARD))
+        schedule.append(
+            CampDay(DrillType.FILM_STUDY, DrillType.INDIVIDUAL, TrainingIntensity.STANDARD)
+        )
 
         # Day 3: PADS
-        schedule.append(CampDay(DrillType.OKLAHOMA, DrillType.SCRIMMAGE, TrainingIntensity.FULL_PADS))
+        schedule.append(
+            CampDay(DrillType.OKLAHOMA, DrillType.SCRIMMAGE, TrainingIntensity.FULL_PADS)
+        )
 
         # Day 4: Recovery/Film
-        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.FILM_STUDY, TrainingIntensity.WALKTHROUGH))
+        schedule.append(
+            CampDay(DrillType.FILM_STUDY, DrillType.FILM_STUDY, TrainingIntensity.WALKTHROUGH)
+        )
 
         # Day 5: Specifics
         if "stamina" in team_needs or "speed" in team_needs:
@@ -225,9 +239,18 @@ class TrainingCampEngine:
         schedule.append(CampDay(DrillType.INDIVIDUAL, pm_drill, TrainingIntensity.STANDARD))
 
         # Day 6: Final Scrimmage
-        schedule.append(CampDay(DrillType.SCRIMMAGE, DrillType.CONDITIONING, TrainingIntensity.FULL_PADS))
+        schedule.append(
+            CampDay(DrillType.SCRIMMAGE, DrillType.CONDITIONING, TrainingIntensity.FULL_PADS)
+        )
 
         # Day 7: Rest
-        schedule.append(CampDay(DrillType.FILM_STUDY, DrillType.FILM_STUDY, TrainingIntensity.WALKTHROUGH, rest_day=True))
+        schedule.append(
+            CampDay(
+                DrillType.FILM_STUDY,
+                DrillType.FILM_STUDY,
+                TrainingIntensity.WALKTHROUGH,
+                rest_day=True,
+            )
+        )
 
         return schedule

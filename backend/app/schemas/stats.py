@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List
+
 
 class PlayerLeader(BaseModel):
     player_id: int
@@ -11,10 +11,11 @@ class PlayerLeader(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class LeagueLeaders(BaseModel):
-    passing_yards: List[PlayerLeader]
-    passing_tds: List[PlayerLeader]
-    rushing_yards: List[PlayerLeader]
-    rushing_tds: List[PlayerLeader]
-    receiving_yards: List[PlayerLeader]
-    receiving_tds: List[PlayerLeader]
+    passing_yards: list[PlayerLeader]
+    passing_tds: list[PlayerLeader]
+    rushing_yards: list[PlayerLeader]
+    rushing_tds: list[PlayerLeader]
+    receiving_yards: list[PlayerLeader]
+    receiving_tds: list[PlayerLeader]

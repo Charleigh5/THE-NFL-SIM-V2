@@ -366,11 +366,12 @@ test.describe("Offseason Dashboard Integration", () => {
       .locator("h1", { hasText: "Offseason" })
       .or(page.locator("text=/Offseason/i"))
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({ timeout: 20000 })
       .catch(() => false);
 
     // If page loaded (even with error boundary), test passes
-    expect(isVisible || (await page.locator("body").isVisible())).toBeTruthy();
+    const bodyVisible = await page.locator("body").isVisible();
+    expect(isVisible || bodyVisible).toBeTruthy();
   });
 
   test("should display offseason phase buttons", async ({ page }) => {

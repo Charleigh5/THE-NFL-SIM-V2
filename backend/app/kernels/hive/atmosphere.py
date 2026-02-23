@@ -1,6 +1,7 @@
-from app.kernels.core.ecs_manager import Component
 from enum import Enum
-from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class CrowdSentiment(Enum):
     EUPHORIC = "Euphoric"
@@ -8,15 +9,16 @@ class CrowdSentiment(Enum):
     HOSTILE = "Hostile"
     DEAD = "Dead"
 
+
 class CrowdNet(Component):
     # Directive 3: Crowd Sentiment State Machine
     sentiment: CrowdSentiment = CrowdSentiment.ANXIOUS
-    decibel_level: float = 85.0 # Base level
-    momentum_meter: float = 50.0 # 0-100 (50 is neutral)
+    decibel_level: float = 85.0  # Base level
+    momentum_meter: float = 50.0  # 0-100 (50 is neutral)
 
     def update_sentiment(self, home_score: int, away_score: int, big_play: bool):
         score_diff = home_score - away_score
-        
+
         if big_play:
             self.decibel_level = min(120.0, self.decibel_level + 15.0)
             self.momentum_meter += 10.0
@@ -38,7 +40,7 @@ class CrowdNet(Component):
         Returns % chance of audibles failing.
         """
         if self.decibel_level > 105.0:
-            return (self.decibel_level - 105.0) * 2.0 # 110dB = 10% fail, 115dB = 20% fail
+            return (self.decibel_level - 105.0) * 2.0  # 110dB = 10% fail, 115dB = 20% fail
         return 0.0
 
     def get_momentum_drain(self) -> float:
@@ -47,5 +49,5 @@ class CrowdNet(Component):
         Hostile crowds drain away team stamina/composure.
         """
         if self.sentiment == CrowdSentiment.HOSTILE:
-            return 0.05 # 5% drain per play
+            return 0.05  # 5% drain per play
         return 0.0

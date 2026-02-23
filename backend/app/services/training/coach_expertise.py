@@ -13,15 +13,15 @@ Tier Multipliers:
 - ROOKIE: 0.90x development
 """
 
-from typing import Dict, List, Optional
 from enum import Enum
+
 from app.models.coach import CoachTier
 
 # ============================================================================
 # TIER DEVELOPMENT MULTIPLIERS
 # ============================================================================
 
-TIER_MULTIPLIERS: Dict[CoachTier, float] = {
+TIER_MULTIPLIERS: dict[CoachTier, float] = {
     CoachTier.LEGEND: 1.50,
     CoachTier.ELITE: 1.30,
     CoachTier.VETERAN: 1.10,
@@ -43,7 +43,7 @@ TIER_THRESHOLDS = [
 # ============================================================================
 
 # Maps offensive/defensive schemes to position bonuses
-SCHEME_EXPERTISE: Dict[str, Dict[str, float]] = {
+SCHEME_EXPERTISE: dict[str, dict[str, float]] = {
     # Offensive Schemes
     "West Coast": {"QB": 0.15, "WR": 0.15, "TE": 0.12, "RB": 0.08},
     "Air Raid": {"QB": 0.20, "WR": 0.18, "TE": 0.10},
@@ -52,7 +52,6 @@ SCHEME_EXPERTISE: Dict[str, Dict[str, float]] = {
     "Zone Run": {"RB": 0.15, "OL": 0.12, "TE": 0.08},
     "RPO": {"QB": 0.12, "RB": 0.12, "WR": 0.10, "OL": 0.08},
     "Pro Style": {"QB": 0.10, "RB": 0.10, "WR": 0.10, "TE": 0.10, "OL": 0.10},
-
     # Defensive Schemes
     "4-3": {"DE": 0.15, "DT": 0.15, "LB": 0.10, "CB": 0.08},
     "3-4": {"NT": 0.18, "OLB": 0.15, "ILB": 0.12, "DE": 0.10},
@@ -67,8 +66,10 @@ SCHEME_EXPERTISE: Dict[str, Dict[str, float]] = {
 # COACH ARCHETYPES
 # ============================================================================
 
+
 class CoachArchetype(str, Enum):
     """Coach specialization archetypes."""
+
     GENERALIST = "GENERALIST"
     QB_GURU = "QB_GURU"
     OL_MASTER = "OL_MASTER"
@@ -79,8 +80,9 @@ class CoachArchetype(str, Enum):
     LB_GURU = "LB_GURU"
     SPECIAL_TEAMS_ACE = "SPECIAL_TEAMS_ACE"
 
+
 # Archetype bonuses: (primary positions, primary bonus, secondary positions, secondary bonus)
-ARCHETYPE_BONUSES: Dict[CoachArchetype, Dict[str, float]] = {
+ARCHETYPE_BONUSES: dict[CoachArchetype, dict[str, float]] = {
     CoachArchetype.GENERALIST: {},  # No specific bonuses, balanced
     CoachArchetype.QB_GURU: {"QB": 0.25, "WR": 0.10, "TE": 0.08},
     CoachArchetype.OL_MASTER: {"OL": 0.25, "C": 0.25, "G": 0.25, "T": 0.25, "RB": 0.10},
@@ -95,6 +97,7 @@ ARCHETYPE_BONUSES: Dict[CoachArchetype, Dict[str, float]] = {
 # ============================================================================
 # CALCULATION FUNCTIONS
 # ============================================================================
+
 
 def calculate_tier_from_ratings(offense: int, defense: int, development: int) -> CoachTier:
     """
@@ -158,11 +161,11 @@ def get_archetype_bonus(archetype: CoachArchetype, position: str) -> float:
 
 def calculate_development_bonus(
     coach_tier: CoachTier,
-    offensive_scheme: Optional[str],
-    defensive_scheme: Optional[str],
+    offensive_scheme: str | None,
+    defensive_scheme: str | None,
     archetype: CoachArchetype,
     player_position: str,
-    cap_total: float = 2.0
+    cap_total: float = 2.0,
 ) -> float:
     """
     Calculate the total development bonus for a player under a coach.
@@ -200,10 +203,10 @@ def calculate_development_bonus(
 
 def get_position_development_summary(
     coach_tier: CoachTier,
-    offensive_scheme: Optional[str],
-    defensive_scheme: Optional[str],
-    archetype: CoachArchetype
-) -> Dict[str, float]:
+    offensive_scheme: str | None,
+    defensive_scheme: str | None,
+    archetype: CoachArchetype,
+) -> dict[str, float]:
     """
     Get development bonuses for all positions under this coach.
 
@@ -211,11 +214,31 @@ def get_position_development_summary(
         Dict mapping position to development multiplier
     """
     positions = [
-        "QB", "RB", "FB", "WR", "TE", "OL", "C", "G", "T",
-        "DL", "DE", "DT", "NT", "EDGE",
-        "LB", "ILB", "OLB", "MLB",
-        "CB", "S", "FS", "SS",
-        "K", "P", "LS"
+        "QB",
+        "RB",
+        "FB",
+        "WR",
+        "TE",
+        "OL",
+        "C",
+        "G",
+        "T",
+        "DL",
+        "DE",
+        "DT",
+        "NT",
+        "EDGE",
+        "LB",
+        "ILB",
+        "OLB",
+        "MLB",
+        "CB",
+        "S",
+        "FS",
+        "SS",
+        "K",
+        "P",
+        "LS",
     ]
 
     return {
@@ -235,24 +258,24 @@ NOTABLE_COACHES = {
         "tier": CoachTier.LEGEND,
         "archetype": CoachArchetype.QB_GURU,
         "offensive_scheme": "West Coast",
-        "notes": "Developed Mahomes, McNabb, Vick"
+        "notes": "Developed Mahomes, McNabb, Vick",
     },
     "Bill Belichick": {
         "tier": CoachTier.LEGEND,
         "archetype": CoachArchetype.GENERALIST,
         "defensive_scheme": "Multiple",
-        "notes": "GOAT defensive mind, develops all positions"
+        "notes": "GOAT defensive mind, develops all positions",
     },
     "Sean McVay": {
         "tier": CoachTier.ELITE,
         "archetype": CoachArchetype.RECEIVING_COACH,
         "offensive_scheme": "West Coast",
-        "notes": "Innovative play-caller, WR development"
+        "notes": "Innovative play-caller, WR development",
     },
     "Kyle Shanahan": {
         "tier": CoachTier.ELITE,
         "archetype": CoachArchetype.RUN_GAME_SPECIALIST,
         "offensive_scheme": "Zone Run",
-        "notes": "Zone running scheme master"
+        "notes": "Zone running scheme master",
     },
 }

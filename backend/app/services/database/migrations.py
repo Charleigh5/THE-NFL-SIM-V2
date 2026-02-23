@@ -11,13 +11,13 @@ Phase 12: Database Enhancements
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Callable
 from datetime import datetime
 from enum import Enum
 
 
 class MigrationStatus(str, Enum):
     """Migration execution status."""
+
     PENDING = "PENDING"
     APPLIED = "APPLIED"
     FAILED = "FAILED"
@@ -27,19 +27,21 @@ class MigrationStatus(str, Enum):
 @dataclass
 class Migration:
     """A single database migration."""
+
     version: str
     name: str
     description: str
     up_sql: str
     down_sql: str
     status: MigrationStatus = MigrationStatus.PENDING
-    applied_at: Optional[datetime] = None
+    applied_at: datetime | None = None
 
 
 @dataclass
 class MigrationHistory:
     """Record of applied migrations."""
-    migrations: List[Migration] = field(default_factory=list)
+
+    migrations: list[Migration] = field(default_factory=list)
     current_version: str = "0.0.0"
 
 
@@ -50,7 +52,7 @@ class MigrationManager:
 
     def __init__(self):
         self.history = MigrationHistory()
-        self.pending: List[Migration] = []
+        self.pending: list[Migration] = []
 
     def register_migration(self, migration: Migration):
         """Add a migration to the pending queue."""
@@ -96,7 +98,7 @@ class MigrationManager:
         self.pending = [m for m in self.pending if m.status == MigrationStatus.PENDING]
         return applied
 
-    def get_status(self) -> Dict:
+    def get_status(self) -> dict:
         """Get migration status summary."""
         return {
             "current_version": self.history.current_version,

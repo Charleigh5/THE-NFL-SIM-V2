@@ -10,14 +10,14 @@ Phase 10: Stadium Effects
 - Momentum feedback loops
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from enum import Enum
 import random
+from dataclasses import dataclass
+from enum import Enum
 
 
 class CrowdMood(str, Enum):
     """Overall crowd emotional state."""
+
     ELECTRIC = "ELECTRIC"
     EXCITED = "EXCITED"
     ENGAGED = "ENGAGED"
@@ -29,6 +29,7 @@ class CrowdMood(str, Enum):
 @dataclass
 class CrowdDynamics:
     """Crowd behavior state."""
+
     mood: CrowdMood
     chant_active: bool = False
     wave_active: bool = False
@@ -46,7 +47,7 @@ class CrowdEngine:
             base_passion: Fan base passion rating (1-100)
         """
         self.base_passion = base_passion
-        self.recent_events: List[str] = []
+        self.recent_events: list[str] = []
 
     def process_event(self, event: str, is_home_positive: bool) -> CrowdDynamics:
         """
@@ -66,12 +67,7 @@ class CrowdEngine:
         # Boo calculation
         boo = self._calculate_boo(is_home_positive)
 
-        return CrowdDynamics(
-            mood=mood,
-            chant_active=chant,
-            wave_active=wave,
-            boo_intensity=boo
-        )
+        return CrowdDynamics(mood=mood, chant_active=chant, wave_active=wave, boo_intensity=boo)
 
     def _calculate_mood(self, is_positive: bool) -> CrowdMood:
         """Determine crowd mood."""

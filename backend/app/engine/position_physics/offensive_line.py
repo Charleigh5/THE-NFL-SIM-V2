@@ -12,19 +12,19 @@ Phase 3: Position-Specific Physics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
+from typing import Any
 
-from .base import Vector2, PhysicsState
-
+from .base import PhysicsState, Vector2
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class BlockType(str, Enum):
     """Types of blocks."""
+
     PASS_SET = "PASS_SET"
     DRIVE_BLOCK = "DRIVE_BLOCK"
     REACH_BLOCK = "REACH_BLOCK"
@@ -36,6 +36,7 @@ class BlockType(str, Enum):
 
 class GapResponsibility(str, Enum):
     """Gap assignments."""
+
     A_GAP_LEFT = "A_GAP_LEFT"
     A_GAP_RIGHT = "A_GAP_RIGHT"
     B_GAP_LEFT = "B_GAP_LEFT"
@@ -49,15 +50,17 @@ class GapResponsibility(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class BlockerState:
     """Current blocker state."""
+
     physics: PhysicsState = field(default_factory=PhysicsState)
 
     # Assignment
     block_type: BlockType = BlockType.PASS_SET
-    assigned_defender_id: Optional[str] = None
-    gap: Optional[GapResponsibility] = None
+    assigned_defender_id: str | None = None
+    gap: GapResponsibility | None = None
 
     # Battle state
     win_score: float = 0.0  # -1 to 1 (-1 = lost, 1 = won)
@@ -71,6 +74,7 @@ class BlockerState:
 @dataclass(frozen=True)
 class OLPhysicsConfig:
     """Configuration for OL physics."""
+
     # Engagement
     engagement_range_yards: float = 1.5
 
@@ -88,6 +92,7 @@ class OLPhysicsConfig:
 # OFFENSIVE LINE PHYSICS
 # ============================================================================
 
+
 class OffensiveLinePhysics:
     """
     Physics engine for offensive linemen.
@@ -101,7 +106,7 @@ class OffensiveLinePhysics:
 
     def __init__(
         self,
-        config: Optional[OLPhysicsConfig] = None,
+        config: OLPhysicsConfig | None = None,
         strength_rating: int = 85,
         pass_block_rating: int = 80,
         run_block_rating: int = 82,
@@ -146,7 +151,7 @@ class OffensiveLinePhysics:
             diff = (self.pass_block_finesse - rusher_finesse_move) / 100.0
 
         # Add variance
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
         variance = (roll - 0.5) * 0.1
 
         # Update win score
@@ -164,9 +169,9 @@ class OffensiveLinePhysics:
 
     def assign_blockers(
         self,
-        blockers: List[Tuple[str, Vector2]],
-        rushers: List[Tuple[str, Vector2]],
-    ) -> Dict[str, Optional[str]]:
+        blockers: list[tuple[str, Vector2]],
+        rushers: list[tuple[str, Vector2]],
+    ) -> dict[str, str | None]:
         """
         Deterministic blocker assignment.
         No double-targeting allowed.
@@ -187,7 +192,7 @@ class OffensiveLinePhysics:
 
             # Find closest available rusher
             best_rusher = None
-            best_distance = float('inf')
+            best_distance = float("inf")
 
             for rusher_id, rusher_pos in rushers:
                 if rusher_id not in available_rushers:
@@ -208,9 +213,9 @@ class OffensiveLinePhysics:
 
     def calculate_pocket_contour(
         self,
-        blocker_positions: List[Vector2],
+        blocker_positions: list[Vector2],
         qb_position: Vector2,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Calculate pocket shape from blocker positions.
 
@@ -263,5 +268,5 @@ class OffensiveLinePhysics:
         # Base probability from holding risk
         prob = (state.holding_risk - 0.7) / 0.3 * 0.5  # Max 50% at full risk
 
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
         return roll < prob

@@ -16,75 +16,80 @@ Context7 Best Practices:
 - Physics-based outcomes
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState, CollisionResult,
+    CollisionResult,
+    PhysicsState,
+    Vector2,
+    calculate_change_of_direction_time,
+    calculate_g_force,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_acceleration,
-    calculate_deceleration,
-    calculate_change_of_direction_time,
-    resolve_momentum_collision,
-    calculate_g_force,
 )
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class CutType(str, Enum):
     """Types of cut moves."""
-    JUKE = "JUKE"           # Quick lateral movement
-    SPIN = "SPIN"           # 360 rotation
-    HURDLE = "HURDLE"       # Jump over tackler
-    STIFF_ARM = "STIFF_ARM" # Push off tackler
-    TRUCK = "TRUCK"         # Run through tackler
-    DEAD_LEG = "DEAD_LEG"   # Plant and acceleration
+
+    JUKE = "JUKE"  # Quick lateral movement
+    SPIN = "SPIN"  # 360 rotation
+    HURDLE = "HURDLE"  # Jump over tackler
+    STIFF_ARM = "STIFF_ARM"  # Push off tackler
+    TRUCK = "TRUCK"  # Run through tackler
+    DEAD_LEG = "DEAD_LEG"  # Plant and acceleration
 
 
 class ContactType(str, Enum):
     """Type of tackle contact."""
-    WRAP_UP = "WRAP_UP"         # Arms around waist
-    DIVING = "DIVING"           # Dive at legs
-    SHOULDER = "SHOULDER"       # Shoulder hit
-    HEAD_ON = "HEAD_ON"         # Direct collision
-    ARM_TACKLE = "ARM_TACKLE"   # One arm tackle
-    PURSUIT = "PURSUIT"         # Angle pursuit
+
+    WRAP_UP = "WRAP_UP"  # Arms around waist
+    DIVING = "DIVING"  # Dive at legs
+    SHOULDER = "SHOULDER"  # Shoulder hit
+    HEAD_ON = "HEAD_ON"  # Direct collision
+    ARM_TACKLE = "ARM_TACKLE"  # One arm tackle
+    PURSUIT = "PURSUIT"  # Angle pursuit
 
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
 
+
 @dataclass(frozen=True)
 class RBPhysicsConfig:
     """Configuration for RB physics."""
+
     # Balance
-    base_balance: float = 50.0    # Center of gravity score
+    base_balance: float = 50.0  # Center of gravity score
     contact_balance_loss: float = 20.0  # Balance lost per contact
 
     # Cut moves
-    juke_speed_retention: float = 0.8   # Speed kept after juke
-    spin_speed_retention: float = 0.6   # Speed kept after spin
+    juke_speed_retention: float = 0.8  # Speed kept after juke
+    spin_speed_retention: float = 0.6  # Speed kept after spin
     hurdle_success_threshold: float = 0.7
 
     # Yards after contact
-    max_yac_yards: float = 15.0   # Maximum YAC possible
-    min_yac_speed: float = 3.0    # Minimum speed to gain YAC
+    max_yac_yards: float = 15.0  # Maximum YAC possible
+    min_yac_speed: float = 3.0  # Minimum speed to gain YAC
 
 
 # ============================================================================
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class TackleAttempt:
     """Data for a tackle attempt."""
+
     tackler_id: str
     tackler_weight: int
     tackler_speed: float
@@ -96,6 +101,7 @@ class TackleAttempt:
 @dataclass
 class CutMove:
     """Data for an attempted cut move."""
+
     cut_type: CutType
     direction_change: float  # Degrees
     target_position: Vector2
@@ -104,6 +110,7 @@ class CutMove:
 @dataclass
 class RBState:
     """Current RB state during play."""
+
     physics: PhysicsState = field(default_factory=PhysicsState)
 
     # Balance (0 = falling, 100 = stable)
@@ -112,7 +119,7 @@ class RBState:
     # Contact tracking
     contacts_absorbed: int = 0
     yards_after_contact: float = 0.0
-    first_contact_position: Optional[Vector2] = None
+    first_contact_position: Vector2 | None = None
 
     # Move cooldowns
     last_cut_time_ms: float = 0.0
@@ -125,6 +132,7 @@ class RBState:
 # ============================================================================
 # RUNNING BACK PHYSICS
 # ============================================================================
+
 
 class RunningBackPhysics:
     """
@@ -139,7 +147,7 @@ class RunningBackPhysics:
 
     def __init__(
         self,
-        config: Optional[RBPhysicsConfig] = None,
+        config: RBPhysicsConfig | None = None,
         speed_rating: int = 85,
         acceleration_rating: int = 85,
         agility_rating: int = 85,
@@ -196,7 +204,7 @@ class RunningBackPhysics:
         tackle_prob = base_prob * elusiveness_mod * fatigue_mod
 
         # Roll for tackle
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
 
         # Calculate G-force for injury check
         speed_change = abs(state.physics.speed - tackle.tackler_speed * 0.5)
@@ -256,11 +264,11 @@ class RunningBackPhysics:
 
         # Contact type modifiers
         type_mods = {
-            ContactType.WRAP_UP: 1.2,      # Best tackle technique
-            ContactType.DIVING: 0.7,        # Risky
+            ContactType.WRAP_UP: 1.2,  # Best tackle technique
+            ContactType.DIVING: 0.7,  # Risky
             ContactType.SHOULDER: 0.9,
             ContactType.HEAD_ON: 1.0,
-            ContactType.ARM_TACKLE: 0.5,    # Worst
+            ContactType.ARM_TACKLE: 0.5,  # Worst
             ContactType.PURSUIT: 0.85,
         }
         type_factor = type_mods.get(contact_type, 1.0)
@@ -321,7 +329,7 @@ class RunningBackPhysics:
 
         fumble_prob = base_rate * g_force_mod * security_mod * contact_mod
 
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
         return roll < fumble_prob
 
     def execute_cut_move(
@@ -331,7 +339,7 @@ class RunningBackPhysics:
         surface_traction: float = 1.0,  # 1.0 = normal, <1 = slippery
         fatigue: float = 0.0,
         rng: Any = None,
-    ) -> Tuple[bool, float, float]:
+    ) -> tuple[bool, float, float]:
         """
         Execute a cut move.
 
@@ -358,7 +366,7 @@ class RunningBackPhysics:
             fatigue,
         )
 
-        roll = rng.next_float() if rng else __import__('random').random()
+        roll = rng.next_float() if rng else __import__("random").random()
         success = roll < success_prob
 
         # Calculate G-force from direction change

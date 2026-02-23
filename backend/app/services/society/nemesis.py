@@ -12,24 +12,25 @@ Phase 6: SOCIETY Locker Room Dynamics
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS
 # ============================================================================
 
+
 class RivalryType(str, Enum):
     """Types of nemesis relationships."""
-    PERSONAL = "PERSONAL"       # History of conflict
-    COMPETITIVE = "COMPETITIVE" # Fighting for position/award
-    DIVISIONAL = "DIVISIONAL"   # Team-based division rival
-    LEGACY = "LEGACY"           # Historic rivalry
+
+    PERSONAL = "PERSONAL"  # History of conflict
+    COMPETITIVE = "COMPETITIVE"  # Fighting for position/award
+    DIVISIONAL = "DIVISIONAL"  # Team-based division rival
+    LEGACY = "LEGACY"  # Historic rivalry
 
 
 class NemesisEvent(str, Enum):
     """Events that trigger/escalate rivalries."""
+
     DIRTY_HIT = "DIRTY_HIT"
     TRASH_TALK = "TRASH_TALK"
     BIG_GAME_LOSS = "BIG_GAME_LOSS"
@@ -41,14 +42,16 @@ class NemesisEvent(str, Enum):
 # DATA CLASSES
 # ============================================================================
 
+
 @dataclass
 class Rivalry:
     """A rivalry between two entities."""
+
     source_id: str
     target_id: str
     type: RivalryType
-    intensity: float = 0.0          # 0-100 scale
-    history: List[str] = field(default_factory=list)
+    intensity: float = 0.0  # 0-100 scale
+    history: list[str] = field(default_factory=list)
     active: bool = True
 
     def escalate(self, amount: float, reason: str) -> None:
@@ -64,9 +67,10 @@ class Rivalry:
 @dataclass
 class NemesisState:
     """State of all rivalries for a context."""
-    rivalries: Dict[str, Rivalry] = field(default_factory=dict)
 
-    def get_rivalry(self, id1: str, id2: str) -> Optional[Rivalry]:
+    rivalries: dict[str, Rivalry] = field(default_factory=dict)
+
+    def get_rivalry(self, id1: str, id2: str) -> Rivalry | None:
         """Get rivalry between two IDs (direction agnostic)."""
         key1 = f"{id1}_{id2}"
         key2 = f"{id2}_{id1}"
@@ -76,6 +80,7 @@ class NemesisState:
 # ============================================================================
 # NEMESIS ENGINE
 # ============================================================================
+
 
 class NemesisEngine:
     """
@@ -108,10 +113,7 @@ class NemesisEngine:
                 rivalry_type = RivalryType.COMPETITIVE
 
             rivalry = Rivalry(
-                source_id=source_id,
-                target_id=target_id,
-                type=rivalry_type,
-                intensity=0.0
+                source_id=source_id, target_id=target_id, type=rivalry_type, intensity=0.0
             )
             key = f"{source_id}_{target_id}"
             self.state.rivalries[key] = rivalry
@@ -128,7 +130,7 @@ class NemesisEngine:
         rivalry.escalate(intensity_boost, f"Event: {event.value}")
         return rivalry
 
-    def get_matchup_heat(self, team1_ids: List[str], team2_ids: List[str]) -> float:
+    def get_matchup_heat(self, team1_ids: list[str], team2_ids: list[str]) -> float:
         """
         Calculate the total "Heat" of a matchup roughly 0-100.
 

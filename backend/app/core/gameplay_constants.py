@@ -51,8 +51,8 @@ class AttributeComparisonConstants:
 
     # Speed comparison
     SPEED_MIN_MOD: float = -0.10  # Speed disadvantage cap
-    SPEED_MAX_MOD: float = 0.20   # Speed advantage cap (higher because "speed kills")
-    SPEED_SCALE: float = 0.01     # 1 point = 1%
+    SPEED_MAX_MOD: float = 0.20  # Speed advantage cap (higher because "speed kills")
+    SPEED_SCALE: float = 0.01  # 1 point = 1%
 
     # Strength comparison
     STRENGTH_SCALE: float = 0.01

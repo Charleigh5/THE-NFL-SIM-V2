@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import List, Optional, Tuple, Dict, Any
+from dataclasses import dataclass
+from typing import Any
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
-from app.models.trait import Trait, PlayerTrait, TraitSource
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
+from app.models.trait import PlayerTrait, Trait, TraitSource
 
 logger = get_logger(__name__)
 
@@ -22,20 +22,22 @@ logger = get_logger(__name__)
 # ============================================================================
 # Controls how rare traits are in the league based on real-world distributions
 
+
 class TraitRarity:
     """Rarity tiers for trait distribution."""
+
     LEGENDARY = "LEGENDARY"  # 1-5 players league-wide (e.g., Ragknow, Rocket Arm)
-    RARE = "RARE"            # 5-15 players league-wide (e.g., Elite Speed)
-    UNCOMMON = "UNCOMMON"    # ~50-100 players (e.g., most Gold-tier traits)
-    COMMON = "COMMON"        # No cap (e.g., most Silver/Common traits)
+    RARE = "RARE"  # 5-15 players league-wide (e.g., Elite Speed)
+    UNCOMMON = "UNCOMMON"  # ~50-100 players (e.g., most Gold-tier traits)
+    COMMON = "COMMON"  # No cap (e.g., most Silver/Common traits)
 
 
 # Soft caps for legendary traits (approximate league-wide limits)
 LEGENDARY_TRAIT_CAPS = {
-    "ragknow": 3,           # ~3 players with legendary toughness
-    "rocket_arm": 5,        # ~5 QBs with truly elite arm strength
-    "elite_speed": 10,      # ~10 players with 4.3 speed or better
-    "generational": 2,      # ~2 truly generational talents at a time
+    "ragknow": 3,  # ~3 players with legendary toughness
+    "rocket_arm": 5,  # ~5 QBs with truly elite arm strength
+    "elite_speed": 10,  # ~10 players with 4.3 speed or better
+    "generational": 2,  # ~2 truly generational talents at a time
 }
 
 
@@ -45,24 +47,27 @@ class TraitDefinition:
     Defines a trait's properties, requirements, and effects.
     Used for the in-memory catalog and eligibility checking.
     """
+
     name: str
     description: str
-    position_requirements: List[str]
+    position_requirements: list[str]
     acquisition_method: str  # AUTO_UNLOCK, STAT_THRESHOLD, COACHING_UNLOCK, TEAM_DESIGNATION, PROGRESSION, RPG_UNLOCK
-    activation_triggers: List[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, INJURY_ACTIVE, etc.
-    effects: Dict[str, float]
+    activation_triggers: list[
+        str
+    ]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, INJURY_ACTIVE, etc.
+    effects: dict[str, float]
     tier: str  # COMMON, SILVER, GOLD, ELITE
 
     # Optional eligibility requirements
-    min_awareness: Optional[int] = None
-    min_experience: Optional[int] = None
-    min_stat_threshold: Optional[Dict[str, int]] = None
+    min_awareness: int | None = None
+    min_experience: int | None = None
+    min_stat_threshold: dict[str, int] | None = None
 
     # Rarity system
     rarity_tier: str = TraitRarity.COMMON  # LEGENDARY, RARE, UNCOMMON, COMMON
-    max_league_count: Optional[int] = None  # Soft cap on total players with this trait
+    max_league_count: int | None = None  # Soft cap on total players with this trait
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for API responses."""
         return {
             "name": self.name,
@@ -79,7 +84,7 @@ class TraitDefinition:
 # TRAIT CATALOG - 25 TRAITS
 # ============================================================================
 
-TRAIT_CATALOG: Dict[str, TraitDefinition] = {
+TRAIT_CATALOG: dict[str, TraitDefinition] = {
     # -------------------------------------------------------------------------
     # QB TRAITS (3)
     # -------------------------------------------------------------------------
@@ -125,7 +130,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="GOLD",
     ),
-
     # -------------------------------------------------------------------------
     # RB TRAITS (3)
     # -------------------------------------------------------------------------
@@ -169,7 +173,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="SILVER",
     ),
-
     # -------------------------------------------------------------------------
     # WR/TE TRAITS (5)
     # -------------------------------------------------------------------------
@@ -240,7 +243,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="GOLD",
     ),
-
     # -------------------------------------------------------------------------
     # OL TRAITS (2)
     # -------------------------------------------------------------------------
@@ -270,7 +272,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="SILVER",
     ),
-
     # -------------------------------------------------------------------------
     # DL TRAITS (2)
     # -------------------------------------------------------------------------
@@ -300,7 +301,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="GOLD",
     ),
-
     # -------------------------------------------------------------------------
     # LB TRAITS (3)
     # -------------------------------------------------------------------------
@@ -344,7 +344,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="SILVER",
     ),
-
     # -------------------------------------------------------------------------
     # DB TRAITS (3)
     # -------------------------------------------------------------------------
@@ -389,7 +388,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="GOLD",
     ),
-
     # -------------------------------------------------------------------------
     # SPECIAL TEAMS TRAITS (2)
     # -------------------------------------------------------------------------
@@ -419,7 +417,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         },
         tier="SILVER",
     ),
-
     # -------------------------------------------------------------------------
     # GENERAL TRAITS (2)
     # -------------------------------------------------------------------------
@@ -449,7 +446,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         tier="SILVER",
         min_experience=8,
     ),
-
     # -------------------------------------------------------------------------
     # LEGENDARY TRAITS (Rare, League-Wide Soft Caps)
     # -------------------------------------------------------------------------
@@ -460,10 +456,10 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         acquisition_method="RPG_UNLOCK",  # Rare trait from RPG events or draft
         activation_triggers=["INJURY_ACTIVE", "ALWAYS"],
         effects={
-            "ignore_injury_penalties": 1.0,       # Boolean flag (1.0 = true)
-            "max_playable_severity": 7,           # Can play through severity 1-7
-            "block_injury_degradation": 1.0,      # No permanent attribute loss while injured
-            "recovery_time_multiplier": 0.90,     # 10% faster recovery
+            "ignore_injury_penalties": 1.0,  # Boolean flag (1.0 = true)
+            "max_playable_severity": 7,  # Can play through severity 1-7
+            "block_injury_degradation": 1.0,  # No permanent attribute loss while injured
+            "recovery_time_multiplier": 0.90,  # 10% faster recovery
         },
         tier="ELITE",
         min_experience=5,  # Must be veteran to unlock through progression
@@ -519,7 +515,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         rarity_tier=TraitRarity.LEGENDARY,
         max_league_count=2,  # Only ~2 truly generational talents at a time
     ),
-
     # -------------------------------------------------------------------------
     # RARE TRAITS (5-15 players league-wide)
     # -------------------------------------------------------------------------
@@ -558,7 +553,6 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         rarity_tier=TraitRarity.RARE,
         max_league_count=12,
     ),
-
     # -------------------------------------------------------------------------
     # TRUE-TO-LIFE TRAITS (Phase 11)
     # -------------------------------------------------------------------------
@@ -569,9 +563,9 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         acquisition_method="PROGRESSION",
         activation_triggers=["CRUNCH_TIME"],
         effects={
-            "pressure_immunity": 1.0,      # Boolean: Nullifies pressure penalties
-            "fatigue_override": 1.0,       # Boolean: Ignores fatigue penalties
-            "awareness_boost": 15,         # Situational awareness for clock/bounds
+            "pressure_immunity": 1.0,  # Boolean: Nullifies pressure penalties
+            "fatigue_override": 1.0,  # Boolean: Ignores fatigue penalties
+            "awareness_boost": 15,  # Situational awareness for clock/bounds
             "fumble_chance_reduction": 0.20,  # 20% less fumbles under pressure
         },
         tier="ELITE",
@@ -582,10 +576,10 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
 }
 
 
-
 # ============================================================================
 # TRAIT SERVICE CLASS
 # ============================================================================
+
 
 class TraitService:
     """
@@ -602,17 +596,17 @@ class TraitService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def get_catalog() -> Dict[str, TraitDefinition]:
+    def get_catalog() -> dict[str, TraitDefinition]:
         """Return the full trait catalog."""
         return TRAIT_CATALOG
 
     @staticmethod
-    def get_trait_definition(trait_key: str) -> Optional[TraitDefinition]:
+    def get_trait_definition(trait_key: str) -> TraitDefinition | None:
         """Get a specific trait definition by key."""
         return TRAIT_CATALOG.get(trait_key)
 
     @staticmethod
-    def get_trait_by_name(name: str) -> Optional[TraitDefinition]:
+    def get_trait_by_name(name: str) -> TraitDefinition | None:
         """Get a trait definition by its display name."""
         for trait_def in TRAIT_CATALOG.values():
             if trait_def.name == name:
@@ -624,12 +618,12 @@ class TraitService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def get_all_traits(db: Session) -> List[Trait]:
+    def get_all_traits(db: Session) -> list[Trait]:
         """List all available traits in the system."""
         return db.scalars(select(Trait)).all()
 
     @staticmethod
-    def get_player_traits(db: Session, player_id: int) -> List[TraitDefinition]:
+    def get_player_traits(db: Session, player_id: int) -> list[TraitDefinition]:
         """
         Get all traits assigned to a specific player.
         Returns TraitDefinition objects from the catalog for full effect data.
@@ -650,25 +644,24 @@ class TraitService:
                 trait_defs.append(catalog_def)
             else:
                 # Fallback: create minimal TraitDefinition from DB data
-                trait_defs.append(TraitDefinition(
-                    name=db_trait.name,
-                    description=db_trait.description or "",
-                    position_requirements=[],
-                    acquisition_method="UNKNOWN",
-                    activation_triggers=["ON_FIELD"],
-                    effects={},
-                    tier="COMMON",
-                ))
+                trait_defs.append(
+                    TraitDefinition(
+                        name=db_trait.name,
+                        description=db_trait.description or "",
+                        position_requirements=[],
+                        acquisition_method="UNKNOWN",
+                        activation_triggers=["ON_FIELD"],
+                        effects={},
+                        tier="COMMON",
+                    )
+                )
 
         return trait_defs
 
     @staticmethod
     def assign_trait(
-        db: Session,
-        player_id: int,
-        trait_id: int,
-        source: TraitSource = TraitSource.DEVELOPMENT
-    ) -> Optional[PlayerTrait]:
+        db: Session, player_id: int, trait_id: int, source: TraitSource = TraitSource.DEVELOPMENT
+    ) -> PlayerTrait | None:
         """Assign a trait to a player with APF 2K8-style tier caps."""
         from app.models.trait import TraitTier  # Local import to avoid circular
 
@@ -683,8 +676,9 @@ class TraitService:
         try:
             # Check if already assigned
             existing = db.scalar(
-                select(PlayerTrait)
-                .where(PlayerTrait.player_id == player_id, PlayerTrait.trait_id == trait_id)
+                select(PlayerTrait).where(
+                    PlayerTrait.player_id == player_id, PlayerTrait.trait_id == trait_id
+                )
             )
             if existing:
                 logger.info("trait_already_assigned", player_id=player_id, trait_id=trait_id)
@@ -698,7 +692,7 @@ class TraitService:
                 raise ValueError("Player or Trait not found")
 
             # Validate tier cap
-            trait_tier = getattr(trait, 'tier', TraitTier.COMMON)
+            trait_tier = getattr(trait, "tier", TraitTier.COMMON)
             cap = TIER_CAPS.get(trait_tier)
             if cap is not None:
                 # Count existing traits of this tier
@@ -714,11 +708,7 @@ class TraitService:
                         f"(max {cap}). Cannot assign '{trait.name}'."
                     )
 
-            new_assignment = PlayerTrait(
-                player_id=player_id,
-                trait_id=trait_id,
-                source=source
-            )
+            new_assignment = PlayerTrait(player_id=player_id, trait_id=trait_id, source=source)
             db.add(new_assignment)
             db.commit()
             db.refresh(new_assignment)
@@ -729,20 +719,26 @@ class TraitService:
                 trait_id=trait_id,
                 source=source,
                 trait_name=trait.name,
-                tier=str(trait_tier)
+                tier=str(trait_tier),
             )
             return new_assignment
 
         except Exception as e:
             db.rollback()
-            log_error(logger, ErrorCategory.TRAIT_ERROR, "Failed to assign trait", exc_info=e, player_id=player_id)
+            log_error(
+                logger,
+                ErrorCategory.TRAIT_ERROR,
+                "Failed to assign trait",
+                exc_info=e,
+                player_id=player_id,
+            )
             raise
 
     # -------------------------------------------------------------------------
     # ASYNC INSTANCE METHOD WRAPPERS (for services that pass db in constructor)
     # -------------------------------------------------------------------------
 
-    async def get_player_traits(self, player_id: int) -> List[TraitDefinition]:
+    async def get_player_traits_async(self, player_id: int) -> list[TraitDefinition]:
         """
         Async instance method wrapper for get_player_traits.
         Uses self.db passed in constructor.
@@ -776,15 +772,17 @@ class TraitService:
             if catalog_def:
                 trait_defs.append(catalog_def)
             else:
-                trait_defs.append(TraitDefinition(
-                    name=db_trait.name,
-                    description=db_trait.description or "",
-                    position_requirements=[],
-                    acquisition_method="UNKNOWN",
-                    activation_triggers=["ON_FIELD"],
-                    effects={},
-                    tier="COMMON",
-                ))
+                trait_defs.append(
+                    TraitDefinition(
+                        name=db_trait.name,
+                        description=db_trait.description or "",
+                        position_requirements=[],
+                        acquisition_method="UNKNOWN",
+                        activation_triggers=["ON_FIELD"],
+                        effects={},
+                        tier="COMMON",
+                    )
+                )
 
         return trait_defs
 
@@ -792,11 +790,7 @@ class TraitService:
     # ELIGIBILITY & ACTIVATION METHODS
     # -------------------------------------------------------------------------
 
-    async def check_trait_eligibility(
-        self,
-        player: Player,
-        trait_name: str
-    ) -> Tuple[bool, str]:
+    async def check_trait_eligibility(self, player: Player, trait_name: str) -> tuple[bool, str]:
         """
         Check if a player is eligible for a specific trait.
         Returns (is_eligible, reason_string).
@@ -815,13 +809,19 @@ class TraitService:
         if trait_def.min_awareness:
             player_awareness = getattr(player, "awareness", 0)
             if player_awareness < trait_def.min_awareness:
-                return False, f"Requires {trait_def.min_awareness}+ awareness (player has {player_awareness})"
+                return (
+                    False,
+                    f"Requires {trait_def.min_awareness}+ awareness (player has {player_awareness})",
+                )
 
         # Check experience requirement
         if trait_def.min_experience:
             player_experience = getattr(player, "experience", 0) or getattr(player, "years_pro", 0)
             if player_experience < trait_def.min_experience:
-                return False, f"Requires {trait_def.min_experience}+ years experience (player has {player_experience})"
+                return (
+                    False,
+                    f"Requires {trait_def.min_experience}+ years experience (player has {player_experience})",
+                )
 
         # Check stat thresholds
         if trait_def.min_stat_threshold:
@@ -833,7 +833,7 @@ class TraitService:
         return True, "Eligible"
 
     @staticmethod
-    def check_crunch_time(context: Dict[str, Any]) -> bool:
+    def check_crunch_time(context: dict[str, Any]) -> bool:
         """
         Determine if the game is in "Crunch Time" for The Closer trait activation.
 
@@ -865,10 +865,7 @@ class TraitService:
         return False
 
     @staticmethod
-    def check_trait_activation(
-        trait_def: TraitDefinition,
-        context: Dict[str, Any]
-    ) -> bool:
+    def check_trait_activation(trait_def: TraitDefinition, context: dict[str, Any]) -> bool:
         """
         Check if a trait is active given the game context.
         Context should contain keys like 'triggers': ['PASS_PLAY', 'RED_ZONE'], etc.
@@ -895,10 +892,8 @@ class TraitService:
 
     @staticmethod
     def apply_trait_effects(
-        player: Player,
-        trait_def: TraitDefinition,
-        context: Dict[str, Any] = None
-    ) -> Dict[str, float]:
+        player: Player, trait_def: TraitDefinition, context: dict[str, Any] = None
+    ) -> dict[str, float]:
         """
         Apply trait effects to a player's attributes.
         Returns the effects that were applied.

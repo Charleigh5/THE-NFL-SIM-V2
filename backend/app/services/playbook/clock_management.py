@@ -1,8 +1,8 @@
-from enum import Enum
 from dataclasses import dataclass
-from typing import List, Optional
-from app.services.playbook.types import GameSituation
+from enum import Enum
+
 from app.services.playbook.coaching_ai import CoachingAIService
+from app.services.playbook.types import GameSituation
 
 
 class ClockStrategy(str, Enum):
@@ -15,15 +15,17 @@ class ClockStrategy(str, Enum):
 
 class UrgencyLevel(str, Enum):
     """Granular urgency levels for 2-minute drill scenarios."""
-    LOW = "LOW"          # >4 min, normal play
-    MEDIUM = "MEDIUM"    # 2-4 min, need to move efficiently
-    HIGH = "HIGH"        # 1-2 min, hurry-up offense
+
+    LOW = "LOW"  # >4 min, normal play
+    MEDIUM = "MEDIUM"  # 2-4 min, need to move efficiently
+    HIGH = "HIGH"  # 1-2 min, hurry-up offense
     CRITICAL = "CRITICAL"  # <1 min, desperation mode
 
 
 @dataclass
 class TwoMinuteDrillContext:
     """Context for 2-minute drill decision making."""
+
     urgency_level: UrgencyLevel
     clock_strategy: ClockStrategy
     timeouts_remaining: int
@@ -40,14 +42,18 @@ class TwoMinuteDrillContext:
     spike_recommended: bool = False
     timeout_recommended: bool = False
 
+
 class ClockManagementAI:
     """
     Manages game clock strategy: Hurry-up, Chew Clock, Spikes, Kneels.
     """
+
     def __init__(self, coaching_service: CoachingAIService):
         self.coaching_service = coaching_service
 
-    def get_clock_strategy(self, situation: GameSituation, timeouts_remaining: int) -> ClockStrategy:
+    def get_clock_strategy(
+        self, situation: GameSituation, timeouts_remaining: int
+    ) -> ClockStrategy:
         """Determines the current clock strategy."""
 
         # Victory Formation (Kneel)
@@ -76,7 +82,7 @@ class ClockManagementAI:
         """Is the offense trying to hurry?"""
         if situation.quarter not in [2, 4]:
             return False
-        if situation.time_remaining > 240: # 4 mins
+        if situation.time_remaining > 240:  # 4 mins
             return False
 
         # Trailing in 4th
@@ -114,7 +120,9 @@ class ClockManagementAI:
 
         return False
 
-    def should_use_timeout(self, situation: GameSituation, timeouts_remaining: int, is_offense: bool) -> bool:
+    def should_use_timeout(
+        self, situation: GameSituation, timeouts_remaining: int, is_offense: bool
+    ) -> bool:
         """Wrapper for timeout decision with resource check."""
         if timeouts_remaining <= 0:
             return False
@@ -124,13 +132,17 @@ class ClockManagementAI:
         else:
             return self.should_defense_call_timeout(situation, timeouts_remaining)
 
-    def should_defense_call_timeout(self, situation: GameSituation, timeouts_remaining: int) -> bool:
+    def should_defense_call_timeout(
+        self, situation: GameSituation, timeouts_remaining: int
+    ) -> bool:
         """Determines if defense should call a timeout to preserve time."""
         if timeouts_remaining <= 0:
             return False
 
         # Only call if losing or tied
-        if situation.score_diff > 0: # Defense team is winning (score_diff is relative to team evaluating)
+        if (
+            situation.score_diff > 0
+        ):  # Defense team is winning (score_diff is relative to team evaluating)
             return False
 
         # 4th Quarter specific
@@ -191,9 +203,7 @@ class ClockManagementAI:
         return UrgencyLevel.LOW
 
     def get_two_minute_drill_context(
-        self,
-        situation: GameSituation,
-        timeouts_remaining: int
+        self, situation: GameSituation, timeouts_remaining: int
     ) -> TwoMinuteDrillContext:
         """
         Build a comprehensive context for 2-minute drill decision making.
@@ -212,7 +222,7 @@ class ClockManagementAI:
             time_remaining=situation.time_remaining,
             field_position=situation.field_position,
             down=situation.down,
-            distance=situation.distance
+            distance=situation.distance,
         )
 
         # Calculate recommendations based on urgency
@@ -221,9 +231,7 @@ class ClockManagementAI:
             context.avoid_middle_field = True
             context.max_pass_depth = "mid"  # No time for deep developing routes
             context.spike_recommended = (
-                situation.down == 1 and
-                timeouts_remaining == 0 and
-                situation.time_remaining < 30
+                situation.down == 1 and timeouts_remaining == 0 and situation.time_remaining < 30
             )
         elif urgency == UrgencyLevel.HIGH:
             context.favor_sideline_routes = True
@@ -254,9 +262,8 @@ class ClockManagementAI:
 
         adjustments = {
             "urgency_level": context.urgency_level.value,
-            "filter_hurry_up_compatible": context.urgency_level in [
-                UrgencyLevel.HIGH, UrgencyLevel.CRITICAL
-            ],
+            "filter_hurry_up_compatible": context.urgency_level
+            in [UrgencyLevel.HIGH, UrgencyLevel.CRITICAL],
             "pass_probability_boost": 0.0,
             "sideline_route_boost": 0.0,
             "deep_pass_penalty": 0.0,
@@ -281,4 +288,3 @@ class ClockManagementAI:
             adjustments["max_play_clock_usage"] = 25
 
         return adjustments
-

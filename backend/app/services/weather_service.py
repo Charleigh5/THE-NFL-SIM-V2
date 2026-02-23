@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import random
-from typing import Dict, Optional
-
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 
 logger = get_logger(__name__)
+
 
 class WeatherService:
     """
@@ -16,13 +14,13 @@ class WeatherService:
     MODIFIER_RAIN_PASSING = -0.15
     MODIFIER_RAIN_FUMBLE = 0.10
     MODIFIER_SNOW_PASSING = -0.25
-    MODIFIER_SNOW_RUSHING = 0.05 # easier to run in snow? or just relative to pass
-    MODIFIER_WIND_PASSING = -0.20 # > 15mph
+    MODIFIER_SNOW_RUSHING = 0.05  # easier to run in snow? or just relative to pass
+    MODIFIER_WIND_PASSING = -0.20  # > 15mph
     MODIFIER_WIND_FG = -0.10
-    MODIFIER_COLD_FUMBLE = 0.15 # < 20F
+    MODIFIER_COLD_FUMBLE = 0.15  # < 20F
 
     @staticmethod
-    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> Dict[str, float]:
+    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> dict[str, float]:
         """
         Get gameplay modifiers based on weather conditions.
 
@@ -33,12 +31,7 @@ class WeatherService:
         Returns:
             Dictionary of modifiers, e.g. {"passing": -0.15, "fumble": 0.10}
         """
-        modifiers = {
-            "passing": 0.0,
-            "rushing": 0.0,
-            "fumble": 0.0,
-            "fg_accuracy": 0.0
-        }
+        modifiers = {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0}
 
         try:
             # TODO: Integrate with real weather API or Simulation Weather Engine
@@ -76,5 +69,10 @@ class WeatherService:
             return modifiers
 
         except Exception as e:
-            log_error(logger, ErrorCategory.WEATHER_ERROR, "Failed to calculate weather modifiers", exc_info=e)
+            log_error(
+                logger,
+                ErrorCategory.WEATHER_ERROR,
+                "Failed to calculate weather modifiers",
+                exc_info=e,
+            )
             return modifiers

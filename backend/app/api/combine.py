@@ -9,13 +9,11 @@ Endpoints:
 - GET /combine/genesis-reveal/{player_id} - Reveal GENESIS biometric data (B-047)
 """
 
-from fastapi import APIRouter, HTTPException, Query, Path
+from fastapi import APIRouter, HTTPException, Path, Query
 from pydantic import BaseModel, Field
-from typing import List, Optional
+
 from app.services.scouting.combine import (
-    CombineResults,
     CombineSimulation,
-    GenesisRevealData,
 )
 
 router = APIRouter(prefix="/combine", tags=["Combine"])
@@ -25,8 +23,10 @@ router = APIRouter(prefix="/combine", tags=["Combine"])
 # SCHEMAS
 # ============================================================================
 
+
 class CombineResultsResponse(BaseModel):
     """B-046: Response model with modernized combine metrics."""
+
     forty_yard: float
     vertical_jump: float
     broad_jump: int
@@ -41,11 +41,12 @@ class CombineResultsResponse(BaseModel):
     # Metadata
     participated: bool
     injury_flag: bool
-    medical_flags: List[str]
+    medical_flags: list[str]
 
 
 class GenesisRevealResponse(BaseModel):
     """B-047: Response model for GENESIS biometric reveal."""
+
     player_id: int
     position: str
 
@@ -63,11 +64,12 @@ class GenesisRevealResponse(BaseModel):
     body_fat_percentage: float
 
     # Medical screening results
-    medical_flags: List[str]
+    medical_flags: list[str]
 
 
 class SimulateCombineRequest(BaseModel):
     """Request to simulate combine for a prospect."""
+
     player_id: int
     position: str
     speed: int = Field(50, ge=1, le=99)
@@ -80,6 +82,7 @@ class SimulateCombineRequest(BaseModel):
 # ============================================================================
 # ENDPOINTS
 # ============================================================================
+
 
 @router.post("/simulate", response_model=CombineResultsResponse)
 async def simulate_combine(request: SimulateCombineRequest) -> CombineResultsResponse:
@@ -207,11 +210,21 @@ async def get_supported_positions() -> dict:
     """Get list of positions supported by the combine system."""
     return {
         "positions": [
-            "QB", "RB", "FB", "WR", "TE",
-            "OT", "OG", "C",
-            "DE", "DT", "LB",
-            "CB", "S",
-            "K", "P"
+            "QB",
+            "RB",
+            "FB",
+            "WR",
+            "TE",
+            "OT",
+            "OG",
+            "C",
+            "DE",
+            "DT",
+            "LB",
+            "CB",
+            "S",
+            "K",
+            "P",
         ],
-        "description": "Valid position codes for combine simulation"
+        "description": "Valid position codes for combine simulation",
     }
