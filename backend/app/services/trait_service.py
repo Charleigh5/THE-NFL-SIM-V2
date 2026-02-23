@@ -738,7 +738,7 @@ class TraitService:
     # ASYNC INSTANCE METHOD WRAPPERS (for services that pass db in constructor)
     # -------------------------------------------------------------------------
 
-    async def get_player_traits(self, player_id: int) -> list[TraitDefinition]:
+    async def get_player_traits_async(self, player_id: int) -> list[TraitDefinition]:
         """
         Async instance method wrapper for get_player_traits.
         Uses self.db passed in constructor.

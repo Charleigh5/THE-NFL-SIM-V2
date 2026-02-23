@@ -58,7 +58,7 @@ class PreGameService:
         # Load traits for all players
         for player_id, player in roster.items():
             # Get player's traits
-            trait_defs = await self.trait_service.get_player_traits(player_id)
+            trait_defs = await self.trait_service.get_player_traits_async(player_id)
 
             if not trait_defs:
                 continue
@@ -155,7 +155,7 @@ class PreGameService:
             select(Game)
             .filter(
                 (Game.home_team_id == team_id) | (Game.away_team_id == team_id),
-                Game.is_played == True,
+                Game.is_played == True,  # noqa: E712
             )
             .order_by(desc(Game.season), desc(Game.week))
             .limit(5)

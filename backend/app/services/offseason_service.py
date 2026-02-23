@@ -318,7 +318,7 @@ class OffseasonService:
         """Get top available rookie prospects."""
         stmt = (
             select(Player)
-            .where(Player.is_rookie == True, Player.team_id == None)
+            .where(Player.is_rookie == True, Player.team_id == None)  # noqa: E711, E712
             .order_by(Player.overall_rating.desc())
             .limit(limit)
         )
@@ -470,7 +470,9 @@ class OffseasonService:
 
         # Get available FAs
         stmt_fa = (
-            select(Player).where(Player.team_id == None).order_by(Player.overall_rating.desc())
+            select(Player)
+            .where(Player.team_id == None)  # noqa: E711
+            .order_by(Player.overall_rating.desc())
         )
         free_agents = list(self.db.execute(stmt_fa).scalars().all())
         fa_pool = list(free_agents)
@@ -500,7 +502,9 @@ class OffseasonService:
         if not season:
             return []
 
-        stmt = select(Player).where(Player.is_retired == False, Player.team_id != None)
+        stmt = select(Player).where(
+            Player.is_retired == False, Player.team_id != None  # noqa: E711, E712
+        )
         players = list(self.db.execute(stmt).scalars().all())
 
         retired_names = []
