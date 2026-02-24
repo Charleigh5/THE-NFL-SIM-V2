@@ -90,7 +90,7 @@ class WeekSimulator:
         stmt = select(Game).filter(
             Game.season_id == season_id,
             Game.week == week,
-            Game.is_played == False
+            Game.is_played == False  # noqa: E712
         )
         result = await self.db.execute(stmt)
         games = result.scalars().all()
