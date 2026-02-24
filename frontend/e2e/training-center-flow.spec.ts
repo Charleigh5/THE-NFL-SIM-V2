@@ -44,8 +44,8 @@ test.describe("Training Center Flow", () => {
   test("should allow selecting coaching style", async ({ page }) => {
     // Check initial state or default
     // Click on a different style
-    await page.getByText("Old School").click();
-    await expect(page.getByText("Old School")).toHaveClass(/border-cyan-400/); // Assuming selected style gets border class
+    await page.getByText("Old School").first().click();
+    await expect(page.getByText("Old School").first()).toHaveClass(/border-cyan-400/); // Assuming selected style gets border class
   });
 
   test("should display drills", async ({ page }) => {

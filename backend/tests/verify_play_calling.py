@@ -163,12 +163,12 @@ def test_situation_5_running_short_yardage():
     else:
         print("FAIL: Run rate <= 50%")
 
-if __name__ == "__main__":
-    test_situation_1_conservative_punt()
-    test_situation_2_aggressive_goal_line()
-    test_situation_3_field_goal_range()
-    test_situation_4_passing_3rd_long()
-    test_situation_5_running_short_yardage()
+# if __name__ == "__main__":
+#     test_situation_1_conservative_punt()
+#     test_situation_2_aggressive_goal_line()
+#     test_situation_3_field_goal_range()
+#     test_situation_4_passing_3rd_long()
+#     test_situation_5_running_short_yardage()
 
 def test_situation_6_advanced_coach_personality():
     """

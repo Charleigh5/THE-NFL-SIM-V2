@@ -55,7 +55,7 @@ class PreGameService:
         # Load traits for all players
         for player_id, player in roster.items():
             # Get player's traits
-            trait_defs = await self.trait_service.get_player_traits(player_id)
+            trait_defs = await self.trait_service.fetch_player_traits(player_id)
 
             if not trait_defs:
                 continue
