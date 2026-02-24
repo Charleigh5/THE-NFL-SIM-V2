@@ -277,7 +277,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
 
     # Get trait definitions
     trait_service = TraitService(db)
-    traits_data = await trait_service.get_player_traits(player_id)
+    traits_data = await trait_service.fetch_player_traits(player_id)
     traits_brief = [
         TraitInfoBrief(
             name=t.name,

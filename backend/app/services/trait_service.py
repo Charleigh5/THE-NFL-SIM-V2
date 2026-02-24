@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import List, Optional, Tuple, Dict, Any
+from dataclasses import dataclass
+from typing import Any
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
-from app.models.trait import Trait, PlayerTrait, TraitSource
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
+from app.models.trait import PlayerTrait, Trait, TraitSource
 
 logger = get_logger(__name__)
 
@@ -47,22 +47,22 @@ class TraitDefinition:
     """
     name: str
     description: str
-    position_requirements: List[str]
+    position_requirements: list[str]
     acquisition_method: str  # AUTO_UNLOCK, STAT_THRESHOLD, COACHING_UNLOCK, TEAM_DESIGNATION, PROGRESSION, RPG_UNLOCK
-    activation_triggers: List[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, INJURY_ACTIVE, etc.
-    effects: Dict[str, float]
+    activation_triggers: list[str]  # ON_FIELD, PASS_PLAY, RUN_PLAY, CONTESTED_CATCH, INJURY_ACTIVE, etc.
+    effects: dict[str, float]
     tier: str  # COMMON, SILVER, GOLD, ELITE
 
     # Optional eligibility requirements
-    min_awareness: Optional[int] = None
-    min_experience: Optional[int] = None
-    min_stat_threshold: Optional[Dict[str, int]] = None
+    min_awareness: int | None = None
+    min_experience: int | None = None
+    min_stat_threshold: dict[str, int] | None = None
 
     # Rarity system
     rarity_tier: str = TraitRarity.COMMON  # LEGENDARY, RARE, UNCOMMON, COMMON
-    max_league_count: Optional[int] = None  # Soft cap on total players with this trait
+    max_league_count: int | None = None  # Soft cap on total players with this trait
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for API responses."""
         return {
             "name": self.name,
@@ -79,7 +79,7 @@ class TraitDefinition:
 # TRAIT CATALOG - 25 TRAITS
 # ============================================================================
 
-TRAIT_CATALOG: Dict[str, TraitDefinition] = {
+TRAIT_CATALOG: dict[str, TraitDefinition] = {
     # -------------------------------------------------------------------------
     # QB TRAITS (3)
     # -------------------------------------------------------------------------
@@ -602,17 +602,17 @@ class TraitService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def get_catalog() -> Dict[str, TraitDefinition]:
+    def get_catalog() -> dict[str, TraitDefinition]:
         """Return the full trait catalog."""
         return TRAIT_CATALOG
 
     @staticmethod
-    def get_trait_definition(trait_key: str) -> Optional[TraitDefinition]:
+    def get_trait_definition(trait_key: str) -> TraitDefinition | None:
         """Get a specific trait definition by key."""
         return TRAIT_CATALOG.get(trait_key)
 
     @staticmethod
-    def get_trait_by_name(name: str) -> Optional[TraitDefinition]:
+    def get_trait_by_name(name: str) -> TraitDefinition | None:
         """Get a trait definition by its display name."""
         for trait_def in TRAIT_CATALOG.values():
             if trait_def.name == name:
@@ -624,12 +624,12 @@ class TraitService:
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def get_all_traits(db: Session) -> List[Trait]:
+    def get_all_traits(db: Session) -> list[Trait]:
         """List all available traits in the system."""
         return db.scalars(select(Trait)).all()
 
     @staticmethod
-    def get_player_traits(db: Session, player_id: int) -> List[TraitDefinition]:
+    def get_player_traits(db: Session, player_id: int) -> list[TraitDefinition]:
         """
         Get all traits assigned to a specific player.
         Returns TraitDefinition objects from the catalog for full effect data.
@@ -668,7 +668,7 @@ class TraitService:
         player_id: int,
         trait_id: int,
         source: TraitSource = TraitSource.DEVELOPMENT
-    ) -> Optional[PlayerTrait]:
+    ) -> PlayerTrait | None:
         """Assign a trait to a player with APF 2K8-style tier caps."""
         from app.models.trait import TraitTier  # Local import to avoid circular
 
@@ -742,7 +742,7 @@ class TraitService:
     # ASYNC INSTANCE METHOD WRAPPERS (for services that pass db in constructor)
     # -------------------------------------------------------------------------
 
-    async def get_player_traits(self, player_id: int) -> List[TraitDefinition]:
+    async def fetch_player_traits(self, player_id: int) -> list[TraitDefinition]:
         """
         Async instance method wrapper for get_player_traits.
         Uses self.db passed in constructor.
@@ -796,7 +796,7 @@ class TraitService:
         self,
         player: Player,
         trait_name: str
-    ) -> Tuple[bool, str]:
+    ) -> tuple[bool, str]:
         """
         Check if a player is eligible for a specific trait.
         Returns (is_eligible, reason_string).
@@ -833,7 +833,7 @@ class TraitService:
         return True, "Eligible"
 
     @staticmethod
-    def check_crunch_time(context: Dict[str, Any]) -> bool:
+    def check_crunch_time(context: dict[str, Any]) -> bool:
         """
         Determine if the game is in "Crunch Time" for The Closer trait activation.
 
@@ -867,7 +867,7 @@ class TraitService:
     @staticmethod
     def check_trait_activation(
         trait_def: TraitDefinition,
-        context: Dict[str, Any]
+        context: dict[str, Any]
     ) -> bool:
         """
         Check if a trait is active given the game context.
@@ -897,8 +897,8 @@ class TraitService:
     def apply_trait_effects(
         player: Player,
         trait_def: TraitDefinition,
-        context: Dict[str, Any] = None
-    ) -> Dict[str, float]:
+        context: dict[str, Any] = None
+    ) -> dict[str, float]:
         """
         Apply trait effects to a player's attributes.
         Returns the effects that were applied.

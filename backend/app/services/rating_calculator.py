@@ -294,7 +294,7 @@ class RatingCalculator:
             elif attr_name == "break_tackle_threshold":
                 # Normalize threshold (lower is better for breaking tackles)
                 threshold = getattr(player, attr_name, 100)
-                attr_value = max(40, min(99, 100 - (threshold / 2)))
+                attr_value = int(max(40, min(99, 100 - (threshold / 2))))
             else:
                 attr_value = getattr(player, attr_name, 50)
 

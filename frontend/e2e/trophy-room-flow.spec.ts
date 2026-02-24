@@ -150,7 +150,7 @@ test.describe("Trophy Room Flow", () => {
     // FIX: Using chained locators instead of ambiguous comma-separated string
     const teamBranding = page
       .locator('[data-testid="team-logo"]')
-      .or(page.locator('.team-banner'))
+      .or(page.locator(".team-banner"))
       .or(page.getByText(/Cardinals/i));
 
     if (await teamBranding.first().isVisible({ timeout: 2000 })) {

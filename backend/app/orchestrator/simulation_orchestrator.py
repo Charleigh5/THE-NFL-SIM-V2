@@ -75,7 +75,8 @@ class SimulationOrchestrator:
     async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
-        self.db_session = db_session
+        if db_session:
+             self.db_session = db_session
 
         if self.db_session:
             new_game = Game(
