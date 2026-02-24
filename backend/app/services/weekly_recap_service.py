@@ -1,14 +1,12 @@
-from typing import Optional, List, Dict, Any
+from typing import Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
-from datetime import datetime
 
 from app.models.weekly_recap import WeeklyRecap
 from app.models.rpg_event import RPGEvent
 from app.models.news_item import NewsItem
 from app.engine.event_bus import EventType
 
-def mock_gemini_recap_script(week: int, events: List[RPGEvent], top_news: List[NewsItem]) -> str:
+def mock_gemini_recap_script(week: int, events: list[RPGEvent], top_news: list[NewsItem]) -> str:
     lines = [f"# Week {week} Around the League", ""]
 
     if top_news:
