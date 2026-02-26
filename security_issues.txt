@@ -1,0 +1,3 @@
+backend/app/core/redis_cache.py:56:        return hashlib.md5(lineup_str.encode()).hexdigest()[:12]
+backend/app/services/database/optimizer.py:56:        return hashlib.md5(key_str.encode()).hexdigest()
+backend/app/services/enhanced_chemistry_service.py:49:        return hashlib.md5(lineup_string.encode()).hexdigest()[:12]
