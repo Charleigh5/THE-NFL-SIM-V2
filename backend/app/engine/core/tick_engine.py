@@ -10,11 +10,10 @@ Features:
 - ECS-compatible architecture
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Protocol
-from enum import Enum
 import time
-
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Protocol
 
 # ============================================================================
 # INTERFACES (Protocols)
@@ -98,10 +97,10 @@ class FrameState:
     timestamp: float
     play_phase: PlayPhase
     game_clock: GameClock
-    entities: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    events: List[Dict[str, Any]] = field(default_factory=list)
+    entities: dict[str, dict[str, Any]] = field(default_factory=dict)
+    events: list[dict[str, Any]] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to dictionary."""
         return {
             "tick": self.tick,
@@ -117,7 +116,7 @@ class FrameState:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'FrameState':
+    def from_dict(cls, data: dict[str, Any]) -> 'FrameState':
         """Deserialize from dictionary."""
         return cls(
             tick=data["tick"],
@@ -149,9 +148,9 @@ class TickEngine:
 
     def __init__(
         self,
-        config: Optional[TickConfig] = None,
-        rng: Optional[Any] = None,
-        event_bus: Optional[Any] = None,
+        config: TickConfig | None = None,
+        rng: Any | None = None,
+        event_bus: Any | None = None,
     ):
         self.config = config or TickConfig()
         self.rng = rng
@@ -162,8 +161,8 @@ class TickEngine:
         self.game_clock = GameClock()
         self.play_phase = PlayPhase.PRE_SNAP
 
-        self._listeners: List[TickListener] = []
-        self._frame_history: List[FrameState] = []
+        self._listeners: list[TickListener] = []
+        self._frame_history: list[FrameState] = []
         self._max_history = 600  # Store last 10 seconds
 
     def register_listener(self, listener: TickListener) -> None:
@@ -207,13 +206,13 @@ class TickEngine:
 
         return frame
 
-    def run_play(self, max_ticks: Optional[int] = None) -> List[FrameState]:
+    def run_play(self, max_ticks: int | None = None) -> list[FrameState]:
         """Run a complete play simulation."""
         max_ticks = max_ticks or self.config.max_play_ticks
         self.state = TickEngineState.RUNNING
         self.play_phase = PlayPhase.PRE_SNAP
 
-        play_frames: List[FrameState] = []
+        play_frames: list[FrameState] = []
 
         for _ in range(max_ticks):
             if self.state != TickEngineState.RUNNING:
@@ -238,14 +237,14 @@ class TickEngine:
         """End the current play."""
         self.play_phase = PlayPhase.PLAY_DEAD
 
-    def get_frame(self, tick: int) -> Optional[FrameState]:
+    def get_frame(self, tick: int) -> FrameState | None:
         """Get a specific frame from history."""
         for frame in self._frame_history:
             if frame.tick == tick:
                 return frame
         return None
 
-    def get_recent_frames(self, count: int = 60) -> List[FrameState]:
+    def get_recent_frames(self, count: int = 60) -> list[FrameState]:
         """Get the most recent N frames."""
         return self._frame_history[-count:]
 

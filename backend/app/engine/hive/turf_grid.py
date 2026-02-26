@@ -17,10 +17,8 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
@@ -116,7 +114,7 @@ class TurfGridState:
     """State of the entire turf grid."""
     turf_type: TurfType = TurfType.NATURAL_GRASS
     weather_effect: WeatherEffect = WeatherEffect.DRY
-    zones: List[List[TurfZone]] = field(default_factory=list)
+    zones: list[list[TurfZone]] = field(default_factory=list)
     games_played: int = 0
 
     @property
@@ -143,7 +141,7 @@ class TurfGrid:
 
     def __init__(
         self,
-        config: Optional[TurfGridConfig] = None,
+        config: TurfGridConfig | None = None,
         turf_type: TurfType = TurfType.NATURAL_GRASS,
     ):
         self.config = config or TurfGridConfig()
@@ -161,7 +159,7 @@ class TurfGrid:
         self,
         yard_line: float,
         lateral_position: float,
-    ) -> Tuple[int, int]:
+    ) -> tuple[int, int]:
         """
         Convert field position to grid zone.
 
@@ -248,7 +246,7 @@ class TurfGrid:
         lateral_start: float,
         lateral_end: float,
         is_run_play: bool = False,
-    ) -> List[Tuple[int, int]]:
+    ) -> list[tuple[int, int]]:
         """
         Record a play and degrade affected zones.
 
@@ -289,7 +287,7 @@ class TurfGrid:
         self,
         y1: float, y2: float,
         x1: float, x2: float,
-    ) -> List[Tuple[int, int]]:
+    ) -> list[tuple[int, int]]:
         """Get all zones crossed by a path."""
         zones = set()
 
@@ -334,12 +332,12 @@ class TurfGrid:
         """Set current weather effect."""
         self.state.weather_effect = weather
 
-    def get_worst_zones(self, n: int = 5) -> List[TurfZone]:
+    def get_worst_zones(self, n: int = 5) -> list[TurfZone]:
         """Get the n most damaged zones."""
         all_zones = [z for row in self.state.zones for z in row]
         return sorted(all_zones, key=lambda z: z.integrity)[:n]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize grid state."""
         return {
             "turf_type": self.state.turf_type.value,

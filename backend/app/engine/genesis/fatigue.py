@@ -17,10 +17,7 @@ Context7 Best Practices:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
-import math
-
 
 # ============================================================================
 # ENUMS
@@ -274,7 +271,7 @@ class FatigueEngine:
 
     def __init__(
         self,
-        state: Optional[FatigueState] = None,
+        state: FatigueState | None = None,
         stamina_rating: int = 80,
         injury_resistance: int = 80,
     ):
@@ -373,7 +370,7 @@ class FatigueEngine:
         # Partial glycolytic recovery
         self.process_recovery(huddle_ticks)
 
-    def get_attribute_modifiers(self) -> Dict[str, float]:
+    def get_attribute_modifiers(self) -> dict[str, float]:
         """
         Get all attribute modifiers based on current fatigue.
 

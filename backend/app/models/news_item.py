@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 import enum
-from typing import Optional
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Float, Enum, DateTime
-from sqlalchemy.orm import mapped_column, Mapped
 from datetime import datetime
 
+from sqlalchemy import DateTime, Enum, Float, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.models.base import Base
+
 
 class NewsCategory(str, enum.Enum):
     TRANSACTION = "TRANSACTION"
@@ -31,14 +33,14 @@ class NewsItem(Base):
     week: Mapped[int] = mapped_column(Integer, nullable=False)
 
     # Optional subjects
-    team_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("team.id"), nullable=True)
-    player_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("player.id"), nullable=True)
+    team_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("team.id"), nullable=True)
+    player_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("player.id"), nullable=True)
 
     category: Mapped[NewsCategory] = mapped_column(Enum(NewsCategory), nullable=False)
     headline: Mapped[str] = mapped_column(String, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False) # Gemini generated story
 
-    image_url: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    image_url: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # For sorting/filtering on the dashboard
     # 1.0 = Breaking News / Huge Story

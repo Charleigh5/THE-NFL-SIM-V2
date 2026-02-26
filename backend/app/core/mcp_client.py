@@ -1,12 +1,11 @@
-import asyncio
-import time
 import logging
-from typing import Any, Dict, List, Optional, Union
+import time
 from contextlib import AsyncExitStack
+from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
 from mcp.client.sse import sse_client
+from mcp.client.stdio import stdio_client
 from mcp.types import Tool
 
 logger = logging.getLogger(__name__)
@@ -17,12 +16,12 @@ class MCPHostClient:
     Supports both Stdio and SSE (HTTP) transports.
     """
 
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str, config: dict[str, Any]):
         self.name = name
         self.config = config
-        self.session: Optional[ClientSession] = None
+        self.session: ClientSession | None = None
         self.exit_stack = AsyncExitStack()
-        self._tools: List[Tool] = []
+        self._tools: list[Tool] = []
 
     async def connect(self):
         """Establish connection to the MCP server."""
@@ -88,7 +87,7 @@ class MCPHostClient:
         self.session = None
         logger.info(f"Disconnected from MCP server: {self.name}")
 
-    async def list_tools(self) -> List[Tool]:
+    async def list_tools(self) -> list[Tool]:
         """Return list of available tools."""
         if not self.session:
             raise RuntimeError("Client is not connected")
@@ -102,7 +101,7 @@ class MCPHostClient:
             return [self._sanitize(item) for item in data]
         return data
 
-    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
+    async def call_tool(self, tool_name: str, arguments: dict[str, Any]) -> Any:
         """Call a specific tool on the server."""
         if not self.session:
             raise RuntimeError("Client is not connected")

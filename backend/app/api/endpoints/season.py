@@ -1,33 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, desc
-from sqlalchemy.orm import selectinload, joinedload, Session
-from typing import List, Optional
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict
 import logging
+from datetime import datetime
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import desc, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session, joinedload
 from starlette.concurrency import run_in_threadpool
 
-from app.core.database import get_async_db, get_db, SessionLocal
+from app.core.database import SessionLocal, get_async_db, get_db
 from app.core.error_decorators import handle_errors
-from app.models.season import Season, SeasonStatus
 from app.models.game import Game
+from app.models.player import Player
+from app.models.season import Season, SeasonStatus
+from app.models.stats import PlayerGameStats
 from app.models.team import Team
+from app.schemas import draft as draft_schemas
+from app.schemas.offseason import (
+    DraftPickDetail,
+    DraftPickSummary,
+    PlayerProgressionResult,
+    Prospect,
+    TeamNeed,
+)
+from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
+from app.schemas.stats import LeagueLeaders, PlayerLeader
+from app.schemas.weather import GameWeatherSchema
+from app.services.offseason_service import OffseasonService
+from app.services.playoff_service import PlayoffService
 from app.services.schedule_generator import ScheduleGenerator
 from app.services.standings_calculator import StandingsCalculator, TeamStanding
 from app.services.week_simulator import WeekSimulator
-from app.services.playoff_service import PlayoffService
-from app.services.offseason_service import OffseasonService
-from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult, DraftPickDetail
-from app.schemas.stats import LeagueLeaders, PlayerLeader
-from app.schemas import draft as draft_schemas
-from app.models.stats import PlayerGameStats
-from app.models.stats import PlayerGameStats
-from app.models.player import Player
-from app.schemas.weather import GameWeatherSchema
-from sqlalchemy import func, desc
-
 
 router = APIRouter(prefix="/api/season", tags=["season"])
 logger = logging.getLogger(__name__)
@@ -37,7 +41,7 @@ logger = logging.getLogger(__name__)
 class SeasonCreate(BaseModel):
     """Schema for creating a new season."""
     year: int
-    start_date: Optional[str] = None  # ISO format date string
+    start_date: str | None = None  # ISO format date string
     total_weeks: int = 18
     playoff_weeks: int = 4
 
@@ -66,7 +70,7 @@ class GameResponse(BaseModel):
     is_played: bool
     is_playoff: bool = False
     date: datetime
-    weather_info: Optional[GameWeatherSchema] = None
+    weather_info: GameWeatherSchema | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -80,21 +84,21 @@ class AwardCandidate(BaseModel):
     score: float
 
 class SeasonAwards(BaseModel):
-    mvp: List[AwardCandidate]
-    opoy: List[AwardCandidate]
-    dpoy: List[AwardCandidate]
-    oroy: List[AwardCandidate]
-    droy: List[AwardCandidate]
+    mvp: list[AwardCandidate]
+    opoy: list[AwardCandidate]
+    dpoy: list[AwardCandidate]
+    oroy: list[AwardCandidate]
+    droy: list[AwardCandidate]
 
 
 class DivisionStandings(BaseModel):
     division: str
-    teams: List[TeamStanding]
+    teams: list[TeamStanding]
 
 
 class ConferenceStandings(BaseModel):
     conference: str
-    divisions: List[DivisionStandings]
+    divisions: list[DivisionStandings]
 
 
 class SeasonSummaryResponse(BaseModel):
@@ -103,10 +107,10 @@ class SeasonSummaryResponse(BaseModel):
     total_games: int
     games_played: int
     completion_percentage: float
-    playoff_bracket: Optional[List[PlayoffMatchupSchema]] = None
-    league_leaders: Optional[LeagueLeaders] = None
-    standings: Optional[List[ConferenceStandings]] = None
-    current_playoff_round: Optional[str] = None
+    playoff_bracket: list[PlayoffMatchupSchema] | None = None
+    league_leaders: LeagueLeaders | None = None
+    standings: list[ConferenceStandings] | None = None
+    current_playoff_round: str | None = None
 
 
 @router.get("/summary", response_model=SeasonSummaryResponse)
@@ -452,11 +456,11 @@ async def get_season(season_id: int, db: AsyncSession = Depends(get_async_db)):
     return season
 
 
-@router.get("/{season_id}/schedule", response_model=List[GameResponse])
+@router.get("/{season_id}/schedule", response_model=list[GameResponse])
 @handle_errors
 async def get_schedule(
     season_id: int,
-    week: Optional[int] = None,
+    week: int | None = None,
     db: AsyncSession = Depends(get_async_db)
 ):
     """
@@ -490,12 +494,12 @@ async def get_schedule(
     return games
 
 
-@router.get("/{season_id}/standings", response_model=List[TeamStanding])
+@router.get("/{season_id}/standings", response_model=list[TeamStanding])
 @handle_errors
 async def get_standings(
     season_id: int,
-    conference: Optional[str] = None,
-    division: Optional[str] = None,
+    conference: str | None = None,
+    division: str | None = None,
     db: AsyncSession = Depends(get_async_db)
 ):
     """
@@ -576,7 +580,7 @@ async def advance_week(season_id: int, db: AsyncSession = Depends(get_async_db))
 @handle_errors
 async def simulate_week(
     season_id: int,
-    week: Optional[int] = None,
+    week: int | None = None,
     play_count: int = 100,
     db: AsyncSession = Depends(get_async_db)
 ):
@@ -692,7 +696,7 @@ async def simulate_to_playoffs(
     return {"message": f"Simulated {weeks_simulated} weeks", "season": season}
 
 
-@router.post("/{season_id}/playoffs/generate", response_model=List[PlayoffMatchupSchema])
+@router.post("/{season_id}/playoffs/generate", response_model=list[PlayoffMatchupSchema])
 @handle_errors
 async def generate_playoffs(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Generate the playoff bracket for the season."""
@@ -708,7 +712,7 @@ async def generate_playoffs(season_id: int, db: AsyncSession = Depends(get_async
     return result
 
 
-@router.get("/{season_id}/playoffs/bracket", response_model=List[PlayoffMatchupSchema])
+@router.get("/{season_id}/playoffs/bracket", response_model=list[PlayoffMatchupSchema])
 @handle_errors
 async def get_playoff_bracket(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get the current playoff bracket."""
@@ -766,7 +770,7 @@ async def start_offseason(season_id: int, db: AsyncSession = Depends(get_async_d
     return result
 
 
-@router.post("/{season_id}/offseason/progression", response_model=List[PlayerProgressionResult])
+@router.post("/{season_id}/offseason/progression", response_model=list[PlayerProgressionResult])
 @handle_errors
 async def simulate_player_progression(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate player progression and regression."""
@@ -782,7 +786,7 @@ async def simulate_player_progression(season_id: int, db: AsyncSession = Depends
     return result
 
 
-@router.get("/{season_id}/offseason/needs/{team_id}", response_model=List[TeamNeed])
+@router.get("/{season_id}/offseason/needs/{team_id}", response_model=list[TeamNeed])
 @handle_errors
 async def get_team_needs(season_id: int, team_id: int, db: AsyncSession = Depends(get_async_db)):
     """Get team needs analysis."""
@@ -796,7 +800,7 @@ async def get_team_needs(season_id: int, team_id: int, db: AsyncSession = Depend
     return await run_in_threadpool(needs_sync)
 
 
-@router.get("/{season_id}/offseason/prospects", response_model=List[Prospect])
+@router.get("/{season_id}/offseason/prospects", response_model=list[Prospect])
 @handle_errors
 async def get_top_prospects(season_id: int, limit: int = 50, db: AsyncSession = Depends(get_async_db)):
     """Get top draft prospects."""
@@ -810,7 +814,7 @@ async def get_top_prospects(season_id: int, limit: int = 50, db: AsyncSession = 
     return await run_in_threadpool(prospects_sync)
 
 
-@router.post("/{season_id}/draft/simulate", response_model=List[DraftPickSummary])
+@router.post("/{season_id}/draft/simulate", response_model=list[DraftPickSummary])
 @handle_errors
 async def simulate_draft(season_id: int, db: AsyncSession = Depends(get_async_db)):
     """Simulate the rookie draft."""
@@ -915,8 +919,8 @@ async def suggest_draft_pick(season_id: int, team_id: int, db: AsyncSession = De
 
 class TradeEvaluationRequest(BaseModel):
     team_id: int
-    offered_ids: List[int]
-    requested_ids: List[int]
+    offered_ids: list[int]
+    requested_ids: list[int]
 
 
 @router.post("/{season_id}/gm/evaluate-trade")
@@ -1080,7 +1084,7 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
 
 @router.get("/team/{team_id}/salary-cap")
 @handle_errors
-def get_team_salary_cap(team_id: int, season_id: Optional[int] = None, db: Session = Depends(get_db)):
+def get_team_salary_cap(team_id: int, season_id: int | None = None, db: Session = Depends(get_db)):
     """
     Get detailed salary cap breakdown for a team.
     """

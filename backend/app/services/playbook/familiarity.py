@@ -16,10 +16,9 @@ NFL Reality:
 - Execution degrades with unfamiliar plays
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, Optional
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +100,8 @@ class PlaybookFamiliarity:
     """
 
     player_id: int
-    play_knowledge: Dict[str, PlayFamiliarity] = field(default_factory=dict)
-    current_scheme: Optional[str] = None
+    play_knowledge: dict[str, PlayFamiliarity] = field(default_factory=dict)
+    current_scheme: str | None = None
     experience_years: int = 0
 
     # --- Core Methods ---
@@ -282,7 +281,7 @@ class FamiliarityManager:
     """
 
     def __init__(self):
-        self._players: Dict[int, PlaybookFamiliarity] = {}
+        self._players: dict[int, PlaybookFamiliarity] = {}
 
     def get_or_create(
         self,

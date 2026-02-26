@@ -1,6 +1,8 @@
-from typing import Optional, TYPE_CHECKING
-from sqlalchemy import Integer, ForeignKey, Boolean
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 if TYPE_CHECKING:
@@ -26,7 +28,7 @@ class PlayerContract(Base):
 
     # Retirement & Legacy
     is_retired: Mapped[bool] = mapped_column(Boolean, default=False)
-    retirement_year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    retirement_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
     legacy_score: Mapped[int] = mapped_column(Integer, default=0)
 
     # Morale
