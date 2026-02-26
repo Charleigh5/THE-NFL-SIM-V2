@@ -148,9 +148,10 @@ test.describe("Trophy Room Flow", () => {
 
     // Check for team colors or logo
     // Fix: Use .or() chaining instead of mixing CSS and text pseudo-selectors in one string which causes parsing errors
-    const teamBranding = page.locator('[data-testid="team-logo"]')
-        .or(page.locator('.team-banner'))
-        .or(page.getByText(/Cardinals/i));
+    const teamBranding = page
+      .locator('[data-testid="team-logo"]')
+      .or(page.locator(".team-banner"))
+      .or(page.getByText(/Cardinals/i));
 
     if (await teamBranding.first().isVisible({ timeout: 2000 })) {
       await expect(teamBranding.first()).toBeVisible();
