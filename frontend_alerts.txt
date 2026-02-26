@@ -1,0 +1,11 @@
+frontend/src/components/trades/PendingOffers.tsx:40:      alert("Failed to process offer");
+frontend/src/components/trades/TradeNegotiator.tsx:460:                  alert(result.message); // Replace with nice toast later
+frontend/src/components/trades/TradeNegotiator.tsx:463:                  alert("Failed to submit offer"); // Replace with nice toast later
+frontend/src/components/common/FeedbackWidget.tsx:135:      alert("❌ Failed to export tasks. Check console for details.");
+frontend/src/components/common/FeedbackWidget.tsx:161:      alert(
+frontend/src/components/common/FeedbackWidget.tsx:168:      alert("❌ Failed to generate plan. Check console for details.");
+frontend/src/components/coaching/CoachSettings.tsx:63:      alert("Settings saved!");
+frontend/src/components/coaching/CoachSettings.tsx:67:      alert("Failed to save.");
+frontend/src/pages/DepthChart.tsx:91:      alert("Depth chart saved successfully!");
+frontend/src/pages/DepthChart.tsx:94:      alert("Failed to save depth chart.");
+frontend/src/pages/TrainingCenter.tsx:91:      alert("Training session failed. Please try again.");

@@ -1,0 +1,21 @@
+frontend/src/hooks/useWebSocket.ts:37:      console.log("Game state synchronized");
+frontend/src/hooks/useWebSocket.ts:55:        console.log("WebSocket connected");
+frontend/src/hooks/useWebSocket.ts:155:        console.log(`WebSocket disconnected. Reconnecting in ${delay}ms...`);
+frontend/src/components/common/FeedbackWidget.tsx:95:              console.log("Research complete:", res.data);
+frontend/src/components/3d/PlayAnimator.tsx:28:    console.log("Animating pass from", qbPosition, "to", receiverEnd);
+frontend/src/components/3d/PlayAnimator.tsx:39:    console.log("Animating run from", rbStart, "to", rbEnd);
+frontend/src/components/3d/PlayAnimator.tsx:45:    console.log("Animating kickoff return for", returnYards, "yards");
+frontend/src/pages/SkillsPage.tsx:71:      console.log("Toggle equip not fully supported yet");
+frontend/src/pages/SeasonDashboard.tsx:73:          console.log("No active season found");
+frontend/src/pages/MedicalCenter.tsx:26:    console.log(`Applied ${treatment} to ${selectedPart}`);
+frontend/src/pages/Dashboard.tsx:30:        console.log("No active season found");
+frontend/src/pages/LiveSim.tsx:46:      console.log("Live simulation started - receiving WebSocket updates");
+frontend/src/pages/LiveSim.tsx:58:      console.log("Simulation stopped");
+frontend/src/pages/LiveSim.tsx:185:                  onPlayComplete={() => console.log("Play complete")}
+frontend/src/services/tradeApi.ts:137:    console.log("Executing trade proposal:", proposal);
+frontend/src/services/tradeApi.ts:159:    console.log("Getting trade block for:", teamId);
+frontend/src/services/tradeApi.ts:188:    console.log("Removing player from trade block:", playerId);
+frontend/src/services/tradeApi.ts:247:      console.log(`Responded to offer ${offerId} with ${response}`);
+frontend/src/services/tradeApi.ts:260:    console.log("Getting trade history:", seasonId, limit);
+frontend/src/services/ImageGenService.ts:69:    console.log("[ImageGenService] Generating image with prompt:", prompt);
+frontend/src/services/errorLogger.ts:295:      if (context) console.log("Context:", context);
