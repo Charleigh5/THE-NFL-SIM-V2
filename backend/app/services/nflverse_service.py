@@ -5,8 +5,8 @@ Bridge between nflreadpy library and THE NFL SIM's Player model.
 Fetches real-world NFL data and converts it to our internal formats.
 """
 import logging
-from typing import Optional, Dict, Any, List
 from datetime import date
+from typing import Any
 
 try:
     import nflreadpy as nfl
@@ -69,7 +69,7 @@ def map_position(nfl_position: str) -> str:
     return POSITION_MAP.get(nfl_position, nfl_position)
 
 
-def calculate_age(birth_date_str: Optional[str]) -> int:
+def calculate_age(birth_date_str: str | None) -> int:
     """Calculate age from birth date string (YYYY-MM-DD format)."""
     if not birth_date_str:
         return 25  # Default age
@@ -96,12 +96,12 @@ class NflverseService:
                 "Install with: pip install nflreadpy polars"
             )
         self.season = season
-        self._rosters_cache: Optional[pl.DataFrame] = None
-        self._nextgen_cache: Optional[pl.DataFrame] = None
-        self._combine_cache: Optional[pl.DataFrame] = None
-        self._ftn_cache: Optional[pl.DataFrame] = None
-        self._contracts_cache: Optional[pl.DataFrame] = None
-        self._player_stats_cache: Optional[pl.DataFrame] = None
+        self._rosters_cache: pl.DataFrame | None = None
+        self._nextgen_cache: pl.DataFrame | None = None
+        self._combine_cache: pl.DataFrame | None = None
+        self._ftn_cache: pl.DataFrame | None = None
+        self._contracts_cache: pl.DataFrame | None = None
+        self._player_stats_cache: pl.DataFrame | None = None
 
     def import_rosters(self) -> pl.DataFrame:
         """
@@ -219,7 +219,7 @@ class NflverseService:
             logger.warning(f"Could not load contracts: {e}")
             return pl.DataFrame()
 
-    def get_player_data(self, gsis_id: str) -> Optional[Dict[str, Any]]:
+    def get_player_data(self, gsis_id: str) -> dict[str, Any] | None:
         """
         Get all available data for a specific player by GSIS ID.
 
@@ -250,7 +250,7 @@ class NflverseService:
         # NOTE: This method is less efficient than get_all_active_players for bulk ops
         return player_dict
 
-    def get_all_active_players(self) -> List[Dict[str, Any]]:
+    def get_all_active_players(self) -> list[dict[str, Any]]:
         """
         Get all active players from the roster with normalized data,
         enriched with Contracts, Next Gen Stats, and Player Stats.

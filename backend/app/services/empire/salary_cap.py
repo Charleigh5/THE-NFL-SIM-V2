@@ -12,10 +12,9 @@ Phase 5: EMPIRE Economic Simulation
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
 from datetime import date
-
+from enum import Enum
+from typing import Any
 
 # ============================================================================
 # ENUMS
@@ -55,7 +54,7 @@ class SalaryCapConfig:
     rookie_contract_years: int = 4
 
     # Franchise tag percentages (by position)
-    franchise_tag_percentages: Dict[str, float] = field(default_factory=lambda: {
+    franchise_tag_percentages: dict[str, float] = field(default_factory=lambda: {
         "QB": 0.08,
         "RB": 0.06,
         "WR": 0.07,
@@ -125,8 +124,8 @@ class Contract:
     contract_type: ContractType
     total_value: int             # Total contract value
     guaranteed: int              # Total guaranteed
-    years: List[ContractYear] = field(default_factory=list)
-    signed_date: Optional[date] = None
+    years: list[ContractYear] = field(default_factory=list)
+    signed_date: date | None = None
 
     @property
     def current_year(self) -> int:
@@ -171,7 +170,7 @@ class TeamCapState:
     carryover: int = 0           # Unused cap from last year
 
     # Contracts
-    contracts: Dict[str, Contract] = field(default_factory=dict)
+    contracts: dict[str, Contract] = field(default_factory=dict)
 
     @property
     def total_cap(self) -> int:
@@ -204,7 +203,7 @@ class SalaryCapEngine:
     - Cap projections
     """
 
-    def __init__(self, config: Optional[SalaryCapConfig] = None):
+    def __init__(self, config: SalaryCapConfig | None = None):
         self.config = config or SalaryCapConfig()
 
     def create_contract(
@@ -321,7 +320,7 @@ class SalaryCapEngine:
         self,
         position: str,
         salary_cap: int,
-        top_5_avg: Optional[int] = None,
+        top_5_avg: int | None = None,
     ) -> int:
         """
         Calculate franchise tag value.
@@ -391,7 +390,7 @@ class SalaryCapEngine:
 
         return contract
 
-    def get_historical_cap(self, year: int) -> Optional[int]:
+    def get_historical_cap(self, year: int) -> int | None:
         """
         Get the actual NFL salary cap for a historical year.
 
@@ -431,7 +430,7 @@ class SalaryCapEngine:
         self,
         current_cap: int,
         years_ahead: int,
-    ) -> List[int]:
+    ) -> list[int]:
         """
         Project future salary caps.
 
@@ -444,7 +443,7 @@ class SalaryCapEngine:
             caps.append(int(caps[-1] * (1 + SALARY_CAP_CAGR)))
         return caps[1:]
 
-    def get_cap_summary(self, state: TeamCapState) -> Dict[str, Any]:
+    def get_cap_summary(self, state: TeamCapState) -> dict[str, Any]:
         """Get summary of team's cap situation."""
         return {
             "team_id": state.team_id,

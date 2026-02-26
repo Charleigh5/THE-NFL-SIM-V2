@@ -20,10 +20,10 @@ The system uses a context-aware calculation that considers:
 4. Trait synergies (traits can modify interaction outcomes)
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Tuple
-from enum import Enum
 import logging
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +60,9 @@ class InteractionResult:
     winner_boost: float              # Bonus applied to winner
     loser_penalty: float             # Penalty applied to loser
     narrative: str                   # Human-readable description
-    modifiers_applied: Dict[str, float] = field(default_factory=dict)
+    modifiers_applied: dict[str, float] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "interaction_type": self.interaction_type.value,
             "outcome": self.outcome.value,
@@ -81,12 +81,12 @@ class InteractionDefinition:
     interaction_type: InteractionType
     attacker_attr: str              # Primary attribute of the aggressor
     defender_attr: str              # Primary attribute of the defender
-    secondary_attrs: List[str]      # Supporting attributes (weighted 25% each)
-    positions_attacker: List[str]   # Positions that can use this as attacker
-    positions_defender: List[str]   # Positions that can use this as defender
+    secondary_attrs: list[str]      # Supporting attributes (weighted 25% each)
+    positions_attacker: list[str]   # Positions that can use this as attacker
+    positions_defender: list[str]   # Positions that can use this as defender
     base_importance: float          # How impactful this interaction is (0.5-2.0)
-    situational_modifiers: Dict[str, float]  # Context-based adjustments
-    narrative_templates: Dict[str, str]      # Templates for outcome descriptions
+    situational_modifiers: dict[str, float]  # Context-based adjustments
+    narrative_templates: dict[str, str]      # Templates for outcome descriptions
 
 
 class AttributeInteractionEngine:
@@ -99,7 +99,7 @@ class AttributeInteractionEngine:
     """
 
     # Interaction Catalog - All defined matchup types
-    INTERACTION_CATALOG: Dict[str, InteractionDefinition] = {}
+    INTERACTION_CATALOG: dict[str, InteractionDefinition] = {}
 
     def __init__(self, rng: Any = None):
         """
@@ -478,7 +478,7 @@ class AttributeInteractionEngine:
         interaction_name: str,
         attacker: Any,
         defender: Any,
-        context: Optional[Dict[str, Any]] = None
+        context: dict[str, Any] | None = None
     ) -> InteractionResult:
         """
         Calculate the result of an attribute interaction.
@@ -621,7 +621,7 @@ class AttributeInteractionEngine:
         outcome: InteractionOutcome,
         scaled_diff: float,
         importance: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate winner boost and loser penalty based on outcome.
 
@@ -690,7 +690,7 @@ class AttributeInteractionEngine:
             modifiers_applied={}
         )
 
-    def get_all_interactions(self) -> Dict[str, Dict[str, Any]]:
+    def get_all_interactions(self) -> dict[str, dict[str, Any]]:
         """Get summary of all available interactions."""
         return {
             name: {
@@ -709,7 +709,7 @@ class AttributeInteractionEngine:
         self,
         play_type: str,
         phase: str
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Get relevant interactions for a given play type and phase.
 
@@ -748,9 +748,9 @@ class AttributeInteractionEngine:
 
     def batch_calculate_interactions(
         self,
-        matchups: List[Tuple[str, Any, Any]],
-        context: Optional[Dict[str, Any]] = None
-    ) -> List[InteractionResult]:
+        matchups: list[tuple[str, Any, Any]],
+        context: dict[str, Any] | None = None
+    ) -> list[InteractionResult]:
         """
         Calculate multiple interactions at once.
 
@@ -780,9 +780,9 @@ class AttributeInteractionEngine:
 
 def apply_interaction_to_play(
     engine: AttributeInteractionEngine,
-    play_context: Dict[str, Any],
-    key_matchups: List[Tuple[str, Any, Any]]
-) -> Dict[str, Any]:
+    play_context: dict[str, Any],
+    key_matchups: list[tuple[str, Any, Any]]
+) -> dict[str, Any]:
     """
     Apply attribute interactions to modify a play's outcome.
 

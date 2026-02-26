@@ -5,11 +5,11 @@ Provides REST API for fetching league news, player news, and injury reports
 from the MCP sports_news server.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Path
-from pydantic import BaseModel
-from typing import List, Dict, Optional
 import logging
 from datetime import datetime
+
+from fastapi import APIRouter, HTTPException, Path, Query
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/news", tags=["news"])
 logger = logging.getLogger(__name__)
@@ -25,14 +25,14 @@ class NewsItem(BaseModel):
     source: str
     date: str
     category: str = "general"
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     is_breaking: bool = False
 
 
 class NewsResponse(BaseModel):
     """News feed response"""
-    items: List[NewsItem]
+    items: list[NewsItem]
     total: int
     last_updated: str
 
@@ -48,7 +48,7 @@ class InjuryReport(BaseModel):
 class InjuryReportResponse(BaseModel):
     """Injury reports response"""
     week: int
-    reports: Dict[str, List[InjuryReport]]
+    reports: dict[str, list[InjuryReport]]
     last_updated: str
 
 
@@ -56,7 +56,7 @@ class InjuryReportResponse(BaseModel):
 # MOCK DATA GENERATOR
 # ============================================================================
 
-def _generate_mock_league_news() -> List[NewsItem]:
+def _generate_mock_league_news() -> list[NewsItem]:
     """Generate simulated league news for immersion."""
     return [
         NewsItem(
@@ -104,7 +104,7 @@ def _generate_mock_league_news() -> List[NewsItem]:
     ]
 
 
-def _generate_mock_team_news(team_name: str) -> List[NewsItem]:
+def _generate_mock_team_news(team_name: str) -> list[NewsItem]:
     """Generate simulated team-specific news."""
     return [
         NewsItem(
@@ -131,7 +131,7 @@ def _generate_mock_team_news(team_name: str) -> List[NewsItem]:
     ]
 
 
-def _generate_mock_player_news(player_name: str) -> List[NewsItem]:
+def _generate_mock_player_news(player_name: str) -> list[NewsItem]:
     """Generate simulated player-specific news."""
     return [
         NewsItem(
@@ -199,7 +199,7 @@ def generate_rivalry_headline(
 @router.get("/league", response_model=NewsResponse)
 async def get_league_news(
     limit: int = Query(10, ge=1, le=50, description="Number of news items to return"),
-    category: Optional[str] = Query(None, description="Filter by category")
+    category: str | None = Query(None, description="Filter by category")
 ):
     """
     Get latest league-wide news.
@@ -342,14 +342,14 @@ async def get_injury_reports(
 # ============================================================================
 
 from fastapi import Depends
-from sqlalchemy.orm import Session
 from pydantic import Field
+from sqlalchemy.orm import Session
+
 from app.core.database import get_db
-from app.models.news_item import NewsItem as NewsItemModel, NewsCategory
-from app.models.weekly_recap import WeeklyRecap as WeeklyRecapModel
+from app.models.news_item import NewsCategory
 from app.services.news_feed_service import NewsFeedService
-from app.services.weekly_recap_service import WeeklyRecapService
 from app.services.storyline_service import StorylineEventService
+from app.services.weekly_recap_service import WeeklyRecapService
 
 
 class LivingNewsItem(BaseModel):
@@ -357,12 +357,12 @@ class LivingNewsItem(BaseModel):
     id: int
     season_id: int
     week: int
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     category: str
     headline: str
     content: str
-    image_url: Optional[str] = None
+    image_url: str | None = None
     importance_score: float = Field(ge=0.0, le=1.0)
     created_at: datetime
 
@@ -372,7 +372,7 @@ class LivingNewsItem(BaseModel):
 
 class LivingNewsFeedResponse(BaseModel):
     """Paginated Living World news feed."""
-    items: List[LivingNewsItem]
+    items: list[LivingNewsItem]
     total_count: int
     page: int
     page_size: int
@@ -385,10 +385,10 @@ class WeeklyRecapResponse(BaseModel):
     season_id: int
     week: int
     summary_text: str
-    mvp_player_id: Optional[int] = None
-    play_of_the_week_id: Optional[str] = None
-    surprising_result: Optional[str] = None
-    media_assets: Optional[List[str]] = None
+    mvp_player_id: int | None = None
+    play_of_the_week_id: str | None = None
+    surprising_result: str | None = None
+    media_assets: list[str] | None = None
     created_at: datetime
 
     class Config:
@@ -398,8 +398,8 @@ class WeeklyRecapResponse(BaseModel):
 class StorylineItem(BaseModel):
     """Active storyline from the Living World Engine."""
     type: str
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     start_week: int
     intensity: int = Field(ge=1, le=5)
     event_count: int
@@ -407,7 +407,7 @@ class StorylineItem(BaseModel):
 
 class StorylineListResponse(BaseModel):
     """List of active storylines."""
-    storylines: List[StorylineItem]
+    storylines: list[StorylineItem]
 
 
 @router.get(
@@ -418,7 +418,7 @@ class StorylineListResponse(BaseModel):
 )
 async def get_living_news_feed(
     season_id: int = Query(..., description="Season ID"),
-    week: Optional[int] = Query(None, ge=1, le=22, description="Week number"),
+    week: int | None = Query(None, ge=1, le=22, description="Week number"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db)
@@ -511,7 +511,7 @@ async def generate_living_weekly_recap(
     description="Get all active multi-week narrative storylines."
 )
 async def get_living_storylines(
-    team_id: Optional[int] = Query(None, description="Filter by team ID")
+    team_id: int | None = Query(None, description="Filter by team ID")
 ):
     """
     Get active storylines from the Living World Engine.
@@ -531,7 +531,7 @@ async def get_living_storylines(
 
 @router.get(
     "/categories",
-    response_model=List[str],
+    response_model=list[str],
     summary="Get News Categories",
     description="Get all available news category types."
 )

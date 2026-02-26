@@ -5,12 +5,12 @@ This module handles Firebase Admin SDK initialization and token verification
 for authenticating users in the NFL Sim Engine API.
 """
 
-import os
-from typing import Optional
-import firebase_admin
-from firebase_admin import credentials, auth
-from fastapi import HTTPException, Header
 import logging
+import os
+
+import firebase_admin
+from fastapi import Header, HTTPException
+from firebase_admin import auth, credentials
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ def verify_token(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Authentication failed")
 
 
-async def get_current_user(authorization: Optional[str] = Header(None)) -> dict:
+async def get_current_user(authorization: str | None = Header(None)) -> dict:
     """
     FastAPI dependency to extract and verify the current user from the Authorization header.
 

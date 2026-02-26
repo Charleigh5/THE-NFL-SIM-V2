@@ -1,21 +1,22 @@
+
 from pydantic import BaseModel
-from typing import List, Dict, Optional
+
 
 class UniformTier(BaseModel):
     name: str
     price_estimate: float
     material_composition: str
     fit_type: str
-    features: List[str]
+    features: list[str]
 
 class UniformSet(BaseModel):
     team_id: str
     home_jersey: str
     away_jersey: str
-    alternates: List[str]
-    pants: List[str]
-    socks: List[str]
-    rivalry_uniform: Optional[str] = None
+    alternates: list[str]
+    pants: list[str]
+    socks: list[str]
+    rivalry_uniform: str | None = None
 
 # Tiers
 JERSEY_TIERS = {

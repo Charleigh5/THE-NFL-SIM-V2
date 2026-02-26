@@ -1,14 +1,15 @@
-from typing import Dict, Any, List, Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from app.models.player import Player
-from app.models.team import Team
-from app.models.gm import GM, GMDecision
-from app.core.mcp_registry import registry
-from app.core.mcp_cache import mcp_cache
 import random
+from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from app.core.random_utils import DeterministicRNG
 from app.core.trade_config import trade_config  # Fix import to get instance
+from app.models.gm import GMDecision
+from app.models.player import Player
+from app.models.team import Team
+
 
 class GMAgent:
     def __init__(self, db: Session, team_id: int, seed: int = None):
@@ -42,7 +43,7 @@ class GMAgent:
                            offered_players_ids: list[int],
                            requested_players_ids: list[int],
                            offered_picks: list[dict] = [],
-                           requested_picks: list[dict] = []) -> Dict[str, Any]:
+                           requested_picks: list[dict] = []) -> dict[str, Any]:
         """
         Evaluate a trade proposal based on value, team needs, and GM personality.
         """
@@ -130,7 +131,7 @@ class GMAgent:
                 "reasoning": f"Trade evaluation failed: {str(e)}"
             }
 
-    def generate_trade_proposal(self, target_position: str = None) -> Dict[str, Any]:
+    def generate_trade_proposal(self, target_position: str = None) -> dict[str, Any]:
         """
         Propose a trade to address a team need.
         """
@@ -172,7 +173,7 @@ class GMAgent:
         self._log_decision("TRADE_PROPOSAL", "GENERATED", proposal)
         return proposal
 
-    def negotiate_contract(self, player: Player, demand: float) -> Dict[str, Any]:
+    def negotiate_contract(self, player: Player, demand: float) -> dict[str, Any]:
         """
         Simulate contract negotiation.
         """
@@ -274,7 +275,7 @@ class GMAgent:
         # Simple heuristic for now:
         return 0.85 # Rental discount
 
-    def _calculate_package_value(self, players: List[Player], picks: List[dict], is_acquiring: bool) -> float:
+    def _calculate_package_value(self, players: list[Player], picks: list[dict], is_acquiring: bool) -> float:
         total_value = 0.0
 
         for player in players:
@@ -323,7 +324,7 @@ class GMAgent:
         # For this sprint, we keep logic internal or simple delegate?
         # Plan says "Draft Chart" is Sprint 1 task 1.3 (done)
         # So we should USE it.
-        from app.data.draft_value_chart import DraftValueChart # lazy import to avoid circle
+        from app.data.draft_value_chart import DraftValueChart  # lazy import to avoid circle
 
         for pick in picks:
             round_num = pick.get("round", 1)
@@ -371,7 +372,7 @@ class GMAgent:
 
         return multiplier
 
-    def _apply_gm_traits(self, score: float, offered_players: List[Player], requested_players: List[Player], offered_picks: List[dict], requested_picks: List[dict]) -> float:
+    def _apply_gm_traits(self, score: float, offered_players: list[Player], requested_players: list[Player], offered_picks: list[dict], requested_picks: list[dict]) -> float:
         """
         Adjust score based on GM philosophy.
         """
@@ -388,7 +389,7 @@ class GMAgent:
 
         return score
 
-    async def _get_llm_trade_opinion(self, offered: List[Player], requested: List[Player]) -> Dict[str, Any]:
+    async def _get_llm_trade_opinion(self, offered: list[Player], requested: list[Player]) -> dict[str, Any]:
         """
         Mock LLM call to evaluate trade sentiment/intangibles.
         """
@@ -402,7 +403,7 @@ class GMAgent:
 
         return {"score_modifier": modifier, "reasoning": reasoning}
 
-    def _log_decision(self, decision_type: str, outcome: str, details: Dict[str, Any]):
+    def _log_decision(self, decision_type: str, outcome: str, details: dict[str, Any]):
         if self.gm:
             decision = GMDecision(
                 gm_id=self.gm.id,

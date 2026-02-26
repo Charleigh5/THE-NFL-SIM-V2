@@ -10,11 +10,10 @@ Context7 Best Practices:
 - Dependency injection pattern
 """
 
-from dataclasses import dataclass, field
-from typing import List, Optional
-from enum import Enum
 import logging
 import re
+from dataclasses import dataclass, field
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +30,10 @@ class ResearchResult:
     """Result of AI research for a task."""
     summary: str
     recommended_approach: str
-    code_examples: List[str] = field(default_factory=list)
+    code_examples: list[str] = field(default_factory=list)
     complexity: TaskComplexity = TaskComplexity.MEDIUM
-    sources: List[str] = field(default_factory=list)
-    related_docs: List[str] = field(default_factory=list)
+    sources: list[str] = field(default_factory=list)
+    related_docs: list[str] = field(default_factory=list)
 
 
 class AIResearchService:

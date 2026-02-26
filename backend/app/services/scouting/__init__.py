@@ -9,23 +9,21 @@ Phase 8: Scouting & Draft
 - Draft Board & Logic
 """
 
-from .scout import (
-    ScoutingEngine,
-    ScoutProfile,
-    ScoutingReport,
-    ScoutRegion,
-    ScoutSpecialty,
-    KnowledgeTier,
-)
-
 from .combine import (
-    CombineSimulation,
     CombineResults,
+    CombineSimulation,
 )
-
 from .draft_board import (
     DraftBoard,
     Prospect,
+)
+from .scout import (
+    KnowledgeTier,
+    ScoutingEngine,
+    ScoutingReport,
+    ScoutProfile,
+    ScoutRegion,
+    ScoutSpecialty,
 )
 
 __all__ = [

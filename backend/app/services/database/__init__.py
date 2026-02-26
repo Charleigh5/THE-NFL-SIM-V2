@@ -10,15 +10,14 @@ Phase 12: Database Enhancements
 """
 
 from .migrations import (
-    MigrationManager,
     Migration,
     MigrationHistory,
+    MigrationManager,
     MigrationStatus,
 )
-
 from .optimizer import (
-    QueryCache,
     CacheEntry,
+    QueryCache,
     QueryOptimizer,
     QueryStats,
 )

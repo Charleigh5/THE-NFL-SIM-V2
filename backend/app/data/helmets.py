@@ -1,5 +1,6 @@
+
 from pydantic import BaseModel
-from typing import List, Optional
+
 
 class HelmetModel(BaseModel):
     name: str
@@ -8,8 +9,8 @@ class HelmetModel(BaseModel):
     dimensions: str # e.g. "11x9.5x10"
     shell_material: str
     safety_rating: float # 0.0 - 5.0
-    features: List[str]
-    compatible_facemasks: List[str]
+    features: list[str]
+    compatible_facemasks: list[str]
     price_estimate: float
 
 # Catalog

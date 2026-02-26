@@ -11,18 +11,16 @@ Phase 3: Position-Specific Physics
 - Sack/TFL physics
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
+from typing import Any
 
 from .base import (
-    Vector2, PhysicsState, CollisionResult,
+    Vector2,
+    calculate_g_force,
     forty_to_yards_per_second,
     speed_rating_to_forty,
-    calculate_g_force,
 )
-
 
 # ============================================================================
 # ENUMS
@@ -58,7 +56,7 @@ class PassRushRep:
     qb_position: Vector2
 
     # Battle state
-    rush_move: Optional[RushMove] = None
+    rush_move: RushMove | None = None
     blocker_stance: BlockerStance = BlockerStance.SET
     leverage_score: float = 0.0  # -1 to 1- = blocker winning, + = rusher winning
 
@@ -100,7 +98,7 @@ class PassRushPhysics:
 
     def __init__(
         self,
-        config: Optional[PassRushConfig] = None,
+        config: PassRushConfig | None = None,
         speed_rating: int = 80,
         acceleration_rating: int = 85,
         strength_rating: int = 85,
@@ -221,7 +219,7 @@ class PassRushPhysics:
 
     def _calculate_first_step_advantage(
         self,
-        rush_move: Optional[RushMove],
+        rush_move: RushMove | None,
         tick_ms: float,
     ) -> float:
         """Calculate first-step explosion advantage."""
@@ -270,7 +268,7 @@ class PassRushPhysics:
         self,
         rusher_speed: float,
         qb_weight: int,
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Calculate sack outcome using momentum.
 

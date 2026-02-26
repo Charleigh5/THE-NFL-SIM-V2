@@ -1,16 +1,17 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
 import logging
 
-from app.core.database import get_db
-from app.core.error_decorators import handle_errors
-from app.models.player import Player
-from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
+from fastapi import APIRouter, Depends, HTTPException
+
 # NOTE: RecruitingEngine class needs to be implemented as a service that
 # orchestrates RecruitingProfile and WorkoutEngine components for full
 # prospect generation. Currently only component classes exist in recruiting.py.
 from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.core.error_decorators import handle_errors
+from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
+from app.models.player import Player
 
 router = APIRouter(prefix="/api/genesis", tags=["genesis"])
 logger = logging.getLogger(__name__)
@@ -91,7 +92,7 @@ def seed_database(db: Session = Depends(get_db)):
     """Seed the database with initial data for testing."""
     logger.info("Seeding database...")
 
-    from app.core.seed import seed_teams, seed_players
+    from app.core.seed import seed_players, seed_teams
     from app.models.season import Season
 
     # Ensure teams and players exist
