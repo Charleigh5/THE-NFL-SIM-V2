@@ -1,0 +1,168 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e36]: SEASON
+      - link "OFFSEASON" [ref=e37] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e39]:
+          - img [ref=e40]
+          - generic [ref=e45]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e46] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e48]:
+          - img [ref=e49]
+          - generic [ref=e56]: DRAFT ROOM
+      - link "ROSTER" [ref=e57] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - generic [ref=e65]: ROSTER
+      - link "DEPTH CHART" [ref=e66] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e68]:
+          - img [ref=e69]
+          - generic [ref=e76]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e77] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e79]:
+          - img [ref=e80]
+          - generic [ref=e85]: TRADE CENTER
+      - link "TRAINING" [ref=e86] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e88]:
+          - img [ref=e89]
+          - generic [ref=e95]: TRAINING
+      - link "MY TEAM" [ref=e96] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e98]:
+          - img [ref=e99]
+          - generic [ref=e101]: MY TEAM
+      - link "SETTINGS" [ref=e102] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e105]:
+          - img [ref=e106]
+          - generic [ref=e109]: SETTINGS
+    - generic [ref=e111]:
+      - img [ref=e113]
+      - generic [ref=e115]:
+        - generic [ref=e116]: GENESIS
+        - generic [ref=e117]: System Online
+  - main [ref=e118]:
+    - generic [ref=e121]:
+      - generic [ref=e122]:
+        - generic [ref=e123]:
+          - heading "Live Simulation" [level=1] [ref=e124]
+          - paragraph [ref=e125]: "Week 4: Empire vs. Genesis"
+        - generic [ref=e126]:
+          - img [ref=e127]
+          - generic [ref=e130]: 15:00
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]: Home Momentum
+            - generic [ref=e135]:
+              - img [ref=e137]
+              - generic [ref=e139]: NEUTRAL
+          - generic [ref=e140]:
+            - generic [ref=e141]: Away Momentum
+            - generic [ref=e142]:
+              - img [ref=e144]
+              - generic [ref=e146]: NEUTRAL
+        - generic [ref=e147]:
+          - generic [ref=e148]:
+            - generic [ref=e149]: "0"
+            - generic [ref=e150]: Empire
+            - generic [ref=e152]:
+              - img [ref=e154]
+              - generic [ref=e156]: NEUTRAL
+            - 'generic "Home Timeouts: 3" [ref=e157]'
+          - generic [ref=e162]:
+            - generic [ref=e163]: Q1
+            - generic [ref=e164]: 1st & 10
+          - generic [ref=e165]:
+            - generic [ref=e166]: "0"
+            - generic [ref=e167]: Genesis
+            - generic [ref=e169]:
+              - img [ref=e171]
+              - generic [ref=e173]: NEUTRAL
+            - 'generic "Away Timeouts: 3" [ref=e174]'
+      - generic [ref=e178]:
+        - generic [ref=e179]:
+          - generic [ref=e180]:
+            - button "Field View" [ref=e181] [cursor=pointer]:
+              - img [ref=e182]
+              - text: Field View
+            - button "Game Stats" [ref=e184] [cursor=pointer]:
+              - img [ref=e185]
+              - text: Game Stats
+          - generic [ref=e189]:
+            - generic:
+              - generic: PHYSICS DEBUG
+              - generic: "FRAME: 1"
+              - generic: "TIME: 0.000s"
+              - generic: "BALL:"
+              - generic: "Pos: 20.1, 26.0"
+              - generic: "Hgt: 0.00 yds"
+              - generic: "PLAYER 1:"
+              - generic: "Vel: 0.0, 0.0"
+              - generic: "Stt: RUN"
+            - generic [ref=e193]:
+              - generic [ref=e194]: Lambeau Field
+              - generic [ref=e195]:
+                - generic [ref=e196]: ☀️
+                - generic [ref=e197]: 70°F
+              - generic [ref=e198]:
+                - generic [ref=e199]:
+                  - generic [ref=e200]: Condition
+                  - generic [ref=e201]: Clear
+                - generic [ref=e202]:
+                  - generic [ref=e203]: Wind
+                  - generic [ref=e204]: 0 mph
+                - generic [ref=e205]:
+                  - generic [ref=e206]: Field
+                  - generic [ref=e207]: Dry
+              - generic [ref=e208]: Impact:Ideal Conditions
+            - generic [ref=e210]:
+              - heading "Coach Strategy" [level=3] [ref=e212]
+              - generic [ref=e213]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]: Aggression
+                  - generic [ref=e217]: "%"
+                - generic [ref=e221]:
+                  - generic [ref=e222]: Tempo
+                  - generic [ref=e223]: "%"
+                - generic [ref=e227]: BALANCED
+            - generic [ref=e229]:
+              - generic [ref=e230]:
+                - generic [ref=e231]:
+                  - img [ref=e232]
+                  - generic [ref=e236]: 92 dB
+                - generic [ref=e237]: Lambeau Field
+              - generic [ref=e240]:
+                - generic [ref=e241]: High Decibels
+                - paragraph [ref=e242]: Communication strained. Check audibles.
+            - button "KICKOFF" [ref=e244] [cursor=pointer]:
+              - img [ref=e245]
+              - text: KICKOFF
+        - generic [ref=e248]:
+          - heading "Play Feed" [level=3] [ref=e250]
+          - generic [ref=e252]: Waiting for kickoff...
+  - button "Mission Control" [ref=e254] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e256] [cursor=pointer]:
+    - img [ref=e257]
+```

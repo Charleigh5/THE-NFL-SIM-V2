@@ -56,14 +56,16 @@ jobs:
 
       - name: Run security scan (Bandit)
         run: |
-          bandit -r backend/app -c .bandit -f json -o bandit-report.json
+          cd backend
+          python -m pip install bandit
+          bandit -r app -c ../.bandit -f json -o bandit-report.json
 
       - name: Upload security report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bandit-security-report
-          path: bandit-report.json
+          path: backend/bandit-report.json
 
       - name: Run unit tests with coverage
         env:
