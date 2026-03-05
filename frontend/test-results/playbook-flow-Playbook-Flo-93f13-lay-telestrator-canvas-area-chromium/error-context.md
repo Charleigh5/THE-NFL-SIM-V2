@@ -1,0 +1,160 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - heading "Playbook & Strategy" [level=1] [ref=e106]
+          - paragraph [ref=e107]: "Offensive Scheme: West Coast • Defensive Scheme: Base 4-3"
+        - generic [ref=e108]:
+          - button "Weekly Install" [ref=e109] [cursor=pointer]
+          - button "Coaching Staff" [ref=e110] [cursor=pointer]
+      - generic [ref=e112]:
+        - generic [ref=e113]:
+          - generic [ref=e114]:
+            - img [ref=e115]
+            - 'heading "Week 10 Opponent Intel: Baltimore Ravens" [level=3] [ref=e118]'
+          - paragraph [ref=e119]: "Scouting Report: Heavy reliance on Run/RPO. Weakness in secondary depth. Suggested: Load the Box or Contain Spy."
+        - generic [ref=e120]:
+          - generic [ref=e121]:
+            - img [ref=e122]
+            - heading "Offensive Install" [level=4] [ref=e131]
+          - generic [ref=e132] [cursor=pointer]:
+            - generic [ref=e133]: Establish The Run
+            - generic [ref=e134]: +5 Run Blocking, -2 Pass Pro
+            - generic [ref=e136]:
+              - generic [ref=e137]: Familiarity
+              - generic [ref=e138]:
+                - text: 65%
+                - generic [ref=e139]: (VETERAN)
+          - generic [ref=e142] [cursor=pointer]:
+            - generic [ref=e143]: Air Raid
+            - generic [ref=e144]: +5 Pass Acc, -5 Run Blk
+            - generic [ref=e146]:
+              - generic [ref=e147]: Familiarity
+              - generic [ref=e148]:
+                - text: 35%
+                - generic [ref=e149]: (UNFAMILIAR)
+          - generic [ref=e152] [cursor=pointer]:
+            - generic [ref=e153]: Pro Style Balanced
+            - generic [ref=e154]: No bonuses or penalties
+            - generic [ref=e156]:
+              - generic [ref=e157]: Familiarity
+              - generic [ref=e158]:
+                - text: 95%
+                - generic [ref=e159]: (EXPERT)
+          - generic [ref=e162] [cursor=pointer]:
+            - generic [ref=e163]: Play Action Heavy
+            - generic [ref=e164]: +3 PA Eff, +2 Run Blk
+            - generic [ref=e166]:
+              - generic [ref=e167]: Familiarity
+              - generic [ref=e168]:
+                - text: 65%
+                - generic [ref=e169]: (VETERAN)
+        - generic [ref=e172]:
+          - generic [ref=e173]:
+            - img [ref=e174]
+            - heading "Defensive Install" [level=4] [ref=e176]
+          - generic [ref=e177] [cursor=pointer]:
+            - generic [ref=e178]: Blitzburgh
+            - generic [ref=e179]: +5 Pass Rush, -3 Coverage
+            - generic [ref=e181]:
+              - generic [ref=e182]: Familiarity
+              - generic [ref=e183]:
+                - text: 75%
+                - generic [ref=e184]: (VETERAN)
+          - generic [ref=e187] [cursor=pointer]:
+            - generic [ref=e188]: Tampa 2
+            - generic [ref=e189]: +5 Zone Cov, -3 Run Def
+            - generic [ref=e191]:
+              - generic [ref=e192]: Familiarity
+              - generic [ref=e193]:
+                - text: 45%
+                - generic [ref=e194]: (UNFAMILIAR)
+          - generic [ref=e197] [cursor=pointer]:
+            - generic [ref=e198]: Base 4-3
+            - generic [ref=e199]: Balanced front
+            - generic [ref=e201]:
+              - generic [ref=e202]: Familiarity
+              - generic [ref=e203]:
+                - text: 95%
+                - generic [ref=e204]: (EXPERT)
+          - generic [ref=e207] [cursor=pointer]:
+            - generic [ref=e208]: Man Free
+            - generic [ref=e209]: +4 Man Cov, +2 Blitz
+            - generic [ref=e211]:
+              - generic [ref=e212]: Familiarity
+              - generic [ref=e213]:
+                - text: 75%
+                - generic [ref=e214]: (VETERAN)
+        - generic [ref=e217]:
+          - img [ref=e218]
+          - heading "Focus Bonus" [level=4] [ref=e222]
+          - generic [ref=e223]: "Proj. Efficiency: 92%"
+          - button "Finalize Gameplan" [ref=e224] [cursor=pointer]
+  - button "Mission Control" [ref=e226] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e228] [cursor=pointer]:
+    - img [ref=e229]
+```
