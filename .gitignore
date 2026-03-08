@@ -114,3 +114,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+backend/__pycache__
+frontend/test-results
+frontend/playwright-report
+artifacts/
