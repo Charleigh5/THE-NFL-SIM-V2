@@ -10,8 +10,11 @@ Phase 11: Validation
 - Calibration checks
 """
 
-import statistics
 from dataclasses import dataclass
+from typing import Dict, List, Tuple
+import math
+import statistics
+
 
 # ============================================================================
 # DATA CLASSES
@@ -33,7 +36,7 @@ class ValidationResult:
     stat_name: str
     passed: bool
     actual_value: float
-    expected_range: tuple[float, float]
+    expected_range: Tuple[float, float]
     deviation_pct: float
     message: str
 
@@ -125,7 +128,7 @@ class ValidationEngine:
             message=f"{'PASS' if passed else 'FAIL'}: {actual:.2f} vs expected {stat_range.mean:.2f}"
         )
 
-    def validate_season(self, season_stats: dict[str, float]) -> list[ValidationResult]:
+    def validate_season(self, season_stats: Dict[str, float]) -> List[ValidationResult]:
         """
         Validate all stats from a simulated season.
         """
@@ -135,7 +138,7 @@ class ValidationEngine:
             results.append(result)
         return results
 
-    def get_calibration_report(self, results: list[ValidationResult]) -> dict:
+    def get_calibration_report(self, results: List[ValidationResult]) -> Dict:
         """
         Generate a calibration summary.
         """

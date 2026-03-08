@@ -5,9 +5,10 @@ B-069 to B-073: Extended validation using scipy KS tests
 and nflfastR target distributions.
 """
 
-import logging
-import statistics
 from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Tuple
+import statistics
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -20,19 +21,19 @@ logger = logging.getLogger(__name__)
 class NFLFastRTargets:
     """Target distributions from nflfastR data (2018-2023)."""
 
-    YPC_DISTRIBUTION: dict[str, float] = field(default_factory=lambda: {
+    YPC_DISTRIBUTION: Dict[str, float] = field(default_factory=lambda: {
         "mean": 4.3,
         "std": 6.2,
         "median": 3.0,
     })
 
-    PASS_OUTCOMES: dict[str, float] = field(default_factory=lambda: {
+    PASS_OUTCOMES: Dict[str, float] = field(default_factory=lambda: {
         "completion_rate": 0.65,
         "sack_rate": 0.072,
         "interception_rate": 0.024,
     })
 
-    YARDS_PER_COMPLETION: dict[str, float] = field(default_factory=lambda: {
+    YARDS_PER_COMPLETION: Dict[str, float] = field(default_factory=lambda: {
         "mean": 11.2,
         "std": 9.5,
         "median": 8.0,
@@ -51,16 +52,16 @@ class ValidationMetric:
     expected: float
     tolerance: float
     passed: bool
-    details: str | None = None
+    details: Optional[str] = None
 
 
 @dataclass
 class StatisticalValidationResult:
     """Complete validation result."""
     total_plays: int
-    metrics: list[ValidationMetric]
+    metrics: List[ValidationMetric]
     overall_passed: bool
-    ks_p_value: float | None = None
+    ks_p_value: Optional[float] = None
 
     def to_dict(self) -> dict:
         return {
@@ -93,8 +94,8 @@ class StatisticalValidator:
 
     def run_validation(
         self,
-        run_yards: list[float],
-        pass_yards: list[float],
+        run_yards: List[float],
+        pass_yards: List[float],
         pass_attempts: int,
         completions: int,
         sacks: int,

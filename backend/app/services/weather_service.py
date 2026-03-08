@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from app.core.logging_config import ErrorCategory, get_logger, log_error
+import random
+from typing import Dict, Optional
+
+from app.core.logging_config import get_logger, ErrorCategory, log_error
 
 logger = get_logger(__name__)
 
@@ -19,7 +22,7 @@ class WeatherService:
     MODIFIER_COLD_FUMBLE = 0.15 # < 20F
 
     @staticmethod
-    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> dict[str, float]:
+    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> Dict[str, float]:
         """
         Get gameplay modifiers based on weather conditions.
 

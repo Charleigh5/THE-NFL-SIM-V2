@@ -1,12 +1,14 @@
+from typing import Optional, List, Dict, Any
 from sqlalchemy.orm import Session
+from sqlalchemy import func, desc
+from datetime import datetime
 
-from app.engine.event_bus import EventType
-from app.models.news_item import NewsItem
-from app.models.rpg_event import RPGEvent
 from app.models.weekly_recap import WeeklyRecap
+from app.models.rpg_event import RPGEvent
+from app.models.news_item import NewsItem
+from app.engine.event_bus import EventType
 
-
-def mock_gemini_recap_script(week: int, events: list[RPGEvent], top_news: list[NewsItem]) -> str:
+def mock_gemini_recap_script(week: int, events: List[RPGEvent], top_news: List[NewsItem]) -> str:
     lines = [f"# Week {week} Around the League", ""]
 
     if top_news:
@@ -69,7 +71,7 @@ class WeeklyRecapService:
         db.refresh(recap)
         return recap
 
-    def get_recap(self, db: Session, season_id: int, week: int) -> WeeklyRecap | None:
+    def get_recap(self, db: Session, season_id: int, week: int) -> Optional[WeeklyRecap]:
         return db.query(WeeklyRecap).filter_by(season_id=season_id, week=week).first()
 
 weekly_recap_service = WeeklyRecapService()
