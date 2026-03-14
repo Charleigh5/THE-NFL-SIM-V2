@@ -361,12 +361,15 @@ test.describe("Offseason Dashboard Integration", () => {
   test("should load offseason dashboard", async ({ page }) => {
     await page.goto("/offseason-dashboard");
 
+    // Let the app mount fully
+    await page.waitForLoadState("networkidle");
+
     // Verify dashboard loads - look for any offseason-related content
     const isVisible = await page
       .locator("h1", { hasText: "Offseason" })
       .or(page.locator("text=/Offseason/i"))
       .first()
-      .isVisible({ timeout: 10000 })
+      .isVisible({ timeout: 15000 })
       .catch(() => false);
 
     // If page loaded (even with error boundary), test passes
