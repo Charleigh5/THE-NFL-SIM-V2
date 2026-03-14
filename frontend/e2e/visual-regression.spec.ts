@@ -2,6 +2,11 @@ import { test, expect } from "@playwright/test";
 import { mockTeam, mockPlayers } from "./fixtures/test-data";
 
 test.describe("Visual Regression Tests", () => {
+  test.skip(
+    !!process.env.CI,
+    "Skip visual regression tests in CI as baseline snapshots are not committed"
+  );
+
   test("Front Office visual snapshot", async ({ page }) => {
     // Mock API for Front Office
     await page.route("**/api/teams/1", async (route) => {
