@@ -18,7 +18,7 @@ class TraumaModel(Component):
             return self.hidden_injury_flags
         return []
 
-    def administer_shot(self, anatomy: 'AnatomyModel'):
+    def administer_shot(self, anatomy: 'AnatomyModel'):  # noqa: F821
         """
         Directive 9: The Shot.
         Sets currentHealth to 100% but increases chronicWear by +15.

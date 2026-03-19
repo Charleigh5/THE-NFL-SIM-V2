@@ -94,7 +94,7 @@ def seed_coaches():
                   f"{staff_data.defensive_coordinator.last_name} (DC)")
 
         db.commit()
-        print(f"\n✅ Coaches seeded successfully!")
+        print("\n✅ Coaches seeded successfully!")
         print(f"   Created: {coaches_created}")
         print(f"   Updated: {coaches_updated}")
 

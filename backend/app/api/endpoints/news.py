@@ -341,15 +341,24 @@ async def get_injury_reports(
 # LIVING WORLD ENDPOINTS (Database-backed AI-generated content)
 # ============================================================================
 
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from pydantic import Field
-from app.core.database import get_db
-from app.models.news_item import NewsItem as NewsItemModel, NewsCategory
-from app.models.weekly_recap import WeeklyRecap as WeeklyRecapModel
-from app.services.news_feed_service import NewsFeedService
-from app.services.weekly_recap_service import WeeklyRecapService
-from app.services.storyline_service import StorylineEventService
+# noqa: E402
+from fastapi import Depends  # noqa: E402
+# noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
+# noqa: E402
+from pydantic import Field  # noqa: E402
+# noqa: E402
+from app.core.database import get_db  # noqa: E402
+# noqa: E402
+from app.models.news_item import NewsItem as NewsItemModel, NewsCategory  # noqa: E402
+# noqa: E402
+from app.models.weekly_recap import WeeklyRecap as WeeklyRecapModel  # noqa: E402
+# noqa: E402
+from app.services.news_feed_service import NewsFeedService  # noqa: E402
+# noqa: E402
+from app.services.weekly_recap_service import WeeklyRecapService  # noqa: E402
+# noqa: E402
+from app.services.storyline_service import StorylineEventService  # noqa: E402
 
 
 class LivingNewsItem(BaseModel):

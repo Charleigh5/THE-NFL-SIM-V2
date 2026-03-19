@@ -384,12 +384,12 @@ NFL_DATA_CALENDAR = {
 
 if __name__ == "__main__":
     # Test the data
-    print(f"=== 2025 NFL Free Agent Data ===")
+    print("=== 2025 NFL Free Agent Data ===")
     print(f"Total signings tracked: {len(FREE_AGENT_SIGNINGS_2025)}")
-    print(f"\nTop 5 by contract value:")
+    print("\nTop 5 by contract value:")
     for i, fa in enumerate(get_top_free_agents(5), 1):
         print(f"  {i}. {fa.first_name} {fa.last_name} ({fa.position}) -> {fa.new_team}: ${fa.contract_total:,}")
 
-    print(f"\n=== Data Update Sources ===")
+    print("\n=== Data Update Sources ===")
     for source, info in DATA_UPDATE_SOURCES.items():
         print(f"  {source}: {info['source']} ({info['update_frequency']})")

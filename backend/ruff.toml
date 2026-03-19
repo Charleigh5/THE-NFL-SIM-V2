@@ -1,0 +1,18 @@
+[lint]
+ignore = [
+    "E501", # Line too long
+    "F401", # Unused import
+    "F841", # Unused variable
+    "UP006", # Use dict instead of Dict
+    "UP035", # typing.Dict is deprecated
+    "UP045", # Use X | None
+    "UP007", # Use X | Y
+    "I001", # Import block un-sorted
+    "E712", # Avoid equality comparisons to False
+    "B007", # Loop control variable not used
+    "W293", # Blank line contains whitespace
+    "W291", # Trailing whitespace
+    "E701", # Multiple statements on one line
+    "F811", # Local variable is assigned to but never used
+    "UP042", # Class ActionType inherits from both str and enum.Enum
+]

@@ -100,8 +100,10 @@ def generate_player(position: str, team_id: int) -> Player:
         experience=random.randint(0, 15)
     )
 
-from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.models.trait import Trait, TraitSource, TraitEffectType
+# noqa: E402
+from app.services.trait_service import TraitService, TRAIT_CATALOG  # noqa: E402
+# noqa: E402
+from app.models.trait import Trait, TraitSource, TraitEffectType  # noqa: E402
 
 def seed_traits(db: Session):
     """Seed traits from the catalog into the database."""

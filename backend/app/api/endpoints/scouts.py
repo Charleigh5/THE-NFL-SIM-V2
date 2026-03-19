@@ -113,7 +113,7 @@ async def assign_scout(
     if not success:
         raise HTTPException(
             status_code=400,
-            detail=f"Assignment failed. Verify IDs."
+            detail="Assignment failed. Verify IDs."
         )
 
     return ScoutAssignmentResponse(

@@ -22,8 +22,8 @@ class SimEngine:
     time_step: float = 1.0 / 10.0
     
     # Directive 9: Decoupled Physics/AI Kernels
-    physics_kernel: 'PhysicsKernel' = None
-    ai_kernel: 'AIKernel' = None
+    physics_kernel: 'PhysicsKernel' = None  # noqa: F821
+    ai_kernel: 'AIKernel' = None  # noqa: F821
 
     def run_loop(self, duration_seconds: float):
         steps = int(duration_seconds / self.time_step)

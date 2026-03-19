@@ -86,7 +86,7 @@ async def get_team_coaches(team_id: int, db: Session = Depends(get_db)):
 @router.get("/available", response_model=CoachListResponse)
 async def get_available_coaches(db: Session = Depends(get_db)):
     """Get all coaches not currently employed by a team."""
-    coaches = db.query(Coach).filter(Coach.team_id == None).all()
+    coaches = db.query(Coach).filter(Coach.team_id is None).all()
     return CoachListResponse(
         coaches=[_coach_to_response(c, db) for c in coaches]
     )
@@ -99,11 +99,11 @@ async def get_coaching_carousel(db: Session = Depends(get_db)):
     - Available coaches (unemployed)
     - Hot seat coaches (poor performance, candidates for firing)
     """
-    available = db.query(Coach).filter(Coach.team_id == None).all()
+    available = db.query(Coach).filter(Coach.team_id is None).all()
 
     # Hot seat: ROOKIE tier coaches or low combined rating
     hot_seat = db.query(Coach).filter(
-        Coach.team_id != None,
+        Coach.team_id is not None,
         Coach.tier == CoachTier.ROOKIE
     ).all()
 

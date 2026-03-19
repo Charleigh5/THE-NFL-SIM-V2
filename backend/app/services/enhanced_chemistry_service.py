@@ -75,7 +75,8 @@ class ChemistryMetadata:
             return "MAXIMUM"
 
 
-from app.core.redis_cache import chemistry_cache
+# noqa: E402
+from app.core.redis_cache import chemistry_cache  # noqa: E402
 
 class EnhancedChemistryService:
     """

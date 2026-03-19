@@ -54,7 +54,7 @@ def download_logos():
             # Try fallback for WAS/WSH if failed
             if abbr == "WAS":
                 try:
-                    print(f"Retrying WAS as 'was'...")
+                    print("Retrying WAS as 'was'...")
                     url = f"{base_url}/was.png"
                     urllib.request.urlretrieve(url, target_file)
                     success_count += 1

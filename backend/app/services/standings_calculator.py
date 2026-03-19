@@ -314,7 +314,7 @@ class StandingsCalculator:
         t2_wins_vs_t1 = t2['head_to_head'].get(t1['team_id'], 0)
 
         if t1_wins_vs_t2 > t2_wins_vs_t1:
-            return f"Head-to-head sweep"
+            return "Head-to-head sweep"
 
         if group_type == 'division':
             if t1['division_win_pct'] > t2['division_win_pct']:

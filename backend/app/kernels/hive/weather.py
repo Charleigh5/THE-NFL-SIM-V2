@@ -102,7 +102,7 @@ class WeatherSys(Component):
         Directive: Weekly Weather Forecast Top Story.
         """
         if self.forecast == "Clear":
-            return f"Clear skies expected, perfect for passing."
+            return "Clear skies expected, perfect for passing."
         elif self.forecast == "Snow":
-            return f"Snow forecast! Expect reduced visibility and slippery conditions."
+            return "Snow forecast! Expect reduced visibility and slippery conditions."
         return f"Weather Alert: {self.forecast} conditions may impact game strategy."
