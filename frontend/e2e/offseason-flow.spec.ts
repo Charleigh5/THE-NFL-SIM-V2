@@ -362,7 +362,7 @@ test.describe("Offseason Dashboard Integration", () => {
     await page.goto("/offseason-dashboard");
 
     // Verify dashboard loads - look for any offseason-related content
-    const isVisible = await page
+    await page
       .locator("h1", { hasText: "Offseason" })
       .or(page.locator("text=/Offseason/i"))
       .first()
