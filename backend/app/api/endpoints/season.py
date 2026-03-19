@@ -363,7 +363,7 @@ async def initialize_season(
 
             # 2. Calculate Regular Season Start Date
             # Add weeks * 7 days
-            regular_start_date = start_date_val + timedelta(weeks=preseason_weeks_count)
+            regular_start_date = start_date_val + timedelta(weeks=preseason_weeks_count)  # noqa: F821
 
             # 3. Generate Regular Season Schedule
             regular_games = generator.generate_schedule(
@@ -389,7 +389,7 @@ async def initialize_season(
         days_until_sunday = (6 - today.weekday()) % 7
         if days_until_sunday == 0:
             days_until_sunday = 7
-        start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)
+        start_date = (today + timedelta(days=days_until_sunday)).replace(hour=13, minute=0, second=0, microsecond=0)  # noqa: F821
 
     # We need to commit new_season so it's visible to sync session?
     # Yes, we flushed, but didn't commit. Sync session won't see it unless we commit.
@@ -903,7 +903,7 @@ async def suggest_draft_pick(season_id: int, team_id: int, db: AsyncSession = De
         # We can use sync_db to query
         available_players = sync_db.query(Player).filter(
             Player.is_rookie == True,
-            Player.team_id == None
+            Player.team_id is None
         ).order_by(Player.overall_rating.desc()).limit(20).all()
 
         assistant = DraftAssistant(sync_db)

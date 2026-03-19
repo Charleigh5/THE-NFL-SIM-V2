@@ -28,7 +28,7 @@ async def get_draft_board(
     result = await db.execute(
         select(Player)
         .where(Player.is_rookie == True)
-        .where(Player.team_id == None)
+        .where(Player.team_id is None)
         .order_by(Player.overall_rating.desc())
     )
     prospects = result.scalars().all()

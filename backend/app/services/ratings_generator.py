@@ -11,8 +11,10 @@ import random
 logger = logging.getLogger(__name__)
 
 
-from app.services.age_curves import get_age_modifier, get_experience_bonus, get_physical_regression
-from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS, CareerAccolades
+# noqa: E402
+from app.services.age_curves import get_age_modifier, get_experience_bonus, get_physical_regression  # noqa: E402
+# noqa: E402
+from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS, CareerAccolades  # noqa: E402
 
 # =============================================================================
 # TIER WEIGHTS CONFIGURATION

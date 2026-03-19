@@ -60,7 +60,7 @@ class PlayerTrait(Base):
     source: Mapped[TraitSource] = mapped_column(default=TraitSource.DRAFT)
 
     # Relationships
-    player: Mapped["Player"] = relationship(back_populates="player_traits")
+    player: Mapped["Player"] = relationship(back_populates="player_traits")  # noqa: F821
     trait: Mapped["Trait"] = relationship(back_populates="players")
 
     def __repr__(self) -> str:

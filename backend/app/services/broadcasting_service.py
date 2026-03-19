@@ -308,7 +308,7 @@ class BroadcastingService:
             templates = SITUATIONAL_TEMPLATES["CLUTCH_DRIVE"]
             return self.rng.choice(templates).format(qb=qb, team=context.possession_team)
         else:
-            return f"A significant moment in this contest!"
+            return "A significant moment in this contest!"
 
     def generate_stat_callout(self, player: str, stat: str, value: int) -> str:
         """Generate statistical highlight commentary."""

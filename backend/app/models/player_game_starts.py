@@ -24,8 +24,8 @@ class PlayerGameStarts(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     # Relationships
-    player: Mapped["Player"] = relationship(back_populates="game_starts")
-    game: Mapped["Game"] = relationship(back_populates="player_starts")
+    player: Mapped["Player"] = relationship(back_populates="game_starts")  # noqa: F821
+    game: Mapped["Game"] = relationship(back_populates="player_starts")  # noqa: F821
 
     __table_args__ = (
         Index('idx_player_game', 'player_id', 'game_id', unique=True),

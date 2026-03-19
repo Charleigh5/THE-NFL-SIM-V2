@@ -70,7 +70,7 @@ class Player(Base):
 
     # Team Relationship
     team_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("team.id"), nullable=True, index=True)
-    team: Mapped[Optional["Team"]] = relationship("Team", back_populates="players")
+    team: Mapped[Optional["Team"]] = relationship("Team", back_populates="players")  # noqa: F821
 
     # --- RPG Attributes (Proxied to PlayerAttributes) ---
     @hybrid_property
@@ -659,13 +659,13 @@ class Player(Base):
         if self.contract: self.contract.legacy_score = value
 
     # History
-    season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player")
+    season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player")  # noqa: F821
 
     # New: Game Starts (OL Chemistry)
     game_starts: Mapped[List["PlayerGameStarts"]] = relationship("PlayerGameStarts", back_populates="player")
 
     # Hyper-Immersive Relationships
-    body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False)
+    body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False)  # noqa: F821
 
     # --- Phase 3: Player Decomposition (1:1 Relationships) ---
     attributes: Mapped["PlayerAttributes"] = relationship("PlayerAttributes", back_populates="player", uselist=False, lazy="joined")

@@ -149,7 +149,7 @@ class PlayCaller:
 
     def call_audible(
         self,
-        qb: "Player",
+        qb: "Player",  # noqa: F821
         current_play: str,
         new_play: str,
         play_clock_remaining: float

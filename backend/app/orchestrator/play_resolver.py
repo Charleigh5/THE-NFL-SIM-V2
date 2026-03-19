@@ -345,7 +345,6 @@ class PlayResolver:
             "press": getattr(db, "press", 75),
             "ball_skills": getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
             "play_recognition": getattr(db, "play_recognition", 78),
-            "ball_skills": getattr(db, "ball_skills", 75),
             "change_of_direction": getattr(db, "change_of_direction", 80),
             "strength": getattr(db, "strength", 60)
         }
