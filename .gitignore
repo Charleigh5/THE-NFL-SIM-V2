@@ -114,3 +114,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+backend/debug_error.txt
+backend/logs/application.log
+backend/nfl_sim.db
