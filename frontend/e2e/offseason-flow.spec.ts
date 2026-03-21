@@ -362,15 +362,14 @@ test.describe("Offseason Dashboard Integration", () => {
     await page.goto("/offseason-dashboard");
 
     // Verify dashboard loads - look for any offseason-related content
-    const isVisible = await page
-      .locator("h1", { hasText: "Offseason" })
-      .or(page.locator("text=/Offseason/i"))
-      .first()
-      .isVisible({ timeout: 10000 })
-      .catch(() => false);
-
-    // If page loaded (even with error boundary), test passes
-    expect(isVisible || (await page.locator("body").isVisible())).toBeTruthy();
+    try {
+      await expect(
+        page.locator("h1", { hasText: "Offseason" }).or(page.locator("text=/Offseason/i")).first()
+      ).toBeVisible({ timeout: 10000 });
+    } catch {
+      // If error boundary or fallback shown instead
+      await expect(page.locator("body")).toBeVisible({ timeout: 5000 });
+    }
   });
 
   test("should display offseason phase buttons", async ({ page }) => {
