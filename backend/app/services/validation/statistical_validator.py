@@ -16,45 +16,36 @@ logger = logging.getLogger(__name__)
 # NFL TARGET DISTRIBUTIONS
 # =============================================================================
 
-
 @dataclass
 class NFLFastRTargets:
     """Target distributions from nflfastR data (2018-2023)."""
 
-    YPC_DISTRIBUTION: dict[str, float] = field(
-        default_factory=lambda: {
-            "mean": 4.3,
-            "std": 6.2,
-            "median": 3.0,
-        }
-    )
+    YPC_DISTRIBUTION: dict[str, float] = field(default_factory=lambda: {
+        "mean": 4.3,
+        "std": 6.2,
+        "median": 3.0,
+    })
 
-    PASS_OUTCOMES: dict[str, float] = field(
-        default_factory=lambda: {
-            "completion_rate": 0.65,
-            "sack_rate": 0.072,
-            "interception_rate": 0.024,
-        }
-    )
+    PASS_OUTCOMES: dict[str, float] = field(default_factory=lambda: {
+        "completion_rate": 0.65,
+        "sack_rate": 0.072,
+        "interception_rate": 0.024,
+    })
 
-    YARDS_PER_COMPLETION: dict[str, float] = field(
-        default_factory=lambda: {
-            "mean": 11.2,
-            "std": 9.5,
-            "median": 8.0,
-        }
-    )
+    YARDS_PER_COMPLETION: dict[str, float] = field(default_factory=lambda: {
+        "mean": 11.2,
+        "std": 9.5,
+        "median": 8.0,
+    })
 
 
 # =============================================================================
 # VALIDATION RESULTS
 # =============================================================================
 
-
 @dataclass
 class ValidationMetric:
     """Result of a single validation metric."""
-
     name: str
     actual: float
     expected: float
@@ -66,7 +57,6 @@ class ValidationMetric:
 @dataclass
 class StatisticalValidationResult:
     """Complete validation result."""
-
     total_plays: int
     metrics: list[ValidationMetric]
     overall_passed: bool
@@ -84,17 +74,16 @@ class StatisticalValidationResult:
                     "expected": round(m.expected, 4),
                     "tolerance": round(m.tolerance, 4),
                     "passed": m.passed,
-                    "details": m.details,
+                    "details": m.details
                 }
                 for m in self.metrics
-            ],
+            ]
         }
 
 
 # =============================================================================
 # STATISTICAL VALIDATOR
 # =============================================================================
-
 
 class StatisticalValidator:
     """Validates simulation output against NFL statistics."""
@@ -109,7 +98,7 @@ class StatisticalValidator:
         pass_attempts: int,
         completions: int,
         sacks: int,
-        interceptions: int,
+        interceptions: int
     ) -> StatisticalValidationResult:
         """Run full validation suite."""
         metrics = []
@@ -122,16 +111,14 @@ class StatisticalValidator:
             expected_ypc = self.targets.YPC_DISTRIBUTION["mean"]
             tolerance = 0.5
 
-            metrics.append(
-                ValidationMetric(
-                    name="YPC",
-                    actual=ypc,
-                    expected=expected_ypc,
-                    tolerance=tolerance,
-                    passed=abs(ypc - expected_ypc) < tolerance,
-                    details=f"Actual {ypc:.2f} vs Expected {expected_ypc:.1f}",
-                )
-            )
+            metrics.append(ValidationMetric(
+                name="YPC",
+                actual=ypc,
+                expected=expected_ypc,
+                tolerance=tolerance,
+                passed=abs(ypc - expected_ypc) < tolerance,
+                details=f"Actual {ypc:.2f} vs Expected {expected_ypc:.1f}"
+            ))
 
         # 2. Completion Percentage
         if pass_attempts > 0:
@@ -139,16 +126,14 @@ class StatisticalValidator:
             expected_comp = self.targets.PASS_OUTCOMES["completion_rate"]
             comp_tolerance = 0.02
 
-            metrics.append(
-                ValidationMetric(
-                    name="Completion %",
-                    actual=comp_pct,
-                    expected=expected_comp,
-                    tolerance=comp_tolerance,
-                    passed=abs(comp_pct - expected_comp) <= comp_tolerance,
-                    details=f"{comp_pct * 100:.1f}% vs {expected_comp * 100:.1f}%",
-                )
-            )
+            metrics.append(ValidationMetric(
+                name="Completion %",
+                actual=comp_pct,
+                expected=expected_comp,
+                tolerance=comp_tolerance,
+                passed=abs(comp_pct - expected_comp) <= comp_tolerance,
+                details=f"{comp_pct*100:.1f}% vs {expected_comp*100:.1f}%"
+            ))
 
         # 3. Sack Rate
         if pass_attempts > 0:
@@ -156,16 +141,14 @@ class StatisticalValidator:
             expected_sack = self.targets.PASS_OUTCOMES["sack_rate"]
             sack_tolerance = 0.01
 
-            metrics.append(
-                ValidationMetric(
-                    name="Sack Rate",
-                    actual=sack_rate,
-                    expected=expected_sack,
-                    tolerance=sack_tolerance,
-                    passed=abs(sack_rate - expected_sack) <= sack_tolerance,
-                    details=f"{sack_rate * 100:.2f}% vs {expected_sack * 100:.1f}%",
-                )
-            )
+            metrics.append(ValidationMetric(
+                name="Sack Rate",
+                actual=sack_rate,
+                expected=expected_sack,
+                tolerance=sack_tolerance,
+                passed=abs(sack_rate - expected_sack) <= sack_tolerance,
+                details=f"{sack_rate*100:.2f}% vs {expected_sack*100:.1f}%"
+            ))
 
         # 4. Interception Rate
         if pass_attempts > 0:
@@ -173,16 +156,14 @@ class StatisticalValidator:
             expected_int = self.targets.PASS_OUTCOMES["interception_rate"]
             int_tolerance = 0.01
 
-            metrics.append(
-                ValidationMetric(
-                    name="INT Rate",
-                    actual=int_rate,
-                    expected=expected_int,
-                    tolerance=int_tolerance,
-                    passed=abs(int_rate - expected_int) <= int_tolerance,
-                    details=f"{int_rate * 100:.2f}% vs {expected_int * 100:.1f}%",
-                )
-            )
+            metrics.append(ValidationMetric(
+                name="INT Rate",
+                actual=int_rate,
+                expected=expected_int,
+                tolerance=int_tolerance,
+                passed=abs(int_rate - expected_int) <= int_tolerance,
+                details=f"{int_rate*100:.2f}% vs {expected_int*100:.1f}%"
+            ))
 
         # 5. Yards Per Completion
         if len(pass_yards) >= 50:
@@ -190,16 +171,14 @@ class StatisticalValidator:
             expected_ypc = self.targets.YARDS_PER_COMPLETION["mean"]
             ypc_tolerance = 2.0
 
-            metrics.append(
-                ValidationMetric(
-                    name="Yards/Completion",
-                    actual=ypc,
-                    expected=expected_ypc,
-                    tolerance=ypc_tolerance,
-                    passed=abs(ypc - expected_ypc) <= ypc_tolerance,
-                    details=f"{ypc:.1f} yds vs {expected_ypc:.1f} yds",
-                )
-            )
+            metrics.append(ValidationMetric(
+                name="Yards/Completion",
+                actual=ypc,
+                expected=expected_ypc,
+                tolerance=ypc_tolerance,
+                passed=abs(ypc - expected_ypc) <= ypc_tolerance,
+                details=f"{ypc:.1f} yds vs {expected_ypc:.1f} yds"
+            ))
 
         overall_passed = all(m.passed for m in metrics)
 
@@ -207,7 +186,7 @@ class StatisticalValidator:
             total_plays=total_plays,
             metrics=metrics,
             overall_passed=overall_passed,
-            ks_p_value=p_value,
+            ks_p_value=p_value
         )
 
 

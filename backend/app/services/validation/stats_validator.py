@@ -17,11 +17,9 @@ from dataclasses import dataclass
 # DATA CLASSES
 # ============================================================================
 
-
 @dataclass
 class StatRange:
     """Expected range for a statistic."""
-
     name: str
     min_val: float
     max_val: float
@@ -32,7 +30,6 @@ class StatRange:
 @dataclass
 class ValidationResult:
     """Result of a validation check."""
-
     stat_name: str
     passed: bool
     actual_value: float
@@ -44,7 +41,6 @@ class ValidationResult:
 # ============================================================================
 # NFL STATISTICAL BENCHMARKS
 # ============================================================================
-
 
 class NFLBenchmarks:
     """
@@ -82,7 +78,6 @@ class NFLBenchmarks:
 # VALIDATION ENGINE
 # ============================================================================
 
-
 class ValidationEngine:
     """
     Validates simulation statistics against NFL benchmarks.
@@ -97,23 +92,16 @@ class ValidationEngine:
         """
         # Find matching benchmark
         stat_range = None
-        for category in [
-            self.benchmarks.TEAM_STATS,
-            self.benchmarks.PLAY_STATS,
-            self.benchmarks.GAME_STATS,
-        ]:
+        for category in [self.benchmarks.TEAM_STATS, self.benchmarks.PLAY_STATS, self.benchmarks.GAME_STATS]:
             if stat_name in category:
                 stat_range = category[stat_name]
                 break
 
         if not stat_range:
             return ValidationResult(
-                stat_name=stat_name,
-                passed=False,
-                actual_value=actual,
-                expected_range=(0, 0),
-                deviation_pct=100,
-                message=f"Unknown stat: {stat_name}",
+                stat_name=stat_name, passed=False, actual_value=actual,
+                expected_range=(0, 0), deviation_pct=100,
+                message=f"Unknown stat: {stat_name}"
             )
 
         # Check if in range
@@ -134,7 +122,7 @@ class ValidationEngine:
             actual_value=actual,
             expected_range=(stat_range.min_val, stat_range.max_val),
             deviation_pct=deviation_pct,
-            message=f"{'PASS' if passed else 'FAIL'}: {actual:.2f} vs expected {stat_range.mean:.2f}",
+            message=f"{'PASS' if passed else 'FAIL'}: {actual:.2f} vs expected {stat_range.mean:.2f}"
         )
 
     def validate_season(self, season_stats: dict[str, float]) -> list[ValidationResult]:

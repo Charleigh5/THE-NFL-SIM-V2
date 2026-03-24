@@ -12,14 +12,13 @@ def mock_gemini_recap_script(week: int, events: list[RPGEvent], top_news: list[N
     if top_news:
         lines.append("## Top Stories")
         for news in top_news:
-            lines.append(f"**{news.headline}**: {news.content[:100]}...")
+             lines.append(f"**{news.headline}**: {news.content[:100]}...")
         lines.append("")
 
     lines.append("## Action Report")
     lines.append(f"A total of {len(events)} major events were recorded this week.")
 
     return "\n".join(lines)
-
 
 class WeeklyRecapService:
     """
@@ -36,13 +35,8 @@ class WeeklyRecapService:
         events = db.query(RPGEvent).filter_by(season_id=season_id, week=week).all()
 
         # 2. Identify top stories (using NewsItems created by NewsFeedService)
-        top_news = (
-            db.query(NewsItem)
-            .filter_by(season_id=season_id, week=week)
-            .order_by(NewsItem.importance_score.desc())
-            .limit(5)
-            .all()
-        )
+        top_news = db.query(NewsItem).filter_by(season_id=season_id, week=week)\
+                     .order_by(NewsItem.importance_score.desc()).limit(5).all()
 
         # 3. Calculate "Play of the Week" (e.g. longest TD or Game Winning Play)
         best_play_id = None
@@ -54,9 +48,9 @@ class WeeklyRecapService:
             if e.event_type == EventType.TOUCHDOWN_EVENT:
                 yards = e.payload.get("yards", 0)
                 if yards > max_excitement:
-                    max_excitement = yards
-                    # Format: GAMEID_PLAYID
-                    best_play_id = f"{e.game_id}_{e.payload.get('play_id')}"
+                     max_excitement = yards
+                     # Format: GAMEID_PLAYID
+                     best_play_id = f"{e.game_id}_{e.payload.get('play_id')}"
 
         # 4. Generate AI Script (Simulated)
         summary = mock_gemini_recap_script(week, events, top_news)
@@ -68,7 +62,7 @@ class WeeklyRecapService:
             summary_text=summary,
             play_of_the_week_id=best_play_id,
             surprising_result=surprising_result,
-            media_assets=[],
+            media_assets=[]
         )
         db.add(recap)
         db.commit()
@@ -77,6 +71,5 @@ class WeeklyRecapService:
 
     def get_recap(self, db: Session, season_id: int, week: int) -> WeeklyRecap | None:
         return db.query(WeeklyRecap).filter_by(season_id=season_id, week=week).first()
-
 
 weekly_recap_service = WeeklyRecapService()
