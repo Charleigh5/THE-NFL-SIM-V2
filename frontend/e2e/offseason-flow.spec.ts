@@ -369,8 +369,12 @@ test.describe("Offseason Dashboard Integration", () => {
       .isVisible({ timeout: 10000 })
       .catch(() => false);
 
+    // Give the page a moment to ensure body is rendered
+    await page.waitForLoadState("domcontentloaded");
+    const bodyVisible = await page.locator("body").isVisible().catch(() => false);
+
     // If page loaded (even with error boundary), test passes
-    expect(isVisible || (await page.locator("body").isVisible())).toBeTruthy();
+    expect(isVisible || bodyVisible).toBeTruthy();
   });
 
   test("should display offseason phase buttons", async ({ page }) => {
