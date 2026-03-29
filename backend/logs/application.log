@@ -26511,3 +26511,11 @@ AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
 AttributeInteractionEngine initialized with 13 interactions
+AttributeInteractionEngine initialized with 13 interactions
+Redis connection failed, using in-memory cache: Error -2 connecting to redis:6379. Name or service not known.
+Application initialized successfully
+PYTEST DEBUG: sys.executable=/home/jules/.pyenv/versions/3.12.13/bin/python
+PYTEST DEBUG: cwd=/app/backend
+PYTEST DEBUG: sys.path[:8]=['/app/backend', '/app', '/home/jules/.pyenv/versions/3.12.13/lib/python312.zip', '/home/jules/.pyenv/versions/3.12.13/lib/python3.12', '/home/jules/.pyenv/versions/3.12.13/lib/python3.12/lib-dynload', '/home/jules/.pyenv/versions/3.12.13/lib/python3.12/site-packages']
+PYTEST DEBUG: app.__file__=None
+PYTEST DEBUG: app.__package__=app
