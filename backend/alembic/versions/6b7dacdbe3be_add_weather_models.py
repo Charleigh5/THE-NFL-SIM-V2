@@ -27,7 +27,7 @@ def upgrade() -> None:
     sa.Column('avg_temp_by_month', sa.JSON(), nullable=True),
     sa.Column('precip_chance_by_month', sa.JSON(), nullable=True),
     sa.Column('wind_avg_by_month', sa.JSON(), nullable=True),
-    # sa.ForeignKeyConstraint(['stadium_id'], ['stadium.id'], ),
+    sa.ForeignKeyConstraint(['stadium_id'], ['stadium.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('stadium_id')
     )

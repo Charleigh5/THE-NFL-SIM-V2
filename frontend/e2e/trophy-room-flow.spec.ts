@@ -147,9 +147,9 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Check for team colors or logo
-    const teamBranding = page.locator('[data-testid="team-logo"], .team-banner, text=/Cardinals/i');
-    if (await teamBranding.isVisible({ timeout: 2000 })) {
-      await expect(teamBranding).toBeVisible();
+    const teamBranding = page.locator('[data-testid="team-logo"]').or(page.locator('.team-banner')).or(page.getByText(/Cardinals/i));
+    if (await teamBranding.first().isVisible({ timeout: 2000 })) {
+      await expect(teamBranding.first()).toBeVisible();
     }
   });
 });
