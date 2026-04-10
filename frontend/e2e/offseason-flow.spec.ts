@@ -370,7 +370,8 @@ test.describe("Offseason Dashboard Integration", () => {
       .catch(() => false);
 
     // If page loaded (even with error boundary), test passes
-    expect(isVisible || (await page.locator("body").isVisible())).toBeTruthy();
+    const bodyVisible = await page.locator("body").isVisible();
+    expect(isVisible || bodyVisible).toBeTruthy();
   });
 
   test("should display offseason phase buttons", async ({ page }) => {

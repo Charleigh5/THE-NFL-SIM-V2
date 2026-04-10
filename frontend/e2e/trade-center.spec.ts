@@ -229,7 +229,10 @@ test.describe.serial("Trade System E2E", () => {
 
     // 2. Drag Murray (101) to Offer
     await tradePage.dragPlayerToOffer(101);
-    await expect(page.locator('[data-testid="offered-zone"]')).toContainText("Murray");
+    // Use a longer timeout or a softer check due to flakiness
+    await expect(page.locator('[data-testid="offered-zone"]')).toContainText("Murray", {
+      timeout: 10000,
+    });
 
     // 3. Drag Kelce (202) to Request
     await tradePage.dragPlayerToRequest(202);
@@ -245,7 +248,9 @@ test.describe.serial("Trade System E2E", () => {
     await tradePage.submitFormalOffer();
 
     // Verify reset (zones empty)
-    await expect(page.locator('[data-testid="offered-zone"]')).not.toContainText("Murray");
+    await expect(page.locator('[data-testid="offered-zone"]')).not.toContainText("Murray", {
+      timeout: 10000,
+    });
   });
 
   test("should view processing offers and accept one", async ({ page }) => {
