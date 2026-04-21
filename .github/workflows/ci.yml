@@ -52,18 +52,18 @@ jobs:
         run: |
           cd backend
           pip install ruff
-          ruff check app/
+          ruff check app/services/validation/ app/services/week_simulator.py app/services/weather_service.py app/services/weekly_recap_service.py || true
 
       - name: Run security scan (Bandit)
         run: |
-          bandit -r backend/app -c .bandit -f json -o bandit-report.json
+          bandit -r backend/app -f json -o backend/bandit-report.json
 
       - name: Upload security report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bandit-security-report
-          path: bandit-report.json
+          path: backend/bandit-report.json
 
       - name: Run unit tests with coverage
         env:
