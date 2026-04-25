@@ -1,0 +1,113 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - navigation [ref=e4]:
+        - generic [ref=e5]:
+            - heading "THE NFL SIM" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Night Game Franchise
+        - list [ref=e12]:
+            - listitem [ref=e13]:
+                - link "Dashboard" [ref=e14]:
+                    - /url: /
+                    - img [ref=e16]
+                    - generic [ref=e21]: Dashboard
+            - listitem [ref=e22]:
+                - link "Season" [ref=e23]:
+                    - /url: /season
+                    - img [ref=e25]
+                    - generic [ref=e27]: Season
+            - listitem [ref=e28]:
+                - link "Offseason" [ref=e29]:
+                    - /url: /offseason
+                    - img [ref=e31]
+                    - generic [ref=e34]: Offseason
+            - listitem [ref=e35]:
+                - link "Draft Room" [ref=e36]:
+                    - /url: /offseason/draft
+                    - img [ref=e38]
+                    - generic [ref=e44]: Draft Room
+            - listitem [ref=e45]:
+                - link "Roster" [ref=e46]:
+                    - /url: /empire/front-office
+                    - img [ref=e48]
+                    - generic [ref=e53]: Roster
+            - listitem [ref=e54]:
+                - link "Depth Chart" [ref=e55]:
+                    - /url: /empire/depth-chart
+                    - img [ref=e57]
+                    - generic [ref=e60]: Depth Chart
+            - listitem [ref=e61]:
+                - link "Trade Center" [ref=e62]:
+                    - /url: /empire/trade-center
+                    - img [ref=e64]
+                    - generic [ref=e67]: Trade Center
+            - listitem [ref=e68]:
+                - link "Training" [ref=e69]:
+                    - /url: /training
+                    - img [ref=e71]
+                    - generic [ref=e77]: Training
+            - listitem [ref=e78]:
+                - link "My Team" [ref=e79]:
+                    - /url: /team-selection
+                    - img [ref=e81]
+                    - generic [ref=e83]: My Team
+            - listitem [ref=e84]:
+                - link "Settings" [ref=e85]:
+                    - /url: /settings
+                    - img [ref=e87]
+                    - generic [ref=e90]: Settings
+        - generic [ref=e92]: System Online
+    - main [ref=e94]:
+        - generic [ref=e98]:
+            - generic [ref=e100]:
+                - heading "Draft Room" [level=1] [ref=e101]
+                - generic [ref=e102]: Draft Theater • Live War Room Broadcast
+            - generic [ref=e103]:
+                - generic [ref=e104]: WAR ROOM LIVE
+                - generic [ref=e105]:
+                    - generic [ref=e106]:
+                        - generic [ref=e107]: Now
+                        - generic [ref=e108]: Welcome to the 2025 NFL Draft War Room
+                    - generic [ref=e109]:
+                        - generic [ref=e110]: 2m ago
+                        - generic [ref=e111]: "Sources say Lions looking to trade down from #5"
+                    - generic [ref=e112]:
+                        - generic [ref=e113]: Now
+                        - generic [ref=e114]: The Bears are on the clock
+            - generic [ref=e115]:
+                - button [ref=e116] [cursor=pointer]:
+                    - img [ref=e117]
+                - generic [ref=e119]: GM HOTLINE
+            - generic [ref=e120]:
+                - generic [ref=e122]:
+                    - generic [ref=e124]: Big Board - Live Feed
+                    - generic [ref=e127]:
+                        - generic [ref=e128]:
+                            - heading "Draft Board" [level=3] [ref=e129]
+                            - generic [ref=e130]:
+                                - combobox "Filter by Position" [ref=e131] [cursor=pointer]:
+                                    - option "ALL" [selected]
+                                    - option "QB"
+                                    - option "RB"
+                                    - option "WR"
+                                    - option "TE"
+                                    - option "OL"
+                                    - option "DL"
+                                    - option "LB"
+                                    - option "DB"
+                                    - option "ST"
+                                - combobox "Sort Draft Board" [ref=e132] [cursor=pointer]:
+                                    - option "Rank" [selected]
+                                    - option "Rating"
+                                    - option "Position"
+                        - generic [ref=e134]: No prospects found.
+                - generic [ref=e135]:
+                    - generic [ref=e138]: Team Needs
+                    - generic [ref=e140]:
+                        - generic [ref=e142]: War Room Controls
+                        - generic [ref=e144]:
+                            - button "Auto-Sim Draft" [disabled] [ref=e145]
+                            - button "Propose Trade" [disabled] [ref=e146]
+    - button "Mission Control" [ref=e148] [cursor=pointer]: ⚡
+```

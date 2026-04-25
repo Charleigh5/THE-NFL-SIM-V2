@@ -1,0 +1,147 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+    - navigation [ref=e4]:
+        - generic [ref=e5]:
+            - heading "THE NFL SIM" [level=1] [ref=e10]
+            - paragraph [ref=e11]: Night Game Franchise
+        - list [ref=e12]:
+            - listitem [ref=e13]:
+                - link "Dashboard" [ref=e14] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e16]
+                    - generic [ref=e21]: Dashboard
+            - listitem [ref=e22]:
+                - link "Season" [ref=e23] [cursor=pointer]:
+                    - /url: /season
+                    - img [ref=e25]
+                    - generic [ref=e27]: Season
+            - listitem [ref=e28]:
+                - link "Offseason" [ref=e29] [cursor=pointer]:
+                    - /url: /offseason
+                    - img [ref=e31]
+                    - generic [ref=e34]: Offseason
+            - listitem [ref=e35]:
+                - link "Draft Room" [ref=e36] [cursor=pointer]:
+                    - /url: /offseason/draft
+                    - img [ref=e38]
+                    - generic [ref=e44]: Draft Room
+            - listitem [ref=e45]:
+                - link "Roster" [ref=e46] [cursor=pointer]:
+                    - /url: /empire/front-office
+                    - img [ref=e48]
+                    - generic [ref=e53]: Roster
+            - listitem [ref=e54]:
+                - link "Depth Chart" [ref=e55] [cursor=pointer]:
+                    - /url: /empire/depth-chart
+                    - img [ref=e57]
+                    - generic [ref=e60]: Depth Chart
+            - listitem [ref=e61]:
+                - link "Trade Center" [ref=e62] [cursor=pointer]:
+                    - /url: /empire/trade-center
+                    - img [ref=e64]
+                    - generic [ref=e67]: Trade Center
+            - listitem [ref=e68]:
+                - link "Training" [ref=e69] [cursor=pointer]:
+                    - /url: /training
+                    - img [ref=e71]
+                    - generic [ref=e77]: Training
+            - listitem [ref=e78]:
+                - link "My Team" [ref=e79] [cursor=pointer]:
+                    - /url: /team-selection
+                    - img [ref=e81]
+                    - generic [ref=e83]: My Team
+            - listitem [ref=e84]:
+                - link "Settings" [ref=e85] [cursor=pointer]:
+                    - /url: /settings
+                    - img [ref=e87]
+                    - generic [ref=e90]: Settings
+        - generic [ref=e92]: System Online
+    - main [ref=e94]:
+        - generic [ref=e98]:
+            - generic [ref=e100]:
+                - generic [ref=e101]: Season Live
+                - generic [ref=e103]: Broadcast Network
+                - generic [ref=e105]: League Wire
+                - generic [ref=e107]: Season Live
+                - generic [ref=e109]: Broadcast Network
+                - generic [ref=e111]: League Wire
+            - generic [ref=e113]:
+                - generic [ref=e114]: 2024 Season - Week 5
+                - generic [ref=e115]:
+                    - generic [ref=e116]:
+                        - generic [ref=e117]:
+                            - generic [ref=e118]: 2024 Season
+                            - heading "Week 5" [level=2] [ref=e119]
+                        - generic [ref=e120]: Active
+                    - generic [ref=e121]:
+                        - generic [ref=e122]:
+                            - generic [ref=e123]: Games Played
+                            - generic [ref=e124]: "4"
+                        - generic [ref=e125]:
+                            - generic [ref=e126]: Remaining
+                            - generic [ref=e127]: "13"
+                        - generic [ref=e128]:
+                            - generic [ref=e129]: Total Weeks
+                            - generic [ref=e130]: "17"
+                    - generic [ref=e132]:
+                        - generic [ref=e133]: Season Progress
+                        - generic [ref=e134]: 25%
+                    - generic [ref=e137]:
+                        - button "⚡ Simulate Week" [ref=e138] [cursor=pointer]:
+                            - generic [ref=e139]: ⚡
+                            - generic [ref=e140]: Simulate Week
+                        - button "⏩ Sim to Postseason" [ref=e141] [cursor=pointer]:
+                            - generic [ref=e142]: ⏩
+                            - generic [ref=e143]: Sim to Postseason
+                        - button "🏆 Bracket" [disabled] [ref=e144]:
+                            - generic [ref=e145]: 🏆
+                            - generic [ref=e146]: Bracket
+            - generic [ref=e147]:
+                - button "📺 Overview" [ref=e148] [cursor=pointer]:
+                    - generic [ref=e150]: 📺 Overview
+                - button "📊 Standings" [ref=e151] [cursor=pointer]:
+                    - generic [ref=e152]: 📊 Standings
+                - button "📅 Schedule" [ref=e153] [cursor=pointer]:
+                    - generic [ref=e154]: 📅 Schedule
+                - button "⭐ Leaders" [ref=e155] [cursor=pointer]:
+                    - generic [ref=e156]: ⭐ Leaders
+            - generic [ref=e157]:
+                - generic [ref=e159]:
+                    - generic [ref=e161]: Live Feed
+                    - generic [ref=e164]:
+                        - generic [ref=e165]:
+                            - heading "Upcoming Games (Week 5)" [level=3] [ref=e166]
+                            - paragraph [ref=e168]: No upcoming games this week.
+                        - generic [ref=e169]:
+                            - heading "Recent Results" [level=3] [ref=e170]
+                            - paragraph [ref=e172]: No games played this week yet.
+                        - heading "Standings Overview" [level=3] [ref=e174]
+                - generic [ref=e175]:
+                    - generic [ref=e176]:
+                        - generic [ref=e178]: Awards Race
+                        - generic [ref=e180]:
+                            - generic [ref=e181]:
+                                - heading "MVP" [level=4] [ref=e182]
+                                - paragraph [ref=e183]: No candidates
+                            - generic [ref=e184]:
+                                - heading "OPOY" [level=4] [ref=e185]
+                                - paragraph [ref=e186]: No candidates
+                            - generic [ref=e187]:
+                                - heading "DPOY" [level=4] [ref=e188]
+                                - paragraph [ref=e189]: No candidates
+                    - generic [ref=e190]:
+                        - generic [ref=e192]: League Wire
+                        - generic [ref=e194]:
+                            - generic [ref=e195]:
+                                - img [ref=e196]
+                                - heading "League News" [level=3] [ref=e199]
+                            - generic [ref=e200]:
+                                - img [ref=e201]
+                                - generic [ref=e203]: Failed to fetch
+                                - button "Retry" [ref=e204] [cursor=pointer]:
+                                    - img [ref=e205]
+                                    - text: Retry
+    - button "Mission Control" [ref=e211] [cursor=pointer]: ⚡
+```
