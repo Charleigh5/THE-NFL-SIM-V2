@@ -59,8 +59,9 @@ export class TradePage {
     }
     await target.hover();
     await this.page.mouse.up();
+    await this.page.waitForTimeout(300);
     // Wait for state update
-    await this.page.waitForTimeout(50);
+    await this.page.waitForTimeout(300);
   }
 
   async dragPlayerToRequest(playerId: number) {
@@ -77,6 +78,7 @@ export class TradePage {
     }
     await target.hover();
     await this.page.mouse.up();
+    await this.page.waitForTimeout(300);
   }
 
   async submitFormalOffer() {
