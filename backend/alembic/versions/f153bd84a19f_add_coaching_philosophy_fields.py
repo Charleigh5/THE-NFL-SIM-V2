@@ -431,15 +431,15 @@ def downgrade() -> None:
                nullable=True,
                existing_server_default=sa.text("'REGULAR'"))
 
-    with op.batch_alter_table('coach', schema=None) as batch_op:
-        batch_op.alter_column('tier',
-               existing_type=sa.Enum('LEGEND', 'ELITE', 'VETERAN', 'DEVELOPING', 'ROOKIE', name='coachtier'),
-               type_=sa.VARCHAR(length=20),
-               nullable=True,
-               existing_server_default=sa.text("'DEVELOPING'"))
+    # with op.batch_alter_table('coach', schema=None) as batch_op:
+    #     batch_op.alter_column('tier',
+    #            existing_type=sa.Enum('LEGEND', 'ELITE', 'VETERAN', 'DEVELOPING', 'ROOKIE', name='coachtier'),
+    #            type_=sa.VARCHAR(length=20),
+    #            nullable=True,
+    #            existing_server_default=sa.text("'DEVELOPING'"))
 
-    op.create_table('_alembic_tmp_player',
-    sa.Column('id', sa.INTEGER(), nullable=False),
+    # op.create_table('_alembic_tmp_player',
+    # sa.Column('id', sa.INTEGER(), nullable=False),
     sa.Column('first_name', sa.VARCHAR(), nullable=False),
     sa.Column('last_name', sa.VARCHAR(), nullable=False),
     sa.Column('position', sa.VARCHAR(), nullable=False),
@@ -532,8 +532,8 @@ def downgrade() -> None:
     sa.Column('gps_speed_max', sa.FLOAT(), nullable=True),
     sa.Column('s2_cognition_score', sa.INTEGER(), nullable=True),
     sa.Column('medical_flags', sqlite.JSON(), nullable=True),
-    sa.Column('genesis_revealed', sa.BOOLEAN(), nullable=False),
-    sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
+    # sa.Column('genesis_revealed', sa.BOOLEAN(), nullable=False),
+    # sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
+    # sa.PrimaryKeyConstraint('id')
+    # )
     # ### end Alembic commands ###
