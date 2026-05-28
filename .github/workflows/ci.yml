@@ -9,7 +9,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.11"
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
 
 jobs:
   # Backend testing and linting
@@ -56,14 +56,14 @@ jobs:
 
       - name: Run security scan (Bandit)
         run: |
-          bandit -r backend/app -c .bandit -f json -o bandit-report.json
+          bandit -r backend/app -c .bandit -f json -o backend/bandit-report.json
 
       - name: Upload security report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bandit-security-report
-          path: bandit-report.json
+          path: backend/bandit-report.json
 
       - name: Run unit tests with coverage
         env:
