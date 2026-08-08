@@ -1,0 +1,48 @@
+name: One-time NFL Actions Artifact Cleanup
+
+on:
+  push:
+    branches:
+      - fix/actions-storage-2026-08-07
+    paths:
+      - '.github/workflows/storage-cleanup-once.yml'
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup-reviewed-playwright-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Delete reviewed non-main Playwright artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          KEEP_ARTIFACT_ID: '8947269879'
+          AUDIT_CUTOFF: '2026-08-08T02:55:00Z'
+        run: |
+          set -euo pipefail
+
+          mapfile -t artifact_ids < <(
+            gh api --paginate \
+              "repos/${GH_REPO}/actions/artifacts?per_page=100&name=playwright-report" \
+              --jq ".artifacts[] | select(
+                .expired == false and
+                (.id | tostring) != \"${KEEP_ARTIFACT_ID}\" and
+                .created_at <= \"${AUDIT_CUTOFF}\" and
+                .workflow_run.head_branch != \"main\" and
+                .workflow_run.head_branch != \"develop\"
+              ) | .id"
+          )
+
+          echo "Reviewed deletion count: ${#artifact_ids[@]}"
+
+          for artifact_id in "${artifact_ids[@]}"; do
+            echo "Deleting reviewed Playwright artifact ${artifact_id}"
+            gh api -X DELETE "repos/${GH_REPO}/actions/artifacts/${artifact_id}"
+          done
+
+          echo "NFL Actions artifact cleanup completed."
