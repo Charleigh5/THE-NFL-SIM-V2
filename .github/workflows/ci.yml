@@ -58,12 +58,14 @@ jobs:
         run: |
           bandit -r backend/app -c .bandit -f json -o bandit-report.json
 
-      - name: Upload security report
-        if: always()
+      - name: Upload security report on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: bandit-security-report
           path: bandit-report.json
+          retention-days: 7
+          if-no-files-found: ignore
 
       - name: Run unit tests with coverage
         env:
@@ -91,6 +93,8 @@ jobs:
         with:
           name: benchmark-results
           path: backend/benchmark-results.json
+          retention-days: 7
+          if-no-files-found: ignore
 
   # Frontend testing and linting
   frontend-tests:
@@ -134,13 +138,48 @@ jobs:
           npx playwright install --with-deps
           npm run test:e2e
 
-      - name: Upload E2E test results
-        if: always()
+      - name: Prepare bounded E2E failure artifact
+        if: failure()
+        id: prepare-e2e-artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          report_dir="frontend/playwright-report"
+          max_bytes=$((25 * 1024 * 1024))
+          echo "upload=false" >> "$GITHUB_OUTPUT"
+
+          if [[ ! -d "$report_dir" ]]; then
+            echo "No Playwright report directory exists; nothing to upload."
+            exit 0
+          fi
+
+          size_bytes=$(du -sb "$report_dir" | cut -f1)
+          echo "Initial Playwright report size: ${size_bytes} bytes"
+
+          if (( size_bytes > max_bytes )); then
+            echo "Report exceeds 25 MiB; pruning video/trace payloads before upload."
+            find "$report_dir" -type f \
+              \( -name '*.webm' -o -name '*.mp4' -o -name '*.zip' -o -name '*.trace' \) \
+              -delete || true
+            size_bytes=$(du -sb "$report_dir" | cut -f1)
+            echo "Pruned Playwright report size: ${size_bytes} bytes"
+          fi
+
+          echo "size_bytes=${size_bytes}" >> "$GITHUB_OUTPUT"
+          if (( size_bytes <= max_bytes )); then
+            echo "upload=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Playwright report still exceeds 25 MiB after pruning; upload skipped to protect Actions storage."
+          fi
+
+      - name: Upload bounded E2E failure report
+        if: failure() && steps.prepare-e2e-artifact.outputs.upload == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: frontend/playwright-report/
-          retention-days: 30
+          retention-days: 3
+          if-no-files-found: ignore
 
   # Database migration checks
   migration-check:
@@ -255,9 +294,7 @@ jobs:
           echo "Add your deployment commands here"
           echo "Examples: kubectl apply, docker-compose pull, etc."
 
-      # Example for deployment notification
       - name: Notify deployment success
         if: success()
         run: |
           echo "Deployment successful!"
-          # Add notification logic (Slack, Discord, etc.)
