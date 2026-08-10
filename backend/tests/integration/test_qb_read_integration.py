@@ -1,8 +1,11 @@
-import pytest
 from unittest.mock import MagicMock, patch
-from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.models.player import Player
+
+import pytest
+
 from app.models.coach import Coach
+from app.models.player import Player
+from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
+
 
 class TestQBReadIntegration:
     """Integration test for Pre-Snap Diagnostician mechanic in SimulationOrchestrator."""

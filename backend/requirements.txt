@@ -37,3 +37,5 @@ polars>=0.20.0
 # Data Analysis & Automation
 pandas>=2.0.0
 playwright>=1.40.0
+networkx>=3.0
+structlog>=24.0.0

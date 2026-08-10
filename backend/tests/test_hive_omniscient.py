@@ -1,36 +1,37 @@
-import sys
 import os
+import sys
 
 # Add backend to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
-from app.kernels.hive.turf_physics import TurfGrid
 from app.kernels.hive.atmosphere import CrowdNet, CrowdSentiment
+from app.kernels.hive.turf_physics import TurfGrid
 from app.kernels.hive.weather import WeatherSys
+
 
 def test_hive_omniscient():
     print("Testing Hive Engine Directives...")
-    
+
     # 1. Turf Physics
     turf = TurfGrid(surface_type="Grass", moisture_level=0.5)
     turf.degrade_zone(5, 5, 0.2)
     print(f"Directive 1: Zone (5,5) Degradation -> {turf.degradation_map[5][5]}")
     assert turf.degradation_map[5][5] == 0.2
-    
+
     friction = turf.get_friction_coefficient(5, 5)
     print(f"Directive 2: Friction at (5,5) with 0.5 Moisture -> {friction:.2f}")
     assert friction < 0.9 # Base 0.9 - penalties
-    
+
     slip = turf.check_slip_event(5, 5, speed=20.0, cut_angle=45.0)
     print(f"Directive 2: Slip Event (Speed 20, Cut 45) -> {slip}")
-    
+
     # 2. Atmosphere
     crowd = CrowdNet(decibel_level=100.0)
     crowd.update_sentiment(home_score=21, away_score=7, big_play=True)
     print(f"Directive 3: Big Play -> Decibels {crowd.decibel_level}, Sentiment {crowd.sentiment}")
     assert crowd.decibel_level == 115.0
     assert crowd.sentiment == CrowdSentiment.EUPHORIC
-    
+
     jamming = crowd.get_communication_jamming()
     print(f"Directive 4: Jamming Chance at 115dB -> {jamming}%")
     assert jamming == 20.0
@@ -39,11 +40,11 @@ def test_hive_omniscient():
     weather = WeatherSys(altitude_ft=5280.0, wind_speed_mph=10.0, is_snowing=True, precipitation_intensity=0.6)
     weather.generate_forecast(month=12, location_climate="Cold")
     print(f"Directive 5: Forecast -> {weather.forecast}")
-    
+
     ballistics = weather.get_ballistic_modifiers()
     print(f"Directive 6: Snow Weight (Intensity 0.6) -> Weight Mult {ballistics[2]}")
     assert ballistics[2] == 0.9
-    
+
     vis = weather.get_visibility_penalty()
     print(f"Directive 12: Snow Intensity 0.6 -> Vision Penalty {vis}")
     assert vis == 0.24

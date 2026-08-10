@@ -7,18 +7,20 @@ Tests the legendary Ragknow trait that allows players to:
 3. Recover 10% faster
 """
 
-import pytest
 from unittest.mock import MagicMock
-from app.models.player import Player, InjuryStatus
-from app.services.trait_service import TraitService, TRAIT_CATALOG, TraitRarity
-from app.rpg.injury_system import (
-    player_has_ragknow,
-    calculate_injured_performance_penalty,
-    apply_playing_injured_risk,
-    get_player_toughness,
-)
+
+import pytest
+
 from app.core import injury_config as InjuryConfig
 from app.core.random_utils import DeterministicRNG
+from app.models.player import Player
+from app.rpg.injury_system import (
+    apply_playing_injured_risk,
+    calculate_injured_performance_penalty,
+    get_player_toughness,
+    player_has_ragknow,
+)
+from app.services.trait_service import TRAIT_CATALOG, TraitRarity
 
 
 class TestRagknowTraitDefinition:

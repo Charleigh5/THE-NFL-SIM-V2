@@ -10,6 +10,7 @@ export const DepthChart = () => {
   const [positionPlayers, setPositionPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
 
   // Manual reorder fallback:
@@ -56,10 +57,14 @@ export const DepthChart = () => {
         const chemData = await api.getTeamChemistry(1);
         setChemistry(chemData);
       } catch (e) {
-        console.error("Failed to load chemistry", e);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load chemistry", e);
+        }
       }
     } catch (e) {
-      console.error(e);
+      if (process.env.NODE_ENV === "development") {
+        console.error(e);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,6 +76,7 @@ export const DepthChart = () => {
 
   const handleSave = async () => {
     setSaving(true);
+    setStatusMessage(null);
     try {
       const playerIds = positionPlayers.map((p) => p.id);
       await api.updateDepthChart(1, selectedPosition, playerIds);
@@ -88,12 +94,15 @@ export const DepthChart = () => {
       });
       setRoster(updatedRoster);
 
-      alert("Depth chart saved successfully!");
+      setStatusMessage("Depth chart saved successfully!");
     } catch (e) {
-      console.error(e);
-      alert("Failed to save depth chart.");
+      if (process.env.NODE_ENV === "development") {
+        console.error(e);
+      }
+      setStatusMessage("Failed to save depth chart.");
     } finally {
       setSaving(false);
+      setTimeout(() => setStatusMessage(null), 3000);
     }
   };
 
@@ -145,13 +154,16 @@ export const DepthChart = () => {
           <div className="bg-black/30 p-6 rounded-xl border border-white/10 backdrop-blur-sm">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-gray-100">{selectedPosition} Depth Chart</h2>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50 transition-colors shadow-lg shadow-green-900/20"
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
+              <div className="flex items-center gap-4">
+                {statusMessage && <span className="text-sm text-cyan-400">{statusMessage}</span>}
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50 transition-colors shadow-lg shadow-green-900/20"
+                >
+                  {saving ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
             </div>
 
             {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) && chemistry && (

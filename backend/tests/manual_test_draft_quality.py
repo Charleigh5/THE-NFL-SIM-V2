@@ -3,18 +3,20 @@ Manual test script for Draft Assistant recommendation quality.
 Tests the draft recommendation system with various scenarios.
 """
 import asyncio
-import sys
 import os
+import sys
 
 # Add backend to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import logging
+
 from sqlalchemy import select
+
 from app.core.database import AsyncSessionLocal
-from app.services.draft_assistant import DraftAssistant
 from app.models.player import Player
 from app.models.team import Team
-import logging
+from app.services.draft_assistant import DraftAssistant
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -78,18 +80,18 @@ async def test_draft_recommendation_quality():
                 logger.info(f"   Historical Comp: {suggestion.historical_comparison.comparable_player_name}")
                 logger.info(f"   Similarity: {suggestion.historical_comparison.similarity_score:.0%}")
 
-            logger.info(f"\n📊 Team Needs Analysis:")
+            logger.info("\n📊 Team Needs Analysis:")
             top_needs = sorted(suggestion.team_needs.items(), key=lambda x: x[1], reverse=True)[:5]
             for pos, need in top_needs:
                 logger.info(f"   {pos}: {need:.1%} priority")
 
             if suggestion.roster_gap_analysis:
-                logger.info(f"\n🎯 Critical Roster Gaps:")
+                logger.info("\n🎯 Critical Roster Gaps:")
                 critical_gaps = [g for g in suggestion.roster_gap_analysis if g.priority_level in ["CRITICAL", "HIGH"]]
                 for gap in critical_gaps[:5]:
                     logger.info(f"   {gap.position}: {gap.current_count}/{gap.target_count} ({gap.priority_level})")
 
-            logger.info(f"\n🔄 Alternative Picks:")
+            logger.info("\n🔄 Alternative Picks:")
             for i, alt in enumerate(suggestion.alternative_picks, 1):
                 logger.info(f"   {i}. {alt.player_name} ({alt.position}) - {alt.overall_rating} OVR")
                 logger.info(f"      {alt.reasoning}")

@@ -1,8 +1,10 @@
-import pytest
 from unittest.mock import MagicMock
-from app.services.ability_service import AbilityService
+
+import pytest
+
 from app.models.player import Player
-from app.rpg.abilities import ABILITY_CATALOG, AbilityDefinition
+from app.services.ability_service import AbilityService
+
 
 class TestAbilityService:
     @pytest.fixture

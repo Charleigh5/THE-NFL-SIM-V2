@@ -1,9 +1,11 @@
 
-import pytest
 from unittest.mock import MagicMock, patch
+
 from fastapi.testclient import TestClient
-from app.main import app
+
 from app.core.database import get_db
+from app.main import app
+
 
 # Override dependency
 def override_get_db():
@@ -31,9 +33,9 @@ def test_get_team_salary_cap_endpoint(mock_get_breakdown):
         "projected_rookie_impact": 10000000
     }
     mock_get_breakdown.return_value = mock_response
-    
+
     # Pass season_id to avoid DB query for active season
     response = client.get("/api/season/team/1/salary-cap?season_id=1")
-    
+
     assert response.status_code == 200
     assert response.json() == mock_response

@@ -26,14 +26,12 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import subprocess
 import time
-from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Protocol
-import hashlib
+from typing import Any, Protocol
 
 # Configure logging
 logging.basicConfig(
@@ -73,15 +71,15 @@ class AgentTask:
     id: str
     name: str
     script_path: str
-    dependencies: List[str] = field(default_factory=list)
-    outputs: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
+    outputs: list[str] = field(default_factory=list)
     status: TaskStatus = TaskStatus.PENDING
-    start_time: Optional[float] = None
-    end_time: Optional[float] = None
-    error_message: Optional[str] = None
+    start_time: float | None = None
+    end_time: float | None = None
+    error_message: str | None = None
 
     @property
-    def duration(self) -> Optional[float]:
+    def duration(self) -> float | None:
         if self.start_time and self.end_time:
             return self.end_time - self.start_time
         return None
@@ -92,14 +90,14 @@ class Phase:
     """Represents a development phase containing multiple agent tasks."""
     id: str
     name: str
-    tasks: List[AgentTask] = field(default_factory=list)
-    phase_dependencies: List[str] = field(default_factory=list)
+    tasks: list[AgentTask] = field(default_factory=list)
+    phase_dependencies: list[str] = field(default_factory=list)
     status: PhaseStatus = PhaseStatus.PENDING
-    start_time: Optional[float] = None
-    end_time: Optional[float] = None
+    start_time: float | None = None
+    end_time: float | None = None
 
     @property
-    def outputs(self) -> List[str]:
+    def outputs(self) -> list[str]:
         """Collect all outputs from all tasks in this phase."""
         all_outputs = []
         for task in self.tasks:
@@ -107,7 +105,7 @@ class Phase:
         return all_outputs
 
     @property
-    def duration(self) -> Optional[float]:
+    def duration(self) -> float | None:
         if self.start_time and self.end_time:
             return self.end_time - self.start_time
         return None
@@ -118,9 +116,9 @@ class ExecutionResult:
     """Result of executing an agent task."""
     task_id: str
     success: bool
-    outputs: List[str]
+    outputs: list[str]
     duration: float
-    error: Optional[str] = None
+    error: str | None = None
     logs: str = ""
 
 
@@ -158,12 +156,12 @@ class DependencyGraph:
     Determines when tasks/phases are ready to execute.
     """
 
-    def __init__(self, phases: List[Phase]):
-        self.phases: Dict[str, Phase] = {p.id: p for p in phases}
-        self.completed_outputs: Set[str] = set()
-        self.completed_phases: Set[str] = set()
+    def __init__(self, phases: list[Phase]):
+        self.phases: dict[str, Phase] = {p.id: p for p in phases}
+        self.completed_outputs: set[str] = set()
+        self.completed_phases: set[str] = set()
 
-    def mark_output_complete(self, output_id: str) -> List[AgentTask]:
+    def mark_output_complete(self, output_id: str) -> list[AgentTask]:
         """
         Mark an output as complete and return newly ready tasks.
 
@@ -177,7 +175,7 @@ class DependencyGraph:
         logger.debug(f"Output completed: {output_id}")
         return self._get_newly_ready_tasks()
 
-    def mark_phase_complete(self, phase_id: str) -> List[Phase]:
+    def mark_phase_complete(self, phase_id: str) -> list[Phase]:
         """
         Mark a phase as complete and return newly ready phases.
 
@@ -198,7 +196,7 @@ class DependencyGraph:
         logger.info(f"✅ Phase completed: {phase.name}")
         return self._get_newly_ready_phases()
 
-    def _get_newly_ready_tasks(self) -> List[AgentTask]:
+    def _get_newly_ready_tasks(self) -> list[AgentTask]:
         """Find tasks whose dependencies are now satisfied."""
         ready_tasks = []
 
@@ -216,7 +214,7 @@ class DependencyGraph:
 
         return ready_tasks
 
-    def _get_newly_ready_phases(self) -> List[Phase]:
+    def _get_newly_ready_phases(self) -> list[Phase]:
         """Find phases whose phase-level dependencies are now satisfied."""
         ready_phases = []
 
@@ -235,7 +233,7 @@ class DependencyGraph:
 
         return ready_phases
 
-    def get_initial_phases(self) -> List[Phase]:
+    def get_initial_phases(self) -> list[Phase]:
         """Get phases with no dependencies (can start immediately)."""
         return [p for p in self.phases.values() if not p.phase_dependencies]
 
@@ -311,14 +309,14 @@ class SimulatedAgentExecutor:
 
     def __init__(
         self,
-        simulated_durations: Optional[Dict[str, float]] = None,
-        simulated_failures: Optional[Set[str]] = None,
+        simulated_durations: dict[str, float] | None = None,
+        simulated_failures: set[str] | None = None,
         base_delay: float = 0.1
     ):
         self.simulated_durations = simulated_durations or {}
         self.simulated_failures = simulated_failures or set()
         self.base_delay = base_delay
-        self.execution_log: List[Dict[str, Any]] = []
+        self.execution_log: list[dict[str, Any]] = []
 
     async def execute(self, task: AgentTask) -> ExecutionResult:
         """Simulate task execution with configurable delays and failures."""
@@ -372,14 +370,14 @@ class PhaseOrchestrator:
         phase: Phase,
         executor: AgentExecutor,
         max_parallel: int = 3,
-        on_task_complete: Optional[Callable[[AgentTask, ExecutionResult], None]] = None
+        on_task_complete: Callable[[AgentTask, ExecutionResult], None] | None = None
     ):
         self.phase = phase
         self.executor = executor
         self.max_parallel = max_parallel
         self.on_task_complete = on_task_complete
-        self.running_tasks: Set[str] = set()
-        self.completed_outputs: Set[str] = set()
+        self.running_tasks: set[str] = set()
+        self.completed_outputs: set[str] = set()
 
     async def run(self) -> bool:
         """
@@ -398,7 +396,7 @@ class PhaseOrchestrator:
 
         # Track tasks by status
         pending_tasks = {t.id: t for t in self.phase.tasks}
-        active_futures: Dict[asyncio.Task, str] = {}  # Map future -> task_id
+        active_futures: dict[asyncio.Task, str] = {}  # Map future -> task_id
 
         while pending_tasks or active_futures:
             # Find ready tasks (pending with satisfied dependencies)
@@ -482,7 +480,7 @@ class MasterOrchestrator:
 
     def __init__(
         self,
-        phases: List[Phase],
+        phases: list[Phase],
         executor: AgentExecutor,
         max_parallel_phases: int = 4,
         max_parallel_tasks_per_phase: int = 3
@@ -491,10 +489,10 @@ class MasterOrchestrator:
         self.executor = executor
         self.max_parallel_phases = max_parallel_phases
         self.max_parallel_tasks = max_parallel_tasks_per_phase
-        self.running_phases: Dict[str, asyncio.Task] = {}
-        self.results: Dict[str, bool] = {}
+        self.running_phases: dict[str, asyncio.Task] = {}
+        self.results: dict[str, bool] = {}
 
-    async def run(self) -> Dict[str, bool]:
+    async def run(self) -> dict[str, bool]:
         """
         Execute all phases in dependency order.
 
@@ -582,7 +580,7 @@ class MasterOrchestrator:
 # PHASE DEFINITIONS (NFL Sim Engine Specific)
 # ============================================================================
 
-def create_nfl_sim_phases() -> List[Phase]:
+def create_nfl_sim_phases() -> list[Phase]:
     """Create all 12 phases for the NFL Sim Engine enhancement."""
 
     phases = [
@@ -940,7 +938,7 @@ def create_nfl_sim_phases() -> List[Phase]:
 # MAIN ENTRY POINTS
 # ============================================================================
 
-async def run_simulation() -> Dict[str, bool]:
+async def run_simulation() -> dict[str, bool]:
     """
     Run a simulated orchestration to verify the workflow.
     Does not execute real agent scripts.
@@ -984,7 +982,7 @@ async def run_simulation() -> Dict[str, bool]:
     return results
 
 
-async def run_real_execution(work_dir: Path) -> Dict[str, bool]:
+async def run_real_execution(work_dir: Path) -> dict[str, bool]:
     """
     Run real orchestration with actual agent scripts.
     """

@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional
-from pydantic import BaseModel
 from enum import Enum
+
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 from app.services.broadcasting_service import (
     BroadcastingService,
     BroadcastStyle,
     GameContext,
-    MomentType
+    MomentType,
 )
 
 router = APIRouter(prefix="/api/broadcast", tags=["broadcasting"])
@@ -37,12 +37,12 @@ class GameContextRequest(BaseModel):
     possession_team: str
     is_redzone: bool = False
     is_two_minute: bool = False
-    momentum_team: Optional[str] = None
+    momentum_team: str | None = None
 
 
 class PlayCommentaryRequest(BaseModel):
     play_type: str  # PASS_COMPLETE, RUN, TOUCHDOWN, SACK, INTERCEPTION, FUMBLE
-    play_data: Dict  # {qb, receiver, yards, etc.}
+    play_data: dict  # {qb, receiver, yards, etc.}
     context: GameContextRequest
     style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 
@@ -61,7 +61,7 @@ class StatCalloutRequest(BaseModel):
 
 class BigMomentRequest(BaseModel):
     moment_type: str  # TOUCHDOWN, TURNOVER, COMEBACK, CLUTCH
-    data: Dict
+    data: dict
     context: GameContextRequest
     style: BroadcastStyleEnum = BroadcastStyleEnum.ESPN
 

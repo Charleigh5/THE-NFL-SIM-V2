@@ -5,18 +5,16 @@ Comprehensive tests for B-048 through B-060.
 """
 
 import pytest
+
 from app.services.playbook.familiarity import (
-    PlaybookFamiliarity,
-    PlayFamiliarity,
+    INITIAL_FAMILIARITY,
+    MAX_EXECUTION_PENALTY,
+    MIN_EXECUTION_PENALTY,
+    SCHEME_CHANGE_PENALTY,
     FamiliarityManager,
     FamiliarityTier,
-    BASE_LEARNING_RATE,
-    VETERAN_LEARNING_MULTIPLIER,
-    MIN_EXECUTION_PENALTY,
-    MAX_EXECUTION_PENALTY,
-    INITIAL_FAMILIARITY,
-    SCHEME_CHANGE_PENALTY,
-    FAMILIARITY_THRESHOLD_MASTERY,
+    PlaybookFamiliarity,
+    PlayFamiliarity,
 )
 
 

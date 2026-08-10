@@ -5,11 +5,12 @@ Provides endpoints for generating implementation plans from task lists
 using MCP infrastructure.
 """
 
+import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+
 from app.services.agent_generator import AgentGeneratorService
-import logging
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -23,14 +24,14 @@ class TaskItem(BaseModel):
     id: str
     note: str
     element_type: str
-    screenshot_path: Optional[str] = None
+    screenshot_path: str | None = None
     has_research: bool = False
 
 
 class GeneratePlanRequest(BaseModel):
     """Request body for plan generation."""
-    tasks: List[TaskItem]
-    project_context: Optional[str] = None
+    tasks: list[TaskItem]
+    project_context: str | None = None
 
 
 class GeneratePlanResponse(BaseModel):

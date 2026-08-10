@@ -10,18 +10,23 @@ Context7 Best Practices:
 - Playbook generation
 """
 
+
 import pytest
-from typing import List
 
 from app.services.playbook import (
-    # Playbook
-    Playbook, Play, PlayType, Formation, Concept, PlaybookGenerator,
-    # Play Caller
-    PlayCallerAI, GameSituation, AggressionLevel, GameScript,
+    AggressionLevel,
+    BlitzPackage,
+    Concept,
+    CoverageType,
     # Defensive
-    DefensiveCoordinatorAI, DefensiveGameplan, CoverageType, BlitzPackage,
+    DefensiveCoordinatorAI,
+    DefensiveGameplan,
+    GameSituation,
+    PlaybookGenerator,
+    # Play Caller
+    PlayCallerAI,
+    PlayType,
 )
-
 
 # ============================================================================
 # PLAYBOOK TESTS

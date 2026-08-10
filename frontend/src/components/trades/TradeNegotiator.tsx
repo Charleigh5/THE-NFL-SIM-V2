@@ -52,6 +52,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
   const [evaluation, setEvaluation] = useState<TradeEvaluation | null>(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
 
   // Loading states
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,9 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
         setTradePartners(partners);
         setUserPlayers(players);
       } catch (err) {
-        console.error("Failed to load trade data:", err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load trade data:", err);
+        }
         setError("Failed to load trade data");
       } finally {
         setLoading(false);
@@ -159,7 +162,9 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
             setRequestedPlayers(refined);
           }
         } catch (err) {
-          console.error("Failed to load partner roster:", err);
+          if (process.env.NODE_ENV === "development") {
+            console.error("Failed to load partner roster:", err);
+          }
         } finally {
           setLoadingPartnerRoster(false);
         }
@@ -274,7 +279,9 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
       );
       setEvaluation(result);
     } catch (err) {
-      console.error("Trade evaluation failed:", err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Trade evaluation failed:", err);
+      }
       setError("Failed to evaluate trade. Please try again.");
     } finally {
       setIsEvaluating(false);
@@ -286,6 +293,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
     setOfferedPlayers([]);
     setRequestedPlayers([]);
     setEvaluation(null);
+    setSubmitMessage(null);
   };
 
   // Calculate trade values
@@ -457,10 +465,12 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
                     offeredPlayers.map((p) => p.id),
                     requestedPlayers.map((p) => p.id)
                   );
-                  alert(result.message); // Replace with nice toast later
-                  handleClearTrade();
+                  setSubmitMessage(result.message);
+                  setTimeout(() => {
+                    handleClearTrade();
+                  }, 2000);
                 } catch {
-                  alert("Failed to submit offer"); // Replace with nice toast later
+                  setError("Failed to submit offer");
                 }
               }}
             >
@@ -468,6 +478,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
             </button>
           </div>
 
+          {submitMessage && <div className="trade-success">{submitMessage}</div>}
           {error && <div className="trade-error">{error}</div>}
 
           {/* Back-compat / E2E-visible analyzer widget */}

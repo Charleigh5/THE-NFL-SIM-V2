@@ -1,29 +1,28 @@
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
-from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
-from app.schemas.play import PlayResult
-from app.core.database import SessionLocal
-from app.models.game import Game
-from app.models.stats import PlayerGameStats
-from app.models.player import Player
-from app.orchestrator.match_context import MatchContext
-from app.orchestrator.kernels.cortex_kernel import GameSituation
-from app.core.random_utils import DeterministicRNG
-from app.services.society.momentum import MomentumEngine, MomentumEvent
-
-from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
 import datetime
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from collections.abc import Awaitable, Callable
+from typing import Any
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.random_utils import DeterministicRNG
+from app.data.coaches import CoachingPhilosophy
+from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStats
+from app.orchestrator.kernels.cortex_kernel import GameSituation
+from app.orchestrator.match_context import MatchContext
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
+from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
+from app.orchestrator.play_resolver import PlayResolver
+from app.rpg.abilities import get_ability_definition
+from app.schemas.play import PlayResult
 from app.services.playbook.clock_management import ClockManagementAI, ClockStrategy
 from app.services.playbook.coaching_ai import CoachingAIService
-from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation as ClockGameSituation
-from app.services.ability_service import AbilityService
-from app.rpg.abilities import get_ability_definition
+from app.services.society.momentum import MomentumEngine, MomentumEvent
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,7 @@ class SimulationOrchestrator:
 
         self.play_resolver = PlayResolver(self.rng)
         self.play_caller = PlayCaller(self.rng, aggression=0.5) # Default balanced coach
-        self.history: List[PlayResult] = []
+        self.history: list[PlayResult] = []
 
         # Game State
         self.is_running = False
@@ -51,15 +50,15 @@ class SimulationOrchestrator:
         self.yard_line = 25  # 0-100, where 50 is midfield
 
         # Database Session
-        self.db_session: Optional[AsyncSession] = None
+        self.db_session: AsyncSession | None = None
         self.current_game_id = None
 
         # Match Context (Data Hydration)
-        self.match_context: Optional[MatchContext] = None
+        self.match_context: MatchContext | None = None
 
         # Callbacks for WebSocket broadcasting
-        self.on_play_complete: Optional[Callable[[PlayResult], Awaitable[None]]] = None
-        self.on_game_update: Optional[Callable[[dict], Awaitable[None]]] = None
+        self.on_play_complete: Callable[[PlayResult], Awaitable[None]] | None = None
+        self.on_game_update: Callable[[dict], Awaitable[None]] | None = None
 
         # Configuration
         self.play_delay_seconds = 5.0  # Delay between plays for animation
@@ -72,7 +71,7 @@ class SimulationOrchestrator:
         # Momentum Engine (Phase 4 Integration)
         self.momentum_engine = MomentumEngine()
 
-    async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
+    async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: dict | None = None, db_session: AsyncSession | None = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
         self.db_session = db_session
@@ -171,7 +170,7 @@ class SimulationOrchestrator:
                 game.game_data = current_data
 
                 await self.db_session.commit()
-        except Exception as e:
+        except Exception:
             logger.exception("Error saving game progress", extra={"game_id": self.current_game_id})
             await self.db_session.rollback()
 
@@ -195,7 +194,7 @@ class SimulationOrchestrator:
                 await self._update_elo_ratings(game)
 
                 logger.info("Finalized game result", extra={"game_id": self.current_game_id})
-        except Exception as e:
+        except Exception:
             logger.exception("Error finalizing game", extra={"game_id": self.current_game_id})
         finally:
             # Cleanup Match Context
@@ -208,8 +207,8 @@ class SimulationOrchestrator:
 
     async def _update_elo_ratings(self, game: Game) -> None:
         """Update Elo ratings for both teams after a game."""
-        from app.services.elo_service import EloService
         from app.models.team import Team
+        from app.services.elo_service import EloService
 
         try:
             # Fetch both teams
@@ -270,7 +269,7 @@ class SimulationOrchestrator:
                     "away_elo": new_away_elo,
                 }
             )
-        except Exception as e:
+        except Exception:
             logger.exception("Error updating Elo ratings", extra={"game_id": game.id})
 
     async def _save_player_stats(self, game: Game = None) -> None:
@@ -383,7 +382,7 @@ class SimulationOrchestrator:
         await self.db_session.commit()
         logger.info("Player stats saved", extra={"game_id": game.id, "player_count": count})
 
-    def run_simulation(self) -> PlayResult:
+    async def run_simulation(self) -> PlayResult:
         """
         Sets up and runs a simple simulation of a single pass play.
         (Legacy method for backward compatibility)
@@ -422,11 +421,11 @@ class SimulationOrchestrator:
 
         logger.debug("Play resolved")
 
-        self._save_progress()
+        await self._save_progress()
 
         return result
 
-    async def run_continuous_simulation(self, num_plays: int = 100, config: Optional[dict] = None) -> None:
+    async def run_continuous_simulation(self, num_plays: int = 100, config: dict | None = None) -> None:
         """
         Run a continuous simulation for a specified number of plays.
         Broadcasts each play result via WebSocket.
@@ -651,7 +650,7 @@ class SimulationOrchestrator:
 
         return result
 
-    async def _calculate_qb_read(self, qb: Player, dc: Optional[Any]) -> Optional[dict]:
+    async def _calculate_qb_read(self, qb: Player, dc: Any | None) -> dict | None:
         """
         Calculate pre-snap read for QB with Diagnostician ability.
 
@@ -739,7 +738,7 @@ class SimulationOrchestrator:
 
 
 
-    def _update_fatigue(self, offense: List[Player], defense: List[Player], result: PlayResult) -> None:
+    def _update_fatigue(self, offense: list[Player], defense: list[Player], result: PlayResult) -> None:
         """Update fatigue for players involved in the play."""
         if not self.match_context:
             return
@@ -1019,7 +1018,7 @@ class SimulationOrchestrator:
             "awayTimeouts": self.away_timeouts
         }
 
-    def get_history(self) -> List[PlayResult]:
+    def get_history(self) -> list[PlayResult]:
         """Return the history of plays in this session."""
         return self.history
 

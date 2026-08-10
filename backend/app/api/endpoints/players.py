@@ -1,9 +1,10 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, func
-from typing import List, Optional, Dict, Any
-import logging
 
 from app.core.database import get_async_db
 from app.core.db_helpers import get_object_or_404_async
@@ -11,7 +12,6 @@ from app.core.error_decorators import handle_errors
 from app.models.player import Player
 from app.models.stats import PlayerGameStats
 from app.services.trait_service import TraitService
-from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -102,7 +102,7 @@ class PersonalityInfo(BaseModel):
     morale: int
     morale_status: str  # "Ecstatic", "Happy", "Content", "Unhappy", "Disgruntled"
     development_trait: str
-    archetype: Optional[str] = None  # Future: "Mercenary", "Hometown Hero", etc.
+    archetype: str | None = None  # Future: "Mercenary", "Hometown Hero", etc.
 
 
 class EnhancedPlayerProfile(BaseModel):
@@ -118,10 +118,10 @@ class EnhancedPlayerProfile(BaseModel):
     overall_rating: int
     age: int
     experience: int
-    college: Optional[str] = None
-    height: Optional[int] = None
-    weight: Optional[int] = None
-    team_id: Optional[int] = None
+    college: str | None = None
+    height: int | None = None
+    weight: int | None = None
+    team_id: int | None = None
 
     # Core Attributes
     speed: int
@@ -133,16 +133,16 @@ class EnhancedPlayerProfile(BaseModel):
     injury_resistance: int
 
     # Position-Specific Attributes (returned as dict for flexibility)
-    position_attributes: Dict[str, int]
+    position_attributes: dict[str, int]
 
     # Personality & Development
     personality: PersonalityInfo
 
     # Active Traits
-    traits: List[TraitInfoBrief]
+    traits: list[TraitInfoBrief]
 
     # Career Stats (aggregated)
-    career_stats: Dict[str, int]
+    career_stats: dict[str, int]
 
     # Contract Info
     contract_years: int
@@ -164,7 +164,7 @@ def _get_morale_status(morale: int) -> str:
         return "Disgruntled"
 
 
-def _get_position_attributes(player: Player) -> Dict[str, int]:
+def _get_position_attributes(player: Player) -> dict[str, int]:
     """Get position-specific attributes based on player position."""
     position = player.position
 

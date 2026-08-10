@@ -16,8 +16,10 @@ Tests B-001 to B-008:
 - B-008: Momentum modifier in run plays
 """
 
+from unittest.mock import Mock
+
 import pytest
-from unittest.mock import Mock, patch, AsyncMock
+
 from app.services.society.momentum import MomentumEngine, MomentumEvent, MomentumState
 
 
@@ -128,8 +130,8 @@ class TestMomentumOrchestatorIntegration:
 
     def test_play_resolver_has_momentum_engine_attribute(self):
         """B-006: PlayResolver should have momentum_engine attribute."""
-        from app.orchestrator.play_resolver import PlayResolver
         from app.core.random_utils import DeterministicRNG
+        from app.orchestrator.play_resolver import PlayResolver
 
         rng = DeterministicRNG("test_seed")
         resolver = PlayResolver(rng)
@@ -143,9 +145,8 @@ class TestMomentumPlayResolverIntegration:
 
     def test_pass_play_uses_momentum_modifier(self):
         """B-007: Pass play should factor in momentum modifier."""
-        from app.orchestrator.play_resolver import PlayResolver
-        from app.orchestrator.play_commands import PassPlayCommand
         from app.core.random_utils import DeterministicRNG
+        from app.orchestrator.play_resolver import PlayResolver
 
         rng = DeterministicRNG("test_seed")
         resolver = PlayResolver(rng)
@@ -169,8 +170,8 @@ class TestMomentumPlayResolverIntegration:
 
     def test_run_play_uses_momentum_modifier(self):
         """B-008: Run play should factor in momentum modifier."""
-        from app.orchestrator.play_resolver import PlayResolver
         from app.core.random_utils import DeterministicRNG
+        from app.orchestrator.play_resolver import PlayResolver
 
         rng = DeterministicRNG("test_seed")
         resolver = PlayResolver(rng)

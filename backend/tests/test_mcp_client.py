@@ -1,6 +1,8 @@
+
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+
 from app.core.mcp_client import MCPHostClient
+
 
 @pytest.mark.asyncio
 async def test_mcp_client_init():

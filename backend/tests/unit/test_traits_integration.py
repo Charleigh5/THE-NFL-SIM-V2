@@ -7,14 +7,10 @@ These tests verify that:
 3. PlayResolver integrates traits during play resolution
 """
 
-import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
 from dataclasses import dataclass
-from typing import List, Optional
 
 # Import the modules under test
 from app.engine.trait_effects import TraitEffectResolver
-
 
 # ============================================================================
 # Mock Player Class for Testing
@@ -27,7 +23,7 @@ class MockPlayer:
     first_name: str = "Test"
     last_name: str = "Player"
     position: str = "QB"
-    active_traits: List[str] = None
+    active_traits: list[str] = None
     awareness: int = 50
     play_recognition: int = 50
     pass_pro_rating: int = 50

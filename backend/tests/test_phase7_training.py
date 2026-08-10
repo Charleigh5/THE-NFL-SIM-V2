@@ -10,18 +10,24 @@ Context7 Best Practices:
 - Edge case handling
 """
 
+
 import pytest
-from typing import List
 
 from app.services.training import (
-    # Camp
-    TrainingCampEngine, CampDay, DrillType, TrainingIntensity,
-    # Progression
-    ProgressionEngine, PlayerProgressionState, ProgressionPhase, DevTrait,
+    CampDay,
     # Coaching
-    CoachingEngine, CoachState, CoachRole,
+    CoachingEngine,
+    CoachRole,
+    DevTrait,
+    DrillType,
+    PlayerProgressionState,
+    # Progression
+    ProgressionEngine,
+    ProgressionPhase,
+    # Camp
+    TrainingCampEngine,
+    TrainingIntensity,
 )
-
 
 # ============================================================================
 # TRAINING CAMP TESTS

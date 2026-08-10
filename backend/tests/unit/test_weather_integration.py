@@ -1,9 +1,11 @@
-import pytest
-import math
 from unittest.mock import MagicMock
+
+import pytest
+
 from app.engine.weather_effects import WeatherEffects
-from app.models.weather import GameWeather, PrecipitationType, FieldCondition
+from app.models.weather import FieldCondition, GameWeather, PrecipitationType
 from app.orchestrator.play_commands import FieldGoalCommand, PuntCommand
+
 
 class TestWeatherIntegration:
     """Test suite for weather effects integration."""

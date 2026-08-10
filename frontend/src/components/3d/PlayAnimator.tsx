@@ -25,7 +25,9 @@ export const PlayAnimator = ({ onAnimationComplete }: PlayAnimatorProps) => {
 
     // Update positions (simplified for MVP - just showing concept)
     // In a full implementation, this would update state frame-by-frame
-    console.log("Animating pass from", qbPosition, "to", receiverEnd);
+    if (process.env.NODE_ENV === "development") {
+      console.log("Animating pass from", qbPosition, "to", receiverEnd);
+    }
 
     // Wait for animation duration
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -36,13 +38,17 @@ export const PlayAnimator = ({ onAnimationComplete }: PlayAnimatorProps) => {
     const rbStart: [number, number, number] = [startX - 3, 0, 0];
     const rbEnd: [number, number, number] = [endX, 0, 0];
 
-    console.log("Animating run from", rbStart, "to", rbEnd);
+    if (process.env.NODE_ENV === "development") {
+      console.log("Animating run from", rbStart, "to", rbEnd);
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }, []);
 
   const animateKickoff = useCallback(async (returnYards: number) => {
-    console.log("Animating kickoff return for", returnYards, "yards");
+    if (process.env.NODE_ENV === "development") {
+      console.log("Animating kickoff return for", returnYards, "yards");
+    }
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }, []);

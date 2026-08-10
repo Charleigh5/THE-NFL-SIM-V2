@@ -10,44 +10,38 @@ Context7 Best Practices:
 - Integration tests for system interactions
 """
 
-import pytest
-from typing import List
 
-# Import Phase 2 modules
-from app.engine.genesis import (
-    # Biometrics
-    BiometricProfile,
-    BodyType,
-    FiberType,
-    POSITION_BIOMETRIC_RANGES,
-    generate_biometrics_for_position,
-    # Cognition
-    CognitionEngine,
-    CognitiveProfile,
-    CognitiveState,
-    ReadPhase,
-    OODAState,
-    VisionCone,
-    # Fatigue
-    FatigueEngine,
-    FatigueState,
-    FatigueLevel,
-    ActivityLevel,
-    EnergyCompartment,
-    # Injury
-    InjuryEngine,
-    InjuryProfile,
-    Injury,
-    InjuryType,
-    InjurySeverity,
-    BodyPart,
-    BodyRegion,
-    ChronicWear,
-)
+import pytest
 
 # Import RNG for deterministic tests
 from app.engine.core import DeterministicRNG
 
+# Import Phase 2 modules
+from app.engine.genesis import (
+    POSITION_BIOMETRIC_RANGES,
+    ActivityLevel,
+    # Biometrics
+    BiometricProfile,
+    BodyPart,
+    ChronicWear,
+    # Cognition
+    CognitionEngine,
+    CognitiveProfile,
+    CognitiveState,
+    EnergyCompartment,
+    # Fatigue
+    FatigueEngine,
+    Injury,
+    # Injury
+    InjuryEngine,
+    InjuryProfile,
+    InjurySeverity,
+    InjuryType,
+    OODAState,
+    ReadPhase,
+    VisionCone,
+    generate_biometrics_for_position,
+)
 
 # ============================================================================
 # BIOMETRICS TESTS

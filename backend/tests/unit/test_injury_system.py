@@ -1,7 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch
-from app.models.player import Player, InjuryStatus
+
+from app.models.player import InjuryStatus, Player
 from app.rpg.injury_system import InjurySystem
+
 
 class TestInjurySystem:
     @pytest.fixture

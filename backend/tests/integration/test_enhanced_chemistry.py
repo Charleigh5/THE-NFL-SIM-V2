@@ -1,8 +1,9 @@
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+
 from app.services.enhanced_chemistry_service import EnhancedChemistryService
-from app.models.game import Game
-from app.models.stats import PlayerGameStart
+
 
 @pytest.mark.asyncio
 async def test_calculate_chemistry_level():

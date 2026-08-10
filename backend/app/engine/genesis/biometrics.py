@@ -16,11 +16,9 @@ Context7 Best Practices:
 - Dataclasses for computed properties
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Tuple
+from dataclasses import dataclass
 from enum import Enum
-import math
-
+from typing import Any
 
 # ============================================================================
 # ENUMS
@@ -141,7 +139,7 @@ class BiometricProfile:
         sweat_factor = self.sweat_rate / 2.0  # Normalize to ~0.75-1.25
         return (base_impact / 100.0) * sweat_factor
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to dictionary for database storage."""
         return {
             "hand_size": self.hand_size,
@@ -168,7 +166,7 @@ class BiometricProfile:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'BiometricProfile':
+    def from_dict(cls, data: dict[str, Any]) -> 'BiometricProfile':
         """Deserialize from dictionary."""
         return cls(
             hand_size=data.get("hand_size", 9.5),
@@ -305,7 +303,7 @@ def generate_biometrics_for_position(
     """
     ranges = POSITION_BIOMETRIC_RANGES.get(position, POSITION_BIOMETRIC_RANGES["LB"])
 
-    def sample_range(key: str, default: Tuple[float, float]) -> float:
+    def sample_range(key: str, default: tuple[float, float]) -> float:
         """Sample from range, biased by talent level."""
         low, high = ranges.get(key, default)
         # Higher talent = closer to high end

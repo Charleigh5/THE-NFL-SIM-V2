@@ -10,10 +10,8 @@ Phase 10: Stadium Effects
 - Crowd noise levels
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
-
 
 # ============================================================================
 # ENUMS

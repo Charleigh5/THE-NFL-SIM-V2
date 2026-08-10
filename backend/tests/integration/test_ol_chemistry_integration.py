@@ -2,17 +2,19 @@
 Integration test for OL Unit Chemistry feature.
 Validates that OL gets blocking bonuses after starting together for 5+ consecutive games.
 """
+from datetime import datetime
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
 from app.models.base import Base
-from app.models.team import Team
-from app.models.player import Player, Position
 from app.models.game import Game
+from app.models.player import Player
 from app.models.stats import PlayerGameStart
-from app.services.pre_game_service import PreGameService
+from app.models.team import Team
 from app.orchestrator.match_context import MatchContext
-from datetime import datetime
+from app.services.pre_game_service import PreGameService
 
 
 # Test database setup
@@ -57,7 +59,7 @@ async def setup_teams(test_db):
     for i, (slot, generic_pos, rank) in enumerate(ol_setup):
         player = Player(
             id=i + 1,
-            first_name=f"Player",
+            first_name="Player",
             last_name=f"{slot}",
             position=generic_pos,
             depth_chart_rank=rank,
@@ -77,7 +79,7 @@ async def setup_teams(test_db):
     for i in range(5):
         player = Player(
             id=i + 10,
-            first_name=f"Opponent",
+            first_name="Opponent",
             last_name=f"{i}",
             position="DE",
             team_id=2,
@@ -171,7 +173,7 @@ async def test_ol_chemistry_bonus_after_5_games(test_db, setup_teams):
         assert player.active_modifiers['awareness'] == 3.0, f"Expected +3.0 awareness, got {player.active_modifiers['awareness']}"
 
     print("\n✅ OL Chemistry Test PASSED")
-    print(f"   All 5 OL players received +3.0 blocking bonus after 5 consecutive starts")
+    print("   All 5 OL players received +3.0 blocking bonus after 5 consecutive starts")
 
 
 @pytest.mark.asyncio
@@ -209,7 +211,7 @@ async def test_chemistry_resets_when_lineup_changes(test_db, setup_teams):
                 "Should NOT have chemistry bonus after lineup change"
 
     print("\n✅ Chemistry Reset Test PASSED")
-    print(f"   No bonus applied when OL lineup changed")
+    print("   No bonus applied when OL lineup changed")
 
 
 @pytest.mark.asyncio
@@ -241,7 +243,7 @@ async def test_no_chemistry_with_less_than_5_games(test_db, setup_teams):
                 "Should NOT have chemistry bonus with only 3 games"
 
     print("\n✅ Insufficient Games Test PASSED")
-    print(f"   No bonus applied with only 3 consecutive starts")
+    print("   No bonus applied with only 3 consecutive starts")
 
 
 if __name__ == "__main__":

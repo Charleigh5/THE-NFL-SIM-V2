@@ -14,10 +14,9 @@ import py_compile
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Tuple
 
 
-def validate_python_syntax(file_path: Path) -> Tuple[bool, str]:
+def validate_python_syntax(file_path: Path) -> tuple[bool, str]:
     """
     Validate Python file syntax.
 
@@ -34,7 +33,7 @@ def validate_python_syntax(file_path: Path) -> Tuple[bool, str]:
         return False, str(e)
 
 
-def validate_imports(file_path: Path) -> Tuple[bool, str]:
+def validate_imports(file_path: Path) -> tuple[bool, str]:
     """
     Validate that a Python file can be imported.
 
@@ -61,7 +60,7 @@ def validate_imports(file_path: Path) -> Tuple[bool, str]:
         return False, str(e)
 
 
-def validate_files_exist(paths: List[Path]) -> Tuple[bool, List[Path]]:
+def validate_files_exist(paths: list[Path]) -> tuple[bool, list[Path]]:
     """
     Validate that all specified files exist.
 
@@ -75,7 +74,7 @@ def validate_files_exist(paths: List[Path]) -> Tuple[bool, List[Path]]:
     return len(missing) == 0, missing
 
 
-def run_tests(test_path: Path) -> Tuple[bool, str]:
+def run_tests(test_path: Path) -> tuple[bool, str]:
     """
     Run pytest on specified test file.
 

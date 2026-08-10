@@ -1,11 +1,10 @@
-from typing import Dict, List, Optional
 from mcp.server.fastmcp import FastMCP
 
 # Initialize FastMCP server
 mcp = FastMCP("nfl_stats")
 
 @mcp.tool()
-def get_player_career_stats(player_name: str, start_year: int = 2020, end_year: int = 2024) -> Dict[str, str]:
+def get_player_career_stats(player_name: str, start_year: int = 2020, end_year: int = 2024) -> dict[str, str]:
     """
     Get career statistics for a specific player.
 
@@ -28,7 +27,7 @@ def get_player_career_stats(player_name: str, start_year: int = 2020, end_year: 
     }
 
 @mcp.tool()
-def get_league_averages(position: str, season: int = 2024) -> Dict[str, float]:
+def get_league_averages(position: str, season: int = 2024) -> dict[str, float]:
     """
     Get league average statistics for a specific position.
 
@@ -52,7 +51,7 @@ def get_league_averages(position: str, season: int = 2024) -> Dict[str, float]:
     return {"message": "No data for position"}
 
 @mcp.tool()
-def get_team_historical_performance(team_id: str, years: int = 5) -> List[Dict[str, str]]:
+def get_team_historical_performance(team_id: str, years: int = 5) -> list[dict[str, str]]:
     """
     Get historical performance records for a team.
 
