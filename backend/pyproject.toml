@@ -49,9 +49,9 @@ addopts = [
     "--verbose",
     "--strict-markers",
     "--tb=short",
-    "--cov=app",
-    "--cov-report=term-missing",
-    "--cov-report=html",
+    "",
+    "",
+    "",
 ]
 asyncio_mode = "auto"
 markers = [
