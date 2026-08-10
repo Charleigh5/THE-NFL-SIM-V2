@@ -1,16 +1,14 @@
 """
 Batch simulation service for simulating entire weeks of games.
 """
-from typing import List, Dict, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+import logging
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.game import Game
 from app.models.season import Season
 from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
-from app.schemas.play import PlayResult
-import asyncio
-import logging
-
 from app.services.player_development_service import PlayerDevelopmentService
 
 logger = logging.getLogger(__name__)
@@ -27,7 +25,7 @@ class WeekSimulator:
         self.db = db
         self.player_development_service = PlayerDevelopmentService(db)
 
-    async def _fetch_weather(self, game: Game) -> Optional[Dict]:
+    async def _fetch_weather(self, game: Game) -> dict | None:
         """Fetch weather for a game using MCP."""
         try:
             from app.core.mcp_registry import registry
@@ -52,11 +50,13 @@ class WeekSimulator:
             logger.warning("Could not fetch weather from MCP", exc_info=e)
         return None
 
-    def _parse_weather(self, weather_data: Dict) -> Dict:
+    def _parse_weather(self, weather_data: dict) -> dict:
         """Parse weather strings into numeric values."""
         try:
             temp_str = weather_data.get("temperature", "70 F")
-            temp = int(temp_str.split()[0]) if temp_str and temp_str[0].isdigit() or temp_str[0] == '-' else 70
+            temp_val = temp_str.split()[0] if temp_str else ''
+            is_valid = temp_val and (temp_val.isdigit() or temp_val.startswith('-'))
+            temp = int(temp_val) if is_valid else 70
 
             wind_str = weather_data.get("wind", "0 mph")
             wind = int(wind_str.split()[0]) if wind_str and wind_str[0].isdigit() else 0
@@ -75,7 +75,7 @@ class WeekSimulator:
         week: int,
         play_count: int = 100,
         use_fast_sim: bool = True
-    ) -> Dict[int, Dict]:
+    ) -> dict[int, dict]:
         """
         Simulate all games in a specific week.
 
@@ -92,7 +92,7 @@ class WeekSimulator:
         stmt = select(Game).filter(
             Game.season_id == season_id,
             Game.week == week,
-            Game.is_played == False
+            Game.is_played == False  # noqa: E712
         )
         result = await self.db.execute(stmt)
         games = result.scalars().all()
@@ -169,7 +169,10 @@ class WeekSimulator:
             )
 
         # Process weekly development (Training, Injuries, Morale)
-        logger.info("Processing weekly player development", extra={"season_id": season_id, "week": week})
+        logger.info(
+            "Processing weekly player development",
+            extra={"season_id": season_id, "week": week}
+        )
         await self.player_development_service.process_weekly_development(season_id, week)
 
         return {
@@ -178,7 +181,9 @@ class WeekSimulator:
             "results": results
         }
 
-    async def simulate_game(self, game_id: int, play_count: int = 100, use_fast_sim: bool = True) -> Dict:
+    async def simulate_game(
+        self, game_id: int, play_count: int = 100, use_fast_sim: bool = True
+    ) -> dict:
         """
         Simulate a single game.
         """
@@ -255,12 +260,12 @@ class WeekSimulator:
         orchestrator.is_running = True
         orchestrator.reset_game_state()
 
-        for play_num in range(num_plays):
+        for _ in range(num_plays):
             if not orchestrator.is_running:
                 break
 
             # Execute play
-            result = await orchestrator._execute_single_play()
+            await orchestrator._execute_single_play()
 
             # Check if game should end (could add more sophisticated logic here)
             if orchestrator._is_quarter_over():
@@ -275,8 +280,8 @@ class WeekSimulator:
         self,
         season_id: int,
         start_week: int = 1,
-        end_week: Optional[int] = None
-    ) -> Dict:
+        end_week: int | None = None
+    ) -> dict:
         """
         Simulate multiple weeks at once.
 

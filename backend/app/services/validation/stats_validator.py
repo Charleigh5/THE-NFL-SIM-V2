@@ -10,11 +10,8 @@ Phase 11: Validation
 - Calibration checks
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Tuple
-import math
 import statistics
-
+from dataclasses import dataclass
 
 # ============================================================================
 # DATA CLASSES
@@ -36,7 +33,7 @@ class ValidationResult:
     stat_name: str
     passed: bool
     actual_value: float
-    expected_range: Tuple[float, float]
+    expected_range: tuple[float, float]
     deviation_pct: float
     message: str
 
@@ -95,7 +92,11 @@ class ValidationEngine:
         """
         # Find matching benchmark
         stat_range = None
-        for category in [self.benchmarks.TEAM_STATS, self.benchmarks.PLAY_STATS, self.benchmarks.GAME_STATS]:
+        for category in [
+            self.benchmarks.TEAM_STATS,
+            self.benchmarks.PLAY_STATS,
+            self.benchmarks.GAME_STATS,
+        ]:
             if stat_name in category:
                 stat_range = category[stat_name]
                 break
@@ -125,10 +126,13 @@ class ValidationEngine:
             actual_value=actual,
             expected_range=(stat_range.min_val, stat_range.max_val),
             deviation_pct=deviation_pct,
-            message=f"{'PASS' if passed else 'FAIL'}: {actual:.2f} vs expected {stat_range.mean:.2f}"
+            message=(
+                f"{'PASS' if passed else 'FAIL'}: "
+                f"{actual:.2f} vs expected {stat_range.mean:.2f}"
+            )
         )
 
-    def validate_season(self, season_stats: Dict[str, float]) -> List[ValidationResult]:
+    def validate_season(self, season_stats: dict[str, float]) -> list[ValidationResult]:
         """
         Validate all stats from a simulated season.
         """
@@ -138,7 +142,7 @@ class ValidationEngine:
             results.append(result)
         return results
 
-    def get_calibration_report(self, results: List[ValidationResult]) -> Dict:
+    def get_calibration_report(self, results: list[ValidationResult]) -> dict:
         """
         Generate a calibration summary.
         """
