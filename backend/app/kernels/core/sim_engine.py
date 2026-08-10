@@ -16,14 +16,20 @@ class ECSManager:
     def get_component(self, entity_id: str, comp_type: str) -> Component:
         return self.components.get(comp_type, {}).get(entity_id)
 
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from app.kernels.hive.physics_kernel import PhysicsKernel
+    from app.kernels.core.ai_kernel import AIKernel
+
 class SimEngine:
     # Directive 2: Fixed Time-Step (10Hz)
     target_fps: int = 10
     time_step: float = 1.0 / 10.0
     
     # Directive 9: Decoupled Physics/AI Kernels
-    physics_kernel: 'PhysicsKernel' = None
-    ai_kernel: 'AIKernel' = None
+    physics_kernel: Optional['PhysicsKernel'] = None
+    ai_kernel: Optional['AIKernel'] = None
 
     def run_loop(self, duration_seconds: float):
         steps = int(duration_seconds / self.time_step)

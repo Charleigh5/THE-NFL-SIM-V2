@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from sqlalchemy.orm import selectinload, joinedload, Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from pydantic import BaseModel, ConfigDict
 import logging
 from starlette.concurrency import run_in_threadpool
@@ -890,27 +890,6 @@ async def simulate_free_agency(season_id: int, db: AsyncSession = Depends(get_as
     return result
 
 
-@router.post("/{season_id}/draft/suggest-pick")
-@handle_errors
-async def suggest_draft_pick(season_id: int, team_id: int, db: AsyncSession = Depends(get_async_db)):
-    """Suggest a draft pick using AI Assistant."""
-    from app.services.draft_assistant import DraftAssistant
-
-    # Use sync session for now as DraftAssistant likely uses sync DB
-    sync_db = SessionLocal()
-    try:
-        # Get available players
-        # We can use sync_db to query
-        available_players = sync_db.query(Player).filter(
-            Player.is_rookie == True,
-            Player.team_id == None
-        ).order_by(Player.overall_rating.desc()).limit(20).all()
-
-        assistant = DraftAssistant(sync_db)
-        suggestion = await assistant.suggest_pick(team_id, available_players)
-        return suggestion
-    finally:
-        sync_db.close()
 
 
 class TradeEvaluationRequest(BaseModel):
