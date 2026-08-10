@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22] [cursor=pointer]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28] [cursor=pointer]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35] [cursor=pointer]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45] [cursor=pointer]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54] [cursor=pointer]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61] [cursor=pointer]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68] [cursor=pointer]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78] [cursor=pointer]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84] [cursor=pointer]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e105]:
+      - generic [ref=e107]:
+        - heading "Draft Room" [level=1] [ref=e108]
+        - generic [ref=e109]: Draft Theater • Live War Room Broadcast
+      - generic [ref=e110]:
+        - generic [ref=e111]: WAR ROOM LIVE
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - generic [ref=e114]: Now
+            - generic [ref=e115]: Welcome to the 2025 NFL Draft War Room
+          - generic [ref=e116]:
+            - generic [ref=e117]: 2m ago
+            - generic [ref=e118]: "Sources say Lions looking to trade down from #5"
+          - generic [ref=e119]:
+            - generic [ref=e120]: Now
+            - generic [ref=e121]: The Bears are on the clock
+      - generic [ref=e122]:
+        - button [ref=e123] [cursor=pointer]:
+          - img [ref=e124]
+        - generic [ref=e126]: GM HOTLINE
+      - generic [ref=e127]:
+        - generic [ref=e129]:
+          - generic [ref=e131]: Big Board - Live Feed
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - heading "Draft Board" [level=3] [ref=e136]
+              - generic [ref=e137]:
+                - combobox "Filter by Position" [ref=e138] [cursor=pointer]:
+                  - option "ALL" [selected]
+                  - option "QB"
+                  - option "RB"
+                  - option "WR"
+                  - option "TE"
+                  - option "OL"
+                  - option "DL"
+                  - option "LB"
+                  - option "DB"
+                  - option "ST"
+                - combobox "Sort Draft Board" [ref=e139] [cursor=pointer]:
+                  - option "Rank" [selected]
+                  - option "Rating"
+                  - option "Position"
+            - generic [ref=e141]: No prospects found.
+        - generic [ref=e142]:
+          - generic [ref=e145]: Team Needs
+          - generic [ref=e147]:
+            - generic [ref=e149]: War Room Controls
+            - generic [ref=e151]:
+              - button "Auto-Sim Draft" [disabled] [ref=e152]
+              - button "Propose Trade" [disabled] [ref=e153]
+  - button "Mission Control" [ref=e155] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e157] [cursor=pointer]:
+    - img [ref=e158]
+```
