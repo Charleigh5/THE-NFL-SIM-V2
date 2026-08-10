@@ -10,6 +10,20 @@ const apiClient = axios.create({
   timeout: 30000, // 30 second timeout
 });
 
+// Add response interceptor for global error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Request Failed:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      message: error.message,
+    });
+    return Promise.reject(error);
+  }
+);
+
 export interface Team {
   id: number;
   city: string;
@@ -90,26 +104,45 @@ export const api = {
 
   // Team/Player Service methods
   getTeams: async (page: number = 1, pageSize: number = 100): Promise<Team[]> => {
-    const response = await apiClient.get<PaginatedResponse<Team>>(
-      `/api/teams?page=${page}&page_size=${pageSize}`
-    );
-    // Return all items for backward compatibility, can be changed to return full response
-    return response.data.items;
+    try {
+      const response = await apiClient.get<PaginatedResponse<Team>>(
+        `/api/teams?page=${page}&page_size=${pageSize}`
+      );
+      return response.data.items;
+    } catch (error) {
+      console.error("Failed to fetch teams", error);
+      throw error;
+    }
   },
 
   getTeam: async (teamId: number): Promise<Team> => {
-    const response = await apiClient.get(`/api/teams/${teamId}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/api/teams/${teamId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch team ${teamId}`, error);
+      throw error;
+    }
   },
 
   getTeamRoster: async (teamId: number): Promise<Player[]> => {
-    const response = await apiClient.get(`/api/teams/${teamId}/roster`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/api/teams/${teamId}/roster`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch roster for team ${teamId}`, error);
+      throw error;
+    }
   },
 
   getPlayer: async (playerId: number): Promise<Player> => {
-    const response = await apiClient.get(`/api/players/${playerId}`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/api/players/${playerId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch player ${playerId}`, error);
+      throw error;
+    }
   },
 
   updateDepthChart: async (
@@ -117,53 +150,93 @@ export const api = {
     position: string,
     playerIds: number[]
   ): Promise<void> => {
-    await apiClient.put(`/api/teams/${teamId}/depth-chart`, {
-      position,
-      player_ids: playerIds,
-    });
+    try {
+      await apiClient.put(`/api/teams/${teamId}/depth-chart`, {
+        position,
+        player_ids: playerIds,
+      });
+    } catch (error) {
+      console.error("Failed to update depth chart", error);
+      throw error;
+    }
   },
 
   getPlayerStats: async (playerId: number): Promise<PlayerStats> => {
-    const response = await apiClient.get<PlayerStats>(`/api/players/${playerId}/stats`);
-    return response.data;
+    try {
+      const response = await apiClient.get<PlayerStats>(`/api/players/${playerId}/stats`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch stats for player ${playerId}`, error);
+      throw error;
+    }
   },
 
   getTeamChemistry: async (teamId: number): Promise<ChemistryMetadata> => {
-    const response = await apiClient.get(`/api/teams/${teamId}/chemistry`);
-    return response.data;
+    try {
+      const response = await apiClient.get(`/api/teams/${teamId}/chemistry`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch chemistry for team ${teamId}`, error);
+      throw error;
+    }
   },
 
   // Enhanced Player Profile (Task 8.3.2)
   getPlayerProfile: async (playerId: number): Promise<EnhancedPlayerProfile> => {
-    const response = await apiClient.get<EnhancedPlayerProfile>(`/api/players/${playerId}/profile`);
-    return response.data;
+    try {
+      const response = await apiClient.get<EnhancedPlayerProfile>(`/api/players/${playerId}/profile`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch profile for player ${playerId}`, error);
+      throw error;
+    }
   },
 
   // News Feed (Task 8.3.1)
   getLeagueNews: async (limit: number = 10, category?: string): Promise<NewsResponse> => {
-    const params = new URLSearchParams({ limit: limit.toString() });
-    if (category) params.append("category", category);
-    const response = await apiClient.get<NewsResponse>(`/api/news/league?${params}`);
-    return response.data;
+    try {
+      const params = new URLSearchParams({ limit: limit.toString() });
+      if (category) params.append("category", category);
+      const response = await apiClient.get<NewsResponse>(`/api/news/league?${params}`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch league news", error);
+      throw error;
+    }
   },
 
   getTeamNews: async (teamName: string, limit: number = 5): Promise<NewsResponse> => {
-    const response = await apiClient.get<NewsResponse>(
-      `/api/news/team/${encodeURIComponent(teamName)}?limit=${limit}`
-    );
-    return response.data;
+    try {
+      const response = await apiClient.get<NewsResponse>(
+        `/api/news/team/${encodeURIComponent(teamName)}?limit=${limit}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch news for team ${teamName}`, error);
+      throw error;
+    }
   },
 
   getPlayerNews: async (playerName: string, limit: number = 5): Promise<NewsResponse> => {
-    const response = await apiClient.get<NewsResponse>(
-      `/api/news/player/${encodeURIComponent(playerName)}?limit=${limit}`
-    );
-    return response.data;
+    try {
+      const response = await apiClient.get<NewsResponse>(
+        `/api/news/player/${encodeURIComponent(playerName)}?limit=${limit}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch news for player ${playerName}`, error);
+      throw error;
+    }
   },
 
   getInjuryReports: async (week: number): Promise<InjuryReportResponse> => {
-    const response = await apiClient.get<InjuryReportResponse>(`/api/news/injuries/week/${week}`);
-    return response.data;
+    try {
+      const response = await apiClient.get<InjuryReportResponse>(`/api/news/injuries/week/${week}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to fetch injury reports for week ${week}`, error);
+      throw error;
+    }
   },
 };
 
