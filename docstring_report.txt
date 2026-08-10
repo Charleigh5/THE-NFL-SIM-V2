@@ -1,0 +1,884 @@
+backend/app/models/player_physics.py:1: Module missing docstring
+backend/app/models/draft.py:1: Module missing docstring
+backend/app/models/draft.py:5: Class 'DraftPick' missing docstring
+backend/app/models/season.py:1: Module missing docstring
+backend/app/models/season.py:33: Function '__repr__' missing docstring
+backend/app/models/stadium.py:1: Module missing docstring
+backend/app/models/stadium.py:5: Class 'Stadium' missing docstring
+backend/app/models/history.py:1: Module missing docstring
+backend/app/models/medical.py:1: Module missing docstring
+backend/app/models/team.py:1: Module missing docstring
+backend/app/models/team.py:5: Class 'Team' missing docstring
+backend/app/models/player_game_start.py:28: Function '__repr__' missing docstring
+backend/app/models/scout.py:1: Module missing docstring
+backend/app/models/scout.py:6: Class 'Region' missing docstring
+backend/app/models/scout.py:13: Class 'ScoutBias' missing docstring
+backend/app/models/scout.py:21: Class 'Scout' missing docstring
+backend/app/models/scout.py:44: Class 'ScoutingReport' missing docstring
+backend/app/models/feedback.py:1: Module missing docstring
+backend/app/models/feedback.py:5: Class 'UserFeedback' missing docstring
+backend/app/models/feedback.py:15: Function '__repr__' missing docstring
+backend/app/models/player_progression.py:1: Module missing docstring
+backend/app/models/player_progression.py:11: Class 'DevelopmentTrait' missing docstring
+backend/app/models/player.py:1: Module missing docstring
+backend/app/models/player.py:22: Class 'Position' missing docstring
+backend/app/models/player.py:38: Class 'InjuryStatus' missing docstring
+backend/app/models/player.py:45: Class 'DevelopmentTrait' missing docstring
+backend/app/models/player.py:77: Function 'speed' missing docstring
+backend/app/models/player.py:80: Function 'speed' missing docstring
+backend/app/models/player.py:84: Function 'acceleration' missing docstring
+backend/app/models/player.py:87: Function 'acceleration' missing docstring
+backend/app/models/player.py:91: Function 'strength' missing docstring
+backend/app/models/player.py:94: Function 'strength' missing docstring
+backend/app/models/player.py:98: Function 'agility' missing docstring
+backend/app/models/player.py:101: Function 'agility' missing docstring
+backend/app/models/player.py:105: Function 'awareness' missing docstring
+backend/app/models/player.py:108: Function 'awareness' missing docstring
+backend/app/models/player.py:112: Function 'stamina' missing docstring
+backend/app/models/player.py:115: Function 'stamina' missing docstring
+backend/app/models/player.py:119: Function 'injury_resistance' missing docstring
+backend/app/models/player.py:122: Function 'injury_resistance' missing docstring
+backend/app/models/player.py:127: Function 'forty_yard_dash' missing docstring
+backend/app/models/player.py:130: Function 'forty_yard_dash' missing docstring
+backend/app/models/player.py:134: Function 'bench_press' missing docstring
+backend/app/models/player.py:137: Function 'bench_press' missing docstring
+backend/app/models/player.py:141: Function 'vertical_jump' missing docstring
+backend/app/models/player.py:144: Function 'vertical_jump' missing docstring
+backend/app/models/player.py:148: Function 'broad_jump' missing docstring
+backend/app/models/player.py:151: Function 'broad_jump' missing docstring
+backend/app/models/player.py:155: Function 'three_cone_drill' missing docstring
+backend/app/models/player.py:158: Function 'three_cone_drill' missing docstring
+backend/app/models/player.py:162: Function 'twenty_yard_shuttle' missing docstring
+backend/app/models/player.py:165: Function 'twenty_yard_shuttle' missing docstring
+backend/app/models/player.py:170: Function 'power_clean_max' missing docstring
+backend/app/models/player.py:173: Function 'power_clean_max' missing docstring
+backend/app/models/player.py:177: Function 'gps_speed_max' missing docstring
+backend/app/models/player.py:180: Function 'gps_speed_max' missing docstring
+backend/app/models/player.py:184: Function 's2_cognition_score' missing docstring
+backend/app/models/player.py:187: Function 's2_cognition_score' missing docstring
+backend/app/models/player.py:191: Function 'medical_flags' missing docstring
+backend/app/models/player.py:194: Function 'medical_flags' missing docstring
+backend/app/models/player.py:198: Function 'genesis_revealed' missing docstring
+backend/app/models/player.py:201: Function 'genesis_revealed' missing docstring
+backend/app/models/player.py:206: Function 'throw_power' missing docstring
+backend/app/models/player.py:209: Function 'throw_power' missing docstring
+backend/app/models/player.py:213: Function 'throw_accuracy_short' missing docstring
+backend/app/models/player.py:216: Function 'throw_accuracy_short' missing docstring
+backend/app/models/player.py:220: Function 'throw_accuracy_mid' missing docstring
+backend/app/models/player.py:223: Function 'throw_accuracy_mid' missing docstring
+backend/app/models/player.py:227: Function 'throw_accuracy_deep' missing docstring
+backend/app/models/player.py:230: Function 'throw_accuracy_deep' missing docstring
+backend/app/models/player.py:234: Function 'catching' missing docstring
+backend/app/models/player.py:237: Function 'catching' missing docstring
+backend/app/models/player.py:241: Function 'route_running' missing docstring
+backend/app/models/player.py:244: Function 'route_running' missing docstring
+backend/app/models/player.py:248: Function 'pass_block' missing docstring
+backend/app/models/player.py:251: Function 'pass_block' missing docstring
+backend/app/models/player.py:255: Function 'run_block' missing docstring
+backend/app/models/player.py:258: Function 'run_block' missing docstring
+backend/app/models/player.py:262: Function 'tackle' missing docstring
+backend/app/models/player.py:265: Function 'tackle' missing docstring
+backend/app/models/player.py:269: Function 'hit_power' missing docstring
+backend/app/models/player.py:272: Function 'hit_power' missing docstring
+backend/app/models/player.py:276: Function 'block_shed' missing docstring
+backend/app/models/player.py:279: Function 'block_shed' missing docstring
+backend/app/models/player.py:283: Function 'man_coverage' missing docstring
+backend/app/models/player.py:286: Function 'man_coverage' missing docstring
+backend/app/models/player.py:290: Function 'zone_coverage' missing docstring
+backend/app/models/player.py:293: Function 'zone_coverage' missing docstring
+backend/app/models/player.py:297: Function 'pass_rush_power' missing docstring
+backend/app/models/player.py:300: Function 'pass_rush_power' missing docstring
+backend/app/models/player.py:304: Function 'pass_rush_finesse' missing docstring
+backend/app/models/player.py:307: Function 'pass_rush_finesse' missing docstring
+backend/app/models/player.py:311: Function 'play_recognition' missing docstring
+backend/app/models/player.py:314: Function 'play_recognition' missing docstring
+backend/app/models/player.py:318: Function 'kick_power' missing docstring
+backend/app/models/player.py:321: Function 'kick_power' missing docstring
+backend/app/models/player.py:325: Function 'kick_accuracy' missing docstring
+backend/app/models/player.py:328: Function 'kick_accuracy' missing docstring
+backend/app/models/player.py:333: Function 'pocket_presence' missing docstring
+backend/app/models/player.py:336: Function 'pocket_presence' missing docstring
+backend/app/models/player.py:340: Function 'quick_release' missing docstring
+backend/app/models/player.py:343: Function 'quick_release' missing docstring
+backend/app/models/player.py:347: Function 'scramble_willingness' missing docstring
+backend/app/models/player.py:350: Function 'scramble_willingness' missing docstring
+backend/app/models/player.py:354: Function 'throw_on_run' missing docstring
+backend/app/models/player.py:357: Function 'throw_on_run' missing docstring
+backend/app/models/player.py:361: Function 'patience' missing docstring
+backend/app/models/player.py:364: Function 'patience' missing docstring
+backend/app/models/player.py:368: Function 'pass_pro_rating' missing docstring
+backend/app/models/player.py:371: Function 'pass_pro_rating' missing docstring
+backend/app/models/player.py:375: Function 'juke_efficiency' missing docstring
+backend/app/models/player.py:378: Function 'juke_efficiency' missing docstring
+backend/app/models/player.py:382: Function 'release' missing docstring
+backend/app/models/player.py:385: Function 'release' missing docstring
+backend/app/models/player.py:389: Function 'blocking_tenacity' missing docstring
+backend/app/models/player.py:392: Function 'blocking_tenacity' missing docstring
+backend/app/models/player.py:396: Function 'pull_speed' missing docstring
+backend/app/models/player.py:399: Function 'pull_speed' missing docstring
+backend/app/models/player.py:403: Function 'anchor' missing docstring
+backend/app/models/player.py:406: Function 'anchor' missing docstring
+backend/app/models/player.py:410: Function 'discipline' missing docstring
+backend/app/models/player.py:413: Function 'discipline' missing docstring
+backend/app/models/player.py:417: Function 'first_step' missing docstring
+backend/app/models/player.py:420: Function 'first_step' missing docstring
+backend/app/models/player.py:424: Function 'gap_integrity' missing docstring
+backend/app/models/player.py:427: Function 'gap_integrity' missing docstring
+backend/app/models/player.py:431: Function 'coverage_disguise' missing docstring
+backend/app/models/player.py:434: Function 'coverage_disguise' missing docstring
+backend/app/models/player.py:438: Function 'blitz_timing' missing docstring
+backend/app/models/player.py:441: Function 'blitz_timing' missing docstring
+backend/app/models/player.py:445: Function 'run_fit' missing docstring
+backend/app/models/player.py:448: Function 'run_fit' missing docstring
+backend/app/models/player.py:452: Function 'press' missing docstring
+backend/app/models/player.py:455: Function 'press' missing docstring
+backend/app/models/player.py:459: Function 'ball_tracking' missing docstring
+backend/app/models/player.py:462: Function 'ball_tracking' missing docstring
+backend/app/models/player.py:466: Function 'run_support' missing docstring
+backend/app/models/player.py:469: Function 'run_support' missing docstring
+backend/app/models/player.py:473: Function 'hang_time' missing docstring
+backend/app/models/player.py:476: Function 'hang_time' missing docstring
+backend/app/models/player.py:480: Function 'coffin_corner' missing docstring
+backend/app/models/player.py:483: Function 'coffin_corner' missing docstring
+backend/app/models/player.py:487: Function 'return_vision' missing docstring
+backend/app/models/player.py:490: Function 'return_vision' missing docstring
+backend/app/models/player.py:495: Function 'arm_slot' missing docstring
+backend/app/models/player.py:498: Function 'arm_slot' missing docstring
+backend/app/models/player.py:502: Function 'release_point_height' missing docstring
+backend/app/models/player.py:505: Function 'release_point_height' missing docstring
+backend/app/models/player.py:509: Function 'vision_cone_angle' missing docstring
+backend/app/models/player.py:512: Function 'vision_cone_angle' missing docstring
+backend/app/models/player.py:516: Function 'break_tackle_threshold' missing docstring
+backend/app/models/player.py:519: Function 'break_tackle_threshold' missing docstring
+backend/app/models/player.py:524: Function 'xp' missing docstring
+backend/app/models/player.py:527: Function 'xp' missing docstring
+backend/app/models/player.py:531: Function 'level' missing docstring
+backend/app/models/player.py:534: Function 'level' missing docstring
+backend/app/models/player.py:538: Function 'skill_points' missing docstring
+backend/app/models/player.py:541: Function 'skill_points' missing docstring
+backend/app/models/player.py:545: Function 'development_trait' missing docstring
+backend/app/models/player.py:548: Function 'development_trait' missing docstring
+backend/app/models/player.py:556: Function 'abilities' missing docstring
+backend/app/models/player.py:559: Function 'abilities' missing docstring
+backend/app/models/player.py:564: Function 'attribute_xp' missing docstring
+backend/app/models/player.py:567: Function 'attribute_xp' missing docstring
+backend/app/models/player.py:572: Function 'morale' missing docstring
+backend/app/models/player.py:575: Function 'morale' missing docstring
+backend/app/models/player.py:580: Function 'injury_status' missing docstring
+backend/app/models/player.py:583: Function 'injury_status' missing docstring
+backend/app/models/player.py:587: Function 'injury_type' missing docstring
+backend/app/models/player.py:590: Function 'injury_type' missing docstring
+backend/app/models/player.py:594: Function 'weeks_to_recovery' missing docstring
+backend/app/models/player.py:597: Function 'weeks_to_recovery' missing docstring
+backend/app/models/player.py:601: Function 'injury_severity' missing docstring
+backend/app/models/player.py:604: Function 'injury_severity' missing docstring
+backend/app/models/player.py:608: Function 'injury_recurrence_risk' missing docstring
+backend/app/models/player.py:611: Function 'injury_recurrence_risk' missing docstring
+backend/app/models/player.py:620: Function 'contract_years' missing docstring
+backend/app/models/player.py:623: Function 'contract_years' missing docstring
+backend/app/models/player.py:627: Function 'contract_salary' missing docstring
+backend/app/models/player.py:630: Function 'contract_salary' missing docstring
+backend/app/models/player.py:634: Function 'is_rookie' missing docstring
+backend/app/models/player.py:637: Function 'is_rookie' missing docstring
+backend/app/models/player.py:641: Function 'is_retired' missing docstring
+backend/app/models/player.py:644: Function 'is_retired' missing docstring
+backend/app/models/player.py:648: Function 'retirement_year' missing docstring
+backend/app/models/player.py:651: Function 'retirement_year' missing docstring
+backend/app/models/player.py:655: Function 'legacy_score' missing docstring
+backend/app/models/player.py:658: Function 'legacy_score' missing docstring
+backend/app/models/player.py:677: Function '__init__' missing docstring
+backend/app/models/player.py:695: Function '__repr__' missing docstring
+backend/app/models/trade_offer.py:69: Function '__repr__' missing docstring
+backend/app/models/player_injury.py:1: Module missing docstring
+backend/app/models/player_injury.py:10: Class 'InjuryStatus' missing docstring
+backend/app/models/coach.py:1: Module missing docstring
+backend/app/models/coach.py:14: Class 'Coach' missing docstring
+backend/app/models/weather.py:1: Module missing docstring
+backend/app/models/weather.py:6: Class 'PrecipitationType' missing docstring
+backend/app/models/weather.py:12: Class 'FieldCondition' missing docstring
+backend/app/models/weather.py:19: Class 'GameWeather' missing docstring
+backend/app/models/weather.py:41: Class 'StadiumClimate' missing docstring
+backend/app/models/gm.py:1: Module missing docstring
+backend/app/models/gm.py:6: Class 'GM' missing docstring
+backend/app/models/gm.py:43: Class 'GMDecision' missing docstring
+backend/app/models/depth_chart.py:1: Module missing docstring
+backend/app/models/depth_chart.py:5: Class 'DepthChart' missing docstring
+backend/app/models/base.py:1: Module missing docstring
+backend/app/models/base.py:11: Function '__tablename__' missing docstring
+backend/app/models/gameplan.py:1: Module missing docstring
+backend/app/models/player_game_starts.py:1: Module missing docstring
+backend/app/models/player_game_starts.py:11: Class 'PlayerGameStarts' missing docstring
+backend/app/models/player_game_starts.py:35: Function '__repr__' missing docstring
+backend/app/models/news_item.py:1: Module missing docstring
+backend/app/models/news_item.py:10: Class 'NewsCategory' missing docstring
+backend/app/models/news_item.py:50: Function '__repr__' missing docstring
+backend/app/models/settings.py:1: Module missing docstring
+backend/app/models/settings.py:5: Class 'SystemSettings' missing docstring
+backend/app/models/rpg_event.py:1: Module missing docstring
+backend/app/models/rpg_event.py:41: Function '__repr__' missing docstring
+backend/app/models/stats.py:1: Module missing docstring
+backend/app/models/stats.py:5: Class 'PlayerGameStats' missing docstring
+backend/app/models/stats.py:63: Class 'PlayerGameStart' missing docstring
+backend/app/models/weekly_recap.py:1: Module missing docstring
+backend/app/models/weekly_recap.py:41: Function '__repr__' missing docstring
+backend/app/models/player_contract.py:1: Module missing docstring
+backend/app/models/player_attributes.py:1: Module missing docstring
+backend/app/models/game.py:1: Module missing docstring
+backend/app/models/game.py:15: Class 'Game' missing docstring
+backend/app/models/trait.py:1: Module missing docstring
+backend/app/models/trait.py:12: Class 'TraitEffectType' missing docstring
+backend/app/models/trait.py:26: Class 'TraitSource' missing docstring
+backend/app/models/trait.py:32: Class 'Trait' missing docstring
+backend/app/models/trait.py:53: Class 'PlayerTrait' missing docstring
+backend/app/models/trait.py:50: Function '__repr__' missing docstring
+backend/app/models/trait.py:66: Function '__repr__' missing docstring
+backend/app/models/hall_of_fame.py:1: Module missing docstring
+backend/app/models/hall_of_fame.py:5: Class 'HallOfFame' missing docstring
+backend/app/models/playoff.py:1: Module missing docstring
+backend/app/models/playoff.py:6: Class 'PlayoffRound' missing docstring
+backend/app/models/playoff.py:12: Class 'PlayoffConference' missing docstring
+backend/app/models/playoff.py:17: Class 'PlayoffMatchup' missing docstring
+backend/app/schemas/draft.py:1: Module missing docstring
+backend/app/schemas/stadium.py:1: Module missing docstring
+backend/app/schemas/stadium.py:4: Class 'StadiumBase' missing docstring
+backend/app/schemas/stadium.py:17: Class 'StadiumCreate' missing docstring
+backend/app/schemas/stadium.py:20: Class 'Stadium' missing docstring
+backend/app/schemas/team.py:1: Module missing docstring
+backend/app/schemas/team.py:4: Class 'TeamBase' missing docstring
+backend/app/schemas/team.py:25: Class 'TeamCreate' missing docstring
+backend/app/schemas/team.py:28: Class 'Team' missing docstring
+backend/app/schemas/feedback.py:1: Module missing docstring
+backend/app/schemas/feedback.py:5: Class 'FeedbackCreate' missing docstring
+backend/app/schemas/feedback.py:11: Class 'FeedbackResponse' missing docstring
+backend/app/schemas/player.py:1: Module missing docstring
+backend/app/schemas/player.py:4: Class 'PlayerBase' missing docstring
+backend/app/schemas/player.py:72: Class 'PlayerCreate' missing docstring
+backend/app/schemas/player.py:75: Class 'Player' missing docstring
+backend/app/schemas/coach.py:1: Module missing docstring
+backend/app/schemas/coach.py:4: Class 'CoachBase' missing docstring
+backend/app/schemas/coach.py:17: Class 'CoachCreate' missing docstring
+backend/app/schemas/coach.py:20: Class 'Coach' missing docstring
+backend/app/schemas/weather.py:1: Module missing docstring
+backend/app/schemas/weather.py:4: Class 'GameWeatherSchema' missing docstring
+backend/app/schemas/weather.py:12: Class 'Config' missing docstring
+backend/app/schemas/errors.py:1: Module missing docstring
+backend/app/schemas/errors.py:4: Class 'ErrorDetail' missing docstring
+backend/app/schemas/errors.py:10: Class 'ErrorResponse' missing docstring
+backend/app/schemas/play.py:1: Module missing docstring
+backend/app/schemas/stats.py:1: Module missing docstring
+backend/app/schemas/stats.py:4: Class 'PlayerLeader' missing docstring
+backend/app/schemas/stats.py:14: Class 'LeagueLeaders' missing docstring
+backend/app/schemas/simulation.py:1: Module missing docstring
+backend/app/schemas/trait.py:1: Module missing docstring
+backend/app/schemas/trait.py:7: Class 'TraitBase' missing docstring
+backend/app/schemas/trait.py:14: Class 'TraitCreate' missing docstring
+backend/app/schemas/trait.py:17: Class 'Trait' missing docstring
+backend/app/schemas/trait.py:21: Class 'PlayerTraitBase' missing docstring
+backend/app/schemas/trait.py:27: Class 'PlayerTrait' missing docstring
+backend/app/schemas/trait.py:31: Class 'TraitAssignment' missing docstring
+backend/app/schemas/trait.py:35: Class 'TraitUnlockRequest' missing docstring
+backend/app/schemas/offseason.py:1: Module missing docstring
+backend/app/schemas/offseason.py:4: Class 'TeamNeed' missing docstring
+backend/app/schemas/offseason.py:10: Class 'Prospect' missing docstring
+backend/app/schemas/offseason.py:18: Class 'DraftPickSummary' missing docstring
+backend/app/schemas/offseason.py:26: Class 'DraftPickDetail' missing docstring
+backend/app/schemas/offseason.py:37: Class 'PlayerProgressionResult' missing docstring
+backend/app/schemas/offseason.py:47: Class 'PlayerProgressionSummary' missing docstring
+backend/app/schemas/expanded_stats.py:1: Module missing docstring
+backend/app/schemas/playoff.py:1: Module missing docstring
+backend/app/schemas/playoff.py:6: Class 'PlayoffMatchupBase' missing docstring
+backend/app/schemas/playoff.py:17: Class 'PlayoffMatchupCreate' missing docstring
+backend/app/schemas/playoff.py:20: Class 'PlayoffMatchup' missing docstring
+backend/app/schemas/playoff.py:31: Class 'PlayoffBracket' missing docstring
+backend/app/orchestrator/match_context.py:1: Module missing docstring
+backend/app/orchestrator/match_context.py:25: Function '__init__' missing docstring
+backend/app/orchestrator/match_context.py:144: Function 'get_player_fatigue' missing docstring
+backend/app/orchestrator/game_repository.py:32: Function '__init__' missing docstring
+backend/app/orchestrator/game_repository.py:176: Function 'get_stats' missing docstring
+backend/app/orchestrator/play_caller.py:1: Module missing docstring
+backend/app/orchestrator/play_caller.py:10: Class 'PlayCallingContext' missing docstring
+backend/app/orchestrator/kernels_interface.py:1: Module missing docstring
+backend/app/orchestrator/kernels_interface.py:11: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:19: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:46: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:53: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:71: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:77: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:92: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:95: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:121: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:124: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:157: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:161: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:211: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_commands.py:227: Function '__init__' missing docstring
+backend/app/orchestrator/play_commands.py:233: Function 'get_play_type' missing docstring
+backend/app/orchestrator/play_resolver.py:1: Module missing docstring
+backend/app/orchestrator/play_resolver.py:36: Function '__init__' missing docstring
+backend/app/orchestrator/play_resolver.py:172: Function '_get_weather_temp' missing docstring
+backend/app/orchestrator/play_resolver.py:220: Function '_get_weather_effects' missing docstring
+backend/app/orchestrator/game_state_manager.py:209: Function 'is_overtime' missing docstring
+backend/app/orchestrator/simulation_orchestrator.py:1: Module missing docstring
+backend/app/orchestrator/simulation_orchestrator.py:34: Function '__init__' missing docstring
+backend/app/orchestrator/simulation_orchestrator.py:303: Function 'get_stats' missing docstring
+backend/app/orchestrator/state_machine.py:88: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/empire_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/empire_kernel.py:8: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/cortex_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/cortex_kernel.py:6: Class 'GameSituation' missing docstring
+backend/app/orchestrator/kernels/cortex_kernel.py:67: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/society_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/society_kernel.py:9: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/society_kernel.py:13: Function 'update_narrative' missing docstring
+backend/app/orchestrator/kernels/rpg_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/rpg_kernel.py:9: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/rpg_kernel.py:12: Function 'get_player_progression' missing docstring
+backend/app/orchestrator/kernels/hive_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/hive_kernel.py:9: Function '__init__' missing docstring
+backend/app/orchestrator/kernels/hive_kernel.py:13: Function 'get_field_conditions' missing docstring
+backend/app/orchestrator/kernels/hive_kernel.py:17: Function 'get_crowd_sentiment' missing docstring
+backend/app/orchestrator/kernels/genesis_kernel.py:1: Module missing docstring
+backend/app/orchestrator/kernels/genesis_kernel.py:9: Function '__init__' missing docstring
+backend/app/rpg/traits.py:40: Function '__init__' missing docstring
+backend/app/rpg/traits.py:48: Function 'get_trait_effect' missing docstring
+backend/app/rpg/player_archetypes.py:251: Function '__init__' missing docstring
+backend/app/rpg/narrative.py:1: Module missing docstring
+backend/app/rpg/narrative.py:3: Class 'NarrativeEngine' missing docstring
+backend/app/rpg/injury_system.py:1: Module missing docstring
+backend/app/rpg/injury_system.py:11: Class 'InjurySystem' missing docstring
+backend/app/rpg/injury_system.py:12: Function '__init__' missing docstring
+backend/app/rpg/injury_system.py:324: Function '__post_init__' missing docstring
+backend/app/rpg/coach.py:1: Module missing docstring
+backend/app/rpg/coach.py:1: Class 'CoachRPG' missing docstring
+backend/app/rpg/gm.py:1: Module missing docstring
+backend/app/rpg/gm.py:1: Class 'GMRPG' missing docstring
+backend/app/rpg/progression.py:1: Module missing docstring
+backend/app/kernels/genesis/recruiting.py:1: Module missing docstring
+backend/app/kernels/genesis/recruiting.py:5: Class 'RecruitingProfile' missing docstring
+backend/app/kernels/genesis/recruiting.py:27: Class 'WorkoutEngine' missing docstring
+backend/app/kernels/genesis/trauma_center.py:1: Module missing docstring
+backend/app/kernels/genesis/trauma_center.py:5: Class 'TraumaModel' missing docstring
+backend/app/kernels/genesis/trauma_center.py:30: Class 'ScarTissueManager' missing docstring
+backend/app/kernels/genesis/trauma_center.py:33: Function 'add_scar' missing docstring
+backend/app/kernels/genesis/trauma_center.py:38: Function 'get_structural_integrity' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:1: Module missing docstring
+backend/app/kernels/genesis/bio_metrics.py:5: Class 'BiologicalProfile' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:37: Class 'AnatomyModel' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:59: Class 'FatigueRegulator' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:17: Function '__init__' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:21: Function 'calculate_derived_metrics' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:30: Function 'calculate_fumble_risk' missing docstring
+backend/app/kernels/genesis/bio_metrics.py:48: Function 'apply_stress' missing docstring
+backend/app/kernels/genesis/progression_bio.py:1: Module missing docstring
+backend/app/kernels/genesis/progression_bio.py:5: Class 'BioProgression' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:1: Module missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:5: Class 'S2Processor' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:19: Class 'AttributeMasking' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:36: Class 'FocusMonitor' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:10: Function '__init__' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:14: Function 'calculate_latency' missing docstring
+backend/app/kernels/genesis/neuro_cognition.py:40: Function 'apply_noise_pressure' missing docstring
+backend/app/kernels/genesis/equipment.py:1: Module missing docstring
+backend/app/kernels/genesis/equipment.py:4: Class 'EquipmentBio' missing docstring
+backend/app/kernels/genesis/equipment.py:10: Function 'equip_item' missing docstring
+backend/app/kernels/genesis/equipment.py:15: Function 'get_modified_stat' missing docstring
+backend/app/kernels/rpg/training.py:1: Module missing docstring
+backend/app/kernels/rpg/progression.py:1: Module missing docstring
+backend/app/kernels/rpg/progression.py:6: Class 'ProgressionSys' missing docstring
+backend/app/kernels/rpg/progression.py:15: Function 'add_xp' missing docstring
+backend/app/kernels/rpg/progression.py:24: Function 'level_up' missing docstring
+backend/app/kernels/society/narrative.py:1: Module missing docstring
+backend/app/kernels/society/narrative.py:100: Class 'DirectorAI' missing docstring
+backend/app/kernels/society/narrative.py:23: Function 'register_rivalry' missing docstring
+backend/app/kernels/society/narrative.py:33: Function 'is_rivalry_game' missing docstring
+backend/app/kernels/society/social_graph.py:1: Module missing docstring
+backend/app/kernels/society/social_graph.py:6: Class 'TrustGraph' missing docstring
+backend/app/kernels/society/social_graph.py:49: Class 'ChemistryLogic' missing docstring
+backend/app/kernels/society/social_graph.py:15: Function 'add_trust_edge' missing docstring
+backend/app/kernels/society/social_graph.py:18: Function 'get_trust' missing docstring
+backend/app/kernels/society/social_graph.py:51: Function 'can_audible' missing docstring
+backend/app/kernels/society/narrative_director.py:1: Module missing docstring
+backend/app/kernels/society/narrative_director.py:5: Class 'StoryBeatGenerator' missing docstring
+backend/app/kernels/society/narrative_director.py:17: Class 'CommentarySynthesizer' missing docstring
+backend/app/kernels/society/narrative_director.py:6: Function 'generate_headline' missing docstring
+backend/app/kernels/society/narrative_director.py:18: Function 'synthesize_commentary' missing docstring
+backend/app/kernels/core/ai_kernel.py:1: Module missing docstring
+backend/app/kernels/core/ai_kernel.py:5: Class 'NodeStatus' missing docstring
+backend/app/kernels/core/ai_kernel.py:10: Class 'BehaviorNode' missing docstring
+backend/app/kernels/core/ai_kernel.py:14: Class 'Selector' missing docstring
+backend/app/kernels/core/ai_kernel.py:25: Class 'Sequence' missing docstring
+backend/app/kernels/core/ai_kernel.py:36: Class 'AIKernel' missing docstring
+backend/app/kernels/core/ai_kernel.py:11: Function 'tick' missing docstring
+backend/app/kernels/core/ai_kernel.py:15: Function '__init__' missing docstring
+backend/app/kernels/core/ai_kernel.py:18: Function 'tick' missing docstring
+backend/app/kernels/core/ai_kernel.py:26: Function '__init__' missing docstring
+backend/app/kernels/core/ai_kernel.py:29: Function 'tick' missing docstring
+backend/app/kernels/core/ai_kernel.py:47: Function 'register_vip_profile' missing docstring
+backend/app/kernels/core/ai_kernel.py:50: Function 'update' missing docstring
+backend/app/kernels/core/sim_engine.py:1: Module missing docstring
+backend/app/kernels/core/sim_engine.py:5: Class 'ECSManager' missing docstring
+backend/app/kernels/core/sim_engine.py:19: Class 'SimEngine' missing docstring
+backend/app/kernels/core/sim_engine.py:10: Function 'add_component' missing docstring
+backend/app/kernels/core/sim_engine.py:16: Function 'get_component' missing docstring
+backend/app/kernels/core/sim_engine.py:28: Function 'run_loop' missing docstring
+backend/app/kernels/core/sim_engine.py:33: Function 'update' missing docstring
+backend/app/kernels/core/ecs_manager.py:1: Module missing docstring
+backend/app/kernels/core/ecs_manager.py:5: Class 'Component' missing docstring
+backend/app/kernels/core/ecs_manager.py:8: Class 'Entity' missing docstring
+backend/app/kernels/core/ecs_manager.py:18: Class 'System' missing docstring
+backend/app/kernels/core/ecs_manager.py:22: Class 'ECSManager' missing docstring
+backend/app/kernels/core/ecs_manager.py:12: Function 'add_component' missing docstring
+backend/app/kernels/core/ecs_manager.py:15: Function 'get_component' missing docstring
+backend/app/kernels/core/ecs_manager.py:19: Function 'update' missing docstring
+backend/app/kernels/core/ecs_manager.py:23: Function '__init__' missing docstring
+backend/app/kernels/core/ecs_manager.py:27: Function 'create_entity' missing docstring
+backend/app/kernels/core/ecs_manager.py:33: Function 'add_system' missing docstring
+backend/app/kernels/core/ecs_manager.py:36: Function 'update' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:1: Module missing docstring
+backend/app/kernels/core/hybrid_resolver.py:4: Class 'PhysicsSolver' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:9: Class 'LogicBridge' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:14: Class 'HybridResolver' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:5: Function 'update' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:10: Function 'update' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:15: Function '__init__' missing docstring
+backend/app/kernels/core/hybrid_resolver.py:19: Function 'resolve_frame' missing docstring
+backend/app/kernels/cortex/strategy.py:1: Module missing docstring
+backend/app/kernels/cortex/strategy.py:5: Class 'PersonnelGrouping' missing docstring
+backend/app/kernels/cortex/strategy.py:12: Class 'OffensiveScheme' missing docstring
+backend/app/kernels/cortex/strategy.py:18: Class 'DefensiveScheme' missing docstring
+backend/app/kernels/cortex/strategy.py:25: Class 'StrategyEngine' missing docstring
+backend/app/kernels/cortex/coverage_net.py:1: Module missing docstring
+backend/app/kernels/cortex/behavior_tree.py:1: Module missing docstring
+backend/app/kernels/cortex/behavior_tree.py:4: Class 'NodeStatus' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:9: Class 'BehaviorNode' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:13: Class 'BehaviorTree' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:21: Class 'Selector' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:32: Class 'Sequence' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:10: Function 'tick' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:14: Function '__init__' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:18: Function 'update' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:22: Function '__init__' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:25: Function 'tick' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:33: Function '__init__' missing docstring
+backend/app/kernels/cortex/behavior_tree.py:36: Function 'tick' missing docstring
+backend/app/kernels/cortex/inference.py:1: Module missing docstring
+backend/app/kernels/cortex/inference.py:3: Class 'BehavioralProfile' missing docstring
+backend/app/kernels/cortex/inference.py:18: Class 'InferenceEngine' missing docstring
+backend/app/kernels/cortex/inference.py:4: Function '__init__' missing docstring
+backend/app/kernels/cortex/inference.py:12: Function 'update_profile' missing docstring
+backend/app/kernels/cortex/inference.py:19: Function 'predict_play' missing docstring
+backend/app/kernels/hive/atmosphere_net.py:1: Module missing docstring
+backend/app/kernels/hive/atmosphere_net.py:4: Class 'CrowdSentiment' missing docstring
+backend/app/kernels/hive/atmosphere_net.py:10: Class 'CrowdSentimentMachine' missing docstring
+backend/app/kernels/hive/atmosphere_net.py:35: Class 'MomentumPressureValve' missing docstring
+backend/app/kernels/hive/atmosphere_net.py:15: Function 'update_sentiment' missing docstring
+backend/app/kernels/hive/atmosphere_net.py:36: Function 'check_cognitive_penalty' missing docstring
+backend/app/kernels/hive/physics_kernel.py:1: Module missing docstring
+backend/app/kernels/hive/weather.py:1: Module missing docstring
+backend/app/kernels/hive/weather.py:9: Class 'WeatherSys' missing docstring
+backend/app/kernels/hive/geo_physics.py:1: Module missing docstring
+backend/app/kernels/hive/geo_physics.py:4: Class 'TurfDegradationMesh' missing docstring
+backend/app/kernels/hive/geo_physics.py:22: Class 'FluidDynamicsSolver' missing docstring
+backend/app/kernels/hive/geo_physics.py:7: Function '__init__' missing docstring
+backend/app/kernels/hive/geo_physics.py:13: Function 'degrade_zone' missing docstring
+backend/app/kernels/hive/geo_physics.py:18: Function 'get_friction' missing docstring
+backend/app/kernels/hive/geo_physics.py:26: Function 'calculate_magnus_effect' missing docstring
+backend/app/kernels/hive/atmosphere.py:1: Module missing docstring
+backend/app/kernels/hive/atmosphere.py:5: Class 'CrowdSentiment' missing docstring
+backend/app/kernels/hive/atmosphere.py:11: Class 'CrowdNet' missing docstring
+backend/app/kernels/hive/atmosphere.py:17: Function 'update_sentiment' missing docstring
+backend/app/kernels/hive/turf_physics.py:1: Module missing docstring
+backend/app/kernels/hive/turf_physics.py:6: Class 'TurfGrid' missing docstring
+backend/app/kernels/empire/owner_ai.py:1: Module missing docstring
+backend/app/kernels/empire/owner_ai.py:6: Class 'OwnerPersonality' missing docstring
+backend/app/kernels/empire/owner_ai.py:12: Class 'OwnerMind' missing docstring
+backend/app/kernels/empire/scout_intel.py:1: Module missing docstring
+backend/app/kernels/empire/scout_intel.py:5: Class 'FogOfWarSystem' missing docstring
+backend/app/kernels/empire/scout_intel.py:21: Class 'PsychProfiler' missing docstring
+backend/app/kernels/empire/scout_intel.py:12: Function 'reveal_attribute' missing docstring
+backend/app/kernels/empire/scout_intel.py:22: Function 'generate_archetype' missing docstring
+backend/app/kernels/empire/capologist.py:1: Module missing docstring
+backend/app/kernels/empire/capologist.py:5: Class 'ContractYear' missing docstring
+backend/app/kernels/empire/capologist.py:16: Class 'CapologistPhysics' missing docstring
+backend/app/kernels/empire/capologist.py:13: Function 'cap_hit' missing docstring
+backend/app/kernels/empire/goal_planner.py:1: Module missing docstring
+backend/app/kernels/empire/goal_planner.py:3: Class 'OwnerMandateAI' missing docstring
+backend/app/kernels/empire/goal_planner.py:7: Function 'evaluate_season' missing docstring
+backend/app/kernels/empire/econ_dynamics.py:1: Module missing docstring
+backend/app/kernels/empire/econ_dynamics.py:3: Class 'CapPhysicist' missing docstring
+backend/app/kernels/empire/econ_dynamics.py:13: Class 'MarketInflator' missing docstring
+backend/app/kernels/empire/econ_dynamics.py:8: Function 'calculate_dead_money_acceleration' missing docstring
+backend/app/kernels/empire/econ_dynamics.py:16: Function 'adjust_contract_demand' missing docstring
+backend/app/kernels/empire/logistics.py:1: Module missing docstring
+backend/app/kernels/empire/logistics.py:5: Class 'LogisticsEngine' missing docstring
+backend/app/kernels/empire/logistics.py:31: Class 'StadiumManager' missing docstring
+backend/app/kernels/empire/logistics.py:36: Function 'perform_renovation' missing docstring
+backend/app/services/agent_generator.py:40: Function '__init__' missing docstring
+backend/app/services/playoff_service.py:1: Module missing docstring
+backend/app/services/playoff_service.py:19: Function '__init__' missing docstring
+backend/app/services/standings_calculator.py:1: Module missing docstring
+backend/app/services/standings_calculator.py:49: Function '__init__' missing docstring
+backend/app/services/weather_service.py:1: Module missing docstring
+backend/app/services/broadcasting_service.py:58: Function 'score_diff' missing docstring
+backend/app/services/broadcasting_service.py:62: Function 'is_close_game' missing docstring
+backend/app/services/broadcasting_service.py:66: Function 'is_blowout' missing docstring
+backend/app/services/broadcasting_service.py:194: Function '__init__' missing docstring
+backend/app/services/rookie_generator.py:1: Module missing docstring
+backend/app/services/rookie_generator.py:17: Class 'RookieGenerator' missing docstring
+backend/app/services/rookie_generator.py:18: Function '__init__' missing docstring
+backend/app/services/rookie_generator.py:64: Function '_create_rookie' missing docstring
+backend/app/services/trait_acquisition_service.py:1: Module missing docstring
+backend/app/services/pre_game_service.py:1: Module missing docstring
+backend/app/services/pre_game_service.py:14: Class 'PreGameService' missing docstring
+backend/app/services/pre_game_service.py:15: Function '__init__' missing docstring
+backend/app/services/pre_game_service.py:119: Function '_check_and_apply_team_chemistry' missing docstring
+backend/app/services/pre_game_service.py:214: Function '_record_team_starters' missing docstring
+backend/app/services/issue_logger.py:31: Function '__post_init__' missing docstring
+backend/app/services/issue_logger.py:60: Function '__init__' missing docstring
+backend/app/services/nflverse_service.py:92: Function '__init__' missing docstring
+backend/app/services/medical_service.py:1: Module missing docstring
+backend/app/services/medical_service.py:6: Class 'MedicalService' missing docstring
+backend/app/services/medical_service.py:7: Function '__init__' missing docstring
+backend/app/services/salary_cap_service.py:1: Module missing docstring
+backend/app/services/salary_cap_service.py:15: Function '__init__' missing docstring
+backend/app/services/depth_chart_service.py:1: Module missing docstring
+backend/app/services/depth_chart_service.py:42: Function 'get_player' missing docstring
+backend/app/services/depth_chart_service.py:117: Function 'get_player' missing docstring
+backend/app/services/depth_chart_service.py:193: Function 'get_player' missing docstring
+backend/app/services/weekly_recap_service.py:1: Module missing docstring
+backend/app/services/weekly_recap_service.py:11: Function 'mock_gemini_recap_script' missing docstring
+backend/app/services/weekly_recap_service.py:30: Function 'generate_recap' missing docstring
+backend/app/services/weekly_recap_service.py:74: Function 'get_recap' missing docstring
+backend/app/services/chemistry_service.py:1: Module missing docstring
+backend/app/services/offseason_service.py:1: Module missing docstring
+backend/app/services/offseason_service.py:18: Class 'OffseasonService' missing docstring
+backend/app/services/offseason_service.py:19: Function '__init__' missing docstring
+backend/app/services/draft_assistant.py:1: Module missing docstring
+backend/app/services/age_curves.py:1: Module missing docstring
+backend/app/services/trait_evolution_service.py:76: Function '__init__' missing docstring
+backend/app/services/storyline_service.py:23: Class 'StorylineType' missing docstring
+backend/app/services/storyline_service.py:36: Function '__init__' missing docstring
+backend/app/services/storyline_service.py:45: Function 'to_dict' missing docstring
+backend/app/services/storyline_service.py:61: Function '__init__' missing docstring
+backend/app/services/week_simulator.py:26: Function '__init__' missing docstring
+backend/app/services/news_feed_service.py:1: Module missing docstring
+backend/app/services/news_feed_service.py:12: Function 'mock_gemini_headline' missing docstring
+backend/app/services/news_feed_service.py:32: Function '__init__' missing docstring
+backend/app/services/news_feed_service.py:37: Function '_subscribe_to_events' missing docstring
+backend/app/services/news_feed_service.py:112: Function 'get_news' missing docstring
+backend/app/services/trait_service.py:1: Module missing docstring
+backend/app/services/schedule_generator.py:1: Module missing docstring
+backend/app/services/schedule_generator.py:26: Function '__init__' missing docstring
+backend/app/services/enhanced_chemistry_service.py:27: Function '__init__' missing docstring
+backend/app/services/enhanced_chemistry_service.py:93: Function '__init__' missing docstring
+backend/app/services/artifact_generator.py:140: Function '__init__' missing docstring
+backend/app/services/data_sync_service.py:185: Function '__init__' missing docstring
+backend/app/services/stats_service.py:1: Module missing docstring
+backend/app/services/stats_service.py:10: Class 'StatsService' missing docstring
+backend/app/services/stats_service.py:11: Function '__init__' missing docstring
+backend/app/services/player_development_service.py:1: Module missing docstring
+backend/app/services/player_development_service.py:12: Class 'TrainingFocus' missing docstring
+backend/app/services/player_development_service.py:18: Class 'PlayerDevelopmentService' missing docstring
+backend/app/services/player_development_service.py:19: Function '__init__' missing docstring
+backend/app/services/player_development_service.py:128: Function '_get_relevant_stats' missing docstring
+backend/app/services/ratings_generator.py:65: Function 'generate_qb_ratings' missing docstring
+backend/app/services/gm_agent.py:1: Module missing docstring
+backend/app/services/gm_agent.py:13: Class 'GMAgent' missing docstring
+backend/app/services/gm_agent.py:14: Function '__init__' missing docstring
+backend/app/services/gm_agent.py:277: Function '_calculate_package_value' missing docstring
+backend/app/services/gm_agent.py:405: Function '_log_decision' missing docstring
+backend/app/services/equipment.py:46: Class 'Config' missing docstring
+backend/app/services/ai/scouting_ai.py:39: Function '__init__' missing docstring
+backend/app/services/ai/gemini_client.py:38: Function '__init__' missing docstring
+backend/app/services/database/migrations.py:51: Function '__init__' missing docstring
+backend/app/services/database/optimizer.py:49: Function '__init__' missing docstring
+backend/app/services/database/optimizer.py:110: Function '__init__' missing docstring
+backend/app/services/society/momentum.py:60: Function '_update_state' missing docstring
+backend/app/services/society/momentum.py:84: Function '__init__' missing docstring
+backend/app/services/society/social_graph.py:57: Function 'is_positive' missing docstring
+backend/app/services/society/social_graph.py:88: Function '__init__' missing docstring
+backend/app/services/society/nemesis.py:90: Function '__init__' missing docstring
+backend/app/services/stadium/stadium.py:91: Function '__init__' missing docstring
+backend/app/services/scouting/combine.py:97: Function '__init__' missing docstring
+backend/app/services/scouting/combine.py:191: Class 'SimpleRNG' missing docstring
+backend/app/services/scouting/combine.py:192: Function 'next_float' missing docstring
+backend/app/services/scouting/draft_board.py:39: Function '__init__' missing docstring
+backend/app/services/scouting/draft_board.py:43: Function 'add_prospect' missing docstring
+backend/app/services/scouting/scout.py:25: Class 'ScoutRegion' missing docstring
+backend/app/services/scouting/scout.py:32: Class 'KnowledgeTier' missing docstring
+backend/app/services/scouting/scout.py:39: Class 'ScoutSpecialty' missing docstring
+backend/app/services/scouting/scout.py:46: Class 'ScoutBias' missing docstring
+backend/app/services/scouting/scout.py:173: Function '_calculate_tier' missing docstring
+backend/app/services/scouting/scout.py:188: Function '_is_specialty_match' missing docstring
+backend/app/services/scouting/scout.py:196: Function 'format_for_display' missing docstring
+backend/app/services/scouting/scout.py:211: Function '_val_to_grade' missing docstring
+backend/app/services/scouting/scouting_service.py:29: Class 'ScoutingService' missing docstring
+backend/app/services/scouting/scouting_service.py:30: Function '__init__' missing docstring
+backend/app/services/scouting/scouting_service.py:123: Function 'get_formatted_report' missing docstring
+backend/app/services/validation/statistical_validator.py:66: Function 'to_dict' missing docstring
+backend/app/services/validation/statistical_validator.py:92: Function '__init__' missing docstring
+backend/app/services/validation/calibrator.py:54: Function '__init__' missing docstring
+backend/app/services/validation/stats_validator.py:89: Function '__init__' missing docstring
+backend/app/services/playbook/play_caller.py:39: Function '__init__' missing docstring
+backend/app/services/playbook/types.py:1: Module missing docstring
+backend/app/services/playbook/playbook.py:106: Function 'add_play' missing docstring
+backend/app/services/playbook/coaching_ai.py:1: Module missing docstring
+backend/app/services/playbook/coaching_ai.py:11: Function '__init__' missing docstring
+backend/app/services/playbook/defensive_ai.py:71: Function '__init__' missing docstring
+backend/app/services/playbook/clock_management.py:1: Module missing docstring
+backend/app/services/playbook/clock_management.py:8: Class 'ClockStrategy' missing docstring
+backend/app/services/playbook/clock_management.py:47: Function '__init__' missing docstring
+backend/app/services/playbook/gameplan_service.py:1: Module missing docstring
+backend/app/services/playbook/gameplan_service.py:5: Class 'GameplanService' missing docstring
+backend/app/services/playbook/gameplan_service.py:6: Function '__init__' missing docstring
+backend/app/services/playbook/familiarity.py:71: Function 'success_rate' missing docstring
+backend/app/services/playbook/familiarity.py:77: Function 'tier' missing docstring
+backend/app/services/playbook/familiarity.py:284: Function '__init__' missing docstring
+backend/app/services/empire/salary_cap.py:207: Function '__init__' missing docstring
+backend/app/services/empire/gm_ai.py:165: Function '__init__' missing docstring
+backend/app/services/empire/gm_ai.py:268: Function 'score_prospect' missing docstring
+backend/app/services/training/coaching_philosophy.py:76: Class 'Config' missing docstring
+backend/app/services/training/coaching_tree.py:85: Function '__init__' missing docstring
+backend/app/services/training/training_programs.py:169: Function '__init__' missing docstring
+backend/app/services/training/drills.py:63: Class 'Config' missing docstring
+backend/app/core/redis_cache.py:19: Function '__init__' missing docstring
+backend/app/core/mcp_client.py:1: Module missing docstring
+backend/app/core/mcp_client.py:20: Function '__init__' missing docstring
+backend/app/core/mcp_client.py:52: Function '_connect_stdio' missing docstring
+backend/app/core/mcp_client.py:71: Function '_connect_sse' missing docstring
+backend/app/core/seed.py:1: Module missing docstring
+backend/app/core/seed.py:67: Function 'seed_teams' missing docstring
+backend/app/core/seed.py:91: Function 'generate_player' missing docstring
+backend/app/core/seed.py:129: Function 'seed_players' missing docstring
+backend/app/core/seed.py:297: Function 'safe_int' missing docstring
+backend/app/core/database.py:1: Module missing docstring
+backend/app/core/database.py:43: Function 'set_sqlite_pragma' missing docstring
+backend/app/core/database.py:49: Function 'set_sqlite_pragma_async' missing docstring
+backend/app/core/error_decorators.py:1: Module missing docstring
+backend/app/core/error_decorators.py:17: Function 'wrapper' missing docstring
+backend/app/core/nfl_reference_data.py:60: Class 'RiskLevel' missing docstring
+backend/app/core/nfl_reference_data.py:79: Function 'success_rate_avg' missing docstring
+backend/app/core/trade_config.py:1: Module missing docstring
+backend/app/core/trade_config.py:5: Class 'GMArchetype' missing docstring
+backend/app/core/config.py:1: Module missing docstring
+backend/app/core/config.py:12: Function 'async_database_url' missing docstring
+backend/app/core/logging_config.py:327: Function 'logging_middleware' missing docstring
+backend/app/core/db_helpers.py:1: Module missing docstring
+backend/app/core/mcp_registry.py:1: Module missing docstring
+backend/app/core/mcp_registry.py:16: Function '__init__' missing docstring
+backend/app/core/mcp_registry.py:115: Function 'get_client' missing docstring
+backend/app/core/random_utils.py:1: Module missing docstring
+backend/app/core/error_handlers.py:15: Function 'get_request_id' missing docstring
+backend/app/core/app_factory.py:75: Function 'read_root' missing docstring
+backend/app/core/mcp_cache.py:1: Module missing docstring
+backend/app/core/mcp_cache.py:18: Function '__init__' missing docstring
+backend/app/data/free_agents_2025.py:28: Class 'Position' missing docstring
+backend/app/data/uniforms.py:1: Module missing docstring
+backend/app/data/uniforms.py:4: Class 'UniformTier' missing docstring
+backend/app/data/uniforms.py:11: Class 'UniformSet' missing docstring
+backend/app/data/facemasks.py:1: Module missing docstring
+backend/app/data/facemasks.py:4: Class 'FaceMaskModel' missing docstring
+backend/app/data/stadiums.py:1: Module missing docstring
+backend/app/data/stadiums.py:4: Class 'StadiumModel' missing docstring
+backend/app/data/career_accomplishments.py:1: Module missing docstring
+backend/app/data/career_accomplishments.py:6: Class 'CareerAccolades' missing docstring
+backend/app/data/scouts.py:14: Class 'ScoutData' missing docstring
+backend/app/data/teams.py:1: Module missing docstring
+backend/app/data/teams.py:4: Class 'TeamColors' missing docstring
+backend/app/data/teams.py:9: Class 'TeamIdentity' missing docstring
+backend/app/data/draft_value_chart.py:1: Module missing docstring
+backend/app/data/helmets.py:1: Module missing docstring
+backend/app/data/helmets.py:4: Class 'HelmetModel' missing docstring
+backend/app/middlewares/logging_middleware.py:1: Module missing docstring
+backend/app/middlewares/logging_middleware.py:10: Class 'LoggingMiddleware' missing docstring
+backend/app/middlewares/logging_middleware.py:11: Function 'dispatch' missing docstring
+backend/app/scripts/download_logos.py:1: Module missing docstring
+backend/app/scripts/download_logos.py:13: Function 'download_logos' missing docstring
+backend/app/scripts/seed_teams.py:1: Module missing docstring
+backend/app/scripts/seed_teams.py:12: Function 'seed_teams' missing docstring
+backend/app/engine/weather_effects.py:1: Module missing docstring
+backend/app/engine/weather_effects.py:16: Function '__init__' missing docstring
+backend/app/engine/sack_calculator.py:1: Module missing docstring
+backend/app/engine/blocking.py:1: Module missing docstring
+backend/app/engine/blocking.py:4: Class 'BlockType' missing docstring
+backend/app/engine/blocking.py:10: Class 'BlockingResult' missing docstring
+backend/app/engine/blocking.py:16: Class 'BlockingEngine' missing docstring
+backend/app/engine/attribute_interaction.py:65: Function 'to_dict' missing docstring
+backend/app/engine/special_teams.py:1: Module missing docstring
+backend/app/engine/special_teams.py:4: Class 'SpecialTeamsEngine' missing docstring
+backend/app/engine/event_bus.py:1: Module missing docstring
+backend/app/engine/event_bus.py:8: Class 'BaseEventPayload' missing docstring
+backend/app/engine/event_bus.py:13: Class 'SackEventPayload' missing docstring
+backend/app/engine/event_bus.py:19: Class 'TouchdownEventPayload' missing docstring
+backend/app/engine/event_bus.py:26: Class 'TurnoverEventPayload' missing docstring
+backend/app/engine/event_bus.py:32: Class 'TradeCompletedPayload' missing docstring
+backend/app/engine/event_bus.py:41: Class 'PlayerInjuredPayload' missing docstring
+backend/app/engine/event_bus.py:47: Class 'BadgeEarnedPayload' missing docstring
+backend/app/engine/event_bus.py:53: Class 'EventType' missing docstring
+backend/app/engine/event_bus.py:89: Class 'EventBus' missing docstring
+backend/app/engine/event_bus.py:93: Function 'subscribe' missing docstring
+backend/app/engine/event_bus.py:99: Function 'publish' missing docstring
+backend/app/engine/event_bus.py:105: Function 'clear_subscribers' missing docstring
+backend/app/engine/ai.py:1: Module missing docstring
+backend/app/engine/ai.py:3: Class 'CollisionSystem' missing docstring
+backend/app/engine/ai.py:30: Class 'VisionAI' missing docstring
+backend/app/engine/ai.py:56: Class 'QuarterbackAI' missing docstring
+backend/app/engine/probability_engine.py:1: Module missing docstring
+backend/app/engine/probability_engine.py:8: Class 'OutcomeType' missing docstring
+backend/app/engine/defense.py:1: Module missing docstring
+backend/app/engine/defense.py:5: Class 'PassRushMove' missing docstring
+backend/app/engine/defense.py:11: Class 'CoverageType' missing docstring
+backend/app/engine/defense.py:15: Class 'PassRushEngine' missing docstring
+backend/app/engine/defense.py:45: Class 'DefenseEngine' missing docstring
+backend/app/engine/venue_effects.py:30: Function '__init__' missing docstring
+backend/app/engine/physics.py:1: Module missing docstring
+backend/app/engine/physics.py:4: Class 'Vector3' missing docstring
+backend/app/engine/physics.py:9: Class 'BallPhysics' missing docstring
+backend/app/engine/position_physics.py:31: Function 'distance_to' missing docstring
+backend/app/engine/position_physics.py:34: Function 'magnitude' missing docstring
+backend/app/engine/position_physics.py:65: Function '__init__' missing docstring
+backend/app/engine/position_physics.py:197: Function '__init__' missing docstring
+backend/app/engine/position_physics.py:355: Function '__init__' missing docstring
+backend/app/engine/position_physics.py:512: Function '__init__' missing docstring
+backend/app/engine/calendar.py:1: Module missing docstring
+backend/app/engine/calendar.py:5: Class 'SeasonPhase' missing docstring
+backend/app/engine/calendar.py:13: Class 'GameClock' missing docstring
+backend/app/engine/calendar.py:26: Class 'CalendarEngine' missing docstring
+backend/app/engine/calendar.py:19: Function 'tick' missing docstring
+backend/app/engine/calendar.py:23: Function 'reset_play_clock' missing docstring
+backend/app/engine/calendar.py:27: Function '__init__' missing docstring
+backend/app/engine/calendar.py:32: Function 'advance_week' missing docstring
+backend/app/engine/calendar.py:36: Function 'check_phase_transition' missing docstring
+backend/app/engine/calendar.py:45: Function 'get_current_date' missing docstring
+backend/app/engine/frame_physics.py:88: Function '__add__' missing docstring
+backend/app/engine/frame_physics.py:91: Function '__sub__' missing docstring
+backend/app/engine/frame_physics.py:94: Function '__mul__' missing docstring
+backend/app/engine/frame_physics.py:97: Function 'magnitude' missing docstring
+backend/app/engine/frame_physics.py:100: Function 'normalized' missing docstring
+backend/app/engine/frame_physics.py:106: Function 'distance_to' missing docstring
+backend/app/engine/frame_physics.py:109: Function 'to_dict' missing docstring
+backend/app/engine/frame_physics.py:131: Function 'to_dict' missing docstring
+backend/app/engine/frame_physics.py:152: Function 'to_dict' missing docstring
+backend/app/engine/frame_physics.py:171: Function 'to_dict' missing docstring
+backend/app/engine/frame_physics.py:201: Function 'to_dict' missing docstring
+backend/app/engine/frame_physics.py:224: Function '__init__' missing docstring
+backend/app/engine/trait_effects.py:1: Module missing docstring
+backend/app/engine/offensive_line_ai.py:1: Module missing docstring
+backend/app/engine/offensive_line_ai.py:4: Class 'OffensiveLineAI' missing docstring
+backend/app/engine/offensive_line_ai.py:5: Function '__init__' missing docstring
+backend/app/engine/position_physics/running_back.py:140: Function '__init__' missing docstring
+backend/app/engine/position_physics/defensive_back.py:106: Function '__init__' missing docstring
+backend/app/engine/position_physics/wide_receiver.py:122: Function '__init__' missing docstring
+backend/app/engine/position_physics/base.py:34: Function '__add__' missing docstring
+backend/app/engine/position_physics/base.py:37: Function '__sub__' missing docstring
+backend/app/engine/position_physics/base.py:40: Function '__mul__' missing docstring
+backend/app/engine/position_physics/base.py:44: Function 'magnitude' missing docstring
+backend/app/engine/position_physics/base.py:48: Function 'normalized' missing docstring
+backend/app/engine/position_physics/base.py:54: Function 'distance_to' missing docstring
+backend/app/engine/position_physics/base.py:57: Function 'dot' missing docstring
+backend/app/engine/position_physics/base.py:73: Function '__add__' missing docstring
+backend/app/engine/position_physics/base.py:76: Function '__sub__' missing docstring
+backend/app/engine/position_physics/base.py:79: Function '__mul__' missing docstring
+backend/app/engine/position_physics/base.py:83: Function 'magnitude' missing docstring
+backend/app/engine/position_physics/base.py:86: Function 'cross' missing docstring
+backend/app/engine/position_physics/quarterback.py:137: Function '__init__' missing docstring
+backend/app/engine/position_physics/offensive_line.py:102: Function '__init__' missing docstring
+backend/app/engine/position_physics/pass_rush.py:101: Function '__init__' missing docstring
+backend/app/engine/genesis/cognition.py:228: Function '__init__' missing docstring
+backend/app/engine/genesis/fatigue.py:275: Function '__init__' missing docstring
+backend/app/engine/genesis/injury.py:335: Function '__init__' missing docstring
+backend/app/engine/core/deterministic_rng.py:73: Function '__init__' missing docstring
+backend/app/engine/core/enhanced_event_bus.py:152: Function '__init__' missing docstring
+backend/app/engine/core/tick_engine.py:150: Function '__init__' missing docstring
+backend/app/engine/hive/weather.py:119: Function '__init__' missing docstring
+backend/app/engine/hive/turf_grid.py:93: Function 'condition' missing docstring
+backend/app/engine/hive/turf_grid.py:123: Function 'average_integrity' missing docstring
+backend/app/engine/hive/turf_grid.py:144: Function '__init__' missing docstring
+backend/app/engine/hive/equipment.py:106: Function '__init__' missing docstring
+backend/app/api/news_router.py:45: Class 'Config' missing docstring
+backend/app/api/news_router.py:70: Class 'Config' missing docstring
+backend/app/api/endpoints/news.py:369: Class 'Config' missing docstring
+backend/app/api/endpoints/news.py:394: Class 'Config' missing docstring
+backend/app/api/endpoints/traits.py:1: Module missing docstring
+backend/app/api/endpoints/season.py:1: Module missing docstring
+backend/app/api/endpoints/season.py:74: Class 'AwardCandidate' missing docstring
+backend/app/api/endpoints/season.py:82: Class 'SeasonAwards' missing docstring
+backend/app/api/endpoints/season.py:90: Class 'DivisionStandings' missing docstring
+backend/app/api/endpoints/season.py:95: Class 'ConferenceStandings' missing docstring
+backend/app/api/endpoints/season.py:916: Class 'TradeEvaluationRequest' missing docstring
+backend/app/api/endpoints/season.py:348: Function 'generate_schedule_sync' missing docstring
+backend/app/api/endpoints/season.py:514: Function 'get_standings_sync' missing docstring
+backend/app/api/endpoints/season.py:701: Function 'generate_sync' missing docstring
+backend/app/api/endpoints/season.py:717: Function 'get_bracket_sync' missing docstring
+backend/app/api/endpoints/season.py:731: Function 'advance_sync' missing docstring
+backend/app/api/endpoints/season.py:775: Function 'progression_sync' missing docstring
+backend/app/api/endpoints/season.py:791: Function 'needs_sync' missing docstring
+backend/app/api/endpoints/season.py:805: Function 'prospects_sync' missing docstring
+backend/app/api/endpoints/season.py:819: Function 'draft_sync' missing docstring
+backend/app/api/endpoints/season.py:833: Function 'pick_sync' missing docstring
+backend/app/api/endpoints/season.py:844: Function 'make_pick_sync' missing docstring
+backend/app/api/endpoints/season.py:855: Function 'sim_next_sync' missing docstring
+backend/app/api/endpoints/season.py:870: Function 'trade_sync' missing docstring
+backend/app/api/endpoints/season.py:883: Function 'fa_sync' missing docstring
+backend/app/api/endpoints/season.py:953: Function 'get_top_stats' missing docstring
+backend/app/api/endpoints/season.py:1004: Function 'get_candidates' missing docstring
+backend/app/api/endpoints/season.py:183: Function 'get_top_stats' missing docstring
+backend/app/api/endpoints/season.py:234: Function 'get_standings_sync' missing docstring
+backend/app/api/endpoints/season.py:157: Function 'get_bracket_sync' missing docstring
+backend/app/api/endpoints/season.py:680: Function 'generate_playoffs_sync' missing docstring
+backend/app/api/endpoints/physics_api.py:261: Function '__init__' missing docstring
+backend/app/api/endpoints/medical.py:1: Module missing docstring
+backend/app/api/endpoints/medical.py:11: Class 'BodyHealthResponse' missing docstring
+backend/app/api/endpoints/medical.py:22: Function 'get_medical_service' missing docstring
+backend/app/api/endpoints/medical.py:26: Function 'get_player_health' missing docstring
+backend/app/api/endpoints/medical.py:54: Class 'ApplyWearRequest' missing docstring
+backend/app/api/endpoints/medical.py:60: Function 'apply_wear' missing docstring
+backend/app/api/endpoints/medical.py:74: Class 'TreatmentDecisionRequest' missing docstring
+backend/app/api/endpoints/medical.py:78: Class 'TreatmentDecisionResponse' missing docstring
+backend/app/api/endpoints/medical.py:170: Class 'InjuredPlayerResponse' missing docstring
+backend/app/api/endpoints/medical.py:209: Class 'SurgeryRiskResponse' missing docstring
+backend/app/api/endpoints/gameplans.py:1: Module missing docstring
+backend/app/api/endpoints/gameplans.py:11: Class 'GameplanRequest' missing docstring
+backend/app/api/endpoints/gameplans.py:18: Function 'get_gameplan_service' missing docstring
+backend/app/api/endpoints/gameplans.py:40: Function 'check_bonus' missing docstring
+backend/app/api/endpoints/playbook.py:46: Class 'Config' missing docstring
+backend/app/api/endpoints/genesis.py:1: Module missing docstring
+backend/app/api/endpoints/genesis.py:18: Class 'BioMetricsResponse' missing docstring
+backend/app/api/endpoints/training.py:1: Module missing docstring
+backend/app/api/endpoints/training.py:30: Class 'TrainingExecutionRequest' missing docstring
+backend/app/api/endpoints/coaches.py:1: Module missing docstring
+backend/app/api/endpoints/coaches.py:17: Class 'CoachResponse' missing docstring
+backend/app/api/endpoints/coaches.py:31: Class 'CoachListResponse' missing docstring
+backend/app/api/endpoints/coaches.py:34: Class 'HireCoachRequest' missing docstring
+backend/app/api/endpoints/coaches.py:39: Class 'FireCoachRequest' missing docstring
+backend/app/api/endpoints/coaches.py:42: Class 'CoachCarouselResponse' missing docstring
+backend/app/api/endpoints/coaches.py:51: Function '_coach_to_response' missing docstring
+backend/app/api/endpoints/feedback.py:1: Module missing docstring
+backend/app/api/endpoints/trades.py:160: Function 'evaluate_sync' missing docstring
+backend/app/api/endpoints/trades.py:328: Function 'evaluate_auto' missing docstring
+backend/app/api/endpoints/settings.py:1: Module missing docstring
+backend/app/api/endpoints/settings.py:11: Class 'SettingsUpdate' missing docstring
+backend/app/api/endpoints/settings.py:15: Class 'SettingsResponse' missing docstring
+backend/app/api/endpoints/settings.py:24: Function 'get_settings' missing docstring
+backend/app/api/endpoints/settings.py:36: Function 'update_settings' missing docstring
+backend/app/api/endpoints/settings.py:19: Class 'Config' missing docstring
+backend/app/api/endpoints/teams.py:1: Module missing docstring
+backend/app/api/endpoints/teams.py:21: Class 'TeamSchema' missing docstring
+backend/app/api/endpoints/teams.py:36: Class 'PlayerSchema' missing docstring
+backend/app/api/endpoints/teams.py:87: Class 'DepthChartUpdate' missing docstring
+backend/app/api/endpoints/teams.py:155: Class 'CoachSettingsUpdate' missing docstring
+backend/app/api/endpoints/data.py:1: Module missing docstring
+backend/app/api/endpoints/players.py:1: Module missing docstring
+backend/app/api/endpoints/players.py:19: Class 'PlayerDetailSchema' missing docstring
+backend/app/api/endpoints/players.py:50: Class 'PlayerStatsSchema' missing docstring
+backend/app/api/endpoints/system.py:1: Module missing docstring
+backend/app/api/endpoints/simulation.py:1: Module missing docstring
+backend/app/api/endpoints/websocket.py:1: Module missing docstring
+backend/app/api/endpoints/websocket.py:14: Function '__init__' missing docstring
+backend/app/api/endpoints/broadcast.py:1: Module missing docstring
+backend/app/api/endpoints/broadcast.py:20: Class 'BroadcastStyleEnum' missing docstring
+backend/app/api/endpoints/broadcast.py:27: Class 'GameContextRequest' missing docstring
+backend/app/api/endpoints/broadcast.py:43: Class 'PlayCommentaryRequest' missing docstring
+backend/app/api/endpoints/broadcast.py:50: Class 'CommentaryResponse' missing docstring
+backend/app/api/endpoints/broadcast.py:55: Class 'StatCalloutRequest' missing docstring
+backend/app/api/endpoints/broadcast.py:62: Class 'BigMomentRequest' missing docstring
