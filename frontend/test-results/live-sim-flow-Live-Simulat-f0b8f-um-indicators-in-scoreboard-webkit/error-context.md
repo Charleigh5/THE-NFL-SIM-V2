@@ -1,0 +1,168 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5] [cursor=pointer]:
+      - heading "THE SIM" [level=1] [ref=e8]
+      - paragraph [ref=e11]: Night Game
+    - generic [ref=e12]:
+      - link "DASHBOARD" [ref=e13]:
+        - /url: /
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - generic [ref=e21]: DASHBOARD
+      - link "SEASON" [ref=e22]:
+        - /url: /season
+        - generic [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: SEASON
+      - link "OFFSEASON" [ref=e28]:
+        - /url: /offseason
+        - generic [ref=e30]:
+          - img [ref=e31]
+          - generic [ref=e34]: OFFSEASON
+      - link "DRAFT ROOM" [ref=e35]:
+        - /url: /offseason/draft
+        - generic [ref=e37]:
+          - img [ref=e38]
+          - generic [ref=e44]: DRAFT ROOM
+      - link "ROSTER" [ref=e45]:
+        - /url: /empire/front-office
+        - generic [ref=e47]:
+          - img [ref=e48]
+          - generic [ref=e53]: ROSTER
+      - link "DEPTH CHART" [ref=e54]:
+        - /url: /empire/depth-chart
+        - generic [ref=e56]:
+          - img [ref=e57]
+          - generic [ref=e60]: DEPTH CHART
+      - link "TRADE CENTER" [ref=e61]:
+        - /url: /empire/trade-center
+        - generic [ref=e63]:
+          - img [ref=e64]
+          - generic [ref=e67]: TRADE CENTER
+      - link "TRAINING" [ref=e68]:
+        - /url: /training
+        - generic [ref=e70]:
+          - img [ref=e71]
+          - generic [ref=e77]: TRAINING
+      - link "MY TEAM" [ref=e78]:
+        - /url: /team-selection
+        - generic [ref=e80]:
+          - img [ref=e81]
+          - generic [ref=e83]: MY TEAM
+      - link "SETTINGS" [ref=e84]:
+        - /url: /settings
+        - generic [ref=e87]:
+          - img [ref=e88]
+          - generic [ref=e91]: SETTINGS
+    - generic [ref=e93]:
+      - img [ref=e95]
+      - generic [ref=e97]:
+        - generic [ref=e98]: GENESIS
+        - generic [ref=e99]: System Online
+  - main [ref=e100]:
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - heading "Live Simulation" [level=1] [ref=e106]
+          - paragraph [ref=e107]: "Week 4: Empire vs. Genesis"
+        - generic [ref=e108]:
+          - img [ref=e109]
+          - generic [ref=e112]: 15:00
+      - generic [ref=e113]:
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]: Home Momentum
+            - generic [ref=e117]:
+              - img [ref=e119]
+              - generic [ref=e120]: NEUTRAL
+          - generic [ref=e121]:
+            - generic [ref=e122]: Away Momentum
+            - generic [ref=e123]:
+              - img [ref=e125]
+              - generic [ref=e126]: NEUTRAL
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]: "0"
+            - generic [ref=e130]: Empire
+            - generic [ref=e132]:
+              - img [ref=e134]
+              - generic [ref=e135]: NEUTRAL
+            - 'generic "Home Timeouts: 3" [ref=e136]'
+          - generic [ref=e141]:
+            - generic [ref=e142]: Q1
+            - generic [ref=e143]: 1st & 10
+          - generic [ref=e144]:
+            - generic [ref=e145]: "0"
+            - generic [ref=e146]: Genesis
+            - generic [ref=e148]:
+              - img [ref=e150]
+              - generic [ref=e151]: NEUTRAL
+            - 'generic "Away Timeouts: 3" [ref=e152]'
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - button "Field View" [ref=e159] [cursor=pointer]:
+              - img [ref=e160]
+              - text: Field View
+            - button "Game Stats" [ref=e162] [cursor=pointer]:
+              - img [ref=e163]
+              - text: Game Stats
+          - generic [ref=e164]:
+            - generic:
+              - generic: PHYSICS DEBUG
+              - generic: "FRAME: 1"
+              - generic: "TIME: 0.000s"
+              - generic: "BALL:"
+              - generic: "Pos: 20.1, 26.0"
+              - generic: "Hgt: 0.00 yds"
+              - generic: "PLAYER 1:"
+              - generic: "Vel: 0.0, 0.0"
+              - generic: "Stt: RUN"
+            - generic [ref=e168]:
+              - generic [ref=e169]: Lambeau Field
+              - generic [ref=e170]:
+                - generic [ref=e171]: ☀️
+                - generic [ref=e172]: 70°F
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - generic [ref=e175]: Condition
+                  - generic [ref=e176]: Clear
+                - generic [ref=e177]:
+                  - generic [ref=e178]: Wind
+                  - generic [ref=e179]: 0 mph
+                - generic [ref=e180]:
+                  - generic [ref=e181]: Field
+                  - generic [ref=e182]: Dry
+              - generic [ref=e183]: Impact:Ideal Conditions
+            - generic [ref=e185]:
+              - heading "Coach Strategy" [level=3] [ref=e187]
+              - generic [ref=e188]:
+                - generic [ref=e190]:
+                  - generic [ref=e191]: Aggression
+                  - generic [ref=e192]: "%"
+                - generic [ref=e196]:
+                  - generic [ref=e197]: Tempo
+                  - generic [ref=e198]: "%"
+                - generic [ref=e202]: BALANCED
+            - generic [ref=e204]:
+              - generic [ref=e205]:
+                - generic [ref=e206]:
+                  - img [ref=e207]
+                  - generic [ref=e209]: 92 dB
+                - generic [ref=e210]: Lambeau Field
+              - generic [ref=e213]:
+                - generic [ref=e214]: High Decibels
+                - paragraph [ref=e215]: Communication strained. Check audibles.
+            - button "KICKOFF" [ref=e217] [cursor=pointer]:
+              - img [ref=e218]
+              - text: KICKOFF
+        - generic [ref=e221]:
+          - heading "Play Feed" [level=3] [ref=e223]
+          - generic [ref=e225]: Waiting for kickoff...
+  - button "Mission Control" [ref=e227] [cursor=pointer]: ⚡
+  - button "Open music player" [ref=e229] [cursor=pointer]:
+    - img [ref=e230]
+```
