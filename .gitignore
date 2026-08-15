@@ -114,3 +114,17 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# SQLite database files
+*.db
+*.sqlite
+
+# Local debug/error dumps
+debug_error.txt
+
+# Test results
+frontend/test-results/
+
+# Playwright reports
+frontend/playwright-report/data/
+
