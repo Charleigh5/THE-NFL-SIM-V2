@@ -2366,3 +2366,223 @@ Traceback (most recent call last):
     "total_cap": team.salary_cap_total,
                  ^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
+DEBUG EXCEPTION: AttributeError: 'Team' object has no attribute 'salary_cap_total'
+Traceback (most recent call last):
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\core\error_decorators.py", line 35, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\api\endpoints\season.py", line 1161, in get_team_salary_cap
+    "starters": min(len(pos_players), starters_count),
+  File "C:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\backend\app\services\salary_cap_service.py", line 89, in get_team_cap_breakdown
+    "total_cap": team.salary_cap_total,
+                 ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Team' object has no attribute 'salary_cap_total'
