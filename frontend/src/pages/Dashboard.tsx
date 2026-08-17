@@ -77,26 +77,27 @@ const Dashboard = () => {
               Control
             </span>
           </h1>
+          <p className="text-gray-400 text-sm mt-1">War Room overview under the stadium lights.</p>
         </div>
 
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-end">
               <span className="text-xs text-gray-400 uppercase tracking-wider">System Status</span>
-              <div className="flex items-center gap-2">
+              <div className="system-status flex items-center gap-2">
                 <div
                   className={`w-2 h-2 rounded-full ${health?.status === "healthy" ? "bg-green-500 animate-pulse" : "bg-red-500"}`}
                 />
-                <span className="font-header text-xl">
-                  {health?.status === "healthy" ? "ONLINE" : "OFFLINE"}
+                <span className="badge font-header text-xl">
+                  {health?.status === "healthy" ? "All Systems Online" : "Offline"}
                 </span>
               </div>
             </div>
             <div className="h-12 w-[1px] bg-white/20" />
             <div className="flex flex-col items-end">
-              <span className="text-xs text-gray-400 uppercase tracking-wider">Season</span>
-              <span className="font-header text-3xl text-brand">
-                {currentSeason?.year || "2025"}
+              <span className="text-xs text-gray-400 uppercase tracking-wider">Current Season</span>
+              <span className="season-year font-header text-3xl text-brand">
+                {currentSeason?.year || "2024"}
               </span>
             </div>
           </div>
@@ -120,7 +121,7 @@ const Dashboard = () => {
                 variant="default"
               >
                 <div className="flex flex-col justify-end h-full relative z-10">
-                  <div className="text-6xl font-header mb-2 relative">
+                  <div className="season-week text-6xl font-header mb-2 relative">
                     WEEK {currentSeason?.current_week || 1}
                     <span className="absolute -top-4 -right-4 text-brand/20 text-9xl -z-10">
                       {currentSeason?.current_week || 1}
@@ -162,28 +163,32 @@ const Dashboard = () => {
           </div>
 
           {/* Action Bar */}
-          <div className="grid grid-cols-4 gap-4">
-            {[
-              { label: "Depth Chart", path: "/empire/depth-chart", icon: "📋" },
-              { label: "Trade Center", path: "/empire/trade-center", icon: "🔄" },
-              { label: "Draft Room", path: "/offseason/draft", icon: "🏆" },
-              { label: "Training", path: "/training", icon: "🏋️" },
-            ].map((action, idx) => (
-              <Link key={action.path} to={action.path}>
-                <PrimeCard
-                  className="h-32 flex items-center justify-center hover:border-brand/50 transition-colors"
-                  variant="glass"
-                  delay={0.2 + idx * 0.05}
-                >
-                  <div className="text-center">
-                    <div className="text-3xl mb-2">{action.icon}</div>
-                    <div className="font-header text-xl uppercase tracking-wide">
-                      {action.label}
+          <div className="quick-actions-section">
+            <h2 className="font-header text-2xl uppercase tracking-wider text-gray-300 mb-3">Quick Actions</h2>
+            <div className="grid grid-cols-5 gap-4">
+              {[
+                { label: "Roster", path: "/empire/front-office", icon: "👥" },
+                { label: "Depth Chart", path: "/empire/depth-chart", icon: "📋" },
+                { label: "Trade Center", path: "/empire/trade-center", icon: "🔄" },
+                { label: "Draft Room", path: "/offseason/draft", icon: "🏆" },
+                { label: "Training", path: "/training", icon: "🏋️" },
+              ].map((action, idx) => (
+                <Link key={action.path} to={action.path}>
+                  <PrimeCard
+                    className="quick-action-card h-32 flex items-center justify-center hover:border-brand/50 transition-colors"
+                    variant="glass"
+                    delay={0.2 + idx * 0.05}
+                  >
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">{action.icon}</div>
+                      <div className="font-header text-lg uppercase tracking-wide">
+                        {action.label}
+                      </div>
                     </div>
-                  </div>
-                </PrimeCard>
-              </Link>
-            ))}
+                  </PrimeCard>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -205,7 +210,7 @@ const Dashboard = () => {
               {!loadingSeason && (
                 <button
                   onClick={handleStartSeason}
-                  className="w-full py-4 bg-brand hover:bg-red-600 text-white font-header text-xl uppercase tracking-widest skew-x-[-6deg] transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+                  className="start-season-btn w-full py-4 bg-brand hover:bg-red-600 text-white font-header text-xl uppercase tracking-widest skew-x-[-6deg] transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(239,68,68,0.4)]"
                 >
                   <span className="block skew-x-[6deg]">
                     {currentSeason ? "Simulate Week" : "Start Season"}

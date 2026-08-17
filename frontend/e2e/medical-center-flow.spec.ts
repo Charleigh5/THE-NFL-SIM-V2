@@ -68,6 +68,11 @@ const MOCK_ROSTER_HEALTH = {
 
 test.describe("Medical Center Flow", () => {
   test.beforeEach(async ({ page }) => {
+    // Fallback
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
     // Mock User Settings
     await page.route("**/api/settings", async (route) => {
       await route.fulfill({ json: { user_team_id: USER_TEAM_ID } });
@@ -103,11 +108,6 @@ test.describe("Medical Center Flow", () => {
     // Mock Roster Health Summary
     await page.route(`**/api/teams/${USER_TEAM_ID}/health*`, async (route) => {
       await route.fulfill({ json: MOCK_ROSTER_HEALTH });
-    });
-
-    // Fallback
-    await page.route("**/api/**", async (route) => {
-      await route.fulfill({ json: {} });
     });
   });
 
@@ -208,7 +208,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify health stats display
-    await expect(page.locator("text=/92%/")).toBeVisible();
+    await expect(page.locator("text=/92%/").first()).toBeVisible();
 
     // Look for additional stats
     const statsSection = page.locator('[data-testid="health-stats"], .health-summary').first();

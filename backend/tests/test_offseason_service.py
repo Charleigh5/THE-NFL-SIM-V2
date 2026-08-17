@@ -306,7 +306,7 @@ def test_simulate_draft_fills_all_picks(service, mock_db):
             mock_result.scalars.return_value.first.return_value = next_pick
 
         elif "from player" in stmt_str:
-            if "is_rookie = :is_rookie_1" in stmt_str or "is_rookie = true" in stmt_str:
+            if "team_id is null" in stmt_str or "team_id = null" in stmt_str or "is_rookie" in stmt_str:
                 # Rookies
                 mock_result.scalars.return_value.all.return_value = rookies
             else:
@@ -355,7 +355,7 @@ def test_simulate_draft_respects_team_needs(service, mock_db):
             mock_result.scalars.return_value.first.return_value = next_pick
 
         elif "from player" in stmt_str:
-            if "is_rookie = :is_rookie_1" in stmt_str or "is_rookie = true" in stmt_str:
+            if "team_id is null" in stmt_str or "team_id = null" in stmt_str or "is_rookie" in stmt_str:
                 mock_result.scalars.return_value.all.return_value = rookies
             else:
                 # Team needs

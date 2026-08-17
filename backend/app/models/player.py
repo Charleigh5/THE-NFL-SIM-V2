@@ -622,6 +622,11 @@ class Player(Base):
     @contract_years.setter
     def contract_years(self, value):
         if self.contract: self.contract.contract_years = value
+    @contract_years.expression
+    def contract_years(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.contract_years).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     @hybrid_property
     def contract_salary(self) -> int:
@@ -629,6 +634,11 @@ class Player(Base):
     @contract_salary.setter
     def contract_salary(self, value):
         if self.contract: self.contract.contract_salary = value
+    @contract_salary.expression
+    def contract_salary(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.contract_salary).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     @hybrid_property
     def is_rookie(self) -> bool:
@@ -636,6 +646,11 @@ class Player(Base):
     @is_rookie.setter
     def is_rookie(self, value):
         if self.contract: self.contract.is_rookie = value
+    @is_rookie.expression
+    def is_rookie(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.is_rookie).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     @hybrid_property
     def is_retired(self) -> bool:
@@ -643,6 +658,11 @@ class Player(Base):
     @is_retired.setter
     def is_retired(self, value):
         if self.contract: self.contract.is_retired = value
+    @is_retired.expression
+    def is_retired(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.is_retired).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     @hybrid_property
     def retirement_year(self) -> Optional[int]:
@@ -650,6 +670,11 @@ class Player(Base):
     @retirement_year.setter
     def retirement_year(self, value):
         if self.contract: self.contract.retirement_year = value
+    @retirement_year.expression
+    def retirement_year(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.retirement_year).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     @hybrid_property
     def legacy_score(self) -> int:
@@ -657,6 +682,23 @@ class Player(Base):
     @legacy_score.setter
     def legacy_score(self, value):
         if self.contract: self.contract.legacy_score = value
+    @legacy_score.expression
+    def legacy_score(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.legacy_score).where(PlayerContract.player_id == cls.id).scalar_subquery()
+
+    @hybrid_property
+    def morale(self) -> int:
+        return self.contract.morale if self.contract else 50
+    @morale.setter
+    def morale(self, value):
+        if self.contract: self.contract.morale = value
+    @morale.expression
+    def morale(cls):
+        from app.models.player_contract import PlayerContract
+        from sqlalchemy import select
+        return select(PlayerContract.morale).where(PlayerContract.player_id == cls.id).scalar_subquery()
 
     # History
     season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player")

@@ -258,6 +258,20 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
     setEvaluation(null);
   };
 
+  const handleAddUserPlayer = (player: TradePlayer) => {
+    if (!offeredPlayers.find((p) => p.id === player.id)) {
+      setOfferedPlayers((prev) => [...prev, player]);
+      setEvaluation(null);
+    }
+  };
+
+  const handleAddPartnerPlayer = (player: TradePlayer) => {
+    if (!requestedPlayers.find((p) => p.id === player.id)) {
+      setRequestedPlayers((prev) => [...prev, player]);
+      setEvaluation(null);
+    }
+  };
+
   // Evaluate trade
   const handleEvaluateTrade = async () => {
     if (!selectedPartner) return;
@@ -275,7 +289,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
       setEvaluation(result);
     } catch (err) {
       console.error("Trade evaluation failed:", err);
-      setError("Failed to evaluate trade. Please try again.");
+      setError("Failed to evaluate trade");
     } finally {
       setIsEvaluating(false);
     }
@@ -357,7 +371,12 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
             <h3>Your Roster</h3>
             <div className="player-list">
               {availableUserPlayers.map((player) => (
-                <DraggableAsset key={player.id} id={`user-player-${player.id}`} player={player} />
+                <DraggableAsset
+                  key={player.id}
+                  id={`user-player-${player.id}`}
+                  player={player}
+                  onClick={() => handleAddUserPlayer(player)}
+                />
               ))}
             </div>
           </div>
@@ -393,6 +412,7 @@ export const TradeNegotiator: React.FC<TradeNegotiatorProps> = ({
                       key={player.id}
                       id={`partner-player-${player.id}`}
                       player={player}
+                      onClick={() => handleAddPartnerPlayer(player)}
                     />
                   ))
                 )}

@@ -83,13 +83,18 @@ class SalaryCapService:
         # In a real scenario, we'd look at specific draft picks owned
         projected_rookie_impact = 10000000 # Placeholder $10M rookie pool
 
+        total_cap = getattr(team, "salary_cap_total", None) or 255000000.0
+        available_cap = getattr(team, "salary_cap_space", None)
+        if available_cap is None:
+            available_cap = max(0.0, total_cap - used_cap)
+
         return {
             "team_id": team.id,
             "team_name": team.name,
-            "total_cap": team.salary_cap_total,
+            "total_cap": total_cap,
             "used_cap": used_cap,
-            "available_cap": team.salary_cap_space,
-            "cap_percentage": round((used_cap / team.salary_cap_total) * 100, 1) if team.salary_cap_total > 0 else 0,
+            "available_cap": available_cap,
+            "cap_percentage": round((used_cap / total_cap) * 100, 1) if total_cap > 0 else 0,
             "top_contracts": top_contracts_data,
             "position_breakdown": pos_breakdown,
             "league_avg_available": int(league_avg_space),

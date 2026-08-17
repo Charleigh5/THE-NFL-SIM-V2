@@ -31,9 +31,9 @@ class BlockingEngine:
 
         if roll > 80:
             return BlockingResult.WIN # Clean pocket
-        elif roll > 40:
+        elif roll > 35:
             return BlockingResult.STALEMATE # Push but no sack
-        elif roll > 10:
+        elif roll > 4:
             return BlockingResult.LOSS # Pressure/Sack
         else:
             return BlockingResult.PANCAKE # Rare for DL to pancake OL in pass, but possible (Bull Rush)

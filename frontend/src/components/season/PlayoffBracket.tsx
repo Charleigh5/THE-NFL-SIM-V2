@@ -88,7 +88,7 @@ export const PlayoffBracket: React.FC<PlayoffBracketProps> = ({ matchups }) => {
     );
   };
 
-  const sbMatchup = matchups.find((m) => m.round === PlayoffRound.SUPER_BOWL);
+  const sbMatchup = (matchups || []).find((m) => m.round === PlayoffRound.SUPER_BOWL);
 
   return (
     <div className="playoff-bracket" data-testid="playoff-bracket-container">

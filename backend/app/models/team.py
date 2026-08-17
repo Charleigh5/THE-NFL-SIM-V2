@@ -30,7 +30,8 @@ class Team(Base):
 
     # RPG/Franchise
     prestige = Column(Integer, default=50)
-    salary_cap_space = Column(Float, default=0.0)
+    salary_cap_total = Column(Float, default=255000000.0)
+    salary_cap_space = Column(Float, default=255000000.0)
     fan_support = Column(Integer, default=50)
 
     # Medical & Staff

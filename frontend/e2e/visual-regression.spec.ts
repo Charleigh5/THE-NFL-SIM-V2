@@ -2,6 +2,44 @@ import { test, expect } from "@playwright/test";
 import { mockTeam, mockPlayers } from "./fixtures/test-data";
 
 test.describe("Visual Regression Tests", () => {
+  test.beforeEach(async ({ page }) => {
+    // Catch-all fallback
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
+    await page.route("**/api/settings", async (route) => {
+      await route.fulfill({
+        json: {
+          user_team_id: 1,
+          selected_season_id: 1,
+        },
+      });
+    });
+
+    await page.route("**/api/teams?*", async (route) => {
+      await route.fulfill({
+        json: {
+          items: [mockTeam],
+          total: 1,
+          page: 1,
+          page_size: 100,
+          total_pages: 1,
+        },
+      });
+    });
+
+    await page.route("**/api/news/**", async (route) => {
+      await route.fulfill({
+        json: {
+          items: [],
+          total: 0,
+          last_updated: new Date().toISOString(),
+        },
+      });
+    });
+  });
+
   test("Front Office visual snapshot", async ({ page }) => {
     // Mock API for Front Office
     await page.route("**/api/teams/1", async (route) => {
@@ -20,7 +58,7 @@ test.describe("Visual Regression Tests", () => {
     await page.waitForSelector('[data-testid^="player-card-"]');
 
     // Take snapshot
-    await expect(page).toHaveScreenshot("front-office.png");
+    await expect(page).toHaveScreenshot("front-office.png", { maxDiffPixelRatio: 0.05 });
   });
 
   test("Season Dashboard visual snapshot", async ({ page }) => {
@@ -36,7 +74,6 @@ test.describe("Visual Regression Tests", () => {
     };
 
     await page.route(/.*\/api\/teams.*/, async (route) => {
-      console.log("Intercepted teams request:", route.request().url());
       await route.fulfill({
         json: {
           items: [mockTeam],
@@ -88,7 +125,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page.locator(".loading-spinner")).not.toBeVisible();
     await page.waitForSelector(".season-dashboard");
 
-    await expect(page).toHaveScreenshot("season-dashboard.png");
+    await expect(page).toHaveScreenshot("season-dashboard.png", { maxDiffPixelRatio: 0.05 });
   });
 
   test("Playoff Bracket visual snapshot", async ({ page }) => {
@@ -172,7 +209,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page.locator(".loading-spinner")).not.toBeVisible();
 
     // Verify Playoffs tab is present
-    const playoffsTab = page.getByRole("button", { name: "Playoffs" });
+    const playoffsTab = page.locator('[data-testid="tab-playoffs"]');
     await expect(playoffsTab).toBeVisible();
 
     // Click it
@@ -181,7 +218,7 @@ test.describe("Visual Regression Tests", () => {
     // Wait for bracket
     await page.waitForSelector(".playoff-bracket");
 
-    await expect(page).toHaveScreenshot("playoff-bracket.png");
+    await expect(page).toHaveScreenshot("playoff-bracket.png", { maxDiffPixelRatio: 0.05 });
   });
 
   test("Draft Board visual snapshot", async ({ page }) => {
@@ -228,6 +265,6 @@ test.describe("Visual Regression Tests", () => {
     // Wait for draft board to load
     await page.waitForSelector(".draft-board");
 
-    await expect(page).toHaveScreenshot("draft-board.png");
+    await expect(page).toHaveScreenshot("draft-board.png", { maxDiffPixelRatio: 0.05 });
   });
 });

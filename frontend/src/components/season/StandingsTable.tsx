@@ -100,7 +100,10 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 
     const groups: Record<string, TeamStanding[]> = {};
     sortedStandings.forEach((team) => {
-      const key = groupBy === "division" ? `${team.conference} ${team.division}` : team.conference;
+      const key =
+        groupBy === "division"
+          ? `${team.conference || "NFC"} ${team.division || "West"}`
+          : team.conference || "NFC";
       if (!groups[key]) groups[key] = [];
       groups[key].push(team);
     });
@@ -178,7 +181,8 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
             <React.Fragment key={team.team_id}>
               <tr
                 className={`${team.clinched_playoff ? "clinched-playoff" : ""} ${isPlayoffPosition ? "playoff-position" : ""} ${showSeparator ? "playoff-separator" : ""}`}
-                data-testid={`standings-row-${team.team_abbreviation}`}
+                data-testid={`standings-table-row-${team.team_name}`}
+                data-team-row={`standings-row-${team.team_abbreviation}`}
               >
                 <td
                   className="team-rank"
@@ -200,22 +204,26 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                 <td className="stat-cell">{team.ties}</td>
                 {!compact && (
                   <>
-                    <td className="stat-cell">{(team.win_percentage * 100).toFixed(1)}%</td>
-                    <td className="stat-cell">{team.points_for}</td>
-                    <td className="stat-cell">{team.points_against}</td>
+                    <td className="stat-cell">{((team.win_percentage ?? 0) * 100).toFixed(1)}%</td>
+                    <td className="stat-cell">{team.points_for ?? 0}</td>
+                    <td className="stat-cell">{team.points_against ?? 0}</td>
                     <td
                       className={`stat-cell ${
-                        team.point_differential > 0
+                        (team.point_differential ?? 0) > 0
                           ? "diff-positive"
-                          : team.point_differential < 0
+                          : (team.point_differential ?? 0) < 0
                             ? "diff-negative"
                             : ""
                       }`}
                     >
-                      {team.point_differential > 0 ? "+" : ""}
-                      {team.point_differential}
+                      {(team.point_differential ?? 0) > 0 ? "+" : ""}
+                      {team.point_differential ?? 0}
                     </td>
-                    <td className="stat-cell">{team.strength_of_schedule.toFixed(3)}</td>
+                    <td className="stat-cell">
+                      {team.strength_of_schedule != null
+                        ? team.strength_of_schedule.toFixed(3)
+                        : "0.000"}
+                    </td>
                     <td
                       className="stat-cell stat-power-rank"
                       title={`Elo: ${team.elo_rating?.toFixed(0) ?? 1500}`}
@@ -233,7 +241,10 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
   );
 
   return (
-    <div className="standings-container" data-testid="standings-table">
+    <div
+      className="standings-container"
+      data-testid={compact ? "standings-table-compact" : "standings-table"}
+    >
       {!compact && (
         <div className="standings-header">
           <div className="standings-filters">
@@ -295,6 +306,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
           {renderTable(teams)}
         </div>
       ))}
+      {Object.keys(groupedStandings).length === 0 && sortedStandings.length > 0 && (
+        <div className="division-group">{renderTable(sortedStandings)}</div>
+      )}
+      {sortedStandings.length === 0 && (
+        <div className="no-standings-data" data-testid="no-standings-data">
+          No standings available.
+        </div>
+      )}
     </div>
   );
 };

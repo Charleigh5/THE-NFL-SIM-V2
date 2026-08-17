@@ -32,59 +32,38 @@ def service(mock_db):
 
 def test_draft_logic_needs(service, mock_db):
     """Test that draft logic prioritizes team needs."""
-    
-    # Setup: Team 1 needs a QB (has 0), has plenty of RBs
-    # Available Rookies: 
-    # 1. RB (90 OVR) - Best Player Available
-    # 2. QB (85 OVR) - Position of Need
-    
     team_id = 1
     
     # Mock existing roster (No QBs, 5 RBs)
     existing_players = [
-        MockPlayer(10, "RB", 80, is_rookie=False, team_id=team_id) for _ in range(5)
+        MockPlayer(10 + i, "RB", 80, is_rookie=False, team_id=team_id) for i in range(5)
     ]
     
     # Mock Rookies
-    rookie_rb = MockPlayer(101, "RB", 90)
-    rookie_qb = MockPlayer(102, "QB", 85)
+    rookie_rb = MockPlayer(101, "RB", 90, is_rookie=True)
+    rookie_qb = MockPlayer(102, "QB", 85, is_rookie=True)
     rookies = [rookie_rb, rookie_qb]
     
     # Mock Draft Pick
     pick = MockPick(team_id, 1)
     
-    # Configure DB mocks
-    # Configure DB mocks
-    # 1. Picks query: query(DraftPick).filter().order_by().all()
-    # 2. Rookies query: query(Player).filter().order_by().all()
-    # 3. Team needs query: query(Player).filter().all()
-    
-    # We need to distinguish these. 
-    # A simple way is to mock the return values based on the model passed to query()
-    
-    def query_side_effect(model):
-        mock_query = MagicMock()
-        if model == DraftPick:
-            # Mock first() for get_current_pick
-            def first_side_effect():
-                return next((p for p in [pick] if p.player_id is None), None)
-            
-            mock_query.filter.return_value.order_by.return_value.first.side_effect = first_side_effect
-            mock_query.filter.return_value.order_by.return_value.all.return_value = [pick]
-        elif model == Player:
-            # Rookies query: filter().order_by().limit().all()
-            limit_mock = MagicMock()
-            limit_mock.all.return_value = rookies
-            mock_query.filter.return_value.order_by.return_value.limit.return_value = limit_mock
-            
-            # Also support non-limit call if any (though service uses limit)
-            mock_query.filter.return_value.order_by.return_value.all.return_value = rookies
-            
-            # Team Needs query: filter().all()
-            mock_query.filter.return_value.all.return_value = existing_players
-        return mock_query
+    def execute_side_effect(stmt):
+        mock_result = MagicMock()
+        stmt_str = str(stmt).lower()
+        
+        if "from draft_pick" in stmt_str:
+            next_pick = pick if pick.player_id is None else None
+            mock_result.scalars.return_value.first.return_value = next_pick
+        elif "from player" in stmt_str:
+            if "team_id is null" in stmt_str:
+                mock_result.scalars.return_value.all.return_value = [r for r in rookies if r.is_rookie]
+            else:
+                mock_result.scalars.return_value.all.return_value = existing_players
+        return mock_result
 
-    mock_db.query.side_effect = query_side_effect
+    mock_db.execute.side_effect = execute_side_effect
+    mock_db.get.return_value = None
+    mock_db.commit.return_value = None
     
     # Run simulation
     service.simulate_draft(season_id=1)
@@ -95,47 +74,37 @@ def test_draft_logic_needs(service, mock_db):
     assert rookie_qb.team_id == team_id
     assert not rookie_qb.is_rookie
 
+
 def test_draft_logic_bpa(service, mock_db):
     """Test that draft logic takes BPA if no immediate need in top prospects."""
-    
-    # Setup: Team 1 needs a Kicker (has 0)
-    # Available Rookies: 
-    # 1. QB (99 OVR) - Best Player Available
-    # 2. K (60 OVR) - Position of Need, but low value
-    
     team_id = 1
     
-    # Mock existing roster (No Kickers)
     existing_players = []
     
-    # Mock Rookies
-    rookie_qb = MockPlayer(201, "QB", 99)
-    rookie_k = MockPlayer(202, "K", 60)
-    # Kicker is far down the list (index > 10 in real scenario, but here we test the logic branch)
-    # To force BPA, we make the need-player not appear in the "top X" check loop
-    # In our implementation, we check top 10. So let's put Kicker at index 11.
-    
-    rookies = [rookie_qb] + [MockPlayer(300+i, "WR", 70) for i in range(10)] + [rookie_k]
+    # Mock Rookies: QB (99) top, K (60) way down at index 11
+    rookie_qb = MockPlayer(201, "QB", 99, is_rookie=True)
+    rookie_k = MockPlayer(202, "K", 60, is_rookie=True)
+    rookies = [rookie_qb] + [MockPlayer(300 + i, "WR", 70, is_rookie=True) for i in range(10)] + [rookie_k]
     
     pick = MockPick(team_id, 1)
     
-    def query_side_effect(model):
-        mock_query = MagicMock()
-        if model == DraftPick:
-            def first_side_effect():
-                return next((p for p in [pick] if p.player_id is None), None)
-            mock_query.filter.return_value.order_by.return_value.first.side_effect = first_side_effect
-            mock_query.filter.return_value.order_by.return_value.all.return_value = [pick]
-        elif model == Player:
-            limit_mock = MagicMock()
-            limit_mock.all.return_value = rookies
-            mock_query.filter.return_value.order_by.return_value.limit.return_value = limit_mock
-            mock_query.filter.return_value.order_by.return_value.all.return_value = rookies
-            
-            mock_query.filter.return_value.all.return_value = existing_players
-        return mock_query
+    def execute_side_effect(stmt):
+        mock_result = MagicMock()
+        stmt_str = str(stmt).lower()
+        
+        if "from draft_pick" in stmt_str:
+            next_pick = pick if pick.player_id is None else None
+            mock_result.scalars.return_value.first.return_value = next_pick
+        elif "from player" in stmt_str:
+            if "team_id is null" in stmt_str:
+                mock_result.scalars.return_value.all.return_value = [r for r in rookies if r.is_rookie]
+            else:
+                mock_result.scalars.return_value.all.return_value = existing_players
+        return mock_result
 
-    mock_db.query.side_effect = query_side_effect
+    mock_db.execute.side_effect = execute_side_effect
+    mock_db.get.return_value = None
+    mock_db.commit.return_value = None
     
     service.simulate_draft(season_id=1)
     

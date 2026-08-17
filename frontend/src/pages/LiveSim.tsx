@@ -13,9 +13,10 @@ import { GameStats } from "../components/game/GameStats";
 import { CoachingWidget } from "../components/game/CoachingWidget";
 import { MomentumIndicator } from "../components/game/MomentumIndicator";
 import { CrowdNoiseMeter } from "../components/game/CrowdNoiseMeter";
-import { Play, Pause, FastForward, Activity, BarChart2 } from "lucide-react";
+import { GridironVisualizer } from "../components/GridironVisualizer";
+import { Play, Pause, FastForward, Activity, BarChart2, Layers } from "lucide-react";
 
-type ViewMode = "field" | "stats";
+type ViewMode = "field" | "stats" | "gridiron";
 
 export const LiveSim = () => {
   const { isLive, setLiveStatus, engineData, gameState } = useSimulationStore();
@@ -161,6 +162,17 @@ export const LiveSim = () => {
               Field View
             </button>
             <button
+              onClick={() => setViewMode("gridiron")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "gridiron"
+                  ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              Turf & Cognition
+            </button>
+            <button
               onClick={() => setViewMode("stats")}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 viewMode === "stats"
@@ -174,7 +186,11 @@ export const LiveSim = () => {
           </div>
 
           <div className="flex-1 glass-panel rounded-xl border border-white/5 relative overflow-hidden p-1">
-            {viewMode === "field" ? (
+            {viewMode === "gridiron" ? (
+              <div className="p-2">
+                <GridironVisualizer />
+              </div>
+            ) : viewMode === "field" ? (
               <>
                 <PhysicsDebugOverlay play={mockTrajectory} canvasRef={canvasRef} />
                 <FieldCanvas

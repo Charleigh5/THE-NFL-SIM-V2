@@ -16,10 +16,12 @@ const MOCK_SEASON = {
 const MOCK_PROSPECTS = [
   {
     id: 1,
+    name: "Caleb Williams",
     first_name: "Caleb",
     last_name: "Williams",
     position: "QB",
     college: "USC",
+    overall_rating: 95,
     overall_grade: 95,
     combine_grade: 92,
     age: 22,
@@ -27,10 +29,12 @@ const MOCK_PROSPECTS = [
   },
   {
     id: 2,
+    name: "Marvin Harrison",
     first_name: "Marvin",
     last_name: "Harrison",
     position: "WR",
     college: "Ohio State",
+    overall_rating: 94,
     overall_grade: 94,
     combine_grade: 90,
     age: 21,
@@ -38,10 +42,12 @@ const MOCK_PROSPECTS = [
   },
   {
     id: 3,
+    name: "Drake Maye",
     first_name: "Drake",
     last_name: "Maye",
     position: "QB",
     college: "UNC",
+    overall_rating: 88,
     overall_grade: 88,
     combine_grade: 85,
     age: 21,
@@ -57,25 +63,43 @@ const MOCK_DRAFT_ORDER = [
 
 test.describe("Draft Room E2E", () => {
   test.beforeEach(async ({ page }) => {
+    // Catch-all defined first so specific routes registered below override it
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
     // Mock User Settings
-    await page.route("**/api/settings", async (route) => {
+    await page.route("**/api/settings*", async (route) => {
       await route.fulfill({ json: { user_team_id: USER_TEAM_ID } });
     });
 
     // Mock Current Season in Draft Phase
-    await page.route("**/api/seasons/current", async (route) => {
+    await page.route("**/api/season*/current*", async (route) => {
       await route.fulfill({ json: MOCK_SEASON });
     });
-
-    // Mock Team
-    await page.route(`**/api/teams/${USER_TEAM_ID}`, async (route) => {
+    await page.route("**/api/season/summary*", async (route) => {
       await route.fulfill({
-        json: {
-          id: USER_TEAM_ID,
-          city: "Arizona",
-          name: "Cardinals",
-          abbreviation: "ARI",
-        },
+        json: { season: MOCK_SEASON, completion_percentage: 100, teams: [] },
+      });
+    });
+    await page.route("**/api/season/*/pick*", async (route) => {
+      await route.fulfill({
+        json: { id: 1, team_id: USER_TEAM_ID, round: 1, pick_number: 1 },
+      });
+    });
+    await page.route("**/api/season/*/needs*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
+    await page.route("**/api/teams*", async (route) => {
+      await route.fulfill({
+        json: [
+          {
+            id: USER_TEAM_ID,
+            city: "Arizona",
+            name: "Cardinals",
+            abbreviation: "ARI",
+          },
+        ],
       });
     });
 
@@ -90,7 +114,7 @@ test.describe("Draft Room E2E", () => {
     });
 
     // Mock AI Recommendation
-    await page.route("**/api/draft/suggest-pick", async (route) => {
+    await page.route("**/api/draft/suggest-pick*", async (route) => {
       await route.fulfill({
         json: {
           recommended_player_id: 1,
@@ -104,7 +128,7 @@ test.describe("Draft Room E2E", () => {
     });
 
     // Mock Make Pick
-    await page.route("**/api/draft/pick", async (route) => {
+    await page.route("**/api/draft/pick*", async (route) => {
       await route.fulfill({
         json: {
           success: true,
@@ -113,28 +137,22 @@ test.describe("Draft Room E2E", () => {
         },
       });
     });
-
-    // Catch-all for unmocked API routes
-    await page.route("**/api/**", async (route) => {
-      console.log(`[UNMOCKED] ${route.request().method()} ${route.request().url()}`);
-      await route.fulfill({ json: {} });
-    });
   });
 
   test("should display draft board with prospects", async ({ page }) => {
     await page.goto("/draft");
 
     // Wait for prospects to load
-    await expect(page.locator("text=Caleb Williams")).toBeVisible({ timeout: 10000 });
-    await expect(page.locator("text=Marvin Harrison")).toBeVisible();
-    await expect(page.locator("text=Drake Maye")).toBeVisible();
+    await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Marvin Harrison").first()).toBeVisible();
+    await expect(page.getByText("Drake Maye").first()).toBeVisible();
   });
 
   test("should show AI recommendation on request", async ({ page }) => {
     await page.goto("/draft");
 
     // Wait for page load
-    await expect(page.locator("text=Caleb Williams")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
 
     // Click AI Suggest button (if visible)
     const aiButton = page.locator(
@@ -151,16 +169,20 @@ test.describe("Draft Room E2E", () => {
     await page.goto("/draft");
 
     // Wait for page load
-    await expect(page.locator("text=Caleb Williams")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
 
     // Look for position filter
     const qbFilter = page.locator('[data-testid="filter-QB"], button:has-text("QB")');
-    if (await qbFilter.isVisible()) {
+    const selectFilter = page.getByLabel("Filter by Position");
+    if (await selectFilter.isVisible()) {
+      await selectFilter.selectOption("QB");
+      await expect(page.getByText("Caleb Williams").first()).toBeVisible();
+      await expect(page.getByText("Drake Maye").first()).toBeVisible();
+      await expect(page.getByText("Marvin Harrison")).not.toBeVisible();
+    } else if (await qbFilter.isVisible()) {
       await qbFilter.click();
-      // Should show only QBs
-      await expect(page.locator("text=Caleb Williams")).toBeVisible();
-      await expect(page.locator("text=Drake Maye")).toBeVisible();
-      // WR should be filtered out (might have count change or hidden)
+      await expect(page.getByText("Caleb Williams").first()).toBeVisible();
+      await expect(page.getByText("Drake Maye").first()).toBeVisible();
     }
   });
 
@@ -168,10 +190,10 @@ test.describe("Draft Room E2E", () => {
     await page.goto("/draft");
 
     // Wait for prospects to load
-    await expect(page.locator("text=Caleb Williams")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
 
     // Click on a prospect row/card
-    await page.locator("text=Caleb Williams").click();
+    await page.getByText("Caleb Williams").first().click();
 
     // Verify selection state (could be highlight, modal, or side panel)
     // Look for draft action button becoming available
@@ -185,7 +207,7 @@ test.describe("Draft Room E2E", () => {
     await page.goto("/draft");
 
     // Wait for initial load
-    await expect(page.locator("text=Caleb Williams")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
 
     // Check for tab navigation (Board / My Picks / History)
     const myPicksTab = page.locator('button:has-text("My Picks"), [role="tab"]:has-text("Picks")');

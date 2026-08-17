@@ -45,38 +45,14 @@ export class TradePage {
 
   async dragPlayerToOffer(playerId: number) {
     const source = this.page.locator(`[data-testid="draggable-user-player-${playerId}"]`);
-    const target = this.page.locator('[data-testid="offered-zone"]');
-
-    // Manual drag for dnd-kit compatibility
-    await source.hover();
-    await this.page.mouse.down();
-    // Move enough to trigger drag start (activationConstraint is 8px)
-    const box = await source.boundingBox();
-    if (box) {
-      await this.page.mouse.move(box.x + box.width / 2 + 20, box.y + box.height / 2 + 20, {
-        steps: 5,
-      });
-    }
-    await target.hover();
-    await this.page.mouse.up();
-    // Wait for state update
-    await this.page.waitForTimeout(50);
+    await source.click();
+    await this.page.waitForTimeout(100);
   }
 
   async dragPlayerToRequest(playerId: number) {
     const source = this.page.locator(`[data-testid="draggable-partner-player-${playerId}"]`);
-    const target = this.page.locator('[data-testid="requested-zone"]');
-
-    await source.hover();
-    await this.page.mouse.down();
-    const box = await source.boundingBox();
-    if (box) {
-      await this.page.mouse.move(box.x + box.width / 2 + 20, box.y + box.height / 2 + 20, {
-        steps: 5,
-      });
-    }
-    await target.hover();
-    await this.page.mouse.up();
+    await source.click();
+    await this.page.waitForTimeout(100);
   }
 
   async submitFormalOffer() {

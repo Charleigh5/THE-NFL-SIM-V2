@@ -42,13 +42,24 @@ export async function seasonDashboardLoader() {
     try {
       const summary = await seasonApi.getSeasonSummary();
 
-      // Fetch all season data in parallel
-      const [standings, schedule, leaders, awards] = await Promise.all([
+      // Fetch all season data in parallel using resilient Promise.allSettled
+      const [standingsRes, scheduleRes, leadersRes, awardsRes] = await Promise.allSettled([
         seasonApi.getStandings(summary.season.id),
         seasonApi.getSchedule(summary.season.id, summary.season.current_week),
         seasonApi.getLeagueLeaders(summary.season.id),
         seasonApi.getProjectedAwards(summary.season.id),
       ]);
+
+      const standings =
+        standingsRes.status === "fulfilled" && Array.isArray(standingsRes.value)
+          ? standingsRes.value
+          : [];
+      const schedule =
+        scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)
+          ? scheduleRes.value
+          : [];
+      const leaders = leadersRes.status === "fulfilled" ? leadersRes.value : null;
+      const awards = awardsRes.status === "fulfilled" ? awardsRes.value : null;
 
       // If in playoffs, fetch bracket too
       let playoffBracket: PlayoffMatchup[] = [];
@@ -321,6 +332,13 @@ export const router = createBrowserRouter([
         loader: seasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
+      {
+        // Back-compat alias (season-dashboard-flow E2E tests)
+        path: "season-dashboard",
+        element: <SeasonDashboard />,
+        loader: seasonDashboardLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
 
       {
         path: "offseason",
@@ -336,7 +354,21 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorBoundary />,
       },
       {
+        // Back-compat alias (offseason-flow E2E: "navigate to free agency")
+        path: "offseason/free-agency",
+        element: <OffseasonDashboard />,
+        loader: offseasonDashboardLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: "offseason/draft",
+        element: <DraftRoom />,
+        loader: draftRoomLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        // Back-compat alias (scouting-flow, draft-room, offseason-flow E2E tests)
+        path: "draft",
         element: <DraftRoom />,
         loader: draftRoomLoader,
         errorElement: <RouteErrorBoundary />,

@@ -80,28 +80,49 @@ const mockTeams = [
 
 test.describe("News Feed Widget", () => {
   test.beforeEach(async ({ page }) => {
+    // Catch-all route first
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
+    await page.route("**/api/settings*", async (route) => {
+      await route.fulfill({ json: { user_team_id: 1 } });
+    });
+
     // Mock API endpoints
-    await page.route("**/api/teams", async (route) => {
+    await page.route("**/api/teams*", async (route) => {
       await route.fulfill({ json: mockTeams });
     });
 
-    await page.route("**/api/season/summary", async (route) => {
+    await page.route("**/api/season/summary*", async (route) => {
       await route.fulfill({ json: mockSeasonSummary });
     });
 
-    await page.route("**/api/season/*/standings", async (route) => {
+    await page.route("**/api/season*/current*", async (route) => {
+      await route.fulfill({ json: mockSeason });
+    });
+
+    await page.route("**/api/season/*/standings*", async (route) => {
       await route.fulfill({ json: [] });
     });
 
-    await page.route("**/api/season/*/schedule/*", async (route) => {
+    await page.route("**/api/standings*", async (route) => {
       await route.fulfill({ json: [] });
     });
 
-    await page.route("**/api/season/*/leaders", async (route) => {
+    await page.route("**/api/season/*/schedule*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
+
+    await page.route("**/api/schedule*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
+
+    await page.route("**/api/season/*/leaders*", async (route) => {
       await route.fulfill({ json: { passing: [], rushing: [], receiving: [] } });
     });
 
-    await page.route("**/api/season/*/awards/projected", async (route) => {
+    await page.route("**/api/season/*/awards*", async (route) => {
       await route.fulfill({ json: { mvp: [], opoy: [], dpoy: [], oroy: [], droy: [] } });
     });
 
@@ -132,16 +153,13 @@ test.describe("News Feed Widget", () => {
     await page.goto("/season");
 
     // Wait for dashboard to load
-    await page.waitForSelector('[data-testid="season-dashboard-page"]', { timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
     // The overview tab should be active by default
     await expect(page.locator('[data-testid="tab-overview"]')).toHaveClass(/active/);
 
-    // News section selector (used in future assertions if needed)
-    // const newsFeedSection = page.locator('.news-feed, [class*="NewsFeed"], .league-wire');
-
     // News content should be visible
-    await expect(page.locator("text=League Wire, text=News, text=Headlines").first()).toBeVisible({
+    await expect(page.getByText(/League Wire|News|Headlines|Cardinals/i).first()).toBeVisible({
       timeout: 5000,
     });
   });
@@ -149,10 +167,10 @@ test.describe("News Feed Widget", () => {
   test("should display breaking news with special styling", async ({ page }) => {
     await page.goto("/season");
 
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
     // Look for breaking news badge or indicator
-    const breakingIndicator = page.locator('.breaking-badge, .breaking, [data-breaking="true"]');
+    const breakingIndicator = page.locator('.breaking-badge, .breaking, [data-breaking="true"], [class*="breaking"]');
 
     // At least one breaking news item should exist (importance_score >= 0.7)
     if ((await breakingIndicator.count()) > 0) {
@@ -163,26 +181,20 @@ test.describe("News Feed Widget", () => {
   test("should display news headlines correctly", async ({ page }) => {
     await page.goto("/season");
 
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
     // Check for specific headlines from mock data
-    const cardinals = page.locator("text=Cardinals");
-    const cowboys = page.locator("text=Cowboys");
-
-    // At least one team name should appear in news
-    const cardinalsVisible = (await cardinals.count()) > 0;
-    const cowboysVisible = (await cowboys.count()) > 0;
-
-    expect(cardinalsVisible || cowboysVisible).toBeTruthy();
+    const cardinals = page.getByText(/Cardinals|Dallas|Cowboys/i).first();
+    await expect(cardinals).toBeVisible({ timeout: 5000 });
   });
 
   test("should categorize news items visually", async ({ page }) => {
     await page.goto("/season");
 
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
     // Look for category indicators
-    const categoryIndicators = page.locator("[data-category], .news-category, .category-indicator");
+    const categoryIndicators = page.locator("[data-category], .news-category, .category-indicator, [class*='category'], [class*='badge']");
 
     if ((await categoryIndicators.count()) > 0) {
       // Categories should be displayed
@@ -206,7 +218,7 @@ test.describe("News Feed Widget", () => {
 
     await page.goto("/season");
 
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
     // Should show empty state or hint message
     const emptyState = page.locator("text=No news, text=Play some games, .empty");
@@ -224,74 +236,100 @@ test.describe("News Feed Widget", () => {
 
     await page.goto("/season");
 
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
-
     // Page should still load, potentially showing retry button or fallback
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible();
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
   });
 });
 
 test.describe("News Categories", () => {
   test.beforeEach(async ({ page }) => {
-    await page.route("**/api/teams", async (route) => {
+    // Catch-all route first
+    await page.route("**/api/**", async (route) => {
+      await route.fulfill({ json: {} });
+    });
+
+    await page.route("**/api/settings*", async (route) => {
+      await route.fulfill({ json: { user_team_id: 1 } });
+    });
+
+    await page.route("**/api/teams*", async (route) => {
       await route.fulfill({ json: mockTeams });
     });
 
-    await page.route("**/api/season/summary", async (route) => {
+    await page.route("**/api/season/summary*", async (route) => {
       await route.fulfill({ json: mockSeasonSummary });
     });
 
-    await page.route("**/api/season/*/standings", async (route) => {
+    await page.route("**/api/season*/current*", async (route) => {
+      await route.fulfill({ json: mockSeason });
+    });
+
+    await page.route("**/api/season/*/standings*", async (route) => {
       await route.fulfill({ json: [] });
     });
 
-    await page.route("**/api/season/*/schedule/*", async (route) => {
+    await page.route("**/api/standings*", async (route) => {
       await route.fulfill({ json: [] });
     });
 
-    await page.route("**/api/season/*/leaders", async (route) => {
+    await page.route("**/api/season/*/schedule*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
+
+    await page.route("**/api/schedule*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
+
+    await page.route("**/api/season/*/leaders*", async (route) => {
       await route.fulfill({ json: { passing: [], rushing: [], receiving: [] } });
     });
 
-    await page.route("**/api/season/*/awards/projected", async (route) => {
+    await page.route("**/api/season/*/awards*", async (route) => {
       await route.fulfill({ json: { mvp: [], opoy: [], dpoy: [], oroy: [], droy: [] } });
     });
 
     await page.route("**/api/news/living/feed*", async (route) => {
       await route.fulfill({ json: mockLivingNews });
     });
+
+    await page.route("**/api/news/league*", async (route) => {
+      await route.fulfill({
+        json: {
+          items: mockLivingNews.items.map((item) => ({
+            headline: item.headline,
+            source: "NFL Network",
+            date: item.created_at,
+            category: item.category,
+            is_breaking: item.importance_score >= 0.7,
+          })),
+          total: mockLivingNews.items.length,
+          last_updated: new Date().toISOString(),
+        },
+      });
+    });
   });
 
   test("should display game result news", async ({ page }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
-    // Mock data includes game_result category
-    const gameNews = page.locator("text=Victory, text=touchdown, text=win");
-    if ((await gameNews.count()) > 0) {
-      await expect(gameNews.first()).toBeVisible();
-    }
+    const gameNews = page.getByText(/Victory|touchdown|win|Cardinals|Cowboys/i).first();
+    await expect(gameNews).toBeVisible({ timeout: 5000 });
   });
 
   test("should display trade news", async ({ page }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
-    // Mock data includes trade category
-    const tradeNews = page.locator("text=Trade, text=acquired, text=deal");
-    if ((await tradeNews.count()) > 0) {
-      await expect(tradeNews.first()).toBeVisible();
-    }
+    const tradeNews = page.getByText(/Trade|acquired|deal|49ers|Blockbuster/i).first();
+    await expect(tradeNews).toBeVisible({ timeout: 5000 });
   });
 
   test("should display injury news", async ({ page }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="season-dashboard-page"]');
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
 
-    // Mock data includes injury category
-    const injuryNews = page.locator("text=Questionable, text=injury, text=injured");
-    if ((await injuryNews.count()) > 0) {
-      await expect(injuryNews.first()).toBeVisible();
-    }
+    const injuryNews = page.getByText(/Questionable|injury|injured|Lamb/i).first();
+    await expect(injuryNews).toBeVisible({ timeout: 5000 });
   });
 });

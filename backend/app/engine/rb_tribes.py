@@ -36,29 +36,29 @@ class TribeProfile:
 # Tribe-specific variance profiles
 TRIBE_PROFILES: Dict[RBTribe, TribeProfile] = {
     RBTribe.FEAST_OR_FAMINE: TribeProfile(
-        base_yards=3.0,
-        std_dev=8.0,  # High variance
-        breakaway_multiplier=2.0,  # Double chance for big plays
-        fumble_multiplier=1.2,  # Slightly higher fumble risk
+        base_yards=4.1,
+        std_dev=6.0,  # High variance
+        breakaway_multiplier=1.8,  # Double chance for big plays
+        fumble_multiplier=1.1,  # Slightly higher fumble risk
         description="Explosive playmaker with boom-or-bust tendencies."
     ),
     RBTribe.BLUE_COLLAR: TribeProfile(
-        base_yards=4.0,
-        std_dev=1.5,  # Low variance, consistent
-        breakaway_multiplier=0.5,  # Rare breakaways
+        base_yards=4.3,
+        std_dev=2.0,  # Low variance, consistent
+        breakaway_multiplier=0.6,  # Rare breakaways
         fumble_multiplier=0.8,  # Reliable ball carrier
         description="Consistent workhorse who moves the chains."
     ),
     RBTribe.CAUTIOUS_CARRIER: TribeProfile(
-        base_yards=2.5,
-        std_dev=2.0,  # Moderate variance
-        breakaway_multiplier=0.3,  # Very few breakaways
+        base_yards=3.6,
+        std_dev=2.5,  # Moderate variance
+        breakaway_multiplier=0.4,  # Very few breakaways
         fumble_multiplier=0.6,  # Protects the ball
         description="Veteran who prioritizes ball security over explosiveness."
     ),
     RBTribe.STANDARD: TribeProfile(
-        base_yards=3.5,
-        std_dev=3.0,  # Default variance
+        base_yards=4.2,
+        std_dev=3.2,  # Default variance
         breakaway_multiplier=1.0,
         fumble_multiplier=1.0,
         description="Standard running back profile."

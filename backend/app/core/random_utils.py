@@ -41,6 +41,14 @@ class DeterministicRNG:
         """Return the next random floating point number in the range [0.0, 1.0)."""
         return self._rng.random()
 
+    def next_float(self) -> float:
+        """Alias for random() for CSPRNG compatibility."""
+        return self._rng.random()
+
+    def random_float(self) -> float:
+        """Alias for random()."""
+        return self._rng.random()
+
     def randint(self, a: int, b: int) -> int:
         """Return random integer in range [a, b], including both end points."""
         return self._rng.randint(a, b)

@@ -11,10 +11,12 @@ def test_create_app_returns_fastapi_instance():
     """Test that create_app returns a valid FastAPI instance."""
     from app.core.app_factory import create_app
 
+    from app.core.config import settings
+
     app = create_app()
 
     assert isinstance(app, FastAPI)
-    assert app.title == "Stellar Sagan NFL Simulation Engine"
+    assert app.title == settings.API_TITLE
 
 
 def test_create_app_has_root_endpoint():

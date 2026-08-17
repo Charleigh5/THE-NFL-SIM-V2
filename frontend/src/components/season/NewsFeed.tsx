@@ -106,18 +106,24 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
         ? `/api/news/team/${encodeURIComponent(teamFilter)}?limit=${maxItems}`
         : `/api/news/league?limit=${maxItems}`;
 
-      const response = await fetch(`http://localhost:8000${endpoint}`);
+      const response = await fetch(endpoint);
 
       if (!response.ok) {
         throw new Error("Failed to fetch news");
       }
 
       const data: NewsResponse = await response.json();
-      setNews(data.items);
-      setLastUpdated(data.last_updated);
+      const newsItems = Array.isArray(data?.items)
+        ? data.items
+        : Array.isArray(data)
+        ? data
+        : [];
+      setNews(newsItems);
+      setLastUpdated(data?.last_updated || new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load news");
       console.error("News fetch error:", err);
+      setNews([]);
     } finally {
       setLoading(false);
     }

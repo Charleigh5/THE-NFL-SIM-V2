@@ -82,10 +82,10 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelect(drill)}
       className={`
-        relative w-64 h-80 rounded-xl cursor-pointer
+        drill-card relative w-64 h-80 rounded-xl cursor-pointer
         bg-opacity-10 backdrop-blur-md border border-white/10
         shadow-2xl transition-colors duration-300
-        ${isSelected ? "bg-blue-900/30 border-blue-500/50" : "bg-gray-900/40"}
+        ${isSelected ? "bg-blue-900/30 border-blue-500/50 border-cyan-400" : "bg-gray-900/40"}
         ${isRecommended && !isSelected ? "bg-yellow-900/10 border-yellow-500/30" : ""}
       `}
     >

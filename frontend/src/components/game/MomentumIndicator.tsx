@@ -74,8 +74,9 @@ export const MomentumIndicator = ({
         </span>
       )}
       <div
+        data-testid="momentum-indicator"
         className={`
-          flex items-center gap-2 rounded-full border transition-all duration-500
+          momentum-indicator flex items-center gap-2 rounded-full border transition-all duration-500
           ${size === "sm" ? "px-2 py-0.5" : "px-3 py-1.5"}
           ${config.bg} ${config.border} ${config.shadow}
         `}

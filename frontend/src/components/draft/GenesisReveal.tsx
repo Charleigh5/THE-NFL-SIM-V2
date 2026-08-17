@@ -21,24 +21,35 @@ export const GenesisReveal = ({
 
   const handleReveal = () => {
     setDecrypting(true);
-    setTimeout(() => {
-      setDecrypting(false);
-      onReveal();
-    }, 1500); // 1.5s decryption animation
+    setTimeout(async () => {
+      try {
+        await onReveal();
+      } finally {
+        setDecrypting(false);
+      }
+    }, 500); // 500ms decryption animation
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-zinc-900 border border-white/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      style={{ zIndex: 99999 }}
+      data-testid="genesis-modal"
+    >
+      <div
+        className="bg-zinc-900 border border-white/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative"
+        style={{ zIndex: 100000 }}
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 p-6 border-b border-white/10 text-center relative">
           <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 tracking-tight">
-            GENESIS <span className="text-white font-light">BIOMETRICS</span>
+            GENESIS <span className="text-white font-light">INSIGHTS</span>
           </h2>
           <p className="text-gray-400 text-sm mt-1">{prospectName}</p>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-white"
+            data-testid="close-genesis-modal"
+            className="absolute top-4 right-4 text-gray-500 hover:text-white p-2 z-20 cursor-pointer"
           >
             ✕
           </button>
@@ -64,7 +75,7 @@ export const GenesisReveal = ({
                 onClick={handleReveal}
                 className="mt-4 px-10 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] flex items-center gap-2"
               >
-                <Activity className="w-4 h-4" /> REVEAL DATA (50 SC)
+                <Activity className="w-4 h-4" /> DECRYPT DATA
               </button>
             </>
           )}
@@ -77,7 +88,7 @@ export const GenesisReveal = ({
               </div>
               <div className="space-y-1">
                 <p className="text-cyan-400 font-mono text-sm animate-pulse tracking-widest">
-                  DECRYPTING...
+                  DECRYPTING SECURE FILES...
                 </p>
                 <p className="text-gray-500 text-[10px] font-mono">ACCESSING MEDICAL DB CL-4</p>
               </div>
@@ -203,6 +214,16 @@ export const GenesisReveal = ({
                   </p>
                 )}
               </div>
+
+              {/* Action Buttons */}
+              <button
+                type="button"
+                onClick={onClose}
+                data-testid="close-modal-bottom"
+                className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold tracking-wider uppercase transition-colors"
+              >
+                Close Insights
+              </button>
             </div>
           )}
         </div>

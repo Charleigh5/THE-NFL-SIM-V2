@@ -26,12 +26,12 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
   }
 
   const getTeamLogo = (teamAbbr: string) => {
-    const team = teams.find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
+    const team = (teams || []).find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
     return team?.logo_url;
   };
 
   const getTeamColor = (teamAbbr: string) => {
-    const team = teams.find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
+    const team = (teams || []).find((t) => t.abbreviation === teamAbbr || t.name === teamAbbr);
     return team?.primary_color || "#2a2a2a";
   };
 

@@ -53,7 +53,16 @@ export const seasonApi = {
   getSchedule: async (seasonId: number, week?: number): Promise<Game[]> => {
     const params = week ? `?week=${week}` : "";
     const response = await api.get(`/api/season/${seasonId}/schedule${params}`);
-    return response.data;
+    const data = response.data;
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (Array.isArray(d.games)) return d.games as Game[];
+      if (Array.isArray(d.schedule)) return d.schedule as Game[];
+      if (Array.isArray(d.items)) return d.items as Game[];
+      if (Array.isArray(d.data)) return d.data as Game[];
+    }
+    return [];
   },
 
   // Get standings (optionally filtered by conference/division)
@@ -67,7 +76,15 @@ export const seasonApi = {
     if (division) params.append("division", division);
     const queryString = params.toString() ? `?${params.toString()}` : "";
     const response = await api.get(`/api/season/${seasonId}/standings${queryString}`);
-    return response.data;
+    const data = response.data;
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (Array.isArray(d.standings)) return d.standings as TeamStanding[];
+      if (Array.isArray(d.items)) return d.items as TeamStanding[];
+      if (Array.isArray(d.data)) return d.data as TeamStanding[];
+    }
+    return [];
   },
 
   // Simulate an entire week

@@ -5,10 +5,10 @@ import type {
   DrillListResponse,
 } from "../types/training";
 import { DrillCategory, SeasonPhase } from "../types/training";
-import axios from "axios";
+import { api } from "./api";
 
 // Base API URL
-const API_URL = "http://localhost:8000/api/training";
+const API_URL = "/api/training";
 
 class TrainingApiService {
   /**
@@ -19,7 +19,7 @@ class TrainingApiService {
     season?: SeasonPhase;
     category?: DrillCategory;
   }): Promise<DrillListResponse> {
-    const response = await axios.get(`${API_URL}/drills`, { params });
+    const response = await api.get<DrillListResponse>(`${API_URL}/drills`, { params });
     return response.data;
   }
 
@@ -33,7 +33,7 @@ class TrainingApiService {
     seasonPhase: string = "regular",
     playerAge: number = 25
   ): Promise<TrainingResult> {
-    const response = await axios.post(`${API_URL}/execute`, {
+    const response = await api.post<TrainingResult>(`${API_URL}/execute`, {
       player_id: playerId,
       drill_name: drillName,
       coaching_style: coachingStyle,
@@ -51,7 +51,7 @@ class TrainingApiService {
     seasonPhase: string = "regular",
     coachingStyle: string = "smart"
   ): Promise<WeeklySchedule> {
-    const response = await axios.get(`${API_URL}/schedule`, {
+    const response = await api.get<WeeklySchedule>(`${API_URL}/schedule`, {
       params: {
         position,
         season_phase: seasonPhase,
@@ -65,7 +65,7 @@ class TrainingApiService {
    * Fetch available coaching styles.
    */
   async getCoachingStyles(): Promise<CoachingStyle[]> {
-    const response = await axios.get(`${API_URL}/styles`);
+    const response = await api.get<CoachingStyle[]>(`${API_URL}/styles`);
     return response.data;
   }
 }

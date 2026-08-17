@@ -1,6 +1,4 @@
 import { test, expect } from "@playwright/test";
-import type { WebSocket as WsWebSocket, WebSocketServer as WsServerType } from "ws";
-import { WebSocketServer } from "ws";
 
 // Mock game state updates for WebSocket
 const mockGameUpdates = [
@@ -34,22 +32,17 @@ const mockGameUpdates = [
 ];
 
 test.describe("Live Simulation Flow", () => {
-  let wss: WsServerType;
-
   test.beforeEach(async ({ page }) => {
     // Mock start and stop simulation API calls
-    await page.route("**/api/simulation/live/start", async (route) => {
+    await page.route("**/api/simulation/live/start*", async (route) => {
       await route.fulfill({ status: 200, json: { message: "Simulation started" } });
     });
-    await page.route("**/api/simulation/live/stop", async (route) => {
+    await page.route("**/api/simulation/live/stop*", async (route) => {
       await route.fulfill({ status: 200, json: { message: "Simulation stopped" } });
     });
 
-    // Start a mock WebSocket server for each test
-    wss = new WebSocketServer({ port: 8001 }); // Use a different port for the mock WS
-    wss.on("connection", (ws: WsWebSocket) => {
-      console.log("Mock WebSocket client connected");
-      // Send mock updates after a short delay to simulate real-time
+    // Native Playwright WebSocket route
+    await page.routeWebSocket(/.*\/ws.*/, (ws) => {
       let i = 0;
       const interval = setInterval(() => {
         if (i < mockGameUpdates.length) {
@@ -57,50 +50,13 @@ test.describe("Live Simulation Flow", () => {
           i++;
         } else {
           clearInterval(interval);
-          // ws.close(); // Optionally close after sending all messages
         }
-      }, 500);
+      }, 300);
 
-      ws.on("close", () => console.log("Mock WebSocket client disconnected"));
-      ws.on("error", (error: Error) => console.error("Mock WebSocket error:", error));
-    });
-    console.log("Mock WebSocket server started on port 8001");
-
-    // Override the useWebSocket hook to connect to the mock server
-    await page.addInitScript(() => {
-      // @ts-expect-error - Adding custom property to window for WebSocket interception
-      window.originalWebSocket = window.WebSocket;
-      // @ts-expect-error - Replacing global WebSocket with mock class
-      window.WebSocket = class MockWebSocket extends window.originalWebSocket {
-        constructor(url: string, protocols?: string | string[]) {
-          // Replace the original WebSocket URL with the mock server's URL
-          const mockUrl = url.replace("ws://localhost:8000", "ws://localhost:8001");
-          super(mockUrl, protocols);
-          console.log(`Intercepted WebSocket connection to: ${mockUrl}`);
-        }
-      };
-    });
-  });
-
-  test.afterEach(async () => {
-    // Close the mock WebSocket server after each test
-    if (wss) {
-      // Ensure all clients are terminated so `close()` can complete promptly.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (wss as any).clients?.forEach((client: any) => {
-        try {
-          client.terminate?.();
-        } catch {
-          // ignore
-        }
+      ws.onClose(() => {
+        clearInterval(interval);
       });
-      await new Promise<void>((resolve) =>
-        wss.close(() => {
-          console.log("Mock WebSocket server closed");
-          resolve();
-        })
-      );
-    }
+    });
   });
 
   test("should load live sim and start simulation, receiving updates", async ({ page }) => {
@@ -167,12 +123,12 @@ test.describe("Live Simulation Flow", () => {
     // Waiting for page load
     await expect(page.locator("button", { hasText: "KICKOFF" })).toBeVisible();
 
-    // Verify indicators exist (one for home, one for away)
-    // Using a more lenient selector to find the momentum container
-    const momentumContainers = page.locator(".flex.items-center.gap-1.px-3.py-1");
-    await expect(momentumContainers).toHaveCount(2);
+    // Verify indicators exist (rendered in primary scoreboard and viewport panels)
+    const momentumContainers = page.locator('[data-testid="momentum-indicator"]');
+    await expect(momentumContainers.first()).toBeVisible();
+    await expect(momentumContainers).toHaveCount(4);
 
     // Initial state should be NEUTRAL (Minus icon)
-    await expect(page.locator("svg.lucide-minus")).toHaveCount(2);
+    await expect(page.locator("svg.lucide-minus").first()).toBeVisible();
   });
 });

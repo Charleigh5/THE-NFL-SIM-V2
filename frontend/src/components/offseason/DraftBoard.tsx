@@ -23,8 +23,22 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 }) => {
   const [filterPos, setFilterPos] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("rank");
+  const [boardProspects, setBoardProspects] = useState<Prospect[]>(prospects);
   const [revealingProspect, setRevealingProspect] = useState<Prospect | null>(null);
   const [scoutingReportProspect, setScoutingReportProspect] = useState<Prospect | null>(null);
+
+  React.useEffect(() => {
+    setBoardProspects((prev) => {
+      const prevMap = new Map(prev.map((p) => [String(p.id), p]));
+      return prospects.map((p) => {
+        const existing = prevMap.get(String(p.id));
+        if (existing?.genesis_revealed) {
+          return existing;
+        }
+        return p;
+      });
+    });
+  }, [prospects]);
 
   // Helper to determine grade based on rating
   const getGrade = (rating: number): string => {
@@ -56,7 +70,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
   };
 
   const filteredProspects = useMemo(() => {
-    let filtered = [...prospects];
+    let filtered = [...boardProspects];
 
     // Filter by position
     if (filterPos !== "ALL") {
@@ -135,7 +149,9 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                 <div className="prospect-main">
                   <div className="prospect-header">
                     <span className={`pos-badge pos-${p.position}`}>{p.position}</span>
-                    <span className="prospect-name">{p.name}</span>
+                    <span className="prospect-name">
+                      {p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim()}
+                    </span>
                   </div>
 
                   <div className="prospect-details">
@@ -147,6 +163,13 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                       </span>
                     )}
                   </div>
+
+                  {/* GPS Speed Viz directly on Card Face when revealed */}
+                  {p.genesis_revealed && p.combine?.gps_speed_max && (
+                    <div className="mt-2 w-full" data-testid="card-gps-speed-viz">
+                      <GpsSpeedViz speedMph={p.combine.gps_speed_max} />
+                    </div>
+                  )}
 
                   {/* Quick Reveal Button */}
                   <div className="mt-2 flex gap-2">
@@ -161,6 +184,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                     </button>
                     {/* Scouting Report Button */}
                     <button
+                      data-testid="view-scouting-report"
                       onClick={(e) => {
                         e.stopPropagation();
                         setScoutingReportProspect(p);
@@ -192,7 +216,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                     )}
 
                     {/* Combine Highlights */}
-                    {p.combine && (
+                    {p.genesis_revealed && p.combine && (
                       <div className="mt-2 pt-2 border-t border-white/10 flex flex-col gap-1">
                         {p.combine.gps_speed_max && (
                           <GpsSpeedViz speedMph={p.combine.gps_speed_max} />
@@ -237,15 +261,21 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                 genesis_revealed: true,
               };
 
+              // Mutate source reference
+              revealingProspect.genesis_revealed = true;
+              if (revealingProspect.combine) {
+                Object.assign(revealingProspect.combine, revealedData.revealed_stats);
+              }
+
               // Update the revealing prospect state to show data immediately in modal
               setRevealingProspect(updatedProspect);
 
               // Update the main prospects list
-              // (In a real app, we might just refetch the board, but this is faster)
-              // NOTE: This requires `prospects` prop to be mutable or handled by parent.
-              // Since we can't mutate props, we rely on parent `fetchDraftState` refresh or accepts this isn't persistent until refresh.
-              // Ideally validation/parent update should happen.
-              // For now, let's just ensure the modal shows it.
+              setBoardProspects((prev) =>
+                prev.map((p) =>
+                  String(p.id) === String(revealingProspect.id) ? updatedProspect : p
+                )
+              );
             } catch (err) {
               console.error("Failed to reveal GENESIS data:", err);
             }

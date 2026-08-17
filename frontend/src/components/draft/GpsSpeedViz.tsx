@@ -39,8 +39,13 @@ export const GpsSpeedViz = ({ speedMph }: GpsSpeedVizProps) => {
           {speedMph.toFixed(1)} <span className="text-[9px] text-gray-500">MPH</span>
         </span>
       </div>
-      <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-        <div ref={fillRef} className={`gps-speed-fill ${colorClass}`} />
+      <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden" style={{ minHeight: "6px" }}>
+        <div
+          ref={fillRef}
+          data-testid="gps-speed-fill"
+          className={`gps-speed-fill ${colorClass}`}
+          style={{ width: `${percentage}%` }}
+        />
       </div>
       {percentage > 90 && (
         <div className="flex items-center gap-1 text-[9px] text-red-400 font-bold animate-pulse mt-0.5">

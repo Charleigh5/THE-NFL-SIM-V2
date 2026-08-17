@@ -209,8 +209,10 @@ DEV_TRAIT_MULTIPLIERS = {
 }
 
 # Age-based learning rate multipliers
-def get_age_multiplier(age: int) -> float:
+def get_age_multiplier(age: Optional[int]) -> float:
     """Young players learn faster, veterans slower."""
+    if age is None:
+        age = 25
     if age < 24:
         return 1.2
     elif age <= 30:
@@ -364,10 +366,10 @@ class UseBasedProgression:
 
         return gains
 
-    @staticmethod
-    def check_and_apply_levelups(player: Any) -> List[ProgressionEvent]:
+    @classmethod
+    def check_and_apply_levelups(cls, player: Any) -> List[ProgressionEvent]:
         """
-        Check if any attributes have enough XP to level up, and apply if so.
+        Check if accumulated XP exceeds thresholds and apply attribute gains.
 
         Args:
             player: Player object
@@ -376,7 +378,7 @@ class UseBasedProgression:
             List of ProgressionEvent records for any attributes that leveled up
         """
         levelups = []
-        attribute_xp = getattr(player, "attribute_xp", {})
+        attribute_xp = getattr(player, "attribute_xp", None) or {}
 
         for attr_name, accumulated_xp in list(attribute_xp.items()):
             # Get current attribute value
@@ -396,13 +398,14 @@ class UseBasedProgression:
                 # Apply to player
                 setattr(player, attr_name, current_value)
 
-                levelups.append(ProgressionEvent(
+                event = ProgressionEvent(
                     player_id=getattr(player, "id", 0),
                     attribute_name=attr_name,
                     old_value=old_value,
                     new_value=current_value,
                     total_xp_spent=threshold
-                ))
+                )
+                levelups.append(event)
 
                 logger.info(
                     f"🎯 LEVEL UP! Player {getattr(player, 'id', 'unknown')}: "
@@ -417,15 +420,10 @@ class UseBasedProgression:
 
         return levelups
 
-    @staticmethod
-    def get_progression_summary(player: Any) -> Dict[str, Dict]:
-        """
-        Get a summary of player's attribute XP progress.
-
-        Returns:
-            Dict mapping attribute name to progress info
-        """
-        attribute_xp = getattr(player, "attribute_xp", {})
+    @classmethod
+    def get_progression_summary(cls, player: Any) -> Dict[str, Any]:
+        """Get summary of player's progression towards next levels."""
+        attribute_xp = getattr(player, "attribute_xp", None) or {}
         summary = {}
 
         for attr_name, xp in attribute_xp.items():

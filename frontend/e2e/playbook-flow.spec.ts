@@ -124,6 +124,7 @@ test.describe("Playbook Flow", () => {
       page
         .locator('text="TELESTRATOR_CANVAS_TARGET"')
         .or(page.locator('[data-testid="telestrator-canvas"]'))
+        .first()
     ).toBeVisible();
   });
 

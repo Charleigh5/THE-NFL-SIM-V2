@@ -241,7 +241,7 @@ class PlayResolver:
 
         Returns a multiplier (0.7 to 1.0) to apply to player ratings.
         """
-        if not player or not play_id:
+        if not player or not play_id or play_id in ["GENERIC_PASS", "GENERIC_RUN", "unknown"]:
             return 1.0
 
         experience = getattr(player, "years_pro", 0)
@@ -284,72 +284,57 @@ class PlayResolver:
         """Create QB physics engine from player attributes."""
         # Note: Matches signature in app/engine/position_physics/quarterback.py
         return QuarterbackPhysics(
-            throw_power_rating=getattr(qb, "throw_power", 80),
-            throw_accuracy_rating=getattr(qb, "throw_accuracy_mid", 80),
-            awareness_rating=getattr(qb, "awareness", 80),
-            speed_rating=getattr(qb, "speed", 70),
-            agility_rating=getattr(qb, "agility", 70),
-            poise_rating=getattr(qb, "poise", 75) if hasattr(qb, "poise") else 75,
+            throw_power_rating=int(getattr(qb, "throw_power", None) or 80),
+            throw_accuracy_rating=int(getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80),
+            awareness_rating=int(getattr(qb, "awareness", None) or getattr(qb, "football_iq", None) or 80),
+            speed_rating=int(getattr(qb, "speed", None) or 70),
+            agility_rating=int(getattr(qb, "agility", None) or 70),
+            poise_rating=int(getattr(qb, "poise", None) or 75),
         )
 
     def _create_wr_physics(self, wr: Any) -> WideReceiverPhysics:
         """Create WR physics engine from player attributes."""
-        ratings = {
-            "speed": getattr(wr, "speed", 90),
-            "acceleration": getattr(wr, "acceleration", 88),
-            "agility": getattr(wr, "agility", 85),
-            "route_running": getattr(wr, "route_running", 85),
-            "catching": getattr(wr, "catching", 85),
-            "catch_in_traffic": getattr(wr, "catch_in_traffic", 80),
-            "spectacular_catch": getattr(wr, "spectacular_catch", 75),
-            "release": getattr(wr, "release", 80),
-            "jumping": int(getattr(wr, "vertical_jump", 36) or 36),
-            "forty_time": 4.45
-        }
         return WideReceiverPhysics(
-            ratings=ratings,
-            height_inches=getattr(wr, "height", 72),
-            hand_size=float(getattr(wr, "hand_size", 9.5) or 9.5),
+            speed_rating=int(getattr(wr, "speed", None) or 90),
+            acceleration_rating=int(getattr(wr, "acceleration", None) or 88),
+            agility_rating=int(getattr(wr, "agility", None) or 85),
+            route_running_rating=int(getattr(wr, "route_running", None) or 85),
+            catching_rating=int(getattr(wr, "catch", None) or getattr(wr, "catching", None) or 85),
+            catch_in_traffic_rating=int(getattr(wr, "catch_in_traffic", None) or 80),
+            spectacular_catch_rating=int(getattr(wr, "spectacular_catch", None) or 75),
+            release_rating=int(getattr(wr, "release", None) or 80),
+            height_inches=int(getattr(wr, "height", None) or 72),
+            vertical_jump_inches=int(getattr(wr, "vertical_jump", None) or 36),
+            hand_size_inches=float(getattr(wr, "hand_size", None) or 9.5),
         )
 
     def _create_rb_physics(self, rb: Any) -> RunningBackPhysics:
         """Create RB physics engine from player attributes."""
-        # Note: Matches signature in app/engine/position_physics/running_back.py
-        ratings = {
-            "speed": getattr(rb, "speed", 85),
-            "acceleration": getattr(rb, "acceleration", 85),
-            "agility": getattr(rb, "agility", 85),
-            "strength": getattr(rb, "strength", 70),
-            "elusiveness": getattr(rb, "elusiveness", 80) if hasattr(rb, "elusiveness") else 80,
-            "trucking": getattr(rb, "trucking", 70) if hasattr(rb, "trucking") else 70,
-            "ball_carrier_vision": getattr(rb, "ball_carrier_vision", 80) if hasattr(rb, "ball_carrier_vision") else 80,
-            "break_tackle": getattr(rb, "break_tackle", 75),
-            "stiff_arm": getattr(rb, "stiff_arm", 70),
-            "balance": getattr(rb, "balance", 75),
-            "forty_time": 4.5
-        }
         return RunningBackPhysics(
-            ratings=ratings,
-            weight=float(getattr(rb, "weight", 210)),
+            speed_rating=int(getattr(rb, "speed", None) or 85),
+            acceleration_rating=int(getattr(rb, "acceleration", None) or 85),
+            agility_rating=int(getattr(rb, "agility", None) or 85),
+            strength_rating=int(getattr(rb, "strength", None) or 70),
+            elusiveness_rating=int(getattr(rb, "elusiveness", None) or 80),
+            trucking_rating=int(getattr(rb, "trucking", None) or 70),
+            ball_carrier_vision_rating=int(getattr(rb, "ball_carrier_vision", None) or 80),
+            weight=int(getattr(rb, "weight", None) or 210),
         )
 
     def _create_db_physics(self, db: Any) -> DefensiveBackPhysics:
         """Create DB physics engine from player attributes."""
-        # Note: Matches signature in app/engine/position_physics/defensive_back.py
-        ratings = {
-            "speed": getattr(db, "speed", 88),
-            "acceleration": getattr(db, "acceleration", 86),
-            "agility": getattr(db, "agility", 85),
-            "man_coverage": getattr(db, "man_coverage", 80),
-            "zone_coverage": getattr(db, "zone_coverage", 78),
-            "press": getattr(db, "press", 75),
-            "ball_skills": getattr(db, "ball_tracking", 75) if hasattr(db, "ball_tracking") else 75,
-            "play_recognition": getattr(db, "play_recognition", 78),
-            "ball_skills": getattr(db, "ball_skills", 75),
-            "change_of_direction": getattr(db, "change_of_direction", 80),
-            "strength": getattr(db, "strength", 60)
-        }
-        return DefensiveBackPhysics(ratings=ratings)
+        return DefensiveBackPhysics(
+            speed_rating=int(getattr(db, "speed", None) or 88),
+            acceleration_rating=int(getattr(db, "acceleration", None) or 86),
+            agility_rating=int(getattr(db, "agility", None) or 85),
+            man_coverage_rating=int(getattr(db, "coverage", None) or getattr(db, "man_coverage", None) or 80),
+            zone_coverage_rating=int(getattr(db, "coverage", None) or getattr(db, "zone_coverage", None) or 78),
+            press_rating=int(getattr(db, "press", None) or 75),
+            play_recognition_rating=int(getattr(db, "play_recognition", None) or getattr(db, "football_iq", None) or 78),
+            pursuit_rating=int(getattr(db, "pursuit", None) or 85),
+            height_inches=int(getattr(db, "height", None) or 71),
+            vertical_jump_inches=int(getattr(db, "vertical_jump", None) or 38),
+        )
 
     def _calculate_physics_separation(
         self,
@@ -624,39 +609,25 @@ class PlayResolver:
         # 4. Line Battle & Sack Check
         block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense, trait_modifiers)
 
-        # Determine if Sack occurred
+        # Determine if Sack occurred via Pressure & Pocket Presence
         is_sack = False
-        sacker = None
-        beaten_ol = None
+        sacker = sackers[0] if sackers else None
+        beaten_ol = beaten_ols[0] if beaten_ols else None
 
         # Pancake = Automatic Sack
         if BlockingResult.PANCAKE in block_results:
             is_sack = True
-            idx = block_results.index(BlockingResult.PANCAKE)
-            # Find corresponding sacker (approximate since we don't track idx in lists perfectly aligned if skips happen)
-            # But sackers list only contains winners.
-            # Let's just take the first one for simplicity or improve _resolve_line_battle to return structured data.
-            if sackers:
-                sacker = sackers[0]
-                beaten_ol = beaten_ols[0]
-
-        # Loss = Chance of Sack (with QB Pocket Presence mitigation)
         elif BlockingResult.LOSS in block_results:
-            # Chance increases with number of losses
             loss_count = block_results.count(BlockingResult.LOSS)
-
-            # Determine pressure level (0.0 to 1.0)
-            # 1 loss = 0.3, 2 losses = 0.6, 3+ losses = 0.9
-            pressure_level = min(0.9, loss_count * 0.3)
+            pressure_level = min(0.9, loss_count * 0.25)
 
             # Get OL Chemistry Bonus
-            # Assuming match_context has these populated
             chem_bonus = 0
             if self.current_match_context:
-                 if getattr(command, "is_home_team", True):
-                     chem_bonus = getattr(self.current_match_context, "home_ol_chemistry", 0)
-                 else:
-                     chem_bonus = getattr(self.current_match_context, "away_ol_chemistry", 0)
+                if getattr(command, "is_home_team", True):
+                    chem_bonus = getattr(self.current_match_context, "home_ol_chemistry", 0)
+                else:
+                    chem_bonus = getattr(self.current_match_context, "away_ol_chemistry", 0)
 
             # Calculate Probability with SackCalculator
             sack_prob = SackCalculator.calculate_sack_probability(qb, pressure_level, chem_bonus)
@@ -666,12 +637,8 @@ class PlayResolver:
 
             if outcome == "SACK":
                 is_sack = True
-                if sackers:
-                    sacker = sackers[0]
-                    beaten_ol = beaten_ols[0]
             elif outcome == "PRESSURE_AVOIDED":
-                 # Maybe Log "Pressure Avoided" narrative?
-                 logger.debug(f"Pressure avoided by {qb.last_name}")
+                logger.debug(f"Pressure avoided by {getattr(qb, 'last_name', 'QB')}")
 
         if is_sack:
             # SACK!
@@ -701,8 +668,9 @@ class PlayResolver:
             return PlayResult(
                 yards_gained=-loss_yards,
                 is_touchdown=False,
-                description=f"SACKED! {qb.last_name} is taken down by {sacker.last_name if sacker else 'the defense'} for a loss of {loss_yards} yards.",
-                headline=f"Sack! {sacker.last_name if sacker else 'Defense'} gets home!",
+                is_sack=True,
+                description=f"SACKED! {getattr(qb, 'last_name', 'QB')} is taken down by {getattr(sacker, 'last_name', 'the defense')} for a loss of {loss_yards} yards.",
+                headline=f"Sack! {getattr(sacker, 'last_name', 'Defense')} gets home!",
                 is_highlight_worthy=True,
                 injuries=injuries,
                 passer_id=qb.id
@@ -713,33 +681,25 @@ class PlayResolver:
             UseBasedProgression.award_action_xp(sacker, ActionType.SACK, {})
             UseBasedProgression.check_and_apply_levelups(sacker)
 
-        # 4. Attribute-Based Core Logic via ProbabilityEngine
-
-        # ** ATTRIBUTE INTERACTIONS ** (Set 3/Set 4 Integration)
-        # Calculate cross-attribute effects
+        # 5. Apply Attribute Interactions (Set 5)
+        # Apply interactions between QB, Receiver, Defender and context
         interaction_results = self._apply_pass_play_interactions(qb, target, defender, command)
+        interaction_modifier = 0.0
+        interaction_narratives = []
 
-        # Safety check: ensure results are valid
-        if interaction_results is None or not isinstance(interaction_results, dict):
-            interaction_results = {
-                "total_offense_boost": 0.0,
-                "total_defense_boost": 0.0,
-                "narratives": []
-            }
-
-        interaction_modifier = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 100.0
-        interaction_narratives = interaction_results.get("narratives", [])
-
-        logger.debug(f"Interaction modifier: {interaction_modifier:.3f}, Offense boost: {interaction_results.get('total_offense_boost', 0.0):.1f}, Defense boost: {interaction_results.get('total_defense_boost', 0.0):.1f}")
+        if interaction_results:
+            interaction_modifier = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 100.0
+            interaction_narratives = interaction_results.get("narratives", [])
 
         # A. Throw Accuracy vs Depth
-        throw_accuracy = 50 # Default base
         if command.depth == "short":
-             throw_accuracy = getattr(qb, "throw_accuracy_short", None) or 50
+            throw_accuracy = getattr(qb, "throw_accuracy_short", None) or getattr(qb, "pass_accuracy", None) or 82
         elif command.depth == "mid":
-             throw_accuracy = getattr(qb, "throw_accuracy_mid", None) or 50
+            throw_accuracy = getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80
         elif command.depth == "deep":
-             throw_accuracy = getattr(qb, "throw_accuracy_deep", None) or 50
+            throw_accuracy = getattr(qb, "throw_accuracy_deep", None) or getattr(qb, "pass_accuracy", None) or 76
+        else:
+            throw_accuracy = getattr(qb, "pass_accuracy", None) or 80
 
         # B-056: Apply Playbook Familiarity Penalty
         # Get play_id from command (fallback to "GENERIC_PASS" if not set)
@@ -832,14 +792,11 @@ class PlayResolver:
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 0.10
 
-        # E. Pressure Impact
+        # E. Pressure Impact (Only true penetration causes throw penalty)
         pressure_penalty = 0.0
         if BlockingResult.LOSS in block_results:
-             # Heavy pressure
-             pressure_penalty = 0.25
-        elif BlockingResult.STALEMATE in block_results:
-             # Mild pressure
-             pressure_penalty = 0.10
+            loss_count = block_results.count(BlockingResult.LOSS)
+            pressure_penalty = min(0.20, loss_count * 0.08)
 
         # ======================================================================
         # SPECIAL PLAYS INTEGRATION
@@ -1216,9 +1173,9 @@ class PlayResolver:
         try:
             tackle_attempt = TackleAttempt(
                 tackler_id=str(defender.id),
-                tackler_weight=getattr(defender, "weight", 220),
-                tackler_speed=getattr(defender, "speed", 80) / 20.0,  # Convert to yards/sec
-                tackle_rating=getattr(defender, "tackle", 75),
+                tackler_weight=int(getattr(defender, "weight", None) or 220),
+                tackler_speed=float(getattr(defender, "speed", None) or 80) / 20.0,  # Convert to yards/sec
+                tackle_rating=int(getattr(defender, "tackle", None) or 75),
                 contact_type=ContactType.WRAP_UP if command.run_direction == "middle" else ContactType.PURSUIT,
                 approach_angle=0.0 if command.run_direction == "middle" else 45.0,
             )
@@ -1299,11 +1256,11 @@ class PlayResolver:
                   base_yards = -0.5
                   std_dev = 0.5
         elif command.run_direction == "middle":
-            base_yards = tribe_base_yards + (blended_power_diff * 10.0)  # +/- 2 yards based on physics strength
+            base_yards = max(3.0, tribe_base_yards + (blended_power_diff * 4.0) + 1.2)  # Calibrated to 4.2 YPC
             std_dev = tribe_std_dev
         else:
-            base_yards = (tribe_base_yards - 1.0) + (speed_diff * 20.0)  # +/- 4 yards based on speed
-            std_dev = tribe_std_dev * 1.5  # Outside runs have higher variance
+            base_yards = max(2.5, (tribe_base_yards) + (speed_diff * 10.0) + 0.8)  # Calibrated to 4.2 YPC
+            std_dev = tribe_std_dev * 1.3  # Outside runs have higher variance
 
         # B-008: Apply momentum modifier to run play
         momentum_yards_bonus = 0.0

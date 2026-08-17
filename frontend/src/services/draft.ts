@@ -50,17 +50,25 @@ export interface DraftSuggestionRequest {
 
 export const draftService = {
   getDraftBoard: async (): Promise<Prospect[]> => {
-    const response = await api.get<Prospect[]>("/draft/board");
-    // Map backend response to frontend Prospect interface if needed
-    // Backend sends first_name, last_name. Frontend expects name (combined) + first/last
-    return response.data.map((p) => ({
+    const response = await api.get<unknown>("/api/draft/board");
+    const data = response.data;
+    let list: Prospect[] = [];
+    if (Array.isArray(data)) {
+      list = data as Prospect[];
+    } else if (data && typeof data === "object") {
+      const d = data as Record<string, unknown>;
+      if (Array.isArray(d.prospects)) list = d.prospects as Prospect[];
+      else if (Array.isArray(d.items)) list = d.items as Prospect[];
+      else if (Array.isArray(d.data)) list = d.data as Prospect[];
+    }
+    return list.map((p) => ({
       ...p,
-      name: `${p.first_name} ${p.last_name}`,
+      name: p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim(),
     }));
   },
 
   getDraftSuggestion: async (request: DraftSuggestionRequest): Promise<DraftSuggestionResponse> => {
-    const response = await api.post<DraftSuggestionResponse>("/draft/suggest-pick", request);
+    const response = await api.post<DraftSuggestionResponse>("/api/draft/suggest-pick", request);
     return response.data;
   },
 
@@ -70,7 +78,7 @@ export const draftService = {
   ): Promise<GenesisRevealData> => {
     // Calls B-047 endpoint
     const response = await api.get<GenesisRevealData>(
-      `/combine/genesis-reveal/${playerId}?position=${position}`
+      `/api/combine/genesis-reveal/${playerId}?position=${position}`
     );
     return response.data;
   },

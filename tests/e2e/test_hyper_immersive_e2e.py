@@ -1,3 +1,4 @@
+import re
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -51,3 +52,23 @@ def test_playbook_coaching_features(page: Page):
     expect(page.get_by_text("Coaching Dynasty Tree")).to_be_visible()
     expect(page.get_by_text("Zac Taylor")).to_be_visible()
     expect(page.get_by_text("Offensive Guru")).to_be_visible()
+
+
+@pytest.mark.e2e
+def test_gridiron_heatmap_telemetry(page: Page):
+    """Test LiveSim Turf Heatmap and S2 Cognition Telemetry Visualizer."""
+    page.goto("http://localhost:5173/live")
+
+    # 1. Switch to Turf & Cognition tab
+    turf_tab = page.get_by_role("button", name="Turf & Cognition")
+    if turf_tab.is_visible():
+        turf_tab.click()
+
+    # 2. Verify Gridiron Visualizer container and canvas exist
+    visualizer = page.locator("[data-testid='gridiron-visualizer']")
+    expect(visualizer).to_be_visible()
+
+    # 3. Verify layer toggle buttons
+    expect(page.get_by_role("button", name=re.compile(r"Turf Heatmap"))).to_be_visible()
+    expect(page.get_by_role("button", name=re.compile(r"Vision Cones"))).to_be_visible()
+    expect(page.get_by_role("button", name=re.compile(r"S2 Telemetry"))).to_be_visible()

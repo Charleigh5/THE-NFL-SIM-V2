@@ -90,11 +90,13 @@ export const api = {
 
   // Team/Player Service methods
   getTeams: async (page: number = 1, pageSize: number = 100): Promise<Team[]> => {
-    const response = await apiClient.get<PaginatedResponse<Team>>(
+    const response = await apiClient.get<PaginatedResponse<Team> | Team[]>(
       `/api/teams?page=${page}&page_size=${pageSize}`
     );
-    // Return all items for backward compatibility, can be changed to return full response
-    return response.data.items;
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data?.items || [];
   },
 
   getTeam: async (teamId: number): Promise<Team> => {

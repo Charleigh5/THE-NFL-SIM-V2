@@ -188,8 +188,12 @@ class TestGameStateManager:
 
     def test_is_game_over(self):
         """Test game end detection."""
-        state = GameStateManager(quarter=4, time_left="00:00")
+        state = GameStateManager(quarter=4, time_left="00:00", home_score=21, away_score=14)
         assert state.is_game_over() is True
+
+        # Tied regulation ends go to overtime, not game over
+        state_tied = GameStateManager(quarter=4, time_left="00:00", home_score=14, away_score=14)
+        assert state_tied.is_game_over() is False
 
         state.quarter = 3
         assert state.is_game_over() is False

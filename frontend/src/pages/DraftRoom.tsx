@@ -42,16 +42,25 @@ export const DraftRoom: React.FC = () => {
 
   const fetchDraftState = useCallback(async (sid: number) => {
     try {
-      const [pick, topProspects] = await Promise.all([
+      const [pickRes, prospectsRes] = await Promise.allSettled([
         seasonApi.getCurrentPick(sid),
         draftService.getDraftBoard(),
       ]);
+      const pick = pickRes.status === "fulfilled" ? pickRes.value : null;
+      const topProspects =
+        prospectsRes.status === "fulfilled" && Array.isArray(prospectsRes.value)
+          ? prospectsRes.value
+          : [];
       setCurrentPick(pick);
       setProspects(topProspects);
 
-      if (pick) {
-        const needs = await seasonApi.getTeamNeeds(sid, pick.team_id);
-        setTeamNeeds(needs);
+      if (pick && pick.team_id) {
+        try {
+          const needs = await seasonApi.getTeamNeeds(sid, pick.team_id);
+          setTeamNeeds(needs || []);
+        } catch {
+          setTeamNeeds([]);
+        }
       }
     } catch (err) {
       console.error("Error fetching draft state:", err);

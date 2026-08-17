@@ -1,3 +1,4 @@
+import { api } from "./api";
 import type { ScoutingReport, PlayerBackstory } from "../types/api/scouting";
 
 // Mock service for Scouting Reports and Backstories
@@ -34,20 +35,26 @@ const MOCK_BACKSHIORY: PlayerBackstory = {
 
 export const scoutingService = {
   getScoutingReport: async (playerId: string): Promise<ScoutingReport> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return {
-      ...MOCK_SCOUTING_REPORT,
-      player_id: playerId,
-    };
+    try {
+      const response = await api.get<ScoutingReport>(`/api/scouting/report/${playerId}`);
+      return response.data;
+    } catch {
+      return {
+        ...MOCK_SCOUTING_REPORT,
+        player_id: playerId,
+      };
+    }
   },
 
   getPlayerBackstory: async (playerId: string): Promise<PlayerBackstory> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    return {
-      ...MOCK_BACKSHIORY,
-      player_id: playerId,
-    };
+    try {
+      const response = await api.get<PlayerBackstory>(`/api/players/${playerId}/backstory`);
+      return response.data;
+    } catch {
+      return {
+        ...MOCK_BACKSHIORY,
+        player_id: playerId,
+      };
+    }
   },
 };

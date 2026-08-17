@@ -90,7 +90,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
     (drill: Drill) => {
       return playerWeaknesses.some(
         (weakness) =>
-          drill.target_stat.toLowerCase() === weakness.toLowerCase() ||
+          drill.target_stat?.toLowerCase() === weakness.toLowerCase() ||
           drill.secondary_stats?.some((stat) => stat.toLowerCase() === weakness.toLowerCase())
       );
     },
@@ -99,14 +99,14 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
 
   // Filter drills by search query and recommendation
   const filteredDrills = useMemo(() => {
-    let result = drills;
+    let result = drills || [];
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (drill) =>
-          drill.name.toLowerCase().includes(query) ||
-          drill.target_stat.toLowerCase().includes(query) ||
+          drill.name?.toLowerCase().includes(query) ||
+          drill.target_stat?.toLowerCase().includes(query) ||
           drill.description?.toLowerCase().includes(query)
       );
     }

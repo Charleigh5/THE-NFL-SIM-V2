@@ -191,6 +191,20 @@
 
 ---
 
+## 9. Cortex Engine Deep Foundations (DEP Series)
+
+| ID | Feature Name | Status | Spec Doc | Tests | Priority | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **DEP-001** | Operator Registry & Codex Ingestion | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-001_operator_registry_and_codex_ingestion.md` | 🧪 100% | P0 | Integrated into operator decision register |
+| **DEP-002** | Agent Workflow (`/codex-pipeline`) | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-002_agent_workflow_integration.md` | 🧪 100% | P0 | Active in `.agent/workflows/codex-pipeline.md` |
+| **DEP-003** | S2 Cognitive Latency & Vision Cones | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-003_s2_cognitive_latency_and_vision_cone_injection.md` | 🧪 100% | P0 | `test_s2_cognition_integration.py` verified |
+| **DEP-004** | 10x10 Turf Degradation Grid | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-004_10x10_turf_degradation_grid_and_contact_physics.md` | 🧪 100% | P0 | `test_turf_grid_integration.py` verified |
+| **DEP-005** | Cryptographic Replay Verification API | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-005_cryptographic_replay_verification_api.md` | 🧪 100% | P0 | `test_replay_verification_api.py` verified |
+| **DEP-006** | Monte Carlo Statistical Calibration Engine | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-006_monte_carlo_statistical_calibration_engine.md` | 🧪 100% | P0 | Active in `scripts/batch_simulator.py` |
+| **DEP-007** | Frontend Gridiron Heatmap & Playwright E2E | 🎯 PRODUCTION_READY | ✅ `docs/tasks/DEP-007_frontend_gridiron_heatmap_and_playwright_e2e_suite.md` | 🧪 100% | P1 | `GridironVisualizer.tsx` + E2E suite verified |
+
+---
+
 ## Summary Statistics
 
 ### By Status

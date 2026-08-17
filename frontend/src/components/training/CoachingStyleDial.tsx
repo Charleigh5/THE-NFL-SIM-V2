@@ -25,12 +25,13 @@ export const CoachingStyleDial: React.FC<CoachingStyleDialProps> = ({
           return (
             <motion.div
               key={style.name}
+              data-testid={`coaching-style-${style.name}`}
               onClick={() => onSelect(style.name)}
               animate={{
                 scale: isSelected ? 1.2 : 1,
                 y: isSelected ? -10 : 0,
-                filter: isSelected ? "grayscale(0%)" : "grayscale(80%)",
-                opacity: isSelected ? 1 : 0.6,
+                filter: isSelected ? "grayscale(0%)" : "grayscale(60%)",
+                opacity: isSelected ? 1 : 0.75,
               }}
               whileHover={{ scale: 1.1, opacity: 1, filter: "grayscale(0%)" }}
               className="group cursor-pointer flex flex-col items-center"
@@ -47,18 +48,16 @@ export const CoachingStyleDial: React.FC<CoachingStyleDialProps> = ({
               </div>
 
               {/* Label */}
-              <motion.div
-                initial={false}
-                animate={{ opacity: isSelected ? 1 : 0, y: isSelected ? 10 : 0 }}
-                className="absolute top-20 w-32 text-center"
-              >
-                <div className="text-white font-bold tracking-widest text-sm uppercase">
+              <div className="mt-2 w-32 text-center" data-testid={`coaching-style-label-${style.name}`}>
+                <div className={`font-bold tracking-widest text-sm uppercase ${isSelected ? "text-white" : "text-gray-400"}`}>
                   {style.display_name}
                 </div>
-                <div className="text-xs text-blue-300 mt-1">
-                  XP: x{style.xp_multiplier} | Risk: x{style.injury_risk_multiplier}
-                </div>
-              </motion.div>
+                {isSelected && (
+                  <div className="text-xs text-blue-300 mt-1">
+                    XP: x{style.xp_multiplier} | Risk: x{style.injury_risk_multiplier}
+                  </div>
+                )}
+              </div>
             </motion.div>
           );
         })}

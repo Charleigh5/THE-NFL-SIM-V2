@@ -5,10 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 4,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:5199",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -18,8 +18,8 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
+    command: "npx vite --port 5199",
+    url: "http://localhost:5199",
+    reuseExistingServer: false,
   },
 });

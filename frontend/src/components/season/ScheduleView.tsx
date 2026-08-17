@@ -80,7 +80,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   };
 
   /** Helper to find a team object by ID. */
-  const getTeam = (teamId: number) => teams.find((t) => t.id === teamId);
+  const getTeam = (teamId: number) => (teams || []).find((t) => t.id === teamId);
 
   /** Formats the date string for display. */
   const formatDate = (dateString: string) => {
@@ -100,7 +100,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   }
 
   return (
-    <div className="schedule-container" data-testid="schedule-view">
+    <div className="schedule-container" data-testid="schedule-section">
       <div className="week-navigation" data-testid="week-navigation">
         <button
           className="nav-button"
@@ -145,10 +145,47 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           <div className="no-games">No games scheduled for Week {selectedWeek}</div>
         ) : (
           games.map((game) => {
-            const homeTeam = getTeam(game.home_team_id);
-            const awayTeam = getTeam(game.away_team_id);
+            const rawHome = getTeam(game.home_team_id);
+            const rawAway = getTeam(game.away_team_id);
+            const legacyGame = game as unknown as { home_team_name?: string; away_team_name?: string };
 
-            if (!homeTeam || !awayTeam) return null;
+            const homeTeam: Team = {
+              id: game.home_team_id,
+              city: rawHome?.city || "",
+              name: rawHome?.name || game.home_team?.name || legacyGame.home_team_name || `Team ${game.home_team_id}`,
+              abbreviation:
+                rawHome?.abbreviation ||
+                game.home_team?.abbreviation ||
+                legacyGame.home_team_name?.substring(0, 3).toUpperCase() ||
+                "HOM",
+              conference: rawHome?.conference || "NFC",
+              division: rawHome?.division || "West",
+              wins: rawHome?.wins ?? 0,
+              losses: rawHome?.losses ?? 0,
+              salary_cap_space: rawHome?.salary_cap_space ?? 0,
+              logo_url: rawHome?.logo_url || game.home_team?.logo_url,
+              primary_color: rawHome?.primary_color,
+              secondary_color: rawHome?.secondary_color,
+            };
+
+            const awayTeam: Team = {
+              id: game.away_team_id,
+              city: rawAway?.city || "",
+              name: rawAway?.name || game.away_team?.name || legacyGame.away_team_name || `Team ${game.away_team_id}`,
+              abbreviation:
+                rawAway?.abbreviation ||
+                game.away_team?.abbreviation ||
+                legacyGame.away_team_name?.substring(0, 3).toUpperCase() ||
+                "AWY",
+              conference: rawAway?.conference || "NFC",
+              division: rawAway?.division || "West",
+              wins: rawAway?.wins ?? 0,
+              losses: rawAway?.losses ?? 0,
+              salary_cap_space: rawAway?.salary_cap_space ?? 0,
+              logo_url: rawAway?.logo_url || game.away_team?.logo_url,
+              primary_color: rawAway?.primary_color,
+              secondary_color: rawAway?.secondary_color,
+            };
 
             const isFinal = game.is_played;
             const homeWinner = isFinal && (game.home_score || 0) > (game.away_score || 0);
@@ -165,7 +202,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               <div
                 key={game.id}
                 className={`game-card ${isPlayoff ? "playoff-game" : ""} ${isThanksgiving ? "thanksgiving-game" : ""}`}
-                data-testid={`game-card-${game.id}`}
+                data-testid={`schedule-game-${game.id}`}
               >
                 {isPlayoff && <div className="playoff-badge">Playoff Game</div>}
                 {isThanksgiving && (
@@ -191,21 +228,21 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                         {awayTeam.logo_url ? (
                           <img
                             src={awayTeam.logo_url}
-                            alt={awayTeam.abbreviation}
+                            alt={awayTeam.abbreviation || awayTeam.name}
                             className="team-logo"
                           />
                         ) : (
                           <span className="team-logo-text">
-                            {awayTeam.abbreviation.substring(0, 2)}
+                            {(awayTeam.abbreviation || awayTeam.name || "AW").substring(0, 2)}
                           </span>
                         )}
                       </TeamLogoContainer>
                       <div className="team-details">
                         <span className="team-name-display">
-                          {awayTeam.city} {awayTeam.name}
+                          {awayTeam.city ? `${awayTeam.city} ` : ""}{awayTeam.name}
                         </span>
                         <span className="team-record">
-                          ({awayTeam.wins}-{awayTeam.losses})
+                          ({awayTeam.wins ?? 0}-{awayTeam.losses ?? 0})
                         </span>
                       </div>
                     </div>
@@ -223,21 +260,21 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                         {homeTeam.logo_url ? (
                           <img
                             src={homeTeam.logo_url}
-                            alt={homeTeam.abbreviation}
+                            alt={homeTeam.abbreviation || homeTeam.name}
                             className="team-logo"
                           />
                         ) : (
                           <span className="team-logo-text">
-                            {homeTeam.abbreviation.substring(0, 2)}
+                            {(homeTeam.abbreviation || homeTeam.name || "HM").substring(0, 2)}
                           </span>
                         )}
                       </TeamLogoContainer>
                       <div className="team-details">
                         <span className="team-name-display">
-                          {homeTeam.city} {homeTeam.name}
+                          {homeTeam.city ? `${homeTeam.city} ` : ""}{homeTeam.name}
                         </span>
                         <span className="team-record">
-                          ({homeTeam.wins}-{homeTeam.losses})
+                          ({homeTeam.wins ?? 0}-{homeTeam.losses ?? 0})
                         </span>
                       </div>
                     </div>

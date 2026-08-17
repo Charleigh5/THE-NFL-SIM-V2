@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useLoaderData } from "react-router-dom";
 import { seasonApi } from "../services/season";
 import { api } from "../services/api";
 import type { Season, Game, TeamStanding, SeasonAwards } from "../types/season";
@@ -19,18 +20,29 @@ import stylesModule from "./SeasonDashboard.module.css";
 // import "./SeasonDashboard.css"; // Disabling old CSS to prefer module
 
 const SeasonDashboard: React.FC = () => {
-  const [season, setSeason] = useState<Season | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [standings, setStandings] = useState<TeamStanding[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
-  const [playoffBracket, setPlayoffBracket] = useState<PlayoffMatchup[]>([]);
-  const [leaders, setLeaders] = useState<LeagueLeadersType | null>(null);
-  const [seasonProgress, setSeasonProgress] = useState<number>(0);
-  const [awards, setAwards] = useState<SeasonAwards | null>(null);
+  const loaderData = useLoaderData() as {
+    teams?: Team[];
+    season?: Season | null;
+    seasonProgress?: number;
+    standings?: TeamStanding[];
+    schedule?: Game[];
+    leaders?: LeagueLeadersType | null;
+    awards?: SeasonAwards | null;
+    playoffBracket?: PlayoffMatchup[];
+  } | null;
+
+  const [season, setSeason] = useState<Season | null>(loaderData?.season ?? null);
+  const [teams, setTeams] = useState<Team[]>(loaderData?.teams ?? []);
+  const [standings, setStandings] = useState<TeamStanding[]>(loaderData?.standings ?? []);
+  const [games, setGames] = useState<Game[]>(loaderData?.schedule ?? []);
+  const [playoffBracket, setPlayoffBracket] = useState<PlayoffMatchup[]>(loaderData?.playoffBracket ?? []);
+  const [leaders, setLeaders] = useState<LeagueLeadersType | null>(loaderData?.leaders ?? null);
+  const [seasonProgress, setSeasonProgress] = useState<number>(loaderData?.seasonProgress ?? 0);
+  const [awards, setAwards] = useState<SeasonAwards | null>(loaderData?.awards ?? null);
   const [activeTab, setActiveTab] = useState<
     "overview" | "standings" | "schedule" | "playoffs" | "leaders"
   >("overview");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!loaderData?.season);
   const [simulating, setSimulating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,18 +61,26 @@ const SeasonDashboard: React.FC = () => {
           setSeason(summary.season);
           setSeasonProgress(summary.completion_percentage);
 
-          // Fetch standings, schedule, leaders, and awards for current season
-          const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
+          // Fetch standings, schedule, leaders, and awards for current season using resilient Promise.allSettled
+          const [standingsRes, scheduleRes, leadersRes, awardsRes] = await Promise.allSettled([
             seasonApi.getStandings(summary.season.id),
             seasonApi.getSchedule(summary.season.id, summary.season.current_week),
             seasonApi.getLeagueLeaders(summary.season.id),
             seasonApi.getProjectedAwards(summary.season.id),
           ]);
 
-          setStandings(standingsData);
-          setGames(scheduleData);
-          setLeaders(leadersData);
-          setAwards(awardsData);
+          if (standingsRes.status === "fulfilled" && Array.isArray(standingsRes.value)) {
+            setStandings(standingsRes.value);
+          }
+          if (scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)) {
+            setGames(scheduleRes.value);
+          }
+          if (leadersRes.status === "fulfilled") {
+            setLeaders(leadersRes.value);
+          }
+          if (awardsRes.status === "fulfilled") {
+            setAwards(awardsRes.value);
+          }
 
           // If in playoffs or off-season, fetch bracket
           if (summary.season.status === "POST_SEASON" || summary.season.status === "OFF_SEASON") {
@@ -101,17 +121,25 @@ const SeasonDashboard: React.FC = () => {
       setSeason(newSeason);
 
       // Refresh data
-      const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
+      const [standingsRes, scheduleRes, leadersRes, awardsRes] = await Promise.allSettled([
         seasonApi.getStandings(newSeason.id),
         seasonApi.getSchedule(newSeason.id, 1),
         seasonApi.getLeagueLeaders(newSeason.id),
         seasonApi.getProjectedAwards(newSeason.id),
       ]);
 
-      setStandings(standingsData);
-      setGames(scheduleData);
-      setLeaders(leadersData);
-      setAwards(awardsData);
+      if (standingsRes.status === "fulfilled" && Array.isArray(standingsRes.value)) {
+        setStandings(standingsRes.value);
+      }
+      if (scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)) {
+        setGames(scheduleRes.value);
+      }
+      if (leadersRes.status === "fulfilled") {
+        setLeaders(leadersRes.value);
+      }
+      if (awardsRes.status === "fulfilled") {
+        setAwards(awardsRes.value);
+      }
     } catch (err) {
       setError("Failed to initialize season");
       console.error(err);
@@ -154,17 +182,25 @@ const SeasonDashboard: React.FC = () => {
         }
 
         // Refresh data
-        const [standingsData, scheduleData, leadersData, awardsData] = await Promise.all([
+        const [standingsRes, scheduleRes, leadersRes, awardsRes] = await Promise.allSettled([
           seasonApi.getStandings(season.id),
           seasonApi.getSchedule(season.id, updatedSeason.current_week),
           seasonApi.getLeagueLeaders(season.id),
           seasonApi.getProjectedAwards(season.id),
         ]);
 
-        setStandings(standingsData);
-        setGames(scheduleData);
-        setLeaders(leadersData);
-        setAwards(awardsData);
+        if (standingsRes.status === "fulfilled" && Array.isArray(standingsRes.value)) {
+          setStandings(standingsRes.value);
+        }
+        if (scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)) {
+          setGames(scheduleRes.value);
+        }
+        if (leadersRes.status === "fulfilled") {
+          setLeaders(leadersRes.value);
+        }
+        if (awardsRes.status === "fulfilled") {
+          setAwards(awardsRes.value);
+        }
       }
     } catch (err) {
       setError("Failed to simulate week");
@@ -209,8 +245,8 @@ const SeasonDashboard: React.FC = () => {
 
   // Calculate champion name using useMemo (must be before any early returns)
   const championName = useMemo(() => {
-    if (season?.status === "OFF_SEASON" && playoffBracket.length > 0) {
-      const superBowl = playoffBracket.find((m) => m.round === "SUPER_BOWL");
+    if (season?.status === "OFF_SEASON" && (playoffBracket || []).length > 0) {
+      const superBowl = (playoffBracket || []).find((m) => m.round === "SUPER_BOWL");
       return superBowl?.winner?.name;
     }
     return undefined;
@@ -513,13 +549,13 @@ const SeasonDashboard: React.FC = () => {
                     <div className="awards-race">
                       <div className="award-item">
                         <h4>MVP</h4>
-                        {awards.mvp[0] ? (
+                        {awards?.mvp?.[0] ? (
                           <div className="award-leader">
                             <p className="leader-name">{awards.mvp[0].name}</p>
                             <p className="leader-team">
                               {awards.mvp[0].team} • {awards.mvp[0].position}
                             </p>
-                            <p className="leader-stats">Score: {awards.mvp[0].score.toFixed(1)}</p>
+                            <p className="leader-stats">Score: {awards.mvp[0].score?.toFixed(1)}</p>
                           </div>
                         ) : (
                           <p>No candidates</p>
@@ -527,7 +563,7 @@ const SeasonDashboard: React.FC = () => {
                       </div>
                       <div className="award-item">
                         <h4>OPOY</h4>
-                        {awards.opoy[0] ? (
+                        {awards?.opoy?.[0] ? (
                           <div className="award-leader">
                             <p className="leader-name">{awards.opoy[0].name}</p>
                             <p className="leader-team">
@@ -540,7 +576,7 @@ const SeasonDashboard: React.FC = () => {
                       </div>
                       <div className="award-item">
                         <h4>DPOY</h4>
-                        {awards.dpoy[0] ? (
+                        {awards?.dpoy?.[0] ? (
                           <div className="award-leader">
                             <p className="leader-name">{awards.dpoy[0].name}</p>
                             <p className="leader-team">

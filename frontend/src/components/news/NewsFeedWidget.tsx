@@ -54,7 +54,9 @@ export function NewsFeedWidget({ seasonId, week, maxItems = 10 }: NewsFeedWidget
     );
   }
 
-  if (!data || data.items.length === 0) {
+  const items = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+
+  if (items.length === 0) {
     return (
       <div className="news-feed-widget empty">
         <p>No news available yet.</p>
@@ -67,16 +69,16 @@ export function NewsFeedWidget({ seasonId, week, maxItems = 10 }: NewsFeedWidget
     <aside className="news-feed-widget">
       <header className="widget-header">
         <h3>📰 Living World News</h3>
-        <span className="news-count">{data.total_count} stories</span>
+        <span className="news-count">{data?.total_count || items.length} stories</span>
       </header>
 
       <div className="news-feed-list">
-        {data.items.map((item) => (
+        {items.map((item) => (
           <NewsItemCard key={item.id} item={item} />
         ))}
       </div>
 
-      {data.has_more && <button className="load-more-btn">View All News →</button>}
+      {data?.has_more && <button className="load-more-btn">View All News →</button>}
     </aside>
   );
 }
