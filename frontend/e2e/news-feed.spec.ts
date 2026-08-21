@@ -153,7 +153,9 @@ test.describe("News Feed Widget", () => {
     await page.goto("/season");
 
     // Wait for dashboard to load
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     // The overview tab should be active by default
     await expect(page.locator('[data-testid="tab-overview"]')).toHaveClass(/active/);
@@ -167,10 +169,14 @@ test.describe("News Feed Widget", () => {
   test("should display breaking news with special styling", async ({ page }) => {
     await page.goto("/season");
 
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Look for breaking news badge or indicator
-    const breakingIndicator = page.locator('.breaking-badge, .breaking, [data-breaking="true"], [class*="breaking"]');
+    const breakingIndicator = page.locator(
+      '.breaking-badge, .breaking, [data-breaking="true"], [class*="breaking"]'
+    );
 
     // At least one breaking news item should exist (importance_score >= 0.7)
     if ((await breakingIndicator.count()) > 0) {
@@ -181,7 +187,9 @@ test.describe("News Feed Widget", () => {
   test("should display news headlines correctly", async ({ page }) => {
     await page.goto("/season");
 
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Check for specific headlines from mock data
     const cardinals = page.getByText(/Cardinals|Dallas|Cowboys/i).first();
@@ -191,10 +199,14 @@ test.describe("News Feed Widget", () => {
   test("should categorize news items visually", async ({ page }) => {
     await page.goto("/season");
 
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Look for category indicators
-    const categoryIndicators = page.locator("[data-category], .news-category, .category-indicator, [class*='category'], [class*='badge']");
+    const categoryIndicators = page.locator(
+      "[data-category], .news-category, .category-indicator, [class*='category'], [class*='badge']"
+    );
 
     if ((await categoryIndicators.count()) > 0) {
       // Categories should be displayed
@@ -218,7 +230,9 @@ test.describe("News Feed Widget", () => {
 
     await page.goto("/season");
 
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Should show empty state or hint message
     const emptyState = page.locator("text=No news, text=Play some games, .empty");
@@ -237,7 +251,9 @@ test.describe("News Feed Widget", () => {
     await page.goto("/season");
 
     // Page should still load, potentially showing retry button or fallback
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
   });
 });
 
@@ -311,7 +327,9 @@ test.describe("News Categories", () => {
 
   test("should display game result news", async ({ page }) => {
     await page.goto("/season");
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     const gameNews = page.getByText(/Victory|touchdown|win|Cardinals|Cowboys/i).first();
     await expect(gameNews).toBeVisible({ timeout: 5000 });
@@ -319,7 +337,9 @@ test.describe("News Categories", () => {
 
   test("should display trade news", async ({ page }) => {
     await page.goto("/season");
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     const tradeNews = page.getByText(/Trade|acquired|deal|49ers|Blockbuster/i).first();
     await expect(tradeNews).toBeVisible({ timeout: 5000 });
@@ -327,7 +347,9 @@ test.describe("News Categories", () => {
 
   test("should display injury news", async ({ page }) => {
     await page.goto("/season");
-    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="season-dashboard-page"]')).toBeVisible({
+      timeout: 10000,
+    });
 
     const injuryNews = page.getByText(/Questionable|injury|injured|Lamb/i).first();
     await expect(injuryNews).toBeVisible({ timeout: 5000 });

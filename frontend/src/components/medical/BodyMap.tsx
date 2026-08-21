@@ -140,8 +140,8 @@ export const BodyMap: React.FC<BodyMapProps> = ({
             overallCondition >= 85
               ? "bg-emerald-950/80 text-emerald-400 border border-emerald-500/30"
               : overallCondition >= 70
-              ? "bg-cyan-950/80 text-cyan-400 border border-cyan-500/30"
-              : "bg-red-950/80 text-red-400 border border-red-500/30 animate-pulse"
+                ? "bg-cyan-950/80 text-cyan-400 border border-cyan-500/30"
+                : "bg-red-950/80 text-red-400 border border-red-500/30 animate-pulse"
           }`}
         >
           {overallCondition}% INTEGRITY

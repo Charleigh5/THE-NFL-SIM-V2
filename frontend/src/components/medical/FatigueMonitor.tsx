@@ -139,7 +139,10 @@ export const FatigueMonitor: React.FC<FatigueMonitorProps> = ({
       <div className="mt-3 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-mono text-slate-400">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>Active Game Wear Accumulation: <strong className="text-white">{currentWearLevel}%</strong></span>
+          <span>
+            Active Game Wear Accumulation:{" "}
+            <strong className="text-white">{currentWearLevel}%</strong>
+          </span>
         </div>
         <span className="text-[11px] text-slate-500">Recovers weekly during rest days</span>
       </div>

@@ -83,14 +83,14 @@ test.describe("Skills Page Flow", () => {
 
     // The overlay should show available points
     await expect(page.locator("text=Available Points")).toBeVisible({ timeout: 10000 });
-    await expect(page.locator("text=SP")).toBeVisible(); // Skill Points unit
+    await expect(page.locator("text=SP").first()).toBeVisible(); // Skill Points unit
   });
 
   test("should display archetype information", async ({ page }) => {
     await page.goto("/players/1/skills");
 
     // The overlay shows an archetype label
-    await expect(page.locator("text=Archetype")).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("text=Archetype").first()).toBeVisible({ timeout: 10000 });
   });
 
   test("should render 3D canvas container", async ({ page }) => {

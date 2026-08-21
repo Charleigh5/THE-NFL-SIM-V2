@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { Calendar, Sun, Moon, Battery } from "lucide-react";
 
 export type IntensityLevel = "WALKTHROUGH" | "STANDARD" | "FULL_PADS";
-export type CampDrillType = "OKLAHOMA" | "7_ON_7" | "INDIVIDUAL" | "FILM_STUDY" | "SCRIMMAGE" | "CONDITIONING";
+export type CampDrillType =
+  | "OKLAHOMA"
+  | "7_ON_7"
+  | "INDIVIDUAL"
+  | "FILM_STUDY"
+  | "SCRIMMAGE"
+  | "CONDITIONING";
 
 export interface DaySchedule {
   dayNumber: number;
@@ -27,12 +33,48 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
     CampDrillType,
     { name: string; target: string; xp: number; injury: number; fatigue: number }
   > = {
-    OKLAHOMA: { name: "Oklahoma Drill", target: "Strength & Tackling", xp: 1.5, injury: 5.0, fatigue: 15.0 },
-    "7_ON_7": { name: "7-on-7 Passing", target: "Passing & Coverage", xp: 1.2, injury: 2.0, fatigue: 10.0 },
-    INDIVIDUAL: { name: "Individual Technique", target: "Position Skills", xp: 1.0, injury: 1.0, fatigue: 5.0 },
-    FILM_STUDY: { name: "Film Study", target: "Awareness & Play Rec", xp: 0.8, injury: 0.0, fatigue: 0.0 },
-    SCRIMMAGE: { name: "Full Scrimmage", target: "Full Team Execution", xp: 2.0, injury: 8.0, fatigue: 25.0 },
-    CONDITIONING: { name: "Conditioning Gassers", target: "Stamina & Speed", xp: 0.9, injury: 3.0, fatigue: 20.0 },
+    OKLAHOMA: {
+      name: "Oklahoma Drill",
+      target: "Strength & Tackling",
+      xp: 1.5,
+      injury: 5.0,
+      fatigue: 15.0,
+    },
+    "7_ON_7": {
+      name: "7-on-7 Passing",
+      target: "Passing & Coverage",
+      xp: 1.2,
+      injury: 2.0,
+      fatigue: 10.0,
+    },
+    INDIVIDUAL: {
+      name: "Individual Technique",
+      target: "Position Skills",
+      xp: 1.0,
+      injury: 1.0,
+      fatigue: 5.0,
+    },
+    FILM_STUDY: {
+      name: "Film Study",
+      target: "Awareness & Play Rec",
+      xp: 0.8,
+      injury: 0.0,
+      fatigue: 0.0,
+    },
+    SCRIMMAGE: {
+      name: "Full Scrimmage",
+      target: "Full Team Execution",
+      xp: 2.0,
+      injury: 8.0,
+      fatigue: 25.0,
+    },
+    CONDITIONING: {
+      name: "Conditioning Gassers",
+      target: "Stamina & Speed",
+      xp: 0.9,
+      injury: 3.0,
+      fatigue: 20.0,
+    },
   };
 
   const intensityMultipliers: Record<IntensityLevel, number> = {
@@ -207,8 +249,8 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
               selectedDayIdx === idx
                 ? "bg-cyan-950 border-cyan-500 text-white shadow-lg shadow-cyan-950/60"
                 : day.isRestDay
-                ? "bg-slate-900/40 border-slate-800 text-emerald-400"
-                : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
+                  ? "bg-slate-900/40 border-slate-800 text-emerald-400"
+                  : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
             }`}
           >
             <div className="text-[10px] font-mono uppercase text-slate-400">{day.dayName}</div>
@@ -218,8 +260,8 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
                 day.isRestDay
                   ? "bg-emerald-950 text-emerald-300"
                   : day.intensity === "FULL_PADS"
-                  ? "bg-red-950 text-red-300"
-                  : "bg-slate-800 text-slate-300"
+                    ? "bg-red-950 text-red-300"
+                    : "bg-slate-800 text-slate-300"
               }`}
             >
               {day.isRestDay ? "REST" : day.intensity}
@@ -235,7 +277,9 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
               {activeDay.dayName} (Day {activeDay.dayNumber}): {activeDay.focusTitle}
             </h4>
-            <p className="text-xs text-slate-400">Configure morning and afternoon practice blocks.</p>
+            <p className="text-xs text-slate-400">
+              Configure morning and afternoon practice blocks.
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -288,9 +332,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
               </div>
               <select
                 value={activeDay.morningDrill}
-                onChange={(e) =>
-                  updateActiveDay({ morningDrill: e.target.value as CampDrillType })
-                }
+                onChange={(e) => updateActiveDay({ morningDrill: e.target.value as CampDrillType })}
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white font-medium focus:border-cyan-500 focus:outline-none"
               >
                 {Object.entries(drillSpecs).map(([key, spec]) => (
@@ -331,7 +373,8 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             <Battery className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
             <h5 className="text-sm font-bold text-white mb-1">Scheduled Rest & Hydration Day</h5>
             <p className="text-xs text-slate-400 max-w-md mx-auto">
-              No on-field contact drills. Roster energy recovers by +20%, eliminating acute micro-wear accumulation before next week.
+              No on-field contact drills. Roster energy recovers by +20%, eliminating acute
+              micro-wear accumulation before next week.
             </p>
           </div>
         )}

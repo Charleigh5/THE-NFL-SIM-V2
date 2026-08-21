@@ -143,8 +143,8 @@ test.describe("Medical Center Flow", () => {
 
     // If injury list exists, verify content
     if (await injuryList.isVisible({ timeout: 3000 })) {
-      await expect(page.locator("text=Kyler Murray")).toBeVisible();
-      await expect(page.locator("text=Knee Sprain")).toBeVisible();
+      await expect(page.locator("text=Kyler Murray").first()).toBeVisible();
+      await expect(page.locator("text=Knee Sprain").first()).toBeVisible();
     }
   });
 

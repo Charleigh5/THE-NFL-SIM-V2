@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
@@ -12,105 +13,157 @@ import {
   Star,
   CalendarDays,
   Sparkles,
-  Zap,
+  BookOpen,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
+import { useTheme } from "../context/useTheme";
+import { soundEffects } from "../services/soundEffects";
 
-const Navigation = () => {
+export const Navigation: React.FC = () => {
   const location = useLocation();
+  const { activeTeam } = useTheme();
+  const [isMuted, setIsMuted] = useState(soundEffects.getMuted());
+
+  const toggleAudio = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newMuted = !isMuted;
+    soundEffects.setMuted(newMuted);
+    setIsMuted(newMuted);
+    if (!newMuted) soundEffects.playSnap();
+  };
 
   const navItems = [
-    { path: "/", label: "DASHBOARD", icon: LayoutDashboard },
-    { path: "/season", label: "SEASON", icon: CalendarDays },
-    { path: "/offseason", label: "OFFSEASON", icon: Sparkles },
-    { path: "/offseason/draft", label: "DRAFT ROOM", icon: Trophy },
-    { path: "/empire/front-office", label: "ROSTER", icon: Users },
-    { path: "/empire/depth-chart", label: "DEPTH CHART", icon: ClipboardList },
-    { path: "/empire/trade-center", label: "TRADE CENTER", icon: ArrowLeftRight },
-    { path: "/training", label: "TRAINING", icon: Dumbbell },
-    { path: "/team-selection", label: "MY TEAM", icon: Star },
-    { path: "/settings", label: "SETTINGS", icon: SettingsIcon },
+    { path: "/", label: "WAR ROOM", icon: LayoutDashboard, tag: "HQ" },
+    { path: "/season", label: "SEASON", icon: CalendarDays, tag: "LIVE" },
+    { path: "/empire/front-office", label: "ROSTER", icon: Users, tag: "53-MAN" },
+    { path: "/empire/depth-chart", label: "DEPTH CHART", icon: ClipboardList, tag: "UNIT" },
+    { path: "/playbook", label: "PLAYBOOK", icon: BookOpen, tag: "SCHEME" },
+    { path: "/live-sim", label: "GAME DAY", icon: Trophy, tag: "SIM" },
+    { path: "/empire/trade-center", label: "TRADE DESK", icon: ArrowLeftRight, tag: "DEALS" },
+    { path: "/offseason/draft", label: "DRAFT ROOM", icon: Sparkles, tag: "WAR ROOM" },
+    { path: "/training", label: "TRAINING", icon: Dumbbell, tag: "CAMP" },
+    { path: "/team-selection", label: "MY FRANCHISE", icon: Star, tag: "TEAM" },
+    { path: "/settings", label: "SETTINGS", icon: SettingsIcon, tag: "SYS" },
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-24 md:w-64 bg-broadcast-black border-r border-red-900/30 z-50 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="relative h-32 flex flex-col justify-center px-6 border-b-4 border-brand overflow-hidden group cursor-pointer">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        {/* Shine Effect */}
-        <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-sheen" />
+    <nav className="fixed left-0 top-0 h-full w-20 md:w-64 bg-broadcast-dark/95 border-r border-white/10 z-50 flex flex-col justify-between backdrop-blur-xl shadow-2xl overflow-hidden">
+      {/* Franchise Top Header */}
+      <div>
+        <Link
+          to="/team-selection"
+          onClick={() => soundEffects.playSnap()}
+          className="relative block p-4 border-b border-white/10 group cursor-pointer overflow-hidden bg-gradient-to-br from-black/80 to-transparent hover:border-white/20 transition-all"
+          title="Change Active Franchise"
+        >
+          {/* Team primary glow */}
+          <div
+            className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity blur-xl"
+            style={{ backgroundColor: "var(--theme-primary, #203731)" }}
+          />
 
-        <h1 className="relative font-header text-5xl tracking-tighter text-white drop-shadow-lg italic -skew-x-6">
-          THE <span className="text-brand">SIM</span>
-        </h1>
-        <div className="relative flex items-center gap-2 mt-1">
-          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          <p className="font-body text-xs tracking-[0.2em] text-gray-400 uppercase">Night Game</p>
-        </div>
-      </div>
-
-      {/* Nav List */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar py-6 space-y-1">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="group relative flex items-center px-6 py-4 overflow-hidden"
-            >
-              {/* Active Background Slide */}
-              <motion.div
-                layoutId="activeNav"
-                initial={false}
-                animate={{
-                  opacity: isActive ? 1 : 0,
-                  x: isActive ? 0 : -300,
+          <div className="relative z-10 flex items-center gap-3">
+            {/* Team Logo or Helmet Icon */}
+            <div className="w-12 h-12 rounded-lg bg-black/60 border border-white/15 flex items-center justify-center p-1 shadow-inner shrink-0 group-hover:scale-105 transition-transform">
+              <img
+                src={`/logos/${activeTeam?.abbreviation || "GB"}.png`}
+                alt={activeTeam?.name || "NFL"}
+                className="w-full h-full object-contain filter drop-shadow"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
                 }}
-                className="absolute inset-0 bg-gradient-to-r from-brand-dark/80 to-transparent skew-x-[-12deg] origin-left border-l-4 border-brand"
               />
+            </div>
 
-              {/* Hover Glow */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-white/5 transition-opacity duration-200" />
-
-              <div className="relative z-10 flex items-center gap-4">
-                <item.icon
-                  size={24}
-                  className={clsx(
-                    "transition-transform duration-300 group-hover:scale-110",
-                    isActive
-                      ? "text-white drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]"
-                      : "text-gray-500 group-hover:text-white"
-                  )}
-                />
-                <span
-                  className={clsx(
-                    "font-header text-2xl tracking-wide uppercase italic transition-all duration-300",
-                    isActive
-                      ? "text-white translate-x-2"
-                      : "text-gray-500 group-hover:text-white group-hover:translate-x-1"
-                  )}
-                >
-                  {item.label}
+            {/* Franchise Info */}
+            <div className="hidden md:flex flex-col min-w-0">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400 truncate">
+                {activeTeam?.conference || "NFC"} {activeTeam?.division || "North"}
+              </span>
+              <h2 className="font-header text-xl tracking-tight text-white uppercase truncate leading-none mt-0.5">
+                {activeTeam?.name || "Packers"}
+              </h2>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-mono text-emerald-400 font-semibold tracking-wider uppercase">
+                  Dynasty Mode
                 </span>
               </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Footer */}
-      <div className="p-6 border-t border-white/10 bg-broadcast-metal">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded bg-brand/10 border border-brand/20">
-            <Zap size={16} className="text-brand" />
-          </div>
-          <div>
-            <div className="font-header text-xl leading-none text-white">GENESIS</div>
-            <div className="text-[10px] text-brand-glow uppercase tracking-widest">
-              System Online
             </div>
           </div>
+        </Link>
+
+        {/* Navigation Item List */}
+        <div className="py-3 px-2 space-y-1 overflow-y-auto max-h-[calc(100vh-210px)] custom-scrollbar">
+          {navItems.map((item) => {
+            const isActive =
+              item.path === "/"
+                ? location.pathname === "/" || location.pathname === "/dashboard"
+                : location.pathname.startsWith(item.path);
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => soundEffects.playSnap()}
+                className={clsx(
+                  "group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200",
+                  isActive
+                    ? "bg-white/10 text-white font-bold shadow-lg"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                )}
+              >
+                {/* Active Indicator Strip */}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeNavStrip"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-r bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"
+                    style={{ backgroundColor: "var(--theme-secondary, #facc15)" }}
+                  />
+                )}
+
+                <div className="flex items-center gap-3 min-w-0">
+                  <item.icon
+                    size={20}
+                    className={clsx(
+                      "shrink-0 transition-transform duration-200 group-hover:scale-110",
+                      isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                    )}
+                    style={isActive ? { color: "var(--theme-secondary, #facc15)" } : undefined}
+                  />
+                  <span className="hidden md:inline font-header tracking-wider text-base uppercase leading-none truncate">
+                    {item.label}
+                  </span>
+                </div>
+
+                {/* Tactical Tag */}
+                <span className="hidden md:inline text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-gray-400 border border-white/5 uppercase">
+                  {item.tag}
+                </span>
+              </Link>
+            );
+          })}
         </div>
+      </div>
+
+      {/* Footer Controls & Audio Toggle */}
+      <div className="p-3 border-t border-white/10 bg-black/40 flex items-center justify-between">
+        <div className="hidden md:flex flex-col">
+          <span className="font-header text-sm tracking-wider text-gray-300">NFL SIM V2</span>
+          <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">
+            Gridiron 2026
+          </span>
+        </div>
+
+        <button
+          onClick={toggleAudio}
+          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex items-center justify-center"
+          title={isMuted ? "Unmute Stadium Sound" : "Mute Stadium Sound"}
+          aria-label={isMuted ? "Unmute Sound" : "Mute Sound"}
+        >
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} className="text-emerald-400" />}
+        </button>
       </div>
     </nav>
   );

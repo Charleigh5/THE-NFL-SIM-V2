@@ -31,27 +31,37 @@ export const TreatmentModal: React.FC<TreatmentModalProps> = ({
   const [loadingRisk, setLoadingRisk] = useState(false);
 
   useEffect(() => {
+    let isCancelled = false;
     if (isOpen && playerId) {
-      setLoadingRisk(true);
       medicalApi
         .getSurgeryRisk(playerId)
-        .then((data) => setSurgeryRisk(data))
-        .catch(() => {
-          // Default mathematical calculation from backend if endpoint is unavailable
-          const baseRisk = 0.05;
-          const severityRisk = (injurySeverity || 4) * 0.01;
-          const totalRisk = Math.min(0.25, baseRisk + severityRisk);
-          setSurgeryRisk({
-            player_id: playerId,
-            base_risk: baseRisk,
-            age_risk: 0.01,
-            severity_risk: severityRisk,
-            total_risk: totalRisk,
-            estimated_recovery_reduction: 0.4,
-          });
+        .then((data) => {
+          if (!isCancelled) {
+            setSurgeryRisk(data);
+            setLoadingRisk(false);
+          }
         })
-        .finally(() => setLoadingRisk(false));
+        .catch(() => {
+          if (!isCancelled) {
+            // Default mathematical calculation from backend if endpoint is unavailable
+            const baseRisk = 0.05;
+            const severityRisk = (injurySeverity || 4) * 0.01;
+            const totalRisk = Math.min(0.25, baseRisk + severityRisk);
+            setSurgeryRisk({
+              player_id: playerId,
+              base_risk: baseRisk,
+              age_risk: 0.01,
+              severity_risk: severityRisk,
+              total_risk: totalRisk,
+              estimated_recovery_reduction: 0.4,
+            });
+            setLoadingRisk(false);
+          }
+        });
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [isOpen, playerId, injurySeverity]);
 
   if (!isOpen) return null;
@@ -82,7 +92,10 @@ export const TreatmentModal: React.FC<TreatmentModalProps> = ({
             </div>
             <p className="text-xs text-slate-400 mt-1">
               Patient: <strong className="text-slate-200">{playerName}</strong> • Zone Integrity:{" "}
-              <span className="font-mono text-cyan-400 font-bold">{Math.round(currentHealth)}%</span> • Est. Recovery:{" "}
+              <span className="font-mono text-cyan-400 font-bold">
+                {Math.round(currentHealth)}%
+              </span>{" "}
+              • Est. Recovery:{" "}
               <span className="font-mono text-amber-400 font-bold">{weeksRemaining} Weeks</span>
             </p>
           </div>
@@ -114,7 +127,8 @@ export const TreatmentModal: React.FC<TreatmentModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mb-2 leading-relaxed">
-                Conservative non-invasive recovery protocol. Eliminates aggravation risk; player remains inactive (OUT).
+                Conservative non-invasive recovery protocol. Eliminates aggravation risk; player
+                remains inactive (OUT).
               </p>
               <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400">
                 <Sparkles className="w-3.5 h-3.5" /> 0% Complication Risk • Safe Baseline
@@ -140,7 +154,8 @@ export const TreatmentModal: React.FC<TreatmentModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mb-2 leading-relaxed">
-                Repairs structural tissue. Accelerates timetable by 30-50%, but carries a calculated complication risk.
+                Repairs structural tissue. Accelerates timetable by 30-50%, but carries a calculated
+                complication risk.
               </p>
               <div className="flex items-center gap-2 text-[10px] font-mono text-cyan-400">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
@@ -177,10 +192,12 @@ export const TreatmentModal: React.FC<TreatmentModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mb-2 leading-relaxed">
-                Applies braces/injections. Player dresses for game day with stat penalties (reduced if high Toughness / Ragknow).
+                Applies braces/injections. Player dresses for game day with stat penalties (reduced
+                if high Toughness / Ragknow).
               </p>
               <div className="flex items-center gap-2 text-[10px] font-mono text-amber-400">
-                <AlertTriangle className="w-3.5 h-3.5" /> High In-Game Escalation Risk • Speed & Agility Penalty
+                <AlertTriangle className="w-3.5 h-3.5" /> High In-Game Escalation Risk • Speed &
+                Agility Penalty
               </div>
             </div>
           </div>

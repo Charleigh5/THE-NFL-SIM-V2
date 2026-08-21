@@ -39,7 +39,10 @@ export const GpsSpeedViz = ({ speedMph }: GpsSpeedVizProps) => {
           {speedMph.toFixed(1)} <span className="text-[9px] text-gray-500">MPH</span>
         </span>
       </div>
-      <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden" style={{ minHeight: "6px" }}>
+      <div
+        className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden"
+        style={{ minHeight: "6px" }}
+      >
         <div
           ref={fillRef}
           data-testid="gps-speed-fill"

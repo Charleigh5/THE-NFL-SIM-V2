@@ -103,7 +103,9 @@ test.describe("Season Dashboard Flow", () => {
   test.beforeEach(async ({ page }) => {
     page.on("pageerror", (err) => console.error("PAGE_ERROR_LOG:", err.message, err.stack));
     await page.route("**/api/teams*", async (route) => {
-      await route.fulfill({ json: [mockTeam, { id: 2, name: "49ers", city: "San Francisco", abbreviation: "SF" }] });
+      await route.fulfill({
+        json: [mockTeam, { id: 2, name: "49ers", city: "San Francisco", abbreviation: "SF" }],
+      });
     });
     await page.route("**/api/season/summary", async (route) => {
       await route.fulfill({
@@ -165,9 +167,7 @@ test.describe("Season Dashboard Flow", () => {
     await page.locator('[data-testid="tab-standings"]').click();
 
     // Verify Standings section
-    const cardinalsRow = page.locator(
-      '[data-testid="standings-table-row-Arizona Cardinals"]'
-    );
+    const cardinalsRow = page.locator('[data-testid="standings-table-row-Arizona Cardinals"]');
     await expect(cardinalsRow).toBeVisible({ timeout: 10000 });
     await expect(cardinalsRow).toContainText("Arizona Cardinals");
     await expect(cardinalsRow).toContainText("5");

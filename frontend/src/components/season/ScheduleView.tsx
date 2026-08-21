@@ -147,12 +147,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           games.map((game) => {
             const rawHome = getTeam(game.home_team_id);
             const rawAway = getTeam(game.away_team_id);
-            const legacyGame = game as unknown as { home_team_name?: string; away_team_name?: string };
+            const legacyGame = game as unknown as {
+              home_team_name?: string;
+              away_team_name?: string;
+            };
 
             const homeTeam: Team = {
               id: game.home_team_id,
               city: rawHome?.city || "",
-              name: rawHome?.name || game.home_team?.name || legacyGame.home_team_name || `Team ${game.home_team_id}`,
+              name:
+                rawHome?.name ||
+                game.home_team?.name ||
+                legacyGame.home_team_name ||
+                `Team ${game.home_team_id}`,
               abbreviation:
                 rawHome?.abbreviation ||
                 game.home_team?.abbreviation ||
@@ -171,7 +178,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             const awayTeam: Team = {
               id: game.away_team_id,
               city: rawAway?.city || "",
-              name: rawAway?.name || game.away_team?.name || legacyGame.away_team_name || `Team ${game.away_team_id}`,
+              name:
+                rawAway?.name ||
+                game.away_team?.name ||
+                legacyGame.away_team_name ||
+                `Team ${game.away_team_id}`,
               abbreviation:
                 rawAway?.abbreviation ||
                 game.away_team?.abbreviation ||
@@ -239,7 +250,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       </TeamLogoContainer>
                       <div className="team-details">
                         <span className="team-name-display">
-                          {awayTeam.city ? `${awayTeam.city} ` : ""}{awayTeam.name}
+                          {awayTeam.city ? `${awayTeam.city} ` : ""}
+                          {awayTeam.name}
                         </span>
                         <span className="team-record">
                           ({awayTeam.wins ?? 0}-{awayTeam.losses ?? 0})
@@ -271,7 +283,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       </TeamLogoContainer>
                       <div className="team-details">
                         <span className="team-name-display">
-                          {homeTeam.city ? `${homeTeam.city} ` : ""}{homeTeam.name}
+                          {homeTeam.city ? `${homeTeam.city} ` : ""}
+                          {homeTeam.name}
                         </span>
                         <span className="team-record">
                           ({homeTeam.wins ?? 0}-{homeTeam.losses ?? 0})

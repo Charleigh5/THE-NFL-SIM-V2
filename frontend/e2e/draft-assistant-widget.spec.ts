@@ -27,7 +27,9 @@ test.describe("Draft Room Page", () => {
     });
     await page.route("**/api/season/1/offseason/prospects*", async (route) => {
       await route.fulfill({
-        json: [{ id: 1, name: "Caleb Williams", position: "QB", overall_rating: 90, school: "USC" }],
+        json: [
+          { id: 1, name: "Caleb Williams", position: "QB", overall_rating: 90, school: "USC" },
+        ],
       });
     });
     await page.route("**/api/season/1/offseason/needs/1", async (route) => {
@@ -42,7 +44,9 @@ test.describe("Draft Room Page", () => {
     await expect(page).toHaveURL(/.*offseason\/draft/);
 
     // Should have navigation / sidebar
-    await expect(page.locator("nav, aside, .sidebar-nav, [role='navigation']").first()).toBeVisible();
+    await expect(
+      page.locator("nav, aside, .sidebar-nav, [role='navigation']").first()
+    ).toBeVisible();
   });
 
   test("should show appropriate message when no active season", async ({ page }) => {
@@ -51,7 +55,9 @@ test.describe("Draft Room Page", () => {
     });
     await page.goto("/offseason/draft");
 
-    const noSeasonHeading = page.locator("h1, h2").filter({ hasText: /No Active Season|Draft Room/i });
+    const noSeasonHeading = page
+      .locator("h1, h2")
+      .filter({ hasText: /No Active Season|Draft Room/i });
     await expect(noSeasonHeading.first()).toBeVisible();
   });
 
@@ -81,7 +87,9 @@ test.describe("Draft Assistant Widget - With Active Draft", () => {
     });
     await page.route("**/api/season/1/offseason/prospects*", async (route) => {
       await route.fulfill({
-        json: [{ id: 1, name: "Caleb Williams", position: "QB", overall_rating: 90, school: "USC" }],
+        json: [
+          { id: 1, name: "Caleb Williams", position: "QB", overall_rating: 90, school: "USC" },
+        ],
       });
     });
     await page.route("**/api/season/1/offseason/needs/1", async (route) => {
@@ -93,7 +101,9 @@ test.describe("Draft Assistant Widget - With Active Draft", () => {
     await page.goto("/offseason/draft");
 
     const widget = page
-      .locator('[data-testid="draft-assistant-widget"], .draft-board, [data-testid="draft-room-page"]')
+      .locator(
+        '[data-testid="draft-assistant-widget"], .draft-board, [data-testid="draft-room-page"]'
+      )
       .first();
     await expect(widget).toBeVisible({ timeout: 10000 });
   });

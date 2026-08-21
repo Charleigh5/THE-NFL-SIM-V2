@@ -8,16 +8,24 @@
   --color-brand-dark: #b91c1c;
   --color-brand-glow: #fca5a5;
 
-  --color-broadcast-black: #000000;
-  --color-broadcast-dark: #0a0a0a;
-  --color-broadcast-metal: #171717;
-  --color-broadcast-glass: rgba(23, 23, 23, 0.8);
+  --color-broadcast-black: #050608;
+  --color-broadcast-dark: #0a0d14;
+  --color-broadcast-metal: #141923;
+  --color-broadcast-glass: rgba(14, 19, 29, 0.85);
 
-  --font-header: "Anton", "Impact", sans-serif;
-  --font-body: "Outfit", sans-serif;
+  --color-gridiron-turf: #0d2818;
+  --color-gridiron-turf-dark: #05140b;
+  --color-gridiron-chalk: rgba(255, 255, 255, 0.6);
+  --color-gridiron-firstdown: #facc15;
+  --color-gridiron-los: #3b82f6;
+
+  --font-header: "Anton", "Impact", "Arial Black", sans-serif;
+  --font-body: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
 
   --animate-ticker: ticker 20s linear infinite;
-  --animate-sheen: sheen 1s ease-in-out infinite;
+  --animate-sheen: sheen 1.5s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-xfactor: xfactor-flame 3s ease-in-out infinite;
 
   @keyframes ticker {
     0% {
@@ -37,6 +45,26 @@
       background-position: -200% 0;
     }
   }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+    }
+  }
+
+  @keyframes xfactor-flame {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 8px #f59e0b) drop-shadow(0 0 16px #ef4444);
+    }
+    50% {
+      filter: drop-shadow(0 0 14px #fbbf24) drop-shadow(0 0 24px #dc2626);
+    }
+  }
 }
 
 :root {
@@ -44,26 +72,103 @@
   line-height: 1.5;
   font-weight: 400;
   color-scheme: dark;
+
+  /* Dynamic Franchise Theme Defaults (Packers Green/Gold) */
+  --theme-primary: #203731;
+  --theme-secondary: #ffb612;
+  --theme-accent: #ffffff;
+  --glass-tint: rgba(32, 55, 49, 0.2);
+
+  /* OVR Rating Tier Colors */
+  --ovr-99: #ffd700;
+  --ovr-elite: #00f0ff;
+  --ovr-gold: #f59e0b;
+  --ovr-silver: #94a3b8;
+  --ovr-bronze: #cd7f32;
 }
 
 body {
   margin: 0;
   padding: 0;
   background-color: var(--color-broadcast-black);
+  background-image:
+    radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      color-mix(in srgb, var(--theme-primary) 35%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(180deg, #050608 0%, #080c14 50%, #030407 100%);
   color: white;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom Sports Utilities */
+.stadium-grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.turf-hash-pattern {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 38px,
+    rgba(255, 255, 255, 0.06) 38px,
+    rgba(255, 255, 255, 0.06) 40px
+  );
+}
+
+.madden-card-cut {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    14px 100%,
+    0 calc(100% - 14px)
+  );
+}
+
+.madden-header-skew {
+  transform: skewX(-10deg);
+}
+
+.madden-header-unskew {
+  transform: skewX(10deg);
+}
+
+.broadcast-glass {
+  background: rgba(15, 20, 30, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.broadcast-scorebug-pill {
+  background: linear-gradient(180deg, #1c2230 0%, #0d111a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-broadcast-dark);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-broadcast-metal);
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-dark);
+  background: color-mix(in srgb, var(--theme-secondary) 80%, #ef4444);
 }

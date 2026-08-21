@@ -23,11 +23,11 @@ export const MedicalCenter: React.FC = () => {
       first_name: "Kyler",
       last_name: "Murray",
       position: "QB",
-      injury_type: "Right Arm - Elbow Sprain",
+      injury_type: "Right Knee - Knee Sprain",
       injury_status: "QUESTIONABLE",
       severity: 4,
       weeks_remaining: 3,
-      body_part: "rightArm",
+      body_part: "rightLeg",
     },
     {
       player_id: 102,
@@ -72,15 +72,16 @@ export const MedicalCenter: React.FC = () => {
 
   // Fetch live player medical and biometrics when active player changes
   useEffect(() => {
+    let isCancelled = false;
     if (!activePlayer) return;
 
-    setLoading(true);
     Promise.all([
       medicalApi.getPlayerHealth(activePlayer.player_id).catch(() => null),
       medicalApi.getPlayerBioMetrics(activePlayer.player_id).catch(() => null),
       medicalApi.getPlayerFatigue(activePlayer.player_id).catch(() => null),
     ])
       .then(([healthRes, bioRes, fatigueRes]) => {
+        if (isCancelled) return;
         if (healthRes) {
           setHealthData({
             head: healthRes.head_health,
@@ -95,9 +96,16 @@ export const MedicalCenter: React.FC = () => {
         }
         if (bioRes) setBiometrics(bioRes);
         if (fatigueRes) setFatigue(fatigueRes);
+        setLoading(false);
       })
-      .finally(() => setLoading(false));
-  }, [activePlayer?.player_id]);
+      .catch(() => {
+        if (!isCancelled) setLoading(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activePlayer]);
 
   const handlePartSelect = (part: BodyZoneKey) => {
     setSelectedPart(part);
@@ -113,13 +121,18 @@ export const MedicalCenter: React.FC = () => {
         treatment: treatment,
       });
     } catch {
-      console.warn("Medical API endpoint returned error or offline mode, applying optimistic update");
+      console.warn(
+        "Medical API endpoint returned error or offline mode, applying optimistic update"
+      );
     }
 
     // Optimistic UI updates
     setHealthData((prev) => ({
       ...prev,
-      [selectedPart]: Math.min(100, (prev[selectedPart] || 70) + (treatment === "SURGERY" ? 25 : 10)),
+      [selectedPart]: Math.min(
+        100,
+        (prev[selectedPart] || 70) + (treatment === "SURGERY" ? 25 : 10)
+      ),
       generalWear: Math.max(0, (prev.generalWear || 10) - 5),
     }));
 
@@ -142,7 +155,10 @@ export const MedicalCenter: React.FC = () => {
   };
 
   return (
-    <div data-testid="medical-center-page" className="w-full min-h-screen bg-slate-950 text-slate-100 p-6 md:p-8 font-sans">
+    <div
+      data-testid="medical-center-page"
+      className="w-full min-h-screen bg-slate-950 text-slate-100 p-6 md:p-8 font-sans"
+    >
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header Bar */}
         <header className="flex flex-wrap justify-between items-end gap-4 pb-6 border-b border-slate-800">
@@ -161,7 +177,10 @@ export const MedicalCenter: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div data-testid="health-stats" className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl text-right">
+            <div
+              data-testid="health-stats"
+              className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl text-right"
+            >
               <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-mono">
                 Roster Health
               </span>
@@ -182,7 +201,10 @@ export const MedicalCenter: React.FC = () => {
         </header>
 
         {/* Patient Selector Bar */}
-        <div data-testid="injury-list" className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar">
+        <div
+          data-testid="injury-list"
+          className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar"
+        >
           <span className="text-xs font-mono text-slate-400 uppercase tracking-wider whitespace-nowrap">
             Active Roster Scans:
           </span>
@@ -205,7 +227,9 @@ export const MedicalCenter: React.FC = () => {
               >
                 {player.position}
               </div>
-              <span>{player.first_name} {player.last_name}</span>
+              <span>
+                {player.first_name} {player.last_name}
+              </span>
               <span className="text-[10px] font-mono text-slate-500">
                 ({player.weeks_remaining}w)
               </span>
@@ -216,7 +240,10 @@ export const MedicalCenter: React.FC = () => {
         {/* Main Grid: Body Map + Biometrics + Roster Report */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: 7-Zone Body Map */}
-          <div data-testid="body-diagram" className="lg:col-span-5 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl backdrop-blur-md shadow-2xl">
+          <div
+            data-testid="body-diagram"
+            className="lg:col-span-5 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl backdrop-blur-md shadow-2xl"
+          >
             <div className="w-full flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
               <span className="text-xs font-mono uppercase text-slate-400 flex items-center gap-2">
                 <HeartPulse className="w-4 h-4 text-cyan-400" /> Anatomical Telemetry
@@ -243,10 +270,7 @@ export const MedicalCenter: React.FC = () => {
             />
 
             {/* Fatigue & Bio-Energy Monitor */}
-            <FatigueMonitor
-              fatigue={fatigue}
-              currentWearLevel={healthData.generalWear}
-            />
+            <FatigueMonitor fatigue={fatigue} currentWearLevel={healthData.generalWear} />
 
             {/* Current Diagnosis Card */}
             <div className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl">
@@ -275,9 +299,7 @@ export const MedicalCenter: React.FC = () => {
                   </div>
                   <button
                     onClick={() => {
-                      setSelectedPart(
-                        (activePlayer.body_part as BodyZoneKey) || "rightArm"
-                      );
+                      setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
                       setShowModal(true);
                     }}
                     className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"

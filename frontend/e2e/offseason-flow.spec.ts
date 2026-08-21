@@ -163,20 +163,14 @@ test.describe("Offseason Flow", () => {
     });
 
     // Mock Team Needs
-    await page.route(
-      `**/api/season/*/offseason/needs/*`,
-      async (route) => {
-        await route.fulfill({ json: MOCK_TEAM_NEEDS });
-      }
-    );
+    await page.route(`**/api/season/*/offseason/needs/*`, async (route) => {
+      await route.fulfill({ json: MOCK_TEAM_NEEDS });
+    });
 
     // Mock Salary Cap
-    await page.route(
-      `**/api/season/*/offseason/salary-cap/*`,
-      async (route) => {
-        await route.fulfill({ json: MOCK_CAP_DATA });
-      }
-    );
+    await page.route(`**/api/season/*/offseason/salary-cap/*`, async (route) => {
+      await route.fulfill({ json: MOCK_CAP_DATA });
+    });
   });
 
   test("should load draft room in offseason", async ({ page }) => {
@@ -185,7 +179,9 @@ test.describe("Offseason Flow", () => {
 
     // Verify draft page loads - look for draft-related content
     await expect(
-      page.locator(".draft-room, [data-testid='draft-room'], [data-testid='draft-room-page']").first()
+      page
+        .locator(".draft-room, [data-testid='draft-room'], [data-testid='draft-room-page']")
+        .first()
     ).toBeVisible({ timeout: 10000 });
   });
 
@@ -373,19 +369,13 @@ test.describe("Offseason Dashboard Integration", () => {
       });
     });
 
-    await page.route(
-      `**/api/season/*/offseason/needs/*`,
-      async (route) => {
-        await route.fulfill({ json: MOCK_TEAM_NEEDS });
-      }
-    );
+    await page.route(`**/api/season/*/offseason/needs/*`, async (route) => {
+      await route.fulfill({ json: MOCK_TEAM_NEEDS });
+    });
 
-    await page.route(
-      `**/api/season/*/offseason/salary-cap/*`,
-      async (route) => {
-        await route.fulfill({ json: MOCK_CAP_DATA });
-      }
-    );
+    await page.route(`**/api/season/*/offseason/salary-cap/*`, async (route) => {
+      await route.fulfill({ json: MOCK_CAP_DATA });
+    });
 
     await page.route(`**/api/season/*/offseason/prospects*`, async (route) => {
       await route.fulfill({ json: MOCK_PROSPECTS });

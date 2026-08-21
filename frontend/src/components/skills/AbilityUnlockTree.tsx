@@ -46,7 +46,8 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
       levelReq: 10,
       xpCost: 5000,
       icon: <Brain className="w-5 h-5" />,
-      mechanic: "Unlocks 'The Read' pre-snap coverage insight (90% read accuracy vs disguised shells).",
+      mechanic:
+        "Unlocks 'The Read' pre-snap coverage insight (90% read accuracy vs disguised shells).",
     },
     audible_master: {
       key: "audible_master",
@@ -55,7 +56,8 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
       levelReq: 8,
       xpCost: 3000,
       icon: <Zap className="w-5 h-5" />,
-      mechanic: "Reduces audible latency from 8s to 2s; false-start immunity on blitz check audibles.",
+      mechanic:
+        "Reduces audible latency from 8s to 2s; false-start immunity on blitz check audibles.",
     },
     red_zone_assassin: {
       key: "red_zone_assassin",
@@ -156,7 +158,9 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
             </h2>
             <p className="text-xs text-slate-400 font-mono">
               Level {playerLevel} • Available Progression XP:{" "}
-              <strong className="text-purple-300 font-bold font-mono">{playerXp.toLocaleString()} XP</strong>
+              <strong className="text-purple-300 font-bold font-mono">
+                {playerXp.toLocaleString()} XP
+              </strong>
             </p>
           </div>
         </div>
@@ -167,7 +171,8 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
         {Object.values(catalog).map((item) => {
           const statusObj = abilityStatuses[item.key];
           const isUnlocked = statusObj?.status === "UNLOCKED";
-          const isEligiblePosition = item.positions.includes(playerPosition) || item.positions.includes("ALL");
+          const isEligiblePosition =
+            item.positions.includes(playerPosition) || item.positions.includes("ALL");
           const meetsLevel = playerLevel >= item.levelReq;
           const meetsXp = playerXp >= item.xpCost;
           const canUnlock = !isUnlocked && meetsLevel && meetsXp && isEligiblePosition;
@@ -181,8 +186,8 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
                 isSelected
                   ? "bg-slate-900 border-purple-500 shadow-lg shadow-purple-950/40"
                   : isUnlocked
-                  ? "bg-purple-950/20 border-purple-500/40 hover:border-purple-400"
-                  : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
+                    ? "bg-purple-950/20 border-purple-500/40 hover:border-purple-400"
+                    : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
               }`}
             >
               <div>
@@ -256,7 +261,8 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
                 <Brain className="w-4 h-4" /> Live "The Read" Simulator (Diagnostician Engine)
               </h4>
               <p className="text-xs text-slate-400">
-                Simulate how QB Awareness + Level cuts through the Defensive Coordinator's coverage disguise.
+                Simulate how QB Awareness + Level cuts through the Defensive Coordinator's coverage
+                disguise.
               </p>
             </div>
             <button
@@ -272,14 +278,19 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
             <div className="p-3.5 rounded-lg bg-slate-950/80 border border-purple-500/20 text-xs font-mono space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-slate-400">Predicted Coverage Shell:</span>
-                <span className="text-cyan-400 font-bold text-sm">{preSnapInsight.predicted_coverage}</span>
+                <span className="text-cyan-400 font-bold text-sm">
+                  {preSnapInsight.predicted_coverage}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-400">Confidence Metric:</span>
-                <span className="text-emerald-400 font-bold">{preSnapInsight.confidence} Confidence</span>
+                <span className="text-emerald-400 font-bold">
+                  {preSnapInsight.confidence} Confidence
+                </span>
               </div>
               <div className="pt-2 border-t border-slate-800 text-purple-300">
-                <strong className="text-slate-400">Telemetry Read:</strong> "{preSnapInsight.key_read}"
+                <strong className="text-slate-400">Telemetry Read:</strong> "
+                {preSnapInsight.key_read}"
               </div>
             </div>
           )}

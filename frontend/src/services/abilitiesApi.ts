@@ -51,7 +51,10 @@ export const abilitiesApi = {
    * Execute Pre-Snap Read insight simulation (The Read mechanic).
    */
   async getPreSnapInsight(request: PreSnapInsightRequest): Promise<PreSnapInsightResponse> {
-    const response = await apiClient.post<PreSnapInsightResponse>("/abilities/match/insight", request);
+    const response = await apiClient.post<PreSnapInsightResponse>(
+      "/abilities/match/insight",
+      request
+    );
     return response.data;
   },
 };

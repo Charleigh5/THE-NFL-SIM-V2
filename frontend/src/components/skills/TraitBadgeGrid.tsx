@@ -18,10 +18,7 @@ interface TraitDisplayItem {
   effects: string;
 }
 
-export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
-  unlockedTraits,
-  onTraitClick,
-}) => {
+export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, onTraitClick }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [hoveredTrait, setHoveredTrait] = useState<TraitDisplayItem | null>(null);
 
@@ -33,7 +30,8 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
       name: "Ragknow",
       tier: "LEGENDARY",
       category: "LEGENDARY",
-      description: "Ignore injury severity 1-7 penalties entirely. Immune to attribute degradation.",
+      description:
+        "Ignore injury severity 1-7 penalties entirely. Immune to attribute degradation.",
       effects: "Zero penalty playing through injury • 10% faster recovery • Max cap: 3 players",
     },
     {
@@ -262,11 +260,22 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
     },
   ];
 
-  const categories = ["ALL", "LEGENDARY", "QB", "RB", "WR/TE", "OL", "DL", "LB", "DB", "ST", "GENERAL"];
+  const categories = [
+    "ALL",
+    "LEGENDARY",
+    "QB",
+    "RB",
+    "WR/TE",
+    "OL",
+    "DL",
+    "LB",
+    "DB",
+    "ST",
+    "GENERAL",
+  ];
 
-  const filtered = selectedCategory === "ALL"
-    ? catalog
-    : catalog.filter((t) => t.category === selectedCategory);
+  const filtered =
+    selectedCategory === "ALL" ? catalog : catalog.filter((t) => t.category === selectedCategory);
 
   const getTierBadgeStyle = (tier: TraitDisplayItem["tier"]) => {
     switch (tier) {
@@ -325,7 +334,8 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
       {/* Trait Badge Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
         {filtered.map((item) => {
-          const isUnlocked = unlockedTraits.includes(item.key) || unlockedTraits.includes(item.name);
+          const isUnlocked =
+            unlockedTraits.includes(item.key) || unlockedTraits.includes(item.name);
 
           return (
             <motion.div
@@ -347,15 +357,13 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
                       item.tier === "LEGENDARY"
                         ? "bg-amber-900/80 text-amber-200 border border-amber-600"
                         : item.tier === "GOLD"
-                        ? "bg-amber-950 text-amber-300 border border-amber-800"
-                        : "bg-slate-800 text-slate-400"
+                          ? "bg-amber-950 text-amber-300 border border-amber-800"
+                          : "bg-slate-800 text-slate-400"
                     }`}
                   >
                     {item.tier}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">
-                    {item.category}
-                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">{item.category}</span>
                 </div>
 
                 <h4 className="font-bold text-sm text-slate-100 flex items-center gap-1.5">
@@ -373,7 +381,9 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({
                 <span className={isUnlocked ? "text-emerald-400 font-bold" : "text-slate-500"}>
                   {isUnlocked ? "ACTIVE BADGE" : "LOCKED"}
                 </span>
-                <span className="text-slate-400 truncate max-w-[120px]">{item.effects.split("•")[0]}</span>
+                <span className="text-slate-400 truncate max-w-[120px]">
+                  {item.effects.split("•")[0]}
+                </span>
               </div>
             </motion.div>
           );

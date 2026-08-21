@@ -9,7 +9,12 @@ export interface TeamTheme {
 export interface BasicTeamInfo {
   id: string;
   name: string;
+  abbreviation?: string;
+  city?: string;
+  conference?: string;
+  division?: string;
   colors: TeamTheme;
+  established?: number;
 }
 
 export interface ThemeContextType {

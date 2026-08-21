@@ -113,11 +113,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({
       }
 
       const data: NewsResponse = await response.json();
-      const newsItems = Array.isArray(data?.items)
-        ? data.items
-        : Array.isArray(data)
-        ? data
-        : [];
+      const newsItems = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
       setNews(newsItems);
       setLastUpdated(data?.last_updated || new Date().toISOString());
     } catch (err) {

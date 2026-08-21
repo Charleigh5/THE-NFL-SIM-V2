@@ -92,7 +92,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
     });
 
     return filtered;
-  }, [prospects, filterPos, sortBy]);
+  }, [boardProspects, prospects, filterPos, sortBy]);
 
   const positions = ["ALL", "QB", "RB", "WR", "TE", "OL", "DL", "LB", "DB", "ST"];
 
@@ -260,12 +260,6 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                 } as unknown as CombineResult, // Safe cast after spread to ensure all required fields are present and correctly typed
                 genesis_revealed: true,
               };
-
-              // Mutate source reference
-              revealingProspect.genesis_revealed = true;
-              if (revealingProspect.combine) {
-                Object.assign(revealingProspect.combine, revealedData.revealed_stats);
-              }
 
               // Update the revealing prospect state to show data immediately in modal
               setRevealingProspect(updatedProspect);

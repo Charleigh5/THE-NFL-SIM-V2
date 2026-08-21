@@ -35,7 +35,9 @@ const SeasonDashboard: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>(loaderData?.teams ?? []);
   const [standings, setStandings] = useState<TeamStanding[]>(loaderData?.standings ?? []);
   const [games, setGames] = useState<Game[]>(loaderData?.schedule ?? []);
-  const [playoffBracket, setPlayoffBracket] = useState<PlayoffMatchup[]>(loaderData?.playoffBracket ?? []);
+  const [playoffBracket, setPlayoffBracket] = useState<PlayoffMatchup[]>(
+    loaderData?.playoffBracket ?? []
+  );
   const [leaders, setLeaders] = useState<LeagueLeadersType | null>(loaderData?.leaders ?? null);
   const [seasonProgress, setSeasonProgress] = useState<number>(loaderData?.seasonProgress ?? 0);
   const [awards, setAwards] = useState<SeasonAwards | null>(loaderData?.awards ?? null);

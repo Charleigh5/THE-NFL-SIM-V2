@@ -12,7 +12,7 @@ export interface TurfGridData {
   cells: TurfCell[][];
 }
 
-export type CognitiveStressState = 'RELAXED' | 'FOCUSED' | 'STRESSED' | 'PANICKED' | 'FLOW';
+export type CognitiveStressState = "RELAXED" | "FOCUSED" | "STRESSED" | "PANICKED" | "FLOW";
 
 export interface PlayerCognitiveTelemetry {
   playerId: number | string;

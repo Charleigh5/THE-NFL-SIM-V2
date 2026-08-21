@@ -16,7 +16,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
   position = "ATH",
   isScoutedInitially = false,
 }) => {
-  const [isRevealed, setIsRevealed] = useState(isScoutedInitially || biometrics?.genesis_revealed || false);
+  const [isRevealed, setIsRevealed] = useState(
+    isScoutedInitially || biometrics?.genesis_revealed || false
+  );
 
   // Defaults derived or mocked if backend biometrics are loading
   const s2Score = biometrics?.s2_cognition_score ?? 84;
@@ -79,7 +81,8 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
                 Classified GENESIS Scouting Data
               </h4>
               <p className="text-xs text-slate-400 max-w-sm mb-4">
-                Advanced S2 Cognition, GPS tracking telemetry, and medical risk flags require authorization to inspect.
+                Advanced S2 Cognition, GPS tracking telemetry, and medical risk flags require
+                authorization to inspect.
               </p>
               <button
                 onClick={() => setIsRevealed(true)}
@@ -92,7 +95,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
         </AnimatePresence>
 
         {/* Primary Metrics Grid */}
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-3 gap-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}
+        >
           {/* 1. S2 Cognition Dial */}
           <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
@@ -114,7 +119,7 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               />
             </div>
             <p className="text-[10px] text-slate-500 mt-2">
-              OODA Loop Reaction: {Math.round(380 - (s2Score * 1.5))}ms (Decide & Act speed)
+              OODA Loop Reaction: {Math.round(380 - s2Score * 1.5)}ms (Decide & Act speed)
             </p>
           </div>
 
@@ -129,7 +134,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               </span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-white font-mono">{gpsSpeed.toFixed(1)}</span>
+              <span className="text-3xl font-black text-white font-mono">
+                {gpsSpeed.toFixed(1)}
+              </span>
               <span className="text-xs text-slate-400">MPH</span>
             </div>
             <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
@@ -170,7 +177,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
         </div>
 
         {/* Secondary Proportions & Flags Row */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}
+        >
           {/* Anatomical Dimensions */}
           <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -180,7 +189,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               <div>
                 <div className="text-xs font-semibold text-white">Anatomical Levers</div>
                 <div className="text-[11px] text-slate-400">
-                  Wingspan: <span className="font-mono text-cyan-300 font-bold">{wingspan.toFixed(1)}"</span> | Hand Size:{" "}
+                  Wingspan:{" "}
+                  <span className="font-mono text-cyan-300 font-bold">{wingspan.toFixed(1)}"</span>{" "}
+                  | Hand Size:{" "}
                   <span className="font-mono text-cyan-300 font-bold">{handSize.toFixed(2)}"</span>
                 </div>
               </div>

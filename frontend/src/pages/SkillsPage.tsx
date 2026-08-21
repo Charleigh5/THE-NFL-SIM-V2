@@ -22,7 +22,7 @@ export const SkillsPage: React.FC = () => {
   const data = useLoaderData() as LoaderData | null;
   const { playerId } = useParams();
 
-  const [activeTab, setActiveTab] = useState<"ABILITIES" | "TRAITS" | "3D_TREE">("ABILITIES");
+  const [activeTab, setActiveTab] = useState<"3D_TREE" | "ABILITIES" | "TRAITS">("3D_TREE");
   const [selectedTraitId, setSelectedTraitId] = useState<string | null>(null);
 
   // Player Progression State
@@ -134,7 +134,7 @@ export const SkillsPage: React.FC = () => {
   const layout = SKILL_TREE_LAYOUTS[layoutKey];
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 p-6 md:p-8 font-sans">
+    <div className="w-full h-screen min-h-screen overflow-y-auto bg-slate-950 text-slate-100 p-6 md:p-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header Bar */}
         <header className="flex flex-wrap justify-between items-end gap-4 pb-6 border-b border-slate-800">
@@ -200,11 +200,15 @@ export const SkillsPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed mb-3">
-                <strong>The Field General:</strong> +5 Awareness, +8 Play Recognition, +10 Leadership. +20% 3rd-down pass conversion efficiency. Pre-snap coverage audible unlocked.
+                <strong>The Field General:</strong> +5 Awareness, +8 Play Recognition, +10
+                Leadership. +20% 3rd-down pass conversion efficiency. Pre-snap coverage audible
+                unlocked.
               </p>
             </div>
             <div className="flex items-center justify-between text-xs font-mono text-slate-400 pt-2 border-t border-slate-800">
-              <span>Career Seasons: <strong>5/3 (Eligible for Evolution)</strong></span>
+              <span>
+                Career Seasons: <strong>5/3 (Eligible for Evolution)</strong>
+              </span>
               <span className="text-emerald-400 font-bold">Evolution Available</span>
             </div>
           </div>
@@ -257,10 +261,7 @@ export const SkillsPage: React.FC = () => {
         )}
 
         {activeTab === "TRAITS" && (
-          <TraitBadgeGrid
-            unlockedTraits={unlockedTraits}
-            onTraitClick={handleUnlockOrEquip}
-          />
+          <TraitBadgeGrid unlockedTraits={unlockedTraits} onTraitClick={handleUnlockOrEquip} />
         )}
 
         {activeTab === "3D_TREE" && (

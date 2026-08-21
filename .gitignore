@@ -126,5 +126,5 @@ debug_error.txt
 frontend/test-results/
 
 # Playwright reports
-frontend/playwright-report/data/
+frontend/playwright-report/
 
