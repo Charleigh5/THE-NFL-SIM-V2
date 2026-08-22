@@ -1,4 +1,7 @@
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { CoachingDynastyTree } from "./CoachingDynastyTree";
+import { Users, GitBranch } from "lucide-react";
 import "./CoachingTree.css";
 
 interface CoachNodeProps {
@@ -26,74 +29,108 @@ const CoachNode: React.FC<CoachNodeProps> = ({ name, role, specialty, color }) =
 );
 
 export const CoachingTree: React.FC = () => {
+  const [viewMode, setViewMode] = useState<"HIERARCHY" | "SKILL_TREE">("SKILL_TREE");
+
   return (
-    <div className="p-8 flex flex-col items-center relative gap-8">
-      {/* Head Coach */}
-      <div className="z-10">
-        <CoachNode name="Zac Taylor" role="Head Coach" specialty="Offensive Guru" color="#f59e0b" />
+    <div className="w-full flex flex-col items-center gap-6 font-sans">
+      {/* Mode Switcher */}
+      <div className="flex items-center gap-2 p-1.5 bg-slate-900/90 border border-slate-800 rounded-2xl">
+        <button
+          onClick={() => setViewMode("SKILL_TREE")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+            viewMode === "SKILL_TREE"
+              ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/20"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <GitBranch className="w-4 h-4" />
+          Dynasty Skill Tree & Synergies
+        </button>
+        <button
+          onClick={() => setViewMode("HIERARCHY")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+            viewMode === "HIERARCHY"
+              ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/20"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          Staff Organizational Chart
+        </button>
       </div>
 
-      {/* Connection Lines (SVG) */}
-      <svg className="absolute top-20 left-0 w-full h-20 -z-0 pointer-events-none">
-        <path d="M50% 0 L50% 20 L25% 20 L25% 40" fill="none" stroke="#4b5563" strokeWidth="2" />
-        <path d="M50% 20 L75% 20 L75% 40" fill="none" stroke="#4b5563" strokeWidth="2" />
-      </svg>
+      {viewMode === "SKILL_TREE" ? (
+        <CoachingDynastyTree />
+      ) : (
+        <div className="p-8 flex flex-col items-center relative gap-8 w-full max-w-4xl bg-slate-950/70 border border-slate-800 rounded-3xl backdrop-blur-xl">
+          {/* Head Coach */}
+          <div className="z-10">
+            <CoachNode name="Zac Taylor" role="Head Coach" specialty="Offensive Guru" color="#f59e0b" />
+          </div>
 
-      {/* Coordinators */}
-      <div className="flex gap-32 z-10">
-        <div className="flex flex-col items-center gap-6">
-          <CoachNode
-            name="Brian Callahan"
-            role="Offensive Coord"
-            specialty="Passing Game"
-            color="#3b82f6"
-          />
-
-          <svg className="w-full h-8 overflow-visible">
-            <path
-              d="M50% 0 L50% 32"
-              fill="none"
-              stroke="#4b5563"
-              strokeWidth="1"
-              strokeDasharray="4 2"
-            />
+          {/* Connection Lines (SVG) */}
+          <svg className="absolute top-28 left-0 w-full h-20 -z-0 pointer-events-none">
+            <path d="M50% 0 L50% 20 L25% 20 L25% 40" fill="none" stroke="#4b5563" strokeWidth="2" />
+            <path d="M50% 20 L75% 20 L75% 40" fill="none" stroke="#4b5563" strokeWidth="2" />
           </svg>
 
-          <div className="flex gap-4">
-            <CoachNode name="Dan Pitcher" role="QB Coach" specialty="Development" color="#1d4ed8" />
-            <CoachNode
-              name="Frank Pollack"
-              role="OL Coach"
-              specialty="Protection"
-              color="#1d4ed8"
-            />
+          {/* Coordinators */}
+          <div className="flex gap-32 z-10">
+            <div className="flex flex-col items-center gap-6">
+              <CoachNode
+                name="Brian Callahan"
+                role="Offensive Coord"
+                specialty="Passing Game"
+                color="#3b82f6"
+              />
+
+              <svg className="w-full h-8 overflow-visible">
+                <path
+                  d="M50% 0 L50% 32"
+                  fill="none"
+                  stroke="#4b5563"
+                  strokeWidth="1"
+                  strokeDasharray="4 2"
+                />
+              </svg>
+
+              <div className="flex gap-4">
+                <CoachNode name="Dan Pitcher" role="QB Coach" specialty="Development" color="#1d4ed8" />
+                <CoachNode
+                  name="Frank Pollack"
+                  role="OL Coach"
+                  specialty="Protection"
+                  color="#1d4ed8"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-6">
+              <CoachNode
+                name="Lou Anarumo"
+                role="Defensive Coord"
+                specialty="Schemer"
+                color="#ef4444"
+              />
+
+              <svg className="w-full h-8 overflow-visible">
+                <path
+                  d="M50% 0 L50% 32"
+                  fill="none"
+                  stroke="#4b5563"
+                  strokeWidth="1"
+                  strokeDasharray="4 2"
+                />
+              </svg>
+
+              <div className="flex gap-4">
+                <CoachNode name="Marion Hobby" role="DL Coach" specialty="Pass Rush" color="#b91c1c" />
+                <CoachNode name="Charles Burks" role="DB Coach" specialty="Coverage" color="#b91c1c" />
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className="flex flex-col items-center gap-6">
-          <CoachNode
-            name="Lou Anarumo"
-            role="Defensive Coord"
-            specialty="Schemer"
-            color="#ef4444"
-          />
-
-          <svg className="w-full h-8 overflow-visible">
-            <path
-              d="M50% 0 L50% 32"
-              fill="none"
-              stroke="#4b5563"
-              strokeWidth="1"
-              strokeDasharray="4 2"
-            />
-          </svg>
-
-          <div className="flex gap-4">
-            <CoachNode name="Marion Hobby" role="DL Coach" specialty="Pass Rush" color="#b91c1c" />
-            <CoachNode name="Charles Burks" role="DB Coach" specialty="Coverage" color="#b91c1c" />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

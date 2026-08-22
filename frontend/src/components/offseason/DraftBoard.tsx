@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from "react";
 import type { Prospect, TeamNeed } from "../../types/offseason";
 import type { CombineResult } from "../../types/combine";
+import type { ScoutBiasLens } from "../../types/deepDive";
 import { GenesisReveal } from "../draft/GenesisReveal";
 import { draftService } from "../../services/draft";
 import { GpsSpeedViz } from "../draft/GpsSpeedViz";
 import { Eye, Dumbbell, FileText } from "lucide-react";
 import { ScoutingReportModal } from "../scouting/ScoutingReportModal";
+import { ScoutIntelligenceLens } from "./ScoutIntelligenceLens";
 import "./DraftBoard.css";
 
 interface DraftBoardProps {
@@ -23,6 +25,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 }) => {
   const [filterPos, setFilterPos] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("rank");
+  const [currentLens, setCurrentLens] = useState<ScoutBiasLens>("CONSENSUS");
   const [boardProspects, setBoardProspects] = useState<Prospect[]>(prospects);
   const [revealingProspect, setRevealingProspect] = useState<Prospect | null>(null);
   const [scoutingReportProspect, setScoutingReportProspect] = useState<Prospect | null>(null);
@@ -53,11 +56,25 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
   };
 
   const getDisplayRating = (p: Prospect) => {
+    let base = p.overall_rating;
     if (p.scouting_report && p.scouting_report.attributes["overall_rating"]) {
-      return p.scouting_report.attributes["overall_rating"].display;
+      const parsed = parseInt(p.scouting_report.attributes["overall_rating"].display);
+      if (!isNaN(parsed)) base = parsed;
     }
-    // Fallback if no report (legacy or user team knows)
-    return p.overall_rating.toString();
+    // Apply dynamic lens lens modifier
+    if (currentLens === "FILM_TRADITIONALIST") {
+      const s2Mod = p.combine?.s2_cognition_score ? (p.combine.s2_cognition_score - 75) * 0.1 : 0;
+      return Math.max(55, Math.min(99, Math.round(base + s2Mod))).toString();
+    }
+    if (currentLens === "ANALYTICS_METRICS") {
+      const speedMod = p.combine?.gps_speed_max ? (p.combine.gps_speed_max - 20) * 1.5 : 0;
+      return Math.max(55, Math.min(99, Math.round(base + speedMod))).toString();
+    }
+    if (currentLens === "REGIONAL_SCOUT") {
+      const hash = ((p.id * 17) % 7) - 3;
+      return Math.max(55, Math.min(99, base + hash)).toString();
+    }
+    return base.toString();
   };
 
   // Helper to determine need level
@@ -98,6 +115,10 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 
   return (
     <div className="draft-board" data-testid="draft-board">
+      <ScoutIntelligenceLens
+        currentLens={currentLens}
+        onLensChange={setCurrentLens}
+      />
       <div className="draft-header">
         <h3>Draft Board</h3>
         <div className="draft-controls">

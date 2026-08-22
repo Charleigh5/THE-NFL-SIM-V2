@@ -4,7 +4,8 @@ import { BodyMap } from "../components/medical/BodyMap";
 import type { BodyZoneKey, BodyMapHealthData } from "../components/medical/BodyMap";
 import { GenesisBiometricCard } from "../components/medical/GenesisBiometricCard";
 import { FatigueMonitor } from "../components/medical/FatigueMonitor";
-import { TreatmentModal } from "../components/medical/TreatmentModal";
+import { OrthopedicTriageModal } from "../components/medical/OrthopedicTriageModal";
+import type { MedicalProtocolType } from "../types/deepDive";
 import { medicalApi } from "../services/medicalApi";
 import type { InjuredPlayer, BioMetrics, FatigueState, TreatmentType } from "../types/medical";
 import { ShieldCheck, Stethoscope, AlertCircle, HeartPulse, Activity } from "lucide-react";
@@ -112,13 +113,39 @@ export const MedicalCenter: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleTreatment = async (treatment: TreatmentType) => {
+  const handleProtocolConfirm = async (protocol: MedicalProtocolType) => {
     if (!activePlayer || !selectedPart) return;
 
+    let weeksReduction = 1.0;
+    let newStatus: "OUT" | "DOUBTFUL" | "QUESTIONABLE" | "ACTIVE" = "OUT";
+    let integrityGain = 10;
+
+    if (protocol === "PRP_THERAPY") {
+      weeksReduction = 0.7;
+      integrityGain = 20;
+    } else if (protocol === "ARTHROSCOPIC_SURGERY") {
+      weeksReduction = 0.5;
+      integrityGain = 25;
+    } else if (protocol === "RECONSTRUCTIVE_SURGERY") {
+      weeksReduction = 1.2;
+      integrityGain = 30;
+    } else if (protocol === "CORTISONE_STABILIZATION") {
+      weeksReduction = 0.0;
+      newStatus = "QUESTIONABLE";
+      integrityGain = 5;
+    }
+
     try {
+      const treatmentMapping: TreatmentType =
+        protocol === "CORTISONE_STABILIZATION"
+          ? "PLAY_THROUGH"
+          : protocol.includes("SURGERY")
+          ? "SURGERY"
+          : "REST";
+
       await medicalApi.applyTreatment({
         player_id: activePlayer.player_id,
-        treatment: treatment,
+        treatment: treatmentMapping,
       });
     } catch {
       console.warn(
@@ -129,10 +156,7 @@ export const MedicalCenter: React.FC = () => {
     // Optimistic UI updates
     setHealthData((prev) => ({
       ...prev,
-      [selectedPart]: Math.min(
-        100,
-        (prev[selectedPart] || 70) + (treatment === "SURGERY" ? 25 : 10)
-      ),
+      [selectedPart]: Math.min(100, (prev[selectedPart] || 70) + integrityGain),
       generalWear: Math.max(0, (prev.generalWear || 10) - 5),
     }));
 
@@ -141,11 +165,8 @@ export const MedicalCenter: React.FC = () => {
         idx === activePlayerIndex
           ? {
               ...p,
-              weeks_remaining:
-                treatment === "SURGERY"
-                  ? Math.max(1, Math.round(p.weeks_remaining * 0.6))
-                  : p.weeks_remaining,
-              injury_status: treatment === "PLAY_THROUGH" ? "QUESTIONABLE" : "OUT",
+              weeks_remaining: Math.max(0, Math.round(p.weeks_remaining * weeksReduction)),
+              injury_status: newStatus,
             }
           : p
       )
@@ -312,19 +333,19 @@ export const MedicalCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* Treatment Modal */}
+        {/* Orthopedic Triage Modal */}
         <AnimatePresence>
           {showModal && (
-            <TreatmentModal
+            <OrthopedicTriageModal
               isOpen={showModal}
               playerId={activePlayer.player_id}
               playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
-              partName={selectedPart ? selectedPart.toUpperCase() : "ANATOMY"}
-              currentHealth={selectedPart ? healthData[selectedPart] : 75}
-              injurySeverity={activePlayer.severity}
-              weeksRemaining={activePlayer.weeks_remaining}
+              zoneKey={selectedPart || "rightArm"}
+              zoneName={selectedPart ? selectedPart.toUpperCase() : "ANATOMICAL ZONE"}
+              currentIntegrity={selectedPart ? healthData[selectedPart] : 75}
+              baselineWeeks={activePlayer.weeks_remaining}
               onClose={() => setShowModal(false)}
-              onConfirm={handleTreatment}
+              onConfirmProtocol={handleProtocolConfirm}
             />
           )}
         </AnimatePresence>
