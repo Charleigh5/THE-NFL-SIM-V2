@@ -1,0 +1,766 @@
+{
+  "schema_version": 1,
+  "active_phase": "A",
+  "active_task": null,
+  "phases": {
+    "A": {
+      "title": "Cutscene scaffold",
+      "status": "TODO",
+      "tasks": [
+        {
+          "id": "A1",
+          "title": "Create board files and schema types",
+          "depends_on": [],
+          "files": [
+            "docs/tasks/BROADCAST_PHASE_BOARD.md",
+            "docs/tasks/broadcast_phase_board.json",
+            "frontend/src/types/broadcast.ts"
+          ],
+          "dod": "files exist; types compile",
+          "status": "DONE",
+          "evidence": null,
+          "star_score": null,
+          "notes": "Board files created. TypeScript types defined with BroadcastPhase enum, transition table, CameraShot, OverlayCue, ClipCue interfaces."
+        },
+        {
+          "id": "A2",
+          "title": "Define BroadcastPhase enum + transition table",
+          "depends_on": [
+            "A1"
+          ],
+          "files": [
+            "frontend/src/types/broadcast.ts",
+            "backend/app/schemas/broadcast.py"
+          ],
+          "dod": "illegal transitions throw; 7 legal states documented",
+          "status": "DONE",
+          "evidence": null,
+          "star_score": null,
+          "notes": "BroadcastPhase enum (7 states) and PHASE_TRANSITIONS table implemented in both TS and Python. validateTransition() throws on illegal transitions. Tests pass: 6 legal + 2 illegal transitions verified."
+        },
+        {
+          "id": "A3",
+          "title": "ClipCue / CameraShot / OverlayCue Pydantic+TS twins",
+          "depends_on": [
+            "A2"
+          ],
+          "files": [
+            "backend/app/schemas/broadcast.py",
+            "frontend/src/types/broadcast.ts"
+          ],
+          "dod": "field names match 1:1; no ORM types",
+          "status": "DONE",
+          "evidence": null,
+          "star_score": null,
+          "notes": "ClipCue/CameraShot/OverlayCue Pydantic schemas match TypeScript interfaces 1:1. Field names follow language conventions (snake_case Python, camelCase TS). JSON serialization verified. No ORM types in response_model."
+        },
+        {
+          "id": "A4",
+          "title": "Zustand broadcast slice",
+          "depends_on": [
+            "A3"
+          ],
+          "files": [
+            "frontend/src/store/useBroadcastStore.ts"
+          ],
+          "dod": "phase, activeClip, camera, overlays, reduce(event)",
+          "status": "DONE",
+          "evidence": null,
+          "star_score": 5,
+          "notes": "useBroadcastStore created with: BroadcastState interface, broadcastReducer for state machine transitions, dispatch() method, clip queue management (enqueue/dequeue), overlay stack management (add/remove/clear), camera navigation (nextCameraShot/setCameraIndex), reduced motion support, reset functionality. TypeScript compilation passes with no errors. All 7 phase transitions validated."
+        },
+        {
+          "id": "A5",
+          "title": "CutsceneDirector class (no React)",
+          "depends_on": [
+            "A4"
+          ],
+          "files": [
+            "frontend/src/broadcast/CutsceneDirector.ts"
+          ],
+          "dod": "given PlayResult, returns ordered ClipCue[]",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "A6",
+          "title": "Wire director into LiveGameVisualizer behind flag",
+          "depends_on": [
+            "A5"
+          ],
+          "files": [
+            "LiveGameVisualizer.tsx"
+          ],
+          "dod": "`enableBroadcast=false` default; no visual change when false",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "A7",
+          "title": "Backend GET /api/live/game/{id}/broadcast/{play_id}",
+          "depends_on": [
+            "A3"
+          ],
+          "files": [
+            "live_visualization.py"
+          ],
+          "dod": "returns ClipCue[]; Session never in response_model",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "A8",
+          "title": "Unit tests for transitions + cue schema",
+          "depends_on": [
+            "A5",
+            "A7"
+          ],
+          "files": [
+            "frontend + backend tests"
+          ],
+          "dod": "illegal transition fails; cue roundtrips JSON",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "A9",
+          "title": "Phase A evidence packet",
+          "depends_on": [
+            "A8"
+          ],
+          "files": [
+            "docs/tasks/evidence/A_SCAFFOLD.md"
+          ],
+          "dod": "screenshot or log of state walk; star audit",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        }
+      ]
+    },
+    "B": {
+      "title": "Pre-play cinematics",
+      "status": "TODO",
+      "tasks": [
+        {
+          "id": "B1",
+          "title": "PrePlayClip catalog (formation_sweep, matchup_card, situation_lower_third)",
+          "depends_on": [
+            "A9"
+          ],
+          "files": [
+            "frontend/src/broadcast/clips/preplay.ts"
+          ],
+          "dod": "3 clip ids, durations, camera paths",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B2",
+          "title": "CameraPath interpolator",
+          "depends_on": [
+            "B1"
+          ],
+          "files": [
+            "frontend/src/broadcast/camera/CameraRig.ts"
+          ],
+          "dod": "lerp/slerp a shot list at 60fps",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B3",
+          "title": "Down/distance + play-clock lower third",
+          "depends_on": [
+            "B1"
+          ],
+          "files": [
+            "frontend/src/components/broadcast/SituationBar.tsx"
+          ],
+          "dod": "8px grid, text inside container, AAA contrast",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B4",
+          "title": "MatchupCard (one O vs one D from roster)",
+          "depends_on": [
+            "B3"
+          ],
+          "files": [
+            "frontend/src/components/broadcast/MatchupCard.tsx"
+          ],
+          "dod": "uses VisualPlayer; jersey + position + rating",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B5",
+          "title": "FormationSweep: camera trucks LOS, players hold stance",
+          "depends_on": [
+            "B2"
+          ],
+          "files": [
+            "LiveGameVisualizer.tsx",
+            "EnhancedPlayerCharacter.tsx"
+          ],
+          "dod": "22 players visible; no clip through turf",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B6",
+          "title": "Pre-play audio cue stubs (no licensed music)",
+          "depends_on": [
+            "B1"
+          ],
+          "files": [
+            "frontend/src/broadcast/audio/preplay.ts"
+          ],
+          "dod": "play/stop functions; silent if file missing",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B7",
+          "title": "Skip / reduced-motion path",
+          "depends_on": [
+            "B5"
+          ],
+          "files": [
+            "useBroadcastStore.ts"
+          ],
+          "dod": "skip jumps to PLAY_EXEC; reduced-motion skips truck",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B8",
+          "title": "Bind to formation endpoint",
+          "depends_on": [
+            "B5",
+            "A7"
+          ],
+          "files": [
+            "useLiveVisualizationStore.ts"
+          ],
+          "dod": "uses /formation/{play_id}; fallback to last roster",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "B9",
+          "title": "5-star visual audit + evidence",
+          "depends_on": [
+            "B7",
+            "B8"
+          ],
+          "files": [
+            "docs/tasks/evidence/B_PREPLAY.md"
+          ],
+          "dod": "all 3 clips 5/5 or listed FAIL+patch",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        }
+      ]
+    },
+    "C": {
+      "title": "Play animations",
+      "status": "TODO",
+      "tasks": [
+        {
+          "id": "C1",
+          "title": "Inventory PlayAnimator + PlayResult fields",
+          "depends_on": [
+            "A9"
+          ],
+          "files": [
+            "PlayAnimator.tsx",
+            "types/simulation"
+          ],
+          "dod": "write field map in board notes",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C2",
+          "title": "TimelineClock (16.66ms tick, seek, pause)",
+          "depends_on": [
+            "C1"
+          ],
+          "files": [
+            "frontend/src/broadcast/TimelineClock.ts"
+          ],
+          "dod": "60Hz; seek(ms); onComplete",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C3",
+          "title": "PlayerPose track format",
+          "depends_on": [
+            "C2"
+          ],
+          "files": [
+            "frontend/src/broadcast/tracks/PlayerPoseTrack.ts"
+          ],
+          "dod": "{playerId, t, x, y, z, yaw, clip}",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C4",
+          "title": "BallTrack format",
+          "depends_on": [
+            "C3"
+          ],
+          "files": [
+            "frontend/src/broadcast/tracks/BallTrack.ts"
+          ],
+          "dod": "snap \u2192 release \u2192 flight \u2192 catch/incomplete",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C5",
+          "title": "Motion recipes: pass / run / sack / punt / FG",
+          "depends_on": [
+            "C4"
+          ],
+          "files": [
+            "frontend/src/broadcast/recipes/*.ts"
+          ],
+          "dod": "each recipe returns pose+ball tracks from PlayResult",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C6",
+          "title": "Replace PlayAnimator timers with TimelineClock",
+          "depends_on": [
+            "C5"
+          ],
+          "files": [
+            "PlayAnimator.tsx"
+          ],
+          "dod": "no setTimeout animation; clock drives poses",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C7",
+          "title": "EnhancedPlayerCharacter pose consumer",
+          "depends_on": [
+            "C6"
+          ],
+          "files": [
+            "EnhancedPlayerCharacter.tsx"
+          ],
+          "dod": "apply x,z,yaw; keep existing body/jersey logic",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C8",
+          "title": "Position stance library (14 positions, idle+explode)",
+          "depends_on": [
+            "C7"
+          ],
+          "files": [
+            "frontend/src/broadcast/stances.ts"
+          ],
+          "dod": "QB drop, OL crouch, WR 2pt, K plant",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C9",
+          "title": "Collision-safe yards: stay on field bounds",
+          "depends_on": [
+            "C7"
+          ],
+          "files": [
+            "recipes"
+          ],
+          "dod": "no player x outside [-60,60] or z outside hashes+sideline pad",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C10",
+          "title": "Play type visual tells (pass vs run readable by 1s)",
+          "depends_on": [
+            "C8"
+          ],
+          "files": [
+            "recipes",
+            "camera"
+          ],
+          "dod": "blind user test note in evidence",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "C11",
+          "title": "5-star motion audit + evidence",
+          "depends_on": [
+            "C10"
+          ],
+          "files": [
+            "docs/tasks/evidence/C_PLAY.md"
+          ],
+          "dod": "5 play types recorded; 60fps claim measured",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        }
+      ]
+    },
+    "D": {
+      "title": "Replay system",
+      "status": "TODO",
+      "tasks": [
+        {
+          "id": "D1",
+          "title": "Replay trigger rules",
+          "depends_on": [
+            "C11"
+          ],
+          "files": [
+            "frontend/src/broadcast/replay/triggers.ts"
+          ],
+          "dod": "score, turnover, sack, 15+ yards, user request",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D2",
+          "title": "Clip buffer: last N ms of pose+ball+camera",
+          "depends_on": [
+            "D1"
+          ],
+          "files": [
+            "frontend/src/broadcast/replay/ReplayBuffer.ts"
+          ],
+          "dod": "ring buffer; dump to ReplayTake",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D3",
+          "title": "Angle set: all22, sideline, endzone, sky",
+          "depends_on": [
+            "D2"
+          ],
+          "files": [
+            "CameraRig.ts"
+          ],
+          "dod": "4 named shots; no new meshes required",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D4",
+          "title": "Transport UI: scrub, 0.5x, 1x, skip",
+          "depends_on": [
+            "D3"
+          ],
+          "files": [
+            "frontend/src/components/broadcast/ReplayTransport.tsx"
+          ],
+          "dod": "keyboard + click; text inside hit targets",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D5",
+          "title": "Telestrator overlay stub (circle + arrow)",
+          "depends_on": [
+            "D4"
+          ],
+          "files": [
+            "frontend/src/components/broadcast/Telestrator.tsx"
+          ],
+          "dod": "SVG over canvas; 8px grid; hide on skip",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D6",
+          "title": "Stats bug (yards, passer, tackler)",
+          "depends_on": [
+            "D5"
+          ],
+          "files": [
+            "frontend/src/components/broadcast/ReplayBug.tsx"
+          ],
+          "dod": "data from PlayResult only",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D7",
+          "title": "Auto-exit to BETWEEN_DOWNS",
+          "depends_on": [
+            "D4"
+          ],
+          "files": [
+            "CutsceneDirector.ts"
+          ],
+          "dod": "max 8s unless user holds replay",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D8",
+          "title": "Backend optional persist replay take",
+          "depends_on": [
+            "D2"
+          ],
+          "files": [
+            "live_visualization.py"
+          ],
+          "dod": "POST optional; do not block UI if 404",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "D9",
+          "title": "5-star replay audit + evidence",
+          "depends_on": [
+            "D7"
+          ],
+          "files": [
+            "docs/tasks/evidence/D_REPLAY.md"
+          ],
+          "dod": "two angles + skip proven",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        }
+      ]
+    },
+    "E": {
+      "title": "Visual asset pipeline",
+      "status": "TODO",
+      "tasks": [
+        {
+          "id": "E1",
+          "title": "Asset manifest schema",
+          "depends_on": [
+            "A9"
+          ],
+          "files": [
+            "frontend/src/assets/visual/manifest.ts"
+          ],
+          "dod": "kit ids, lod, license, path",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E2",
+          "title": "TeamKit resolver from VisualTeam colors",
+          "depends_on": [
+            "E1"
+          ],
+          "files": [
+            "frontend/src/assets/visual/teamKit.ts"
+          ],
+          "dod": "primary/secondary/helmet/endzone",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E3",
+          "title": "PositionKit: 14 position body+gear maps",
+          "depends_on": [
+            "E2"
+          ],
+          "files": [
+            "frontend/src/assets/visual/positionKit.ts"
+          ],
+          "dod": "uses existing body_type mapping",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E4",
+          "title": "Logo loader from /logos/{ABBR}.png with fallback",
+          "depends_on": [
+            "E3"
+          ],
+          "files": [
+            "frontend/src/assets/visual/logo.ts"
+          ],
+          "dod": "missing file \u2192 abbreviation glyph",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E5",
+          "title": "Jersey number decal on EnhancedPlayerCharacter",
+          "depends_on": [
+            "E3"
+          ],
+          "files": [
+            "EnhancedPlayerCharacter.tsx"
+          ],
+          "dod": "number readable at sideline cam",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E6",
+          "title": "Helmet stripe + facemask from kit",
+          "depends_on": [
+            "E5"
+          ],
+          "files": [
+            "EnhancedPlayerCharacter.tsx"
+          ],
+          "dod": "no extra draw-call explosion on low LOD",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E7",
+          "title": "Field endzone colors from home/away kits",
+          "depends_on": [
+            "E2"
+          ],
+          "files": [
+            "EnhancedFieldVisualizer.tsx"
+          ],
+          "dod": "home/away ends distinct",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E8",
+          "title": "Procedural kit bake script (optional CLI)",
+          "depends_on": [
+            "E3"
+          ],
+          "files": [
+            "scripts/bake_visual_kits.py"
+          ],
+          "dod": "writes JSON kits; no binary blobs in git",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E9",
+          "title": "License + provenance ledger",
+          "depends_on": [
+            "E1"
+          ],
+          "files": [
+            "docs/tasks/ASSET_PROVENANCE.md"
+          ],
+          "dod": "every path: authored / public / missing",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        },
+        {
+          "id": "E10",
+          "title": "5-star kit audit + evidence",
+          "depends_on": [
+            "E7",
+            "E9"
+          ],
+          "files": [
+            "docs/tasks/evidence/E_ASSETS.md"
+          ],
+          "dod": "2 teams, 14 positions sampled",
+          "status": "TODO",
+          "evidence": null,
+          "star_score": null,
+          "notes": ""
+        }
+      ]
+    }
+  }
+}

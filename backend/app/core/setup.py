@@ -69,7 +69,7 @@ def configure_routes(app: FastAPI) -> None:
         system, simulation, data, websocket, teams, players, season,
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api, training
+        playbook, physics_api, training, live_visualization
     )
 
     # Core system routes
@@ -77,6 +77,9 @@ def configure_routes(app: FastAPI) -> None:
     app.include_router(simulation.router)
     app.include_router(data.router)
     app.include_router(websocket.router)
+    
+    # Live Visualization (NEW - for 3D game viewing)
+    app.include_router(live_visualization.router)
 
     # Team and player management
     app.include_router(teams.router, prefix="/api/teams", tags=["teams"])
