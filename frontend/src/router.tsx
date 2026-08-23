@@ -381,6 +381,13 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorBoundary />,
       },
       {
+        // Route alias
+        path: "roster",
+        element: <FrontOffice />,
+        loader: frontOfficeLoader,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: "empire/depth-chart",
         element: <DepthChart />,
         loader: depthChartLoader,
@@ -395,6 +402,18 @@ export const router = createBrowserRouter([
       },
       {
         path: "empire/trade-center",
+        element: <TradeCenterPage />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        // Route alias
+        path: "trades",
+        element: <TradeCenterPage />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        // Route alias
+        path: "trade-center",
         element: <TradeCenterPage />,
         errorElement: <RouteErrorBoundary />,
       },
@@ -416,6 +435,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "medical-center",
+        element: <MedicalCenter />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        // Route alias
+        path: "medical",
         element: <MedicalCenter />,
         errorElement: <RouteErrorBoundary />,
       },

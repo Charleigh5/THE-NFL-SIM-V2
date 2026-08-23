@@ -41,8 +41,7 @@ export const PlayerSprite: React.FC<PlayerSpriteProps> = ({
   });
 
   const draw = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (g: any) => {
+    (g: PixiGraphics) => {
       g.clear();
 
       // Shadow

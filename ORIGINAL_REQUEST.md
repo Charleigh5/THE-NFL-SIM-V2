@@ -1,59 +1,57 @@
 # Original User Request
 
-## 2026-08-22T16:18:01Z
+## Initial Request — 2026-08-23T13:18:16Z
 
-Execute the complete end-to-end remediation of the NFL Sim Engine based on the AUDIT-001 master plan across all 5 core modules (Game Engine & Physics, Database & ORM Models, Season Lifecycle & RPG, Backend API & Security, Frontend UI/UX & State Flow) governed by the Hive-Mind Multi-Agent Architecture (`.agent/tasks/TASK_HIVE_MIND_AGENT_ARCHITECTURE.md`).
+You are the Project Orchestrator for THE-NFL-SIM-V2 ("The Digital Gridiron").
 
-Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2
-Integrity mode: development
+Your working directory is:
+`c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\orchestrator_1`
+Please maintain your `BRIEFING.md` and `progress.md` inside your working directory.
 
-## Requirements
+The original user request is recorded in:
+`c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\ORIGINAL_REQUEST.md` and `.agents\ORIGINAL_REQUEST.md`
 
-### R1. Database Schema Consolidation & ORM Integrity
-Unify the conflicting `player_game_starts` table into a single canonical SQLAlchemy 2.0 declarative model, register all 20+ models in Alembic metadata, fix the `Player.traits` and `Player.speed` hybrid property expressions, add `cascade="all, delete-orphan"` to 1:1 decomposition relationships, and configure SQLite WAL connection pragmas.
+## Mission & Requirements
 
-### R2. Core Football Simulation & Physics Engine Correction
-Correct safety calculation so sacks or tackles behind the offensive goal line (`yard_line <= 0`) award a 2-point safety to the defense with a free kick from the 20 rather than an offensive touchdown. Implement dynamic play clock runoffs (4-7s for incomplete passes, 5-8s out-of-bounds, 25-38s in-bounds), fix red zone touchdown player stat attribution, integrate dynamic PAT/2-point conversions, eliminate unseeded `random` calls in favor of deterministic seeded RNG, and add a full multi-quarter simulation loop (`Q1 -> Q4 + OT`).
+You must orchestrate and execute the complete, closed-loop resolution of the following requirements:
 
-### R3. Season Lifecycle, Offseason & RPG Repair
-Fix the draft order attribute collision (`win_percentage`), preserve traded draft pick ownership across rounds 1-7, route `/free-agency/simulate` to the full `FreeAgencyEngine`, eliminate duplicate `Game` row creation in `WeekSimulator`, await `save_game_result()`, implement head-to-head tiebreakers in `StandingsCalculator`, and enforce `OffseasonPhase` state machine transitions.
+### R1. 13-View UI & Broadcast Visual Verification
+Drive automated browser navigation across all 13 core application views:
+1. Franchise War Room / Dynasty Hub Dashboard
+2. Tactical Live Sim Chalkboard & Field Radar
+3. Offseason Draft Room with Multi-Lens Scouting Fog of War
+4. Coaching Dynasty Tree & Staff Chemistry Matrix
+5. Medical Trauma Center & 5-Pathway Orthopedic Triage
+6. Depth Chart & Positional Hierarchy
+7. Roster Management & Capology Contracts
+8. Season Schedule & Week Simulator
+9. League Standings & Playoff Bracket
+10. Player Profile & Biometric/S2 Cognition Card
+11. Front Office GM Trades & Valuation Matrix
+12. Cryptographic Replay Verification Telemetry
+13. League Settings & Weather Simulation Config
 
-### R4. Backend API Architecture, Concurrency & Security Hardening
-Mount all orphaned routers (`coaches.py`, `combine.py`, `news_router.py`, `training.py`), eliminate blocking synchronous database calls inside `async def` endpoints, eliminate duplicate session acquisition in `season.py`, consolidate real-time broadcasting into a room-isolated thread-safe WebSocket manager with async locks, scrub hardcoded API keys from `.env.example`, add admin guards to `/api/genesis/seed`, and sanitize database error disclosures.
+Capture visual proof (screenshots) of pre- and post-interaction states across each view. Ensure backend and frontend dev/preview servers or headless browser automation are running properly to verify active, responsive UI states with 0 unhandled console errors or broken navigation transitions.
 
-### R5. Frontend State Management, Type Safety & Performance Overhaul
-Reconcile loader type contracts in `useLoaderData.ts` to strictly handle nullable seasons/teams, pre-allocate Three.js `Vector3` instances to eliminate 60FPS GC allocation thrashing, remove redundant component-mount API fetches duplicating route loaders, dynamicize hardcoded URLs and franchise IDs (`userTeamId`), purge dead Zustand stores and legacy files, and add missing views to primary navigation.
+### R2. Strict Contract Parity & Frontend-Backend Synchronization
+Enforce 1:1 schema alignment between backend FastAPI endpoints / Pydantic V2 models (`backend/app/schemas/`) and frontend TypeScript definitions (`frontend/src/types/`). Ensure 0 missing fields, zero `any` types, and 0 runtime deserialization errors.
 
-## Acceptance Criteria
+### R3. Autonomous Defect Isolation & Closed-Loop Remediation
+Detect and repair any broken event handlers, missing API fallbacks, styling/layout clipping, or state desynchronizations discovered during browser automation and test passes.
 
-### Database & ORM Verification
-- [ ] `PlayerGameStarts` is unified into a single declarative model without duplicate definitions in `app/models/`.
-- [ ] `GET /api/players/{player_id}/profile` loads without `AttributeError` on `Player.player_traits`.
-- [ ] `DraftAssistant` executes draft pick suggestions using `Player.speed` without SQLAlchemy `Comparator` exceptions.
-- [ ] `alembic check` and model metadata autogenerate discover all tables including `Season`, `PlayoffMatchup`, `DepthChart`, and `NewsItem`.
+### R4. Production Testing & Statistical Calibration
+- Execute full unit and integration test suites: `pytest backend/tests/unit` (and any related test suites).
+- Execute frontend production compilation: `npm run build` (`tsc -b && vite build`) in `frontend/`.
+- Execute Monte Carlo statistical calibration (`python scripts/batch_simulator.py` or equivalent) to confirm 100% compliance with NFL baseline metrics (sack rates, YPC, completion rates, turnovers, scoring).
 
-### Football Engine & Physics Verification
-- [ ] Sacks and tackles resulting in `yard_line <= 0` award 2 points to the defense and reset possession to receiving team at the 35 (free kick from 20).
-- [ ] Incomplete passes consume between 4 and 7 seconds of game clock instead of a flat 40 seconds.
-- [ ] Red zone touchdowns scored inside the 20-yard line are credited to the scoring player's passing/rushing/receiving statistics.
-- [ ] PATs and 2-point conversions execute dynamically after touchdowns with variable scoring (1, 2, or 0 points).
-- [ ] Deterministic replay checksums match 100% across identical game seed runs with zero global `random` leaks.
+### R5. Formal Task Documentation
+Author comprehensive task specification in `docs/tasks/TASK-003_13_VIEW_VISUAL_AUDIT_AND_REMEDIATION.md` strictly following `.agent/rules/task-list-template.md`.
 
-### Season & Offseason Lifecycle Verification
-- [ ] Draft order generates successfully from active standings without `AttributeError: 'TeamStanding' object has no attribute 'win_pct'`.
-- [ ] `POST /api/season/{id}/free-agency/simulate` executes multi-round market bidding through `FreeAgencyEngine` with salary cap updates.
-- [ ] Batch week simulations complete without inserting duplicate `Game` rows with `season=2025, week=1`.
-- [ ] Head-to-head records among tied opponents are evaluated before point differential in conference/division standings.
-
-### API, Security & Real-Time Verification
-- [ ] All mounted routes under `/api/coaches`, `/api/combine`, `/api/news`, and `/api/training` return valid JSON responses rather than 404s.
-- [ ] Synchronous endpoints execute in worker threadpools without blocking the asyncio event loop.
-- [ ] WebSocket connections on `/api/live/ws/game/{game_id}` receive game-isolated play events with backpressure timeouts and concurrency locks.
-- [ ] No plaintext API keys are present in `.env.example`.
-
-### Frontend & UI/UX Verification
-- [ ] `npm run build` (`tsc -b && vite build`) executes cleanly with zero TypeScript errors.
-- [ ] Route loaders in `useLoaderData.ts` safely handle `season: null` and `noSeason: true` states without early render crashes.
-- [ ] Three.js 3D player animations render without frame drops or per-frame vector allocations.
-- [ ] `SeasonDashboard.tsx` does not duplicate API fetches on mount.
-- [ ] Navigation sidebar includes working links for `/medical-center`, `/empire/trophy-room`, `/offseason`, and `/skills`.
+## Acceptance Criteria:
+- High-resolution screenshots captured and stored for all 13 core views displaying responsive, active UI states.
+- 0 unhandled console errors or broken navigation transitions across the full application route graph.
+- 100% type parity between backend Pydantic models and frontend TypeScript interfaces with 0 `any` types.
+- Frontend production build compiles with 0 errors (`tsc -b && vite build`).
+- 100% pass rate on backend unit test suite (`pytest backend/tests/unit`).
+- 100% pass rate on Monte Carlo statistical calibration across sack rates, YPC, completion rates, turnovers, and scoring.
+- Formally formatted task spec saved to `docs/tasks/TASK-003_13_VIEW_VISUAL_AUDIT_AND_REMEDIATION.md`.

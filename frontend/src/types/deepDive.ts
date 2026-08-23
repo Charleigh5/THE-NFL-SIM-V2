@@ -5,10 +5,10 @@
  */
 
 export type ScoutBiasLens =
-  | 'CONSENSUS'
-  | 'FILM_TRADITIONALIST'
-  | 'ANALYTICS_METRICS'
-  | 'REGIONAL_SCOUT';
+  | "CONSENSUS"
+  | "FILM_TRADITIONALIST"
+  | "ANALYTICS_METRICS"
+  | "REGIONAL_SCOUT";
 
 export interface ProspectIntelligence {
   id: number;
@@ -23,7 +23,7 @@ export interface ProspectIntelligence {
   burst_score: number;
   boom_bust_factor: number;
   scheme_fit_percentage: number;
-  medical_grade: 'PASS' | 'CONCERN' | 'FAIL';
+  medical_grade: "PASS" | "CONCERN" | "FAIL";
   draft_projection_round: number;
 }
 
@@ -35,10 +35,7 @@ export interface DraftTradeUrgency {
   suggested_package_value: number;
 }
 
-export type CoachingBranch =
-  | 'SCHEME_TACTICS'
-  | 'DEVELOPMENT'
-  | 'PROGRAM_CULTURE';
+export type CoachingBranch = "SCHEME_TACTICS" | "DEVELOPMENT" | "PROGRAM_CULTURE";
 
 export interface CoachingSkillNode {
   id: string;
@@ -75,11 +72,11 @@ export interface CoachDynastyProfile {
 }
 
 export type MedicalProtocolType =
-  | 'REST'
-  | 'PRP_THERAPY'
-  | 'ARTHROSCOPIC_SURGERY'
-  | 'RECONSTRUCTIVE_SURGERY'
-  | 'CORTISONE_STABILIZATION';
+  | "REST"
+  | "PRP_THERAPY"
+  | "ARTHROSCOPIC_SURGERY"
+  | "RECONSTRUCTIVE_SURGERY"
+  | "CORTISONE_STABILIZATION";
 
 export interface OrthopedicProtocolOption {
   protocol: MedicalProtocolType;
@@ -88,7 +85,7 @@ export interface OrthopedicProtocolOption {
   complication_risk_pct: number;
   target_integrity_restore: number;
   re_injury_hazard_multiplier: number;
-  game_availability_status: 'OUT' | 'DOUBTFUL' | 'QUESTIONABLE' | 'ACTIVE';
+  game_availability_status: "OUT" | "DOUBTFUL" | "QUESTIONABLE" | "ACTIVE";
   description: string;
   clinical_note?: string;
 }

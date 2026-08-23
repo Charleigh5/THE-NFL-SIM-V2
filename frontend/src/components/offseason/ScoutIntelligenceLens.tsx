@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Brain, Gauge, Sparkles, ShieldAlert, FileText, Zap, Compass } from 'lucide-react';
-import type { ScoutBiasLens, ProspectIntelligence } from '../../types/deepDive';
+import React from "react";
+import { motion } from "framer-motion";
+import { Brain, Gauge, Sparkles, ShieldAlert, FileText, Zap, Compass } from "lucide-react";
+import type { ScoutBiasLens, ProspectIntelligence } from "../../types/deepDive";
 
 interface ScoutIntelligenceLensProps {
   currentLens: ScoutBiasLens;
@@ -14,28 +14,28 @@ const LENS_METADATA: Record<
   { label: string; icon: React.FC<{ className?: string }>; color: string; desc: string }
 > = {
   CONSENSUS: {
-    label: 'Media Consensus',
+    label: "Media Consensus",
     icon: Compass,
-    color: '#00f0ff',
-    desc: 'National draft boards and aggregated media ranking composite.',
+    color: "#00f0ff",
+    desc: "National draft boards and aggregated media ranking composite.",
   },
   FILM_TRADITIONALIST: {
-    label: 'Film Room Guru',
+    label: "Film Room Guru",
     icon: FileText,
-    color: '#f59e0b',
-    desc: 'Heavy weight on S2 cognition, pre-snap processing, and technique.',
+    color: "#f59e0b",
+    desc: "Heavy weight on S2 cognition, pre-snap processing, and technique.",
   },
   ANALYTICS_METRICS: {
-    label: 'Analytics & GPS',
+    label: "Analytics & GPS",
     icon: Gauge,
-    color: '#10b981',
-    desc: 'Peak GPS tracking speed, burst acceleration index, and age curves.',
+    color: "#10b981",
+    desc: "Peak GPS tracking speed, burst acceleration index, and age curves.",
   },
   REGIONAL_SCOUT: {
-    label: 'Area Scout Note',
+    label: "Area Scout Note",
     icon: Zap,
-    color: '#ec4899',
-    desc: 'Visceral subjective evaluation with high upside conviction bias.',
+    color: "#ec4899",
+    desc: "Visceral subjective evaluation with high upside conviction bias.",
   },
 };
 
@@ -73,8 +73,8 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
                 onClick={() => onLensChange(lens)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
                   isActive
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -132,10 +132,10 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
               <span
                 className={`text-lg font-extrabold font-mono ${
                   selectedProspect.boom_bust_factor > 0.6
-                    ? 'text-red-400'
+                    ? "text-red-400"
                     : selectedProspect.boom_bust_factor > 0.3
-                    ? 'text-amber-400'
-                    : 'text-emerald-400'
+                      ? "text-amber-400"
+                      : "text-emerald-400"
                 }`}
               >
                 {Math.round(selectedProspect.boom_bust_factor * 100)}%
@@ -150,20 +150,20 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
             <div className="flex items-center gap-1.5 mt-1">
               <ShieldAlert
                 className={`w-4 h-4 ${
-                  selectedProspect.medical_grade === 'PASS'
-                    ? 'text-emerald-400'
-                    : selectedProspect.medical_grade === 'CONCERN'
-                    ? 'text-amber-400'
-                    : 'text-red-400'
+                  selectedProspect.medical_grade === "PASS"
+                    ? "text-emerald-400"
+                    : selectedProspect.medical_grade === "CONCERN"
+                      ? "text-amber-400"
+                      : "text-red-400"
                 }`}
               />
               <span
                 className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${
-                  selectedProspect.medical_grade === 'PASS'
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                    : selectedProspect.medical_grade === 'CONCERN'
-                    ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                    : 'bg-red-950 text-red-300 border border-red-800'
+                  selectedProspect.medical_grade === "PASS"
+                    ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                    : selectedProspect.medical_grade === "CONCERN"
+                      ? "bg-amber-950 text-amber-300 border border-amber-800"
+                      : "bg-red-950 text-red-300 border border-red-800"
                 }`}
               >
                 {selectedProspect.medical_grade}

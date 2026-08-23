@@ -15,9 +15,15 @@ const MOCK_SCOUTING_REPORT: ScoutingReport = {
     "Can struggle against press coverage",
     "Willing blocker but lacks functional strength",
   ],
+  pros: ["Elite burst off the line of scrimmage", "Refined route runner with excellent footwork"],
+  cons: ["Can struggle against press coverage", "Lacks functional inline blocking strength"],
   summary:
-    "A dynamic playmaker who can stretch the field verticaly. He has the potential to be a WR1 in a passing offense.",
+    "A dynamic playmaker who can stretch the field vertically. He has the potential to be a WR1 in a passing offense.",
   nfl_comparison: "DeVonta Smith",
+  ceiling_projection: "Pro Bowl Starter",
+  floor_projection: "Slot Receiver",
+  draft_grade: "A",
+  fit_analysis: "Seamlessly integrates into modern spread and West Coast pass concepts.",
   ceiling: "Pro Bowl Starter",
   floor: "Slot Receiver",
   generated_at: new Date().toISOString(),
@@ -25,10 +31,20 @@ const MOCK_SCOUTING_REPORT: ScoutingReport = {
 
 const MOCK_BACKSHIORY: PlayerBackstory = {
   player_id: "1",
-  childhood: "Grew up in a football family in Texas. His father was a high school coach.",
+  hometown: "Miami, Florida",
+  background:
+    "Grew up in a football family in Miami, Florida. Born to former athletes who instilled a relentless work ethic.",
+  childhood: "Grew up in a football family in Miami, Florida. His father was a high school coach.",
   high_school:
     "State champion in track and field. Dominated as a dual-threat QB before switching to WR.",
   college_career: "Three-year starter at Alabama. Won the Heisman Trophy in his junior year.",
+  motivations: "Playing to honor his family and cement a lasting NFL legacy.",
+  notable_college_moments: [
+    "Game-winning 4th quarter touchdown in National Championship",
+    "Heisman Trophy award recipient as junior",
+  ],
+  adversity_overcome:
+    "Overcame a major hamstring tear in sophomore campaign to return faster and stronger.",
   personality_traits: ["Competitive", "Leader", "Hard-worker"],
   generated_at: new Date().toISOString(),
 };

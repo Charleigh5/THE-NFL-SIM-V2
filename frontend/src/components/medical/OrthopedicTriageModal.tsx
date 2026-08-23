@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Activity,
   BedDouble,
@@ -11,8 +11,8 @@ import {
   ShieldAlert,
   Clock,
   HeartPulse,
-} from 'lucide-react';
-import type { MedicalProtocolType, OrthopedicProtocolOption } from '../../types/deepDive';
+} from "lucide-react";
+import type { MedicalProtocolType, OrthopedicProtocolOption } from "../../types/deepDive";
 
 interface OrthopedicTriageModalProps {
   isOpen: boolean;
@@ -29,72 +29,76 @@ interface OrthopedicTriageModalProps {
 export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
   isOpen,
   playerId = 1,
-  playerName = 'Selected Athlete',
-  zoneKey = 'zone',
+  playerName = "Selected Athlete",
+  zoneKey = "zone",
   zoneName,
   currentIntegrity,
   baselineWeeks = 4,
   onClose,
   onConfirmProtocol,
 }) => {
-  const [selectedProtocol, setSelectedProtocol] = useState<MedicalProtocolType>('REST');
+  const [selectedProtocol, setSelectedProtocol] = useState<MedicalProtocolType>("REST");
 
   const protocols = React.useMemo<OrthopedicProtocolOption[]>(() => {
     return [
       {
-        protocol: 'REST',
-        name: 'Conservative Rest & Physical Therapy',
+        protocol: "REST",
+        name: "Conservative Rest & Physical Therapy",
         estimated_recovery_weeks: Math.max(1, baselineWeeks),
         complication_risk_pct: 0.0,
         target_integrity_restore: 100.0,
         re_injury_hazard_multiplier: 1.0,
-        game_availability_status: 'OUT',
+        game_availability_status: "OUT",
         description: `Non-invasive physiological rest for ${zoneName.toLowerCase()}. Eliminates complication risks; safe return timetable.`,
-        clinical_note: 'Recommended baseline for low-grade muscular strains.',
+        clinical_note: "Recommended baseline for low-grade muscular strains.",
       },
       {
-        protocol: 'PRP_THERAPY',
-        name: 'Platelet-Rich Plasma (PRP) Biotherapy',
+        protocol: "PRP_THERAPY",
+        name: "Platelet-Rich Plasma (PRP) Biotherapy",
         estimated_recovery_weeks: Math.max(1, Math.round(baselineWeeks * 0.7)),
         complication_risk_pct: 0.05,
         target_integrity_restore: 95.0,
         re_injury_hazard_multiplier: 1.1,
-        game_availability_status: 'OUT',
-        description: 'Concentrated autologous platelet injections accelerating cellular regeneration by ~30%.',
-        clinical_note: 'Accelerates ligament repair with minimal tissue disturbance.',
+        game_availability_status: "OUT",
+        description:
+          "Concentrated autologous platelet injections accelerating cellular regeneration by ~30%.",
+        clinical_note: "Accelerates ligament repair with minimal tissue disturbance.",
       },
       {
-        protocol: 'ARTHROSCOPIC_SURGERY',
-        name: 'Accelerated Arthroscopic Scope',
+        protocol: "ARTHROSCOPIC_SURGERY",
+        name: "Accelerated Arthroscopic Scope",
         estimated_recovery_weeks: Math.max(1, Math.round(baselineWeeks * 0.5)),
         complication_risk_pct: 0.12,
         target_integrity_restore: 90.0,
         re_injury_hazard_multiplier: 1.25,
-        game_availability_status: 'OUT',
-        description: 'Surgical scope debridement repairing structural tissue, cutting timetable in half.',
-        clinical_note: 'Meniscus and labral cleanouts with faster return to field.',
+        game_availability_status: "OUT",
+        description:
+          "Surgical scope debridement repairing structural tissue, cutting timetable in half.",
+        clinical_note: "Meniscus and labral cleanouts with faster return to field.",
       },
       {
-        protocol: 'RECONSTRUCTIVE_SURGERY',
-        name: 'Full Structural Reconstruction',
+        protocol: "RECONSTRUCTIVE_SURGERY",
+        name: "Full Structural Reconstruction",
         estimated_recovery_weeks: Math.max(4, Math.round(baselineWeeks * 1.2)),
         complication_risk_pct: 0.08,
         target_integrity_restore: 98.0,
         re_injury_hazard_multiplier: 0.9,
-        game_availability_status: 'OUT',
-        description: 'Definitive tendon/ligament graft reconstruction ensuring maximum multi-year joint longevity.',
-        clinical_note: 'Best long-term outcome for high-impact contact positions.',
+        game_availability_status: "OUT",
+        description:
+          "Definitive tendon/ligament graft reconstruction ensuring maximum multi-year joint longevity.",
+        clinical_note: "Best long-term outcome for high-impact contact positions.",
       },
       {
-        protocol: 'CORTISONE_STABILIZATION',
-        name: 'Cortisone Joint Injection (Suit Up & Play)',
+        protocol: "CORTISONE_STABILIZATION",
+        name: "Cortisone Joint Injection (Suit Up & Play)",
         estimated_recovery_weeks: 0,
         complication_risk_pct: 0.35,
         target_integrity_restore: Math.max(35.0, currentIntegrity),
         re_injury_hazard_multiplier: 2.5,
-        game_availability_status: 'QUESTIONABLE',
-        description: 'High-dose anti-inflammatory injection with joint bracing allowing the player to suit up immediately.',
-        clinical_note: 'WARNING: 2.5x higher hazard of season-ending catastrophic aggravation.',
+        game_availability_status: "QUESTIONABLE",
+        description:
+          "High-dose anti-inflammatory injection with joint bracing allowing the player to suit up immediately.",
+        clinical_note: "WARNING: 2.5x higher hazard of season-ending catastrophic aggravation.",
       },
     ];
   }, [baselineWeeks, zoneName, currentIntegrity]);
@@ -131,8 +135,12 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                 <h3 className="text-lg font-bold text-white tracking-wide">{zoneName} Triage</h3>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Patient: <strong className="text-slate-200">{playerName}</strong> (ID #{playerId}) • Zone: <span className="font-mono text-slate-300">{zoneKey}</span> • Current Integrity:{' '}
-                <span className="font-mono text-cyan-400 font-bold">{Math.round(currentIntegrity)}%</span>
+                Patient: <strong className="text-slate-200">{playerName}</strong> (ID #{playerId}) •
+                Zone: <span className="font-mono text-slate-300">{zoneKey}</span> • Current
+                Integrity:{" "}
+                <span className="font-mono text-cyan-400 font-bold">
+                  {Math.round(currentIntegrity)}%
+                </span>
               </p>
             </div>
           </div>
@@ -157,15 +165,15 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                 onClick={() => setSelectedProtocol(option.protocol)}
                 className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-4 ${
                   isSelected
-                    ? 'bg-cyan-950/60 border-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.2)]'
-                    : 'bg-slate-950/50 border-slate-800 hover:bg-slate-900/60 hover:border-slate-700'
+                    ? "bg-cyan-950/60 border-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+                    : "bg-slate-950/50 border-slate-800 hover:bg-slate-900/60 hover:border-slate-700"
                 }`}
               >
                 <div
                   className={`p-3 rounded-xl border ${
                     isSelected
-                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50'
-                      : 'bg-slate-900 text-slate-400 border-slate-800'
+                      ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50"
+                      : "bg-slate-900 text-slate-400 border-slate-800"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -177,14 +185,14 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">
                         {option.estimated_recovery_weeks === 0
-                          ? '0 Wks (Suit Up)'
+                          ? "0 Wks (Suit Up)"
                           : `~${option.estimated_recovery_weeks} Wks`}
                       </span>
                       <span
                         className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
-                          option.game_availability_status === 'QUESTIONABLE'
-                            ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                            : 'bg-red-950 text-red-300 border border-red-800'
+                          option.game_availability_status === "QUESTIONABLE"
+                            ? "bg-amber-950 text-amber-300 border border-amber-800"
+                            : "bg-red-950 text-red-300 border border-red-800"
                         }`}
                       >
                         {option.game_availability_status}
@@ -192,26 +200,28 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-400 leading-relaxed mb-2">{option.description}</p>
+                  <p className="text-xs text-slate-400 leading-relaxed mb-2">
+                    {option.description}
+                  </p>
 
                   <div className="flex flex-wrap items-center gap-4 text-[10px] font-mono text-slate-400 pt-2 border-t border-slate-800/60">
                     <span className="flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3 text-amber-400" />
-                      Complication Risk:{' '}
+                      Complication Risk:{" "}
                       <strong className="text-amber-300 font-bold">
                         {Math.round(option.complication_risk_pct * 100)}%
                       </strong>
                     </span>
                     <span className="flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-emerald-400" />
-                      Target Restore:{' '}
+                      Target Restore:{" "}
                       <strong className="text-emerald-300 font-bold">
                         {option.target_integrity_restore}%
                       </strong>
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3 text-cyan-400" />
-                      Hazard Multiplier:{' '}
+                      Hazard Multiplier:{" "}
                       <strong className="text-cyan-300 font-bold">
                         {option.re_injury_hazard_multiplier}x
                       </strong>

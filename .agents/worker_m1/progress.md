@@ -1,27 +1,19 @@
-# Progress Tracker — Worker M1 (Physics & Tactical Play Resolution Engine)
+# Progress Tracker — Worker M1 (Contract Parity & Type Alignment)
 
-- **Last visited**: 2026-08-21T21:20:00Z
+- **Last visited**: 2026-08-23T13:30:00Z
 - **Current Status**: Complete
 
 ## Milestones & Checklist
-- [x] Create worker workspace, DISPATCH.md, and BRIEFING.md
-- [x] Ingest ORIGINAL_REQUEST.md, PROJECT.md, and survey_physics.md
-- [x] Draft comprehensive architectural specification `physics_engine.md` adhering to `.agent/rules/task-list-template.md`
-  - [x] System Context Header (Chris Weir Persona, 2025/2026 Standards)
-  - [x] Phase 1: Conceptual Exploration (The Scout)
-  - [x] Phase 2: Adversarial Synthesis (The Architect)
-  - [x] Phase 3: Actionable Blueprint (The Engineer)
-    - [x] 1. Technology & Architecture Context
-    - [x] 2. Core Data Schemas (Pydantic V2 & TypeScript)
-    - [x] 3. S2 Cognition Reaction Time Equations & OODA Loop Dynamics
-    - [x] 4. 4-Compartment Biometric Fatigue Degradation Model
-    - [x] 5. Spatial Route Stem Geometry & Separation Mechanics
-    - [x] 6. Offensive/Defensive Line Trench Physics & Pocket Dynamics
-    - [x] 7. 3D Ball Trajectory Kinematics (RK4) & Catch Radius Spheres
-    - [x] 8. Dynamic Audible Decision Trees & Pre-Snap Cognitive Battles
-    - [x] 9. Deterministic Randomness, Probability Distributions & Merkle Frame Verification
-    - [x] 10. Edge Cases & Error Handling Matrices
-  - [x] Phase 4: The Auditor (Verification)
-  - [x] Baton Handoff
-- [x] Verify document completeness, mathematical validity, and formatting
-- [x] Generate handoff.md and send completion message to parent orchestrator
+- [x] Initialized BRIEFING.md and updated progress.md
+- [x] Task 1: Fix 4 residual `any` casts in frontend/src/
+  - [x] `frontend/src/components/coaching/CoachingDynastyTree.tsx:245`
+  - [x] `frontend/src/components/game/PlayerSprite.tsx:45`
+  - [x] `frontend/src/components/skills/ConnectionLine.tsx:21`
+  - [x] `frontend/src/hooks/useWebSocket.ts:118`
+- [x] Task 2: Harmonize schema interfaces with backend models
+  - [x] `frontend/src/types/api/scouting.ts` (vs `backend/app/schemas/scouting.py`)
+  - [x] `frontend/src/types/simulation.ts` (vs `backend/app/schemas/play.py`)
+  - [x] `frontend/src/services/api.ts` (vs `backend/app/schemas/team.py`)
+- [x] Task 3: Add missing route aliases in `frontend/src/router.tsx` (`/medical`, `/roster`, `/trades`)
+- [x] Task 4: Execute `npm run build` (`tsc -b && vite build`) and verify 0 errors
+- [x] Task 5: Write complete `handoff.md` and send message to parent

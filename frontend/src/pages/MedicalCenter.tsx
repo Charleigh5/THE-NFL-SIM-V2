@@ -140,8 +140,8 @@ export const MedicalCenter: React.FC = () => {
         protocol === "CORTISONE_STABILIZATION"
           ? "PLAY_THROUGH"
           : protocol.includes("SURGERY")
-          ? "SURGERY"
-          : "REST";
+            ? "SURGERY"
+            : "REST";
 
       await medicalApi.applyTreatment({
         player_id: activePlayer.player_id,

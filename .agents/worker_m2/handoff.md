@@ -1,53 +1,100 @@
-# Handoff Report — Milestone M2: Dynasty RPG Progression & Front Office Empire Economics Specification
-
-**Worker ID:** Worker M2 (Dynasty RPG & Front Office Economics Architect)  
-**Parent Conversation ID:** `18451d18-0570-4faa-9bec-b84d14c2d697`  
-**Date:** 2026-08-21T21:19:30Z  
-**Type:** Hard Handoff (Task Complete)  
-
----
+# Handoff Report — Milestone 2: 13-View UI & Broadcast Visual Verification
 
 ## 1. Observation
-- **Target Specification Path:** `docs/design_theory/nfl_simulation_blueprint/dynasty_empire.md` (Total 856 lines, 50,397 bytes).
-- **Core Directives & Survey:** Ingested requirements from `.agents/ORIGINAL_REQUEST.md` (§R2), `.agents/explorer_survey_2/survey_dynasty.md`, and `PROJECT.md` (§F08-F13).
-- **Template Adherence:** Verified four-phase structure from `.agent/rules/task-list-template.md`:
-  - `<system_context>` persona header (2025/2026 standards).
-  - `# TASK: Dynasty RPG Progression & Front Office Empire Economics Specification (R2)`
-  - `## 📋 PHASE 1: CONCEPTUAL EXPLORATION (The Scout)`
-  - `## ⚖️ PHASE 2: ADVERSARIAL SYNTHESIS (The Architect)`
-  - `## 🛠️ PHASE 3: ACTIONABLE BLUEPRINT (The Engineer)`
-  - `## 🛡️ PHASE 4: THE AUDITOR (Verification)`
-  - `<baton_handoff>`
-- **Content Coverage:**
-  1. Dynamic Player Developmental Traits (Normal 1.0x, Star 1.25x, Superstar 1.5x, X-Factor 2.0x), Zone ability engine, ability catalog, evolution ($E_i$) and devolution triggers.
-  2. Positional Age Curve Progression/Regression (Continuous physical power decay vs. logarithmic mental growth across 8 positional groupings).
-  3. Trade Equity Evaluation Algorithms (Ensemble Jimmy Johnson / Rich Hill / Fitzgerald-Spielberger draft chart + Surplus Value $S_i = V_{\text{prod}} - C_{\text{cash}}$ + anti-cheese package decay).
-  4. Salary Cap Optimization Models (5-year proration limit, pre/post-June 1 dead money acceleration, simple restructures, void years, rollover cap, and 89% 4-year cash spending floor).
-  5. Medical Injury Triage Protocols (8-zone anatomical vulnerability matrix, fatigue risk factors, playing-through escalation function, Toradol vs. Orthopedic Brace vs. Surgery trade-offs).
-  6. Emergent Storyline Event DAG (Directed Acyclic Graph narrative engine with full state mutation payloads).
-  7. Formal Data Contracts (Pydantic V2 schemas and strict TypeScript interfaces with zero `any` types).
+
+- **Playwright Test Execution**:
+  - Test Command: `npx playwright test e2e/capture-dossier-screenshots.spec.ts e2e/comprehensive-feature-verification.spec.ts --project=chromium`
+  - Output:
+    ```
+    Running 28 tests using 4 workers
+    [1/28] [chromium] › e2e\capture-dossier-screenshots.spec.ts:84:3 › Full Dossier Screenshot Suite › Capture 01 - Dashboard Overview
+    [2/28] [chromium] › e2e\capture-dossier-screenshots.spec.ts:121:3 › Full Dossier Screenshot Suite › Capture 04 - Draft Room
+    ...
+    [28/28] [chromium] › e2e\comprehensive-feature-verification.spec.ts:342:3 › Exhaustive 13-View Interactive Feature Verification & Audit Suite › View 04 - Coaching Dynasty Tree & Staff Chemistry Matrix
+      28 passed (25.7s)
+    ```
+- **Screenshot Artifacts**:
+  - High-resolution visual snapshots generated in `docs/assets/screenshots/` (15 dossier captures) and `docs/assets/screenshots/interactive_audit/` (56 interactive pre/post captures), totaling 71+ files.
+- **Frontend Production Build**:
+  - Command: `npm run build` (`tsc -b && vite build`)
+  - Output:
+    ```
+    ✓ 3729 modules transformed.
+    rendering chunks...
+    dist/index.html                             0.46 kB │ gzip:   0.29 kB
+    dist/assets/index-DspkWoAj.css            239.44 kB │ gzip:  37.99 kB
+    dist/assets/index-Ci1zR7d-.js           2,593.02 kB │ gzip: 760.85 kB
+    ✓ built in 13.13s
+    ```
+- **Backend Unit Tests**:
+  - Command: `pytest backend/tests/unit -q`
+  - Output: `300 passed, 9 warnings in 11.47s`
+- **Console & Navigation Verification**:
+  - 0 unhandled console errors or runtime page exceptions detected across all 13 view navigation sequences.
 
 ---
 
 ## 2. Logic Chain
-1. **Mathematical Rigor & Determinism:** The specification derives deterministic mathematical formulas for every subsystem (e.g., physical decay $\Phi_{\text{phys}}(t, \text{pos}) = 1.0 - \alpha_{\text{pos}}(t - t_{\text{peak\_end}})^{1.45}$, injury probability $P(\text{Injury}) = P_{\text{base}} \cdot \mu_{\text{play}} \cdot \mu_{\text{pos}} \cdot \mu_{\text{age}} \cdot \mu_{\text{dur}} \cdot \mu_{\text{fatigue}} \cdot \mu_{\text{staff}} \cdot \mu_{\text{wear}}$, and trade package decay $V_{\text{package}} = \max(V) + 0.60 V_2 + 0.25 \sum V_i$), guaranteeing reproducibility under seedable CSPRNG execution.
-2. **CBA Financial Integrity:** The capology formulas directly model real-world NFL Collective Bargaining Agreement rules (2020–2030 CBA), ensuring that signing bonus amortization never exceeds 5 years, dead cap accurately accelerates upon termination/trade, and teams cannot evade cap penalties through infinite restructures without triggering the documented insolvency penalty routines.
-3. **Adversarial Resilience:** The adversarial synthesis explicitly tests and defeats common exploit archetypes: the "New Orleans Saints" infinite restructure loop, package trade cheese, the running back vs. quarterback aging paradox, and binary health states.
-4. **Data Contract Parity:** Backend Pydantic V2 schemas and frontend TypeScript definitions were constructed with identical field mappings, enums, and numerical constraints, ensuring zero type drift and zero `any` types.
+
+1. **Mapping and Verification of 13 Core Views**:
+   - Each view in the application route graph was audited for interactive elements, state transitions, and responsive rendering:
+     1. **Franchise War Room / Dynasty Hub Dashboard** (`/`): Tested kickoff button, sim week triggers, and quick action cards. Verified visual transition from pre-sim to simulating state.
+     2. **Tactical Live Sim Chalkboard & Field Radar** (`/live-sim`): Tested ScoreBoard scorebug, GameClock, 2D Field canvas, Turf & S2 Cognition visualizer with vision cones and friction heatmaps, and live kickoff simulation state.
+     3. **Offseason Draft Room with Multi-Lens Scouting Fog of War** (`/offseason/draft`): Tested `CONSENSUS`, `ANALYTICS_METRICS`, and `FILM_TRADITIONALIST` lens switching, Big Board re-weighting, and war room auto-sim controls.
+     4. **Coaching Dynasty Tree & Staff Chemistry Matrix** (`/playbook` tab `STAFF`): Tested `CoachingDynastyTree` DAG skill nodes, skill unlocks, and toggle to `Staff Organizational Chart`.
+     5. **Medical Trauma Center & 5-Pathway Orthopedic Triage** (`/medical` / `/medical-center`): Tested 7-zone anatomical body map, 5-pathway orthopedic triage protocol modal (`REST`, `PRP_THERAPY`, `ARTHROSCOPIC_SURGERY`, `RECONSTRUCTIVE_SURGERY`, `CORTISONE_STABILIZATION`), and timetable updates.
+     6. **Depth Chart & Positional Hierarchy** (`/depth-chart`): Tested positional filter tabs (`QB`, `WR`, `DE`), drag/reorder hierarchy, and depth chart state persistence.
+     7. **Roster Management & Capology Contracts** (`/roster` / `/empire/front-office`): Tested 53-man active roster grid, positional filters (`OFF`, `DEF`), and player card detail / Capology modal.
+     8. **Season Schedule & Week Simulator** (`/season` tab `Schedule`): Tested schedule overview, week navigation dropdown, and matchup simulation cards.
+     9. **League Standings & Playoff Bracket** (`/season` tabs `Standings` & `Playoffs`): Tested AFC/NFC divisional standings table and 4-round interactive playoff bracket.
+     10. **Player Profile & Biometric/S2 Cognition Card** (`/players/1/skills`): Tested 3D skill constellation tree, ability unlock mechanics, and trait effect badges.
+     11. **Front Office GM Trades & Valuation Matrix** (`/trades` / `/empire/trade-center`): Tested trade desk, franchise partner selector, Trade Analyzer valuation gauge, and pending offers list.
+     12. **Cryptographic Replay Verification Telemetry** (`/live-sim`): Tested replay scrubber slider seeking (0% -> 50% -> 100%), multi-angle camera views, and CSPRNG HMAC-SHA256 commit hash HUD.
+     13. **League Settings & Weather Simulation Config** (`/settings`): Enhanced `Settings.tsx` with atmospheric weather simulation parameters (temperature, precipitation, wind velocity) and cryptographic telemetry verification settings.
+2. **Defect Remediation**:
+   - Added weather simulation and cryptographic replay telemetry configuration to `frontend/src/pages/Settings.tsx`.
+   - Verified that all route aliases (`/medical`, `/roster`, `/trades`, `/draft`, `/depth-chart`, `/trophy-room`) resolve with 0 `NotFound` errors.
+   - Enforced strict console error tracking in all Playwright tests with `page.on('pageerror')` and `page.on('console')`.
+3. **Compilation and Integrity Assurance**:
+   - `npm run build` completed with 0 errors (`tsc -b && vite build`).
+   - Pytest unit test suite passed 300/300 tests.
 
 ---
 
 ## 3. Caveats
-- No caveats. The deliverable is exhaustive, fully documented, and strictly compliant with all system instructions and architectural rules.
+
+- **WebGL Headless Rendering**: In headless automation environments without dedicated physical GPUs, Three.js 3D canvases utilize software rasterization or graceful CSS/2D canvas fallbacks. All visual capture tests pass deterministically without throwing WebGL context loss errors.
 
 ---
 
 ## 4. Conclusion
-Milestone M2 deliverable `docs/design_theory/nfl_simulation_blueprint/dynasty_empire.md` is complete and verified. It provides a production-grade blueprint for the dynasty progression, capology economics, medical triage, and narrative DAG subsystems of *The Digital Gridiron*.
+
+Milestone 2 ("13-View UI & Broadcast Visual Verification") is 100% complete and verified:
+1. Automated browser navigation and interactive testing successfully executed across all 13 core views.
+2. 71+ high-resolution screenshots saved to `docs/assets/screenshots/` and `docs/assets/screenshots/interactive_audit/`.
+3. Zero unhandled console errors or broken navigation transitions across the entire route graph.
+4. Clean production build (`npm run build`) and 100% pass rate on backend unit test suite (`pytest backend/tests/unit`).
 
 ---
 
 ## 5. Verification Method
-- **File Inspection:** `view_file` on `docs/design_theory/nfl_simulation_blueprint/dynasty_empire.md` to confirm the complete 856-line specification.
-- **Section Integrity Check:** Verify the presence of all 4 template phases, LaTeX mathematical equations, JSON ability catalog, Pydantic V2 schemas, TypeScript interfaces, and the Baton Handoff.
-- **Invalidation Condition:** Any missing mathematical formula, presence of `any` types in data contracts, or absence of the 4-phase template structure would invalidate this report.
+
+### 5.1 Playwright Visual Audit Verification
+```powershell
+cd frontend
+npx playwright test e2e/capture-dossier-screenshots.spec.ts e2e/comprehensive-feature-verification.spec.ts --project=chromium
+```
+Expected output: 28 passed.
+
+### 5.2 Frontend Production Build Verification
+```powershell
+cd frontend
+npm run build
+```
+Expected output: Exit code 0, 0 TypeScript errors.
+
+### 5.3 Backend Unit Test Verification
+```powershell
+pytest backend/tests/unit -q
+```
+Expected output: 300 passed.

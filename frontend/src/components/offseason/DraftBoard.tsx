@@ -115,10 +115,7 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
 
   return (
     <div className="draft-board" data-testid="draft-board">
-      <ScoutIntelligenceLens
-        currentLens={currentLens}
-        onLensChange={setCurrentLens}
-      />
+      <ScoutIntelligenceLens currentLens={currentLens} onLensChange={setCurrentLens} />
       <div className="draft-header">
         <h3>Draft Board</h3>
         <div className="draft-controls">

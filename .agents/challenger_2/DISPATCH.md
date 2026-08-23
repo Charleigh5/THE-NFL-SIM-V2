@@ -1,14 +1,17 @@
-## 2026-08-21T21:22:05Z
-You are Challenger 2: Cross-Contract Parity & Schema Verifier.
-Working Directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\challenger_2
-Project Root: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2
-Original Request: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\ORIGINAL_REQUEST.md
-Project Blueprint: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\PROJECT.md
+# DISPATCH: Challenger 2 — Frontend Type Parity & Playwright Automation Stress Test
 
-Mission:
-Empirically verify all data contracts, schemas, and models across the 4 blueprint documents in `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\docs\design_theory\nfl_simulation_blueprint\`:
-1. Verify exact 1:1 field and type parity between Python Pydantic V2 schemas and TypeScript interfaces.
-2. Confirm zero `any` types, proper discriminated union tags, and complete WebSocket frame typing.
-3. Verify model compatibility across domain boundaries (Physics -> Broadcast -> Dynasty -> UI).
+Target Directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\challenger_2
+Mission: Adversarially challenge the frontend build, type system, and browser automation:
+1. Run `npm run build` (`tsc -b && vite build`) and challenge type soundness and bundle validity.
+2. Verify that 0 `any` annotations exist in frontend/src/ via static ripgrep audit.
+3. Review Playwright test specs and screenshots for all 13 core views.
+4. Issue verdict: APPROVE or REJECT.
+Write your report to c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\challenger_2\handoff.md.
 
-Provide your explicit verdict (APPROVE or REQUEST_CHANGES) in your `handoff.md` and message the parent orchestrator.
+## 2026-08-23T13:40:00Z
+Received dispatch request from orchestrator:
+- Adversarially challenge frontend build and type definitions: run `npm run build` in `frontend/`.
+- Check for any remaining `any` types in `frontend/src/`.
+- Challenge Playwright visual automation results for the 13 core views.
+- Issue verdict: APPROVE or REJECT.
+- Write complete report to `.agents/challenger_2/handoff.md` and send message to parent.

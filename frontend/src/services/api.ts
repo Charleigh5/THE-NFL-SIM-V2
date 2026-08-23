@@ -19,10 +19,17 @@ export interface Team {
   division: string;
   wins: number;
   losses: number;
+  ties?: number;
   salary_cap_space: number;
   logo_url?: string;
   primary_color?: string;
   secondary_color?: string;
+  established_year?: number;
+  stadium_id?: number;
+  medical_rating?: number;
+  training_staff_quality?: number;
+  medical_budget?: number;
+  elo_rating?: number;
 }
 
 export interface Player {

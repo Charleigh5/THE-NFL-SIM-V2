@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
-// Removed unused THREE import
+import type { LineBasicMaterial } from "three";
 
 interface ConnectionLineProps {
   start: [number, number, number];
@@ -16,12 +16,10 @@ export const ConnectionLine: React.FC<ConnectionLineProps> = ({
   isUnlocked,
   color = "#fbbf24", // Default gold-ish
 }) => {
-  // Fix 'any' -> typed as THREE.LineBasicMaterial (or generic with dashOffset)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const materialRef = useRef<any>(null);
+  const materialRef = useRef<(LineBasicMaterial & { dashOffset?: number }) | null>(null);
 
   useFrame((_state, delta) => {
-    if (materialRef.current && isUnlocked) {
+    if (materialRef.current && isUnlocked && typeof materialRef.current.dashOffset === "number") {
       // Animate the dash offset to create a "flow" effect
       materialRef.current.dashOffset -= delta * 2;
     }

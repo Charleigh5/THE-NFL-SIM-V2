@@ -114,11 +114,10 @@ export const useWebSocket = (url: string | null) => {
             // homeScore stays 7 across update #2 and #3.)
             if (isAutomated || hasE2EWebSocketOverride) {
               // Stagger updates in automated runs so assertions can observe intermediate states.
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const w = window as any;
+              const w = window as unknown as Window & { __wsE2ENextAt?: number };
               const spacingMs = 2000;
               const now = Date.now();
-              const nextAt = Math.max(now, (w.__wsE2ENextAt as number | undefined) ?? now);
+              const nextAt = Math.max(now, w.__wsE2ENextAt ?? now);
               w.__wsE2ENextAt = nextAt + spacingMs;
               window.setTimeout(applyUpdate, Math.max(0, nextAt - now));
             } else {

@@ -65,7 +65,12 @@ export const CoachingTree: React.FC = () => {
         <div className="p-8 flex flex-col items-center relative gap-8 w-full max-w-4xl bg-slate-950/70 border border-slate-800 rounded-3xl backdrop-blur-xl">
           {/* Head Coach */}
           <div className="z-10">
-            <CoachNode name="Zac Taylor" role="Head Coach" specialty="Offensive Guru" color="#f59e0b" />
+            <CoachNode
+              name="Zac Taylor"
+              role="Head Coach"
+              specialty="Offensive Guru"
+              color="#f59e0b"
+            />
           </div>
 
           {/* Connection Lines (SVG) */}
@@ -95,7 +100,12 @@ export const CoachingTree: React.FC = () => {
               </svg>
 
               <div className="flex gap-4">
-                <CoachNode name="Dan Pitcher" role="QB Coach" specialty="Development" color="#1d4ed8" />
+                <CoachNode
+                  name="Dan Pitcher"
+                  role="QB Coach"
+                  specialty="Development"
+                  color="#1d4ed8"
+                />
                 <CoachNode
                   name="Frank Pollack"
                   role="OL Coach"
@@ -124,8 +134,18 @@ export const CoachingTree: React.FC = () => {
               </svg>
 
               <div className="flex gap-4">
-                <CoachNode name="Marion Hobby" role="DL Coach" specialty="Pass Rush" color="#b91c1c" />
-                <CoachNode name="Charles Burks" role="DB Coach" specialty="Coverage" color="#b91c1c" />
+                <CoachNode
+                  name="Marion Hobby"
+                  role="DL Coach"
+                  specialty="Pass Rush"
+                  color="#b91c1c"
+                />
+                <CoachNode
+                  name="Charles Burks"
+                  role="DB Coach"
+                  specialty="Coverage"
+                  color="#b91c1c"
+                />
               </div>
             </div>
           </div>

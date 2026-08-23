@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Award, Zap, Shield, BookOpen, Lock, CheckCircle2 } from 'lucide-react';
-import type { CoachDynastyProfile, CoachingSkillNode, StaffSynergyBreakdown } from '../../types/deepDive';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Award, Zap, Shield, BookOpen, Lock, CheckCircle2 } from "lucide-react";
+import type {
+  CoachDynastyProfile,
+  CoachingSkillNode,
+  StaffSynergyBreakdown,
+  CoachingBranch,
+} from "../../types/deepDive";
 
 interface CoachingDynastyTreeProps {
   initialProfile?: CoachDynastyProfile;
@@ -10,130 +15,130 @@ interface CoachingDynastyTreeProps {
 }
 
 const DEFAULT_PROFILE: CoachDynastyProfile = {
-  coach_id: 'HC-CAMPBELL',
-  name: 'Dan Campbell',
-  role: 'Head Coach',
+  coach_id: "HC-CAMPBELL",
+  name: "Dan Campbell",
+  role: "Head Coach",
   level: 14,
   current_sp: 4,
   total_sp_earned: 28,
-  archetype: 'Tactical Mastermind',
+  archetype: "Tactical Mastermind",
   tree_nodes: {
     SCHEME_DISGUISE_I: {
-      id: 'SCHEME_DISGUISE_I',
-      name: 'Pre-Snap Disguise',
-      branch: 'SCHEME_TACTICS',
+      id: "SCHEME_DISGUISE_I",
+      name: "Pre-Snap Disguise",
+      branch: "SCHEME_TACTICS",
       tier: 1,
       unlocked: true,
       sp_cost: 1,
-      bonus_description: '+5% pre-snap coverage misdirection against opposing QBs',
+      bonus_description: "+5% pre-snap coverage misdirection against opposing QBs",
       prerequisites: [],
       stat_multiplier: 1.05,
     },
     SCHEME_MATCHUP_NIGHTMARE: {
-      id: 'SCHEME_MATCHUP_NIGHTMARE',
-      name: 'Iso-Mismatches',
-      branch: 'SCHEME_TACTICS',
+      id: "SCHEME_MATCHUP_NIGHTMARE",
+      name: "Iso-Mismatches",
+      branch: "SCHEME_TACTICS",
       tier: 2,
       unlocked: false,
       sp_cost: 2,
-      bonus_description: '+8% route win rate for slot receivers and tight ends',
-      prerequisites: ['SCHEME_DISGUISE_I'],
+      bonus_description: "+8% route win rate for slot receivers and tight ends",
+      prerequisites: ["SCHEME_DISGUISE_I"],
       stat_multiplier: 1.08,
     },
     SCHEME_FOURTH_DOWN_ALGO: {
-      id: 'SCHEME_FOURTH_DOWN_ALGO',
-      name: 'Analytics 4th-Down Edge',
-      branch: 'SCHEME_TACTICS',
+      id: "SCHEME_FOURTH_DOWN_ALGO",
+      name: "Analytics 4th-Down Edge",
+      branch: "SCHEME_TACTICS",
       tier: 3,
       unlocked: false,
       sp_cost: 3,
-      bonus_description: '+12% conversion probability on 4th & 2 or less',
-      prerequisites: ['SCHEME_MATCHUP_NIGHTMARE'],
+      bonus_description: "+12% conversion probability on 4th & 2 or less",
+      prerequisites: ["SCHEME_MATCHUP_NIGHTMARE"],
       stat_multiplier: 1.12,
     },
     DEV_ROOKIE_ONBOARDING: {
-      id: 'DEV_ROOKIE_ONBOARDING',
-      name: 'Rookie Fast-Track',
-      branch: 'DEVELOPMENT',
+      id: "DEV_ROOKIE_ONBOARDING",
+      name: "Rookie Fast-Track",
+      branch: "DEVELOPMENT",
       tier: 1,
       unlocked: true,
       sp_cost: 1,
-      bonus_description: '+15% XP gain for Year 1 rookies during training camp',
+      bonus_description: "+15% XP gain for Year 1 rookies during training camp",
       prerequisites: [],
       stat_multiplier: 1.15,
     },
     DEV_TRENCH_DEVELOPER: {
-      id: 'DEV_TRENCH_DEVELOPER',
-      name: 'Trench Whisperer',
-      branch: 'DEVELOPMENT',
+      id: "DEV_TRENCH_DEVELOPER",
+      name: "Trench Whisperer",
+      branch: "DEVELOPMENT",
       tier: 2,
       unlocked: false,
       sp_cost: 2,
-      bonus_description: '+10% pass-rush & run-block progression for OL/DL',
-      prerequisites: ['DEV_ROOKIE_ONBOARDING'],
-      stat_multiplier: 1.10,
+      bonus_description: "+10% pass-rush & run-block progression for OL/DL",
+      prerequisites: ["DEV_ROOKIE_ONBOARDING"],
+      stat_multiplier: 1.1,
     },
     DEV_STAR_MAKER: {
-      id: 'DEV_STAR_MAKER',
-      name: 'X-Factor Catalyst',
-      branch: 'DEVELOPMENT',
+      id: "DEV_STAR_MAKER",
+      name: "X-Factor Catalyst",
+      branch: "DEVELOPMENT",
       tier: 3,
       unlocked: false,
       sp_cost: 3,
-      bonus_description: '+20% higher chance for Star dev traits to elevate to Superstar',
-      prerequisites: ['DEV_TRENCH_DEVELOPER'],
-      stat_multiplier: 1.20,
+      bonus_description: "+20% higher chance for Star dev traits to elevate to Superstar",
+      prerequisites: ["DEV_TRENCH_DEVELOPER"],
+      stat_multiplier: 1.2,
     },
     CULTURE_LOCKER_ROOM_UNITY: {
-      id: 'CULTURE_LOCKER_ROOM_UNITY',
-      name: 'Brotherhood Culture',
-      branch: 'PROGRAM_CULTURE',
+      id: "CULTURE_LOCKER_ROOM_UNITY",
+      name: "Brotherhood Culture",
+      branch: "PROGRAM_CULTURE",
       tier: 1,
       unlocked: true,
       sp_cost: 1,
-      bonus_description: '-50% morale penalty after tough divisional losses',
+      bonus_description: "-50% morale penalty after tough divisional losses",
       prerequisites: [],
       stat_multiplier: 1.05,
     },
     CULTURE_CAP_DISCIPLINE: {
-      id: 'CULTURE_CAP_DISCIPLINE',
-      name: 'Hometown Loyalty Discount',
-      branch: 'PROGRAM_CULTURE',
+      id: "CULTURE_CAP_DISCIPLINE",
+      name: "Hometown Loyalty Discount",
+      branch: "PROGRAM_CULTURE",
       tier: 2,
       unlocked: false,
       sp_cost: 2,
-      bonus_description: 'Re-signing players grant a 5% hometown contract discount',
-      prerequisites: ['CULTURE_LOCKER_ROOM_UNITY'],
+      bonus_description: "Re-signing players grant a 5% hometown contract discount",
+      prerequisites: ["CULTURE_LOCKER_ROOM_UNITY"],
       stat_multiplier: 1.05,
     },
     CULTURE_PRIME_TIME_SWAGGER: {
-      id: 'CULTURE_PRIME_TIME_SWAGGER',
-      name: 'Big Game Mentality',
-      branch: 'PROGRAM_CULTURE',
+      id: "CULTURE_PRIME_TIME_SWAGGER",
+      name: "Big Game Mentality",
+      branch: "PROGRAM_CULTURE",
       tier: 3,
       unlocked: false,
       sp_cost: 3,
-      bonus_description: '+3 OVR boost to all starters in playoff and primetime night games',
-      prerequisites: ['CULTURE_CAP_DISCIPLINE'],
-      stat_multiplier: 1.10,
+      bonus_description: "+3 OVR boost to all starters in playoff and primetime night games",
+      prerequisites: ["CULTURE_CAP_DISCIPLINE"],
+      stat_multiplier: 1.1,
     },
   },
 };
 
 const DEFAULT_SYNERGY: StaffSynergyBreakdown = {
-  head_coach_id: 'HC-CAMPBELL',
-  offensive_coord_id: 'OC-BEN-JOHNSON',
-  defensive_coord_id: 'DC-AARON-GLENN',
+  head_coach_id: "HC-CAMPBELL",
+  offensive_coord_id: "OC-BEN-JOHNSON",
+  defensive_coord_id: "DC-AARON-GLENN",
   offensive_synergy_score: 96,
   defensive_synergy_score: 92,
   overall_chemistry_score: 94,
   active_synergy_perks: [
-    'Apex Staff Synergy (+5% team OVR in 4th Quarter)',
-    'Play-Caller Telepathy (Redzone TD% +8%)',
+    "Apex Staff Synergy (+5% team OVR in 4th Quarter)",
+    "Play-Caller Telepathy (Redzone TD% +8%)",
   ],
   scheme_alignment_notes: [
-    'Perfect Scheme Lock (WEST_COAST): +10% play-call execution speed',
-    'Defensive Autonomy (COVER_3_ZONE): DC has complete tactical control',
+    "Perfect Scheme Lock (WEST_COAST): +10% play-call execution speed",
+    "Defensive Autonomy (COVER_3_ZONE): DC has complete tactical control",
   ],
 };
 
@@ -144,7 +149,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
 }) => {
   const [profile, setProfile] = useState<CoachDynastyProfile>(initialProfile);
   const [synergy] = useState<StaffSynergyBreakdown>(initialSynergy);
-  const [activeBranch, setActiveBranch] = useState<'ALL' | 'SCHEME_TACTICS' | 'DEVELOPMENT' | 'PROGRAM_CULTURE'>('ALL');
+  const [activeBranch, setActiveBranch] = useState<"ALL" | CoachingBranch>("ALL");
   const [selectedNode, setSelectedNode] = useState<CoachingSkillNode | null>(null);
 
   const handleUnlock = (node: CoachingSkillNode) => {
@@ -173,10 +178,15 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
     onSkillUnlock?.(node.id);
   };
 
-  const branches = [
-    { key: 'SCHEME_TACTICS', label: 'Tactical Playbook', icon: BookOpen, color: '#00f0ff' },
-    { key: 'DEVELOPMENT', label: 'Player Development', icon: Zap, color: '#10b981' },
-    { key: 'PROGRAM_CULTURE', label: 'Culture & Dynasty', icon: Shield, color: '#f59e0b' },
+  const branches: Array<{
+    key: CoachingBranch;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+  }> = [
+    { key: "SCHEME_TACTICS", label: "Tactical Playbook", icon: BookOpen, color: "#00f0ff" },
+    { key: "DEVELOPMENT", label: "Player Development", icon: Zap, color: "#10b981" },
+    { key: "PROGRAM_CULTURE", label: "Culture & Dynasty", icon: Shield, color: "#f59e0b" },
   ];
 
   return (
@@ -227,11 +237,11 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
       {/* Branch Tabs */}
       <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2">
         <button
-          onClick={() => setActiveBranch('ALL')}
+          onClick={() => setActiveBranch("ALL")}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
-            activeBranch === 'ALL'
-              ? 'bg-slate-800 text-white border border-slate-600'
-              : 'text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800'
+            activeBranch === "ALL"
+              ? "bg-slate-800 text-white border border-slate-600"
+              : "text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800"
           }`}
         >
           FULL DYNASTY TREE
@@ -242,11 +252,11 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
           return (
             <button
               key={b.key}
-              onClick={() => setActiveBranch(b.key as any)}
+              onClick={() => setActiveBranch(b.key)}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
                 isActive
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-[0_0_12px_rgba(0,240,255,0.2)]'
-                  : 'text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800'
+                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
+                  : "text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800"
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -259,7 +269,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
       {/* 3-Branch Tree Visualization */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         {branches.map((branch) => {
-          if (activeBranch !== 'ALL' && activeBranch !== branch.key) return null;
+          if (activeBranch !== "ALL" && activeBranch !== branch.key) return null;
 
           const branchNodes = Object.values(profile.tree_nodes)
             .filter((n) => n.branch === branch.key)
@@ -285,7 +295,8 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
                   const prereqsMet = node.prerequisites.every(
                     (p) => profile.tree_nodes[p]?.unlocked
                   );
-                  const canUnlock = !node.unlocked && prereqsMet && profile.current_sp >= node.sp_cost;
+                  const canUnlock =
+                    !node.unlocked && prereqsMet && profile.current_sp >= node.sp_cost;
 
                   return (
                     <motion.div
@@ -294,10 +305,10 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
                       whileHover={{ scale: 1.02 }}
                       className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-start justify-between gap-3 ${
                         node.unlocked
-                          ? 'bg-emerald-950/40 border-emerald-500/50 text-slate-100 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                          ? "bg-emerald-950/40 border-emerald-500/50 text-slate-100 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
                           : canUnlock
-                          ? 'bg-cyan-950/40 border-cyan-500/40 text-slate-200 hover:border-cyan-400'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-500 opacity-60'
+                            ? "bg-cyan-950/40 border-cyan-500/40 text-slate-200 hover:border-cyan-400"
+                            : "bg-slate-950/60 border-slate-800 text-slate-500 opacity-60"
                       }`}
                     >
                       <div className="flex-1">
