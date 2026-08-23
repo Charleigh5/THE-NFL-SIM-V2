@@ -32,12 +32,12 @@ class WeatherEffects:
         # Wind (NFL: noticeable effect above 10 mph)
         if self.weather.wind_speed and self.weather.wind_speed > 10:
             wind_over = self.weather.wind_speed - 10
-            accuracy -= wind_over * 0.010   # -1.0% per mph over 10
+            accuracy -= wind_over * 0.008   # -0.8% per mph over 10
             distance -= wind_over * 0.005   # -0.5% per mph over 10
 
-        # Precipitation (NFL: ~10% reduction in rain, ~15% in snow)
+        # Precipitation (NFL: -12% reduction in rain, -15% in snow)
         if self.weather.precipitation_type == PrecipitationType.RAIN.value:
-            accuracy *= 0.90  # -10%
+            accuracy *= 0.88  # -12%
         elif self.weather.precipitation_type == PrecipitationType.SNOW.value:
             accuracy *= 0.85  # -15%
             distance *= 0.95

@@ -240,8 +240,31 @@ graph LR
 
 ---
 
-## 8. Changelog
+## 8. Multi-Lens Scouting Fog of War & Dynamic Draft AI (SUBSYS-001)
+
+**Files:**
+- [`backend/app/services/draft/scouting_lens_service.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/services/draft/scouting_lens_service.py)
+- [`backend/app/schemas/deep_dive.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/schemas/deep_dive.py)
+- [`frontend/src/components/offseason/ScoutIntelligenceLens.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/offseason/ScoutIntelligenceLens.tsx)
+
+### Evaluation Lenses:
+1. `CONSENSUS`: National media consensus draft board composite.
+2. `FILM_TRADITIONALIST`: Weights S2 cognition scores, technique, and pre-snap processing.
+3. `ANALYTICS_METRICS`: Weights peak GPS tracking speed (mph) and burst acceleration index.
+4. `REGIONAL_SCOUT`: High-variance subjective evaluations with upside conviction bias.
+
+### Dynamic Trade Urgency Formula:
+```python
+urgency_score = 0.5 + (0.5 * (target_prospect_tier / 4.0)) + (0.3 * position_run_pressure)
+should_trade_up = urgency_score >= 0.70
+```
+
+---
+
+## 9. Changelog
 
 | Date       | Change                   | Files |
 | ---------- | ------------------------ | ----- |
 | 2025-12-11 | Initial dossier creation | N/A   |
+| 2026-08-22 | SUBSYS-001 Multi-Lens Scouting & Dynamic Draft AI | `scouting_lens_service.py`, `ScoutIntelligenceLens.tsx` |
+

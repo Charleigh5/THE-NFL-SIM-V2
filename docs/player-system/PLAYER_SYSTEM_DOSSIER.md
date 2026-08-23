@@ -1,4 +1,4 @@
-﻿# NFL SIM Engine: Player System Master Dossier
+# NFL SIM Engine: Player System Master Dossier
 
 > **Living Document** - This comprehensive reference is updated whenever player-related systems change.
 >
@@ -1176,15 +1176,34 @@ Include ALL files:
 
 ---
 
-## 14. Changelog
+---
+
+## 15. Deep-Dive Subsystems (SUBSYS-002 & SUBSYS-003)
+
+### 15.1 Coaching Dynasty Skill Tree & Staff Synergy (SUBSYS-002)
+- **Files:** [`backend/app/services/coaching/coaching_dynasty_service.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/services/coaching/coaching_dynasty_service.py), [`frontend/src/components/coaching/CoachingDynastyTree.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/coaching/CoachingDynastyTree.tsx)
+- **Progression Branches:**
+  1. `SCHEME_TACTICS`: *Pre-Snap Disguise* → *Iso-Mismatches* → *Analytics 4th-Down Edge* → *Master Playbook Architect (Tier 4)*.
+  2. `DEVELOPMENT`: *Rookie Fast-Track* → *Trench Whisperer* → *X-Factor Catalyst* → *Age Defier (Tier 4)*.
+  3. `PROGRAM_CULTURE`: *Brotherhood Culture* → *Hometown Loyalty Discount* → *Big Game Mentality* → *Dynasty Magnet (Tier 4)*.
+- **Staff Synergy Engine:** HC/OC/DC scheme compatibility matrix unlocking *Apex Staff Synergy* (+15% XP gain) and *Play-Caller Telepathy* (+10% audible accuracy).
+
+### 15.2 Clinical Orthopedic Trauma Triage (SUBSYS-003)
+- **Files:** [`backend/app/services/medical/orthopedic_triage_service.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/services/medical/orthopedic_triage_service.py), [`frontend/src/components/medical/OrthopedicTriageModal.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/medical/OrthopedicTriageModal.tsx)
+- **5 Clinical Pathways:**
+  - `REST`: Conservative rest (0% complication, 100% integrity restoration).
+  - `PRP_THERAPY`: Platelet-rich plasma autologous biotherapy (-30% recovery time, 5% complication).
+  - `ARTHROSCOPIC_SURGERY`: Minimally invasive scope debridement (-50% recovery time, 12% complication).
+  - `RECONSTRUCTIVE_SURGERY`: Full graft reconstruction for long-term multi-year joint longevity.
+  - `CORTISONE_STABILIZATION`: Field joint bracing allowing players to suit up immediately under 2.5x hazard risk.
+
+---
+
+## 16. Changelog
 
 | Date | Change | Files Affected |
 | :--- | :--- | :--- |
 | 2025-12-11 | Initial comprehensive dossier created | All player files |
-| 2026-08-15 | Major update: Documented satellite model decomposition (PlayerAttributes, PlayerContract, PlayerPhysics, PlayerInjury, PlayerProgression, BodyPart), 12-type attribute interaction engine, 25+ trait catalog with rarity tiers and legendary traits, 7 RPG abilities, 7 player archetypes with game impact cascades, Skyrim-style use-based progression, 50+ training drills, coaching philosophy/expertise/tree systems, training camp mechanics, free agency market valuation with bidding wars, GENESIS biometrics/cognition/4-compartment fatigue model, position-specific physics engines (QB/RB/WR/OL/DL/DB), draft narrative generation, and expanded file linkage map. | player.py, player_attributes.py, player_contract.py, player_physics.py, player_injury.py, player_progression.py, medical.py, trait.py, trait_service.py, trait_effects.py, abilities.py, player_archetypes.py, archetype_effects.py, attribute_interaction.py, sack_calculator.py, blocking.py, rb_tribes.py, play_resolver.py, drills.py, coaching_philosophy.py, coach_expertise.py, coaching_tree.py, camp.py, progression.py, training_programs.py, offseason_service.py, age_curves.py, use_based_progression.py, free_agency_engine.py, rookie_generator.py, salary_cap_service.py, draft_narrative_service.py, injury_system.py, biometrics.py, cognition.py, fatigue.py, position_physics/*.py |
+| 2026-08-15 | Major update: Documented satellite model decomposition | player models & services |
+| 2026-08-22 | SUBSYS-002 Coaching Dynasty Tree & SUBSYS-003 Orthopedic Trauma Triage | `coaching_dynasty_service.py`, `orthopedic_triage_service.py`, `CoachingDynastyTree.tsx`, `OrthopedicTriageModal.tsx` |
 
----
-
-
-
----

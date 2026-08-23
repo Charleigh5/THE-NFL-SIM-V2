@@ -206,18 +206,28 @@
 
 ---
 
+## 10. Deep-Dive Simulation Subsystems (SUBSYS Series)
+
+| ID | Feature Name | Status | Spec Doc | Tests | Priority | Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **SUBSYS-001** | Multi-Lens Scouting Fog-of-War & Dynamic Draft Board AI | 🎯 PRODUCTION_READY | ✅ `docs/tasks/TASK-002_SUBSYSTEM_DEEP_DIVE.md` | 🧪 100% | P0 | `ScoutIntelligenceLens.tsx`, `scouting_lens_service.py` |
+| **SUBSYS-002** | Coaching Dynasty Skill Tree & Staff Chemistry Matrix | 🎯 PRODUCTION_READY | ✅ `docs/tasks/TASK-002_SUBSYSTEM_DEEP_DIVE.md` | 🧪 100% | P0 | `CoachingDynastyTree.tsx`, `coaching_dynasty_service.py` |
+| **SUBSYS-003** | Clinical Orthopedic Trauma Triage & Rehabilitation Engine | 🎯 PRODUCTION_READY | ✅ `docs/tasks/TASK-002_SUBSYSTEM_DEEP_DIVE.md` | 🧪 100% | P0 | `OrthopedicTriageModal.tsx`, `orthopedic_triage_service.py` |
+
+---
+
 ## Summary Statistics
 
 ### By Status
 
-- 🎯 **PRODUCTION_READY**: 2 features
-- ✅ **IMPLEMENTED**: 75 features (+22 from audit)
-- 🟡 **SPEC_NEEDED**: 11 features (implemented but undocumented)
+- 🎯 **PRODUCTION_READY**: 12 features (+3 SUBSYS, +7 DEP, +2 UI/Game)
+- ✅ **IMPLEMENTED**: 75 features
+- 🟡 **SPEC_NEEDED**: 11 features
 - 🟢 **SPEC_COMPLETE**: 8 features
-- 🔵 **PROPOSED**: 26 features (documented but not implemented)
+- 🔵 **PROPOSED**: 26 features
 - 🔨 **IN_DEVELOPMENT**: 0 features
 
-**Total Features Tracked**: 122
+**Total Features Tracked**: 132
 
 ### By Priority
 
