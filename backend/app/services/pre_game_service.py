@@ -70,20 +70,22 @@ class PreGameService:
             for trait_def in trait_defs:
                 player.active_traits.append(trait_def.name)
 
-                # Check if trait is active (simplified - assume ON_FIELD traits are active)
-                if "ON_FIELD" in trait_def.activation_triggers:
-                    # Apply individual effects
-                    for effect_key, effect_value in trait_def.effects.items():
-                        player.trait_effects[effect_key] = effect_value
+                # Apply individual effects
+                for effect_key, effect_value in trait_def.effects.items():
+                    player.trait_effects[effect_key] = effect_value
 
-                    # Track team-wide traits
-                    if trait_def.name == "Field General" and player.position == "QB":
-                        field_general_active = True
-                        logger.info(f"Field General active for Team {team_id}: {player.first_name} {player.last_name}")
+                # Backward compatibility mapping
+                if "catching_in_traffic_boost" in trait_def.effects and "contested_catch_bonus" not in player.trait_effects:
+                    player.trait_effects["contested_catch_bonus"] = trait_def.effects["catching_in_traffic_boost"]
 
-                    if trait_def.name == "Green Dot (Defensive Captain)" and player.position == "LB":
-                        green_dot_active = True
-                        logger.info(f"Green Dot active for Team {team_id}: {player.first_name} {player.last_name}")
+                # Track team-wide traits
+                if trait_def.name == "Field General" and player.position == "QB":
+                    field_general_active = True
+                    logger.info(f"Field General active for Team {team_id}: {player.first_name} {player.last_name}")
+
+                if trait_def.name == "Green Dot (Defensive Captain)" and player.position == "LB":
+                    green_dot_active = True
+                    logger.info(f"Green Dot active for Team {team_id}: {player.first_name} {player.last_name}")
 
         # Apply team-wide boosts
         if field_general_active:

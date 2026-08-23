@@ -136,6 +136,8 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         acquisition_method="COACHING_UNLOCK",
         activation_triggers=["PASS_PLAY", "BLITZ_DETECTED"],
         effects={
+            "chip_block_effectiveness": 1.30,
+            "pass_pro_rating_boost": 5,
             "chip_block_success_rate": 0.40,
             "pass_protection_boost": 10,
             "route_timing_after_chip": 0.15,
@@ -180,6 +182,7 @@ TRAIT_CATALOG: Dict[str, TraitDefinition] = {
         acquisition_method="STAT_THRESHOLD",
         activation_triggers=["CONTESTED_CATCH", "TRAFFIC"],
         effects={
+            "contested_catch_bonus": 15,
             "catching_in_traffic_boost": 15,
             "drop_rate_reduction": 0.30,
             "fumble_after_catch_reduction": 0.25,
@@ -628,28 +631,37 @@ class TraitService:
         """List all available traits in the system."""
         return db.scalars(select(Trait)).all()
 
-    @staticmethod
-    def get_player_traits(db: Session, player_id: int) -> List[TraitDefinition]:
+    def get_player_traits(self, player_id_or_db: Any, player_id: Optional[int] = None) -> Any:
         """
-        Get all traits assigned to a specific player.
-        Returns TraitDefinition objects from the catalog for full effect data.
+        Dual-mode get_player_traits supporting:
+        - service.get_player_traits(player_id) -> async coroutine
+        - TraitService.get_player_traits(db, player_id) -> sync list
         """
-        # Query trait names from DB
+        if isinstance(self, TraitService):
+            target_id = player_id if player_id is not None else player_id_or_db
+            return self._get_player_traits_instance(target_id)
+        else:
+            db = self
+            target_id = player_id_or_db
+            return TraitService._get_player_traits_sync(db, target_id)
+
+    @classmethod
+    def _get_player_traits_sync(cls, db: Any, player_id: int) -> List[TraitDefinition]:
+        """
+        Get all traits assigned to a specific player synchronously from DB.
+        """
         db_traits = db.scalars(
             select(Trait)
             .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
             .where(PlayerTrait.player_id == player_id)
         ).all()
 
-        # Map DB traits to catalog definitions for full data
         trait_defs = []
         for db_trait in db_traits:
-            # Try to find matching catalog trait
-            catalog_def = TraitService.get_trait_by_name(db_trait.name)
+            catalog_def = cls.get_trait_by_name(db_trait.name)
             if catalog_def:
                 trait_defs.append(catalog_def)
             else:
-                # Fallback: create minimal TraitDefinition from DB data
                 trait_defs.append(TraitDefinition(
                     name=db_trait.name,
                     description=db_trait.description or "",
@@ -742,7 +754,7 @@ class TraitService:
     # ASYNC INSTANCE METHOD WRAPPERS (for services that pass db in constructor)
     # -------------------------------------------------------------------------
 
-    async def get_player_traits(self, player_id: int) -> List[TraitDefinition]:
+    async def _get_player_traits_instance(self, player_id: int) -> List[TraitDefinition]:
         """
         Async instance method wrapper for get_player_traits.
         Uses self.db passed in constructor.

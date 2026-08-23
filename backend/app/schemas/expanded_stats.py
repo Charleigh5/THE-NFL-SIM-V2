@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 from typing import List, Optional, Dict, Any
 from enum import Enum
 
@@ -61,6 +61,12 @@ class QuarterbackStat(PlayerStat):
     fumbles: int = 0
     fumbles_lost: int = 0
 
+    @model_validator(mode="after")
+    def validate_qb_logic(self):
+        if self.completions > self.passing_attempts:
+            raise ValueError("Completions cannot exceed passing attempts")
+        return self
+
 class RunningBackStat(PlayerStat):
     """Comprehensive running back statistics"""
     # Rushing stats
@@ -91,6 +97,12 @@ class RunningBackStat(PlayerStat):
     fantasy_points: Optional[float] = None
     two_point_conversions: int = 0
 
+    @model_validator(mode="after")
+    def validate_rb_logic(self):
+        if self.rushing_yards < 0:
+            raise ValueError("Rushing yards cannot be negative in this context")
+        return self
+
 class WideReceiverStat(PlayerStat):
     """Comprehensive wide receiver statistics"""
     # Receiving stats
@@ -107,6 +119,12 @@ class WideReceiverStat(PlayerStat):
     yards_per_target: Optional[float] = None
     air_yards: Optional[int] = None
     yards_after_catch: Optional[int] = None
+
+    # Blocking metrics
+    pass_blocking_snaps: Optional[int] = None
+    run_blocking_snaps: Optional[int] = None
+    pressures_allowed: Optional[int] = None
+    penalties: int = 0
 
     # Rushing stats (for WR who get occasional carries)
     rushing_attempts: int = 0
@@ -145,98 +163,139 @@ class TightEndStat(PlayerStat):
 
 class OffensiveLineStat(PlayerStat):
     """Comprehensive offensive line statistics"""
-    # Pass protection stats
+    # Snap counts
+    snaps_played: int = 0
+    pass_blocking_snaps: int = 0
+    run_blocking_snaps: int = 0
+
+    # Pass protection metrics
     sacks_allowed: int = 0
-    quarterback_hits_allowed: int = 0
+    hits_allowed: int = 0
     hurries_allowed: int = 0
+    pressures_allowed: int = 0
+    pass_blocking_efficiency: Optional[float] = None
 
-    # Run blocking stats
-    pancake_blocks: Optional[int] = None
-    run_block_win_rate: Optional[float] = None
+    # Run blocking metrics
+    run_blocking_grade: Optional[float] = None
+    blown_blocks: int = 0
 
-    # Advanced metrics
-    pass_block_win_rate: Optional[float] = None
-    pressure_rate_allowed: Optional[float] = None
+    # Discipline
     penalties: int = 0
+    false_starts: int = 0
+    holding_penalties: int = 0
 
 class DefensiveLineStat(PlayerStat):
     """Comprehensive defensive line statistics"""
-    # Standard defensive stats
-    total_tackles: int = 0
-    solo_tackles: int = 0
-    assisted_tackles: int = 0
-    sacks: int = 0
+    # Standard stats
+    tackles_total: int = 0
+    tackles_solo: int = 0
+    tackles_assist: int = 0
     tackles_for_loss: int = 0
+    sacks: float = 0.0
+
+    # Pressure metrics
     quarterback_hits: int = 0
+    hurries: int = 0
+    pressures: int = 0
+    pressure_rate: Optional[float] = None
+    pass_rush_win_rate: Optional[float] = None
+
+    # Turnover plays
     forced_fumbles: int = 0
-    fumble_recoveries: int = 0
-    passes_defensed: int = 0
+    fumbles_recovered: int = 0
+    defensive_touchdowns: int = 0
 
     # Advanced metrics
-    pressure_rate: Optional[float] = None
-    run_stop_percentage: Optional[float] = None
-    pass_rush_win_rate: Optional[float] = None
-    tackle_efficiency: Optional[float] = None
+    stops: int = 0
+    batted_passes: int = 0
 
 class LinebackerStat(PlayerStat):
     """Comprehensive linebacker statistics"""
-    # Standard defensive stats
-    total_tackles: int = 0
-    solo_tackles: int = 0
-    assisted_tackles: int = 0
-    sacks: int = 0
+    # Standard stats
+    tackles_total: int = 0
+    tackles_solo: int = 0
+    tackles_assist: int = 0
     tackles_for_loss: int = 0
+    sacks: float = 0.0
+
+    # Pass rush metrics
+    quarterback_hits: int = 0
+    pressures: int = 0
+
+    # Coverage stats
+    targets_in_coverage: Optional[int] = None
+    receptions_allowed: Optional[int] = None
+    yards_allowed: Optional[int] = None
     interceptions: int = 0
     passes_defensed: int = 0
-    forced_fumbles: int = 0
-    fumble_recoveries: int = 0
-    quarterback_hits: int = 0
+    passer_rating_allowed: Optional[float] = None
 
-    # Advanced metrics
-    tackle_efficiency: Optional[float] = None
-    coverage_snaps: Optional[int] = None
-    run_defense_snaps: Optional[int] = None
-    blitz_rate: Optional[float] = None
-    completion_percentage_allowed: Optional[float] = None
+    # Turnover plays
+    forced_fumbles: int = 0
+    fumbles_recovered: int = 0
+    defensive_touchdowns: int = 0
 
 class DefensiveBackStat(PlayerStat):
     """Comprehensive defensive back statistics"""
-    # Standard defensive stats
-    total_tackles: int = 0
-    solo_tackles: int = 0
-    assisted_tackles: int = 0
+    # Coverage metrics
+    targets: int = 0
+    receptions_allowed: int = 0
+    yards_allowed: int = 0
+    touchdowns_allowed: int = 0
+    completion_percentage_allowed: Optional[float] = None
+    yards_per_coverage_snap: Optional[float] = None
+    passer_rating_allowed: Optional[float] = None
+
+    # Ball production
     interceptions: int = 0
     passes_defensed: int = 0
-    interception_return_yards: Optional[int] = None
+    interception_return_yards: int = 0
     interception_return_touchdowns: int = 0
-    forced_fumbles: int = 0
-    fumble_recoveries: int = 0
 
-    # Advanced metrics
-    target_rate: Optional[float] = None
-    completion_percentage_allowed: Optional[float] = None
-    yards_per_target_allowed: Optional[float] = None
-    passer_rating_when_targeted: Optional[float] = None
-    coverage_snaps: Optional[int] = None
+    # Tackling stats
+    tackles_total: int = 0
+    tackles_solo: int = 0
+    tackles_assist: int = 0
+    missed_tackles: int = 0
+    missed_tackle_percentage: Optional[float] = None
+
+    # Big plays
+    forced_fumbles: int = 0
+    fumbles_recovered: int = 0
+    defensive_touchdowns: int = 0
 
 class KickerStat(PlayerStat):
     """Comprehensive kicker statistics"""
-    # Field goal stats
+    # Field goals
     field_goals_attempted: int = 0
     field_goals_made: int = 0
     field_goal_percentage: Optional[float] = None
     longest_field_goal: Optional[int] = None
 
-    # Extra point stats
+    # Distance breakdown
+    fg_1_19_made: int = 0
+    fg_1_19_att: int = 0
+    fg_20_29_made: int = 0
+    fg_20_29_att: int = 0
+    fg_30_39_made: int = 0
+    fg_30_39_att: int = 0
+    fg_40_49_made: int = 0
+    fg_40_49_att: int = 0
+    fg_50_plus_made: int = 0
+    fg_50_plus_att: int = 0
+
+    # Extra points
     extra_points_attempted: int = 0
     extra_points_made: int = 0
     extra_point_percentage: Optional[float] = None
 
-    # Kickoff stats
+    # Scoring
+    points: int = 0
+
+    # Kickoffs
     kickoffs: int = 0
     touchbacks: int = 0
-    onside_kicks: int = 0
-    onside_kicks_recovered: int = 0
+    touchback_percentage: Optional[float] = None
 
 class PunterStat(PlayerStat):
     """Comprehensive punter statistics"""
@@ -271,41 +330,41 @@ class SpecialTeamsStat(PlayerStat):
 class LeagueLeaders(BaseModel):
     """Expanded league leaders with comprehensive position-specific metrics"""
     # Passing leaders
-    passing_yards: List[PlayerStat]
-    passing_touchdowns: List[PlayerStat]
-    passer_rating: List[PlayerStat]
-    completion_percentage: List[PlayerStat]
-    adjusted_net_yards_per_attempt: List[PlayerStat]
+    passing_yards: List[PlayerStat] = []
+    passing_touchdowns: List[PlayerStat] = []
+    passer_rating: List[PlayerStat] = []
+    completion_percentage: List[PlayerStat] = []
+    adjusted_net_yards_per_attempt: List[PlayerStat] = []
 
     # Rushing leaders
-    rushing_yards: List[PlayerStat]
-    rushing_touchdowns: List[PlayerStat]
-    yards_per_carry: List[PlayerStat]
+    rushing_yards: List[PlayerStat] = []
+    rushing_touchdowns: List[PlayerStat] = []
+    yards_per_carry: List[PlayerStat] = []
 
     # Receiving leaders
-    receiving_yards: List[PlayerStat]
-    receiving_touchdowns: List[PlayerStat]
-    receptions: List[PlayerStat]
-    yards_per_reception: List[PlayerStat]
+    receiving_yards: List[PlayerStat] = []
+    receiving_touchdowns: List[PlayerStat] = []
+    receptions: List[PlayerStat] = []
+    yards_per_reception: List[PlayerStat] = []
 
     # Defensive leaders
-    sacks: List[PlayerStat]
-    interceptions: List[PlayerStat]
-    total_tackles: List[PlayerStat]
-    passes_defensed: List[PlayerStat]
-    forced_fumbles: List[PlayerStat]
+    sacks: List[PlayerStat] = []
+    interceptions: List[PlayerStat] = []
+    total_tackles: List[PlayerStat] = []
+    passes_defensed: List[PlayerStat] = []
+    forced_fumbles: List[PlayerStat] = []
 
     # Special teams leaders
-    field_goal_percentage: List[PlayerStat]
-    punting_average: List[PlayerStat]
-    kickoff_return_yards: List[PlayerStat]
-    punt_return_yards: List[PlayerStat]
+    field_goal_percentage: List[PlayerStat] = []
+    punting_average: List[PlayerStat] = []
+    kickoff_return_yards: List[PlayerStat] = []
+    punt_return_yards: List[PlayerStat] = []
 
     # Advanced metrics leaders
-    passer_rating_against: List[PlayerStat]
-    pressure_rate: List[PlayerStat]
-    tackle_efficiency: List[PlayerStat]
-    fantasy_points: List[PlayerStat]
+    passer_rating_against: List[PlayerStat] = []
+    pressure_rate: List[PlayerStat] = []
+    tackle_efficiency: List[PlayerStat] = []
+    fantasy_points: List[PlayerStat] = []
 
 class TeamStats(BaseModel):
     """Team-level statistics"""

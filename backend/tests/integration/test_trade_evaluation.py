@@ -58,8 +58,8 @@ def test_evaluate_trade_endpoint(client, setup_trade_data):
             "/api/season/2024/gm/evaluate-trade",
             json={
                 "team_id": 1,
-                "offered_ids": [101],
-                "requested_ids": [201]
+                "offered_ids": [201],
+                "requested_ids": [101]
             }
         )
 
@@ -70,7 +70,7 @@ def test_evaluate_trade_endpoint(client, setup_trade_data):
         assert "score" in data
         assert "reasoning" in data
 
-        # 10 (Murray) - 10 (Mahomes) = 0 => ACCEPT (based on placeholder logic)
+        # Mahomes (201) > Murray (101) => ACCEPT
         assert data["decision"] == "ACCEPT"
 
 def test_evaluate_trade_invalid_team(client):
@@ -79,18 +79,14 @@ def test_evaluate_trade_invalid_team(client):
         "/api/season/2024/gm/evaluate-trade",
         json={
             "team_id": 999,
-            "offered_ids": [101],
-            "requested_ids": [201]
+            "offered_ids": [201],
+            "requested_ids": [101]
         }
     )
-    # The endpoint might return 404 or 500 depending on implementation details of GMAgent init
-    # GMAgent currently does db.query(Team).get(team_id) but doesn't explicitly check if None in init
-    # But accessing self.team later might fail if used.
-    # Actually, GMAgent init just sets self.team.
-    # Let's see what happens. If it fails, it's a bug or expected error.
-    # For now, let's assume it returns 200 but maybe with error in reasoning or 500.
-    # Actually, let's skip this edge case for now as GMAgent implementation is simple.
-    pass
+    # Non-existent team should reject
+    assert response.status_code == 200
+    data = response.json()
+    assert data["decision"] == "REJECT"
 
 def test_evaluate_trade_mcp_integration(client, setup_trade_data):
     """Test that MCP data is reflected in the API response."""
@@ -103,15 +99,15 @@ def test_evaluate_trade_mcp_integration(client, setup_trade_data):
             "/api/season/2024/gm/evaluate-trade",
             json={
                 "team_id": 1,
-                "offered_ids": [101],
-                "requested_ids": [201]
+                "offered_ids": [201],
+                "requested_ids": [101]
             }
         )
 
         assert response.status_code == 200
         data = response.json()
 
-        # Injury news might be present, but the value difference (Mahomes > Murray) is so high
-        # that the new valuation model ACCEPTS the trade.
+        # Injury news might be present, and the value difference (Mahomes > Murray) is high
+        # so the valuation model ACCEPTS the trade.
         assert data["decision"] == "ACCEPT"
         assert "injury" in data["reasoning"].lower()

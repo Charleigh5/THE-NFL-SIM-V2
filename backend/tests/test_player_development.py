@@ -19,7 +19,8 @@ def db():
     session.close()
     Base.metadata.drop_all(bind=engine)
 
-def test_player_development_service(db):
+@pytest.mark.asyncio
+async def test_player_development_service(db):
     # Setup Data
     team = Team(name="Test Team", city="Test City", abbreviation="TST")
     db.add(team)
@@ -42,7 +43,7 @@ def test_player_development_service(db):
     service = PlayerDevelopmentService(db)
     
     # Test Weekly Development
-    service.process_weekly_development(season_id=1, week=1)
+    await service.process_weekly_development(season_id=1, week=1)
     
     # Check XP Gain
     # Base 50 * 1.5 (Superstar) * 1.3 (Coach 80 rating -> +0.3) * 1.2 (Age < 24)
@@ -58,12 +59,12 @@ def test_player_development_service(db):
     player.weeks_to_recovery = 2
     db.commit()
     
-    service.process_weekly_development(season_id=1, week=2)
+    await service.process_weekly_development(season_id=1, week=2)
     db.refresh(player)
     assert player.weeks_to_recovery == 1
     assert player.injury_status == InjuryStatus.OUT
     
-    service.process_weekly_development(season_id=1, week=3)
+    await service.process_weekly_development(season_id=1, week=3)
     db.refresh(player)
     assert player.weeks_to_recovery == 0
     assert player.injury_status == InjuryStatus.ACTIVE
@@ -72,7 +73,7 @@ def test_player_development_service(db):
     # Team has 0 wins, 0 losses -> win_pct 0.5 -> No change from record
     # Depth chart rank default 999 -> -1 morale
     old_morale = player.morale
-    service.process_weekly_development(season_id=1, week=4)
+    await service.process_weekly_development(season_id=1, week=4)
     db.refresh(player)
     # Morale might fluctuate randomly, but let's check it's within bounds
     assert 0 <= player.morale <= 100

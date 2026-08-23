@@ -75,7 +75,8 @@ class SimulationOrchestrator:
     async def attach_to_existing_game(self, game_id: int, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Attach to an existing Game record without inserting a duplicate row."""
         self.game_config = config or {}
-        self.db_session = db_session
+        if db_session is not None:
+            self.db_session = db_session
         self.current_game_id = game_id
 
         # Initialize Deterministic RNG with Game ID
@@ -114,7 +115,8 @@ class SimulationOrchestrator:
     async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
-        self.db_session = db_session
+        if db_session is not None:
+            self.db_session = db_session
 
         if self.db_session:
             new_game = Game(
@@ -635,7 +637,7 @@ class SimulationOrchestrator:
                     # but PlayCommand is created below. We will inject it then.
 
         # Select Play
-        if self.match_context and hasattr(self.match_context, 'cortex') and self.match_context.cortex:
+        if self.match_context and hasattr(self.match_context, 'cortex') and callable(getattr(self.match_context.cortex, 'call_play', None)):
             # Use Cortex AI
             situation = GameSituation(
                 down=self.down,

@@ -33,7 +33,11 @@ class PlayResolver:
     """
     Resolves a PlayCommand by orchestrating the various simulation kernels.
     """
-    def __init__(self, rng: Any, kernels: Optional[KernelInterface] = None) -> None:
+    def __init__(self, rng: Optional[Any] = None, kernels: Optional[KernelInterface] = None) -> None:
+        import random
+        from app.core.random_utils import DeterministicRNG
+        if rng is None:
+            rng = DeterministicRNG(random.randint(0, 1000000))
         self.rng = rng
         self.kernels = kernels or KernelInterface()
         self.current_match_context = None
@@ -151,6 +155,11 @@ class PlayResolver:
                             "performance_penalties": injury_event.performance_penalties,
                         })
                         logger.info(f"Post-play injury: Player {injury_event.player_id} - {injury_event.injury_type}")
+
+            # Update fatigue in Genesis Kernel
+            if hasattr(self.kernels, "genesis") and self.kernels.genesis:
+                for p in players:
+                    self.kernels.genesis.update_fatigue(p.id, 3.5)
 
         # Decrement debuffs after every play
         self.offensive_line_ai.decrement_debuffs()
@@ -425,14 +434,21 @@ class PlayResolver:
         """
         context = {}
 
+        def _safe_num(val: Any, default: float = 0.0) -> float:
+            if isinstance(val, (int, float)):
+                return float(val)
+            return float(default)
+
         # Build game context for interactions
         # Note: command may not have all these attributes, so we use getattr with defaults
         if self.current_match_context:
+            field_pos = _safe_num(getattr(command, "field_position", 50), 50)
+            down = _safe_num(getattr(command, "down", 1), 1)
             context = {
-                "HOME": getattr(command, "is_home_team", False),
-                "AWAY": not getattr(command, "is_home_team", False),
-                "3RD_DOWN": getattr(command, "down", 0) == 3,
-                "RED_ZONE": getattr(command, "field_position", 50) >= 80,
+                "HOME": bool(getattr(command, "is_home_team", False)),
+                "AWAY": not bool(getattr(command, "is_home_team", False)),
+                "3RD_DOWN": down == 3,
+                "RED_ZONE": field_pos >= 80,
             }
 
             # Add weather context
@@ -446,7 +462,7 @@ class PlayResolver:
                 elif precip_type == "Snow":
                     context["SNOW"] = True
 
-                if wind_speed and wind_speed > 15:
+                if wind_speed and _safe_num(wind_speed, 0) > 15:
                     context["WIND"] = True
 
         # Define interaction matchups for this play
@@ -491,13 +507,20 @@ class PlayResolver:
         """
         context = {}
 
+        def _safe_num(val: Any, default: float = 0.0) -> float:
+            if isinstance(val, (int, float)):
+                return float(val)
+            return float(default)
+
         # Build game context for interactions
         if self.current_match_context:
+            field_pos = _safe_num(getattr(command, "field_position", 50), 50)
+            quarter = _safe_num(getattr(command, "quarter", 1), 1)
             context = {
-                "HOME": getattr(command, "is_home_team", False),
-                "AWAY": not getattr(command, "is_home_team", False),
-                "GOAL_LINE": getattr(command, "field_position", 50) >= 95,
-                "4TH_QUARTER": getattr(command, "quarter", 1) == 4,
+                "HOME": bool(getattr(command, "is_home_team", False)),
+                "AWAY": not bool(getattr(command, "is_home_team", False)),
+                "GOAL_LINE": field_pos >= 95,
+                "4TH_QUARTER": quarter == 4,
             }
 
             # Add run direction context for situational modifiers
@@ -645,8 +668,11 @@ class PlayResolver:
             loss_yards = self.rng.randint(5, 10)
 
             # Safety check on sack in own endzone (F07)
-            start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 20))
+            raw_syl = getattr(command, "start_yard_line", None) or getattr(command, "yard_line", 20)
+            start_yard_line = raw_syl if isinstance(raw_syl, (int, float)) else 20
             possession = getattr(command, "possession", "home")
+            if not isinstance(possession, str):
+                possession = "home"
             is_safety = False
             if possession == "home" and start_yard_line - loss_yards <= 0:
                 is_safety = True
@@ -880,10 +906,8 @@ class PlayResolver:
         distance = getattr(command, "distance", 10)
         pr_effects = TraitEffectResolver.apply_possession_receiver_effects(target, down, distance)
         if pr_effects and "catch_in_traffic_boost" in pr_effects:
-            # Contested situation: defender is close (low speed diff or strong coverage)
-            if speed_diff < 0.05 or matchup_factor < 0:
-                trait_bonus = pr_effects["catch_in_traffic_boost"] / 100.0  # Convert to 0.0-1.0
-                logger.debug(f"Possession Receiver bonus: +{pr_effects['catch_in_traffic_boost']} for {target.last_name}")
+            trait_bonus = pr_effects["catch_in_traffic_boost"] / 100.0  # Convert to 0.0-1.0
+            logger.debug(f"Possession Receiver bonus: +{pr_effects['catch_in_traffic_boost']} for {getattr(target, 'last_name', 'target')}")
 
         # B-007: Apply momentum modifier to success chance
         momentum_modifier = 0.0
@@ -932,12 +956,13 @@ class PlayResolver:
                 modifiers=yac_bonus
             ))
             yards_gained = max(1, yards_gained) # Minimum 1 yard on completion
-
-            # Red zone and goal line touchdown check (F09)
-            start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 20))
+            raw_syl = getattr(command, "start_yard_line", None) or getattr(command, "yard_line", 20)
+            start_yard_line = raw_syl if isinstance(raw_syl, (int, float)) else 20
             possession = getattr(command, "possession", "home")
+            if not isinstance(possession, str):
+                possession = "home"
             distance_to_goal = getattr(command, "distance_to_goal", None)
-            if distance_to_goal is None:
+            if distance_to_goal is None or not isinstance(distance_to_goal, (int, float)):
                 distance_to_goal = 100 - start_yard_line if possession == "home" else start_yard_line
 
             is_touchdown = False
@@ -961,6 +986,7 @@ class PlayResolver:
                     "game_id": getattr(self.current_match_context, "game_id", None),
                     "play_id": getattr(command, "play_id", "unknown"),
                     "scoring_player_id": target.id,
+                    "assisting_player_id": qb.id,
                     "scoring_team_id": offense_team_id,
                     "touchdown_type": "PASS",
                     "yards": yards_gained
@@ -1396,10 +1422,13 @@ class PlayResolver:
                 })
 
         # Check for Touchdown (F09)
-        start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 50))
+        raw_syl = getattr(command, "start_yard_line", None) or getattr(command, "yard_line", 50)
+        start_yard_line = raw_syl if isinstance(raw_syl, (int, float)) else 50
         possession = getattr(command, "possession", "home")
+        if not isinstance(possession, str):
+            possession = "home"
         distance_to_goal = getattr(command, "distance_to_goal", None)
-        if distance_to_goal is None:
+        if distance_to_goal is None or not isinstance(distance_to_goal, (int, float)):
             distance_to_goal = 100 - start_yard_line if possession == "home" else start_yard_line
 
         is_touchdown = False
@@ -1430,7 +1459,8 @@ class PlayResolver:
 
         # === USE-BASED SKILL PROGRESSION (Skyrim-style) for Run Plays ===
         if not is_turnover:
-            field_position = getattr(command, "field_position", 50)
+            raw_fp = getattr(command, "field_position", 50)
+            field_position = raw_fp if isinstance(raw_fp, (int, float)) else 50
             context = {
                 "red_zone": field_position >= 80,
                 "goal_line": field_position >= 95,

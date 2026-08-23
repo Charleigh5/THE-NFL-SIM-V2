@@ -44,28 +44,35 @@ class SackCalculator:
         - <40 pocket presence → ~9% sack rate (poor)
         """
         try:
+            def _safe_val(v: Any, default: float = 50.0) -> float:
+                if isinstance(v, (int, float)):
+                    return float(v)
+                return float(default)
+
             # 1. Pocket Presence Effect (0.0 to 0.45 reduction)
             # Higher presence = lower sack chance
             # NFL: Elite QBs (90+ rating) have ~30-40% fewer sacks
-            pocket_presence = getattr(qb, 'pocket_presence', None) or 50
+            pocket_presence = _safe_val(getattr(qb, 'pocket_presence', 50), 50.0)
             presence_factor = pocket_presence * 0.005  # 90 rating = 45% reduction
 
             # 2. Chemistry Effect (0.0 to 0.1 reduction)
             # Each point of chemistry reduces sack chance by 2%
-            chemistry_factor = ol_chemistry_bonus * 0.02
+            chem_bonus = _safe_val(ol_chemistry_bonus, 0.0)
+            chemistry_factor = chem_bonus * 0.02
 
             # 3. Mobility Factor (Escape)
             # Combine speed/agility/acceleration with safe defaults
             # NFL: Mobile QBs like Jackson, Allen have lower sack rates
-            qb_speed = getattr(qb, 'speed', None) or 50
-            qb_accel = getattr(qb, 'acceleration', None) or 50
-            qb_agility = getattr(qb, 'agility', None) or 50
+            qb_speed = _safe_val(getattr(qb, 'speed', 50), 50.0)
+            qb_accel = _safe_val(getattr(qb, 'acceleration', 50), 50.0)
+            qb_agility = _safe_val(getattr(qb, 'agility', 50), 50.0)
             mobility_score = (qb_speed + qb_accel + qb_agility) / 300.0  # 0.0-1.0
             escape_factor = mobility_score * 0.25  # Up to 25% reduction for elite mobility
 
             # Base probability scaled by pressure
             # pressure_level 0.5 = normal, 1.0 = instant pressure
-            initial_prob = SackCalculator.BASE_SACK_PROBABILITY * (1 + pressure_level)
+            safe_pressure = _safe_val(pressure_level, 0.5)
+            initial_prob = SackCalculator.BASE_SACK_PROBABILITY * (1 + safe_pressure)
 
             final_prob = initial_prob * (1 - presence_factor) * (1 - chemistry_factor) * (1 - escape_factor)
 

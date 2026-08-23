@@ -503,9 +503,9 @@ class AttributeInteractionEngine:
         attacker_primary = getattr(attacker, definition.attacker_attr, 50)
         defender_primary = getattr(defender, definition.defender_attr, 50)
 
-        # Safety: handle None values for primary attributes
-        attacker_primary = attacker_primary if attacker_primary is not None else 50
-        defender_primary = defender_primary if defender_primary is not None else 50
+        # Safety: handle None and non-numeric values
+        attacker_primary = attacker_primary if isinstance(attacker_primary, (int, float)) else 50
+        defender_primary = defender_primary if isinstance(defender_primary, (int, float)) else 50
 
         # Step 2: Calculate secondary attribute contributions (25% weight each, max 2)
         attacker_secondary_bonus = 0.0
@@ -515,9 +515,9 @@ class AttributeInteractionEngine:
             attacker_val = getattr(attacker, attr, 50)
             defender_val = getattr(defender, attr, 50)
 
-            # Safety: handle None values
-            attacker_val = attacker_val if attacker_val is not None else 50
-            defender_val = defender_val if defender_val is not None else 50
+            # Safety: handle None and non-numeric values
+            attacker_val = attacker_val if isinstance(attacker_val, (int, float)) else 50
+            defender_val = defender_val if isinstance(defender_val, (int, float)) else 50
 
             attacker_secondary_bonus += (attacker_val - 50) * 0.25
             defender_secondary_bonus += (defender_val - 50) * 0.25
@@ -601,17 +601,18 @@ class AttributeInteractionEngine:
 
     def _differential_to_outcome(self, differential: float) -> InteractionOutcome:
         """Convert a raw differential to an outcome enum."""
-        if differential >= 15:
+        diff = float(differential) if isinstance(differential, (int, float)) else 0.0
+        if diff >= 15:
             return InteractionOutcome.DOMINANT_WIN
-        elif differential >= 8:
+        elif diff >= 8:
             return InteractionOutcome.WIN
-        elif differential >= 2:
+        elif diff >= 2:
             return InteractionOutcome.SLIGHT_WIN
-        elif differential >= -2:
+        elif diff >= -2:
             return InteractionOutcome.NEUTRAL
-        elif differential >= -8:
+        elif diff >= -8:
             return InteractionOutcome.SLIGHT_LOSS
-        elif differential >= -15:
+        elif diff >= -15:
             return InteractionOutcome.LOSS
         else:
             return InteractionOutcome.DOMINANT_LOSS
@@ -655,11 +656,11 @@ class AttributeInteractionEngine:
         if not template:
             return f"{outcome.value} in {definition.name}"
 
-        # Get player names
-        attacker_name = getattr(attacker, 'last_name', None) or \
-                       getattr(attacker, 'name', 'Attacker')
-        defender_name = getattr(defender, 'last_name', None) or \
-                       getattr(defender, 'name', 'Defender')
+        # Get player names safely
+        raw_att = getattr(attacker, 'last_name', None) or getattr(attacker, 'name', None)
+        attacker_name = raw_att if isinstance(raw_att, str) else "Attacker"
+        raw_def = getattr(defender, 'last_name', None) or getattr(defender, 'name', None)
+        defender_name = raw_def if isinstance(raw_def, str) else "Defender"
 
         # Replace template placeholders
         narrative = template

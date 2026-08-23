@@ -53,6 +53,13 @@ class CombineResults:
     # B-044: Medical Flags (populated by GENESIS reveal)
     medical_flags: List[str] = field(default_factory=list)
 
+    @property
+    def bench_reps(self) -> int:
+        """Backward compatibility: estimate bench reps from power clean max."""
+        if self.power_clean_max > 0:
+            return max(0, int((self.power_clean_max - 100) / 7.5))
+        return 0
+
 
 @dataclass
 class GenesisRevealData:

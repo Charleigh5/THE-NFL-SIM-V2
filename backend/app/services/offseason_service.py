@@ -199,7 +199,7 @@ class OffseasonService:
         # Sort by record (worst to best)
         # Note: Standings are already sorted best to worst by calculate_standings
         # We want worst to best for draft order
-        standings.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential))
+        standings.sort(key=lambda x: (getattr(x, "win_percentage", getattr(x, "win_pct", 0.0)), x.wins, x.point_differential))
 
         # Find SB Winner and Loser to move to end
         stmt = select(PlayoffMatchup).where(

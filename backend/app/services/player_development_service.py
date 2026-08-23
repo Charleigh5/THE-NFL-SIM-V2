@@ -30,8 +30,12 @@ class PlayerDevelopmentService:
             selectinload(Team.players),
             selectinload(Team.coaches)
         )
-        result = await self.db.execute(stmt)
-        teams = result.scalars().all()
+        if isinstance(self.db, AsyncSession):
+            result = await self.db.execute(stmt)
+            teams = result.scalars().all()
+        else:
+            result = self.db.execute(stmt)
+            teams = result.scalars().all()
 
         for team in teams:
             self._apply_team_training(team)
@@ -39,7 +43,10 @@ class PlayerDevelopmentService:
             self._update_team_morale(team)
             self._process_financials(team)
 
-        await self.db.commit()
+        if isinstance(self.db, AsyncSession):
+            await self.db.commit()
+        else:
+            self.db.commit()
 
     def _process_financials(self, team: Team):
         """

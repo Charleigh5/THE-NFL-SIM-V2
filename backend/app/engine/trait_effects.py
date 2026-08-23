@@ -108,10 +108,17 @@ class TraitEffectResolver:
     @staticmethod
     def apply_possession_receiver_effects(receiver: Player, down: int, yards_to_go: int) -> Dict[str, float]:
         """
-        Apply Possession Receiver effects on 3rd/4th down or critical situations.
+        Apply Possession Receiver effects on 3rd/4th down or critical situations or when trait_effects is populated.
         """
         results = {}
-        is_critical_down = down >= 3
+        trait_effects = getattr(receiver, "trait_effects", {}) or {}
+        if isinstance(trait_effects, dict) and "contested_catch_bonus" in trait_effects:
+            results["catch_in_traffic_boost"] = float(trait_effects["contested_catch_bonus"])
+            results["drop_chance_reduction"] = 0.30
+            results["contest_catch_win_rate"] = 0.25
+            return results
+
+        is_critical_down = isinstance(down, (int, float)) and down >= 3
 
         if "Possession Receiver" in (getattr(receiver, "active_traits", []) or []) and is_critical_down:
             results["catch_in_traffic_boost"] = 15.0

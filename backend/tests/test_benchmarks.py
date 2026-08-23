@@ -23,6 +23,14 @@ def rng():
 
 
 @pytest.fixture
+def benchmark():
+    """Fallback benchmark fixture when pytest-benchmark is not installed."""
+    def _bench(func, *args, **kwargs):
+        return func(*args, **kwargs)
+    return _bench
+
+
+@pytest.fixture
 def mock_db():
     """Provide a mock database session."""
     return Mock()

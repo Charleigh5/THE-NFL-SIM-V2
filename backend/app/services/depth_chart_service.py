@@ -199,9 +199,15 @@ class DepthChartService:
         lineup["K"] = get_player("K", 0)
         lineup["P"] = get_player("P", 0)
         
-        # Returner (usually WR or CB)
-        lineup["KR"] = get_player("WR", 3) or get_player("CB", 2) or get_player("RB", 1)
-        lineup["PR"] = get_player("WR", 3) or get_player("CB", 2)
+        # Returner (usually backup WR or CB, or any available playmaker)
+        lineup["KR"] = (
+            get_player("WR", 3) or get_player("CB", 2) or get_player("RB", 1)
+            or get_player("WR", 0) or get_player("CB", 0) or get_player("RB", 0)
+        )
+        lineup["PR"] = (
+            get_player("WR", 3) or get_player("CB", 2)
+            or get_player("WR", 0) or get_player("CB", 0)
+        )
         
         # Fill the rest with backups/specialists (simplified)
         # We need 11 players total usually for kickoff/punt

@@ -390,17 +390,34 @@ class GMAgent:
 
     async def _get_llm_trade_opinion(self, offered: List[Player], requested: List[Player]) -> Dict[str, Any]:
         """
-        Mock LLM call to evaluate trade sentiment/intangibles.
+        Evaluate trade sentiment/intangibles and incorporate news/MCP context.
         """
         modifier = 0
-        reasoning = ""
+        reasoning_parts = []
 
         stars_offered = [p for p in offered if p.overall_rating > 90]
         if stars_offered:
             modifier += 5
-            reasoning = f"AI Analyst: Acquiring a superstar like {stars_offered[0].last_name} is a franchise-altering move."
+            reasoning_parts.append(f"AI Analyst: Acquiring a superstar like {stars_offered[0].last_name} is a franchise-altering move.")
 
-        return {"score_modifier": modifier, "reasoning": reasoning}
+        # Check MCP news for all involved players
+        try:
+            mcp_client = registry.get_client("news")
+            if mcp_client:
+                for player in (offered + requested):
+                    news_items = await mcp_client.call_tool("get_player_news", {"player_id": player.id})
+                    if news_items and isinstance(news_items, list):
+                        for item in news_items:
+                            headline = item.get("headline", "") if isinstance(item, dict) else str(item)
+                            if "injury" in headline.lower():
+                                modifier -= 5
+                                reasoning_parts.append(f"Injury Concern: {headline}")
+                            elif headline:
+                                reasoning_parts.append(f"Player Intel: {headline}")
+        except Exception:
+            pass
+
+        return {"score_modifier": modifier, "reasoning": "; ".join(reasoning_parts)}
 
     def _log_decision(self, decision_type: str, outcome: str, details: Dict[str, Any]):
         if self.gm:

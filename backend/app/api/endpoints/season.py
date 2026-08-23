@@ -925,18 +925,14 @@ class TradeEvaluationRequest(BaseModel):
 async def evaluate_trade(
     season_id: int,
     request: TradeEvaluationRequest,
-    db: AsyncSession = Depends(get_async_db)
+    db: Session = Depends(get_db)
 ):
     """Evaluate a trade proposal using AI GM Agent."""
     from app.services.gm_agent import GMAgent
 
-    sync_db = SessionLocal()
-    try:
-        agent = GMAgent(sync_db, request.team_id)
-        evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
-        return evaluation
-    finally:
-        sync_db.close()
+    agent = GMAgent(db, request.team_id)
+    evaluation = await agent.evaluate_trade(request.offered_ids, request.requested_ids)
+    return evaluation
 
 
 @router.get("/{season_id}/leaders", response_model=LeagueLeaders)

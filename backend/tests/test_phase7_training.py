@@ -112,7 +112,7 @@ class TestProgressionEngine:
     def test_apply_xp_level_up(self, engine):
         """XP triggers level up."""
         state = PlayerProgressionState(
-            player_id="P1", age=24, current_xp=0, level=75,
+            player_id="P1", age=26, current_xp=0, level=75,
             dev_trait=DevTrait.NORMAL, xp_to_next_level=1000
         )
 

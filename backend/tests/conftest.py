@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.database import get_async_db, get_db
-from app.main import app
+from app.main import app as fastapi_app
 from app.models.base import Base
 import app.models  # Register all models on Base.metadata for table creation
 
@@ -187,12 +187,12 @@ def client(db_session):
         async with AsyncTestingSessionLocal() as session:
             yield session
 
-    app.dependency_overrides[get_db] = override_get_db
-    app.dependency_overrides[get_async_db] = override_get_async_db
+    fastapi_app.dependency_overrides[get_db] = override_get_db
+    fastapi_app.dependency_overrides[get_async_db] = override_get_async_db
 
-    yield TestClient(app)
+    yield TestClient(fastapi_app)
 
-    app.dependency_overrides.clear()
+    fastapi_app.dependency_overrides.clear()
 
 @pytest.fixture(scope="function")
 async def async_client(async_db_session):
@@ -204,12 +204,12 @@ async def async_client(async_db_session):
     async def override_get_async_db():
         yield async_db_session
 
-    app.dependency_overrides[get_async_db] = override_get_async_db
+    fastapi_app.dependency_overrides[get_async_db] = override_get_async_db
 
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(transport=ASGITransport(app=fastapi_app), base_url="http://test") as ac:
         yield ac
 
-    app.dependency_overrides.clear()
+    fastapi_app.dependency_overrides.clear()
 
 @pytest.fixture(scope="function", autouse=True)
 async def clear_tables(async_db_session):

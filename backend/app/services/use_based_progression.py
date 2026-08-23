@@ -211,7 +211,7 @@ DEV_TRAIT_MULTIPLIERS = {
 # Age-based learning rate multipliers
 def get_age_multiplier(age: Optional[int]) -> float:
     """Young players learn faster, veterans slower."""
-    if age is None:
+    if not isinstance(age, (int, float)):
         age = 25
     if age < 24:
         return 1.2
@@ -239,6 +239,8 @@ def get_xp_threshold(current_rating: int) -> int:
     Higher ratings require more XP to improve.
     This creates natural diminishing returns.
     """
+    if not isinstance(current_rating, (int, float)):
+        current_rating = 75
     if current_rating < 60:
         return 100
     elif current_rating < 70:
@@ -341,15 +343,20 @@ class UseBasedProgression:
 
         # Award XP to each attribute
         attribute_xp = getattr(player, "attribute_xp", None)
-        if attribute_xp is None:
+        if not isinstance(attribute_xp, dict):
             attribute_xp = {}
-            player.attribute_xp = attribute_xp
+            try:
+                player.attribute_xp = attribute_xp
+            except Exception:
+                pass
 
         for attr_name, base_xp in base_awards.items():
             final_xp = int(base_xp * total_mult)
 
             # Accumulate XP
             current_attr_xp = attribute_xp.get(attr_name, 0)
+            if not isinstance(current_attr_xp, (int, float)):
+                current_attr_xp = 0
             attribute_xp[attr_name] = current_attr_xp + final_xp
 
             gains.append(AttributeXPGain(
@@ -378,12 +385,16 @@ class UseBasedProgression:
             List of ProgressionEvent records for any attributes that leveled up
         """
         levelups = []
-        attribute_xp = getattr(player, "attribute_xp", None) or {}
+        attribute_xp = getattr(player, "attribute_xp", None)
+        if not isinstance(attribute_xp, dict):
+            return []
 
         for attr_name, accumulated_xp in list(attribute_xp.items()):
+            if not isinstance(accumulated_xp, (int, float)):
+                continue
             # Get current attribute value
             current_value = getattr(player, attr_name, None)
-            if current_value is None:
+            if not isinstance(current_value, (int, float)):
                 continue
 
             # Check if we have enough XP to level up

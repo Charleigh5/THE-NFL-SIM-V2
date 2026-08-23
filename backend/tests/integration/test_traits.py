@@ -6,8 +6,7 @@ from app.models.player import Player
 # Mock DB Session if needed or use real test DB fixture
 # Assuming standard pytest-asyncio and conftest setup for db_session fixture
 
-@pytest.mark.asyncio
-async def test_create_and_assign_trait(db_session):
+def test_create_and_assign_trait(db_session):
     # 1. Create a Player
     player = Player(
         first_name="Test",
@@ -28,9 +27,9 @@ async def test_create_and_assign_trait(db_session):
         effect_value=10.0
     )
     db_session.add(trait)
-    await db_session.commit()
-    await db_session.refresh(player)
-    await db_session.refresh(trait)
+    db_session.commit()
+    db_session.refresh(player)
+    db_session.refresh(trait)
 
     # 3. Assign Trait via Service
     # Note: Service methods in trait_service.py are currently synchronous/blocking SA?

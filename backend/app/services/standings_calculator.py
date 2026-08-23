@@ -274,69 +274,87 @@ class StandingsCalculator:
                 reason = self._determine_tiebreaker_reason(t1, t2, group_type)
                 t1['tiebreaker_reason'] = reason
 
+    def _get_val(self, obj, key, default=None):
+        if isinstance(obj, dict):
+            return obj.get(key, default)
+        return getattr(obj, key, default)
+
     def _make_sort_key(self, team: Dict, all_teams_in_group: List[Dict], group_type: str):
         """Generate a sort key for a team."""
         # 1. Win Percentage
-        win_pct = team['win_percentage']
+        win_pct = self._get_val(team, 'win_percentage', 0.0)
+        team_id = self._get_val(team, 'team_id')
+        team_h2h = self._get_val(team, 'head_to_head', {}) or {}
 
         # 2. Head-to-Head win % against teams with the exact same overall record
         tied_opponents = [
             t for t in all_teams_in_group
-            if t['team_id'] != team['team_id'] and t['win_percentage'] == win_pct
+            if self._get_val(t, 'team_id') != team_id and self._get_val(t, 'win_percentage', 0.0) == win_pct
         ]
         if tied_opponents:
-            h2h_wins = sum(team['head_to_head'].get(t['team_id'], 0) for t in tied_opponents)
-            h2h_losses = sum(t['head_to_head'].get(team['team_id'], 0) for t in tied_opponents)
+            h2h_wins = sum(team_h2h.get(self._get_val(t, 'team_id'), 0) for t in tied_opponents)
+            h2h_losses = sum(self._get_val(t, 'head_to_head', {}).get(team_id, 0) for t in tied_opponents)
             total_h2h_games = h2h_wins + h2h_losses
             h2h_win_pct = (h2h_wins / total_h2h_games) if total_h2h_games > 0 else 0.0
         else:
             h2h_win_pct = 0.0
 
         # 3. Division Win % (only if ranking division)
-        div_pct = team['division_win_pct'] if group_type == 'division' else 0
+        div_pct = self._get_val(team, 'division_win_pct', 0.0) if group_type == 'division' else 0.0
 
         # 4. Conference Win %
-        conf_pct = team['conference_win_pct']
+        conf_pct = self._get_val(team, 'conference_win_pct', 0.0)
 
         # 5. Strength of Schedule
-        sos = team['strength_of_schedule']
+        sos = self._get_val(team, 'strength_of_schedule', 0.0)
 
         # 6. Point Differential
-        diff = team['point_differential']
+        diff = self._get_val(team, 'point_differential', 0)
 
         if group_type == 'division':
             return (win_pct, h2h_win_pct, div_pct, conf_pct, sos, diff)
         else:
             # Prioritize division winners for conference ranking/seeding
             # Division winners (rank 1) get top seeds
-            is_div_winner = 1 if team.get('division_rank') == 1 else 0
+            div_rank = self._get_val(team, 'division_rank')
+            is_div_winner = 1 if div_rank == 1 else 0
 
             return (is_div_winner, win_pct, h2h_win_pct, conf_pct, sos, diff)
 
     def _determine_tiebreaker_reason(self, t1: Dict, t2: Dict, group_type: str) -> str:
         """Explain why t1 is ranked above t2."""
-        if t1['win_percentage'] != t2['win_percentage']:
+        t1_win_pct = self._get_val(t1, 'win_percentage')
+        t2_win_pct = self._get_val(t2, 'win_percentage')
+        if t1_win_pct != t2_win_pct:
             return ""
 
+        t1_id = self._get_val(t1, 'team_id')
+        t2_id = self._get_val(t2, 'team_id')
+        t1_h2h = self._get_val(t1, 'head_to_head', {}) or {}
+        t2_h2h = self._get_val(t2, 'head_to_head', {}) or {}
+
         # Check Head-to-Head
-        t1_wins_vs_t2 = t1['head_to_head'].get(t2['team_id'], 0)
-        t2_wins_vs_t1 = t2['head_to_head'].get(t1['team_id'], 0)
+        t1_wins_vs_t2 = t1_h2h.get(t2_id, 0)
+        t2_wins_vs_t1 = t2_h2h.get(t1_id, 0)
 
         if t1_wins_vs_t2 > t2_wins_vs_t1:
             return f"Head-to-head sweep"
 
         if group_type == 'division':
-            if t1['division_win_pct'] > t2['division_win_pct']:
-                return f"Better division record ({t1['division_wins']}-{t1['division_losses']} vs {t2['division_wins']}-{t2['division_losses']})"
+            t1_div = self._get_val(t1, 'division_win_pct', 0.0)
+            t2_div = self._get_val(t2, 'division_win_pct', 0.0)
+            if t1_div > t2_div:
+                return f"Better division record ({t1_div:.3f} vs {t2_div:.3f})"
 
-        if t1['conference_win_pct'] > t2['conference_win_pct']:
-            return f"Better conference record ({t1['conference_wins']}-{t1['conference_losses']} vs {t2['conference_wins']}-{t2['conference_losses']})"
+        t1_conf = self._get_val(t1, 'conference_win_pct', 0.0)
+        t2_conf = self._get_val(t2, 'conference_win_pct', 0.0)
+        if t1_conf > t2_conf:
+            return f"Better conference record ({t1_conf:.3f} vs {t2_conf:.3f})"
 
-        if t1['strength_of_schedule'] > t2['strength_of_schedule']:
-            return f"Strength of schedule ({t1['strength_of_schedule']} vs {t2['strength_of_schedule']})"
-
-        if t1['point_differential'] > t2['point_differential']:
-            return f"Point differential ({t1['point_differential']} vs {t2['point_differential']})"
+        t1_diff = self._get_val(t1, 'point_differential', 0)
+        t2_diff = self._get_val(t2, 'point_differential', 0)
+        if t1_diff > t2_diff:
+            return f"Point differential ({t1_diff} vs {t2_diff})"
 
         return "Coin toss"
 

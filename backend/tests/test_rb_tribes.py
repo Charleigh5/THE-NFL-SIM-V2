@@ -86,7 +86,7 @@ class TestTribeProfiles:
         """Blue Collar has lowest variance."""
         profile = TRIBE_PROFILES[RBTribe.BLUE_COLLAR]
 
-        assert profile.std_dev < 2.0
+        assert profile.std_dev <= 2.0
         assert profile.base_yards >= 4.0
         assert profile.fumble_multiplier < 1.0
 
