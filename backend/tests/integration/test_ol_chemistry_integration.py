@@ -9,7 +9,7 @@ from app.models.base import Base
 from app.models.team import Team
 from app.models.player import Player, Position
 from app.models.game import Game
-from app.models.stats import PlayerGameStart
+from app.models.player_game_starts import PlayerGameStarts, PlayerGameStart
 from app.services.pre_game_service import PreGameService
 from app.orchestrator.match_context import MatchContext
 from datetime import datetime

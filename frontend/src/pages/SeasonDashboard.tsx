@@ -48,8 +48,13 @@ const SeasonDashboard: React.FC = () => {
   const [simulating, setSimulating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Initial data fetch
+  // Initial data fetch - only run if loaderData was not provided
   useEffect(() => {
+    if (loaderData?.teams && loaderData.teams.length > 0) {
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -103,7 +108,7 @@ const SeasonDashboard: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [loaderData]);
 
   // Fetch schedule when week changes in ScheduleView
   const handleWeekChange = async (week: number) => {

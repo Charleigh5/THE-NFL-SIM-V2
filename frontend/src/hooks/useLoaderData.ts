@@ -29,8 +29,9 @@ export function useSeasonDashboardData() {
 // Offseason Dashboard Loader Data
 export interface OffseasonDashboardLoaderData {
   teams: Team[];
-  season: Season;
+  season: Season | null;
   isOffseason: boolean;
+  noSeason?: boolean;
 }
 
 export function useOffseasonDashboardData() {
@@ -40,8 +41,9 @@ export function useOffseasonDashboardData() {
 // Draft Room Loader Data
 export interface DraftRoomLoaderData {
   teams: Team[];
-  season: Season;
+  season: Season | null;
   currentPick: DraftPickDetail | null;
+  noSeason?: boolean;
 }
 
 export function useDraftRoomData() {
@@ -51,7 +53,7 @@ export function useDraftRoomData() {
 // Front Office Loader Data
 export interface FrontOfficeLoaderData {
   teams: Team[];
-  team: Team;
+  team: Team | null;
   roster: Player[];
   season: Season | null;
   salaryCapData: SalaryCapData | null;
@@ -64,7 +66,7 @@ export function useFrontOfficeData() {
 // Depth Chart Loader Data
 export interface DepthChartLoaderData {
   teams: Team[];
-  team: Team;
+  team: Team | null;
   roster: Player[];
 }
 

@@ -10,6 +10,8 @@ interface PlayerCharacterProps {
   targetPosition?: [number, number, number];
 }
 
+const _tempTarget = new THREE.Vector3();
+
 export const PlayerCharacter = ({
   position,
   team,
@@ -19,21 +21,17 @@ export const PlayerCharacter = ({
 }: PlayerCharacterProps) => {
   const meshRef = useRef<THREE.Group>(null);
 
-  // Use a ref for target position to avoid re-creating Vector3 every frame if possible,
-  // but creating it is cheap.
-
   useFrame((state, delta) => {
     if (meshRef.current) {
-      // Determine target: if animating and explicit target provided, use that.
-      // Otherwise use the 'position' prop (which changes with LOS).
-      const target =
-        isAnimating && targetPosition
-          ? new THREE.Vector3(...targetPosition)
-          : new THREE.Vector3(...position);
+      // Determine target without allocating a new Vector3 every frame
+      if (isAnimating && targetPosition) {
+        _tempTarget.set(targetPosition[0], targetPosition[1], targetPosition[2]);
+      } else {
+        _tempTarget.set(position[0], position[1], position[2]);
+      }
 
       // Smooth interpolation (lerp)
-      // Use a faster speed for responsiveness, but slow enough to be smooth
-      meshRef.current.position.lerp(target, delta * 5);
+      meshRef.current.position.lerp(_tempTarget, delta * 5);
 
       // Breathing animation (bobbing/scaling)
       // Only breathe if not moving fast? Or always.

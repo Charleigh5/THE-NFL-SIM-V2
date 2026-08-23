@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import random
 from typing import Optional
 
 from app.core.logging_config import get_logger, ErrorCategory, log_error
@@ -91,11 +90,16 @@ class SackCalculator:
             return SackCalculator.BASE_SACK_PROBABILITY # Fallback
 
     @staticmethod
-    def resolve_sack_outcome(qb: Player, sack_prob: float) -> str:
+    def resolve_sack_outcome(qb: Player, sack_prob: float, rng: Optional[Any] = None) -> str:
         """
         Determine if a play results in a Sack, Throw Away, or Scramble based on probability.
+        Uses deterministic seeded RNG.
         """
-        roll = random.random()
+        if rng is not None:
+            roll = rng.random()
+        else:
+            from app.core.random_utils import DeterministicRNG
+            roll = DeterministicRNG(f"sack_{getattr(qb, 'id', 0)}_{sack_prob}").random()
 
         if roll < sack_prob:
             return "SACK"

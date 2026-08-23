@@ -18,6 +18,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.database import get_async_db, get_db
 from app.main import app
 from app.models.base import Base
+import app.models  # Register all models on Base.metadata for table creation
 
 # Use a file-based SQLite database for testing to allow sharing between sync and async
 TEST_DB_FILE = "test.db"

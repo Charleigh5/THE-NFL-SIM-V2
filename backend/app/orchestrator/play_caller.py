@@ -24,18 +24,19 @@ class PlayCaller:
     """
     Handles situation-aware play selection based on game state and coach personality.
     """
-    def __init__(self, rng: Any, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
+    def __init__(self, rng: Any = None, aggression: float = 0.5, run_pass_ratio: float = 0.45) -> None:
         """
         Initialize PlayCaller.
 
         Args:
-            rng: DeterministicRNG instance
+            rng: DeterministicRNG instance (optional)
             aggression (float): 0.0 (conservative) to 1.0 (aggressive).
                                Affects 4th down decisions, deep passes, etc.
             run_pass_ratio (float): 0.0 (all pass) to 1.0 (all run).
                                    Base tendency before situational adjustments.
         """
-        self.rng = rng
+        from app.core.random_utils import DeterministicRNG
+        self.rng = rng or DeterministicRNG("play_caller_default")
         self.aggression = aggression
         self.run_pass_ratio = run_pass_ratio
 

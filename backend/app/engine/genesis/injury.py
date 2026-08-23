@@ -406,10 +406,11 @@ class InjuryEngine:
 
         # Roll for injury
         if self.rng:
-            roll = self.rng.next_float()
+            roll = self.rng.next_float() if hasattr(self.rng, "next_float") else self.rng.random()
         else:
-            import random
-            roll = random.random()
+            from app.core.random_utils import DeterministicRNG
+            actual_rng = DeterministicRNG(f"injury_{body_part.value}_{g_force}_{season}_{week}")
+            roll = actual_rng.random()
 
         if roll >= probability:
             return None
@@ -474,10 +475,11 @@ class InjuryEngine:
         # Get recovery time
         min_weeks, max_weeks = BASE_RECOVERY_WEEKS.get(injury_type, (1, 4))
         if self.rng:
-            recovery = self.rng.next_int(min_weeks, max_weeks)
+            recovery = self.rng.next_int(min_weeks, max_weeks) if hasattr(self.rng, "next_int") else self.rng.randint(min_weeks, max_weeks)
         else:
-            import random
-            recovery = random.randint(min_weeks, max_weeks)
+            from app.core.random_utils import DeterministicRNG
+            actual_rng = DeterministicRNG(f"recovery_{injury_type.value}_{body_part.value}_{g_force}")
+            recovery = actual_rng.randint(min_weeks, max_weeks)
 
         return Injury(
             body_part=body_part,

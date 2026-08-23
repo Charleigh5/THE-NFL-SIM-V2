@@ -12,6 +12,8 @@ interface EnhancedPlayerCharacterProps {
   detailLevel?: "low" | "medium" | "high";
 }
 
+const _enhancedTempTarget = new THREE.Vector3();
+
 export const EnhancedPlayerCharacter: React.FC<EnhancedPlayerCharacterProps> = ({
   playerData,
   position,
@@ -60,12 +62,13 @@ export const EnhancedPlayerCharacter: React.FC<EnhancedPlayerCharacterProps> = (
 
   useFrame((state, delta) => {
     if (groupRef.current) {
-      const target =
-        isAnimating && targetPosition
-          ? new THREE.Vector3(...targetPosition)
-          : new THREE.Vector3(...position);
+      if (isAnimating && targetPosition) {
+        _enhancedTempTarget.set(targetPosition[0], targetPosition[1], targetPosition[2]);
+      } else {
+        _enhancedTempTarget.set(position[0], position[1], position[2]);
+      }
 
-      groupRef.current.position.lerp(target, delta * 5);
+      groupRef.current.position.lerp(_enhancedTempTarget, delta * 5);
 
       const breathSpeed = playerPosition === "QB" ? 2 : 3;
       const breathAmount = body_type === "lean" ? 0.03 : 0.02;

@@ -185,12 +185,9 @@ class OffseasonService:
             # Let's just log and maybe return or use random order?
             # For now, let's assume we need standings.
             print("Error: No standings found for draft order generation.")
-            # We could try to fetch teams directly but they won't have win_pct
+            # We could try to fetch teams directly but they won't have win_percentage
             # Let's try to fetch teams and give them default stats so we don't crash
-            stmt = select(Team)
-            teams = list(self.db.execute(stmt).scalars().all())
-            # Create dummy standings objects or just use team IDs
-            # But the code below expects objects with win_pct, etc.
+            # But the code below expects objects with win_percentage, etc.
             # So let's just raise an error or return to avoid crash
             raise ValueError("Cannot generate draft order: No standings data found.")
 
@@ -202,7 +199,7 @@ class OffseasonService:
         # Sort by record (worst to best)
         # Note: Standings are already sorted best to worst by calculate_standings
         # We want worst to best for draft order
-        standings.sort(key=lambda x: (x.win_pct, x.wins, x.point_differential))
+        standings.sort(key=lambda x: (x.win_percentage, x.wins, x.point_differential))
 
         # Find SB Winner and Loser to move to end
         stmt = select(PlayoffMatchup).where(

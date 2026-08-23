@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 from app.models.player import Player
 from app.models.game import Game
-from app.models.stats import PlayerGameStart
+from app.models.player_game_starts import PlayerGameStarts, PlayerGameStart
 from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.match_context import MatchContext
 import logging

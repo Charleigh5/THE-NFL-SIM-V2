@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy import select, func
 from typing import List, Optional, Dict, Any
 import logging
@@ -9,6 +9,7 @@ from app.core.database import get_async_db
 from app.core.db_helpers import get_object_or_404_async
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
+from app.models.trait import PlayerTrait
 from app.models.stats import PlayerGameStats
 from app.services.trait_service import TraitService
 from pydantic import BaseModel, ConfigDict
@@ -268,7 +269,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
     logger.info(f"Fetching enhanced profile for player {player_id}")
 
     # Get player with traits
-    stmt = select(Player).options(selectinload(Player.traits)).where(Player.id == player_id)
+    stmt = select(Player).options(selectinload(Player.player_traits).joinedload(PlayerTrait.trait)).where(Player.id == player_id)
     result = await db.execute(stmt)
     player = result.scalar_one_or_none()
 

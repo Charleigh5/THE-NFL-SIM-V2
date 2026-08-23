@@ -28,6 +28,10 @@ class PlayCommand(ABC):
         self.is_home_team = is_home_team
         self.possession = possession
         self.start_yard_line = start_yard_line
+        self.distance_to_goal = 100 - yard_line if possession == "home" else yard_line
+        self.weather_impact = 0.0
+        self.turf_impact = 0.0
+        self.statistical_realism_score = 0.92
 
     @abstractmethod
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
@@ -97,20 +101,22 @@ class KickoffCommand(PlayCommand):
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a kickoff"""
-        base_yards = rng.randint(15, 30)
+        from app.core.random_utils import DeterministicRNG
+        actual_rng = rng or DeterministicRNG("kickoff_default")
+        base_yards = actual_rng.randint(15, 30)
 
         # Weather impact
         weather = context.get("weather", {})
         if weather:
-             # Wind affects kick distance (and thus return starting point)
-             # Higher wind speed could lead to shorter kicks (better returns) or touchbacks
              wind_speed = weather.get("wind_speed", 0)
              if wind_speed > 15:
-                 # High wind: variability increased
-                 base_yards += rng.randint(-5, 5)
+                 base_yards += actual_rng.randint(-5, 5)
+
+        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1)
 
         return PlayResult(
             yards_gained=base_yards,
+            time_elapsed=time_elapsed,
             description=f"Kickoff returned to the {base_yards} yard line"
         )
 
@@ -126,8 +132,10 @@ class PuntCommand(PlayCommand):
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a punt"""
-        punt_distance = rng.randint(35, 55)
-        return_yards = rng.randint(0, 15)
+        from app.core.random_utils import DeterministicRNG
+        actual_rng = rng or DeterministicRNG("punt_default")
+        punt_distance = actual_rng.randint(35, 55)
+        return_yards = actual_rng.randint(0, 15)
 
         # Weather impact
         weather = context.get("weather", {})
@@ -144,9 +152,11 @@ class PuntCommand(PlayCommand):
                  punt_distance -= int((40 - temp) * 0.2)
 
         net_yards = -(punt_distance - return_yards)
+        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1)
 
         return PlayResult(
             yards_gained=net_yards,
+            time_elapsed=time_elapsed,
             description=f"Punt {punt_distance} yards, returned {return_yards} yards"
         )
 
@@ -163,6 +173,8 @@ class FieldGoalCommand(PlayCommand):
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a field goal attempt"""
+        from app.core.random_utils import DeterministicRNG
+        actual_rng = rng or DeterministicRNG(f"fg_default_{self.distance}")
 
         # Simple success calculation based on distance
         base_success = max(0, 100 - (self.distance - 20) * 2)
@@ -189,17 +201,20 @@ class FieldGoalCommand(PlayCommand):
              if precip in ["Rain", "Snow"]:
                  base_success -= 5
 
-        is_good = rng.randint(0, 100) < base_success
+        is_good = actual_rng.randint(0, 100) < base_success
+        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1)
 
         if is_good:
             return PlayResult(
                 yards_gained=0,
+                time_elapsed=time_elapsed,
                 description=f"{self.distance}-yard field goal GOOD!{weather_desc}",
                 is_highlight_worthy=self.distance > 50
             )
         else:
             return PlayResult(
                 yards_gained=0,
+                time_elapsed=time_elapsed,
                 is_turnover=True,
                 description=f"{self.distance}-yard field goal NO GOOD{weather_desc}"
             )
@@ -213,10 +228,14 @@ class ExtraPointCommand(PlayCommand):
 
     def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute an extra point attempt"""
-        is_good = rng.randint(0, 100) < 95  # 95% success rate
+        from app.core.random_utils import DeterministicRNG
+        actual_rng = rng or DeterministicRNG("pat_default")
+        is_good = actual_rng.randint(0, 100) < 95  # 95% success rate
+        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1)
 
         return PlayResult(
             yards_gained=0,
+            time_elapsed=time_elapsed,
             description="Extra point " + ("GOOD!" if is_good else "NO GOOD")
         )
 

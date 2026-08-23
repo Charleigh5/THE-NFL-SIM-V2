@@ -16,6 +16,9 @@ import {
   BookOpen,
   Volume2,
   VolumeX,
+  Activity,
+  Briefcase,
+  Award,
 } from "lucide-react";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
@@ -40,8 +43,11 @@ export const Navigation: React.FC = () => {
     { path: "/empire/depth-chart", label: "DEPTH CHART", icon: ClipboardList, tag: "UNIT" },
     { path: "/playbook", label: "PLAYBOOK", icon: BookOpen, tag: "SCHEME" },
     { path: "/live-sim", label: "GAME DAY", icon: Trophy, tag: "SIM" },
+    { path: "/medical-center", label: "MEDICAL", icon: Activity, tag: "REHAB" },
     { path: "/empire/trade-center", label: "TRADE DESK", icon: ArrowLeftRight, tag: "DEALS" },
+    { path: "/offseason", label: "OFFSEASON", icon: Briefcase, tag: "PHASES" },
     { path: "/offseason/draft", label: "DRAFT ROOM", icon: Sparkles, tag: "WAR ROOM" },
+    { path: "/empire/trophy-room", label: "TROPHY ROOM", icon: Award, tag: "LEGACY" },
     { path: "/training", label: "TRAINING", icon: Dumbbell, tag: "CAMP" },
     { path: "/team-selection", label: "MY FRANCHISE", icon: Star, tag: "TEAM" },
     { path: "/settings", label: "SETTINGS", icon: SettingsIcon, tag: "SYS" },

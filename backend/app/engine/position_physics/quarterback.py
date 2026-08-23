@@ -237,9 +237,10 @@ class QuarterbackPhysics:
             angle = rng.next_float() * 360.0
             deviation = rng.next_float() * accuracy_radius
         else:
-            import random
-            angle = random.random() * 360.0
-            deviation = random.random() * accuracy_radius
+            from app.core.random_utils import DeterministicRNG
+            actual_rng = DeterministicRNG(f"qb_throw_{distance}_{self.throw_accuracy}")
+            angle = actual_rng.random() * 360.0
+            deviation = actual_rng.random() * accuracy_radius
 
         # Calculate actual landing position
         offset = Vector2(

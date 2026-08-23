@@ -279,9 +279,18 @@ class StandingsCalculator:
         # 1. Win Percentage
         win_pct = team['win_percentage']
 
-        # 2. Head-to-Head (Simplified: win % against other tied teams)
-        # This is hard to do in a single key because it depends on who you are tied with.
-        # We will skip complex H2H in the key and rely on Division/Conf record.
+        # 2. Head-to-Head win % against teams with the exact same overall record
+        tied_opponents = [
+            t for t in all_teams_in_group
+            if t['team_id'] != team['team_id'] and t['win_percentage'] == win_pct
+        ]
+        if tied_opponents:
+            h2h_wins = sum(team['head_to_head'].get(t['team_id'], 0) for t in tied_opponents)
+            h2h_losses = sum(t['head_to_head'].get(team['team_id'], 0) for t in tied_opponents)
+            total_h2h_games = h2h_wins + h2h_losses
+            h2h_win_pct = (h2h_wins / total_h2h_games) if total_h2h_games > 0 else 0.0
+        else:
+            h2h_win_pct = 0.0
 
         # 3. Division Win % (only if ranking division)
         div_pct = team['division_win_pct'] if group_type == 'division' else 0
@@ -296,13 +305,13 @@ class StandingsCalculator:
         diff = team['point_differential']
 
         if group_type == 'division':
-            return (win_pct, div_pct, conf_pct, sos, diff)
+            return (win_pct, h2h_win_pct, div_pct, conf_pct, sos, diff)
         else:
             # Prioritize division winners for conference ranking/seeding
             # Division winners (rank 1) get top seeds
             is_div_winner = 1 if team.get('division_rank') == 1 else 0
 
-            return (is_div_winner, win_pct, conf_pct, sos, diff)
+            return (is_div_winner, win_pct, h2h_win_pct, conf_pct, sos, diff)
 
     def _determine_tiebreaker_reason(self, t1: Dict, t2: Dict, group_type: str) -> str:
         """Explain why t1 is ranked above t2."""

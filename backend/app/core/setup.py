@@ -69,8 +69,9 @@ def configure_routes(app: FastAPI) -> None:
         system, simulation, data, websocket, teams, players, season,
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api, training, live_visualization, broadcast
+        playbook, physics_api, training, live_visualization, broadcast, coaches
     )
+    from app.api import combine, news_router
 
     # Core system routes
     app.include_router(system.router)
@@ -117,5 +118,14 @@ def configure_routes(app: FastAPI) -> None:
 
     # 60Hz Physics (Phase 4)
     app.include_router(physics_api.router, prefix="/api", tags=["physics"])
+
+    # Coaches & Staff
+    app.include_router(coaches.router)
+
+    # Scouting Combine
+    app.include_router(combine.router, prefix="/api")
+
+    # News feed & Storylines
+    app.include_router(news_router.router)
 
 

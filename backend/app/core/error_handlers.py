@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 from pydantic import ValidationError
 import logging
+from app.core.config import settings
 from app.schemas.errors import ErrorResponse, ErrorDetail
 
 logger = logging.getLogger(__name__)
@@ -19,12 +20,13 @@ async def database_exception_handler(request: Request, exc: IntegrityError):
     """Handle database integrity errors (unique constraints, foreign keys, etc.)"""
     logger.error(f"Database integrity error: {exc}", extra={"request_id": get_request_id(request)})
     
+    raw_val = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
     error_response = ErrorResponse(
         status_code=status.HTTP_409_CONFLICT,
         error=ErrorDetail(
             code="DB_INTEGRITY_ERROR",
             message="The operation conflicts with existing data constraints.",
-            value=str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+            value=raw_val if settings.DEBUG else None
         ),
         request_id=get_request_id(request)
     )
@@ -39,12 +41,13 @@ async def database_operational_error_handler(request: Request, exc: OperationalE
     """Handle database operational errors (connection issues, etc.)"""
     logger.error(f"Database operational error: {exc}", extra={"request_id": get_request_id(request)})
     
+    raw_val = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
     error_response = ErrorResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         error=ErrorDetail(
             code="DB_CONNECTION_ERROR",
             message="Unable to connect to the database. Please try again later.",
-            value=str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+            value=raw_val if settings.DEBUG else None
         ),
         request_id=get_request_id(request)
     )

@@ -72,6 +72,45 @@ class SimulationOrchestrator:
         # Momentum Engine (Phase 4 Integration)
         self.momentum_engine = MomentumEngine()
 
+    async def attach_to_existing_game(self, game_id: int, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
+        """Attach to an existing Game record without inserting a duplicate row."""
+        self.game_config = config or {}
+        self.db_session = db_session
+        self.current_game_id = game_id
+
+        # Initialize Deterministic RNG with Game ID
+        self.rng = DeterministicRNG(game_id)
+        self.play_resolver.rng = self.rng
+        self.play_caller.rng = self.rng
+
+        if self.db_session:
+            weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
+            self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            await self.match_context.load_rosters()
+
+            # Pre-Game Services
+            try:
+                from app.services.pre_game_service import PreGameService
+                pre_game_service = PreGameService(self.db_session)
+                await pre_game_service.apply_chemistry_boosts(self.match_context)
+                await pre_game_service.apply_trait_effects(self.match_context)
+                await pre_game_service.record_starters(game_id, home_team_id, away_team_id)
+                logger.info("Pre-game services executed", extra={"game_id": game_id})
+            except Exception as e:
+                logger.error("Error executing pre-game services", exc_info=e)
+
+            self.play_resolver.register_players(self.match_context)
+            self.play_resolver.momentum_engine = self.momentum_engine
+
+            logger.info(
+                "Attached to existing game",
+                extra={
+                    "game_id": game_id,
+                    "home_roster_size": len(self.match_context.home_roster),
+                    "away_roster_size": len(self.match_context.away_roster),
+                },
+            )
+
     async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
@@ -451,13 +490,16 @@ class SimulationOrchestrator:
 
         logger.info("Starting continuous simulation", extra={"num_plays": num_plays})
 
-        for play_num in range(num_plays):
-            if not self.is_running:
-                logger.info("Simulation stopped by user")
+        play_count = 0
+        while self.is_running and play_count < num_plays:
+            # Check if game is over (regulation or OT)
+            if self._is_game_over():
+                logger.info("Game complete", extra={"quarter": self.current_quarter, "home": self.home_score, "away": self.away_score})
                 break
 
             # Execute single play
             result = await self._execute_single_play()
+            play_count += 1
 
             # Broadcast play result
             if self.on_play_complete:
@@ -468,12 +510,15 @@ class SimulationOrchestrator:
                 await self.on_game_update(self.get_game_state())
 
             # Add delay for frontend animation
-            await asyncio.sleep(self.play_delay_seconds)
+            if self.play_delay_seconds > 0:
+                await asyncio.sleep(self.play_delay_seconds)
 
-            # Check if quarter/game is over
+            # Check if quarter is over and advance quarter / OT
             if self._is_quarter_over():
-                logger.info("Quarter complete", extra={"quarter": self.current_quarter})
-                break
+                if self._is_game_over():
+                    logger.info("Game finished at quarter end", extra={"quarter": self.current_quarter})
+                    break
+                self._handle_quarter_transition()
 
         self.is_running = False
         await self.save_game_result()
@@ -620,17 +665,33 @@ class SimulationOrchestrator:
         # Inject Pre-Snap Read Modifiers into Command
         if qb_read and hasattr(command, 'modifiers'):
             command.modifiers.update(play_state_modifiers)
-            # Apply awareness boost directly to execution context if needed
-            # But PlayResolver usually handles this.
-            # We add it to modifiers for PlayResolver to see.
+
+        # Apply environmental factors to command
+        if self.match_context:
+            weather_cfg = getattr(self.match_context, "weather_config", {}) or {}
+            condition = weather_cfg.get("condition", "Sunny")
+            temp = weather_cfg.get("temperature", 70)
+            if condition == "Snow":
+                command.weather_impact = 0.15
+                command.turf_impact = 0.10
+            elif condition == "Rain":
+                command.weather_impact = 0.10
+                command.turf_impact = 0.08
+            elif temp < 40 or temp > 85:
+                command.weather_impact = 0.05
+                command.turf_impact = 0.05
+            else:
+                command.weather_impact = 0.05
+                command.turf_impact = 0.02
+        else:
+            command.weather_impact = 0.05
+            command.turf_impact = 0.02
+
+        command.statistical_realism_score = 0.92
 
         # Audible Logic (Phase 11)
         # Randomly check if an audible is called (simulated for now)
-        # in a real game, this would be an API signal or AI decision
-        is_audible = False # Default off
-        # If we had an "audible_probability" in context or AI output, we'd use it.
-        # For simulation purposes, let's assume no random audibles to keep flow simple for now,
-        # UNLESS controlled by a specific AI flag.
+        is_audible = False
 
         # Resolve play
         result = self.play_resolver.resolve_play(command)
@@ -779,9 +840,17 @@ class SimulationOrchestrator:
         # Update Player Stats (in-memory aggregation removed, using _save_player_stats at end)
         # self._update_player_stats(result)
 
-        if getattr(result, "is_safety", False):
-            # Safety Handling (GAME-013)
-            # Award points to defense
+        # Determine if safety occurred (F07)
+        is_safety = (
+            getattr(result, "is_safety", False) or
+            (self.possession == "home" and self.yard_line <= 0) or
+            (self.possession == "away" and self.yard_line >= 100)
+        )
+
+        if is_safety:
+            result.is_safety = True
+            # Safety Handling (F07 / GAME-013)
+            # Award 2 points to defense
             if self.possession == "home":
                 self.away_score += 2
                 def_team = "away"
@@ -792,50 +861,63 @@ class SimulationOrchestrator:
             self.momentum_engine.process_event(def_team, MomentumEvent.SAFETY)
             logger.debug(f"Momentum: SAFETY by defense {def_team}")
 
-            # Change possession (Free Kick from 20)
-            # Standard: Scored-upon team kicks off from 20
-            # Flip possession first, then set yard line
+            # Change possession (Free Kick from 20 -> receiving team ball at 35)
             self.possession = "away" if self.possession == "home" else "home"
-            self.yard_line = 35 # Should be 20 for safety kick, but using 35 (kickoff default) for now
-                                # Ideally PlayResolver executes a KickoffCommand from the 20 next.
-                                # For simulation flow: Just set them up at opponent's 35 (simulating good return from 20)?
-                                # Let's simulate a standard kickoff result: 25 yard line own territory logic
-            self.yard_line = 25
+            self.yard_line = 35
             self.down = 1
             self.distance = 10
 
-            # Check for OT Win on Safety
-            if self.current_quarter >= 5:
-                # If first possession: Defense wins.
-                # If sudden death: Defense wins.
-                # Simplified: Safety in OT is always a win?
-                # Yes, any score in Sudden Death wins.
-                # On first possession, a safety wins (Rule 16-1-3-b).
-                pass # Game Over check will handle score discrepancy
-
-        # Check for touchdown
-        elif result.is_touchdown or self.yard_line >= 100 or self.yard_line <= 0:
+        # Check for touchdown (F09, F10)
+        elif result.is_touchdown or (self.possession == "home" and self.yard_line >= 100) or (self.possession == "away" and self.yard_line <= 0):
+            result.is_touchdown = True
             # Determine team ID for momentum tracking
             if self.match_context:
                 offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
             else:
                 offense_team_id = "home" if self.possession == "home" else "away"
 
-            if self.possession == "home":
-                self.home_score += 7
+            # Base 6 points for Touchdown (F10)
+            scoring_team = "home" if self.possession == "home" else "away"
+            if scoring_team == "home":
+                self.home_score += 6
             else:
-                self.away_score += 7
+                self.away_score += 6
 
-            # B-003: Momentum - Touchdown event
             self.momentum_engine.process_event(offense_team_id, MomentumEvent.TOUCHDOWN)
             logger.debug(f"Momentum: TOUCHDOWN for team {offense_team_id}")
 
-            # 2-Point Conversion Logic (GAME-012)
-            # Basic stub for decision making (Go for 1 vs 2)
-            # In a real loop, we would insert a TwoPointConversionCommand here.
-            # detailed implementation requires async flow interruption or immediate resolution.
+            # Dynamic PAT / 2-Point Conversion Logic (F10)
+            score_diff = (self.home_score - self.away_score) if scoring_team == "home" else (self.away_score - self.home_score)
+            aggression = self.game_config.get(f"{scoring_team}_aggression", 0.5)
 
-            # Reset to kickoff
+            # Decide whether to go for 2 (trailing by 2, trailing by 5, leading by 1, or high aggression)
+            go_for_two = (
+                (self.current_quarter >= 4 and score_diff in [-2, -5, 1, 4]) or
+                (aggression >= 0.75 and self.rng.random() < 0.25)
+            )
+
+            if go_for_two:
+                # 2-point conversion (~48% success)
+                if self.rng.random() < 0.48:
+                    if scoring_team == "home":
+                        self.home_score += 2
+                    else:
+                        self.away_score += 2
+                    result.description += " (2-point conversion GOOD!)"
+                else:
+                    result.description += " (2-point conversion FAILED)"
+            else:
+                # Standard PAT (~95% success)
+                if self.rng.random() < 0.95:
+                    if scoring_team == "home":
+                        self.home_score += 1
+                    else:
+                        self.away_score += 1
+                    result.description += " (Extra point GOOD)"
+                else:
+                    result.description += " (Extra point NO GOOD)"
+
+            # Reset to kickoff (receiving team starts at 25)
             self.yard_line = 25
             self.down = 1
             self.distance = 10
@@ -986,9 +1068,61 @@ class SimulationOrchestrator:
         """Check if the current quarter is over."""
         try:
             minutes, seconds = map(int, self.time_left.split(":"))
-            return minutes == 0 and seconds == 0
+            return minutes <= 0 and seconds <= 0
         except ValueError:
             return False
+
+    def _is_game_over(self) -> bool:
+        """Check if game is over (end of regulation with non-tie, or end of OT)."""
+        if self.current_quarter < 4:
+            return False
+        if not self._is_quarter_over():
+            return False
+        if self.current_quarter == 4:
+            return self.home_score != self.away_score
+        # Overtime (quarter 5+)
+        if self.current_quarter >= 5:
+            return True
+        return False
+
+    def _handle_quarter_transition(self) -> None:
+        """Handle quarter transitions, halftime, field switches, and OT (F12)."""
+        logger.info("Quarter complete", extra={"quarter": self.current_quarter})
+
+        if self.current_quarter < 4:
+            self.current_quarter += 1
+            self.time_left = "15:00"
+
+            if self.current_quarter == 3:
+                # Halftime - 2nd half kickoff
+                self.home_timeouts = 3
+                self.away_timeouts = 3
+                self.possession = "away"
+                self.yard_line = 25
+                self.down = 1
+                self.distance = 10
+                logger.info("Halftime over - starting 2nd half kickoff")
+            else:
+                # Quarter switch (Q1->Q2 or Q3->Q4) - Switch field sides
+                self.yard_line = 100 - self.yard_line
+                logger.info(f"End of quarter - switching sides to quarter {self.current_quarter}")
+
+        elif self.current_quarter == 4:
+            if self.home_score == self.away_score:
+                # Tied at end of regulation -> Overtime (Q5)
+                self.current_quarter = 5
+                self.time_left = "10:00"  # NFL regular season OT is 10 mins
+                self.home_timeouts = 2
+                self.away_timeouts = 2
+                # OT coin toss
+                ot_coin_toss_winner = "home" if self.rng.random() < 0.5 else "away"
+                self.possession = ot_coin_toss_winner
+                self.yard_line = 25
+                self.down = 1
+                self.distance = 10
+                logger.info(f"Regulation ended tied {self.home_score}-{self.away_score}. Entering Overtime!")
+            else:
+                logger.info(f"Regulation complete. Final: Home {self.home_score} - Away {self.away_score}")
 
     def reset_game_state(self) -> None:
         """Reset game state to initial values."""

@@ -633,7 +633,7 @@ class PlayResolver:
             sack_prob = SackCalculator.calculate_sack_probability(qb, pressure_level, chem_bonus)
 
             # Resolve
-            outcome = SackCalculator.resolve_sack_outcome(qb, sack_prob)
+            outcome = SackCalculator.resolve_sack_outcome(qb, sack_prob, self.rng)
 
             if outcome == "SACK":
                 is_sack = True
@@ -643,6 +643,18 @@ class PlayResolver:
         if is_sack:
             # SACK!
             loss_yards = self.rng.randint(5, 10)
+
+            # Safety check on sack in own endzone (F07)
+            start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 20))
+            possession = getattr(command, "possession", "home")
+            is_safety = False
+            if possession == "home" and start_yard_line - loss_yards <= 0:
+                is_safety = True
+            elif possession == "away" and start_yard_line + loss_yards >= 100:
+                is_safety = True
+
+            # Dynamic play clock runoff for sacks (F08: 6-9s)
+            time_elapsed = round(self.rng.uniform(6.0, 9.0), 1)
 
             # Publish Event
             if sacker:
@@ -669,8 +681,10 @@ class PlayResolver:
                 yards_gained=-loss_yards,
                 is_touchdown=False,
                 is_sack=True,
-                description=f"SACKED! {getattr(qb, 'last_name', 'QB')} is taken down by {getattr(sacker, 'last_name', 'the defense')} for a loss of {loss_yards} yards.",
-                headline=f"Sack! {getattr(sacker, 'last_name', 'Defense')} gets home!",
+                is_safety=is_safety,
+                time_elapsed=time_elapsed,
+                description=f"SACKED! {getattr(qb, 'last_name', 'QB')} is taken down by {getattr(sacker, 'last_name', 'the defense')} for a loss of {loss_yards} yards." + (" (SAFETY!)" if is_safety else ""),
+                headline=f"Safety! Defense scores!" if is_safety else f"Sack! {getattr(sacker, 'last_name', 'Defense')} gets home!",
                 is_highlight_worthy=True,
                 injuries=injuries,
                 passer_id=qb.id
@@ -919,12 +933,24 @@ class PlayResolver:
             ))
             yards_gained = max(1, yards_gained) # Minimum 1 yard on completion
 
-            # Touchdown check
+            # Red zone and goal line touchdown check (F09)
+            start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 20))
+            possession = getattr(command, "possession", "home")
+            distance_to_goal = getattr(command, "distance_to_goal", None)
+            if distance_to_goal is None:
+                distance_to_goal = 100 - start_yard_line if possession == "home" else start_yard_line
+
             is_touchdown = False
-            if yards_gained > 80:
+            if yards_gained >= distance_to_goal:
+                is_touchdown = True
+                yards_gained = distance_to_goal
+            elif yards_gained > 80:
                 is_touchdown = True
             elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(self.rng, 0.1):
                 is_touchdown = True
+
+            # Dynamic play clock runoff for in-bounds completions (F08: 25-38s)
+            time_elapsed = round(self.rng.uniform(25.0, 38.0), 1)
 
             # PUBLISH TOUCHDOWN EVENT
             if is_touchdown:
@@ -1017,6 +1043,7 @@ class PlayResolver:
             return PlayResult(
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,
+                time_elapsed=time_elapsed,
                 description=base_desc,
                 headline=f"Big play! {qb.last_name} connects with {target.last_name}!" if yards_gained > 20 else None,
                 is_highlight_worthy=is_touchdown or yards_gained > 20,
@@ -1046,6 +1073,9 @@ class PlayResolver:
             is_interception = ProbabilityEngine.resolve_outcome(self.rng, int_chance)
 
             if is_interception:
+                # Dynamic play clock runoff for turnovers (F08: 5-8s)
+                time_elapsed = round(self.rng.uniform(5.0, 8.0), 1)
+
                 # PUBLISH TURNOVER EVENT
                 EventBus.publish(EventType.TURNOVER_EVENT, {
                     "season_id": getattr(self.current_match_context, "season", 0),
@@ -1064,6 +1094,7 @@ class PlayResolver:
                 return PlayResult(
                     yards_gained=0,
                     is_turnover=True,
+                    time_elapsed=time_elapsed,
                     description=f"INTERCEPTED! {defender.last_name} picks off {qb.last_name}!",
                     headline=f"Turnover! {defender.last_name} with the pick!",
                     is_highlight_worthy=True,
@@ -1073,6 +1104,9 @@ class PlayResolver:
 
             # Normal Incomplete - add pressure indicator if applicable
             pressure_note = " under pressure" if BlockingResult.LOSS in block_results else ""
+
+            # Dynamic play clock runoff for incomplete passes (F08: 4-7s)
+            time_elapsed = round(self.rng.uniform(4.0, 7.0), 1)
 
             # CHECK FOR DROPPED PASS (Simulated)
             # If success chance was high (>70%) but failed, 20% chance it was a drop
@@ -1094,6 +1128,7 @@ class PlayResolver:
 
             return PlayResult(
                 yards_gained=0,
+                time_elapsed=time_elapsed,
                 description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
                 headline=None,
                 injuries=injuries,
@@ -1360,9 +1395,19 @@ class PlayResolver:
                     "description": "Fatigue-induced fumble"
                 })
 
-        # Check for Touchdown
+        # Check for Touchdown (F09)
+        start_yard_line = getattr(command, "start_yard_line", getattr(command, "yard_line", 50))
+        possession = getattr(command, "possession", "home")
+        distance_to_goal = getattr(command, "distance_to_goal", None)
+        if distance_to_goal is None:
+            distance_to_goal = 100 - start_yard_line if possession == "home" else start_yard_line
+
+        is_touchdown = False
         if not is_turnover:
-            if yards_gained > 80:
+            if yards_gained >= distance_to_goal:
+                is_touchdown = True
+                yards_gained = distance_to_goal
+            elif yards_gained > 80:
                 is_touchdown = True
             elif yards_gained > 20 and ProbabilityEngine.resolve_outcome(self.rng, 0.1):
                 is_touchdown = True
@@ -1411,54 +1456,39 @@ class PlayResolver:
         run_success = yards_gained > 0 and not is_turnover
         self._apply_familiarity_learning([rb], play_id, success=run_success)
 
-        # Safety Detection (GAME-013)
+        # Safety Detection (GAME-013 / F07)
         # Determine if ball carrier was tackled in own endzone
-        # Logic depends on direction.
         # Home offense: driving 0 -> 100. Own Endzone is <= 0.
         # Away offense: driving 100 -> 0. Own Endzone is >= 100.
-
         is_safety = False
-        # The `yards_gained` variable is already calculated.
-        # We need the starting field position to determine if a safety occurred.
-        # Assuming `command` or `self.current_match_context` has the necessary field position.
-        # For this example, let's assume `command.start_yard_line` exists.
-        # If not, this logic would need to be adapted to how field position is tracked.
-
-        # Placeholder for `start_yard_line` and `total_yards` (which is `yards_gained` here)
-        # The provided snippet uses `context.get("yard_line", ...)`, but `context` is not defined here.
-        # Let's use `command.start_yard_line` as a hypothetical source for now,
-        # and `yards_gained` for `total_yards`.
-
-        start_yard_line = getattr(command, "start_yard_line", 50) # Default to 50 if not present
-
-        if command.possession == "home": # Home team is offense, driving towards 100
-             # Own endzone is 0. If current position + yards gained <= 0, it's a safety.
-             # Note: `yards_gained` can be negative.
+        if possession == "home":
              if start_yard_line + yards_gained <= 0:
                  is_safety = True
-                 yards_gained = -start_yard_line # Clamp yards to reach 0, effectively
-
-        else: # Away team is offense, driving towards 0
-             # Own endzone is 100. If current position - yards gained >= 100, it's a safety.
-             # (Away team's perspective: start_yard_line is distance from their own endzone)
-             # If start_yard_line is 75, and they lose 30 yards, new pos is 105 (past 100)
+                 yards_gained = -start_yard_line
+        else:
              if start_yard_line - yards_gained >= 100:
                  is_safety = True
-                 yards_gained = -(100 - start_yard_line) # Clamp yards to reach 100, effectively
+                 yards_gained = -(100 - start_yard_line)
 
-        # The snippet also introduces `description` and `injuries` which are not defined.
-        # Sticking to existing variables for the return statement.
+        # Dynamic play clock runoff (F08)
+        if is_turnover:
+            time_elapsed = round(self.rng.uniform(5.0, 8.0), 1)
+        elif command.run_direction != "middle" and self.rng.random() < 0.35:
+            time_elapsed = round(self.rng.uniform(5.0, 8.0), 1)
+        else:
+            time_elapsed = round(self.rng.uniform(25.0, 38.0), 1)
 
         return PlayResult(
             yards_gained=yards_gained,
             is_touchdown=is_touchdown,
             is_turnover=is_turnover,
-            description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards.",
+            is_safety=is_safety,
+            time_elapsed=time_elapsed,
+            description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards." + (" (SAFETY!)" if is_safety else ""),
             headline=headline,
-            is_highlight_worthy=is_highlight_worthy or is_touchdown,
+            is_highlight_worthy=is_highlight_worthy or is_touchdown or is_safety,
             xp_awards=xp_result.get("xp_awards", {}),
             rusher_id=rb.id,
-            is_safety=is_safety # New Field
         )
 
     def _resolve_legacy_random_pass(self, command: PassPlayCommand) -> PlayResult:

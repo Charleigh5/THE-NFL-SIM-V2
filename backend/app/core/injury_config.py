@@ -200,24 +200,30 @@ def get_position_multiplier(position: str) -> float:
     return POSITION_MULTIPLIERS.get(position.upper(), DEFAULT_POSITION_MULTIPLIER)
 
 
-def get_age_multiplier(age: int) -> float:
+def get_age_multiplier(age: Optional[int]) -> float:
     """Get the injury risk multiplier based on player age."""
+    if age is None:
+        return 1.0
     for (min_age, max_age), multiplier in AGE_RISK_MULTIPLIERS.items():
         if min_age <= age <= max_age:
             return multiplier
     return 1.0
 
 
-def get_durability_multiplier(injury_resistance: int) -> float:
+def get_durability_multiplier(injury_resistance: Optional[int]) -> float:
     """Get the injury risk multiplier based on durability rating."""
+    if injury_resistance is None:
+        return 1.0
     for (min_rat, max_rat), multiplier in DURABILITY_RISK_MULTIPLIERS.items():
         if min_rat <= injury_resistance <= max_rat:
             return multiplier
     return 1.0
 
 
-def get_medical_staff_multiplier(medical_rating: int) -> float:
+def get_medical_staff_multiplier(medical_rating: Optional[int]) -> float:
     """Get the injury risk multiplier based on medical staff quality."""
+    if medical_rating is None:
+        return 1.0
     for (min_rat, max_rat), multiplier in MEDICAL_STAFF_RISK_MULTIPLIERS.items():
         if min_rat <= medical_rating <= max_rat:
             return multiplier

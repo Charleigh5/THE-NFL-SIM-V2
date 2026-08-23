@@ -128,8 +128,9 @@ class WeekSimulator:
                 game.wind_speed = parsed["wind_speed"]
                 weather_config = parsed
 
-            # Start game session (this will create/update db entry)
-            await orchestrator.start_new_game_session(
+            # Attach orchestrator to existing game (avoid duplicate Game insert)
+            await orchestrator.attach_to_existing_game(
+                game_id=game.id,
                 home_team_id=game.home_team_id,
                 away_team_id=game.away_team_id,
                 config={"fast_sim": use_fast_sim, "weather": weather_config},
@@ -269,7 +270,7 @@ class WeekSimulator:
                 break
 
         orchestrator.is_running = False
-        orchestrator.save_game_result()
+        await orchestrator.save_game_result()
 
     async def simulate_full_season(
         self,

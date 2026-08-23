@@ -882,8 +882,9 @@ async def simulate_free_agency(season_id: int, db: AsyncSession = Depends(get_as
 
     def fa_sync():
         with SessionLocal() as sync_db:
-            service = OffseasonService(sync_db)
-            return service.simulate_free_agency(season_id)
+            from app.services.free_agency_engine import FreeAgencyEngine
+            engine = FreeAgencyEngine(sync_db)
+            return engine.simulate_free_agency(season_id)
 
     result = await run_in_threadpool(fa_sync)
     logger.info(f"Free agency complete for season {season_id}")

@@ -754,20 +754,30 @@ class TraitService:
         from sqlalchemy import select as sa_select
         from sqlalchemy.ext.asyncio import AsyncSession
 
-        if isinstance(self.db, AsyncSession):
+        import inspect
+        is_async = (
+            isinstance(self.db, AsyncSession) or
+            inspect.iscoroutinefunction(getattr(self.db, "execute", None)) or
+            inspect.iscoroutinefunction(getattr(self.db, "scalars", None))
+        )
+
+        if is_async:
             result = await self.db.execute(
                 sa_select(Trait)
                 .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
                 .where(PlayerTrait.player_id == player_id)
             )
-            db_traits = result.scalars().all()
+            db_traits = result.scalars().all() if hasattr(result, "scalars") else []
         else:
             # Sync session fallback
-            db_traits = self.db.scalars(
+            res = self.db.scalars(
                 sa_select(Trait)
                 .join(PlayerTrait, Trait.id == PlayerTrait.trait_id)
                 .where(PlayerTrait.player_id == player_id)
-            ).all()
+            )
+            if inspect.isawaitable(res):
+                res = await res
+            db_traits = res.all() if hasattr(res, "all") else []
 
         # Map DB traits to catalog definitions for full data
         trait_defs = []

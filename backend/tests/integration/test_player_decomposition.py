@@ -4,7 +4,7 @@ from app.core.database import SessionLocal
 from app.models.player import Player
 import app.models.trait # ensure registry population
 
-def test_player_decomposition_integration():
+def test_player_decomposition_integration(db_session):
     """
     Verifies that the Player model decomposition into satellite tables
     (Attributes, Contract, Physics, Injury, Progression) works correctly.
@@ -13,7 +13,7 @@ def test_player_decomposition_integration():
     2. Hybrid property getters/setters proxying to satellites.
     3. Constructor kwargs handling for hybrid properties.
     """
-    db = SessionLocal()
+    db = db_session
     try:
         # 1. Create new player using hybrid properties in init
         p = Player(

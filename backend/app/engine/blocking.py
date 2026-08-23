@@ -1,4 +1,5 @@
 import enum
+from typing import Any, Optional
 from pydantic import BaseModel
 
 class BlockType(str, enum.Enum):
@@ -16,27 +17,49 @@ class BlockingResult(str, enum.Enum):
 class BlockingEngine:
 
     @staticmethod
-    def resolve_pass_block(rng, ol_rating: int, dl_rating: int, ol_technique: str = "KickStep") -> BlockingResult:
+    def resolve_pass_block(
+        rng_or_ol_rating: Any = None,
+        ol_rating: Optional[int] = None,
+        dl_rating: Optional[int] = None,
+        ol_technique: str = "KickStep",
+        rng: Optional[Any] = None,
+    ) -> BlockingResult:
         """
-        Resolve 1-on-1 pass block interaction.
+        Resolve 1-on-1 pass block interaction with deterministic seeded RNG.
+        Supports both (rng, ol_rating, dl_rating) and (ol_rating=80, dl_rating=75).
         """
+        from app.core.random_utils import DeterministicRNG
+
+        if isinstance(rng_or_ol_rating, (int, float)):
+            actual_ol = int(rng_or_ol_rating)
+            actual_dl = dl_rating if dl_rating is not None else 75
+            actual_rng = rng or DeterministicRNG(f"pass_block_{actual_ol}_{actual_dl}")
+        elif rng_or_ol_rating is not None and not isinstance(rng_or_ol_rating, (int, float)):
+            actual_rng = rng_or_ol_rating
+            actual_ol = ol_rating if ol_rating is not None else 75
+            actual_dl = dl_rating if dl_rating is not None else 75
+        else:
+            actual_ol = ol_rating if ol_rating is not None else 75
+            actual_dl = dl_rating if dl_rating is not None else 75
+            actual_rng = rng or DeterministicRNG(f"pass_block_{actual_ol}_{actual_dl}")
+
         # Base leverage calculation
-        leverage = ol_rating - dl_rating
+        leverage = actual_ol - actual_dl
 
         # Technique modifier
         if ol_technique == "KickStep":
-            leverage += 5 # Bonus for proper technique
+            leverage += 5  # Bonus for proper technique
 
-        roll = rng.randint(0, 100) + leverage
+        roll = actual_rng.randint(0, 100) + leverage
 
         if roll > 80:
-            return BlockingResult.WIN # Clean pocket
+            return BlockingResult.WIN  # Clean pocket
         elif roll > 35:
-            return BlockingResult.STALEMATE # Push but no sack
+            return BlockingResult.STALEMATE  # Push but no sack
         elif roll > 4:
-            return BlockingResult.LOSS # Pressure/Sack
+            return BlockingResult.LOSS  # Pressure/Sack
         else:
-            return BlockingResult.PANCAKE # Rare for DL to pancake OL in pass, but possible (Bull Rush)
+            return BlockingResult.PANCAKE  # Rare for DL to pancake OL in pass, but possible (Bull Rush)
 
     @staticmethod
     def resolve_run_block(ol_strength: int, dl_anchor: int, scheme: str) -> dict:
