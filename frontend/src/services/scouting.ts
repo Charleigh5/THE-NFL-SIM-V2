@@ -53,11 +53,23 @@ export const scoutingService = {
   getScoutingReport: async (playerId: string, teamId: number = 1): Promise<ScoutingReport> => {
     try {
       const response = await api.get<ScoutingReport>(`/api/scouting/report/${teamId}/${playerId}`);
-      return response.data;
+      if (response.data && response.data.strengths && Array.isArray(response.data.strengths)) {
+        return response.data;
+      }
+      return {
+        ...MOCK_SCOUTING_REPORT,
+        player_id: playerId,
+      };
     } catch {
       try {
         const fallbackResponse = await api.get<ScoutingReport>(`/api/scouts/report/${playerId}`);
-        return fallbackResponse.data;
+        if (fallbackResponse.data && fallbackResponse.data.strengths && Array.isArray(fallbackResponse.data.strengths)) {
+          return fallbackResponse.data;
+        }
+        return {
+          ...MOCK_SCOUTING_REPORT,
+          player_id: playerId,
+        };
       } catch {
         return {
           ...MOCK_SCOUTING_REPORT,

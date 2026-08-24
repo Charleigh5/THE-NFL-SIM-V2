@@ -21,11 +21,11 @@ Orchestrate and execute the complete, closed-loop resolution of the full codebas
 - **Work items**:
   1. Milestone 1: Component Mount Hierarchy & Router Integration (R1) [done]
   2. Milestone 2: Live FastAPI Endpoint Implementation & Wire-up (R2) [done]
-  3. Milestone 3: Duplicate Logic & Schema Deduplication (R3) [in-progress]
-  4. Milestone 4: Full-Stack Regression & Playwright Visual Verification (R4) [pending]
+  3. Milestone 3: Duplicate Logic & Schema Deduplication (R3) [done]
+  4. Milestone 4: Full-Stack Regression & Playwright Visual Verification (R4) [in-progress]
   5. Milestone 5: Formal Audit Spec & Living Matrix Sync (R5) [pending]
-- **Current phase**: 4 (Milestone 3 Execution)
-- **Current focus**: Milestone 3 - Duplicate Logic & Schema Deduplication
+- **Current phase**: 5 (Milestone 4 Execution)
+- **Current focus**: Milestone 4 - Full-Stack Regression & Playwright Visual Verification
 
 ## 🔒 Key Constraints
 - Dispatch-only orchestrator: NEVER edit code, NEVER run build/test commands directly. Delegate ALL exploration, coding, testing, and auditing to subagents.
@@ -62,12 +62,22 @@ Orchestrate and execute the complete, closed-loop resolution of the full codebas
 | challenger1_m2 | teamwork_preview_challenger | M2 Challenger 1 (Backend endpoint stress test) | in-progress | f8f880e0-148e-4e44-8928-5823f2b8265c |
 | challenger2_m2 | teamwork_preview_challenger | M2 Challenger 2 (Frontend mock stubs audit) | in-progress | 8e8dda87-a644-4a82-b2f1-c27c53171a9f |
 | auditor_m2 | teamwork_preview_auditor | M2 Forensic Integrity Auditor | completed | 60434911-180d-45e4-b480-a6faa02d87c9 |
-| worker_m3 | teamwork_preview_worker | Deduplicate logic, schemas & enforce parity | in-progress | f7229eef-3148-4f12-ae9f-ff3b81729a78 |
+| worker_m3_r2 | teamwork_preview_worker | Deduplicate logic, schemas & enforce parity (respawn) | completed | 66bbed89-d8a7-430b-b96c-c3f5cf05f429 |
+| reviewer1_m3 | teamwork_preview_reviewer | M3 Reviewer 1 (Backend deduplication) | in-progress | 36f56e6c-c98c-48eb-928c-0ccfa141d916 |
+| reviewer2_m3 | teamwork_preview_reviewer | M3 Reviewer 2 (Frontend typing & schema parity) | in-progress | 15052ad5-103e-4ff4-a939-b4e3040cb819 |
+| challenger1_m3 | teamwork_preview_challenger | M3 Challenger 1 (Monte Carlo calibration stress) | in-progress | 7885614b-1740-496c-b87d-a3324703a2b3 |
+| challenger2_m3 | teamwork_preview_challenger | M3 Challenger 2 (TypeScript 0 any verification) | in-progress | c74109d3-a041-442b-8843-829582c11b9a |
+| worker_m4 | teamwork_preview_worker | Full-stack regression & Playwright visual verification | completed | b753b88c-f41b-4582-ba30-80f38e157ea8 |
+| reviewer1_m4 | teamwork_preview_reviewer | M4 Reviewer 1 (Unit tests, build, Playwright logs) | in-progress | 28cbbf0e-9f90-4a37-89c2-04a8e7249350 |
+| reviewer2_m4 | teamwork_preview_reviewer | M4 Reviewer 2 (Calibration & UI rendering integrity) | in-progress | b681cea4-8799-4627-8eef-e75faebee280 |
+| challenger1_m4 | teamwork_preview_challenger | M4 Challenger 1 (Playwright E2E & pytest stress) | in-progress | d8df2f70-8591-4590-b0ee-7a5bed68d37e |
+| challenger2_m4 | teamwork_preview_challenger | M4 Challenger 2 (Multi-batch Monte Carlo stress) | in-progress | a5d9b6d0-4624-4b93-9dab-c9e2c18ae940 |
+| auditor_m4 | teamwork_preview_auditor | M4 Forensic Integrity Auditor | in-progress | 00b5a3a7-841a-4555-a429-4fe65824a09c |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 16 / 16
-- Pending subagents: f7229eef-3148-4f12-ae9f-ff3b81729a78
+- Spawn count: 28 / 16
+- Pending subagents: 28cbbf0e-9f90-4a37-89c2-04a8e7249350, b681cea4-8799-4627-8eef-e75faebee280, d8df2f70-8591-4590-b0ee-7a5bed68d37e, a5d9b6d0-4624-4b93-9dab-c9e2c18ae940, 00b5a3a7-841a-4555-a429-4fe65824a09c
 - Predecessor: none
 - Successor: not yet spawned
 

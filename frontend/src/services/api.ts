@@ -88,12 +88,12 @@ export interface PaginatedResponse<T> {
 }
 
 export const api = {
-  // Expose axios methods
-  get: apiClient.get,
-  post: apiClient.post,
-  put: apiClient.put,
-  delete: apiClient.delete,
-  patch: apiClient.patch,
+  // Expose axios methods with proper binding
+  get: apiClient.get.bind(apiClient),
+  post: apiClient.post.bind(apiClient),
+  put: apiClient.put.bind(apiClient),
+  delete: apiClient.delete.bind(apiClient),
+  patch: apiClient.patch.bind(apiClient),
 
   // Team/Player Service methods
   getTeams: async (page: number = 1, pageSize: number = 100): Promise<Team[]> => {

@@ -191,7 +191,7 @@ test.describe("Scouting System E2E", () => {
     });
 
     // Mock Scouting Report
-    await page.route("**/api/scouting/report/*", async (route) => {
+    await page.route("**/api/scouting/report/**", async (route) => {
       await route.fulfill({ json: MOCK_SCOUTING_REPORT });
     });
 
@@ -251,13 +251,11 @@ test.describe("Scouting System E2E", () => {
     // Wait for prospect to load
     await expect(page.getByText("Caleb Williams").first()).toBeVisible({ timeout: 10000 });
 
-    // Look for scouting report button or click prospect
-    const scoutBtn = page.locator(
-      '[data-testid="view-scouting-report"], button:has-text("Scout"), button:has-text("Report")'
-    );
+    // Look for scouting report button on prospect card
+    const scoutBtn = page.locator('[data-testid="view-scouting-report"]').first();
 
-    if (await scoutBtn.first().isVisible({ timeout: 3000 })) {
-      await scoutBtn.first().click();
+    if (await scoutBtn.isVisible({ timeout: 3000 })) {
+      await scoutBtn.click();
 
       // Verify modal content
       await expect(page.getByText("Patrick Mahomes").first()).toBeVisible({ timeout: 5000 });

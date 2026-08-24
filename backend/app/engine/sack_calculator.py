@@ -45,6 +45,8 @@ class SackCalculator:
         """
         try:
             def _safe_val(v: Any, default: float = 50.0) -> float:
+                if hasattr(v, "chemistry_level"):
+                    return float(getattr(v, "chemistry_level", 0.0) * 5.0)
                 if isinstance(v, (int, float)):
                     return float(v)
                 return float(default)

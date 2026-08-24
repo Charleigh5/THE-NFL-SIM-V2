@@ -75,6 +75,7 @@ class ChemistryMetadata:
             return "MAXIMUM"
 
 
+from app.services.chemistry_service import ChemistryService
 from app.core.redis_cache import chemistry_cache
 
 class EnhancedChemistryService:
@@ -83,83 +84,43 @@ class EnhancedChemistryService:
     and full metadata tracking.
     """
 
-    # Configuration Constants
-    CHEMISTRY_THRESHOLD_GAMES = 5
-    CHEMISTRY_MAX_GAMES = 10
-    BASE_BONUS_MULTIPLIER = 5.0  # Max blocking bonus at 100% chemistry
+    # Configuration Constants harmonized with ChemistryService
+    CHEMISTRY_THRESHOLD_GAMES = ChemistryService.CHEMISTRY_THRESHOLD_GAMES
+    CHEMISTRY_MAX_GAMES = ChemistryService.CHEMISTRY_MAX_GAMES
+    BASE_BONUS_MULTIPLIER = ChemistryService.BASE_BONUS_MULTIPLIER  # Max blocking bonus at 100% chemistry
 
-    OL_POSITIONS = ["LT", "LG", "C", "RG", "RT"]
+    OL_POSITIONS = ChemistryService.OL_POSITIONS
 
     def __init__(self, db: AsyncSession):
         self.db = db
 
     # ========================================================================
-    # CORE CHEMISTRY CALCULATION
+    # CORE CHEMISTRY CALCULATION (Unified with ChemistryService)
     # ========================================================================
 
     @staticmethod
     def calculate_chemistry_level(consecutive_games: int) -> float:
         """
         Calculate chemistry level using logarithmic progression.
-
-        Args:
-            consecutive_games: Number of consecutive games OL has started together
-
-        Returns:
-            Chemistry level from 0.0 (none) to 1.0 (maximum)
+        Delegates to canonical ChemistryService formula.
         """
-        if consecutive_games < EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES:
-            return 0.0
+        return ChemistryService.calculate_chemistry_level(consecutive_games)
 
-        if consecutive_games >= EnhancedChemistryService.CHEMISTRY_MAX_GAMES:
-            return 1.0
-
-        # Normalize to 0.0-1.0 range between threshold and max
-        normalized = (
-            (consecutive_games - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES) /
-            (EnhancedChemistryService.CHEMISTRY_MAX_GAMES - EnhancedChemistryService.CHEMISTRY_THRESHOLD_GAMES)
-        )
-
-        # Logarithmic curve: fast growth early, slower later
-        # Formula: 0.6 + 0.4 * (1 - e^(-2.5x))
-        chemistry_level = 0.6 + (0.4 * (1 - math.exp(-2.5 * normalized)))
-
-        return min(1.0, chemistry_level)
-
-    def calculate_scaled_bonuses(self, chemistry_level: float) -> Dict[str, float]:
+    @staticmethod
+    def calculate_scaled_bonuses(chemistry_level: float) -> Dict[str, float]:
         """
         Calculate attribute bonuses based on chemistry level.
-
-        Args:
-            chemistry_level: 0.0 to 1.0
-
-        Returns:
-            Dictionary of attribute bonuses
+        Delegates to canonical ChemistryService formula.
         """
-        base_multiplier = self.BASE_BONUS_MULTIPLIER
+        return ChemistryService.calculate_scaled_bonuses(chemistry_level)
 
-        return {
-            "pass_block": chemistry_level * base_multiplier,
-            "run_block": chemistry_level * base_multiplier,
-            "awareness": chemistry_level * base_multiplier
-        }
-
-    def calculate_advanced_effects(self, chemistry_level: float) -> Dict[str, float]:
+    @staticmethod
+    def calculate_advanced_effects(chemistry_level: float) -> Dict[str, float]:
         """
         Calculate advanced gameplay effects based on chemistry level.
-
-        Args:
-            chemistry_level: 0.0 to 1.0
-
-        Returns:
-            Dictionary of advanced effect modifiers
+        Delegates to canonical ChemistryService formula.
         """
-        return {
-            "stunt_pickup_bonus": chemistry_level * 0.25,  # Up to +25% stunt recognition
-            "penalty_reduction": chemistry_level * 0.20,   # Up to -20% penalties
-            "communication_boost": chemistry_level * 10.0,  # Up to +10 communication
-            "blitz_pickup_improvement": chemistry_level * 0.30  # Up to +30% blitz pickup
-        }
+        return ChemistryService.calculate_advanced_effects(chemistry_level)
 
     # ========================================================================
     # CHEMISTRY DETECTION & TRACKING

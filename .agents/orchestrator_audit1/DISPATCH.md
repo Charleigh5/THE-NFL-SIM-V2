@@ -4,9 +4,6 @@
 **From**: Sentinel / Parent (759ee02f-9fc5-4da2-8e72-610fb1a839d6)
 **Mission**: Full Codebase Component and Endpoint Audit for THE-NFL-SIM-V2 ("The Digital Gridiron")
 
-### Requirements:
-- R1. Comprehensive UI Component & Page Mounting Audit
-- R2. Live Endpoint Integration & Mock Placeholder Replacement
-- R3. Duplicate Logic & Schema Deduplication
-- R4. Full-Stack Regression & Playwright Visual Verification
-- R5. Formal Audit Spec & Living Matrix Sync (`docs/tasks/AUDIT-001_FULL_CODEBASE_COMPONENT_AND_ENDPOINT_AUDIT.md`, `docs/FEATURE_STATUS_MATRIX.md`)
+## 2026-08-24T05:08:11Z
+**From**: Sentinel / Parent (759ee02f-9fc5-4da2-8e72-610fb1a839d6)
+**Directive**: The rate limit window has fully cleared. Check status of worker for Milestone 3 (Deduplication & Schema Harmonization), respawn or continue worker_m3 if interrupted, and drive remaining milestones (M3, M4, M5, and final audit) to completion.

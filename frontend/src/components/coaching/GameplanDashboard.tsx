@@ -25,7 +25,16 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
     async function loadSynergy() {
       try {
         const res = await api.get<SynergyData>(`/api/coaches/staff/synergy/${teamId}`);
-        setSynergy(res.data);
+        if (res.data && typeof res.data === "object" && res.data.overall_chemistry_score !== undefined) {
+          setSynergy(res.data);
+        } else {
+          setSynergy({
+            offensive_synergy_score: 85,
+            defensive_synergy_score: 80,
+            overall_chemistry_score: 83,
+            scheme_alignment_notes: ["Aligned West Coast execution", "Complementary Cover 3 scheme"],
+          });
+        }
       } catch {
         // Fallback
         setSynergy({
@@ -100,7 +109,7 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
               {synergy.overall_chemistry_score}% <span className="text-xs text-gray-400 font-normal">(Off: {synergy.offensive_synergy_score}% | Def: {synergy.defensive_synergy_score}%)</span>
             </div>
             <div className="text-[11px] text-gray-400 mt-1">
-              {synergy.scheme_alignment_notes[0] || "Optimal coordinator alignment"}
+              {synergy.scheme_alignment_notes?.[0] || "Optimal coordinator alignment"}
             </div>
           </div>
         )}

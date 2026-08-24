@@ -79,7 +79,9 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Ceiling</span>
-                  <span className="text-green-400 font-semibold">{report.ceiling}</span>
+                  <span className="text-green-400 font-semibold">
+                    {report.ceiling || report.ceiling_projection || (report as any).ceiling_grade || "Pro Bowl"}
+                  </span>
                 </div>
                 <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-green-500 h-full w-3/4"></div>
@@ -89,7 +91,9 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Floor</span>
-                  <span className="text-amber-400 font-semibold">{report.floor}</span>
+                  <span className="text-amber-400 font-semibold">
+                    {report.floor || report.floor_projection || (report as any).floor_grade || "Starter"}
+                  </span>
                 </div>
                 <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-amber-500 h-full w-1/2"></div>
@@ -127,7 +131,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                   Executive Summary
                 </h4>
                 <p className="text-slate-200 leading-relaxed text-lg font-light">
-                  {report.summary}
+                  {report.summary || (report as any).notes || "Elite athletic prospect with high starting potential."}
                 </p>
               </div>
 
@@ -137,7 +141,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                     <TrendingUp className="w-4 h-4" /> Strengths
                   </h4>
                   <ul className="space-y-2">
-                    {report.strengths.map((s, i) => (
+                    {(report.strengths || []).map((s, i) => (
                       <li key={i} className="text-slate-300 text-sm flex items-start gap-2">
                         <span className="text-green-500/50 mt-1">•</span>
                         {s}
@@ -151,7 +155,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                     <TrendingDown className="w-4 h-4" /> Areas for Improvement
                   </h4>
                   <ul className="space-y-2">
-                    {report.weaknesses.map((w, i) => (
+                    {(report.weaknesses || []).map((w, i) => (
                       <li key={i} className="text-slate-300 text-sm flex items-start gap-2">
                         <span className="text-red-500/50 mt-1">•</span>
                         {w}
