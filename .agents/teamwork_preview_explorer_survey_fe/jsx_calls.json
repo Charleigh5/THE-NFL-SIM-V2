@@ -1,0 +1,6452 @@
+{
+  "RouterProvider": [
+    {
+      "caller_file": "App.tsx",
+      "attrs": [
+        "router"
+      ]
+    }
+  ],
+  "StrictMode": [
+    {
+      "caller_file": "main.tsx",
+      "attrs": []
+    }
+  ],
+  "QueryClientProvider": [
+    {
+      "caller_file": "main.tsx",
+      "attrs": [
+        "client"
+      ]
+    }
+  ],
+  "AudioProvider": [
+    {
+      "caller_file": "main.tsx",
+      "attrs": []
+    }
+  ],
+  "ThemeProvider": [
+    {
+      "caller_file": "main.tsx",
+      "attrs": []
+    }
+  ],
+  "App": [
+    {
+      "caller_file": "main.tsx",
+      "attrs": []
+    }
+  ],
+  "MainLayout": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "RootErrorBoundary": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "Dashboard": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "SeasonDashboard": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "RouteErrorBoundary": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "OffseasonDashboard": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "DraftRoom": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "FrontOffice": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "DepthChart": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeCenterPage": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "TrophyRoom": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "LiveSim": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "MedicalCenter": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "Playbook": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "TrainingCenter": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "SkillsPage": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "Settings": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "TeamSelection": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "NotFound": [
+    {
+      "caller_file": "router.tsx",
+      "attrs": []
+    }
+  ],
+  "ErrorBoundaryProps": [
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": [
+        "ErrorBoundaryState"
+      ]
+    },
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": []
+    }
+  ],
+  "ErrorBoundaryState": [
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": []
+    }
+  ],
+  "ErrorBoundaryContext": [
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/ErrorBoundary.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    }
+  ],
+  "GameCanvas": [
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "width",
+        "height"
+      ]
+    },
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "width",
+        "height"
+      ]
+    }
+  ],
+  "PlayerSprite": [
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "y",
+        "centerY",
+        "color",
+        "isOffense"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/FieldView.tsx",
+      "attrs": [
+        "x",
+        "losX",
+        "y",
+        "centerY",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "x",
+        "Controlled",
+        "by",
+        "Data",
+        "Source",
+        "y",
+        "Controlled",
+        "by",
+        "Data",
+        "Source",
+        "color",
+        "player_id",
+        "11",
+        "0xff0000",
+        "Mock",
+        "Defense",
+        "based",
+        "on",
+        "ID",
+        "isOffense",
+        "player_id",
+        "dataSource"
+      ]
+    }
+  ],
+  "Clock": [
+    {
+      "caller_file": "components/GameClock.tsx",
+      "attrs": [
+        "w-4",
+        "h-4",
+        "isTwoMinuteWarning"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    }
+  ],
+  "GridironVisualizerProps": [
+    {
+      "caller_file": "components/GridironVisualizer.tsx",
+      "attrs": []
+    }
+  ],
+  "HTMLCanvasElement": [
+    {
+      "caller_file": "components/GridironVisualizer.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/GridironVisualizer.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/GridironVisualizer.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerCognitiveTelemetry": [
+    {
+      "caller_file": "components/GridironVisualizer.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Link": [
+    {
+      "caller_file": "components/Navigation.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "components/Navigation.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "to",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "to",
+        "5",
+        "rounded-xl",
+        "bg-slate-900",
+        "border",
+        "border-slate-800",
+        "bg-slate-800",
+        "text-slate-300"
+      ]
+    },
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "to",
+        "p-2",
+        "rounded-full",
+        "10"
+      ]
+    }
+  ],
+  "VolumeX": [
+    {
+      "caller_file": "components/Navigation.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Volume2": [
+    {
+      "caller_file": "components/Navigation.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "HTMLDivElement": [
+    {
+      "caller_file": "components/PlayByPlayFeed.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/ElementInspector.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/RegionSelector.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/common/RegionSelector.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/draft/GpsSpeedViz.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/FatigueIndicator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/immersive/ParallaxScene.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/immersive/TiltCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/news/StorylineTracker.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/season/ScheduleView.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/ui/Card.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/ui/Card.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/ui/Card.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/ui/Card.tsx",
+      "attrs": []
+    }
+  ],
+  "AnimatePresence": [
+    {
+      "caller_file": "components/PlayByPlayFeed.tsx",
+      "attrs": [
+        "initial"
+      ]
+    },
+    {
+      "caller_file": "components/PlayByPlayFeed.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "layouts/MainLayout.tsx",
+      "attrs": [
+        "mode",
+        "initial"
+      ]
+    },
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/draft/WarRoomTicker.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/player/ArchetypeBadge.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillsOverlay.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": [
+        "mode"
+      ]
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": [
+        "mode"
+      ]
+    }
+  ],
+  "PlayItem": [
+    {
+      "caller_file": "components/PlayByPlayFeed.tsx",
+      "attrs": [
+        "play"
+      ]
+    }
+  ],
+  "InteractionTimeline": [
+    {
+      "caller_file": "components/PlayByPlayFeed.tsx",
+      "attrs": [
+        "interactions"
+      ]
+    }
+  ],
+  "MomentumIndicator": [
+    {
+      "caller_file": "components/ScoreBoard.tsx",
+      "attrs": [
+        "state",
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ScoreBoard.tsx",
+      "attrs": [
+        "state",
+        "size",
+        "align"
+      ]
+    },
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "label",
+        "Home",
+        "state",
+        "align"
+      ]
+    },
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "label",
+        "Away",
+        "state",
+        "align"
+      ]
+    }
+  ],
+  "Howl": [
+    {
+      "caller_file": "context/AudioContext.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "AudioContext": [
+    {
+      "caller_file": "context/AudioContext.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    }
+  ],
+  "ThemeContextType": [
+    {
+      "caller_file": "context/ThemeContext.tsx",
+      "attrs": [
+        "undefined"
+      ]
+    }
+  ],
+  "ThemeContext": [
+    {
+      "caller_file": "context/ThemeProvider.tsx",
+      "attrs": [
+        "Provider",
+        "value"
+      ]
+    }
+  ],
+  "Navigation": [
+    {
+      "caller_file": "layouts/MainLayout.tsx",
+      "attrs": []
+    }
+  ],
+  "Outlet": [
+    {
+      "caller_file": "layouts/MainLayout.tsx",
+      "attrs": []
+    }
+  ],
+  "FeedbackWidget": [
+    {
+      "caller_file": "layouts/MainLayout.tsx",
+      "attrs": [
+        "currentPage"
+      ]
+    }
+  ],
+  "SoundtrackPlayer": [
+    {
+      "caller_file": "layouts/MainLayout.tsx",
+      "attrs": []
+    }
+  ],
+  "Season": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "CloudSun": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Play": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-5",
+        "h-5"
+      ]
+    },
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/game/ReplayScrubber.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "Users": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "news-icon"
+      ]
+    }
+  ],
+  "ChevronRight": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size",
+        "translate-x-1"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size",
+        "translate-x-1"
+      ]
+    },
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size",
+        "translate-x-1"
+      ]
+    }
+  ],
+  "DollarSign": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "BookOpen": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/player/PlayerBackstoryModal.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Flame": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    },
+    {
+      "caller_file": "components/game/MomentumIndicator.tsx",
+      "attrs": [
+        "w-4",
+        "h-4",
+        "fill"
+      ]
+    },
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/TraitBadgeGrid.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size",
+        "text-orange-500"
+      ]
+    }
+  ],
+  "Activity": [
+    {
+      "caller_file": "pages/Dashboard.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/draft/GenesisReveal.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-8",
+        "h-8"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-8",
+        "h-8"
+      ]
+    },
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "morale-icon"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Player": [
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerModal.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ChemistryMetadata": [
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ChemistryBadge": [
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": [
+        "level",
+        "consecutiveGames",
+        "status",
+        "bonuses"
+      ]
+    }
+  ],
+  "Reorder": [
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": [
+        "Group",
+        "as",
+        "axis",
+        "values",
+        "onReorder",
+        "keep",
+        "legacy",
+        "for",
+        "existing",
+        "E2E",
+        "Reorder_Group"
+      ]
+    },
+    {
+      "caller_file": "pages/DepthChart.tsx",
+      "attrs": [
+        "Item",
+        "as",
+        "value",
+        "dragListener",
+        "onPointerDown"
+      ]
+    }
+  ],
+  "LegacySeason": [
+    {
+      "caller_file": "pages/DraftLegacy.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/DraftLegacy.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/SeasonDashboardLegacy.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "LegacyProspect": [
+    {
+      "caller_file": "pages/DraftLegacy.tsx",
+      "attrs": []
+    }
+  ],
+  "DraftPickDetail": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Prospect": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "DraftPickSummary": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "TeamNeed": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "ParallaxScene": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": []
+    }
+  ],
+  "WarRoomTicker": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": []
+    }
+  ],
+  "TradePhone": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "hasOffer",
+        "Simulate",
+        "offer",
+        "when",
+        "modal",
+        "is",
+        "open",
+        "for",
+        "or",
+        "add",
+        "specific",
+        "state",
+        "onAnswer"
+      ]
+    }
+  ],
+  "BroadcastPanel": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "title",
+        "Big",
+        "Board",
+        "Live",
+        "isLive"
+      ]
+    },
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "title",
+        "AI"
+      ]
+    },
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "title",
+        "Team"
+      ]
+    },
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "title",
+        "War",
+        "Room"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Progression"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Team",
+        "Needs"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Draft",
+        "War",
+        "Room",
+        "data-testid"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "League"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Cap"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Scouting"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "activeTab",
+        "Live",
+        "isLive",
+        "activeTab"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Awards"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "League"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "title",
+        "Season"
+      ]
+    }
+  ],
+  "DraftBoard": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "prospects",
+        "teamNeeds",
+        "onProspectSelect"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "prospects",
+        "teamNeeds"
+      ]
+    }
+  ],
+  "DraftAssistant": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "seasonId",
+        "teamId",
+        "pickNumber",
+        "availablePlayers"
+      ]
+    }
+  ],
+  "TradeModal": [
+    {
+      "caller_file": "pages/DraftRoom.tsx",
+      "attrs": [
+        "seasonId",
+        "currentTeamId",
+        "onClose"
+      ]
+    }
+  ],
+  "Team": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "PositionFilter": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": []
+    }
+  ],
+  "SortOption": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": []
+    }
+  ],
+  "Filter": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    }
+  ],
+  "ArrowUpDown": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "DraggableCard": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team",
+        "abbreviation",
+        "jerseyNumber",
+        "speed",
+        "speed",
+        "strength",
+        "strength",
+        "agility",
+        "agility",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice_Baseline.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice_Baseline.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice_Baseline.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice_Baseline.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team"
+      ]
+    },
+    {
+      "caller_file": "pages/FrontOffice_Baseline.tsx",
+      "attrs": [
+        "name",
+        "position",
+        "rating",
+        "team"
+      ]
+    }
+  ],
+  "CoachSettings": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "teamId"
+      ]
+    }
+  ],
+  "X": [
+    {
+      "caller_file": "pages/FrontOffice.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/player/PlayerBackstoryModal.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillsOverlay.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerModal.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/Telestrator.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "ViewMode": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "FieldCanvasRef": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/debug/PhysicsDebugOverlay.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "FieldCanvasProps"
+      ]
+    },
+    {
+      "caller_file": "components/game/ReplayScrubber.tsx",
+      "attrs": []
+    }
+  ],
+  "GameClock": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "ScoreBoard": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "Layers": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "Tv": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "BarChart2": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "LiveGameVisualizer": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "gameId",
+        "enableBroadcast"
+      ]
+    }
+  ],
+  "GridironVisualizer": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "PhysicsDebugOverlay": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "play",
+        "canvasRef"
+      ]
+    }
+  ],
+  "FieldCanvas": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "isPlaying",
+        "currentPlay",
+        "playbackSpeed",
+        "onPlayComplete"
+      ]
+    }
+  ],
+  "WeatherWidget": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "weather",
+        "location",
+        "Lambeau"
+      ]
+    }
+  ],
+  "CoachingWidget": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "teamId"
+      ]
+    }
+  ],
+  "CrowdNoiseMeter": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "decibels",
+        "96",
+        "stadiumName",
+        "Lambeau",
+        "isAwayTeamOnOffense"
+      ]
+    }
+  ],
+  "Pause": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/game/ReplayScrubber.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "FastForward": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    }
+  ],
+  "GameStats": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayByPlayFeed": [
+    {
+      "caller_file": "pages/LiveSim.tsx",
+      "attrs": []
+    }
+  ],
+  "BodyZoneKey": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "InjuredPlayer": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": []
+    }
+  ],
+  "BodyMapHealthData": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": []
+    }
+  ],
+  "BioMetrics": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "FatigueState": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Stethoscope": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    }
+  ],
+  "ShieldCheck": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "HeartPulse": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    },
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-8",
+        "h-8"
+      ]
+    }
+  ],
+  "BodyMap": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "healthData",
+        "selectedZone",
+        "onZoneSelect",
+        "playerName"
+      ]
+    }
+  ],
+  "GenesisBiometricCard": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "biometrics",
+        "playerName",
+        "position"
+      ]
+    }
+  ],
+  "FatigueMonitor": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "fatigue",
+        "currentWearLevel"
+      ]
+    }
+  ],
+  "AlertCircle": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "OrthopedicTriageModal": [
+    {
+      "caller_file": "pages/MedicalCenter.tsx",
+      "attrs": [
+        "isOpen",
+        "playerId",
+        "playerName",
+        "zoneKey",
+        "selectedPart",
+        "zoneName",
+        "selectedPart",
+        "ANATOMICAL",
+        "currentIntegrity",
+        "selectedPart",
+        "baselineWeeks",
+        "onClose"
+      ]
+    }
+  ],
+  "PlayerProgressionResult": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "SalaryCapData": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "Record": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "unknown"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "unknown"
+      ]
+    },
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "PlayerAbilityStatus"
+      ]
+    }
+  ],
+  "LoadingSpinner": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "text",
+        "Loading",
+        "offseason",
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "text",
+        "size",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "text",
+        "Loading",
+        "season",
+        "size"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "text",
+        "size",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "text",
+        "Loading",
+        "Trade",
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/LeagueLeaders.tsx",
+      "attrs": [
+        "text",
+        "Loading"
+      ]
+    }
+  ],
+  "OffseasonTimeline": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "currentPhase",
+        "phaseStats"
+      ]
+    }
+  ],
+  "PlayerProgression": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "progressionData"
+      ]
+    }
+  ],
+  "TeamNeeds": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "needs"
+      ]
+    }
+  ],
+  "NewsFeed": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "maxItems",
+        "compact",
+        "refreshInterval"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "maxItems",
+        "compact",
+        "refreshInterval"
+      ]
+    }
+  ],
+  "SalaryCapWidget": [
+    {
+      "caller_file": "pages/OffseasonDashboard.tsx",
+      "attrs": [
+        "data"
+      ]
+    }
+  ],
+  "FootballPlay": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": []
+    }
+  ],
+  "Pencil": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Trash2": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/Telestrator.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "GameplanDashboard": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": []
+    }
+  ],
+  "ArrowRight": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Compass": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "size",
+        "text-emerald-400",
+        "mx-auto"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    }
+  ],
+  "CoachingTree": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": []
+    }
+  ],
+  "Telestrator": [
+    {
+      "caller_file": "pages/Playbook.tsx",
+      "attrs": [
+        "isActive",
+        "onClose"
+      ]
+    }
+  ],
+  "TeamStanding": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/offseason/TradeModal.tsx",
+      "attrs": []
+    }
+  ],
+  "Game": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayoffMatchup": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "LeagueLeadersType": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "SeasonAwards": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "RibbonTicker": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "items",
+        "Season",
+        "Broadcast",
+        "League",
+        "speedSec"
+      ]
+    },
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": [
+        "items",
+        "Tunnel",
+        "Choose",
+        "Your",
+        "32",
+        "NFL",
+        "Dynasty",
+        "Mode",
+        "speedSec"
+      ]
+    }
+  ],
+  "SeasonSummaryCard": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "season",
+        "progress",
+        "actions",
+        "champion"
+      ]
+    }
+  ],
+  "StandingsTable": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "standings",
+        "compact"
+      ]
+    },
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "standings"
+      ]
+    }
+  ],
+  "ScheduleView": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "games",
+        "teams",
+        "currentWeek",
+        "totalWeeks",
+        "total_weeks",
+        "Approx",
+        "playoff",
+        "weeks",
+        "onWeekChange",
+        "onSimulateGame"
+      ]
+    }
+  ],
+  "PlayoffBracket": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "matchups"
+      ]
+    }
+  ],
+  "LeagueLeaders": [
+    {
+      "caller_file": "pages/SeasonDashboard.tsx",
+      "attrs": [
+        "leaders",
+        "loading",
+        "teams"
+      ]
+    }
+  ],
+  "LegacyStanding": [
+    {
+      "caller_file": "pages/SeasonDashboardLegacy.tsx",
+      "attrs": []
+    }
+  ],
+  "LegacyScheduleGame": [
+    {
+      "caller_file": "pages/SeasonDashboardLegacy.tsx",
+      "attrs": []
+    }
+  ],
+  "ChevronLeft": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    }
+  ],
+  "Sparkles": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/ScoutIntelligenceLens.tsx",
+      "attrs": [
+        "w-3",
+        "h-3",
+        "text-slate-500"
+      ]
+    },
+    {
+      "caller_file": "components/player/PlayerBackstoryModal.tsx",
+      "attrs": [
+        "text-amber-400",
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/skills/StarfieldBackground.tsx",
+      "attrs": [
+        "count",
+        "scale",
+        "size",
+        "speed",
+        "opacity",
+        "color",
+        "Gold",
+        "tint",
+        "noise",
+        "Organic",
+        "movement"
+      ]
+    },
+    {
+      "caller_file": "components/skills/StarfieldBackground.tsx",
+      "attrs": [
+        "count",
+        "scale",
+        "size",
+        "speed",
+        "opacity",
+        "color",
+        "Blue",
+        "tint",
+        "noise"
+      ]
+    }
+  ],
+  "User": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "w-5",
+        "h-5"
+      ]
+    },
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "w-5",
+        "h-5"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size",
+        "80",
+        "filter"
+      ]
+    }
+  ],
+  "ArchetypeBadge": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "archetype",
+        "size",
+        "showTooltip"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "archetype",
+        "size",
+        "showTooltip"
+      ]
+    }
+  ],
+  "AbilityUnlockTree": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "playerId",
+        "playerLevel",
+        "playerXp",
+        "playerPosition",
+        "abilityStatuses",
+        "onUnlockSuccess"
+      ]
+    }
+  ],
+  "TraitBadgeGrid": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "unlockedTraits",
+        "onTraitClick"
+      ]
+    }
+  ],
+  "SkillTreeCanvas": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "layout",
+        "unlockedTraits",
+        "equippedTraits",
+        "onNodeClick"
+      ]
+    }
+  ],
+  "SkillsOverlay": [
+    {
+      "caller_file": "pages/SkillsPage.tsx",
+      "attrs": [
+        "selectedTraitId",
+        "selectedTraitDetails",
+        "selectedTraitId",
+        "Active",
+        "NFL",
+        "SIM",
+        "Trait",
+        "as",
+        "null",
+        "playerPoints",
+        "onCloseDetail"
+      ]
+    }
+  ],
+  "ConfFilter": [
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": []
+    }
+  ],
+  "TiltCard": [
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": [
+        "team-card",
+        "broadcast-glass",
+        "group",
+        "relative",
+        "overflow-hidden",
+        "rounded-2xl",
+        "border",
+        "transition-all",
+        "duration-300",
+        "isSelected",
+        "border-yellow-400",
+        "ring-2",
+        "50",
+        "10",
+        "onClick"
+      ]
+    }
+  ],
+  "CheckCircle2": [
+    {
+      "caller_file": "pages/TeamSelection.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    }
+  ],
+  "TradeTab": [
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeOffer": [
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/trades/PendingOffers.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/PendingOffers.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeNegotiator": [
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "seasonId",
+        "userTeamId",
+        "initialOffer"
+      ]
+    }
+  ],
+  "PendingOffers": [
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "teamId",
+        "onCounter"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "teamId"
+      ]
+    }
+  ],
+  "TradeBlock": [
+    {
+      "caller_file": "pages/TradeCenterPage.tsx",
+      "attrs": [
+        "seasonId",
+        "userTeamId"
+      ]
+    }
+  ],
+  "CoachingStyle": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": []
+    }
+  ],
+  "Drill": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": []
+    }
+  ],
+  "TrainingResult": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "PlayerWeaknessData": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Canvas": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "camera",
+        "45"
+      ]
+    },
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "shadows"
+      ]
+    },
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": [
+        "camera",
+        "45",
+        "gl",
+        "true"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "shadows",
+        "camera",
+        "50"
+      ]
+    }
+  ],
+  "StarfieldBackground": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachingStyleDial": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "styles",
+        "selectedStyle",
+        "onSelect"
+      ]
+    }
+  ],
+  "WeeklyScheduleTimeline": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "selectedDay",
+        "onSelectDay"
+      ]
+    }
+  ],
+  "DrillSelector": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "position",
+        "onDrillSelect",
+        "selectedDrill",
+        "playerWeaknesses"
+      ]
+    }
+  ],
+  "AlertTriangle": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    },
+    {
+      "caller_file": "components/draft/GenesisReveal.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "news-icon"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": [
+        "w-12",
+        "h-12"
+      ]
+    }
+  ],
+  "TrainingSessionResult": [
+    {
+      "caller_file": "pages/TrainingCenter.tsx",
+      "attrs": [
+        "result",
+        "onClose"
+      ]
+    }
+  ],
+  "TrophyCaseScene": [
+    {
+      "caller_file": "pages/TrophyRoom.tsx",
+      "attrs": []
+    }
+  ],
+  "EnhancedFieldVisualizerProps": [
+    {
+      "caller_file": "components/3d/EnhancedFieldVisualizer.tsx",
+      "attrs": []
+    }
+  ],
+  "THREE": [
+    {
+      "caller_file": "components/3d/EnhancedFieldVisualizer.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/3d/EnhancedPlayerCharacter.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/3d/EnhancedPlayerCharacter.tsx",
+      "attrs": [
+        "Mesh"
+      ]
+    },
+    {
+      "caller_file": "components/3d/EnhancedPlayerCharacter.tsx",
+      "attrs": [
+        "Mesh"
+      ]
+    },
+    {
+      "caller_file": "components/3d/FieldVisualizer.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/3d/PlayerCharacter.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "Mesh"
+      ]
+    },
+    {
+      "caller_file": "components/skills/StarfieldBackground.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": [
+        "Group"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": [
+        "Mesh"
+      ]
+    }
+  ],
+  "EnhancedPlayerCharacterProps": [
+    {
+      "caller_file": "components/3d/EnhancedPlayerCharacter.tsx",
+      "attrs": []
+    }
+  ],
+  "Text": [
+    {
+      "caller_file": "components/3d/FieldVisualizer.tsx",
+      "attrs": [
+        "position",
+        "rotation",
+        "PI",
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/3d/FieldVisualizer.tsx",
+      "attrs": [
+        "position",
+        "rotation",
+        "PI",
+        "fontSize",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "position",
+        "fontSize",
+        "color",
+        "isUnlocked",
+        "anchorX",
+        "anchorY",
+        "outlineWidth",
+        "outlineColor"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": [
+        "position",
+        "fontSize",
+        "color",
+        "anchorX",
+        "anchorY"
+      ]
+    }
+  ],
+  "PlayerCharacter": [
+    {
+      "caller_file": "components/3d/FieldVisualizer.tsx",
+      "attrs": [
+        "position",
+        "team",
+        "playerNumber",
+        "isAnimating"
+      ]
+    },
+    {
+      "caller_file": "components/3d/FieldVisualizer.tsx",
+      "attrs": [
+        "position",
+        "team",
+        "playerNumber",
+        "isAnimating"
+      ]
+    }
+  ],
+  "LiveGameVisualizerProps": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": []
+    }
+  ],
+  "GameRosterData": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "FormationData": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "PerspectiveCamera": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "makeDefault",
+        "position",
+        "fov"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "makeDefault",
+        "position",
+        "fov"
+      ]
+    }
+  ],
+  "OrbitControls": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "enablePan",
+        "enableZoom",
+        "enableRotate",
+        "maxPolarAngle",
+        "PI",
+        "minDistance",
+        "maxDistance"
+      ]
+    },
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": [
+        "enableZoom",
+        "enablePan",
+        "autoRotate",
+        "pathname",
+        "autoRotateSpeed",
+        "maxPolarAngle",
+        "PI"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "enablePan",
+        "enableZoom",
+        "enableRotate",
+        "minDistance",
+        "maxDistance",
+        "maxPolarAngle",
+        "PI",
+        "t",
+        "allow",
+        "going",
+        "too",
+        "far",
+        "below",
+        "minPolarAngle",
+        "PI"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "enablePan",
+        "minPolarAngle",
+        "PI",
+        "maxPolarAngle",
+        "PI",
+        "minDistance",
+        "maxDistance",
+        "autoRotate",
+        "autoRotateSpeed"
+      ]
+    }
+  ],
+  "Environment": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "preset"
+      ]
+    },
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": [
+        "preset"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "preset"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "preset"
+      ]
+    }
+  ],
+  "EnhancedFieldVisualizer": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "homeColor",
+        "primary_color",
+        "awayColor",
+        "primary_color",
+        "showYardLines",
+        "showNumbers"
+      ]
+    }
+  ],
+  "EnhancedPlayerCharacter": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "playerData",
+        "position",
+        "isAnimating",
+        "detailLevel",
+        "showNumber"
+      ]
+    }
+  ],
+  "ContactShadows": [
+    {
+      "caller_file": "components/3d/LiveGameVisualizer.tsx",
+      "attrs": [
+        "position",
+        "opacity",
+        "scale",
+        "blur",
+        "far"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "position",
+        "opacity",
+        "scale",
+        "blur",
+        "far"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "resolution",
+        "scale",
+        "blur",
+        "opacity",
+        "far",
+        "color",
+        "primary"
+      ]
+    }
+  ],
+  "Suspense": [
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": [
+        "fallback"
+      ]
+    },
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "fallback"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "fallback"
+      ]
+    }
+  ],
+  "Stars": [
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": [
+        "radius",
+        "depth",
+        "count",
+        "factor",
+        "saturation",
+        "fade",
+        "speed"
+      ]
+    },
+    {
+      "caller_file": "components/skills/StarfieldBackground.tsx",
+      "attrs": [
+        "radius",
+        "depth",
+        "count",
+        "factor",
+        "saturation",
+        "fade",
+        "speed"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "radius",
+        "depth",
+        "count",
+        "factor",
+        "saturation",
+        "fade",
+        "speed"
+      ]
+    }
+  ],
+  "FieldVisualizer": [
+    {
+      "caller_file": "components/3d/SceneContainer.tsx",
+      "attrs": []
+    }
+  ],
+  "HTMLInputElement": [
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/ReplayScrubber.tsx",
+      "attrs": []
+    }
+  ],
+  "Music": [
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "ChevronDown": [
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "ChevronUp": [
+    {
+      "caller_file": "components/audio/SoundtrackPlayer.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/game/MomentumIndicator.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "CoachCardProps": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "CardContainer": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": [
+        "tier",
+        "whileHover",
+        "02",
+        "transition",
+        "2"
+      ]
+    }
+  ],
+  "TierBadge": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": [
+        "tier"
+      ]
+    }
+  ],
+  "CoachName": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachRole": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "ArchetypeSection": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "Label": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "Value": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "StatGrid": [
+    {
+      "caller_file": "components/coaching/CoachCard.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachingDynastyTreeProps": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachDynastyProfile": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": []
+    }
+  ],
+  "StaffSynergyBreakdown": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachingSkillNode": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Award": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "w-5",
+        "h-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/TraitBadgeGrid.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "dev-icon"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Zap": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "w-5",
+        "h-5",
+        "text-cyan-400"
+      ]
+    },
+    {
+      "caller_file": "components/draft/GpsSpeedViz.tsx",
+      "attrs": [
+        "w-2"
+      ]
+    },
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-8",
+        "h-8"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "morale-icon"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "dev-icon"
+      ]
+    }
+  ],
+  "Icon": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/game/CrowdNoiseMeter.tsx",
+      "attrs": [
+        "w-5",
+        "h-5",
+        "level"
+      ]
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/ScoutIntelligenceLens.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/training/CoachingStylePicker.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    }
+  ],
+  "BranchIcon": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "Lock": [
+    {
+      "caller_file": "components/coaching/CoachingDynastyTree.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    },
+    {
+      "caller_file": "components/draft/GenesisReveal.tsx",
+      "attrs": [
+        "w-10",
+        "h-10"
+      ]
+    },
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    }
+  ],
+  "CoachNodeProps": [
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": []
+    }
+  ],
+  "GitBranch": [
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "CoachingDynastyTree": [
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": []
+    }
+  ],
+  "CoachNode": [
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Zac",
+        "role",
+        "Head",
+        "specialty",
+        "Offensive",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Brian",
+        "role",
+        "Offensive",
+        "specialty",
+        "Passing",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Dan",
+        "role",
+        "QB",
+        "specialty",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Frank",
+        "role",
+        "OL",
+        "specialty",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Lou",
+        "role",
+        "Defensive",
+        "specialty",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Marion",
+        "role",
+        "DL",
+        "specialty",
+        "Pass",
+        "color"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/CoachingTree.tsx",
+      "attrs": [
+        "name",
+        "Charles",
+        "role",
+        "DB",
+        "specialty",
+        "color"
+      ]
+    }
+  ],
+  "CoachingUnlockPanelProps": [
+    {
+      "caller_file": "components/coaching/CoachingUnlockPanel.tsx",
+      "attrs": []
+    }
+  ],
+  "TraitBadge": [
+    {
+      "caller_file": "components/coaching/CoachingUnlockPanel.tsx",
+      "attrs": [
+        "trait",
+        "showTooltip"
+      ]
+    }
+  ],
+  "CoachSettingsProps": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": []
+    }
+  ],
+  "Philosophy": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Card": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": [
+        "variant"
+      ]
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": [
+        "w-64",
+        "60",
+        "backdrop-blur-md",
+        "variant"
+      ]
+    }
+  ],
+  "CardHeader": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": [
+        "py-2",
+        "px-3",
+        "border-b"
+      ]
+    }
+  ],
+  "CardTitle": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": [
+        "text-xs",
+        "font-bold",
+        "uppercase",
+        "tracking-widest"
+      ]
+    }
+  ],
+  "CardContent": [
+    {
+      "caller_file": "components/coaching/CoachSettings.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/CoachingWidget.tsx",
+      "attrs": [
+        "p-3"
+      ]
+    }
+  ],
+  "Scroll": [
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "Swords": [
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": []
+    }
+  ],
+  "FamiliarityBar": [
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": [
+        "score",
+        "showLabel"
+      ]
+    },
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": [
+        "score",
+        "showLabel"
+      ]
+    }
+  ],
+  "Shield": [
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "news-icon"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Target": [
+    {
+      "caller_file": "components/coaching/GameplanDashboard.tsx",
+      "attrs": [
+        "size",
+        "text-green-500"
+      ]
+    },
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "dev-icon"
+      ]
+    }
+  ],
+  "HTMLTextAreaElement": [
+    {
+      "caller_file": "components/common/AnnotationPopover.tsx",
+      "attrs": []
+    }
+  ],
+  "HTMLElement": [
+    {
+      "caller_file": "components/common/ElementInspector.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ElementMetadata": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Annotation": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "BatchSubmitResult": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ElementInspector": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "isActive",
+        "onElementSelect",
+        "onDeactivate"
+      ]
+    }
+  ],
+  "RegionSelector": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "isActive",
+        "onCapture",
+        "onCancel"
+      ]
+    }
+  ],
+  "AnnotationPopover": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "element",
+        "screenshot",
+        "onSave",
+        "onCancel"
+      ]
+    }
+  ],
+  "TaskListPanel": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "annotations",
+        "onEdit",
+        "onRemove",
+        "onClose"
+      ]
+    }
+  ],
+  "ScreenshotEditor": [
+    {
+      "caller_file": "components/common/FeedbackWidget.tsx",
+      "attrs": [
+        "annotation",
+        "onSave",
+        "onClose"
+      ]
+    }
+  ],
+  "NewsItem": [
+    {
+      "caller_file": "components/common/NewsFeed.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": []
+    }
+  ],
+  "SelectionRect": [
+    {
+      "caller_file": "components/common/RegionSelector.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ScreenshotEditorProps": [
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    }
+  ],
+  "ImageData": [
+    {
+      "caller_file": "components/common/ScreenshotEditor.tsx",
+      "attrs": []
+    }
+  ],
+  "TaskListPanelProps": [
+    {
+      "caller_file": "components/common/TaskListPanel.tsx",
+      "attrs": []
+    }
+  ],
+  "TraitBadgeProps": [
+    {
+      "caller_file": "components/common/TraitBadge.tsx",
+      "attrs": []
+    }
+  ],
+  "TraitTooltip": [
+    {
+      "caller_file": "components/common/TraitBadge.tsx",
+      "attrs": [
+        "trait"
+      ]
+    }
+  ],
+  "TraitTooltipProps": [
+    {
+      "caller_file": "components/common/TraitTooltip.tsx",
+      "attrs": []
+    }
+  ],
+  "PhysicsDebugOverlayProps": [
+    {
+      "caller_file": "components/debug/PhysicsDebugOverlay.tsx",
+      "attrs": []
+    }
+  ],
+  "DebugData": [
+    {
+      "caller_file": "components/debug/PhysicsDebugOverlay.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "TraitManagerProps": [
+    {
+      "caller_file": "components/dev/TraitManager.tsx",
+      "attrs": []
+    }
+  ],
+  "Trait": [
+    {
+      "caller_file": "components/dev/TraitManager.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/dev/TraitManager.tsx",
+      "attrs": []
+    }
+  ],
+  "DraftAssistantProps": [
+    {
+      "caller_file": "components/draft/DraftAssistant.tsx",
+      "attrs": []
+    }
+  ],
+  "DraftSuggestionResponse": [
+    {
+      "caller_file": "components/draft/DraftAssistant.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "FogOfWarBadge": [
+    {
+      "caller_file": "components/draft/DraftAssistant.tsx",
+      "attrs": [
+        "confidence"
+      ]
+    }
+  ],
+  "AttributeDisplay": [
+    {
+      "caller_file": "components/draft/DraftAssistant.tsx",
+      "attrs": [
+        "value",
+        "confidence_score"
+      ]
+    }
+  ],
+  "FeedbackCollector": [
+    {
+      "caller_file": "components/draft/DraftAssistant.tsx",
+      "attrs": [
+        "contextId",
+        "contextType"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeAnalyzer.tsx",
+      "attrs": [
+        "contextId",
+        "targetTeamId",
+        "contextType"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "contextId",
+        "contextType"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "contextId",
+        "contextType"
+      ]
+    }
+  ],
+  "FeedbackCollectorProps": [
+    {
+      "caller_file": "components/draft/FeedbackCollector.tsx",
+      "attrs": []
+    }
+  ],
+  "TradePhoneProps": [
+    {
+      "caller_file": "components/draft/TradePhone.tsx",
+      "attrs": []
+    }
+  ],
+  "PhoneIncoming": [
+    {
+      "caller_file": "components/draft/TradePhone.tsx",
+      "attrs": [
+        "size",
+        "color"
+      ]
+    }
+  ],
+  "Phone": [
+    {
+      "caller_file": "components/draft/TradePhone.tsx",
+      "attrs": [
+        "size",
+        "color"
+      ]
+    }
+  ],
+  "TickerItem": [
+    {
+      "caller_file": "components/draft/WarRoomTicker.tsx",
+      "attrs": []
+    }
+  ],
+  "CrowdNoiseMeterProps": [
+    {
+      "caller_file": "components/game/CrowdNoiseMeter.tsx",
+      "attrs": []
+    }
+  ],
+  "StyledMeterFill": [
+    {
+      "caller_file": "components/game/CrowdNoiseMeter.tsx",
+      "attrs": [
+        "fill",
+        "meter-fill-bar",
+        "h-full",
+        "level"
+      ]
+    }
+  ],
+  "FatigueIndicatorProps": [
+    {
+      "caller_file": "components/game/FatigueIndicator.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerID": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "Application": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/game/GameCanvas.tsx",
+      "attrs": [
+        "width",
+        "height",
+        "backgroundColor"
+      ]
+    }
+  ],
+  "Stage": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "FieldAnimator": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "currentPlay",
+        "isPlaying",
+        "playbackSpeed",
+        "playerPositionsRef",
+        "playTimeRef",
+        "onPlayComplete"
+      ]
+    }
+  ],
+  "Map": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "number"
+      ]
+    },
+    {
+      "caller_file": "components/game/PlayerSprite.tsx",
+      "attrs": [
+        "number"
+      ]
+    }
+  ],
+  "TrajectoryOverlay": [
+    {
+      "caller_file": "components/game/FieldCanvas.tsx",
+      "attrs": [
+        "play"
+      ]
+    }
+  ],
+  "GameCanvasProps": [
+    {
+      "caller_file": "components/game/GameCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "FieldGraphics": [
+    {
+      "caller_file": "components/game/GameCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "StatRow": [
+    {
+      "caller_file": "components/game/GameStats.tsx",
+      "attrs": [
+        "label",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/game/GameStats.tsx",
+      "attrs": [
+        "label",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/game/GameStats.tsx",
+      "attrs": [
+        "label",
+        "value"
+      ]
+    },
+    {
+      "caller_file": "components/game/GameStats.tsx",
+      "attrs": [
+        "label",
+        "First",
+        "value"
+      ]
+    }
+  ],
+  "InteractionBadgeProps": [
+    {
+      "caller_file": "components/game/InteractionBadge.tsx",
+      "attrs": []
+    }
+  ],
+  "InteractionTimelineProps": [
+    {
+      "caller_file": "components/game/InteractionTimeline.tsx",
+      "attrs": []
+    }
+  ],
+  "InteractionBadge": [
+    {
+      "caller_file": "components/game/InteractionTimeline.tsx",
+      "attrs": [
+        "outcome"
+      ]
+    }
+  ],
+  "Snowflake": [
+    {
+      "caller_file": "components/game/MomentumIndicator.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/game/MomentumIndicator.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "Minus": [
+    {
+      "caller_file": "components/game/MomentumIndicator.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "PlayerSpriteProps": [
+    {
+      "caller_file": "components/game/PlayerSprite.tsx",
+      "attrs": []
+    }
+  ],
+  "PixiGraphics": [
+    {
+      "caller_file": "components/game/PlayerSprite.tsx",
+      "attrs": []
+    }
+  ],
+  "ReplayScrubberProps": [
+    {
+      "caller_file": "components/game/ReplayScrubber.tsx",
+      "attrs": []
+    }
+  ],
+  "WeatherWidgetProps": [
+    {
+      "caller_file": "components/game/WeatherWidget.tsx",
+      "attrs": []
+    }
+  ],
+  "HTMLMotionProps": [
+    {
+      "caller_file": "components/immersive/SpotlightButton.tsx",
+      "attrs": []
+    }
+  ],
+  "BodyPartPathProps": [
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": []
+    }
+  ],
+  "BodyMapProps": [
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": []
+    }
+  ],
+  "BodyPartPath": [
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Cranial",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "100",
+        "12",
+        "C",
+        "84",
+        "78",
+        "78",
+        "38",
+        "C",
+        "78",
+        "86",
+        "100",
+        "58",
+        "C",
+        "114",
+        "122",
+        "122",
+        "38",
+        "C",
+        "122",
+        "116",
+        "100",
+        "12"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Cervical",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "91",
+        "58",
+        "L",
+        "109",
+        "58",
+        "L",
+        "114",
+        "70",
+        "L",
+        "86",
+        "70"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Torso",
+        "Chest",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "85",
+        "71",
+        "L",
+        "115",
+        "71",
+        "L",
+        "132",
+        "84",
+        "L",
+        "126",
+        "155",
+        "L",
+        "74",
+        "155",
+        "L",
+        "68",
+        "84"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Left",
+        "Arm",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "66",
+        "84",
+        "L",
+        "38",
+        "120",
+        "L",
+        "28",
+        "178",
+        "L",
+        "42",
+        "182",
+        "L",
+        "54",
+        "135",
+        "L",
+        "72",
+        "98"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Right",
+        "Arm",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "134",
+        "84",
+        "L",
+        "162",
+        "120",
+        "L",
+        "172",
+        "178",
+        "L",
+        "158",
+        "182",
+        "L",
+        "146",
+        "135",
+        "L",
+        "128",
+        "98"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Left",
+        "Leg",
+        "Knee",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "74",
+        "160",
+        "L",
+        "96",
+        "160",
+        "L",
+        "91",
+        "260",
+        "L",
+        "89",
+        "360",
+        "L",
+        "66",
+        "360",
+        "L",
+        "69",
+        "260"
+      ]
+    },
+    {
+      "caller_file": "components/medical/BodyMap.tsx",
+      "attrs": [
+        "name",
+        "Right",
+        "Leg",
+        "Knee",
+        "health",
+        "isSelected",
+        "selectedZone",
+        "onClick",
+        "d",
+        "M",
+        "104",
+        "160",
+        "L",
+        "126",
+        "160",
+        "L",
+        "131",
+        "260",
+        "L",
+        "134",
+        "360",
+        "L",
+        "111",
+        "360",
+        "L",
+        "109",
+        "260"
+      ]
+    }
+  ],
+  "FatigueMonitorProps": [
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": []
+    }
+  ],
+  "BatteryCharging": [
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    }
+  ],
+  "Wind": [
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "Brain": [
+    {
+      "caller_file": "components/medical/FatigueMonitor.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/ScoutIntelligenceLens.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    },
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-8",
+        "h-8"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "GenesisBiometricCardProps": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": []
+    }
+  ],
+  "Dna": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "w-5"
+      ]
+    }
+  ],
+  "Eye": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    }
+  ],
+  "Gauge": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    }
+  ],
+  "Ruler": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "ShieldAlert": [
+    {
+      "caller_file": "components/medical/GenesisBiometricCard.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/ScoutIntelligenceLens.tsx",
+      "attrs": [
+        "w-4",
+        "h-4",
+        "medical_grade",
+        "medical_grade"
+      ]
+    }
+  ],
+  "OrthopedicTriageModalProps": [
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": []
+    }
+  ],
+  "MedicalProtocolType": [
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": [
+        "string"
+      ]
+    }
+  ],
+  "OrthopedicProtocolOption": [
+    {
+      "caller_file": "components/medical/OrthopedicTriageModal.tsx",
+      "attrs": []
+    }
+  ],
+  "TreatmentModalProps": [
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": []
+    }
+  ],
+  "SurgeryRisk": [
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "BedDouble": [
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    }
+  ],
+  "Scissors": [
+    {
+      "caller_file": "components/medical/TreatmentModal.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    }
+  ],
+  "NewsItemCard": [
+    {
+      "caller_file": "components/news/NewsFeedWidget.tsx",
+      "attrs": [
+        "item"
+      ]
+    }
+  ],
+  "StorylineCard": [
+    {
+      "caller_file": "components/news/StorylineTracker.tsx",
+      "attrs": [
+        "storyline"
+      ]
+    }
+  ],
+  "RecapContent": [
+    {
+      "caller_file": "components/news/WeeklyRecapModal.tsx",
+      "attrs": [
+        "recap"
+      ]
+    }
+  ],
+  "DraftBoardProps": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": []
+    }
+  ],
+  "ScoutBiasLens": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": []
+    }
+  ],
+  "ScoutIntelligenceLens": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "currentLens",
+        "onLensChange"
+      ]
+    }
+  ],
+  "GpsSpeedViz": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "speedMph"
+      ]
+    },
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "speedMph"
+      ]
+    }
+  ],
+  "FileText": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "w-3"
+      ]
+    }
+  ],
+  "Dumbbell": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-16",
+        "h-16",
+        "mb-4"
+      ]
+    }
+  ],
+  "GenesisReveal": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "prospectName",
+        "data",
+        "isRevealed",
+        "onClose"
+      ]
+    }
+  ],
+  "ScoutingReportModal": [
+    {
+      "caller_file": "components/offseason/DraftBoard.tsx",
+      "attrs": [
+        "playerId",
+        "Assuming",
+        "is",
+        "mock",
+        "service",
+        "expects",
+        "string",
+        "playerName",
+        "position",
+        "isOpen",
+        "onClose"
+      ]
+    }
+  ],
+  "DraftTickerProps": [
+    {
+      "caller_file": "components/offseason/DraftTicker.tsx",
+      "attrs": []
+    }
+  ],
+  "OffseasonTimelineProps": [
+    {
+      "caller_file": "components/offseason/OffseasonTimeline.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerProgressionProps": [
+    {
+      "caller_file": "components/offseason/PlayerProgression.tsx",
+      "attrs": []
+    }
+  ],
+  "SalaryCapWidgetProps": [
+    {
+      "caller_file": "components/offseason/SalaryCapWidget.tsx",
+      "attrs": []
+    }
+  ],
+  "ScoutIntelligenceLensProps": [
+    {
+      "caller_file": "components/offseason/ScoutIntelligenceLens.tsx",
+      "attrs": []
+    }
+  ],
+  "TeamNeedsProps": [
+    {
+      "caller_file": "components/offseason/TeamNeeds.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeModalProps": [
+    {
+      "caller_file": "components/offseason/TradeModal.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeAnalyzer": [
+    {
+      "caller_file": "components/offseason/TradeModal.tsx",
+      "attrs": [
+        "seasonId",
+        "teamId",
+        "offeredAssets",
+        "In",
+        "this",
+        "simple",
+        "modal",
+        "we",
+        "are",
+        "trading",
+        "the",
+        "current",
+        "pick",
+        "which",
+        "d",
+        "need",
+        "ID",
+        "For",
+        "ll",
+        "just",
+        "simulate",
+        "it",
+        "by",
+        "passing",
+        "empty",
+        "arrays",
+        "as",
+        "the",
+        "backend",
+        "handles",
+        "logic",
+        "based",
+        "on",
+        "context",
+        "or",
+        "we",
+        "need",
+        "to",
+        "pass",
+        "pick",
+        "ID",
+        "the",
+        "backend",
+        "endpoint",
+        "expects",
+        "offered_ids",
+        "and",
+        "Since",
+        "this",
+        "modal",
+        "is",
+        "Trade",
+        "Current",
+        "we",
+        "should",
+        "ideally",
+        "pass",
+        "the",
+        "pick",
+        "the",
+        "current",
+        "TradeModal",
+        "t",
+        "have",
+        "the",
+        "pick",
+        "ID",
+        "ll",
+        "assume",
+        "for",
+        "this",
+        "MVP",
+        "integration",
+        "we",
+        "just",
+        "pass",
+        "empty",
+        "to",
+        "trigger",
+        "the",
+        "general",
+        "check",
+        "or",
+        "mock",
+        "A",
+        "better",
+        "approach",
+        "is",
+        "to",
+        "pass",
+        "a",
+        "dummy",
+        "ID",
+        "or",
+        "update",
+        "s",
+        "pass",
+        "empty",
+        "for",
+        "now",
+        "and",
+        "let",
+        "the",
+        "frontend",
+        "handle",
+        "it",
+        "gracefully",
+        "or",
+        "just",
+        "show",
+        "the",
+        "requestedAssets"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "seasonId",
+        "teamId",
+        "targetTeamId",
+        "offeredAssets"
+      ]
+    }
+  ],
+  "FamiliarityBarProps": [
+    {
+      "caller_file": "components/playbook/FamiliarityBar.tsx",
+      "attrs": []
+    }
+  ],
+  "ArchetypeBadgeProps": [
+    {
+      "caller_file": "components/player/ArchetypeBadge.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerBackstoryModalProps": [
+    {
+      "caller_file": "components/player/PlayerBackstoryModal.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerBackstory": [
+    {
+      "caller_file": "components/player/PlayerBackstoryModal.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ScoutingReportModalProps": [
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": []
+    }
+  ],
+  "ScoutingReport": [
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "TrendingUp": [
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "news-icon"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": [
+        "w-5",
+        "h-5"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "morale-icon"
+      ]
+    }
+  ],
+  "TrendingDown": [
+    {
+      "caller_file": "components/scouting/ScoutingReportModal.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "morale-icon"
+      ]
+    }
+  ],
+  "LeagueLeadersProps": [
+    {
+      "caller_file": "components/season/LeagueLeaders.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerModal": [
+    {
+      "caller_file": "components/season/LeagueLeaders.tsx",
+      "attrs": [
+        "playerId",
+        "onClose"
+      ]
+    }
+  ],
+  "Newspaper": [
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "news-icon"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "NewsFeedProps": [
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": []
+    }
+  ],
+  "RefreshCw": [
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/season/NewsFeed.tsx",
+      "attrs": [
+        "size",
+        "loading"
+      ]
+    }
+  ],
+  "PlayoffBracketProps": [
+    {
+      "caller_file": "components/season/PlayoffBracket.tsx",
+      "attrs": []
+    }
+  ],
+  "QuickActionsProps": [
+    {
+      "caller_file": "components/season/QuickActions.tsx",
+      "attrs": []
+    }
+  ],
+  "ScheduleViewProps": [
+    {
+      "caller_file": "components/season/ScheduleView.tsx",
+      "attrs": []
+    }
+  ],
+  "TeamLogoContainer": [
+    {
+      "caller_file": "components/season/ScheduleView.tsx",
+      "attrs": [
+        "primaryColor"
+      ]
+    },
+    {
+      "caller_file": "components/season/ScheduleView.tsx",
+      "attrs": [
+        "primaryColor"
+      ]
+    }
+  ],
+  "SeasonSummaryCardProps": [
+    {
+      "caller_file": "components/season/SeasonSummaryCard.tsx",
+      "attrs": []
+    }
+  ],
+  "QuickActions": [
+    {
+      "caller_file": "components/season/SeasonSummaryCard.tsx",
+      "attrs": [
+        "actions"
+      ]
+    }
+  ],
+  "StandingsTableProps": [
+    {
+      "caller_file": "components/season/StandingsTable.tsx",
+      "attrs": []
+    }
+  ],
+  "SortField": [
+    {
+      "caller_file": "components/season/StandingsTable.tsx",
+      "attrs": []
+    }
+  ],
+  "SortDirection": [
+    {
+      "caller_file": "components/season/StandingsTable.tsx",
+      "attrs": []
+    }
+  ],
+  "React": [
+    {
+      "caller_file": "components/season/StandingsTable.tsx",
+      "attrs": [
+        "Fragment"
+      ]
+    }
+  ],
+  "AbilityUnlockTreeProps": [
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": []
+    }
+  ],
+  "PreSnapInsightResponse": [
+    {
+      "caller_file": "components/skills/AbilityUnlockTree.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "ConnectionLineProps": [
+    {
+      "caller_file": "components/skills/ConnectionLine.tsx",
+      "attrs": []
+    }
+  ],
+  "Line": [
+    {
+      "caller_file": "components/skills/ConnectionLine.tsx",
+      "attrs": [
+        "points",
+        "color",
+        "isUnlocked",
+        "color",
+        "Gold",
+        "if",
+        "grey",
+        "if",
+        "locked",
+        "lineWidth",
+        "isUnlocked",
+        "3",
+        "dashed",
+        "dashScale",
+        "isUnlocked",
+        "2",
+        "No",
+        "dashes",
+        "if",
+        "Or",
+        "spaced",
+        "out",
+        "dashSize",
+        "isUnlocked",
+        "5",
+        "gapSize",
+        "isUnlocked",
+        "2",
+        "opacity",
+        "isUnlocked",
+        "1",
+        "transparent",
+        "toneMapped",
+        "Make",
+        "it",
+        "glow",
+        "against",
+        "bloom"
+      ]
+    }
+  ],
+  "SkillNode3DProps": [
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": []
+    }
+  ],
+  "Html": [
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "transform",
+        "occlude",
+        "position",
+        "Slightly",
+        "in",
+        "front",
+        "of",
+        "sphere",
+        "isUnlocked"
+      ]
+    }
+  ],
+  "IconComponent": [
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "size",
+        "strokeWidth"
+      ]
+    }
+  ],
+  "Float": [
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "speed",
+        "rotationIntensity",
+        "floatIntensity"
+      ]
+    }
+  ],
+  "MeshDistortMaterial": [
+    {
+      "caller_file": "components/skills/SkillNode3D.tsx",
+      "attrs": [
+        "color",
+        "emissive",
+        "emissiveIntensity",
+        "isUnlocked",
+        "hovered",
+        "2",
+        "roughness",
+        "isUnlocked",
+        "2",
+        "metalness",
+        "isUnlocked",
+        "8",
+        "distort",
+        "hovered",
+        "4",
+        "Glitch",
+        "effect",
+        "on",
+        "hover",
+        "speed",
+        "toneMapped"
+      ]
+    }
+  ],
+  "SkillsOverlayProps": [
+    {
+      "caller_file": "components/skills/SkillsOverlay.tsx",
+      "attrs": []
+    }
+  ],
+  "Check": [
+    {
+      "caller_file": "components/skills/SkillsOverlay.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": [
+        "w-12",
+        "h-12"
+      ]
+    }
+  ],
+  "SkillTreeCanvasProps": [
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": []
+    }
+  ],
+  "SkillNode3D": [
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "position",
+        "iconType",
+        "It",
+        "is",
+        "unlocked",
+        "if",
+        "s",
+        "in",
+        "the",
+        "list",
+        "isUnlocked",
+        "isEquipped",
+        "tier",
+        "Read",
+        "from",
+        "actual",
+        "trait",
+        "data",
+        "if",
+        "defaulting",
+        "for",
+        "visual",
+        "demo",
+        "label",
+        "onClick"
+      ]
+    }
+  ],
+  "ConnectionLine": [
+    {
+      "caller_file": "components/skills/SkillTreeCanvas.tsx",
+      "attrs": [
+        "start",
+        "end",
+        "isUnlocked"
+      ]
+    }
+  ],
+  "Cloud": [
+    {
+      "caller_file": "components/skills/StarfieldBackground.tsx",
+      "attrs": [
+        "opacity",
+        "speed",
+        "segments",
+        "color"
+      ]
+    }
+  ],
+  "TraitBadgeGridProps": [
+    {
+      "caller_file": "components/skills/TraitBadgeGrid.tsx",
+      "attrs": []
+    }
+  ],
+  "TraitDisplayItem": [
+    {
+      "caller_file": "components/skills/TraitBadgeGrid.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Star": [
+    {
+      "caller_file": "components/skills/TraitBadgeGrid.tsx",
+      "attrs": [
+        "5",
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": [
+        "w-3",
+        "h-3"
+      ]
+    },
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4",
+        "h-4",
+        "showRecommendedOnly"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "dev-icon"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    },
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "size",
+        "text-yellow-400"
+      ]
+    }
+  ],
+  "DraggableAssetProps": [
+    {
+      "caller_file": "components/trades/DraggableAsset.tsx",
+      "attrs": []
+    }
+  ],
+  "AssetContainer": [
+    {
+      "caller_file": "components/trades/DraggableAsset.tsx",
+      "attrs": [
+        "transform",
+        "isDragging",
+        "disabled",
+        "onClick",
+        "data-testid"
+      ]
+    }
+  ],
+  "DroppableZoneProps": [
+    {
+      "caller_file": "components/trades/DroppableZone.tsx",
+      "attrs": []
+    }
+  ],
+  "DraggableAsset": [
+    {
+      "caller_file": "components/trades/DroppableZone.tsx",
+      "attrs": [
+        "player",
+        "showRemoveButton",
+        "onRemove"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "player",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "player",
+        "onClick"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "player",
+        "disabled"
+      ]
+    }
+  ],
+  "PendingOffersProps": [
+    {
+      "caller_file": "components/trades/PendingOffers.tsx",
+      "attrs": []
+    }
+  ],
+  "OfferCard": [
+    {
+      "caller_file": "components/trades/PendingOffers.tsx",
+      "attrs": [
+        "offer",
+        "type"
+      ]
+    },
+    {
+      "caller_file": "components/trades/PendingOffers.tsx",
+      "attrs": [
+        "offer",
+        "type"
+      ]
+    }
+  ],
+  "TradeAnalyzerProps": [
+    {
+      "caller_file": "components/trades/TradeAnalyzer.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeEvaluation": [
+    {
+      "caller_file": "components/trades/TradeAnalyzer.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": [
+        "null"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "TradeBlockProps": [
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeBlockPlayer": [
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": []
+    }
+  ],
+  "IncomingTradeOffer": [
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": []
+    }
+  ],
+  "TradePlayer": [
+    {
+      "caller_file": "components/trades/TradeBlock.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "TradeCenterProps": [
+    {
+      "caller_file": "components/trades/TradeCenter.tsx",
+      "attrs": []
+    }
+  ],
+  "TradeNegotiatorProps": [
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    }
+  ],
+  "DndContext": [
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "sensors",
+        "collisionDetection",
+        "onDragStart",
+        "onDragEnd"
+      ]
+    }
+  ],
+  "DroppableZone": [
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "title",
+        "You",
+        "players",
+        "onRemove",
+        "emptyMessage",
+        "Drag",
+        "your",
+        "players"
+      ]
+    },
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": [
+        "title",
+        "You",
+        "players",
+        "onRemove",
+        "emptyMessage",
+        "Drag",
+        "their",
+        "players"
+      ]
+    }
+  ],
+  "DragOverlay": [
+    {
+      "caller_file": "components/trades/TradeNegotiator.tsx",
+      "attrs": []
+    }
+  ],
+  "CampSchedulePlannerProps": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": []
+    }
+  ],
+  "IntensityLevel": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "number"
+      ]
+    }
+  ],
+  "DaySchedule": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": []
+    }
+  ],
+  "Calendar": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "w-6"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "Battery": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "5"
+      ]
+    },
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "w-8",
+        "h-8",
+        "text-emerald-400",
+        "mx-auto"
+      ]
+    }
+  ],
+  "Sun": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "Moon": [
+    {
+      "caller_file": "components/training/CampSchedulePlanner.tsx",
+      "attrs": [
+        "w-4",
+        "h-4"
+      ]
+    }
+  ],
+  "CoachingStyleDialProps": [
+    {
+      "caller_file": "components/training/CoachingStyleDial.tsx",
+      "attrs": []
+    }
+  ],
+  "DrillCard3DProps": [
+    {
+      "caller_file": "components/training/DrillCard3D.tsx",
+      "attrs": []
+    }
+  ],
+  "Heart": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    },
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size",
+        "morale-icon"
+      ]
+    }
+  ],
+  "Coffee": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "w-4"
+      ]
+    }
+  ],
+  "DrillSelectorProps": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": []
+    }
+  ],
+  "DrillCategory": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "Search": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "absolute",
+        "left-3",
+        "2",
+        "2",
+        "w-5",
+        "h-5"
+      ]
+    }
+  ],
+  "DrillCard3D": [
+    {
+      "caller_file": "components/training/DrillSelector.tsx",
+      "attrs": [
+        "drill",
+        "isSelected",
+        "name",
+        "isRecommended",
+        "onSelect"
+      ]
+    }
+  ],
+  "PlayerProgressChartProps": [
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": []
+    }
+  ],
+  "StyledPreviousBar": [
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": [
+        "absolute",
+        "inset-0",
+        "h-full",
+        "rounded-full",
+        "opacity-30",
+        "width",
+        "previous",
+        "color"
+      ]
+    }
+  ],
+  "StyledGlowBar": [
+    {
+      "caller_file": "components/training/PlayerProgressChart.tsx",
+      "attrs": [
+        "initial",
+        "0",
+        "animate",
+        "1",
+        "transition",
+        "5",
+        "index",
+        "1",
+        "glow-bar",
+        "absolute",
+        "inset-0",
+        "h-full",
+        "width",
+        "glowColor"
+      ]
+    }
+  ],
+  "TrainingSessionResultProps": [
+    {
+      "caller_file": "components/training/TrainingSessionResult.tsx",
+      "attrs": []
+    }
+  ],
+  "WeeklyScheduleTimelineProps": [
+    {
+      "caller_file": "components/training/WeeklyScheduleTimeline.tsx",
+      "attrs": []
+    }
+  ],
+  "PageTransitionProps": [
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/transitions/PageTransition.tsx",
+      "attrs": []
+    }
+  ],
+  "SilverMaterial": [
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    },
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    }
+  ],
+  "GoldMaterial": [
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    }
+  ],
+  "CrystalMaterial": [
+    {
+      "caller_file": "components/trophy/TrophyAssets.tsx",
+      "attrs": []
+    }
+  ],
+  "LombardiTrophy": [
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "position"
+      ]
+    }
+  ],
+  "MvpTrophy": [
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "position",
+        "rotation"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "position",
+        "rotation"
+      ]
+    }
+  ],
+  "DivisionTitleTrophy": [
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "position"
+      ]
+    },
+    {
+      "caller_file": "components/trophy/TrophyCaseScene.tsx",
+      "attrs": [
+        "position"
+      ]
+    }
+  ],
+  "HTMLSpanElement": [
+    {
+      "caller_file": "components/ui/Badge.tsx",
+      "attrs": []
+    }
+  ],
+  "HTMLHeadingElement": [
+    {
+      "caller_file": "components/ui/Card.tsx",
+      "attrs": []
+    }
+  ],
+  "ChemistryBadgeProps": [
+    {
+      "caller_file": "components/ui/ChemistryBadge.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerCard": [
+    {
+      "caller_file": "components/ui/DraggableCard.tsx",
+      "attrs": [
+        "testId"
+      ]
+    }
+  ],
+  "EnhancedPlayerProfileProps": [
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": []
+    }
+  ],
+  "EnhancedPlayerProfileData": [
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "GraduationCap": [
+    {
+      "caller_file": "components/ui/EnhancedPlayerProfile.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "LoadingSpinnerProps": [
+    {
+      "caller_file": "components/ui/LoadingSpinner.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerCardProps": [
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerBackstoryModal": [
+    {
+      "caller_file": "components/ui/PlayerCard.tsx",
+      "attrs": [
+        "playerId",
+        "playerName",
+        "isOpen",
+        "onClose"
+      ]
+    }
+  ],
+  "PlayerModalProps": [
+    {
+      "caller_file": "components/ui/PlayerModal.tsx",
+      "attrs": []
+    }
+  ],
+  "PlayerStats": [
+    {
+      "caller_file": "components/ui/PlayerModal.tsx",
+      "attrs": [
+        "null"
+      ]
+    }
+  ],
+  "NavLink": [
+    {
+      "caller_file": "components/ui/Sidebar.tsx",
+      "attrs": [
+        "to",
+        "isActive"
+      ]
+    }
+  ],
+  "Point": [
+    {
+      "caller_file": "components/ui/Telestrator.tsx",
+      "attrs": []
+    }
+  ],
+  "SVGSVGElement": [
+    {
+      "caller_file": "components/ui/Telestrator.tsx",
+      "attrs": []
+    }
+  ],
+  "PenTool": [
+    {
+      "caller_file": "components/ui/Telestrator.tsx",
+      "attrs": [
+        "size"
+      ]
+    }
+  ],
+  "TraitNotificationProps": [
+    {
+      "caller_file": "components/ui/TraitNotification.tsx",
+      "attrs": []
+    }
+  ]
+}

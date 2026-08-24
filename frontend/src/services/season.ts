@@ -138,58 +138,59 @@ export const seasonApi = {
   },
 
   getCurrentPick: async (seasonId: number): Promise<DraftPickDetail | null> => {
-    return {
-      id: 1,
-      season_id: seasonId,
-      round: 1,
-      pick_number: 1,
-      team_id: 1,
-      original_team_id: 1,
-      player_id: undefined,
-    };
+    try {
+      const response = await api.get<DraftPickDetail>(`/api/season/${seasonId}/draft/current`);
+      return response.data;
+    } catch {
+      return {
+        id: 1,
+        season_id: seasonId,
+        round: 1,
+        pick_number: 1,
+        team_id: 1,
+        original_team_id: 1,
+        player_id: undefined,
+      };
+    }
   },
 
   makePick: async (seasonId: number, playerId: number): Promise<DraftPickDetail> => {
-    return {
-      id: 1,
-      season_id: seasonId,
-      round: 1,
-      pick_number: 1,
-      team_id: 1,
-      original_team_id: 1,
+    const response = await api.post<DraftPickDetail>(`/api/season/${seasonId}/draft/pick`, {
       player_id: playerId,
-    };
+    });
+    return response.data;
   },
 
   tradeCurrentPick: async (seasonId: number, targetTeamId: number): Promise<DraftPickDetail> => {
-    void targetTeamId; // Will be used when real API is integrated
-    return {
-      id: 1,
-      season_id: seasonId,
-      round: 1,
-      pick_number: 1,
-      team_id: 1,
-      original_team_id: 1,
-      player_id: undefined,
-    };
+    const response = await api.post<DraftPickDetail>(`/api/season/${seasonId}/draft/trade-current`, {
+      target_team_id: targetTeamId,
+    });
+    return response.data;
   },
 
   simulateNextPick: async (seasonId: number): Promise<DraftPickSummary | null> => {
-    void seasonId; // Will be used when real API is integrated
-    return null;
+    try {
+      const response = await api.post<DraftPickSummary>(`/api/season/${seasonId}/draft/simulate-next`);
+      return response.data;
+    } catch {
+      return null;
+    }
   },
 
   simulateFreeAgency: async (seasonId: number): Promise<void> => {
-    void seasonId; // Will be used when real API is integrated
+    await api.post(`/api/season/${seasonId}/offseason/free-agency/simulate`);
   },
 
   getTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {
-    void seasonId; // Will be used when real API is integrated
-    void teamId;
-    return [
-      { position: "QB", current_count: 2, target_count: 3, need_score: 4.5 },
-      { position: "WR", current_count: 4, target_count: 6, need_score: 3.8 },
-    ];
+    try {
+      const response = await api.get<TeamNeed[]>(`/api/season/${seasonId}/offseason/needs/${teamId}`);
+      return response.data;
+    } catch {
+      return [
+        { position: "QB", current_count: 2, target_count: 3, need_score: 4.5 },
+        { position: "WR", current_count: 4, target_count: 6, need_score: 3.8 },
+      ];
+    }
   },
 
   getEnhancedTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {

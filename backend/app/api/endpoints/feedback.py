@@ -192,12 +192,8 @@ async def export_updates(request: BatchSubmitRequest):
         # ../../../..
         project_root = Path(os.getcwd()) # Should be backend or project root. Assuming execution context.
         # Ensure we find the right docs folder.
-        # If running from backend dir, docs is ../docs possibly?
-        # Let's rely on absolute path construction relative to known anchor if possible.
-        # Safer: Use absolute path c:\Users\cweir\Documents\GitHub\THE NFL SIM\docs\updates_and_enhancements
-        # But for portability, let's try to resolve it.
-
-        output_dir = Path("c:/Users/cweir/Documents/GitHub/THE NFL SIM/docs/updates_and_enhancements")
+        output_dir = Path("docs/updates_and_enhancements")
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         # Initialize generator with specific output dir
         custom_generator = ArtifactGeneratorService(output_dir=output_dir)

@@ -50,15 +50,20 @@ const MOCK_BACKSHIORY: PlayerBackstory = {
 };
 
 export const scoutingService = {
-  getScoutingReport: async (playerId: string): Promise<ScoutingReport> => {
+  getScoutingReport: async (playerId: string, teamId: number = 1): Promise<ScoutingReport> => {
     try {
-      const response = await api.get<ScoutingReport>(`/api/scouting/report/${playerId}`);
+      const response = await api.get<ScoutingReport>(`/api/scouting/report/${teamId}/${playerId}`);
       return response.data;
     } catch {
-      return {
-        ...MOCK_SCOUTING_REPORT,
-        player_id: playerId,
-      };
+      try {
+        const fallbackResponse = await api.get<ScoutingReport>(`/api/scouts/report/${playerId}`);
+        return fallbackResponse.data;
+      } catch {
+        return {
+          ...MOCK_SCOUTING_REPORT,
+          player_id: playerId,
+        };
+      }
     }
   },
 
@@ -73,4 +78,15 @@ export const scoutingService = {
       };
     }
   },
+
+  getProspectIntelligence: async (prospectId: string | number) => {
+    const response = await api.get(`/api/scouts/prospects/${prospectId}/intelligence`);
+    return response.data;
+  },
+
+  getDraftTradeUrgency: async (teamId: string | number, position: string = "QB") => {
+    const response = await api.get(`/api/scouts/trade-urgency/${teamId}?target_position=${position}`);
+    return response.data;
+  },
 };
+

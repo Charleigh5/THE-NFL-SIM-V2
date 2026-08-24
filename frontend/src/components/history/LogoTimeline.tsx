@@ -1,8 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { api } from "../../services/api";
 import "./LogoTimeline.css";
 
-const MOCK_HISTORY = [
+export interface FranchiseHistoryItem {
+  year: string;
+  label: string;
+  description: string;
+}
+
+const DEFAULT_HISTORY: FranchiseHistoryItem[] = [
   {
     year: "1960 - 1980",
     label: "Classic Era",
@@ -16,8 +23,30 @@ const MOCK_HISTORY = [
   { year: "2001 - Present", label: "Modern Edge", description: "Refined for the digital age." },
 ];
 
-export const LogoTimeline = () => {
+export const LogoTimeline = ({
+  teamId,
+  initialHistory,
+}: {
+  teamId?: number;
+  initialHistory?: FranchiseHistoryItem[];
+}) => {
   const constraintsRef = useRef(null);
+  const [history, setHistory] = useState<FranchiseHistoryItem[]>(initialHistory || DEFAULT_HISTORY);
+
+  useEffect(() => {
+    if (teamId) {
+      api
+        .get<FranchiseHistoryItem[]>(`/api/teams/${teamId}/history`)
+        .then((res) => {
+          if (res.data && res.data.length > 0) {
+            setHistory(res.data);
+          }
+        })
+        .catch(() => {
+          // Graceful fallback to default franchise timeline
+        });
+    }
+  }, [teamId]);
 
   return (
     <div className="logo-timeline">
@@ -25,7 +54,7 @@ export const LogoTimeline = () => {
 
       <div ref={constraintsRef} className="logo-timeline__scroll-container">
         <motion.div drag="x" dragConstraints={constraintsRef} className="logo-timeline__track">
-          {MOCK_HISTORY.map((era, i) => (
+          {history.map((era, i) => (
             <motion.div
               key={i}
               whileHover={{ scale: 1.05, boxShadow: "0 0 25px var(--theme-primary)" }}
@@ -44,3 +73,4 @@ export const LogoTimeline = () => {
     </div>
   );
 };
+

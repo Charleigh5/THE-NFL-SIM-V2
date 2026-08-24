@@ -1,0 +1,4551 @@
+{
+  "App.tsx": {
+    "component_names": [
+      "App"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "main.tsx": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "router.tsx": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 148,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock data for UI verification"
+      }
+    ],
+    "mock_obj_summaries": [
+      {
+        "variable": "mockTeams",
+        "length_chars": 568,
+        "preview": "[     {       id: 1,       name: \"Cardinals\",       city: \"Arizona\",       abbreviation: \"ARI\",       conference: \"NFC\",..."
+      },
+      {
+        "variable": "mockSeason",
+        "length_chars": 227,
+        "preview": "{     id: 1,     year: 2024,     current_week: 1,     status: \"OFF_SEASON\",     total_weeks: 18,     playoff_weeks: 4,  ..."
+      },
+      {
+        "variable": "mockCurrentPick",
+        "length_chars": 135,
+        "preview": "{     id: 1,     season_id: 1,     round: 1,     pick_number: 1,     team_id: 1,     original_team_id: 1,     player_id:..."
+      }
+    ],
+    "is_reachable": false
+  },
+  "components/ErrorBoundary.tsx": {
+    "component_names": [],
+    "props_defs": [
+      {
+        "name": "ErrorBoundaryProps",
+        "fields": [
+          "/** Child components to wrap */",
+          "children: ReactNode;",
+          "/** Custom fallback UI to render on error */",
+          "fallback?: ReactNode | ((props: FallbackProps) => ReactNode);",
+          "/** Callback when an error is caught */",
+          "onError?: (error: Error, errorInfo: ErrorInfo) => void;",
+          "/** Callback when user clicks retry */",
+          "onRetry?: () => void;",
+          "/** Maximum number of retry attempts before giving up */",
+          "maxRetries?: number;",
+          "/** Whether to show error details in non-production */",
+          "showDetails?: boolean;",
+          "/** Custom error boundary name for logging context */",
+          "name?: string;"
+        ]
+      },
+      {
+        "name": "FallbackProps",
+        "fields": [
+          "error: Error | null;",
+          "errorInfo: ErrorInfo | null;",
+          "resetError: () => void;",
+          "retryCount: number;",
+          "isRetrying: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/FieldView.tsx": {
+    "component_names": [
+      "FieldView"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 7,
+        "type": "PLACEHOLDER_COMMENT",
+        "content": "// For Phase 1, we just render static placeholders."
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/GameClock.tsx": {
+    "component_names": [
+      "GameClock"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/GridironVisualizer.tsx": {
+    "component_names": [
+      "GridironVisualizer",
+      "DEFAULT_PLAYERS"
+    ],
+    "props_defs": [
+      {
+        "name": "GridironVisualizerProps",
+        "fields": [
+          "turfData?: TurfGridData;",
+          "players?: PlayerCognitiveTelemetry[];",
+          "ballPosition?: { x: number; y: number"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "GridironVisualizer",
+        "props": [
+          "turfData",
+          "players",
+          "ballPosition",
+          "y"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/Navigation.tsx": {
+    "component_names": [
+      "Navigation"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/NotFound.tsx": {
+    "component_names": [
+      "NotFound"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/PlayByPlayFeed.tsx": {
+    "component_names": [
+      "PlayByPlayFeed",
+      "PlayItem"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "PlayItem",
+        "props": [
+          "play"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/RootErrorBoundary.tsx": {
+    "component_names": [
+      "RootErrorBoundary"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/RouteErrorBoundary.tsx": {
+    "component_names": [
+      "RouteErrorBoundary"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ScoreBoard.tsx": {
+    "component_names": [
+      "ScoreBoard"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "context/AudioContext.tsx": {
+    "component_names": [
+      "AudioProvider"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "AudioProvider",
+        "props": [
+          "children"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "context/ThemeContext.tsx": {
+    "component_names": [
+      "ThemeContext"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "context/ThemeProvider.tsx": {
+    "component_names": [
+      "ThemeProvider"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "ThemeProvider",
+        "props": [
+          "children"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "layouts/MainLayout.tsx": {
+    "component_names": [
+      "MainLayout"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "pages/Dashboard.tsx": {
+    "component_names": [
+      "Dashboard"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 89,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock opponent based on current week"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/DepthChart.tsx": {
+    "component_names": [
+      "DepthChart"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/DraftLegacy.tsx": {
+    "component_names": [
+      "DraftLegacy"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 38,
+        "type": "MOCK_COMMENT",
+        "content": "// These endpoints are mocked in e2e/draft-room.spec.ts."
+      },
+      {
+        "line": 55,
+        "type": "MOCK_COMMENT",
+        "content": "// Hard fallback to keep UI testable even if API is mocked with `{}`."
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/DraftRoom.tsx": {
+    "component_names": [
+      "DraftRoom"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 35,
+        "type": "TODO_COMMENT",
+        "content": "// TODO: Display recentPicks in a ticker or sidebar component"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/FrontOffice.tsx": {
+    "component_names": [
+      "FrontOffice"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/FrontOffice_Baseline.tsx": {
+    "component_names": [
+      "FrontOffice_Baseline"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 3,
+        "type": "MOCK_COMMENT",
+        "content": "// BASELINE VERSION: Mock Data for Visual Regression Testing"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/LiveSim.tsx": {
+    "component_names": [
+      "LiveSim"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 64,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock Trajectory for F-032 Verification"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/MedicalCenter.tsx": {
+    "component_names": [
+      "MedicalCenter"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/OffseasonDashboard.tsx": {
+    "component_names": [
+      "OffseasonDashboard"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/Playbook.tsx": {
+    "component_names": [
+      "PLAYBOOK_LIBRARY",
+      "Playbook"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/SeasonDashboard.tsx": {
+    "component_names": [
+      "SeasonDashboard"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/SeasonDashboardLegacy.tsx": {
+    "component_names": [
+      "SeasonDashboardLegacy"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/Settings.tsx": {
+    "component_names": [
+      "Settings"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/SkillsPage.tsx": {
+    "component_names": [
+      "SkillsPage"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/TeamSelection.tsx": {
+    "component_names": [
+      "TeamSelection"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/TradeCenterPage.tsx": {
+    "component_names": [
+      "TradeCenterPage"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/TrainingCenter.tsx": {
+    "component_names": [
+      "TrainingCenter"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "pages/TrophyRoom.tsx": {
+    "component_names": [
+      "TrophyRoom"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/EnhancedFieldVisualizer.tsx": {
+    "component_names": [
+      "EnhancedFieldVisualizer"
+    ],
+    "props_defs": [
+      {
+        "name": "EnhancedFieldVisualizerProps",
+        "fields": [
+          "gameId?: number;",
+          "showPlayers?: boolean;",
+          "detailLevel?: \"low\" | \"medium\" | \"high\";",
+          "homeColor?: string;",
+          "awayColor?: string;",
+          "showYardLines?: boolean;",
+          "showNumbers?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "EnhancedFieldVisualizer",
+        "props": [
+          "detailLevel",
+          "homeColor",
+          "awayColor"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/EnhancedPlayerCharacter.tsx": {
+    "component_names": [
+      "EnhancedPlayerCharacter"
+    ],
+    "props_defs": [
+      {
+        "name": "EnhancedPlayerCharacterProps",
+        "fields": [
+          "playerData: PlayerVisualData;",
+          "position: [number, number, number];",
+          "isAnimating?: boolean;",
+          "targetPosition?: [number, number, number];",
+          "showNumber?: boolean;",
+          "detailLevel?: \"low\" | \"medium\" | \"high\";"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "EnhancedPlayerCharacter",
+        "props": [
+          "playerData",
+          "position",
+          "isAnimating",
+          "targetPosition",
+          "showNumber",
+          "detailLevel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/FieldVisualizer.tsx": {
+    "component_names": [
+      "FieldVisualizer"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/LiveGameVisualizer.tsx": {
+    "component_names": [
+      "LiveGameVisualizer"
+    ],
+    "props_defs": [
+      {
+        "name": "LiveGameVisualizerProps",
+        "fields": [
+          "gameId: number;",
+          "apiUrl?: string;",
+          "autoConnect?: boolean;",
+          "enableBroadcast?: boolean;",
+          "showControls?: boolean;",
+          "detailLevel?: \"low\" | \"medium\" | \"high\";"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "LiveGameVisualizer",
+        "props": [
+          "gameId",
+          "apiUrl",
+          "autoConnect",
+          "enableBroadcast",
+          "showControls",
+          "detailLevel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [
+      {
+        "variable": "mockPlayResult",
+        "length_chars": 456,
+        "preview": "{       playId: currentPlay,       playType: \"pass\",       outcome: \"complete\",       yardsGained: 25,       passerId: r..."
+      }
+    ],
+    "is_reachable": true
+  },
+  "components/3d/PlayAnimator.tsx": {
+    "component_names": [
+      "PlayAnimator"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayAnimatorProps",
+        "fields": [
+          "onAnimationComplete?: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayAnimator",
+        "props": [
+          "onAnimationComplete"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/PlayerCharacter.tsx": {
+    "component_names": [
+      "PlayerCharacter"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerCharacterProps",
+        "fields": [
+          "position: [number, number, number];",
+          "team: \"offense\" | \"defense\";",
+          "playerNumber?: number;",
+          "isAnimating?: boolean;",
+          "targetPosition?: [number, number, number];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerCharacter",
+        "props": [
+          "position",
+          "team",
+          "playerNumber",
+          "isAnimating",
+          "targetPosition"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/3d/SceneContainer.tsx": {
+    "component_names": [
+      "SceneContainer"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/audio/SoundtrackPlayer.tsx": {
+    "component_names": [
+      "SoundtrackPlayer"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/CoachCard.tsx": {
+    "component_names": [
+      "CoachRole",
+      "CoachName",
+      "CoachTier",
+      "StatGrid",
+      "TierBadge",
+      "CoachArchetype",
+      "CardContainer",
+      "Value",
+      "CoachCard",
+      "Label",
+      "ArchetypeSection"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachCardProps",
+        "fields": [
+          "name: string;",
+          "role: string;",
+          "tier: CoachTier | string;",
+          "archetype: CoachArchetype | string;",
+          "playbookOffense?: string;",
+          "playbookDefense?: string;",
+          "experience: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachCard",
+        "props": [
+          "name",
+          "role",
+          "tier",
+          "archetype",
+          "playbookOffense",
+          "playbookDefense",
+          "experience"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/CoachingDynastyTree.tsx": {
+    "component_names": [
+      "CoachingDynastyTree",
+      "Icon",
+      "DEFAULT_SYNERGY",
+      "BranchIcon",
+      "DEFAULT_PROFILE"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachingDynastyTreeProps",
+        "fields": [
+          "initialProfile?: CoachDynastyProfile;",
+          "initialSynergy?: StaffSynergyBreakdown;",
+          "onSkillUnlock?: (nodeId: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachingDynastyTree",
+        "props": [
+          "initialProfile",
+          "initialSynergy",
+          "onSkillUnlock"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/CoachingTree.tsx": {
+    "component_names": [
+      "CoachingTree",
+      "CoachNode"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachNodeProps",
+        "fields": [
+          "name: string;",
+          "role: string;",
+          "specialty: string;",
+          "color: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachNode",
+        "props": [
+          "name",
+          "role",
+          "specialty",
+          "color"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/CoachingUnlockPanel.tsx": {
+    "component_names": [
+      "CoachingUnlockPanel"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachingUnlockPanelProps",
+        "fields": [
+          "playerId: number;",
+          "availableTraits: Trait[];",
+          "onUnlockComplete: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachingUnlockPanel",
+        "props": [
+          "playerId",
+          "availableTraits",
+          "onUnlockComplete"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/CoachSettings.tsx": {
+    "component_names": [
+      "CoachSettings"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachSettingsProps",
+        "fields": [
+          "teamId: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachSettings",
+        "props": [
+          "teamId"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/coaching/GameplanDashboard.tsx": {
+    "component_names": [
+      "GameplanDashboard"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 47,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock familiarity depending on strategy for demo"
+      },
+      {
+        "line": 87,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock familiarity depending on strategy for demo"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/AnnotationPopover.tsx": {
+    "component_names": [
+      "AnnotationPopover"
+    ],
+    "props_defs": [
+      {
+        "name": "AnnotationPopoverProps",
+        "fields": [
+          "element: ElementMetadata | null;",
+          "screenshot?: string | null;",
+          "onSave: (note: string, researchRequested: boolean) => void;",
+          "onCancel: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "AnnotationPopover",
+        "props": [
+          "element",
+          "screenshot",
+          "onSave",
+          "onCancel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/ElementInspector.tsx": {
+    "component_names": [
+      "ElementInspector"
+    ],
+    "props_defs": [
+      {
+        "name": "ElementInspectorProps",
+        "fields": [
+          "isActive: boolean;",
+          "onElementSelect: (metadata: ElementMetadata) => void;",
+          "onDeactivate: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ElementInspector",
+        "props": [
+          "isActive",
+          "onElementSelect",
+          "onDeactivate"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/FeedbackWidget.tsx": {
+    "component_names": [
+      "FeedbackWidget"
+    ],
+    "props_defs": [
+      {
+        "name": "FeedbackWidgetProps",
+        "fields": [
+          "currentPage?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "FeedbackWidget",
+        "props": [
+          "currentPage"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/NewsFeed.tsx": {
+    "component_names": [
+      "API_BASE",
+      "NewsFeed"
+    ],
+    "props_defs": [
+      {
+        "name": "NewsFeedProps",
+        "fields": [
+          "limit?: number;",
+          "showRefresh?: boolean;",
+          "compact?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "NewsFeed",
+        "props": [
+          "limit",
+          "showRefresh",
+          "compact"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/RegionSelector.tsx": {
+    "component_names": [
+      "RegionSelector"
+    ],
+    "props_defs": [
+      {
+        "name": "RegionSelectorProps",
+        "fields": [
+          "isActive: boolean;",
+          "onCapture: (imageData: string, rect: DOMRect) => void;",
+          "onCancel: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "RegionSelector",
+        "props": [
+          "isActive",
+          "onCapture",
+          "onCancel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/ScreenshotEditor.tsx": {
+    "component_names": [
+      "ScreenshotEditor"
+    ],
+    "props_defs": [
+      {
+        "name": "ScreenshotEditorProps",
+        "fields": [
+          "annotation: Annotation;",
+          "onSave: (updatedAnnotation: Annotation) => void;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ScreenshotEditor",
+        "props": [
+          "annotation",
+          "onSave",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/TaskListPanel.tsx": {
+    "component_names": [
+      "TaskListPanel"
+    ],
+    "props_defs": [
+      {
+        "name": "TaskListPanelProps",
+        "fields": [
+          "annotations: Annotation[];",
+          "onEdit: (annotation: Annotation) => void;",
+          "onRemove: (id: string) => void;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TaskListPanel",
+        "props": [
+          "annotations",
+          "onEdit",
+          "onRemove",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/TraitBadge.tsx": {
+    "component_names": [
+      "TraitBadge"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitBadgeProps",
+        "fields": [
+          "trait: Trait;",
+          "showTooltip?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitBadge",
+        "props": [
+          "trait",
+          "showTooltip"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/common/TraitTooltip.tsx": {
+    "component_names": [
+      "TraitTooltip"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitTooltipProps",
+        "fields": [
+          "trait: Trait;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitTooltip",
+        "props": [
+          "trait"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/debug/PhysicsDebugOverlay.tsx": {
+    "component_names": [
+      "PhysicsDebugOverlay"
+    ],
+    "props_defs": [
+      {
+        "name": "PhysicsDebugOverlayProps",
+        "fields": [
+          "play: PlayTrajectory;",
+          "canvasRef: React.RefObject<FieldCanvasRef | null>;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PhysicsDebugOverlay",
+        "props": [
+          "play",
+          "canvasRef"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/dev/TraitManager.tsx": {
+    "component_names": [
+      "TraitManager"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitManagerProps",
+        "fields": [
+          "playerId: number;",
+          "playerName?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitManager",
+        "props": [
+          "playerId",
+          "playerName"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/DraftAssistant.tsx": {
+    "component_names": [
+      "FogOfWarBadge",
+      "AttributeDisplay",
+      "DraftAssistant"
+    ],
+    "props_defs": [
+      {
+        "name": "DraftAssistantProps",
+        "fields": [
+          "seasonId: number;",
+          "teamId: number;",
+          "pickNumber: number;",
+          "availablePlayers: number[];",
+          "onPlayerSelect?: (prospect: Prospect) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "AttributeDisplay",
+        "props": [
+          "value",
+          "label"
+        ]
+      },
+      {
+        "component": "FogOfWarBadge",
+        "props": [
+          "confidence"
+        ]
+      },
+      {
+        "component": "DraftAssistant",
+        "props": [
+          "seasonId",
+          "teamId",
+          "pickNumber",
+          "availablePlayers",
+          "onPlayerSelect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/FeedbackCollector.tsx": {
+    "component_names": [
+      "FeedbackCollector"
+    ],
+    "props_defs": [
+      {
+        "name": "FeedbackCollectorProps",
+        "fields": [
+          "contextId: string; // ID of the recommendation (e.g., draft pick ID or trade ID)",
+          "contextType: \"draft\" | \"trade\";",
+          "onFeedbackSubmit?: (feedback: FeedbackData) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "FeedbackCollector",
+        "props": [
+          "contextId",
+          "contextType",
+          "onFeedbackSubmit"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/GenesisReveal.tsx": {
+    "component_names": [
+      "GenesisReveal"
+    ],
+    "props_defs": [
+      {
+        "name": "GenesisRevealProps",
+        "fields": [
+          "prospectName: string;",
+          "data: CombineResult;",
+          "onClose: () => void;",
+          "onReveal: () => void;",
+          "isRevealed: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "GenesisReveal",
+        "props": [
+          "prospectName",
+          "data",
+          "onClose",
+          "onReveal",
+          "isRevealed"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/GpsSpeedViz.tsx": {
+    "component_names": [
+      "GpsSpeedViz"
+    ],
+    "props_defs": [
+      {
+        "name": "GpsSpeedVizProps",
+        "fields": [
+          "speedMph: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "GpsSpeedViz",
+        "props": [
+          "speedMph"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/TradePhone.tsx": {
+    "component_names": [
+      "TradePhone"
+    ],
+    "props_defs": [
+      {
+        "name": "TradePhoneProps",
+        "fields": [
+          "onAnswer: () => void;",
+          "hasOffer: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradePhone",
+        "props": [
+          "onAnswer",
+          "hasOffer"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/draft/WarRoomTicker.tsx": {
+    "component_names": [
+      "WarRoomTicker"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/CoachingWidget.tsx": {
+    "component_names": [
+      "CoachingWidget"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "CoachingWidget",
+        "props": [
+          "teamId"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/CrowdNoiseMeter.tsx": {
+    "component_names": [
+      "CrowdNoiseMeter",
+      "Icon",
+      "StyledMeterFill"
+    ],
+    "props_defs": [
+      {
+        "name": "CrowdNoiseMeterProps",
+        "fields": [
+          "decibels: number; // 50 to 120",
+          "stadiumName?: string;",
+          "isAwayTeamOnOffense: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CrowdNoiseMeter",
+        "props": [
+          "decibels",
+          "stadiumName",
+          "isAwayTeamOnOffense"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/FatigueIndicator.tsx": {
+    "component_names": [
+      "FatigueIndicator"
+    ],
+    "props_defs": [
+      {
+        "name": "FatigueIndicatorProps",
+        "fields": [
+          "fatigue: number; // 0.0 to 1.0 (0% to 100%)",
+          "showLabel?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "FatigueIndicator",
+        "props": [
+          "fatigue",
+          "showLabel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/FieldCanvas.tsx": {
+    "component_names": [
+      "TrajectoryOverlay",
+      "FieldAnimator",
+      "FieldCanvas"
+    ],
+    "props_defs": [
+      {
+        "name": "FieldCanvasProps",
+        "fields": [
+          "currentPlay?: PlayTrajectory;",
+          "isPlaying: boolean;",
+          "onPlayComplete?: () => void;",
+          "playbackSpeed?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TrajectoryOverlay",
+        "props": [
+          "play"
+        ]
+      },
+      {
+        "component": "FieldAnimator",
+        "props": [
+          "currentPlay",
+          "isPlaying",
+          "playbackSpeed",
+          "playerPositionsRef",
+          "playTimeRef",
+          "onPlayComplete"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 205,
+        "type": "MOCK_COMMENT",
+        "content": "color={p.player_id < 11 ? 0xff0000 : 0x0000ff} // Mock Offense/Defense based on ID"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/GameCanvas.tsx": {
+    "component_names": [
+      "COLOR_LINES",
+      "FIELD_WIDTH_YARDS",
+      "FieldGraphics",
+      "COLOR_ENDZONE_AWAY",
+      "COLOR_ENDZONE_HOME",
+      "W",
+      "FIELD_WIDTH_PX",
+      "FIELD_HEIGHT_PX",
+      "FIELD_LENGTH_YARDS",
+      "SCALE",
+      "GameCanvas",
+      "H",
+      "YARDS_TO_PIXELS",
+      "COLOR_GRASS"
+    ],
+    "props_defs": [
+      {
+        "name": "GameCanvasProps",
+        "fields": [
+          "width?: number;",
+          "height?: number;",
+          "children?: React.ReactNode;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "GameCanvas",
+        "props": [
+          "width",
+          "height",
+          "children"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/GameStats.tsx": {
+    "component_names": [
+      "GameStats",
+      "StatRow"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "StatRow",
+        "props": [
+          "label",
+          "value"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/InteractionBadge.tsx": {
+    "component_names": [
+      "InteractionBadge"
+    ],
+    "props_defs": [
+      {
+        "name": "InteractionBadgeProps",
+        "fields": [
+          "outcome: InteractionOutcome;",
+          "showLabel?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "InteractionBadge",
+        "props": [
+          "outcome",
+          "showLabel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/InteractionTimeline.tsx": {
+    "component_names": [
+      "InteractionTimeline"
+    ],
+    "props_defs": [
+      {
+        "name": "InteractionTimelineProps",
+        "fields": [
+          "interactions: InteractionResult[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "InteractionTimeline",
+        "props": [
+          "interactions"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/MomentumIndicator.tsx": {
+    "component_names": [
+      "MomentumIndicator"
+    ],
+    "props_defs": [
+      {
+        "name": "MomentumIndicatorProps",
+        "fields": [
+          "label?: string;",
+          "state: MomentumState;",
+          "align?: \"left\" | \"right\";",
+          "size?: \"sm\" | \"md\";"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "MomentumIndicator",
+        "props": [
+          "label",
+          "state",
+          "align",
+          "size"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/PlayerSprite.tsx": {
+    "component_names": [
+      "PlayerSprite"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerSpriteProps",
+        "fields": [
+          "/** Player ID - required for dynamic position updates via dataSource */",
+          "id?: number;",
+          "/** Static X position (used when dataSource not provided) */",
+          "x: number;",
+          "/** Static Y position (used when dataSource not provided) */",
+          "y: number;",
+          "/** Fill color for the player sprite */",
+          "color: number;",
+          "/** Whether player is on offense (affects direction indicator) */",
+          "isOffense?: boolean;",
+          "/** Dynamic position source - when provided with id, sprite updates position from this ref */",
+          "dataSource?: React.MutableRefObject<Map<number, { x: number; y: number"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerSprite",
+        "props": [
+          "id",
+          "x",
+          "y",
+          "color",
+          "isOffense",
+          "dataSource"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/ReplayScrubber.tsx": {
+    "component_names": [
+      "ReplayScrubber"
+    ],
+    "props_defs": [
+      {
+        "name": "ReplayScrubberProps",
+        "fields": [
+          "canvasRef: React.RefObject<FieldCanvasRef>;",
+          "duration: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ReplayScrubber",
+        "props": [
+          "canvasRef",
+          "duration"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/game/WeatherWidget.tsx": {
+    "component_names": [
+      "WeatherWidget"
+    ],
+    "props_defs": [
+      {
+        "name": "WeatherWidgetProps",
+        "fields": [
+          "weather: GameWeather;",
+          "location?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "WeatherWidget",
+        "props": [
+          "weather",
+          "location"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/history/LogoTimeline.tsx": {
+    "component_names": [
+      "MOCK_HISTORY",
+      "LogoTimeline"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 5,
+        "type": "MOCK_VAR_DECLARATION",
+        "content": "const MOCK_HISTORY = ["
+      },
+      {
+        "line": 28,
+        "type": "MOCK_CONSTANT_USAGE",
+        "content": "{MOCK_HISTORY.map((era, i) => ("
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/immersive/BroadcastPanel.tsx": {
+    "component_names": [
+      "BroadcastPanel"
+    ],
+    "props_defs": [
+      {
+        "name": "BroadcastPanelProps",
+        "fields": [
+          "title: string;",
+          "isLive?: boolean;",
+          "className?: string;",
+          "children: React.ReactNode;",
+          "\"data-testid\"?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "BroadcastPanel",
+        "props": [
+          "title",
+          "isLive",
+          "className",
+          "children",
+          "\"data-testid\""
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/immersive/ParallaxScene.tsx": {
+    "component_names": [
+      "ParallaxScene"
+    ],
+    "props_defs": [
+      {
+        "name": "ParallaxSceneProps",
+        "fields": [
+          "className?: string;",
+          "children: React.ReactNode;",
+          "rain?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ParallaxScene",
+        "props": [
+          "className",
+          "children",
+          "rain"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/immersive/RibbonTicker.tsx": {
+    "component_names": [
+      "RibbonTicker"
+    ],
+    "props_defs": [
+      {
+        "name": "RibbonTickerProps",
+        "fields": [
+          "items: Array<string>;",
+          "speedSec?: number;",
+          "\"data-testid\"?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "RibbonTicker",
+        "props": [
+          "items",
+          "speedSec",
+          "\"data-testid\""
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/immersive/SpotlightButton.tsx": {
+    "component_names": [
+      "SpotlightButton"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "SpotlightButton",
+        "props": [
+          "className",
+          "variant",
+          "onPointerMove",
+          "...props"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/immersive/TiltCard.tsx": {
+    "component_names": [
+      "TiltCard"
+    ],
+    "props_defs": [
+      {
+        "name": "TiltCardProps",
+        "fields": [
+          "className?: string;",
+          "children: React.ReactNode;",
+          "intensity?: number; // degrees",
+          "glow?: boolean;",
+          "onClick?: React.MouseEventHandler<HTMLDivElement>;",
+          "\"data-testid\"?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TiltCard",
+        "props": [
+          "className",
+          "children",
+          "intensity",
+          "glow",
+          "onClick",
+          "\"data-testid\""
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/medical/BodyMap.tsx": {
+    "component_names": [
+      "BodyPartPath",
+      "BodyMap"
+    ],
+    "props_defs": [
+      {
+        "name": "BodyPartPathProps",
+        "fields": [
+          "id: BodyZoneKey;",
+          "name: string;",
+          "health: number;",
+          "isSelected: boolean;",
+          "onClick: (id: BodyZoneKey) => void;",
+          "d: string;"
+        ]
+      },
+      {
+        "name": "BodyMapProps",
+        "fields": [
+          "healthData: BodyMapHealthData;",
+          "selectedZone?: BodyZoneKey | null;",
+          "onZoneSelect: (zone: BodyZoneKey) => void;",
+          "playerName?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "BodyPartPath",
+        "props": [
+          "id",
+          "name",
+          "health",
+          "isSelected",
+          "onClick",
+          "d"
+        ]
+      },
+      {
+        "component": "BodyMap",
+        "props": [
+          "healthData",
+          "selectedZone",
+          "onZoneSelect",
+          "playerName"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/medical/FatigueMonitor.tsx": {
+    "component_names": [
+      "FatigueMonitor"
+    ],
+    "props_defs": [
+      {
+        "name": "FatigueMonitorProps",
+        "fields": [
+          "fatigue?: FatigueState | null;",
+          "currentWearLevel?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "FatigueMonitor",
+        "props": [
+          "fatigue",
+          "currentWearLevel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/medical/GenesisBiometricCard.tsx": {
+    "component_names": [
+      "GenesisBiometricCard"
+    ],
+    "props_defs": [
+      {
+        "name": "GenesisBiometricCardProps",
+        "fields": [
+          "biometrics?: BioMetrics | null;",
+          "playerName?: string;",
+          "position?: string;",
+          "isScoutedInitially?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "GenesisBiometricCard",
+        "props": [
+          "biometrics",
+          "playerName",
+          "position",
+          "isScoutedInitially"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 23,
+        "type": "MOCK_COMMENT",
+        "content": "// Defaults derived or mocked if backend biometrics are loading"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/medical/OrthopedicTriageModal.tsx": {
+    "component_names": [
+      "OrthopedicTriageModal",
+      "Icon"
+    ],
+    "props_defs": [
+      {
+        "name": "OrthopedicTriageModalProps",
+        "fields": [
+          "isOpen: boolean;",
+          "playerId?: number;",
+          "playerName?: string;",
+          "zoneKey: string;",
+          "zoneName: string;",
+          "currentIntegrity: number;",
+          "baselineWeeks?: number;",
+          "onClose: () => void;",
+          "onConfirmProtocol: (protocol: MedicalProtocolType) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "OrthopedicTriageModal",
+        "props": [
+          "isOpen",
+          "playerId",
+          "playerName",
+          "zoneKey",
+          "zoneName",
+          "currentIntegrity",
+          "baselineWeeks",
+          "onClose",
+          "onConfirmProtocol"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/medical/TreatmentModal.tsx": {
+    "component_names": [
+      "TreatmentModal"
+    ],
+    "props_defs": [
+      {
+        "name": "TreatmentModalProps",
+        "fields": [
+          "isOpen: boolean;",
+          "playerId?: number;",
+          "playerName?: string;",
+          "partName: string;",
+          "currentHealth: number;",
+          "injurySeverity?: number;",
+          "weeksRemaining?: number;",
+          "onClose: () => void;",
+          "onConfirm: (treatment: TreatmentType) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TreatmentModal",
+        "props": [
+          "isOpen",
+          "playerId",
+          "playerName",
+          "partName",
+          "currentHealth",
+          "injurySeverity",
+          "weeksRemaining",
+          "onClose",
+          "onConfirm"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/news/NewsFeedWidget.tsx": {
+    "component_names": [
+      "NewsItemCard",
+      "NewsFeedWidget"
+    ],
+    "props_defs": [
+      {
+        "name": "NewsFeedWidgetProps",
+        "fields": [
+          "seasonId: number;",
+          "week?: number;",
+          "maxItems?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "NewsItemCard",
+        "props": [
+          "item"
+        ]
+      },
+      {
+        "component": "NewsFeedWidget",
+        "props": [
+          "seasonId",
+          "week",
+          "maxItems"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/news/StorylineTracker.tsx": {
+    "component_names": [
+      "StorylineCard",
+      "StorylineTracker",
+      "STORYLINE_CONFIG"
+    ],
+    "props_defs": [
+      {
+        "name": "StorylineTrackerProps",
+        "fields": [
+          "teamId?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "StorylineCard",
+        "props": [
+          "storyline"
+        ]
+      },
+      {
+        "component": "StorylineTracker",
+        "props": [
+          "teamId"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/news/WeeklyRecapModal.tsx": {
+    "component_names": [
+      "WeeklyRecapModal",
+      "RecapContent"
+    ],
+    "props_defs": [
+      {
+        "name": "WeeklyRecapModalProps",
+        "fields": [
+          "seasonId: number;",
+          "week: number;",
+          "isOpen: boolean;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "RecapContent",
+        "props": [
+          "recap"
+        ]
+      },
+      {
+        "component": "WeeklyRecapModal",
+        "props": [
+          "seasonId",
+          "week",
+          "isOpen",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/DraftBoard.tsx": {
+    "component_names": [
+      "DraftBoard"
+    ],
+    "props_defs": [
+      {
+        "name": "DraftBoardProps",
+        "fields": [
+          "prospects: Prospect[];",
+          "teamNeeds?: TeamNeed[];",
+          "onProspectSelect?: (prospect: Prospect) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DraftBoard",
+        "props": [
+          "prospects",
+          "teamNeeds",
+          "onProspectSelect"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 300,
+        "type": "MOCK_COMMENT",
+        "content": "playerId={String(scoutingReportProspect.id)} // Assuming prospect.id is number, mock service expects string"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/DraftTicker.tsx": {
+    "component_names": [
+      "DraftTicker"
+    ],
+    "props_defs": [
+      {
+        "name": "DraftTickerProps",
+        "fields": [
+          "recentPicks: DraftPickSummary[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DraftTicker",
+        "props": [
+          "recentPicks"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/OffseasonTimeline.tsx": {
+    "component_names": [
+      "OffseasonTimeline"
+    ],
+    "props_defs": [
+      {
+        "name": "OffseasonTimelineProps",
+        "fields": [
+          "currentPhase: string;",
+          "phaseStats?: {",
+          "[key: string]: PhaseStat;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "OffseasonTimeline",
+        "props": [
+          "currentPhase",
+          "phaseStats"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/PlayerProgression.tsx": {
+    "component_names": [
+      "PlayerProgression"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerProgressionProps",
+        "fields": [
+          "progressionData: ProgressionData[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerProgression",
+        "props": [
+          "progressionData"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/SalaryCapWidget.tsx": {
+    "component_names": [
+      "SalaryCapWidget"
+    ],
+    "props_defs": [
+      {
+        "name": "SalaryCapWidgetProps",
+        "fields": [
+          "data: SalaryCapData;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "SalaryCapWidget",
+        "props": [
+          "data"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/ScoutIntelligenceLens.tsx": {
+    "component_names": [
+      "Icon",
+      "ScoutIntelligenceLens",
+      "LENS_METADATA"
+    ],
+    "props_defs": [
+      {
+        "name": "ScoutIntelligenceLensProps",
+        "fields": [
+          "currentLens: ScoutBiasLens;",
+          "onLensChange: (lens: ScoutBiasLens) => void;",
+          "selectedProspect?: ProspectIntelligence | null;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ScoutIntelligenceLens",
+        "props": [
+          "currentLens",
+          "onLensChange",
+          "selectedProspect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/TeamNeeds.tsx": {
+    "component_names": [
+      "TeamNeeds"
+    ],
+    "props_defs": [
+      {
+        "name": "TeamNeedsProps",
+        "fields": [
+          "needs: TeamNeed[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TeamNeeds",
+        "props": [
+          "needs"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/offseason/TradeModal.tsx": {
+    "component_names": [
+      "TradeModal"
+    ],
+    "props_defs": [
+      {
+        "name": "TradeModalProps",
+        "fields": [
+          "seasonId: number;",
+          "currentTeamId: number;",
+          "onClose: () => void;",
+          "onTrade: (targetTeamId: number) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradeModal",
+        "props": [
+          "seasonId",
+          "currentTeamId",
+          "onClose",
+          "onTrade"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 72,
+        "type": "MOCK_COMMENT",
+        "content": "// We'll assume for this MVP integration we just pass empty to trigger the \"general fairness\" check or mock it."
+      },
+      {
+        "line": 73,
+        "type": "DUMMY_COMMENT",
+        "content": "// A better approach is to pass a dummy ID or update props."
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/playbook/FamiliarityBar.tsx": {
+    "component_names": [
+      "FamiliarityBar"
+    ],
+    "props_defs": [
+      {
+        "name": "FamiliarityBarProps",
+        "fields": [
+          "score: number; // 0.0 to 1.0",
+          "showLabel?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "FamiliarityBar",
+        "props": [
+          "score",
+          "showLabel"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/player/ArchetypeBadge.tsx": {
+    "component_names": [
+      "ArchetypeBadge"
+    ],
+    "props_defs": [
+      {
+        "name": "ArchetypeBadgeProps",
+        "fields": [
+          "archetype: PlayerArchetype | string;",
+          "size?: \"sm\" | \"md\" | \"lg\";",
+          "showTooltip?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ArchetypeBadge",
+        "props": [
+          "archetype",
+          "size",
+          "showTooltip"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/player/PlayerBackstoryModal.tsx": {
+    "component_names": [
+      "PlayerBackstoryModal"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerBackstoryModalProps",
+        "fields": [
+          "playerId: string;",
+          "playerName: string;",
+          "isOpen: boolean;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerBackstoryModal",
+        "props": [
+          "playerId",
+          "playerName",
+          "isOpen",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/scouting/ScoutingReportModal.tsx": {
+    "component_names": [
+      "ScoutingReportModal"
+    ],
+    "props_defs": [
+      {
+        "name": "ScoutingReportModalProps",
+        "fields": [
+          "playerId: string;",
+          "playerName: string;",
+          "position: string;",
+          "isOpen: boolean;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ScoutingReportModal",
+        "props": [
+          "playerId",
+          "playerName",
+          "position",
+          "isOpen",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/LeagueLeaders.tsx": {
+    "component_names": [
+      "LeagueLeaders"
+    ],
+    "props_defs": [
+      {
+        "name": "LeagueLeadersProps",
+        "fields": [
+          "leaders: LeagueLeadersType | null;",
+          "loading: boolean;",
+          "teams: Team[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "LeagueLeaders",
+        "props": [
+          "leaders",
+          "loading",
+          "teams"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/NewsFeed.tsx": {
+    "component_names": [
+      "NewsFeed"
+    ],
+    "props_defs": [
+      {
+        "name": "NewsFeedProps",
+        "fields": [
+          "/** Filter news by team name */",
+          "teamFilter?: string;",
+          "/** Maximum items to display */",
+          "maxItems?: number;",
+          "/** Enable compact mode for sidebar */",
+          "compact?: boolean;",
+          "/** Auto-refresh interval in seconds (0 to disable) */",
+          "refreshInterval?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "NewsFeed",
+        "props": [
+          "teamFilter",
+          "maxItems",
+          "compact",
+          "refreshInterval"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/PlayoffBracket.tsx": {
+    "component_names": [
+      "PlayoffBracket"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayoffBracketProps",
+        "fields": [
+          "/** List of all playoff matchups to display in the bracket. */",
+          "matchups: PlayoffMatchup[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayoffBracket",
+        "props": [
+          "matchups"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/QuickActions.tsx": {
+    "component_names": [
+      "QuickActions"
+    ],
+    "props_defs": [
+      {
+        "name": "QuickActionsProps",
+        "fields": [
+          "actions: Action[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "QuickActions",
+        "props": [
+          "actions"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/ScheduleView.tsx": {
+    "component_names": [
+      "ScheduleView",
+      "TeamLogoContainer"
+    ],
+    "props_defs": [
+      {
+        "name": "ScheduleViewProps",
+        "fields": [
+          "/** List of games to display for the selected week. */",
+          "games: Game[];",
+          "/** List of all teams, used for looking up names and logos. */",
+          "teams: Team[];",
+          "/** The currently active week in the season. */",
+          "currentWeek: number;",
+          "/** Total number of weeks in the season. */",
+          "totalWeeks: number;",
+          "/** Callback triggered when the user selects a different week. */",
+          "onWeekChange: (week: number) => void;",
+          "/** Callback triggered when the user wants to simulate a specific game. */",
+          "onSimulateGame?: (gameId: number) => void;",
+          "/** Whether the schedule data is loading. */",
+          "loading?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TeamLogoContainer",
+        "props": [
+          "primaryColor",
+          "children"
+        ]
+      },
+      {
+        "component": "ScheduleView",
+        "props": [
+          "games",
+          "teams",
+          "currentWeek",
+          "totalWeeks",
+          "onWeekChange",
+          "onSimulateGame",
+          "loading"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/SeasonSummaryCard.tsx": {
+    "component_names": [
+      "SeasonSummaryCard"
+    ],
+    "props_defs": [
+      {
+        "name": "SeasonSummaryCardProps",
+        "fields": [
+          "season: Season;",
+          "progress: number;",
+          "actions: Action[];",
+          "champion?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "SeasonSummaryCard",
+        "props": [
+          "season",
+          "progress",
+          "actions",
+          "champion"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/season/StandingsTable.tsx": {
+    "component_names": [
+      "StandingsTable"
+    ],
+    "props_defs": [
+      {
+        "name": "StandingsTableProps",
+        "fields": [
+          "/** List of team standings to display. */",
+          "standings: TeamStanding[];",
+          "/** Whether the data is currently loading. */",
+          "loading?: boolean;",
+          "/** Whether to show a compact version of the table. */",
+          "compact?: boolean;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "StandingsTable",
+        "props": [
+          "standings",
+          "loading",
+          "compact"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/shared/TraitBadge.tsx": {
+    "component_names": [
+      "TraitBadge"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitBadgeProps",
+        "fields": [
+          "name: string;",
+          "tier: \"GOLD\" | \"SILVER\" | \"BRONZE\" | \"COMMON\";",
+          "description?: string;",
+          "iconUrl?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitBadge",
+        "props": [
+          "name",
+          "tier",
+          "description",
+          "iconUrl"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/AbilityUnlockTree.tsx": {
+    "component_names": [
+      "AbilityUnlockTree"
+    ],
+    "props_defs": [
+      {
+        "name": "AbilityUnlockTreeProps",
+        "fields": [
+          "playerId: number;",
+          "playerLevel: number;",
+          "playerXp: number;",
+          "playerPosition: string;",
+          "abilityStatuses: Record<string, PlayerAbilityStatus>;",
+          "onUnlockSuccess: (abilityKey: string, remainingXp?: number) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "AbilityUnlockTree",
+        "props": [
+          "playerId",
+          "playerLevel",
+          "playerXp",
+          "playerPosition",
+          "abilityStatuses",
+          "onUnlockSuccess"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/ConnectionLine.tsx": {
+    "component_names": [
+      "ConnectionLine"
+    ],
+    "props_defs": [
+      {
+        "name": "ConnectionLineProps",
+        "fields": [
+          "start: [number, number, number];",
+          "end: [number, number, number];",
+          "isUnlocked: boolean;",
+          "color?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ConnectionLine",
+        "props": [
+          "start",
+          "end",
+          "isUnlocked",
+          "color",
+          "// Default gold-ish"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/SkillNode3D.tsx": {
+    "component_names": [
+      "ICON_MAP",
+      "IconComponent",
+      "SkillNode3D"
+    ],
+    "props_defs": [
+      {
+        "name": "SkillNode3DProps",
+        "fields": [
+          "id: string;",
+          "position: [number, number, number];",
+          "iconType: string;",
+          "isUnlocked: boolean;",
+          "isEquipped: boolean;",
+          "tier: string;",
+          "label: string;",
+          "onClick: (id: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "SkillNode3D",
+        "props": [
+          "id",
+          "position",
+          "iconType",
+          "isUnlocked",
+          "isEquipped",
+          "// tier is passed but not currently used in rendering\n  label",
+          "onClick"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/SkillsOverlay.tsx": {
+    "component_names": [
+      "SkillsOverlay"
+    ],
+    "props_defs": [
+      {
+        "name": "SkillsOverlayProps",
+        "fields": [
+          "selectedTraitId: string | null;",
+          "selectedTraitDetails: Trait | null;",
+          "onCloseDetail: () => void;",
+          "onEquip: (traitId: string) => void;",
+          "playerPoints: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "SkillsOverlay",
+        "props": [
+          "selectedTraitId",
+          "selectedTraitDetails",
+          "onCloseDetail",
+          "onEquip",
+          "playerPoints"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 83,
+        "type": "MOCK_COMMENT",
+        "content": "{/* Mock data for now, would come from real trait */}"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/SkillTreeCanvas.tsx": {
+    "component_names": [
+      "SkillTreeCanvas"
+    ],
+    "props_defs": [
+      {
+        "name": "SkillTreeCanvasProps",
+        "fields": [
+          "layout: SkillTreeLayout;",
+          "unlockedTraits: string[]; // List of trait IDs",
+          "equippedTraits: string[]; // List of trait IDs",
+          "onNodeClick: (traitId: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "SkillTreeCanvas",
+        "props": [
+          "layout",
+          "unlockedTraits",
+          "equippedTraits",
+          "onNodeClick"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 89,
+        "type": "TODO_COMMENT",
+        "content": "tier=\"GOLD\" // TODO: Read from actual trait data if available, defaulting for visual demo"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/StarfieldBackground.tsx": {
+    "component_names": [
+      "StarfieldBackground"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/skills/TraitBadgeGrid.tsx": {
+    "component_names": [
+      "TraitBadgeGrid"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitBadgeGridProps",
+        "fields": [
+          "unlockedTraits: string[];",
+          "allTraits?: Trait[];",
+          "onTraitClick?: (traitName: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitBadgeGrid",
+        "props": [
+          "unlockedTraits",
+          "onTraitClick"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/DraggableAsset.tsx": {
+    "component_names": [
+      "AssetContainer",
+      "DraggableAsset"
+    ],
+    "props_defs": [
+      {
+        "name": "DraggableAssetProps",
+        "fields": [
+          "id: string;",
+          "player: TradePlayer;",
+          "disabled?: boolean;",
+          "onClick?: () => void;",
+          "showRemoveButton?: boolean;",
+          "onRemove?: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DraggableAsset",
+        "props": [
+          "id",
+          "player",
+          "disabled",
+          "onClick",
+          "showRemoveButton",
+          "onRemove"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/DroppableZone.tsx": {
+    "component_names": [
+      "DroppableZone"
+    ],
+    "props_defs": [
+      {
+        "name": "DroppableZoneProps",
+        "fields": [
+          "id: string;",
+          "title: string;",
+          "players: TradePlayer[];",
+          "onRemove: (playerId: number) => void;",
+          "emptyMessage?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DroppableZone",
+        "props": [
+          "id",
+          "title",
+          "players",
+          "onRemove",
+          "emptyMessage"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/PendingOffers.tsx": {
+    "component_names": [
+      "PendingOffers",
+      "OfferCard"
+    ],
+    "props_defs": [
+      {
+        "name": "PendingOffersProps",
+        "fields": [
+          "teamId: number;",
+          "onCounter?: (offer: TradeOffer) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PendingOffers",
+        "props": [
+          "teamId",
+          "onCounter"
+        ]
+      },
+      {
+        "component": "OfferCard",
+        "props": [
+          "offer",
+          "type"
+        ]
+      }
+    ],
+    "mock_findings": [
+      {
+        "line": 25,
+        "type": "MOCK_COMMENT",
+        "content": "// Silent error for now, mock data fallback handles it"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/TradeAnalyzer.tsx": {
+    "component_names": [
+      "TradeAnalyzer"
+    ],
+    "props_defs": [
+      {
+        "name": "TradeAnalyzerProps",
+        "fields": [
+          "seasonId: number;",
+          "teamId: number;",
+          "targetTeamId?: number | null;",
+          "offeredAssets: number[]; // Player IDs",
+          "requestedAssets: number[]; // Player IDs"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradeAnalyzer",
+        "props": [
+          "seasonId",
+          "teamId",
+          "targetTeamId",
+          "offeredAssets",
+          "requestedAssets"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/TradeBlock.tsx": {
+    "component_names": [
+      "TradeBlock"
+    ],
+    "props_defs": [
+      {
+        "name": "TradeBlockProps",
+        "fields": [
+          "seasonId: number;",
+          "userTeamId: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradeBlock",
+        "props": [
+          "userTeamId"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/TradeCenter.tsx": {
+    "component_names": [
+      "TradeCenter"
+    ],
+    "props_defs": [
+      {
+        "name": "TradeCenterProps",
+        "fields": [
+          "seasonId: number;",
+          "userTeamId: number;",
+          "userTeam: Team;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradeCenter",
+        "props": [
+          "seasonId",
+          "userTeamId",
+          "userTeam"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/TradeNegotiator.tsx": {
+    "component_names": [
+      "TradeNegotiator"
+    ],
+    "props_defs": [
+      {
+        "name": "TradeNegotiatorProps",
+        "fields": [
+          "seasonId: number;",
+          "userTeamId: number;",
+          "initialOffer?: TradeOffer | null; // Support for counter-offers"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TradeNegotiator",
+        "props": [
+          "seasonId",
+          "userTeamId",
+          "initialOffer"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/CampSchedulePlanner.tsx": {
+    "component_names": [
+      "CampSchedulePlanner"
+    ],
+    "props_defs": [
+      {
+        "name": "CampSchedulePlannerProps",
+        "fields": [
+          "onScheduleChange?: (schedule: DaySchedule[]) => void;",
+          "onSimulateCampWeek?: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CampSchedulePlanner",
+        "props": [
+          "onScheduleChange",
+          "onSimulateCampWeek"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/CoachingStyleDial.tsx": {
+    "component_names": [
+      "CoachingStyleDial"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachingStyleDialProps",
+        "fields": [
+          "styles: CoachingStyle[];",
+          "selectedStyle?: string;",
+          "onSelect: (styleName: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachingStyleDial",
+        "props": [
+          "styles",
+          "selectedStyle",
+          "onSelect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/CoachingStylePicker.tsx": {
+    "component_names": [
+      "STYLES",
+      "Icon",
+      "CoachingStylePicker"
+    ],
+    "props_defs": [
+      {
+        "name": "CoachingStylePickerProps",
+        "fields": [
+          "currentStyle: CoachingStyleType;",
+          "onStyleSelect: (style: CoachingStyleType) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "CoachingStylePicker",
+        "props": [
+          "currentStyle",
+          "onStyleSelect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/DrillCard.tsx": {
+    "component_names": [
+      "DrillCard"
+    ],
+    "props_defs": [
+      {
+        "name": "DrillCardProps",
+        "fields": [
+          "drill: Drill;",
+          "isSelected?: boolean;",
+          "onSelect?: (drill: Drill) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DrillCard",
+        "props": [
+          "drill",
+          "isSelected",
+          "onSelect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/DrillCard3D.tsx": {
+    "component_names": [
+      "DrillCard3D"
+    ],
+    "props_defs": [
+      {
+        "name": "DrillCard3DProps",
+        "fields": [
+          "drill: Drill;",
+          "isSelected: boolean;",
+          "isRecommended?: boolean;",
+          "onSelect: (drill: Drill) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DrillCard3D",
+        "props": [
+          "drill",
+          "isSelected",
+          "isRecommended",
+          "onSelect"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/DrillSelector.tsx": {
+    "component_names": [
+      "DrillSelector",
+      "CATEGORY_CONFIG"
+    ],
+    "props_defs": [
+      {
+        "name": "DrillSelectorProps",
+        "fields": [
+          "position?: string;",
+          "seasonPhase?: string;",
+          "onDrillSelect: (drill: Drill) => void;",
+          "selectedDrill?: Drill | null;",
+          "playerWeaknesses?: string[]; // New prop for recommendations"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "DrillSelector",
+        "props": [
+          "position",
+          "// seasonPhase - reserved for future season-phase filtering\n  onDrillSelect",
+          "selectedDrill",
+          "playerWeaknesses"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/PlayerProgressChart.tsx": {
+    "component_names": [
+      "PlayerProgressChart",
+      "StyledPreviousBar",
+      "StyledGlowBar",
+      "STAT_COLORS"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerProgressChartProps",
+        "fields": [
+          "playerId: number;",
+          "playerName: string;",
+          "position: string;",
+          "stats: StatProgress[];",
+          "weeklyXP?: number[];"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerProgressChart",
+        "props": [
+          "playerName",
+          "position",
+          "stats",
+          "weeklyXP"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/TrainingSessionResult.tsx": {
+    "component_names": [
+      "TrainingSessionResult"
+    ],
+    "props_defs": [
+      {
+        "name": "TrainingSessionResultProps",
+        "fields": [
+          "result: TrainingResult;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TrainingSessionResult",
+        "props": [
+          "result",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/training/WeeklyScheduleTimeline.tsx": {
+    "component_names": [
+      "DAYS",
+      "WeeklyScheduleTimeline"
+    ],
+    "props_defs": [
+      {
+        "name": "WeeklyScheduleTimelineProps",
+        "fields": [
+          "selectedDay?: string;",
+          "onSelectDay: (day: string) => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "WeeklyScheduleTimeline",
+        "props": [
+          "selectedDay",
+          "onSelectDay"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/transitions/PageTransition.tsx": {
+    "component_names": [
+      "StaggeredTransition",
+      "SlideTransition",
+      "PageTransition",
+      "FadeBlurTransition"
+    ],
+    "props_defs": [
+      {
+        "name": "PageTransitionProps",
+        "fields": [
+          "children: React.ReactNode;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PageTransition",
+        "props": [
+          "children"
+        ]
+      },
+      {
+        "component": "SlideTransition",
+        "props": [
+          "children"
+        ]
+      },
+      {
+        "component": "FadeBlurTransition",
+        "props": [
+          "children"
+        ]
+      },
+      {
+        "component": "StaggeredTransition",
+        "props": [
+          "children"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trophy/TrophyAssets.tsx": {
+    "component_names": [
+      "SilverMaterial",
+      "MvpTrophy",
+      "LombardiTrophy",
+      "DivisionTitleTrophy",
+      "CrystalMaterial",
+      "GoldMaterial"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trophy/TrophyCaseScene.tsx": {
+    "component_names": [
+      "TrophyCaseScene"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/Badge.tsx": {
+    "component_names": [
+      "Badge"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "Badge",
+        "props": [
+          "children",
+          "variant",
+          "className",
+          "...props"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/Card.tsx": {
+    "component_names": [
+      "CardTitle",
+      "Card",
+      "CardFooter",
+      "CardContent",
+      "CardHeader"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [
+      {
+        "component": "Card",
+        "props": [
+          "children",
+          "className",
+          "variant",
+          "...props"
+        ]
+      },
+      {
+        "component": "CardHeader",
+        "props": [
+          "children",
+          "className",
+          "...props"
+        ]
+      },
+      {
+        "component": "CardTitle",
+        "props": [
+          "children",
+          "className",
+          "...props"
+        ]
+      },
+      {
+        "component": "CardContent",
+        "props": [
+          "children",
+          "className",
+          "...props"
+        ]
+      },
+      {
+        "component": "CardFooter",
+        "props": [
+          "children",
+          "className",
+          "...props"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/ChemistryBadge.tsx": {
+    "component_names": [
+      "ChemistryBadge"
+    ],
+    "props_defs": [
+      {
+        "name": "ChemistryBadgeProps",
+        "fields": [
+          "level: number; // 0.0 to 1.0",
+          "consecutiveGames: number;",
+          "status: string; // \"NONE\", \"DEVELOPING\", \"STRONG\", \"ELITE\", \"MAXIMUM\"",
+          "bonuses?: {",
+          "pass_block: number;",
+          "run_block: number;",
+          "awareness: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "ChemistryBadge",
+        "props": [
+          "level",
+          "consecutiveGames",
+          "status",
+          "bonuses"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/DraggableCard.tsx": {
+    "component_names": [
+      "DraggableCard"
+    ],
+    "props_defs": [
+      {
+        "name": "DraggableCardProps",
+        "fields": [
+          "name: string;",
+          "position: string;",
+          "rating: number;",
+          "team: string;",
+          "jerseyNumber?: number;",
+          "speed?: number;",
+          "strength?: number;",
+          "agility?: number;",
+          "acceleration?: number;",
+          "awareness?: number;",
+          "devTrait?: \"NORMAL\" | \"STAR\" | \"SUPERSTAR\" | \"XFACTOR\";",
+          "morale?: string;",
+          "className?: string;",
+          "traits?: string[];",
+          "archetype?: PlayerArchetype | string;",
+          "onClick?: () => void;",
+          "testId?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/EnhancedPlayerProfile.tsx": {
+    "component_names": [
+      "EnhancedPlayerProfile"
+    ],
+    "props_defs": [
+      {
+        "name": "EnhancedPlayerProfileProps",
+        "fields": [
+          "playerId: number;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "EnhancedPlayerProfile",
+        "props": [
+          "playerId",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/LoadingSpinner.tsx": {
+    "component_names": [
+      "LoadingSpinner"
+    ],
+    "props_defs": [
+      {
+        "name": "LoadingSpinnerProps",
+        "fields": [
+          "size?: \"small\" | \"medium\" | \"large\";",
+          "color?: string;",
+          "text?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "LoadingSpinner",
+        "props": [
+          "size",
+          "color",
+          "text"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/PlayerCard.tsx": {
+    "component_names": [
+      "PlayerCard"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerCardProps",
+        "fields": [
+          "name: string;",
+          "position: string;",
+          "rating: number;",
+          "team: string;",
+          "jerseyNumber?: number;",
+          "speed?: number;",
+          "strength?: number;",
+          "agility?: number;",
+          "acceleration?: number;",
+          "awareness?: number;",
+          "devTrait?: \"NORMAL\" | \"STAR\" | \"SUPERSTAR\" | \"XFACTOR\";",
+          "morale?: string;",
+          "className?: string;",
+          "traits?: string[];",
+          "archetype?: PlayerArchetype | string;",
+          "onClick?: () => void;",
+          "testId?: string;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerCard",
+        "props": [
+          "name",
+          "position",
+          "rating",
+          "team",
+          "jerseyNumber",
+          "speed",
+          "strength",
+          "agility",
+          "devTrait",
+          "className",
+          "onClick",
+          "testId",
+          "archetype"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/PlayerModal.tsx": {
+    "component_names": [
+      "PlayerModal"
+    ],
+    "props_defs": [
+      {
+        "name": "PlayerModalProps",
+        "fields": [
+          "playerId: number;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PlayerModal",
+        "props": [
+          "playerId",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/PrimeCard.tsx": {
+    "component_names": [
+      "PrimeCard"
+    ],
+    "props_defs": [
+      {
+        "name": "PrimeCardProps",
+        "fields": [
+          "children: ReactNode;",
+          "className?: string;",
+          "title?: string;",
+          "icon?: ReactNode;",
+          "variant?: \"default\" | \"danger\" | \"glass\";",
+          "delay?: number;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "PrimeCard",
+        "props": [
+          "children",
+          "className",
+          "title",
+          "icon",
+          "variant",
+          "delay"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/Sidebar.tsx": {
+    "component_names": [
+      "Sidebar"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/Telestrator.tsx": {
+    "component_names": [
+      "Telestrator"
+    ],
+    "props_defs": [
+      {
+        "name": "TelestratorProps",
+        "fields": [
+          "isActive: boolean;",
+          "onClose: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "Telestrator",
+        "props": [
+          "isActive",
+          "onClose"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/ui/TraitNotification.tsx": {
+    "component_names": [
+      "TraitNotification"
+    ],
+    "props_defs": [
+      {
+        "name": "TraitNotificationProps",
+        "fields": [
+          "traitName: string;",
+          "playerName: string;",
+          "type?: \"UNLOCK\" | \"UPGRADE\" | \"LOST\";",
+          "duration?: number;",
+          "onDismiss?: () => void;"
+        ]
+      }
+    ],
+    "prop_destructuring": [
+      {
+        "component": "TraitNotification",
+        "props": [
+          "traitName",
+          "playerName",
+          "type",
+          "duration",
+          "onDismiss"
+        ]
+      }
+    ],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "broadcast/CutsceneDirector.ts": {
+    "component_names": [
+      "DEFAULT_CONFIG",
+      "CutsceneDirector"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "config/SkillTreeConfig.ts": {
+    "component_names": [
+      "ICON_KEYS",
+      "SKILL_TREE_LAYOUTS",
+      "QB_SKILL_TREE"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "constants/index.ts": {
+    "component_names": [
+      "MAX_PAGE_SIZE",
+      "GAME_REFRESH_INTERVAL",
+      "QUERY_KEYS",
+      "API_TIMEOUT",
+      "STANDINGS_REFRESH_INTERVAL",
+      "DEFAULT_PAGE_SIZE",
+      "PLAYOFF_WEEKS",
+      "DEFAULT_LEADERS_COUNT",
+      "REGULAR_SEASON_WEEKS"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "context/AudioTypes.ts": {
+    "component_names": [
+      "STORAGE_KEY",
+      "AudioContext"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "context/ThemeContext.ts": {
+    "component_names": [
+      "ThemeContext"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "context/useAudio.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "context/useTheme.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "hooks/useAnnotationList.ts": {
+    "component_names": [
+      "STORAGE_KEY"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "hooks/useErrorBoundary.ts": {
+    "component_names": [
+      "ChildComponent",
+      "ErrorBoundaryContext"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "hooks/useGestureController.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "hooks/useLivingWorld.ts": {
+    "component_names": [
+      "API_BASE"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "hooks/useLoaderData.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "hooks/usePlayAnimator.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "hooks/useWebSocket.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/abilitiesApi.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/api.ts": {
+    "component_names": [
+      "API_BASE_URL"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/draft.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/errorLogger.ts": {
+    "component_names": [
+      "ErrorCategory",
+      "STORAGE_KEY",
+      "ErrorSeverity",
+      "DEFAULT_CONFIG",
+      "SESSION_ID_KEY"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "services/ImageGenService.ts": {
+    "component_names": [
+      "ImageGenService"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 54,
+        "type": "MOCK_COMMENT",
+        "content": "// Return mock image"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "services/medicalApi.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/physicsService.ts": {
+    "component_names": [
+      "WS_BASE_URL",
+      "API_BASE_URL",
+      "PhysicsStreamClient"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "services/scouting.ts": {
+    "component_names": [
+      "MOCK_BACKSHIORY",
+      "MOCK_SCOUTING_REPORT"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 4,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock service for Scouting Reports and Backstories"
+      },
+      {
+        "line": 7,
+        "type": "MOCK_CONSTANT_USAGE",
+        "content": "const MOCK_SCOUTING_REPORT: ScoutingReport = {"
+      },
+      {
+        "line": 32,
+        "type": "MOCK_CONSTANT_USAGE",
+        "content": "const MOCK_BACKSHIORY: PlayerBackstory = {"
+      },
+      {
+        "line": 59,
+        "type": "MOCK_CONSTANT_USAGE",
+        "content": "...MOCK_SCOUTING_REPORT,"
+      },
+      {
+        "line": 71,
+        "type": "MOCK_CONSTANT_USAGE",
+        "content": "...MOCK_BACKSHIORY,"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/season.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/simulation.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/soundEffects.ts": {
+    "component_names": [
+      "AudioCtxClass"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/tradeApi.ts": {
+    "component_names": [
+      "API_BASE_URL"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 148,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock data for MVP - would be real endpoint"
+      },
+      {
+        "line": 158,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock implementation - would be real endpoint"
+      },
+      {
+        "line": 170,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock implementation"
+      },
+      {
+        "line": 187,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock implementation"
+      },
+      {
+        "line": 216,
+        "type": "MOCK_COMMENT",
+        "content": "// Try to fetch from backend, fall back to mock if needed"
+      },
+      {
+        "line": 246,
+        "type": "MOCK_COMMENT",
+        "content": "// Currently using a mock behavior as the backend /respond endpoint isn't fully defined in the viewed file"
+      },
+      {
+        "line": 259,
+        "type": "MOCK_COMMENT",
+        "content": "// Mock implementation"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/trainingApi.ts": {
+    "component_names": [
+      "API_URL"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/traits.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "services/traitService.ts": {
+    "component_names": [
+      "API_BASE_URL"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/useBroadcastStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "store/useDebugStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/useGameStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/useLiveVisualizationStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/usePlayLogStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/useScoreboardStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "store/useSettingsStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "store/useSimulationStore.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "styles/motion.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/ability.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/archetypes.ts": {
+    "component_names": [
+      "ARCHETYPE_CONFIG",
+      "PlayerArchetype"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/broadcast.ts": {
+    "component_names": [
+      "PHASE_TRANSITIONS",
+      "BroadcastPhase"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/combine.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/deepDive.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/engine-state.ts": {
+    "component_names": [
+      "DEFAULT_HIVE_STATE",
+      "DEFAULT_RPG_STATE",
+      "DEFAULT_GENESIS_STATE",
+      "DEFAULT_SOCIETY_STATE",
+      "DEFAULT_EMPIRE_STATE",
+      "DEFAULT_ENGINE_DATA"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "types/interaction.ts": {
+    "component_names": [
+      "InteractionOutcome"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/medical.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/momentum.ts": {
+    "component_names": [
+      "MomentumState"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/offseason.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/physics.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/playbook.ts": {
+    "component_names": [
+      "FamiliarityLevel"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/playoff.ts": {
+    "component_names": [
+      "PlayoffRound",
+      "PlayoffConference"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/season.ts": {
+    "component_names": [
+      "GameType",
+      "SeasonStatus"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/simulation.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/stats.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/telemetry.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/trade.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/training.ts": {
+    "component_names": [
+      "DrillCategory",
+      "CoachingStyleType",
+      "SeasonPhase"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/trait.ts": {
+    "component_names": [
+      "TraitSource",
+      "TraitEffectType"
+    ],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "utils/cssSelector.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [
+      {
+        "line": 85,
+        "type": "PLACEHOLDER_COMMENT",
+        "content": "// Try placeholder (for inputs)"
+      },
+      {
+        "line": 86,
+        "type": "MOCK_VAR_DECLARATION",
+        "content": "const placeholder = element.getAttribute(\"placeholder\");"
+      }
+    ],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "types/api/scouting.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": false
+  },
+  "components/news/index.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/trades/index.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/transitions/index.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  },
+  "components/transitions/transitionVariants.ts": {
+    "component_names": [],
+    "props_defs": [],
+    "prop_destructuring": [],
+    "mock_findings": [],
+    "mock_obj_summaries": [],
+    "is_reachable": true
+  }
+}

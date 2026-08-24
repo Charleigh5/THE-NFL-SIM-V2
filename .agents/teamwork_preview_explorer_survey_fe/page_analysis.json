@@ -1,0 +1,1360 @@
+{
+  "Dashboard.tsx": {
+    "imported_comps": [
+      [
+        "useState, useEffect",
+        "react"
+      ],
+      [
+        "Link",
+        "react-router-dom"
+      ],
+      [
+        "useQuery",
+        "@tanstack/react-query"
+      ],
+      [
+        "motion",
+        "framer-motion"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ],
+      [
+        "useTheme",
+        "../context/useTheme"
+      ],
+      [
+        "soundEffects",
+        "../services/soundEffects"
+      ]
+    ],
+    "jsx_tags": [
+      "Activity",
+      "BookOpen",
+      "ChevronRight",
+      "CloudSun",
+      "DollarSign",
+      "Flame",
+      "Link",
+      "Play",
+      "Season",
+      "Users"
+    ],
+    "apis": [
+      "seasonApi.initSeason",
+      "api.get",
+      "seasonApi.getCurrentSeason",
+      "seasonApi.advanceWeek",
+      "seasonApi.simulateWeek"
+    ],
+    "stores": [
+      "useTheme"
+    ],
+    "states": [
+      [
+        "currentSeason",
+        "null"
+      ],
+      [
+        "simulating",
+        "false"
+      ]
+    ],
+    "lines": 480
+  },
+  "DepthChart.tsx": {
+    "imported_comps": [
+      [
+        "useState, useEffect, useRef",
+        "react"
+      ],
+      [
+        "Reorder",
+        "framer-motion"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "ChemistryBadge",
+        "../components/ui/ChemistryBadge"
+      ]
+    ],
+    "jsx_tags": [
+      "ChemistryBadge",
+      "ChemistryMetadata",
+      "Player",
+      "Reorder"
+    ],
+    "apis": [
+      "api.updateDepthChart",
+      "api.getTeamChemistry",
+      "api.getTeamRoster"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "roster",
+        "[]"
+      ],
+      [
+        "selectedPosition",
+        "\"QB\""
+      ],
+      [
+        "positionPlayers",
+        "[]"
+      ],
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "saving",
+        "false"
+      ],
+      [
+        "chemistry",
+        "null"
+      ]
+    ],
+    "lines": 259
+  },
+  "DraftLegacy.tsx": {
+    "imported_comps": [
+      [
+        "useEffect, useMemo, useState",
+        "react"
+      ],
+      [
+        "api",
+        "../services/api"
+      ]
+    ],
+    "jsx_tags": [
+      "LegacyProspect",
+      "LegacySeason"
+    ],
+    "apis": [
+      "api.get",
+      "api.post"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "season",
+        "null"
+      ],
+      [
+        "prospects",
+        "[]"
+      ],
+      [
+        "filterPos",
+        "\"ALL\""
+      ],
+      [
+        "selectedProspectId",
+        "null"
+      ],
+      [
+        "aiText",
+        "\"\""
+      ]
+    ],
+    "lines": 177
+  },
+  "DraftRoom.tsx": {
+    "imported_comps": [
+      [
+        "useLoaderData",
+        "react-router-dom"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ],
+      [
+        "draftService",
+        "../services/draft"
+      ],
+      [
+        "DraftBoard",
+        "../components/offseason/DraftBoard"
+      ],
+      [
+        "DraftTicker",
+        "../components/offseason/DraftTicker"
+      ],
+      [
+        "TradeModal",
+        "../components/offseason/TradeModal"
+      ],
+      [
+        "DraftAssistant",
+        "../components/draft/DraftAssistant"
+      ],
+      [
+        "WarRoomTicker",
+        "../components/draft/WarRoomTicker"
+      ],
+      [
+        "TradePhone",
+        "../components/draft/TradePhone"
+      ],
+      [
+        "ParallaxScene",
+        "../components/immersive/ParallaxScene"
+      ],
+      [
+        "RibbonTicker",
+        "../components/immersive/RibbonTicker"
+      ],
+      [
+        "BroadcastPanel",
+        "../components/immersive/BroadcastPanel"
+      ],
+      [
+        "styles",
+        "./DraftRoom.module.css"
+      ]
+    ],
+    "jsx_tags": [
+      "BroadcastPanel",
+      "DraftAssistant",
+      "DraftBoard",
+      "DraftPickDetail",
+      "DraftPickSummary",
+      "ParallaxScene",
+      "Prospect",
+      "TeamNeed",
+      "TradeModal",
+      "TradePhone",
+      "WarRoomTicker"
+    ],
+    "apis": [
+      "seasonApi.simulateDraft",
+      "seasonApi.getTeamNeeds",
+      "seasonApi.makePick",
+      "seasonApi.getCurrentSeason",
+      "seasonApi.getCurrentPick",
+      "seasonApi.tradeCurrentPick"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "seasonId",
+        "loaderData?.season?.id ?? null"
+      ],
+      [
+        "currentPick",
+        "null"
+      ],
+      [
+        "prospects",
+        "[]"
+      ],
+      [
+        "teamNeeds",
+        "[]"
+      ],
+      [
+        "simulating",
+        "false"
+      ],
+      [
+        "showTradeModal",
+        "false"
+      ],
+      [
+        "loading",
+        "true"
+      ]
+    ],
+    "lines": 256
+  },
+  "FrontOffice.tsx": {
+    "imported_comps": [
+      [
+        "useEffect, useState, useMemo",
+        "react"
+      ],
+      [
+        "DraggableCard",
+        "../components/ui/DraggableCard"
+      ],
+      [
+        "CoachSettings",
+        "../components/coaching/CoachSettings"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "useTheme",
+        "../context/useTheme"
+      ],
+      [
+        "soundEffects",
+        "../services/soundEffects"
+      ],
+      [
+        "Users, Filter, ArrowUpDown, DollarSign, X",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "ArrowUpDown",
+      "CoachSettings",
+      "DollarSign",
+      "DraggableCard",
+      "Filter",
+      "Player",
+      "PositionFilter",
+      "SortOption",
+      "Team",
+      "Users",
+      "X"
+    ],
+    "apis": [
+      "api.getTeam",
+      "api.getTeamRoster"
+    ],
+    "stores": [
+      "useTheme"
+    ],
+    "states": [
+      [
+        "roster",
+        "[]"
+      ],
+      [
+        "selectedPlayer",
+        "null"
+      ],
+      [
+        "team",
+        "null"
+      ],
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "positionFilter",
+        "\"ALL\""
+      ],
+      [
+        "sortBy",
+        "\"OVR\""
+      ]
+    ],
+    "lines": 362
+  },
+  "FrontOffice_Baseline.tsx": {
+    "imported_comps": [
+      [
+        "DraggableCard",
+        "../components/ui/DraggableCard"
+      ]
+    ],
+    "jsx_tags": [
+      "DraggableCard"
+    ],
+    "apis": [],
+    "stores": [],
+    "states": [],
+    "lines": 29
+  },
+  "LiveSim.tsx": {
+    "imported_comps": [
+      [
+        "useState, useRef",
+        "react"
+      ],
+      [
+        "useSimulationStore",
+        "../store/useSimulationStore"
+      ],
+      [
+        "useWebSocket",
+        "../hooks/useWebSocket"
+      ],
+      [
+        "simulationService",
+        "../services/simulation"
+      ],
+      [
+        "ScoreBoard",
+        "../components/ScoreBoard"
+      ],
+      [
+        "GameClock",
+        "../components/GameClock"
+      ],
+      [
+        "FieldCanvas",
+        "../components/game/FieldCanvas"
+      ],
+      [
+        "PlayByPlayFeed",
+        "../components/PlayByPlayFeed"
+      ],
+      [
+        "PhysicsDebugOverlay",
+        "../components/debug/PhysicsDebugOverlay"
+      ],
+      [
+        "WeatherWidget",
+        "../components/game/WeatherWidget"
+      ],
+      [
+        "GameStats",
+        "../components/game/GameStats"
+      ],
+      [
+        "CoachingWidget",
+        "../components/game/CoachingWidget"
+      ],
+      [
+        "MomentumIndicator",
+        "../components/game/MomentumIndicator"
+      ],
+      [
+        "CrowdNoiseMeter",
+        "../components/game/CrowdNoiseMeter"
+      ],
+      [
+        "GridironVisualizer",
+        "../components/GridironVisualizer"
+      ],
+      [
+        "LiveGameVisualizer",
+        "../components/3d/LiveGameVisualizer"
+      ],
+      [
+        "soundEffects",
+        "../services/soundEffects"
+      ],
+      [
+        "Play, Pause, FastForward, Activity, BarChart2, Layers, Tv",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "Activity",
+      "BarChart2",
+      "CoachingWidget",
+      "CrowdNoiseMeter",
+      "FastForward",
+      "FieldCanvas",
+      "FieldCanvasRef",
+      "GameClock",
+      "GameStats",
+      "GridironVisualizer",
+      "Layers",
+      "LiveGameVisualizer",
+      "MomentumIndicator",
+      "Pause",
+      "PhysicsDebugOverlay",
+      "Play",
+      "PlayByPlayFeed",
+      "ScoreBoard",
+      "Tv",
+      "ViewMode",
+      "WeatherWidget"
+    ],
+    "apis": [],
+    "stores": [
+      "useSimulationStore"
+    ],
+    "states": [
+      [
+        "isLoading",
+        "false"
+      ],
+      [
+        "viewMode",
+        "\"field\""
+      ]
+    ],
+    "lines": 308
+  },
+  "MedicalCenter.tsx": {
+    "imported_comps": [
+      [
+        "AnimatePresence",
+        "framer-motion"
+      ],
+      [
+        "BodyMap",
+        "../components/medical/BodyMap"
+      ],
+      [
+        "GenesisBiometricCard",
+        "../components/medical/GenesisBiometricCard"
+      ],
+      [
+        "FatigueMonitor",
+        "../components/medical/FatigueMonitor"
+      ],
+      [
+        "OrthopedicTriageModal",
+        "../components/medical/OrthopedicTriageModal"
+      ],
+      [
+        "medicalApi",
+        "../services/medicalApi"
+      ],
+      [
+        "ShieldCheck, Stethoscope, AlertCircle, HeartPulse, Activity",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "Activity",
+      "AlertCircle",
+      "AnimatePresence",
+      "BioMetrics",
+      "BodyMap",
+      "BodyMapHealthData",
+      "BodyZoneKey",
+      "FatigueMonitor",
+      "FatigueState",
+      "GenesisBiometricCard",
+      "HeartPulse",
+      "InjuredPlayer",
+      "OrthopedicTriageModal",
+      "ShieldCheck",
+      "Stethoscope"
+    ],
+    "apis": [
+      "medicalApi.getPlayerHealth",
+      "medicalApi.getPlayerFatigue",
+      "medicalApi.applyTreatment",
+      "medicalApi.getPlayerBioMetrics"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "selectedPart",
+        "null"
+      ],
+      [
+        "showModal",
+        "false"
+      ],
+      [
+        "activePlayerIndex",
+        "0"
+      ],
+      [
+        "loading",
+        "false"
+      ],
+      [
+        "injuredRoster",
+        "[\n    {\n      player_id: 101,\n      first_name: \"Kyler\",\n      last_name: \"Murray\",\n      position: \"QB\",\n      injury_type: \"Right Knee - Knee Sprain\",\n      injury_status: \"QUESTIONABLE\",\n      severity: 4,\n      weeks_remaining: 3,\n      body_part: \"rightLeg\",\n    },\n    {\n      player_id: 102,\n      first_name: \"James\",\n      last_name: \"Conner\",\n      position: \"RB\",\n      injury_type: \"Left Leg - Hamstring Tightness\",\n      injury_status: \"OUT\",\n      severity: 3,\n      weeks_remaining: 2,\n      body_part: \"leftLeg\",\n    },\n    {\n      player_id: 103,\n      first_name: \"Hollywood\",\n      last_name: \"Brown\",\n      position: \"WR\",\n      injury_type: \"Neck - Cervical Strain\",\n      injury_status: \"ACTIVE\",\n      severity: 2,\n      weeks_remaining: 1,\n      body_part: \"neck\",\n    },\n  ]"
+      ],
+      [
+        "healthData",
+        "{\n    head: 95,\n    neck: 88,\n    torso: 92,\n    rightArm: 68, // Injured\n    leftArm: 98,\n    rightLeg: 94,\n    leftLeg: 82,\n    generalWear: 14,\n  }"
+      ],
+      [
+        "biometrics",
+        "null"
+      ],
+      [
+        "fatigue",
+        "null"
+      ]
+    ],
+    "lines": 355
+  },
+  "OffseasonDashboard.tsx": {
+    "imported_comps": [
+      [
+        "useNavigate, useLoaderData",
+        "react-router-dom"
+      ],
+      [
+        "useSettingsStore",
+        "../store/useSettingsStore"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "NewsFeed",
+        "../components/season/NewsFeed"
+      ],
+      [
+        "LoadingSpinner",
+        "../components/ui/LoadingSpinner"
+      ],
+      [
+        "TeamNeeds",
+        "../components/offseason/TeamNeeds"
+      ],
+      [
+        "DraftBoard",
+        "../components/offseason/DraftBoard"
+      ],
+      [
+        "OffseasonTimeline",
+        "../components/offseason/OffseasonTimeline"
+      ],
+      [
+        "PlayerProgression",
+        "../components/offseason/PlayerProgression"
+      ],
+      [
+        "SalaryCapWidget",
+        "../components/offseason/SalaryCapWidget"
+      ],
+      [
+        "ParallaxScene",
+        "../components/immersive/ParallaxScene"
+      ],
+      [
+        "BroadcastPanel",
+        "../components/immersive/BroadcastPanel"
+      ],
+      [
+        "stylesModule",
+        "./OffseasonDashboard.module.css"
+      ]
+    ],
+    "jsx_tags": [
+      "BroadcastPanel",
+      "DraftBoard",
+      "DraftPickSummary",
+      "LoadingSpinner",
+      "NewsFeed",
+      "OffseasonTimeline",
+      "ParallaxScene",
+      "PlayerProgression",
+      "PlayerProgressionResult",
+      "Prospect",
+      "Record",
+      "SalaryCapData",
+      "SalaryCapWidget",
+      "Season",
+      "Team",
+      "TeamNeed",
+      "TeamNeeds"
+    ],
+    "apis": [
+      "seasonApi.simulateProgression",
+      "api.getTeam",
+      "api.post",
+      "seasonApi.simulateDraft",
+      "api.get",
+      "seasonApi.getTeamNeeds",
+      "seasonApi.getCurrentSeason",
+      "seasonApi.simulateFreeAgency",
+      "seasonApi.getSalaryCapData",
+      "seasonApi.startOffseason",
+      "seasonApi.getEnhancedTeamNeeds",
+      "seasonApi.getTopProspects"
+    ],
+    "stores": [
+      "useSettingsStore"
+    ],
+    "states": [
+      [
+        "season",
+        "loaderData?.season ?? null"
+      ],
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "processing",
+        "false"
+      ],
+      [
+        "message",
+        "null"
+      ],
+      [
+        "settingsAttempted",
+        "false"
+      ],
+      [
+        "team",
+        "null"
+      ],
+      [
+        "needs",
+        "[]"
+      ],
+      [
+        "prospects",
+        "[]"
+      ],
+      [
+        "draftSummary",
+        "[]"
+      ],
+      [
+        "playerProgression",
+        "[]"
+      ],
+      [
+        "salaryCapData",
+        "null"
+      ]
+    ],
+    "lines": 499
+  },
+  "Playbook.tsx": {
+    "imported_comps": [
+      [
+        "useState",
+        "react"
+      ],
+      [
+        "GameplanDashboard",
+        "../components/coaching/GameplanDashboard"
+      ],
+      [
+        "CoachingTree",
+        "../components/coaching/CoachingTree"
+      ],
+      [
+        "Telestrator",
+        "../components/ui/Telestrator"
+      ],
+      [
+        "soundEffects",
+        "../services/soundEffects"
+      ],
+      [
+        "BookOpen, Compass, Pencil, Trash2, ArrowRight",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "ArrowRight",
+      "BookOpen",
+      "CoachingTree",
+      "Compass",
+      "FootballPlay",
+      "GameplanDashboard",
+      "Pencil",
+      "Telestrator",
+      "Trash2"
+    ],
+    "apis": [],
+    "stores": [],
+    "states": [
+      [
+        "activeTab",
+        "\"GAMEPLAN\""
+      ],
+      [
+        "selectedPlay",
+        "PLAYBOOK_LIBRARY[0]"
+      ],
+      [
+        "isTelestratorActive",
+        "false"
+      ]
+    ],
+    "lines": 312
+  },
+  "SeasonDashboard.tsx": {
+    "imported_comps": [
+      [
+        "useLoaderData",
+        "react-router-dom"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "StandingsTable",
+        "../components/season/StandingsTable"
+      ],
+      [
+        "ScheduleView",
+        "../components/season/ScheduleView"
+      ],
+      [
+        "PlayoffBracket",
+        "../components/season/PlayoffBracket"
+      ],
+      [
+        "LoadingSpinner",
+        "../components/ui/LoadingSpinner"
+      ],
+      [
+        "LeagueLeaders",
+        "../components/season/LeagueLeaders"
+      ],
+      [
+        "SeasonSummaryCard",
+        "../components/season/SeasonSummaryCard"
+      ],
+      [
+        "NewsFeed",
+        "../components/season/NewsFeed"
+      ],
+      [
+        "ParallaxScene",
+        "../components/immersive/ParallaxScene"
+      ],
+      [
+        "RibbonTicker",
+        "../components/immersive/RibbonTicker"
+      ],
+      [
+        "BroadcastPanel",
+        "../components/immersive/BroadcastPanel"
+      ],
+      [
+        "stylesModule",
+        "./SeasonDashboard.module.css"
+      ]
+    ],
+    "jsx_tags": [
+      "BroadcastPanel",
+      "Game",
+      "LeagueLeaders",
+      "LeagueLeadersType",
+      "LoadingSpinner",
+      "NewsFeed",
+      "ParallaxScene",
+      "PlayoffBracket",
+      "PlayoffMatchup",
+      "RibbonTicker",
+      "ScheduleView",
+      "Season",
+      "SeasonAwards",
+      "SeasonSummaryCard",
+      "StandingsTable",
+      "Team",
+      "TeamStanding"
+    ],
+    "apis": [
+      "seasonApi.getStandings",
+      "seasonApi.getProjectedAwards",
+      "seasonApi.getPlayoffBracket",
+      "seasonApi.initSeason",
+      "seasonApi.getSeasonSummary",
+      "seasonApi.simulateWeek",
+      "seasonApi.getLeagueLeaders",
+      "seasonApi.advancePlayoffRound",
+      "seasonApi.getSeason",
+      "seasonApi.generatePlayoffs",
+      "seasonApi.advanceWeek",
+      "seasonApi.simulateGame",
+      "seasonApi.getSchedule",
+      "seasonApi.simulateToPlayoffs",
+      "api.getTeams"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "season",
+        "loaderData?.season ?? null"
+      ],
+      [
+        "teams",
+        "loaderData?.teams ?? []"
+      ],
+      [
+        "standings",
+        "loaderData?.standings ?? []"
+      ],
+      [
+        "games",
+        "loaderData?.schedule ?? []"
+      ],
+      [
+        "playoffBracket",
+        "\n    loaderData?.playoffBracket ?? []\n  "
+      ],
+      [
+        "leaders",
+        "loaderData?.leaders ?? null"
+      ],
+      [
+        "seasonProgress",
+        "loaderData?.seasonProgress ?? 0"
+      ],
+      [
+        "awards",
+        "loaderData?.awards ?? null"
+      ],
+      [
+        "activeTab",
+        "\"overview\""
+      ],
+      [
+        "loading",
+        "!loaderData?.season"
+      ],
+      [
+        "simulating",
+        "false"
+      ],
+      [
+        "error",
+        "null"
+      ]
+    ],
+    "lines": 623
+  },
+  "SeasonDashboardLegacy.tsx": {
+    "imported_comps": [
+      [
+        "useEffect, useState",
+        "react"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ]
+    ],
+    "jsx_tags": [
+      "LegacyScheduleGame",
+      "LegacySeason",
+      "LegacyStanding"
+    ],
+    "apis": [
+      "seasonApi.getCurrentSeason",
+      "api.get"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "season",
+        "null"
+      ],
+      [
+        "standings",
+        "[]"
+      ],
+      [
+        "schedule",
+        "[]"
+      ],
+      [
+        "loading",
+        "true"
+      ]
+    ],
+    "lines": 108
+  },
+  "Settings.tsx": {
+    "imported_comps": [
+      [
+        "useSettingsStore",
+        "../store/useSettingsStore"
+      ],
+      [
+        "useNavigate",
+        "react-router-dom"
+      ]
+    ],
+    "jsx_tags": [],
+    "apis": [],
+    "stores": [
+      "useSettingsStore"
+    ],
+    "states": [],
+    "lines": 102
+  },
+  "SkillsPage.tsx": {
+    "imported_comps": [
+      [
+        "useLoaderData, useParams, Link",
+        "react-router-dom"
+      ],
+      [
+        "SkillTreeCanvas",
+        "../components/skills/SkillTreeCanvas"
+      ],
+      [
+        "SkillsOverlay",
+        "../components/skills/SkillsOverlay"
+      ],
+      [
+        "AbilityUnlockTree",
+        "../components/skills/AbilityUnlockTree"
+      ],
+      [
+        "TraitBadgeGrid",
+        "../components/skills/TraitBadgeGrid"
+      ],
+      [
+        "ArchetypeBadge",
+        "../components/player/ArchetypeBadge"
+      ],
+      [
+        "SKILL_TREE_LAYOUTS",
+        "../config/SkillTreeConfig"
+      ],
+      [
+        "traitsApi",
+        "../services/traits"
+      ],
+      [
+        "abilitiesApi",
+        "../services/abilitiesApi"
+      ],
+      [
+        "Sparkles, ChevronLeft, User, Flame",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "AbilityUnlockTree",
+      "ArchetypeBadge",
+      "ChevronLeft",
+      "Flame",
+      "Link",
+      "Record",
+      "SkillTreeCanvas",
+      "SkillsOverlay",
+      "Sparkles",
+      "TraitBadgeGrid",
+      "User"
+    ],
+    "apis": [
+      "traitsApi.unlockTrait"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "activeTab",
+        "\"3D_TREE\""
+      ],
+      [
+        "selectedTraitId",
+        "null"
+      ],
+      [
+        "playerXp",
+        "7500"
+      ],
+      [
+        "unlockedTraits",
+        "[\n    \"field_general\",\n    \"gunslinger\",\n    \"possession_receiver\",\n    \"ragknow\",\n  ]"
+      ]
+    ],
+    "lines": 299
+  },
+  "TeamSelection.tsx": {
+    "imported_comps": [
+      [
+        "useSettingsStore",
+        "../store/useSettingsStore"
+      ],
+      [
+        "useNavigate",
+        "react-router-dom"
+      ],
+      [
+        "useTeamSelectionData",
+        "../hooks/useLoaderData"
+      ],
+      [
+        "useTheme",
+        "../context/useTheme"
+      ],
+      [
+        "motion",
+        "framer-motion"
+      ],
+      [
+        "ParallaxScene",
+        "../components/immersive/ParallaxScene"
+      ],
+      [
+        "TiltCard",
+        "../components/immersive/TiltCard"
+      ],
+      [
+        "RibbonTicker",
+        "../components/immersive/RibbonTicker"
+      ],
+      [
+        "soundEffects",
+        "../services/soundEffects"
+      ],
+      [
+        "Filter, CheckCircle2",
+        "lucide-react"
+      ]
+    ],
+    "jsx_tags": [
+      "CheckCircle2",
+      "ConfFilter",
+      "Filter",
+      "ParallaxScene",
+      "RibbonTicker",
+      "TiltCard"
+    ],
+    "apis": [],
+    "stores": [
+      "useTheme",
+      "useSettingsStore"
+    ],
+    "states": [
+      [
+        "confFilter",
+        "\"ALL\""
+      ]
+    ],
+    "lines": 180
+  },
+  "TradeCenterPage.tsx": {
+    "imported_comps": [
+      [
+        "useNavigate",
+        "react-router-dom"
+      ],
+      [
+        "useSettingsStore",
+        "../store/useSettingsStore"
+      ],
+      [
+        "seasonApi",
+        "../services/season"
+      ],
+      [
+        "api",
+        "../services/api"
+      ],
+      [
+        "tradeApi",
+        "../services/tradeApi"
+      ],
+      [
+        "TradeNegotiator",
+        "../components/trades/TradeNegotiator"
+      ],
+      [
+        "TradeBlock",
+        "../components/trades/TradeBlock"
+      ],
+      [
+        "PendingOffers",
+        "../components/trades/PendingOffers"
+      ],
+      [
+        "LoadingSpinner",
+        "../components/ui/LoadingSpinner"
+      ]
+    ],
+    "jsx_tags": [
+      "LoadingSpinner",
+      "PendingOffers",
+      "Season",
+      "Team",
+      "TradeBlock",
+      "TradeNegotiator",
+      "TradeOffer",
+      "TradeTab"
+    ],
+    "apis": [
+      "seasonApi.getCurrentSeason",
+      "api.getTeam",
+      "tradeApi.getPendingOffers"
+    ],
+    "stores": [
+      "useSettingsStore"
+    ],
+    "states": [
+      [
+        "season",
+        "null"
+      ],
+      [
+        "team",
+        "null"
+      ],
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "activeTab",
+        "\"negotiate\""
+      ],
+      [
+        "pendingOffersCount",
+        "0"
+      ],
+      [
+        "counterOffer",
+        "null"
+      ],
+      [
+        "settingsAttempted",
+        "false"
+      ]
+    ],
+    "lines": 223
+  },
+  "TrainingCenter.tsx": {
+    "imported_comps": [
+      [
+        "Canvas",
+        "@react-three/fiber"
+      ],
+      [
+        "motion, AnimatePresence",
+        "framer-motion"
+      ],
+      [
+        "StarfieldBackground",
+        "../components/skills/StarfieldBackground"
+      ],
+      [
+        "DrillSelector",
+        "../components/training/DrillSelector"
+      ],
+      [
+        "CoachingStyleDial",
+        "../components/training/CoachingStyleDial"
+      ],
+      [
+        "WeeklyScheduleTimeline",
+        "../components/training/WeeklyScheduleTimeline"
+      ],
+      [
+        "TrainingSessionResult",
+        "../components/training/TrainingSessionResult"
+      ],
+      [
+        "trainingApi",
+        "../services/trainingApi"
+      ],
+      [
+        "ChevronLeft, User, AlertTriangle",
+        "lucide-react"
+      ],
+      [
+        "Link, useParams",
+        "react-router-dom"
+      ],
+      [
+        "axios",
+        "axios"
+      ]
+    ],
+    "jsx_tags": [
+      "AlertTriangle",
+      "AnimatePresence",
+      "Canvas",
+      "ChevronLeft",
+      "CoachingStyle",
+      "CoachingStyleDial",
+      "Drill",
+      "DrillSelector",
+      "Link",
+      "PlayerWeaknessData",
+      "StarfieldBackground",
+      "TrainingResult",
+      "TrainingSessionResult",
+      "User",
+      "WeeklyScheduleTimeline"
+    ],
+    "apis": [
+      "trainingApi.getCoachingStyles",
+      "trainingApi.executeTraining"
+    ],
+    "stores": [],
+    "states": [
+      [
+        "styles",
+        "[]"
+      ],
+      [
+        "selectedDrill",
+        "null"
+      ],
+      [
+        "selectedStyle",
+        "\"smart\""
+      ],
+      [
+        "loading",
+        "true"
+      ],
+      [
+        "isTraining",
+        "false"
+      ],
+      [
+        "trainingResult",
+        "null"
+      ],
+      [
+        "playerData",
+        "null"
+      ],
+      [
+        "playerWeaknesses",
+        "[]"
+      ]
+    ],
+    "lines": 271
+  },
+  "TrophyRoom.tsx": {
+    "imported_comps": [
+      [
+        "TrophyCaseScene",
+        "../components/trophy/TrophyCaseScene"
+      ],
+      [
+        "useTheme",
+        "../context/useTheme"
+      ],
+      [
+        "motion",
+        "framer-motion"
+      ]
+    ],
+    "jsx_tags": [
+      "TrophyCaseScene"
+    ],
+    "apis": [],
+    "stores": [
+      "useTheme"
+    ],
+    "states": [],
+    "lines": 36
+  }
+}

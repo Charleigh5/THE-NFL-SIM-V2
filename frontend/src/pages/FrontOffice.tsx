@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { DraggableCard } from "../components/ui/DraggableCard";
+import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import CoachSettings from "../components/coaching/CoachSettings";
 import { api } from "../services/api";
 import { useTheme } from "../context/useTheme";
@@ -26,6 +27,7 @@ type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
 export const FrontOffice = () => {
   const [roster, setRoster] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [enhancedPlayerId, setEnhancedPlayerId] = useState<number | null>(null);
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("ALL");
@@ -352,8 +354,26 @@ export const FrontOffice = () => {
                 <span className="text-white font-bold">{selectedPlayer.experience ?? 3} yrs</span>
               </div>
             </div>
+
+            <button
+              onClick={() => {
+                setEnhancedPlayerId(selectedPlayer.id);
+                setSelectedPlayer(null);
+              }}
+              className="w-full mt-4 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-header text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all"
+            >
+              Open In-Depth Biometrics & Traits Dossier
+            </button>
           </div>
         </div>
+      )}
+
+      {/* In-Depth Enhanced Player Profile Modal */}
+      {enhancedPlayerId && (
+        <EnhancedPlayerProfile
+          playerId={enhancedPlayerId}
+          onClose={() => setEnhancedPlayerId(null)}
+        />
       )}
     </div>
   );

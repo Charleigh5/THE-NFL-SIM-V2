@@ -32,10 +32,10 @@ export interface Prospect {
   projected_round?: number;
   combine?: CombineResult;
   genesis_revealed?: boolean;
-  scouting_report?: ScoutingReport;
+  scouting_report?: ProspectScoutingReport;
 }
 
-export interface ScoutingReport {
+export interface ProspectScoutingReport {
   prospect_id: string;
   completion: number;
   attributes: Record<
@@ -50,6 +50,8 @@ export interface ScoutingReport {
   strengths: string[];
   weaknesses: string[];
 }
+
+export type ScoutingReport = ProspectScoutingReport;
 
 export interface DraftPickSummary {
   round: number;

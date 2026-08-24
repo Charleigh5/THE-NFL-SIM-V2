@@ -71,7 +71,7 @@ def configure_routes(app: FastAPI) -> None:
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
         playbook, physics_api, training, live_visualization, broadcast, coaches
     )
-    from app.api import combine, news_router
+    from app.api import combine
 
     # Core system routes
     app.include_router(system.router)
@@ -107,6 +107,7 @@ def configure_routes(app: FastAPI) -> None:
     # Trading and scouting
     app.include_router(trades.router)
     app.include_router(scouts.router)
+    app.include_router(scouts.scouts_router)
 
     # Medical and gameplans
     app.include_router(medical.router)
@@ -124,8 +125,5 @@ def configure_routes(app: FastAPI) -> None:
 
     # Scouting Combine
     app.include_router(combine.router, prefix="/api")
-
-    # News feed & Storylines
-    app.include_router(news_router.router)
 
 

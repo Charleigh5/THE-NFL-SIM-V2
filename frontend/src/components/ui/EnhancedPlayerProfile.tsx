@@ -6,6 +6,7 @@
  */
 
 import React, { useEffect, useState } from "react";
+import { api } from "../../services/api";
 import {
   X,
   TrendingUp,
@@ -159,29 +160,35 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
   const [activeTab, setActiveTab] = useState<"stats" | "attributes" | "traits">("stats");
 
   useEffect(() => {
+    let isCancelled = false;
+
     const fetchProfile = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:8000/api/players/${playerId}/profile`);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch player profile");
+        const data = await api.getPlayerProfile(playerId);
+        if (!isCancelled) {
+          setProfile(data as unknown as EnhancedPlayerProfileData);
         }
-
-        const data = await response.json();
-        setProfile(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load profile");
+        if (!isCancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load profile");
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
 
     if (playerId) {
       fetchProfile();
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [playerId]);
 
   if (!playerId) return null;

@@ -1,116 +1,98 @@
-# Handoff Report: Challenger 1 — Milestone M1 Adversarial Review
-
-**Agent:** Challenger 1 (Empirical Challenger / Critic & Specialist)  
-**Milestone:** M1 (Database Schema Consolidation & ORM Integrity)  
-**Working Directory:** `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\challenger1_m1`  
-**Date:** 2026-08-22  
-**Verdict:** `REQUEST_CHANGES`
-
----
+# Milestone 1 Empirical Challenge Report: Component Mounting & Route Integrity
 
 ## 1. Observation
 
-An adversarial stress test suite (`backend/tests/integration/test_m1_adversarial_stress.py`) was constructed and executed against the Milestone M1 codebase.
+### 1.1 Empirical AST Dependency & Import Analysis
+We constructed and executed a comprehensive TypeScript AST parser (`typescript@5.9.3`) across all 206 `.ts` and `.tsx` source files in `frontend/src/`:
+- **Total Source Files Scanned**: 206
+- **Unresolved Static/Dynamic Imports**: 0
+- **Dynamic Imports**: 1 (`src/router.tsx` -> `src/services/traits.ts`) -- verified target file exists and exports `traitsApi`.
+- **Circular Dependency Cycles**: 0 (Tarjan / DFS cycle detection found 0 strongly connected cycles).
 
-### 1.1 Hybrid Property & Query Expressions (PASSED)
-- **Multi-column sorting and filtering**: Queries sorting on `Player.speed.desc()`, `Player.strength.asc()`, `Player.agility.desc()` with complex boolean predicates (`and_(Player.speed >= 90, or_(Player.strength >= 90, Player.agility >= 95))`) executed cleanly without SQLAlchemy `Comparator` exceptions.
-- **SQL Aggregations**: `func.avg(Player.speed)`, `func.max(Player.speed)`, `func.min(Player.speed)`, `func.sum(Player.contract_salary)` executed directly in SQLite via scalar subqueries.
-- **Roster aggregations with GROUP BY / HAVING**: Grouping by `Team.id` and filtering with `HAVING func.avg(Player.speed) > 90` succeeded.
-- **Hybrid mutations**: Python attribute setters (`p.speed = 94`, `p.injury_status = "OUT"`, `p.contract_salary = 50000000`) synchronized to the database upon commit, and subsequent SQL scalar subquery expressions returned identical updated values.
+### 1.2 Route Graph & Component Reachability Analysis
+Starting from root entrypoints (`src/main.tsx`, `src/App.tsx`, `src/router.tsx`):
+- Found 166 reachable TS/TSX source files (plus static assets/CSS)
+- **All 13 Core Application Views Mapped**:
+  1. Franchise War Room / Dynasty Hub Dashboard: `pages/Dashboard.tsx` (`/`, `/dashboard`)
+  2. Tactical Live Sim Chalkboard & Field Radar: `pages/LiveSim.tsx` (`/live-sim`)
+  3. Offseason Draft Room with Multi-Lens Scouting: `pages/DraftRoom.tsx` (`/offseason/draft`, `/draft`)
+  4. Coaching Dynasty Tree & Staff Chemistry Matrix: `pages/Playbook.tsx` / `CoachingDynastyTree.tsx` (`/playbook`)
+  5. Medical Trauma Center & 5-Pathway Orthopedic Triage: `pages/MedicalCenter.tsx` (`/medical-center`, `/medical`)
+  6. Depth Chart & Positional Hierarchy: `pages/DepthChart.tsx` (`/empire/depth-chart`, `/depth-chart`)
+  7. Roster Management & Capology Contracts: `pages/FrontOffice.tsx` (`/empire/front-office`, `/roster`)
+  8. Season Schedule & Week Simulator: `pages/SeasonDashboard.tsx` (`/season`, `/season-dashboard`)
+  9. League Standings & Playoff Bracket: `pages/SeasonDashboard.tsx`
+  10. Player Profile & Biometric Card: `pages/SkillsPage.tsx` (`/players/:playerId/skills`, `/skills`) + `EnhancedPlayerProfile` modal
+  11. Front Office GM Trades: `pages/TradeCenterPage.tsx` (`/empire/trade-center`, `/trades`, `/trade-center`)
+  12. Cryptographic Replay Verification Telemetry: `pages/LiveSim.tsx` (`ReplayScrubber`, `PlayAnimator`, `PhysicsDebugOverlay`)
+  13. League Settings & Weather Simulation Config: `pages/Settings.tsx` (`/settings`)
 
-### 1.2 SQLite WAL Mode & Concurrency (PASSED)
-- Multi-threaded stress testing with 8 concurrent worker threads performing 160 mixed operations (inserts, hybrid queries, attribute mutations) on a file-based SQLite database configured with `PRAGMA journal_mode=WAL;` and `PRAGMA busy_timeout=5000;` completed with zero `OperationalError: database is locked` errors.
+### 1.3 Milestone 1 Target Components Mount Verification
+Verified that 100% of the M1 target components are mounted and actively wired to their parent views:
+- `components/game/ReplayScrubber.tsx`, mounted in `pages/LiveSim.tsx` (lines 18, 244-247)
+- `components/3d/PlayAnimator.tsx`, mounted in `pages/LiveSim.tsx` (lines 19, 233)
+- `components/medical/TreatmentModal.tsx`, mounted in `pages/MedicalCenter.tsx` (lines 8, 384-420)
+- `components/ui/EnhancedPlayerProfile.tsx`, mounted in `pages/FrontOffice.tsx` (lines 3, 366-382) and `pages/DepthChart.tsx` (lines 6, 269-275)
+- `components/news/StorylineTracker.tsx`, mounted in `pages/Dashboard.tsx` (lines 24, 480)
+- `components/news/NewsFeedWidget.tsx`, mounted in `pages/Dashboard.tsx` (lines 25, 485)
+- `components/history/LogoTimeline.tsx`, mounted in `pages/TrophyRoom.tsx` (lines 2, 27-29)
 
-### 1.3 Cascade Deletion & Orphan Rows (FAILED)
-- When deleting a `Player` that has associated `PlayerTrait` or `PlayerGameStarts` records, SQLAlchemy crashes during `session.commit()`:
-  ```
-  AssertionError: Dependency rule on column 'player.id' tried to blank-out primary key column 'player_traits.player_id' on instance '<PlayerTrait at 0x...>'
-  ```
-  ```
-  sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: player_game_starts.player_id
-  [SQL: UPDATE player_game_starts SET player_id=? WHERE player_game_starts.id = ?]
-  [parameters: (None, 1)]
-  ```
-- **Code Locations**:
-  - `backend/app/models/player.py:821`:
-    ```python
-    player_traits: Mapped[List["PlayerTrait"]] = relationship("PlayerTrait", back_populates="player")
-    ```
-  - `backend/app/models/player.py:989`:
-    ```python
-    game_starts: Mapped[List["PlayerGameStarts"]] = relationship("PlayerGameStarts", back_populates="player")
-    ```
-  - `backend/app/models/player.py:986`:
-    ```python
-    season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player")
-    ```
-  - `backend/app/models/player.py:992`:
-    ```python
-    body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False)
-    ```
+### 1.4 Unmounted Component Inventory (25 components)
+Found 25 component files not in the active route reachability tree:
+- [Superseded / Legacy Prototypes (scheduled for M3 deduplication)] (16 files):
+  `components/3d/FieldVisualizer.tsx`, `components/3d/PlayerCharacter.tsx`, `components/3d/SceneContainer.tsx`, `components/common/NewsFeed.tsx`, `components/common/TraitBadge.tsx`, `components/common/TraitTooltip.tsx`, `components/shared/TraitBadge.tsx`, `components/offseason/DraftTicker.tsx`, `components/trades/TradeCenter.tsx`, `components/transitions/PageTransition.tsx`, `components/transitions/transitionVariants.ts`, `components/ui/Sidebar.tsx`, `components/ErrorBoundary.tsx`, `components/FieldView.tsx`, `components/training/CoachingStylePicker.tsx`, `components/training/DrillCard.tsx`.
+- [Unmounted Feature Subcomponents] (9 files):
+  `components/training/PlayerProgressChart.tsx`, `components/training/CampSchedulePlanner.tsx`, `components/news/WeeklyRecapModal.tsx`, `components/coaching/CoachingUnlockPanel.tsx`, `components/coaching/CoachCard.tsx`, `components/game/FatigueIndicator.tsx`, `components/ui/TraitNotification.tsx`, `components/dev/TraitManager.tsx`, `components/ui/Badge.tsx`.
+
+### 1.5 Production Compilation Gate
+Executed `npm run build` (`tsc -b && vite build`):
+```text
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+vite v7.3.0 building client environment for production...
+âœ“ 3741 modules transformed.
+rendering chunks...
+dist/index.html                             0.46 kB â”‚ gzip:   0.29 kB
+dist/assets/index-B83n2LbM.css            258.26 kB â”‚ gzip:  41.16 kB
+dist/assets/colorToUniform-BXaCBwVl.js      1.70 kB â”‚ gzip:   0.65 kB
+dist/assets/WebGPURenderer-B4_UtVe3.js     37.37 kB â”‚ gzip:  10.29 kB
+dist/assets/browserAll-CfV9GKtJ.js         42.89 kB â”‚ gzip:  11.23 kB
+dist/assets/SharedSystems-Ddo4qo29.js      51.12 kB â”‚ gzip:  13.82 kB
+dist/assets/WebGLRenderer-baNRB1H3.js      63.37 kB â”‚ gzip:  17.35 kB
+dist/assets/webworkerAll-hCqRzfdS.js       69.94 kB â”‚ gzip:  19.75 kB
+dist/assets/index-B7oF6ykX.js           2,621.23 kB â”‚ gzip: 766.72 kB
+âœ“ built in 16.72s
+```
+Exit code: 0. Zero TypeScript compiler errors.
 
 ---
 
 ## 2. Logic Chain
-
-1. **Root Cause of Cascade Failure**:
-   - In SQLAlchemy, when a parent model (`Player`) is deleted via the ORM, any `relationship()` that lacks explicit `cascade="all, delete-orphan"` defaults to attempting to nullify the foreign key on child objects (`player_id = None`).
-   - For `PlayerTrait`, `player_id` is part of the composite primary key (`primary_key=True`). Setting a primary key to `None` raises an `AssertionError`.
-   - For `PlayerGameStarts`, `player_id` is defined with `nullable=False`. Setting `player_id=None` issues an `UPDATE` that violates SQLite's NOT NULL constraint.
-   - For `BodyPart` and `PlayerSeasonStats`, deleting a `Player` similarly orphans rows or causes nullification failures.
-2. **Impact on System Lifecycle**:
-   - Any operation that deletes a player (e.g. roster trimming, player retirement cleanup, draft pool purges) will crash with unhandled server exceptions whenever traits or game starts have been recorded for that player.
-3. **Required Fix**:
-   - Update `backend/app/models/player.py` to add `cascade="all, delete-orphan"` to `player_traits`, `game_starts`, `body_health`, and `season_stats`.
+1. AST graph analysis parsed 100% of TypeScript and TSX files in `frontend/src/` and verified that import paths resolve without a single missing file or unresolved dynamic import.
+2. Cycle detection on the complete module import graph confirmed exactly 0 circular dependency cycles.
+3. Every target high-value component specified in Milestone 1 (`ReplayScrubber`, `PlayAnimator`, `TreatmentModal`, `EnhancedPlayerProfile`, `StorylineTracker`, `NewsFeedWidget`, `LogoTimeline`) is actively imported, rendered, and hooked up to component state and handlers in active parent views.
+4. All 13 primary application views and support routes are registered in `router.tsx` with appropriate data loaders and error boundaries.
+5. The full production compilation pipeline (`tsc -b && vite build`) executes cleanly with zero errors.
 
 ---
 
 ## 3. Caveats
-
-- Deletion of `Player` instances containing *only* the 5 1:1 decomposition satellites (`attributes`, `contract`, `physics`, `injury`, `progression`) succeeded without error because those 5 relationships already contain `cascade="all, delete-orphan"`.
-- The failure is isolated specifically to `player_traits`, `game_starts`, `body_health`, and `season_stats` relationships on the `Player` model.
+- Runtime backend API responses and live endpoint wire-ups (replacing mock fallbacks in services/loaders) are scheduled for Milestone 2.
+- The 16 superseded prototype components and 9 unmounted subcomponents are cataloged and slated for consolidation during Milestone 3 (Deduplication).
 
 ---
 
 ## 4. Conclusion
+**VERDICT: APPROVE**
 
-**Verdict: `REQUEST_CHANGES`**
-
-Milestone M1 made significant, solid progress:
-- F01 (`PlayerGameStarts` unification), F02 (Alembic model discovery), F03 (Profile trait loading), F04 (Hybrid property SQL expressions), and F06 (SQLite WAL pragmas) are verified and robust.
-- However, F05 (Cascade Deletion & ORM Integrity) is incomplete because deleting a player with active traits or game starts triggers fatal ORM crashes.
-
-### Actionable Remediation for Worker M1:
-In `backend/app/models/player.py`:
-1. Update `player_traits`:
-   ```python
-   player_traits: Mapped[List["PlayerTrait"]] = relationship("PlayerTrait", back_populates="player", cascade="all, delete-orphan")
-   ```
-2. Update `game_starts`:
-   ```python
-   game_starts: Mapped[List["PlayerGameStarts"]] = relationship("PlayerGameStarts", back_populates="player", cascade="all, delete-orphan")
-   ```
-3. Update `body_health`:
-   ```python
-   body_health: Mapped["BodyPart"] = relationship("BodyPart", back_populates="player", uselist=False, cascade="all, delete-orphan")
-   ```
-4. Update `season_stats`:
-   ```python
-   season_stats: Mapped[List["PlayerSeasonStats"]] = relationship("PlayerSeasonStats", back_populates="player", cascade="all, delete-orphan")
-   ```
+Milestone 1 satisfies all criteria for component mounting, route tree reachability across the 13 views, zero circular dependencies, zero unresolved dynamic imports, and successful clean production compilation.
 
 ---
 
 ## 5. Verification Method
-
-To reproduce the failure and independently verify:
+To independently verify:
 ```bash
-pytest backend/tests/integration/test_m1_adversarial_stress.py -v
+# 1. Verify clean production build and zero type errors
+cd frontend && npm run build
 ```
-
-### Expected Output Before Fix:
-- `test_adversarial_cascade_delete_with_traits_and_game_starts` FAILS with `AssertionError: Dependency rule on column 'player.id' tried to blank-out primary key column 'player_traits.player_id'`.
-
-### Target Output After Remediation:
-- 6 passed in `test_m1_adversarial_stress.py`
-- 22 passed in baseline test suite (`test_models.py`, `test_draft_logic.py`, `test_m1_database_consolidation.py`, etc.).

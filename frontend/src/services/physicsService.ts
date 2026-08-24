@@ -83,7 +83,7 @@ export interface StreamFrame {
  * Simulate a play and get all frames at once.
  */
 export async function simulatePlay(request: SimulatePlayRequest): Promise<SimulatePlayResponse> {
-  const response = await fetch(`${API_BASE_URL}/physics/simulate`, {
+  const response = await fetch(`${API_BASE_URL}/api/physics/simulate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
@@ -100,7 +100,7 @@ export async function simulatePlay(request: SimulatePlayRequest): Promise<Simula
  * Get physics engine constants.
  */
 export async function getPhysicsConstants(): Promise<PhysicsConstants> {
-  const response = await fetch(`${API_BASE_URL}/physics/constants`);
+  const response = await fetch(`${API_BASE_URL}/api/physics/constants`);
 
   if (!response.ok) {
     throw new Error(`Failed to fetch constants: ${response.statusText}`);
@@ -129,7 +129,7 @@ export class PhysicsStreamClient {
   private onComplete: CompleteCallback | null = null;
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const wsUrl = `${WS_BASE_URL}/physics/stream`;
+      const wsUrl = `${WS_BASE_URL}/api/physics/stream`;
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {

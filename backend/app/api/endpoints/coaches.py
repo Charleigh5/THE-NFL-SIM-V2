@@ -6,6 +6,13 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.coach import Coach, CoachTier
 from app.models.team import Team
+from app.services.coaching.coaching_dynasty_service import coaching_dynasty_service
+from app.schemas.deep_dive import (
+    CoachDynastyProfile,
+    StaffSynergyBreakdown,
+    CoachingSkillNode,
+    CoachingBranch,
+)
 
 router = APIRouter(prefix="/api/coaches", tags=["coaches"])
 
@@ -38,6 +45,9 @@ class HireCoachRequest(BaseModel):
 
 class FireCoachRequest(BaseModel):
     coach_id: int
+
+class UnlockNodeRequest(BaseModel):
+    node_id: str
 
 class CoachCarouselResponse(BaseModel):
     available_coaches: List[CoachResponse]
@@ -217,3 +227,123 @@ async def promote_coach(
         }
 
     raise HTTPException(status_code=400, detail="Invalid promotion role")
+
+
+# =============================================================================
+# DYNASTY SKILL TREE & STAFF SYNERGY ENDPOINTS
+# =============================================================================
+
+@router.get("/{coach_id}/tree", response_model=CoachDynastyProfile)
+@router.get("/{coach_id}/dynasty", response_model=CoachDynastyProfile)
+async def get_coach_tree(coach_id: int, db: Session = Depends(get_db)):
+    """
+    Get 3-branch dynasty skill tree profile for a coach.
+    Branches: Scheme & Tactics, Player Development, Program Culture.
+    """
+    coach = db.query(Coach).filter(Coach.id == coach_id).first()
+    if not coach:
+        raise HTTPException(status_code=404, detail="Coach not found")
+
+    coach_name = f"{coach.first_name} {coach.last_name}"
+    role = coach.role or "Head Coach"
+    level = coach.level if coach.level and coach.level > 0 else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
+    current_sp = coach.xp // 100 if hasattr(coach, 'xp') and coach.xp else 4
+
+    unlocked_nodes = None
+    if coach.skills and isinstance(coach.skills, dict) and "unlocked_nodes" in coach.skills:
+        unlocked_nodes = coach.skills.get("unlocked_nodes")
+
+    return coaching_dynasty_service.get_coach_profile(
+        coach_id=str(coach.id),
+        name=coach_name,
+        role=role,
+        level=level,
+        current_sp=current_sp,
+        unlocked_node_ids=unlocked_nodes,
+    )
+
+
+@router.post("/{coach_id}/unlock-node", response_model=CoachDynastyProfile)
+@router.post("/{coach_id}/dynasty/unlock", response_model=CoachDynastyProfile)
+async def unlock_coach_skill_node(
+    coach_id: int,
+    request: UnlockNodeRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Unlock a skill tree node for a coach using skill points (SP).
+    Enforces prerequisites and DAG dependencies.
+    """
+    coach = db.query(Coach).filter(Coach.id == coach_id).first()
+    if not coach:
+        raise HTTPException(status_code=404, detail="Coach not found")
+
+    coach_name = f"{coach.first_name} {coach.last_name}"
+    role = coach.role or "Head Coach"
+    level = coach.level if coach.level and coach.level > 0 else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
+    current_sp = coach.xp // 100 if hasattr(coach, 'xp') and coach.xp else 4
+
+    unlocked_nodes = None
+    if coach.skills and isinstance(coach.skills, dict) and "unlocked_nodes" in coach.skills:
+        unlocked_nodes = list(coach.skills.get("unlocked_nodes", []))
+
+    profile = coaching_dynasty_service.get_coach_profile(
+        coach_id=str(coach.id),
+        name=coach_name,
+        role=role,
+        level=level,
+        current_sp=current_sp,
+        unlocked_node_ids=unlocked_nodes,
+    )
+
+    success = coaching_dynasty_service.unlock_node(profile, request.node_id)
+    if not success:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot unlock node '{request.node_id}'. Ensure prerequisites are met and sufficient SP available."
+        )
+
+    # Persist unlocked state to DB
+    skills_dict = dict(coach.skills) if coach.skills and isinstance(coach.skills, dict) else {}
+    unlocked_list = [nid for nid, n in profile.tree_nodes.items() if n.unlocked]
+    skills_dict["unlocked_nodes"] = unlocked_list
+    coach.skills = skills_dict
+    db.commit()
+    db.refresh(coach)
+
+    return profile
+
+
+@router.get("/staff/synergy/{team_id}", response_model=StaffSynergyBreakdown)
+@router.get("/team/{team_id}/synergy", response_model=StaffSynergyBreakdown)
+async def get_staff_synergy(team_id: int, db: Session = Depends(get_db)):
+    """
+    Calculate organizational chemistry and synergy score across HC, OC, and DC.
+    """
+    team = db.query(Team).filter(Team.id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail=f"Team {team_id} not found")
+
+    team_coaches = db.query(Coach).filter(Coach.team_id == team_id).all()
+
+    hc = next((c for c in team_coaches if c.role == "Head Coach"), None)
+    oc = next((c for c in team_coaches if c.role in ["Offensive Coordinator", "OC"]), None)
+    dc = next((c for c in team_coaches if c.role in ["Defensive Coordinator", "DC"]), None)
+
+    hc_scheme = hc.playbook_offense if hc and hc.playbook_offense else "WEST_COAST"
+    oc_scheme = oc.playbook_offense if oc and oc.playbook_offense else "WEST_COAST"
+    dc_scheme = dc.playbook_defense if dc and dc.playbook_defense else "COVER_3_ZONE"
+
+    hc_id = f"HC-{hc.id}" if hc else "HC-01"
+    oc_id = f"OC-{oc.id}" if oc else "OC-01"
+    dc_id = f"DC-{dc.id}" if dc else "DC-01"
+
+    return coaching_dynasty_service.calculate_staff_synergy(
+        hc_scheme=hc_scheme,
+        oc_scheme=oc_scheme,
+        dc_scheme=dc_scheme,
+        hc_id=hc_id,
+        oc_id=oc_id,
+        dc_id=dc_id,
+    )
+

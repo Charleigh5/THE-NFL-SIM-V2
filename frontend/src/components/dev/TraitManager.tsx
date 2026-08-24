@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { traitService } from "../../services/traitService";
+import { traitService } from "../../services/traits";
 import type { Trait, TraitAssignment } from "../../types/trait";
 import { TraitSource } from "../../types/trait";
 import styles from "./TraitManager.module.css";

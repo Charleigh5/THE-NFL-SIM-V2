@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from backend.app.schemas.expanded_stats import (
+from app.schemas.expanded_stats import (
     PositionType,
     PlayerStat,
     QuarterbackStat,

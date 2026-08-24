@@ -1,61 +1,57 @@
-# Project: THE-NFL-SIM-V2 ("The Digital Gridiron")
+# Project: THE-NFL-SIM-V2 Full Codebase Component & Endpoint Audit (AUDIT-001)
 
 ## Architecture
-THE-NFL-SIM-V2 is a full-stack professional football simulation platform comprising:
-- **Backend (Python / FastAPI / SQLAlchemy / Alembic)**:
-  - High-performance simulation engine (`backend/app/engine/`) with 60Hz deterministic frame physics, CSPRNG commit-reveal seeds, and Monte Carlo calibrated play resolution.
-  - Deep-dive RPG subsystems (`backend/app/services/` & `backend/app/schemas/deep_dive.py`): Multi-Lens Scouting Fog of War, Coaching Dynasty DAG trees & staff synergy, and 5-Pathway Orthopedic Triage with Cox hazard modeling.
-  - 26 REST & WebSocket API modules (`backend/app/api/endpoints/`) serving all franchise management and live broadcast endpoints.
-- **Frontend (React / Vite / TypeScript / Tailwind / Framer Motion / Three.js / Pixi.js)**:
-  - 13 core views covering Franchise War Room, Tactical Live Sim, Offseason Draft Room, Coaching Dynasty Tree, Medical Trauma Center, Depth Chart, Roster/Capology, Schedule, Standings/Playoffs, Player Profile/S2, GM Trades, Cryptographic Replay Telemetry, and League Settings.
-  - Strict TypeScript schema contract alignment (`frontend/src/types/`) with zero `any` types.
-- **Testing & Calibration Infrastructure**:
-  - Playwright browser automation test suite (`frontend/e2e/`) capturing pre/post interaction states across all 13 core views.
-  - Pytest unit suite (`backend/tests/unit/`) with 300+ tests covering simulation, AI, RPG, medical, and broadcast models.
-  - Monte Carlo batch simulator (`scripts/batch_simulator.py`) enforcing NFL historical benchmark calibration.
+- **Backend Architecture**: FastAPI REST API (`backend/app/api/`), Domain Services (`backend/app/services/`), Simulation Engine (`backend/app/engine/`), RPG Kernels (`backend/app/rpg/`), SQLAlchemy/Alembic Database Models (`backend/app/models/`), Pydantic V2 Schemas (`backend/app/schemas/`).
+- **Frontend Architecture**: React 19 / TypeScript / Vite (`frontend/src/`), React Router v7 Data Routers (`router.tsx`), Zustand & Context State Stores, Tailwind CSS + Framer Motion animations, Three.js / HTML5 Canvas Gridiron Visualizer.
+- **Testing & Calibration Architecture**: Pytest Unit & Integration Suite (`backend/tests/`), Batch Monte Carlo Physics & Stat Calibration (`scripts/batch_simulator.py`), Playwright E2E Browser Automation Suite (`frontend/e2e/`).
 
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| 1 | 13-View UI Route Graph & Navigation | Complete routing across all 13 views with route aliases (`/medical`, `/roster`, `/trades`) | M1, M2 | ORIGINAL_REQUEST §R1 |
-| 2 | Strict Contract Parity & 0 `any` Types | 1:1 parity between FastAPI Pydantic V2 schemas and TypeScript definitions | M1 | ORIGINAL_REQUEST §R2 |
-| 3 | Schema Synchronization (Scouting, PlayResult, Team) | Harmonize scouting report fields, `is_safety`, and team medical/staff properties | M1 | ORIGINAL_REQUEST §R2 |
-| 4 | Automated Browser Navigation & Pre/Post Visual Proof | Capture high-resolution screenshots of pre- and post-interaction states for 13 views | M2 | ORIGINAL_REQUEST §R1 |
-| 5 | Defect Isolation & Closed-Loop Remediation | Zero console errors, broken transitions, or UI clipping across all views | M2 | ORIGINAL_REQUEST §R3 |
-| 6 | Backend Unit Test Suite Verification | 100% pass rate on `pytest backend/tests/unit` | M3 | ORIGINAL_REQUEST §R4 |
-| 7 | Monte Carlo Statistical Calibration | 100% calibration compliance across sack rate, YPC, completion rate, turnovers, PPG | M3 | ORIGINAL_REQUEST §R4 |
-| 8 | Frontend Production Compilation | 100% clean build on `npm run build` (`tsc -b && vite build`) with exit code 0 | M3 | ORIGINAL_REQUEST §R4 |
-| 9 | Formal Task Documentation TASK-003 | Comprehensive specification in `docs/tasks/TASK-003_13_VIEW_VISUAL_AUDIT_AND_REMEDIATION.md` | M4 | ORIGINAL_REQUEST §R5 |
-| 10 | Multi-Agent Final Verification & Audit Gate | Independent Reviewers, Challengers, and Forensic Auditor verification | M5 | System Governance |
+| 1 | Component Mount Hierarchy Audit | Mount high-value unmounted components (`ReplayScrubber`, `TreatmentModal`, `EnhancedPlayerProfile`, `StorylineTracker`, `NewsFeedWidget`, `LogoTimeline`) and isolate legacy pages | M1 | Survey / R1 |
+| 2 | Medical 5-Pathway Orthopedic Triage API | Expose REST endpoints for 5 triage protocols (`REST`, `PRP_THERAPY`, `ARTHROSCOPIC_SURGERY`, `RECONSTRUCTIVE_SURGERY`, `CORTISONE_STABILIZATION`) | M2 | Survey / R2 |
+| 3 | Coaching Dynasty Tree & Synergy API | Expose REST endpoints for coach skill trees, node unlocking, and staff synergy calculations | M2 | Survey / R2 |
+| 4 | Multi-Lens Scouting Intelligence API | Expose REST endpoints for scouting bias lenses and trade urgency calculations | M2 | Survey / R2 |
+| 5 | Frontend API Service Prefix & Endpoint Wire-up | Fix URL prefix mismatches (`/abilities`, `/physics`, `/scouting`) and wire live endpoints replacing mock stubs in services and loaders | M2 | Survey / R2 |
+| 6 | Engine & Service Deduplication | Harmonize OL Chemistry calculation, consolidate 7-archetype RPG system, remove deprecated traits, unify duplicate training and news routers | M3 | Survey / R3 |
+| 7 | Contract & TypeScript Parity | Ensure 100% Pydantic V2 / TypeScript contract parity (add `neck_health`, eliminate `any` casts, align Trade schemas, deduplicate trait services) | M3 | Survey / R3 |
+| 8 | Full-Stack Testing & Calibration Gate | Verify 100% pass rate on `pytest backend/tests/unit`, Monte Carlo calibration (`batch_simulator.py`), frontend production build (`npm run build`), and Playwright E2E browser tests | M4 | Survey / R4 |
+| 9 | Formal Audit Spec & Documentation Sync | Author `docs/tasks/AUDIT-001_FULL_CODEBASE_COMPONENT_AND_ENDPOINT_AUDIT.md` complying with task-list-template.md and synchronize `docs/FEATURE_STATUS_MATRIX.md` | M5 | Survey / R5 |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| 1 | Contract Parity & Type Alignment | Eliminate residual `any` types in `frontend/src/`, synchronize scouting/simulation/team schemas, add route aliases | none | DONE |
-| 2 | 13-View UI & Broadcast Visual Verification | Execute Playwright visual capture suite for all 13 views (pre & post interaction), verify 0 console errors | M1 | DONE |
-| 3 | Production Testing & Statistical Calibration | Run full `pytest backend/tests/unit`, `npm run build`, and `python scripts/batch_simulator.py` | M1, M2 | DONE |
-| 4 | Formal Task Documentation TASK-003 | Author `docs/tasks/TASK-003_13_VIEW_VISUAL_AUDIT_AND_REMEDIATION.md` per task-list-template.md | M1, M2, M3 | DONE |
-| 5 | Final Gate & Forensic Integrity Audit | Multi-agent review, adversarial challenge, and binary forensic audit | M1, M2, M3, M4 | DONE |
+| M1 | UI Component Mounting & Route Integration | Mount unmounted components in views (LiveSim, MedicalCenter, FrontOffice/DepthChart, Dashboard, TrophyRoom) | none | DONE |
+| M2 | Live FastAPI Endpoint Implementation & Wire-up | Expose triage, coaching tree, scouting APIs; fix frontend services and replace mock fallbacks | M1 | DONE |
+| M3 | Logic & Schema Deduplication | Harmonize chemistry/archetypes, eliminate duplicate routers/services, guarantee strict schema parity with 0 `any` types | M2 | IN_PROGRESS |
+| M4 | Full-Stack Verification & Playwright Tests | Run pytest unit tests, Monte Carlo statistical calibration, frontend build, and Playwright E2E specs | M3 | PLANNED |
+| M5 | Formal Audit Spec & Matrix Sync | Author AUDIT-001 task report and update FEATURE_STATUS_MATRIX.md | M4 | PLANNED |
 
 ## Interface Contracts
-### `backend/app/schemas/scouting.py` ↔ `frontend/src/types/api/scouting.ts`
-- `ScoutingReport`: `ceiling_projection`, `floor_projection`, `draft_grade`, `fit_analysis`, `pros`, `cons`, `summary`.
-- `PlayerBackstory`: `hometown`, `background`, `personality_traits`, `motivations`, `notable_college_moments`, `adversity_overcome`.
+### Medical Triage API
+- `GET /api/medical/players/{player_id}/triage/protocols` -> `TriageProtocolsResponse` (protocols: List[TriageProtocolOption], current_diagnosis: InjuryDiagnosis)
+- `POST /api/medical/players/{player_id}/triage/apply` -> Request: `TriageDecisionRequest(protocol: TriageProtocolType)`, Response: `TriageDecisionResult`
+- `GET /api/medical/players/{player_id}/health` -> `BodyHealthResponse` (including `neck_health: float`)
 
-### `backend/app/schemas/play.py` ↔ `frontend/src/types/simulation.ts`
-- `PlayResult`: `play_id`, `play_type`, `quarter`, `time_remaining`, `yard_line`, `down`, `distance`, `yards_gained`, `is_touchdown`, `is_interception`, `is_fumble`, `is_incomplete`, `is_sack`, `is_penalty`, `is_safety`, `points_scored`, `description`.
+### Coaching Dynasty Tree API
+- `GET /api/coaches/{coach_id}/tree` -> `CoachDynastyTreeResponse`
+- `POST /api/coaches/{coach_id}/unlock-node` -> Request: `UnlockNodeRequest(node_id: str)`, Response: `CoachDynastyTreeResponse`
+- `GET /api/coaches/staff/synergy/{team_id}` -> `StaffSynergyResponse`
 
-### `backend/app/schemas/team.py` ↔ `frontend/src/services/api.ts`
-- `Team`: `id`, `city`, `name`, `abbreviation`, `conference`, `division`, `wins`, `losses`, `ties`, `salary_cap_space`, `logo_url`, `primary_color`, `secondary_color`, `medical_rating`, `training_staff_quality`, `medical_budget`, `elo_rating`.
+### Scouting Multi-Lens Intelligence API
+- `GET /api/scouts/prospects/{prospect_id}/intelligence` -> `ProspectIntelligenceResponse` (consensus, film, analytics, regional)
+- `GET /api/scouts/trade-urgency/{team_id}` -> `TradeUrgencyResponse`
+
+### Trade Proposals & Blocks
+- `POST /api/trades/proposals` -> Request: `TradeOfferRequest(proposing_team_id: int, target_team_id: int, offered_player_ids: List[int], requested_player_ids: List[int], offered_draft_pick_ids: List[int], requested_draft_pick_ids: List[int])`
 
 ## Code Layout
-- `backend/app/schemas/`: Pydantic V2 schema definitions
-- `backend/app/api/endpoints/`: FastAPI REST endpoints and WebSockets
-- `backend/app/engine/`: Simulation core, 60Hz physics, RNG verification
-- `backend/tests/unit/`: Pytest unit and integration test suites
-- `frontend/src/types/`: TypeScript interface definitions
-- `frontend/src/pages/`: 13 core view page components
-- `frontend/src/components/`: Subsystem UI components (coaching, medical, draft, trades, live sim)
-- `frontend/e2e/`: Playwright E2E and visual capture test suites
-- `docs/assets/screenshots/`: Captured high-resolution UI screenshots (pre and post interaction)
-- `docs/tasks/`: Formal task documentation specifications
+- `backend/app/api/endpoints/`: Canonical FastAPI route controllers
+- `backend/app/services/`: Canonical business logic and simulation support services
+- `backend/app/schemas/`: Canonical Pydantic V2 schema definitions
+- `backend/app/engine/`: Core simulation math and physics engines
+- `frontend/src/components/`: Modular UI components organized by domain
+- `frontend/src/pages/`: 13 core application views connected via React Router v7
+- `frontend/src/services/`: Axios and typed client services connecting to `/api/...`
+- `frontend/src/types/`: Strict TypeScript interface models mirroring backend schemas
+- `docs/tasks/`: Formal audit specifications and execution records

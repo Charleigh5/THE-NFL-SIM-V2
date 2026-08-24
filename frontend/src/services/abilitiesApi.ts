@@ -12,7 +12,7 @@ export const abilitiesApi = {
    * Fetch the full catalog of RPG abilities.
    */
   async getCatalog(): Promise<AbilityDefinition[]> {
-    const response = await apiClient.get<AbilityDefinition[]>("/abilities/catalog");
+    const response = await apiClient.get<AbilityDefinition[]>("/api/abilities/catalog");
     return response.data;
   },
 
@@ -21,7 +21,7 @@ export const abilitiesApi = {
    */
   async getPlayerAbilityStatus(playerId: number): Promise<Record<string, PlayerAbilityStatus>> {
     const response = await apiClient.get<Record<string, PlayerAbilityStatus>>(
-      `/abilities/players/${playerId}`
+      `/api/abilities/players/${playerId}`
     );
     return response.data;
   },
@@ -31,7 +31,7 @@ export const abilitiesApi = {
    */
   async getPlayerUnlockedAbilities(playerId: number): Promise<AbilityDefinition[]> {
     const response = await apiClient.get<AbilityDefinition[]>(
-      `/abilities/players/${playerId}/unlocked`
+      `/api/abilities/players/${playerId}/unlocked`
     );
     return response.data;
   },
@@ -41,7 +41,7 @@ export const abilitiesApi = {
    */
   async unlockAbility(playerId: number, abilityKey: string): Promise<UnlockAbilityResponse> {
     const response = await apiClient.post<UnlockAbilityResponse>(
-      `/abilities/players/${playerId}/unlock`,
+      `/api/abilities/players/${playerId}/unlock`,
       { ability_key: abilityKey }
     );
     return response.data;
@@ -52,7 +52,7 @@ export const abilitiesApi = {
    */
   async getPreSnapInsight(request: PreSnapInsightRequest): Promise<PreSnapInsightResponse> {
     const response = await apiClient.post<PreSnapInsightResponse>(
-      "/abilities/match/insight",
+      "/api/abilities/match/insight",
       request
     );
     return response.data;

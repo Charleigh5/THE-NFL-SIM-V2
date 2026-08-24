@@ -1,20 +1,15 @@
-## 2026-08-22T16:29:53Z
+## 2026-08-24T01:12:17Z
+You are Reviewer 2 for Milestone 1 (Component Mount Hierarchy & Router Integration) of THE-NFL-SIM-V2.
+Your working directory is: `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\reviewer2_m1`
+Create your working directory if needed. Maintain `progress.md` with timestamps.
 
-<USER_REQUEST>
-You are Reviewer 2 for Milestone M1 (Database Schema Consolidation & ORM Integrity).
-Your working directory is: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\reviewer2_m1
+MANDATORY: You MUST read `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\ORIGINAL_REQUEST.md` and `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\PROJECT.md`.
+Read worker handoff at `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\worker_m1_mounting\handoff.md`.
 
-MANDATORY INSTRUCTIONS:
-1. You MUST read:
-   - c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\ORIGINAL_REQUEST.md
-   - c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\PROJECT.md
-   - c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\worker_m1_database\handoff.md
-2. Adversarially review the code changes:
-   - Check `PlayerGameStarts` consolidation, indexes, relationships, and chemistry service compatibility.
-   - Check Alembic metadata completeness and model exports.
-   - Check `Player.player_traits` and `Player.speed` hybrid expressions with edge cases.
-   - Check cascades (`cascade="all, delete-orphan"`) and WAL pragmas.
-3. Run tests and verify results.
-4. Write your detailed review to `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\reviewer2_m1\handoff.md` with explicit verdict: `APPROVE` or `REQUEST_CHANGES`.
-5. Send a message to orchestrator with your verdict.
-</USER_REQUEST>
+TASK: Review UX flow, component tree nesting, reactivity, and legacy file removal.
+Verify:
+1. Legacy files (`DraftLegacy.tsx`, `FrontOffice_Baseline.tsx`, `SeasonDashboardLegacy.tsx`, etc.) are cleanly removed with zero runtime import regressions.
+2. The UI hierarchy in `Dashboard.tsx`, `LiveSim.tsx`, `MedicalCenter.tsx`, `FrontOffice.tsx`, and `TrophyRoom.tsx` handles null/undefined data safely.
+3. Run `npm run build` in `frontend/`.
+4. Deliver your verdict: APPROVE or REQUEST_CHANGES in `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\reviewer2_m1\handoff.md`.
+When done, message parent with your verdict and report path.

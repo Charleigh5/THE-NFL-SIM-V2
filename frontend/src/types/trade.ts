@@ -1,5 +1,7 @@
 /**
  * Trade Types for the Trade Center
+ * =================================
+ * 1:1 parity with backend/app/schemas/trade.py
  */
 
 export interface TradeAsset {
@@ -38,15 +40,33 @@ export interface TradePick {
   trade_value: number;
 }
 
+export interface DraftPickInfo {
+  round: number;
+  year: number;
+  original_team_id?: number;
+}
+
+export interface TradeOfferRequest {
+  target_team_id: number;
+  offered_player_ids: number[];
+  requested_player_ids: number[];
+  offered_picks?: DraftPickInfo[];
+  requested_picks?: DraftPickInfo[];
+  message?: string;
+}
+
 export interface TradeProposal {
   id?: number;
-  offering_team_id: number;
-  receiving_team_id: number;
-  offered_players: number[];
-  offered_picks: number[];
-  requested_players: number[];
-  requested_picks: number[];
-  status: "pending" | "accepted" | "rejected" | "countered";
+  offering_team_id?: number;
+  receiving_team_id?: number;
+  target_team_id?: number;
+  offered_players?: number[];
+  offered_player_ids?: number[];
+  requested_players?: number[];
+  requested_player_ids?: number[];
+  offered_picks?: (number | DraftPickInfo)[];
+  requested_picks?: (number | DraftPickInfo)[];
+  status?: "pending" | "accepted" | "rejected" | "countered" | "withdrawn" | TradeOfferStatus;
   created_at?: string;
 }
 
@@ -54,13 +74,16 @@ export interface TradeEvaluation {
   decision: "ACCEPT" | "REJECT" | "COUNTER";
   score: number;
   reasoning: string;
+  offered_value?: number;
+  requested_value?: number;
+  gm_philosophy?: string;
+  gm_personality?: string;
   counter_offer?: {
     add_players?: number[];
     add_picks?: number[];
     remove_players?: number[];
     remove_picks?: number[];
   };
-  gm_personality?: string;
 }
 
 export interface IncomingTradeOffer {
@@ -100,10 +123,17 @@ export interface TradeHistoryItem {
   grade_b?: string;
 }
 
-// Alias for consistency with implementation plan naming
+// Canonical TradeOfferStatus with WITHDRAWN
+export type TradeOfferStatus =
+  | "PENDING"
+  | "ACCEPTED"
+  | "REJECTED"
+  | "COUNTERED"
+  | "EXPIRED"
+  | "WITHDRAWN";
+
 export type TradeEvaluationResult = TradeEvaluation;
 export type TradeDecision = TradeEvaluation["decision"];
-export type TradeOfferStatus = "PENDING" | "ACCEPTED" | "REJECTED" | "COUNTERED" | "EXPIRED";
 
 export interface TradeOffer {
   id: number;
@@ -150,7 +180,6 @@ export function parseAssetId(assetId: string): {
   if (parts[0] === "player") {
     return { type: "player", id: parseInt(parts[1], 10) };
   } else {
-    // pick-year-round-id format
     return { type: "pick", id: parseInt(parts[3] || parts[1], 10) };
   }
 }

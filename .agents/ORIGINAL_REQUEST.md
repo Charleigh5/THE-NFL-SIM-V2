@@ -53,3 +53,45 @@ Author comprehensive task specification in `docs/tasks/TASK-003_13_VIEW_VISUAL_A
 - [ ] 100% pass rate on backend unit test suite (`pytest backend/tests/unit`).
 - [ ] 100% pass rate on Monte Carlo statistical calibration across sack rates, YPC, completion rates, turnovers, and scoring.
 - [ ] Formally formatted task spec saved to `docs/tasks/TASK-003_13_VIEW_VISUAL_AUDIT_AND_REMEDIATION.md`.
+
+## Follow-up — 2026-08-23T21:03:26-04:00
+
+Comprehensive codebase audit and autonomous in-place remediation across THE-NFL-SIM-V2 to identify, connect, deduplicate, and verify all UI components, mock placeholders, backend endpoints, and data schemas.
+
+Working directory: docs/tasks/
+Integrity mode: demo
+
+## Requirements
+
+### R1. Comprehensive UI Component & Page Mounting Audit
+Scan every component in `frontend/src/components/` and `frontend/src/pages/` to catalog its mount hierarchy. Identify all unmounted/orphaned components, incomplete views, or sub-components not displayed on their designated parent pages, and integrate them properly into the layout and route tree.
+
+### R2. Live Endpoint Integration & Mock Placeholder Replacement
+Audit all frontend components and services for static mock objects, hardcoded placeholder data, or dummy fallback states. For every component requiring backend data, wire it directly to the corresponding FastAPI endpoint (creating any missing endpoints, routes, or Pydantic V2 models as needed).
+
+### R3. Duplicate Logic & Schema Deduplication
+Audit backend services (`backend/app/services/`), engine resolvers (`backend/app/engine/`), and frontend TypeScript interfaces (`frontend/src/types/`) to eliminate duplicate code paths, legacy schema definitions, and redundant data transformations.
+
+### R4. Full-Stack Regression & Playwright Visual Verification
+Execute end-to-end browser automation using Playwright across all audited and connected views. Ensure all connected components render live data correctly with 0 unhandled console errors. Run full backend unit tests (`pytest backend/tests/unit`) and statistical calibration.
+
+### R5. Formal Audit Spec & Living Matrix Sync
+Document the complete audit inventory, wiring changes, and resolution matrix in `docs/tasks/AUDIT-001_FULL_CODEBASE_COMPONENT_AND_ENDPOINT_AUDIT.md` complying with `.agent/rules/task-list-template.md` and synchronize `docs/FEATURE_STATUS_MATRIX.md`.
+
+## Acceptance Criteria
+
+### Component Mounting & Display
+- [ ] 100% of components in `frontend/src/components/` are actively integrated and visible on their respective page views.
+- [ ] Zero unmounted or orphaned components left unconnected.
+
+### Live Data Wiring & Mock Remediation
+- [ ] All UI components displaying game, player, franchise, medical, coaching, draft, or simulation state are wired to live backend endpoints.
+- [ ] 100% contract-first parity between backend Pydantic V2 schemas and frontend TypeScript interfaces with 0 `any` types.
+
+### Test & Calibration Gates
+- [ ] Backend test suite achieves 100% pass rate (`pytest backend/tests/unit`).
+- [ ] Frontend production build compiles with 0 errors (`tsc -b && vite build`).
+- [ ] Playwright E2E browser tests verify live rendering of all connected components with 0 console errors.
+- [ ] Monte Carlo statistical calibration achieves 100% compliance against NFL baselines.
+- [ ] Formal audit report saved to `docs/tasks/AUDIT-001_FULL_CODEBASE_COMPONENT_AND_ENDPOINT_AUDIT.md`.
+

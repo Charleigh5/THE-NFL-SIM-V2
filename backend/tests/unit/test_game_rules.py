@@ -1,9 +1,9 @@
 
 import pytest
 from unittest.mock import MagicMock, patch
-from backend.app.orchestrator.game_state_manager import GameStateManager
-from backend.app.orchestrator.play_commands import TwoPointConversionCommand, RunPlayCommand, PassPlayCommand, PlayResult
-from backend.app.orchestrator.play_resolver import PlayResolver
+from app.orchestrator.game_state_manager import GameStateManager
+from app.orchestrator.play_commands import TwoPointConversionCommand, RunPlayCommand, PassPlayCommand, PlayResult
+from app.orchestrator.play_resolver import PlayResolver
 
 class TestGameRules:
 

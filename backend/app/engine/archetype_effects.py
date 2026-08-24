@@ -1,15 +1,17 @@
 """
 Archetype Effects System - NFL Identity Blueprint Integration
 =============================================================
-Implements game impact cascades for player archetypes from the
-NFL Identity Blueprint. Each archetype has specific thresholds
-and in-game effects.
+Implements game impact cascades for player archetypes harmonized
+with the 7 canonical RPG archetypes in app.rpg.player_archetypes.
 
-Archetypes:
-- FIELD_GENERAL: QB with 90+ accuracy unlocks audibles, +20% 3rd down
-- TRAILER_PARK_TERMINATOR: Run Stopper + Blue Collar DNA
-- SPEED_MERCHANT: WR/RB with 90+ speed, home run threat
-- TRENCH_WARLORD: OL/DL with 85+ strength, dominance
+Canonical 7 Archetypes:
+1. FIELD_GENERAL: QB with 90+ accuracy unlocks audibles, +20% 3rd down
+2. SORCERER: QB with elite arm talent and improvisation, +25% big plays
+3. ALPHA_DOG: WR/CB with dominant press/coverage, +15% conversion, 1.4x intimidation
+4. WEAPON: WR/RB with 90+ speed/accel, +25% breakaway chance
+5. FREAK: EDGE/LB with 85+ strength/tackle, 1.5x intimidation
+6. TECHNICIAN: OL/DL with 85+ strength and 80+ awareness, trench dominance
+7. WORKHORSE: RB with 85+ stamina/carrying, 4th quarter wear-down dominance
 """
 
 from enum import Enum
@@ -17,20 +19,28 @@ from typing import Any, Dict, Optional, List
 from dataclasses import dataclass
 
 
-class PlayerArchetype(Enum):
-    """Player archetypes with distinct game effects."""
+class PlayerArchetype(str, Enum):
+    """Player archetypes with distinct game effects harmonized with RPG archetypes."""
     FIELD_GENERAL = "Field General"
-    TRAILER_PARK_TERMINATOR = "Trailer Park Terminator"
-    SPEED_MERCHANT = "Speed Merchant"
-    TRENCH_WARLORD = "Trench Warlord"
+    SORCERER = "Sorcerer"
+    ALPHA_DOG = "Alpha Dog"
+    WEAPON = "Weapon"
+    FREAK = "Freak"
+    TECHNICIAN = "Technician"
+    WORKHORSE = "Workhorse"
     STANDARD = "Standard"
+
+    # Legacy aliases for backward compatibility
+    TRAILER_PARK_TERMINATOR = "Freak"
+    SPEED_MERCHANT = "Weapon"
+    TRENCH_WARLORD = "Technician"
 
 
 @dataclass
 class ArchetypeThresholds:
     """Rating thresholds required to unlock an archetype."""
     required_ratings: Dict[str, int]
-    required_position: Optional[str] = None
+    allowed_positions: Optional[List[str]] = None
     required_dna: Optional[List[str]] = None
 
 
@@ -48,20 +58,31 @@ class ArchetypeEffect:
 ARCHETYPE_DEFINITIONS: Dict[PlayerArchetype, ArchetypeThresholds] = {
     PlayerArchetype.FIELD_GENERAL: ArchetypeThresholds(
         required_ratings={"throw_accuracy_short": 90, "throw_accuracy_mid": 90},
-        required_position="QB"
+        allowed_positions=["QB"]
     ),
-    PlayerArchetype.TRAILER_PARK_TERMINATOR: ArchetypeThresholds(
-        required_ratings={"strength": 85, "tackle": 80},
-        required_position="DT",
-        required_dna=["Run Stopper", "Blue Collar"]
+    PlayerArchetype.SORCERER: ArchetypeThresholds(
+        required_ratings={"throw_power": 90, "throw_accuracy_deep": 88},
+        allowed_positions=["QB"]
     ),
-    PlayerArchetype.SPEED_MERCHANT: ArchetypeThresholds(
+    PlayerArchetype.ALPHA_DOG: ArchetypeThresholds(
+        required_ratings={"press": 88, "man_coverage": 88},
+        allowed_positions=["WR", "CB", "DB", "S"]
+    ),
+    PlayerArchetype.WEAPON: ArchetypeThresholds(
         required_ratings={"speed": 90, "acceleration": 88},
-        required_position=None  # WR, RB, CB
+        allowed_positions=["WR", "RB", "TE", "CB"]
     ),
-    PlayerArchetype.TRENCH_WARLORD: ArchetypeThresholds(
+    PlayerArchetype.WORKHORSE: ArchetypeThresholds(
+        required_ratings={"stamina": 85, "carrying": 85},
+        allowed_positions=["RB", "FB"]
+    ),
+    PlayerArchetype.FREAK: ArchetypeThresholds(
+        required_ratings={"strength": 85, "tackle": 80},
+        allowed_positions=["EDGE", "LB", "DE", "DT", "DL"]
+    ),
+    PlayerArchetype.TECHNICIAN: ArchetypeThresholds(
         required_ratings={"strength": 85, "awareness": 80},
-        required_position=None  # OL, DL positions
+        allowed_positions=["OL", "OT", "OG", "C", "DL", "DT", "DE", "LT", "LG", "RG", "RT"]
     ),
 }
 
@@ -72,18 +93,32 @@ ARCHETYPE_EFFECTS: Dict[PlayerArchetype, ArchetypeEffect] = {
         audible_unlock=True,
         description="Elite accuracy unlocks pre-snap reads and audibles."
     ),
-    PlayerArchetype.TRAILER_PARK_TERMINATOR: ArchetypeEffect(
-        intimidation_factor=1.5,  # 50% more intimidating
-        description="4th gen coal miner. Limited between-the-ears, unlimited motor."
+    PlayerArchetype.SORCERER: ArchetypeEffect(
+        breakaway_boost=0.25,
+        audible_unlock=True,
+        description="Improvisational magic and off-platform arm talent."
     ),
-    PlayerArchetype.SPEED_MERCHANT: ArchetypeEffect(
+    PlayerArchetype.ALPHA_DOG: ArchetypeEffect(
+        conversion_boost=0.15,
+        intimidation_factor=1.4,
+        description="Dominant competitor that demoralizes opposing coverage."
+    ),
+    PlayerArchetype.WEAPON: ArchetypeEffect(
         breakaway_boost=0.25,  # +25% breakaway chance
-        description="Home run threat. Breaks free on any touch."
+        description="Home run threat and versatile mismatch weapon."
     ),
-    PlayerArchetype.TRENCH_WARLORD: ArchetypeEffect(
+    PlayerArchetype.FREAK: ArchetypeEffect(
+        intimidation_factor=1.5,  # 50% more intimidating
+        description="Physical specimen with unlimited motor and explosive disruption."
+    ),
+    PlayerArchetype.TECHNICIAN: ArchetypeEffect(
         intimidation_factor=1.3,
-        conversion_boost=0.10,  # Run game boost
-        description="Dominates the trenches. Pancakes for breakfast."
+        conversion_boost=0.10,  # Run game / line boost
+        description="Dominates the trenches with precise technique and zero mistakes."
+    ),
+    PlayerArchetype.WORKHORSE: ArchetypeEffect(
+        conversion_boost=0.15,
+        description="Iron man running back that punishes defenses in late-game situations."
     ),
     PlayerArchetype.STANDARD: ArchetypeEffect(
         description="Standard player without elite archetype traits."
@@ -108,8 +143,9 @@ class ArchetypeClassifier:
         Returns:
             PlayerArchetype enum value
         """
-        position = getattr(player, "position", "")
-        dna = dna_traits or []
+        raw_pos = getattr(player, "position", "")
+        position = str(raw_pos) if isinstance(raw_pos, str) else ""
+        dna = dna_traits if isinstance(dna_traits, list) else []
 
         # Check each archetype in priority order
         for archetype, thresholds in ARCHETYPE_DEFINITIONS.items():
@@ -128,13 +164,21 @@ class ArchetypeClassifier:
     ) -> bool:
         """Check if player meets all thresholds for an archetype."""
         # Check position requirement
-        if thresholds.required_position:
-            if not position.startswith(thresholds.required_position):
+        if thresholds.allowed_positions:
+            if not position:
+                return False
+            # Check prefix / exact match
+            matched_pos = any(
+                position.upper().startswith(p.upper()) or p.upper().startswith(position.upper())
+                for p in thresholds.allowed_positions
+            )
+            if not matched_pos:
                 return False
 
         # Check rating requirements
         for rating_name, min_value in thresholds.required_ratings.items():
-            player_rating = getattr(player, rating_name, 0) or 0
+            val = getattr(player, rating_name, 0)
+            player_rating = val if isinstance(val, (int, float)) else 0
             if player_rating < min_value:
                 return False
 
@@ -198,15 +242,20 @@ class ArchetypeEffectApplicator:
                 result["conversion_modifier"] = 1.0 + effects.conversion_boost
                 result["narrative"] = f"{getattr(player, 'last_name', 'QB')} reads the defense pre-snap."
 
-        # Apply breakaway boost for Speed Merchant
-        if archetype == PlayerArchetype.SPEED_MERCHANT:
+        # Apply breakaway boost for Weapon / Sorcerer
+        if archetype in [PlayerArchetype.WEAPON, PlayerArchetype.SORCERER]:
             result["breakaway_modifier"] = 1.0 + effects.breakaway_boost
             if game_context.get("is_breakaway"):
                 result["narrative"] = f"{getattr(player, 'last_name', 'Player')} has the jets!"
 
-        # Apply trench boost for Trench Warlord
-        if archetype == PlayerArchetype.TRENCH_WARLORD:
+        # Apply trench boost for Technician
+        if archetype == PlayerArchetype.TECHNICIAN:
             if game_context.get("play_type") == "run":
+                result["conversion_modifier"] = 1.0 + effects.conversion_boost
+
+        # Apply late-game / heavy load boost for Workhorse
+        if archetype == PlayerArchetype.WORKHORSE:
+            if game_context.get("quarter", 1) >= 4 or game_context.get("down") == 4:
                 result["conversion_modifier"] = 1.0 + effects.conversion_boost
 
         return result

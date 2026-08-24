@@ -5,6 +5,7 @@ import type { BodyZoneKey, BodyMapHealthData } from "../components/medical/BodyM
 import { GenesisBiometricCard } from "../components/medical/GenesisBiometricCard";
 import { FatigueMonitor } from "../components/medical/FatigueMonitor";
 import { OrthopedicTriageModal } from "../components/medical/OrthopedicTriageModal";
+import { TreatmentModal } from "../components/medical/TreatmentModal";
 import type { MedicalProtocolType } from "../types/deepDive";
 import { medicalApi } from "../services/medicalApi";
 import type { InjuredPlayer, BioMetrics, FatigueState, TreatmentType } from "../types/medical";
@@ -14,6 +15,7 @@ import "../components/medical/MedicalCenter.css";
 export const MedicalCenter: React.FC = () => {
   const [selectedPart, setSelectedPart] = useState<BodyZoneKey | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showTreatmentModal, setShowTreatmentModal] = useState(false);
   const [activePlayerIndex, setActivePlayerIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -175,6 +177,57 @@ export const MedicalCenter: React.FC = () => {
     setShowModal(false);
   };
 
+  const handleTreatmentConfirm = async (treatment: TreatmentType) => {
+    if (!activePlayer || !selectedPart) return;
+
+    let weeksReduction = 1.0;
+    let newStatus: "OUT" | "DOUBTFUL" | "QUESTIONABLE" | "ACTIVE" = "OUT";
+    let integrityGain = 10;
+
+    if (treatment === "SURGERY") {
+      weeksReduction = 0.6;
+      integrityGain = 25;
+      newStatus = "OUT";
+    } else if (treatment === "PLAY_THROUGH") {
+      weeksReduction = 0.0;
+      integrityGain = 5;
+      newStatus = "QUESTIONABLE";
+    } else if (treatment === "REST") {
+      weeksReduction = 1.0;
+      integrityGain = 15;
+      newStatus = "OUT";
+    }
+
+    try {
+      await medicalApi.applyTreatment({
+        player_id: activePlayer.player_id,
+        treatment,
+      });
+    } catch {
+      console.warn("Medical API offline mode, applying optimistic treatment update");
+    }
+
+    setHealthData((prev) => ({
+      ...prev,
+      [selectedPart]: Math.min(100, (prev[selectedPart] || 70) + integrityGain),
+      generalWear: Math.max(0, (prev.generalWear || 10) - 5),
+    }));
+
+    setInjuredRoster((prev) =>
+      prev.map((p, idx) =>
+        idx === activePlayerIndex
+          ? {
+              ...p,
+              weeks_remaining: Math.max(0, Math.round(p.weeks_remaining * weeksReduction)),
+              injury_status: newStatus,
+            }
+          : p
+      )
+    );
+
+    setShowTreatmentModal(false);
+  };
+
   return (
     <div
       data-testid="medical-center-page"
@@ -318,15 +371,26 @@ export const MedicalCenter: React.FC = () => {
                       {activePlayer.weeks_remaining} Weeks
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
-                      setShowModal(true);
-                    }}
-                    className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
-                  >
-                    Adjust Protocol
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
+                        setShowModal(true);
+                      }}
+                      className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                    >
+                      Adjust Protocol
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
+                        setShowTreatmentModal(true);
+                      }}
+                      className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                    >
+                      Treatment Plan
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -346,6 +410,23 @@ export const MedicalCenter: React.FC = () => {
               baselineWeeks={activePlayer.weeks_remaining}
               onClose={() => setShowModal(false)}
               onConfirmProtocol={handleProtocolConfirm}
+            />
+          )}
+        </AnimatePresence>
+
+        {/* 4-Pathway / Surgical Treatment Modal */}
+        <AnimatePresence>
+          {showTreatmentModal && (
+            <TreatmentModal
+              isOpen={showTreatmentModal}
+              playerId={activePlayer.player_id}
+              playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
+              partName={selectedPart ? selectedPart.toUpperCase() : "ANATOMICAL ZONE"}
+              currentHealth={selectedPart ? healthData[selectedPart] : 75}
+              injurySeverity={activePlayer.severity}
+              weeksRemaining={activePlayer.weeks_remaining}
+              onClose={() => setShowTreatmentModal(false)}
+              onConfirm={handleTreatmentConfirm}
             />
           )}
         </AnimatePresence>

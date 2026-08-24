@@ -3,11 +3,13 @@ import { Reorder } from "framer-motion";
 import { api } from "../services/api";
 import type { Player, ChemistryMetadata } from "../services/api";
 import { ChemistryBadge } from "../components/ui/ChemistryBadge";
+import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 
 export const DepthChart = () => {
   const [roster, setRoster] = useState<Player[]>([]);
   const [selectedPosition, setSelectedPosition] = useState<string>("QB");
   const [positionPlayers, setPositionPlayers] = useState<Player[]>([]);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
@@ -222,25 +224,38 @@ export const DepthChart = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="text-white/20 group-hover:text-white/50">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPlayerId(player.id);
+                      }}
+                      className="px-2.5 py-1 rounded bg-cyan-950/80 border border-cyan-800 text-cyan-400 hover:text-white hover:bg-cyan-900 text-xs font-mono font-semibold transition-colors"
+                      title="Inspect Player Dossier"
                     >
-                      <circle cx="9" cy="12" r="1" />
-                      <circle cx="9" cy="5" r="1" />
-                      <circle cx="9" cy="19" r="1" />
-                      <circle cx="15" cy="12" r="1" />
-                      <circle cx="15" cy="5" r="1" />
-                      <circle cx="15" cy="19" r="1" />
-                    </svg>
+                      Dossier
+                    </button>
+                    <div className="text-white/20 group-hover:text-white/50">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="9" cy="12" r="1" />
+                        <circle cx="9" cy="5" r="1" />
+                        <circle cx="9" cy="19" r="1" />
+                        <circle cx="15" cy="12" r="1" />
+                        <circle cx="15" cy="5" r="1" />
+                        <circle cx="15" cy="19" r="1" />
+                      </svg>
+                    </div>
                   </div>
                 </Reorder.Item>
               ))}
@@ -254,6 +269,16 @@ export const DepthChart = () => {
           </div>
         </div>
       </div>
+
+      {/* Enhanced Player Profile Dossier Modal */}
+      {selectedPlayerId && (
+        <EnhancedPlayerProfile
+          playerId={selectedPlayerId}
+          onClose={() => setSelectedPlayerId(null)}
+        />
+      )}
     </div>
   );
 };
+
+export default DepthChart;

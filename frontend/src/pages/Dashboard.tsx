@@ -21,6 +21,8 @@ import { api } from "../services/api";
 import { seasonApi } from "../services/season";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
+import { StorylineTracker } from "../components/news/StorylineTracker";
+import { NewsFeedWidget } from "../components/news/NewsFeedWidget";
 import type { Season } from "../types/season";
 
 export const Dashboard = () => {
@@ -425,50 +427,66 @@ export const Dashboard = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. ESPN / MEDIA WIRE HEADLINES */}
+        {/* 4. ESPN / MEDIA WIRE HEADLINES & LIVING WORLD STORYLINES */}
         {/* ========================================================================= */}
-        <div className="rounded-2xl bg-broadcast-dark border border-white/10 p-6 shadow-2xl">
-          <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <Activity size={20} className="text-red-500" />
-              <h3 className="font-header text-xl uppercase tracking-wider text-white">
-                League Wire & Storylines
-              </h3>
+        <div className="space-y-6">
+          <div className="rounded-2xl bg-broadcast-dark border border-white/10 p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Activity size={20} className="text-red-500" />
+                <h3 className="font-header text-xl uppercase tracking-wider text-white">
+                  League Wire & Breaking Headlines
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold border border-red-500/30 uppercase">
+                LIVE NETWORK FEED
+              </span>
             </div>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold border border-red-500/30 uppercase">
-              LIVE NETWORK FEED
-            </span>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                <span className="text-[10px] font-mono text-yellow-400 uppercase font-bold">
+                  ⭐ MVP RACE
+                </span>
+                <h4 className="font-bold text-sm text-white">
+                  Patrick Mahomes surges into top MVP consideration with 340-yd 4 TD outing.
+                </h4>
+                <p className="text-xs text-gray-400">Next Gen Stats: 82.4 QBR in Week 4 victory.</p>
+              </div>
+
+              <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">
+                  🛡️ DEFENSIVE SPOTLIGHT
+                </span>
+                <h4 className="font-bold text-sm text-white">
+                  T.J. Watt logs 3.0 sacks in dominant divisional showcase.
+                </h4>
+                <p className="text-xs text-gray-400">Pass Rush Win Rate: 28.5% across 42 snaps.</p>
+              </div>
+
+              <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
+                <span className="text-[10px] font-mono text-emerald-400 uppercase font-bold">
+                  📈 POWER RANKINGS
+                </span>
+                <h4 className="font-bold text-sm text-white">
+                  Chiefs, 49ers, and Ravens lock down the top 3 spots entering Week 5.
+                </h4>
+                <p className="text-xs text-gray-400">Simulation Model: Super Bowl odds updated.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] font-mono text-yellow-400 uppercase font-bold">
-                ⭐ MVP RACE
-              </span>
-              <h4 className="font-bold text-sm text-white">
-                Patrick Mahomes surges into top MVP consideration with 340-yd 4 TD outing.
-              </h4>
-              <p className="text-xs text-gray-400">Next Gen Stats: 82.4 QBR in Week 4 victory.</p>
+          {/* Living World Dynasty News Feed & Active Storylines */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7 bg-broadcast-dark/90 rounded-2xl border border-white/10 p-6 shadow-2xl">
+              <NewsFeedWidget
+                seasonId={currentSeason?.id || 1}
+                week={currentSeason?.current_week || 1}
+                maxItems={8}
+              />
             </div>
-
-            <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">
-                🛡️ DEFENSIVE SPOTLIGHT
-              </span>
-              <h4 className="font-bold text-sm text-white">
-                T.J. Watt logs 3.0 sacks in dominant divisional showcase.
-              </h4>
-              <p className="text-xs text-gray-400">Pass Rush Win Rate: 28.5% across 42 snaps.</p>
-            </div>
-
-            <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
-              <span className="text-[10px] font-mono text-emerald-400 uppercase font-bold">
-                📈 POWER RANKINGS
-              </span>
-              <h4 className="font-bold text-sm text-white">
-                Chiefs, 49ers, and Ravens lock down the top 3 spots entering Week 5.
-              </h4>
-              <p className="text-xs text-gray-400">Simulation Model: Super Bowl odds updated.</p>
+            <div className="lg:col-span-5 bg-broadcast-dark/90 rounded-2xl border border-white/10 p-6 shadow-2xl">
+              <StorylineTracker teamId={Number(activeTeam?.id) || 1} />
             </div>
           </div>
         </div>

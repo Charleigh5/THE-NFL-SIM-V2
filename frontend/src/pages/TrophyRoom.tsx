@@ -1,4 +1,5 @@
 import { TrophyCaseScene } from "../components/trophy/TrophyCaseScene";
+import { LogoTimeline } from "../components/history/LogoTimeline";
 import { useTheme } from "../context/useTheme";
 import { motion } from "framer-motion";
 import "./TrophyRoom.css";
@@ -25,8 +26,8 @@ const TrophyRoom = () => {
           <h2 className="trophy-room__subtitle">{activeTeam?.name || "Franchise"} Trophy Case</h2>
         </motion.header>
 
-        <div className="trophy-room__footer">
-          {/* Placeholder for future specific trophy interactions/filters */}
+        <div className="trophy-room__footer w-full max-w-5xl mx-auto z-20">
+          <LogoTimeline />
         </div>
       </div>
     </div>

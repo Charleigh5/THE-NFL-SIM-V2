@@ -1,60 +1,48 @@
-# BRIEFING — 2026-08-22T16:34:00Z
+# BRIEFING — 2026-08-24T01:14:15Z
 
 ## Mission
-Adversarial and quality review of Milestone M1 (Database Schema Consolidation & ORM Integrity).
+Adversarially review Milestone 1 (Component Mount Hierarchy & Router Integration) UX flow, component tree nesting, reactivity, safe null/undefined handling, and legacy file removal.
 
 ## 🔒 My Identity
-- Archetype: reviewer-critic
+- Archetype: reviewer_critic
 - Roles: reviewer, critic
 - Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\.agents\reviewer2_m1
-- Original parent: b4a0be66-d743-42bc-b0f8-c9aaf3893cdb
-- Milestone: M1
+- Original parent: e2795446-c3c5-4e9f-8b68-8c7a1cd58475
+- Milestone: Milestone 1 (Component Mount Hierarchy & Router Integration)
 - Instance: 2 of 2
 
 ## 🔒 Key Constraints
 - Review-only — do NOT modify implementation code
-- Adversarial challenge: stress-test assumptions, find failure modes, check integrity violations
+- Actively check for integrity violations: hardcoded test results, facade implementations, shortcuts, fake verifications, self-certifying work
+- Verify legacy file cleanup, null/undefined safety in UI hierarchy, and clean build
 
 ## Current Parent
-- Conversation ID: b4a0be66-d743-42bc-b0f8-c9aaf3893cdb
-- Updated: 2026-08-22T16:34:00Z
+- Conversation ID: e2795446-c3c5-4e9f-8b68-8c7a1cd58475
+- Updated: 2026-08-24T01:14:15Z
 
 ## Review Scope
-- **Files to review**: Models, migrations, database session setup, traits/attributes hybrid properties, PlayerGameStarts consolidation, chemistry service, cascades, pragmas
-- **Interface contracts**: PROJECT.md, ORIGINAL_REQUEST.md
-- **Review criteria**: Correctness, integrity, adversarial robustness, Alembic sync, tests passing
+- **Files to review**: `Dashboard.tsx`, `LiveSim.tsx`, `MedicalCenter.tsx`, `FrontOffice.tsx`, `TrophyRoom.tsx`, `App.tsx`, `DepthChart.tsx`, legacy file removals, router configuration, state stores, worker handoff `worker_m1_mounting/handoff.md`
+- **Interface contracts**: `ORIGINAL_REQUEST.md`, `PROJECT.md`
+- **Review criteria**: UX flow, component tree nesting, reactivity, null/undefined handling, clean removal of legacy files, build verification
 
 ## Review Checklist
-- **Items reviewed**:
-  - `backend/app/models/player_game_starts.py` (Consolidated model & indexes)
-  - `backend/app/models/stats.py` (Deduplication)
-  - `backend/app/models/__init__.py` (All 35+ models exported)
-  - `backend/alembic/env.py` (Base.metadata discovery)
-  - `backend/app/api/endpoints/players.py` (Player trait profile loading)
-  - `backend/app/models/player.py` (Hybrid property SQL expressions, 1:1 cascades, default attributes)
-  - `backend/app/core/database.py` (SQLite WAL mode and connection pragmas)
-  - `backend/app/services/enhanced_chemistry_service.py` & `pre_game_service.py` (Service integration)
-  - `backend/tests/integration/test_m1_database_consolidation.py` (M1 test suite)
-  - `backend/tests/integration/test_m1_adversarial_stress.py` (Adversarial stress suite)
+- **Items reviewed**: `Dashboard.tsx`, `LiveSim.tsx`, `MedicalCenter.tsx`, `FrontOffice.tsx`, `DepthChart.tsx`, `TrophyRoom.tsx`, `ReplayScrubber.tsx`, `PlayAnimator.tsx`, `TreatmentModal.tsx`, `EnhancedPlayerProfile.tsx`, `NewsFeedWidget.tsx`, `StorylineTracker.tsx`, `LogoTimeline.tsx`, legacy deletions, `npm run build`
 - **Verdict**: APPROVE
-- **Unverified claims**: None. All claims verified via direct code inspection, SQL analysis, and test execution.
+- **Unverified claims**: none
 
 ## Attack Surface
 - **Hypotheses tested**:
-  - Multi-column SQL ordering, filtering (and/or), aggregations (avg, max, sum) on hybrid properties -> PASSED
-  - 1:1 decomposition cascade deletion with zero orphaned rows -> PASSED
-  - Multi-threaded SQLite WAL concurrency under load (8 threads, 160 ops) -> PASSED (0 lock errors)
-  - Cascade deletion on secondary M:N relationships (`player_traits`, `game_starts`) -> Documented as finding
-- **Vulnerabilities found**:
-  - Minor: `Player.player_traits` lacks `cascade="all, delete-orphan"`, causing error if deleting Player without first clearing player traits.
-- **Untested angles**: None within M1 scope.
+  - Legacy imports broken? Confirmed 0 regressions.
+  - Null states causing runtime errors? Confirmed resilient defensive handling & fallbacks.
+  - Async state update race conditions? Confirmed `isCancelled` cleanup flags.
+  - Build failure under production compilation? Confirmed `tsc -b && vite build` passes with exit code 0.
+- **Vulnerabilities found**: None.
+- **Untested angles**: Backend endpoint responses for triage/coaching/scouting (deferred to Milestone 2).
 
 ## Key Decisions Made
-- Confirmed zero integrity violations (no hardcoding, no facades, no bypasses).
-- Verified production-grade SQLAlchemy 2.0 ORM patterns and Alembic discovery.
-- Issued verdict: APPROVE with recommendations for future M:N cascade cleanup.
+- Confirmed APPROVE verdict for Milestone 1.
 
 ## Artifact Index
-- handoff.md — Final review report
-- progress.md — Liveness and status heartbeat
-- DISPATCH.md — Incoming message log
+- `.agents/reviewer2_m1/DISPATCH.md` — Incoming dispatch log
+- `.agents/reviewer2_m1/progress.md` — Liveness heartbeat and step tracking
+- `.agents/reviewer2_m1/handoff.md` — Final review report and verdict

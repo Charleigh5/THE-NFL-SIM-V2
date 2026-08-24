@@ -5,12 +5,19 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.services.medical_service import MedicalService
+from app.services.medical.orthopedic_triage_service import orthopedic_triage_service
+from app.schemas.deep_dive import (
+    MedicalProtocolType,
+    OrthopedicProtocolOption,
+    TriageDecisionResult,
+)
 
 router = APIRouter(prefix="/api/medical", tags=["medical"])
 
 class BodyHealthResponse(BaseModel):
     player_id: int
     head_health: float
+    neck_health: float = 100.0
     torso_health: float
     right_arm_health: float
     left_arm_health: float
@@ -36,12 +43,15 @@ async def get_player_health(
     if not player.body_health:
         # Initialize if missing
         health = service.initialize_body_health(player_id)
+    elif isinstance(player.body_health, list):
+        health = player.body_health[0] if len(player.body_health) > 0 else service.initialize_body_health(player_id)
     else:
-        health = player.body_health[0]
+        health = player.body_health
 
     return BodyHealthResponse(
         player_id=player_id,
         head_health=health.head_health,
+        neck_health=getattr(health, 'neck_health', 100.0) if getattr(health, 'neck_health', None) is not None else 100.0,
         torso_health=health.torso_health,
         right_arm_health=health.right_arm_health,
         left_arm_health=health.left_arm_health,
@@ -252,4 +262,150 @@ async def calculate_surgery_risk(
         total_risk=total_risk,
         estimated_recovery_reduction=estimated_reduction
     )
+
+
+# =============================================================================
+# 5-PATHWAY ORTHOPEDIC TRIAGE ENDPOINTS
+# =============================================================================
+
+class InjuryDiagnosis(BaseModel):
+    injury_type: Optional[str] = "Soft Tissue Strain"
+    severity: int = 2
+    weeks_to_recovery: int = 2
+    body_zone: str = "right_leg"
+    current_integrity: float = 60.0
+
+class TriageProtocolsResponse(BaseModel):
+    player_id: int
+    current_diagnosis: InjuryDiagnosis
+    protocols: List[OrthopedicProtocolOption]
+
+class TriageDecisionRequest(BaseModel):
+    protocol: MedicalProtocolType
+    zone_key: Optional[str] = None
+
+
+@router.get("/players/{player_id}/triage/protocols", response_model=TriageProtocolsResponse)
+@router.get("/triage/protocols/{player_id}", response_model=TriageProtocolsResponse)
+async def get_player_triage_protocols(
+    player_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Get all available 5-pathway orthopedic triage protocols for a player.
+    Pathways: REST, PRP_THERAPY, ARTHROSCOPIC_SURGERY, RECONSTRUCTIVE_SURGERY, CORTISONE_STABILIZATION.
+    """
+    from app.models.player import Player
+
+    player = db.query(Player).filter(Player.id == player_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
+
+    zone_key = "right_leg"
+    bh = None
+    if isinstance(player.body_health, list) and len(player.body_health) > 0:
+        bh = player.body_health[0]
+    elif player.body_health and not isinstance(player.body_health, list):
+        bh = player.body_health
+
+    if bh:
+        # Find zone with lowest health
+        zones = {
+            "head": bh.head_health,
+            "neck": getattr(bh, "neck_health", 100.0) or 100.0,
+            "torso": bh.torso_health,
+            "right_arm": bh.right_arm_health,
+            "left_arm": bh.left_arm_health,
+            "right_leg": bh.right_leg_health,
+            "left_leg": bh.left_leg_health,
+        }
+        zone_key = min(zones, key=zones.get)
+        current_integrity = zones[zone_key]
+    else:
+        current_integrity = 60.0
+
+    baseline_weeks = player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    player_age = player.age or 26
+    is_x_factor = getattr(player, "development_trait", "") in ["SUPERSTAR", "X_FACTOR", "SUPERSTAR_X_FACTOR"]
+
+    options = orthopedic_triage_service.get_protocol_options(
+        zone_key=zone_key,
+        current_integrity=current_integrity,
+        baseline_weeks=baseline_weeks,
+        player_age=player_age,
+        is_x_factor=is_x_factor,
+    )
+
+    diagnosis = InjuryDiagnosis(
+        injury_type=player.injury_type or "Musculoskeletal Trauma",
+        severity=player.injury_severity or 2,
+        weeks_to_recovery=baseline_weeks,
+        body_zone=zone_key,
+        current_integrity=round(current_integrity, 1),
+    )
+
+    return TriageProtocolsResponse(
+        player_id=player_id,
+        current_diagnosis=diagnosis,
+        protocols=options,
+    )
+
+
+@router.get("/triage/options", response_model=List[OrthopedicProtocolOption])
+async def get_triage_protocol_options():
+    """Get general clinical protocol options for orthopedic triage."""
+    return orthopedic_triage_service.get_protocol_options(
+        zone_key="general",
+        current_integrity=60.0,
+        baseline_weeks=3,
+        player_age=26,
+    )
+
+
+@router.post("/players/{player_id}/triage/apply", response_model=TriageDecisionResult)
+async def apply_player_triage_protocol(
+    player_id: int,
+    request: TriageDecisionRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Apply a 5-pathway clinical triage protocol to an injured player.
+    Executes recovery calculations, rolls for complication risk, and updates player recovery timetable.
+    """
+    from app.models.player import Player, InjuryStatus
+
+    player = db.query(Player).filter(Player.id == player_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
+
+    zone_key = request.zone_key or "right_leg"
+    baseline_weeks = player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    player_age = player.age or 26
+    toughness = player.injury_resistance or 80
+
+    result = orthopedic_triage_service.apply_triage_protocol(
+        player_id=player.id,
+        zone_key=zone_key,
+        protocol=request.protocol,
+        baseline_weeks=baseline_weeks,
+        player_age=player_age,
+        toughness=toughness,
+    )
+
+    # Persist decision to DB
+    player.weeks_to_recovery = result.projected_recovery_weeks
+    player.injury_recurrence_risk = result.re_injury_risk_index
+
+    if request.protocol == MedicalProtocolType.CORTISONE_STABILIZATION:
+        player.injury_status = InjuryStatus.QUESTIONABLE
+    elif result.projected_recovery_weeks > 0:
+        player.injury_status = InjuryStatus.OUT
+    else:
+        player.injury_status = InjuryStatus.ACTIVE
+
+    db.commit()
+    db.refresh(player)
+
+    return result
+
 

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import hashlib
-from typing import List, Optional
+import math
+from typing import List, Optional, Dict
 
 from sqlalchemy import select, func, desc
 from sqlalchemy.orm import Session
@@ -19,60 +20,68 @@ class ChemistryService:
     Focuses on Offensive Line (OL) chemistry based on shared game starts.
     """
 
+    # Configuration Constants harmonized with EnhancedChemistryService
+    CHEMISTRY_THRESHOLD_GAMES = 5
+    CHEMISTRY_MAX_GAMES = 10
+    BASE_BONUS_MULTIPLIER = 5.0
+    OL_POSITIONS = ["LT", "LG", "C", "RG", "RT"]
+
     @staticmethod
-    def calculate_ol_chemistry(db: Session, team_id: int, current_game_id: int) -> int:
+    def calculate_chemistry_level(consecutive_games: int) -> float:
+        """
+        Calculate chemistry level using logarithmic progression.
+
+        Args:
+            consecutive_games: Number of consecutive games OL has started together
+
+        Returns:
+            Chemistry level from 0.0 (none) to 1.0 (maximum)
+        """
+        if consecutive_games < ChemistryService.CHEMISTRY_THRESHOLD_GAMES:
+            return 0.0
+
+        if consecutive_games >= ChemistryService.CHEMISTRY_MAX_GAMES:
+            return 1.0
+
+        # Normalize to 0.0-1.0 range between threshold and max
+        normalized = (
+            (consecutive_games - ChemistryService.CHEMISTRY_THRESHOLD_GAMES) /
+            (ChemistryService.CHEMISTRY_MAX_GAMES - ChemistryService.CHEMISTRY_THRESHOLD_GAMES)
+        )
+
+        # Logarithmic curve: fast growth early, slower later
+        # Formula: 0.6 + 0.4 * (1 - e^(-2.5x))
+        chemistry_level = 0.6 + (0.4 * (1 - math.exp(-2.5 * normalized)))
+
+        return min(1.0, chemistry_level)
+
+    @staticmethod
+    def calculate_scaled_bonuses(chemistry_level: float) -> Dict[str, float]:
+        """Calculate attribute bonuses based on chemistry level."""
+        base_multiplier = ChemistryService.BASE_BONUS_MULTIPLIER
+        return {
+            "pass_block": chemistry_level * base_multiplier,
+            "run_block": chemistry_level * base_multiplier,
+            "awareness": chemistry_level * base_multiplier
+        }
+
+    @staticmethod
+    def calculate_advanced_effects(chemistry_level: float) -> Dict[str, float]:
+        """Calculate advanced gameplay effects based on chemistry level."""
+        return {
+            "stunt_pickup_bonus": chemistry_level * 0.25,
+            "penalty_reduction": chemistry_level * 0.20,
+            "communication_boost": chemistry_level * 10.0,
+            "blitz_pickup_improvement": chemistry_level * 0.30
+        }
+
+    @staticmethod
+    def calculate_ol_chemistry(db: Session, team_id: int, current_game_id: Optional[int] = None) -> int:
         """
         Calculate OL chemistry bonus (0-5) based on lineup stability.
-
-        Logic:
-        1. Identify the 5 OL players starting this game (or projected to start).
-           (Note: This requires that starts are recorded OR we look at depth chart)
-           For simulation, we usually look at the *previous* games' starts for the same group.
-
-        2. Find how many consecutive/total games this exact 5-man unit has started together.
-
-        3. Award bonus:
-           - 0 games: +0
-           - 1-2 games: +1
-           - 3-5 games: +2
-           - 6-9 games: +3
-           - 10+ games: +5
+        Uses the harmonized logarithmic formula shared across the simulation engine.
         """
-        try:
-            # 1. Get current OL starters for the team
-            # This is complex without a "Current Starters" table, usually derived from Depth Chart.
-            # For MVP, we'll assume we are verifying the *historical* chemistry of the *currently active* OL unit.
-            # Let's assume we pass a list of player_ids instead of team_id?
-            # Or better, fetch the top depth chart OLs.
-
-            # Simplified approach: Look at the most recent game played by this team.
-            # If current_game_id is provided, look at games BEFORE this one.
-
-            # Find the most recent game starts for OL on this team
-            # We need the hash of the last game's unit.
-
-            stmt = (
-                select(PlayerGameStarts.teammates_hash)
-                .join(PlayerGameStarts.game) # Assuming Game model has date/season link
-                # For now, just order by created_at descending distinct by game
-                .where(PlayerGameStarts.player_id.in_(
-                    select(Player.id).where(Player.team_id == team_id, Player.position.in_(["LT", "LG", "C", "RG", "RT"]))
-                ))
-                .order_by(desc(PlayerGameStarts.created_at))
-                .limit(5) # Get last 5 distinct games logic is tricky with rows.
-            )
-
-            # Optimized Approach:
-            # We track chemistry by `teammates_hash`.
-            # We basically need to know: "For the current projected starting 5, how many games have they started together?"
-            # So first, we identify the starting 5.
-            pass
-
-        except Exception as e:
-            log_error(logger, ErrorCategory.CHEMISTRY_ERROR, "Failed to calculate OL chemistry", exc_info=e, team_id=team_id)
-            return 0
-
-        return 0
+        return ChemistryService.get_chemistry_bonus(db, team_id)
 
     @staticmethod
     def get_projected_ol_hash(db: Session, team_id: int) -> Optional[str]:
@@ -81,7 +90,7 @@ class ChemistryService:
         """
         try:
             # Query starters (depth_chart_rank=1) for OL positions
-            ol_positions = ["LT", "LG", "C", "RG", "RT"]
+            ol_positions = ChemistryService.OL_POSITIONS
             starters = db.scalars(
                 select(Player.id)
                 .where(
@@ -89,7 +98,7 @@ class ChemistryService:
                     Player.position.in_(ol_positions),
                     Player.depth_chart_rank == 1
                 )
-                .order_by(Player.position) # Ensure consistent order for hashing? No, sort by ID for hash consistency.
+                .order_by(Player.position)
             ).all()
 
             if len(starters) < 5:
@@ -105,17 +114,13 @@ class ChemistryService:
     @staticmethod
     def get_chemistry_bonus(db: Session, team_id: int) -> int:
         """
-        Get chemistry bonus for the current projected starting lineup.
+        Get chemistry bonus (0-5) for the current projected starting lineup.
+        Uses the harmonized logarithmic formula.
         """
         try:
             lineup_hash = ChemistryService.get_projected_ol_hash(db, team_id)
             if not lineup_hash:
                 return 0
-
-            # Count games started with this hash
-            # We can count distinct game_ids where any player had this teammates_hash
-            # Actually, teammates_hash is stored on PlayerGameStarts.
-            # So just count distinct games where teammates_hash == lineup_hash
 
             count = db.scalar(
                 select(func.count(func.distinct(PlayerGameStarts.game_id)))
@@ -124,16 +129,8 @@ class ChemistryService:
 
             logger.info("chemistry_lookup", team_id=team_id, games_together=count)
 
-            if count >= 10:
-                return 5
-            elif count >= 6:
-                return 3
-            elif count >= 3:
-                return 2
-            elif count >= 1:
-                return 1
-            else:
-                return 0
+            chem_level = ChemistryService.calculate_chemistry_level(count)
+            return round(chem_level * ChemistryService.BASE_BONUS_MULTIPLIER)
 
         except Exception as e:
             log_error(logger, ErrorCategory.CHEMISTRY_ERROR, "Error getting chemistry bonus", exc_info=e, team_id=team_id)

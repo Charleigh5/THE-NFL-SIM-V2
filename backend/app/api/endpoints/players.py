@@ -5,7 +5,8 @@ from sqlalchemy import select, func
 from typing import List, Optional, Dict, Any
 import logging
 
-from app.core.database import get_async_db
+from app.core.database import get_async_db, get_db
+from sqlalchemy.orm import Session
 from app.core.db_helpers import get_object_or_404_async
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
@@ -344,3 +345,63 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         contract_salary=player.contract_salary,
         is_rookie=player.is_rookie,
     )
+
+
+class PlayerBackstoryResponse(BaseModel):
+    player_id: int
+    hometown: str
+    background: str
+    personality_traits: List[str]
+    motivations: str
+    notable_college_moments: List[str]
+    adversity_overcome: Optional[str] = None
+    childhood: Optional[str] = None
+    high_school: Optional[str] = None
+    college_career: Optional[str] = None
+    generated_at: str
+
+
+@router.get("/{player_id}/backstory", response_model=PlayerBackstoryResponse)
+def get_player_backstory(player_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve or procedurally generate a rich narrative origin backstory for a player.
+    """
+    player = db.query(Player).filter(Player.id == player_id).first()
+
+    if not player:
+        raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
+
+    college = player.college or "State University"
+    full_name = f"{player.first_name} {player.last_name}"
+    pos = player.position.value if hasattr(player.position, 'value') else str(player.position)
+
+    hometown = f"{player.birth_city or 'Dallas'}, {player.birth_state or 'Texas'}" if hasattr(player, 'birth_city') and player.birth_city else "Miami, Florida"
+    childhood = f"Growing up in {hometown}, {full_name} was immersed in football culture from an early age, learning discipline from family mentors."
+    high_school = f"An all-state standout in high school, {full_name} set local records and earned a four-star recruitment status."
+    college_career = f"At {college}, {full_name} excelled as a key starter at {pos}, demonstrating elite game IQ and consistent clutch execution."
+    background = f"{childhood} {high_school} {college_career}"
+
+    traits = ["Competitive", "Dedicated", "Vocal Leader"]
+    if player.overall_rating >= 85:
+        traits = ["Elite Competitor", "Film Room Addict", "Field General"]
+    elif player.speed >= 90:
+        traits = ["Explosive Athlete", "Home-Run Threat", "Relentless Worker"]
+
+    import datetime
+    return PlayerBackstoryResponse(
+        player_id=player.id,
+        hometown=hometown,
+        background=background,
+        personality_traits=traits,
+        motivations="Driven by the desire to dominate at the highest level of professional football.",
+        notable_college_moments=[
+            f"Conference Championship standout performance with {college}",
+            "National award semifinalist during junior season",
+        ],
+        adversity_overcome="Overcame early depth chart competition to become an undisputed team leader.",
+        childhood=childhood,
+        high_school=high_school,
+        college_career=college_career,
+        generated_at=datetime.datetime.utcnow().isoformat(),
+    )
+

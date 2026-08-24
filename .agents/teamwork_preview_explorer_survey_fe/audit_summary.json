@@ -1,0 +1,2426 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "element": "Dashboard",
+      "loader": null
+    },
+    {
+      "path": "season",
+      "element": "SeasonDashboard",
+      "loader": "seasonDashboardLoader"
+    },
+    {
+      "path": "offseason",
+      "element": "OffseasonDashboard",
+      "loader": "offseasonDashboardLoader"
+    },
+    {
+      "path": "offseason/draft",
+      "element": "DraftRoom",
+      "loader": "draftRoomLoader"
+    },
+    {
+      "path": "empire/front-office",
+      "element": "FrontOffice",
+      "loader": "frontOfficeLoader"
+    },
+    {
+      "path": "empire/depth-chart",
+      "element": "DepthChart",
+      "loader": "depthChartLoader"
+    },
+    {
+      "path": "empire/trade-center",
+      "element": "TradeCenterPage",
+      "loader": null
+    },
+    {
+      "path": "empire/trophy-room",
+      "element": "TrophyRoom",
+      "loader": null
+    },
+    {
+      "path": "live-sim",
+      "element": "LiveSim",
+      "loader": null
+    },
+    {
+      "path": "medical-center",
+      "element": "MedicalCenter",
+      "loader": null
+    },
+    {
+      "path": "playbook",
+      "element": "Playbook",
+      "loader": null
+    },
+    {
+      "path": "training",
+      "element": "TrainingCenter",
+      "loader": null
+    },
+    {
+      "path": "training/:playerId",
+      "element": "TrainingCenter",
+      "loader": null
+    },
+    {
+      "path": "players/:playerId/skills",
+      "element": "SkillsPage",
+      "loader": "skillsLoader"
+    },
+    {
+      "path": "skills",
+      "element": "SkillsPage",
+      "loader": null
+    },
+    {
+      "path": "settings",
+      "element": "Settings",
+      "loader": null
+    },
+    {
+      "path": "team-selection",
+      "element": "TeamSelection",
+      "loader": "teamSelectionLoader"
+    },
+    {
+      "path": "*",
+      "element": "NotFound",
+      "loader": null
+    }
+  ],
+  "reachable_count": 159,
+  "total_files": 214,
+  "unreachable_files": [
+    "components/3d/FieldVisualizer.tsx",
+    "components/3d/PlayAnimator.tsx",
+    "components/3d/PlayerCharacter.tsx",
+    "components/3d/SceneContainer.tsx",
+    "components/ErrorBoundary.tsx",
+    "components/FieldView.tsx",
+    "components/coaching/CoachCard.tsx",
+    "components/coaching/CoachingUnlockPanel.tsx",
+    "components/common/NewsFeed.tsx",
+    "components/common/TraitBadge.tsx",
+    "components/common/TraitTooltip.tsx",
+    "components/dev/TraitManager.tsx",
+    "components/game/FatigueIndicator.tsx",
+    "components/game/ReplayScrubber.tsx",
+    "components/history/LogoTimeline.tsx",
+    "components/immersive/SpotlightButton.tsx",
+    "components/medical/TreatmentModal.tsx",
+    "components/news/NewsFeedWidget.tsx",
+    "components/news/StorylineTracker.tsx",
+    "components/news/WeeklyRecapModal.tsx",
+    "components/news/index.ts",
+    "components/shared/TraitBadge.tsx",
+    "components/trades/TradeCenter.tsx",
+    "components/trades/index.ts",
+    "components/training/CampSchedulePlanner.tsx",
+    "components/training/CoachingStylePicker.tsx",
+    "components/training/DrillCard.tsx",
+    "components/training/PlayerProgressChart.tsx",
+    "components/transitions/PageTransition.tsx",
+    "components/transitions/index.ts",
+    "components/transitions/transitionVariants.ts",
+    "components/ui/Badge.tsx",
+    "components/ui/EnhancedPlayerProfile.tsx",
+    "components/ui/PrimeCard.tsx",
+    "components/ui/Sidebar.tsx",
+    "components/ui/TraitNotification.tsx",
+    "constants/index.ts",
+    "context/ThemeContext.ts",
+    "hooks/useErrorBoundary.ts",
+    "hooks/useGestureController.ts",
+    "hooks/useLivingWorld.ts",
+    "hooks/usePlayAnimator.ts",
+    "pages/DraftLegacy.tsx",
+    "pages/FrontOffice_Baseline.tsx",
+    "pages/SeasonDashboardLegacy.tsx",
+    "services/ImageGenService.ts",
+    "services/errorLogger.ts",
+    "services/physicsService.ts",
+    "services/traitService.ts",
+    "store/useDebugStore.ts",
+    "store/useGameStore.ts",
+    "store/useLiveVisualizationStore.ts",
+    "store/usePlayLogStore.ts",
+    "store/useScoreboardStore.ts",
+    "types/engine-state.ts"
+  ],
+  "pages": {
+    "pages/Dashboard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(Dashboard)",
+        "Dashboard"
+      ]
+    },
+    "pages/DepthChart.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "DepthChart"
+      ]
+    },
+    "pages/DraftLegacy.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(DraftLegacy)"
+      ]
+    },
+    "pages/DraftRoom.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "DraftRoom"
+      ]
+    },
+    "pages/FrontOffice.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(FrontOffice)",
+        "FrontOffice"
+      ]
+    },
+    "pages/FrontOffice_Baseline.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "FrontOffice_Baseline"
+      ]
+    },
+    "pages/LiveSim.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(LiveSim)",
+        "LiveSim"
+      ]
+    },
+    "pages/MedicalCenter.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "MedicalCenter"
+      ]
+    },
+    "pages/OffseasonDashboard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(OffseasonDashboard)"
+      ]
+    },
+    "pages/Playbook.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(Playbook)",
+        "Playbook"
+      ]
+    },
+    "pages/SeasonDashboard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(SeasonDashboard)"
+      ]
+    },
+    "pages/SeasonDashboardLegacy.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(SeasonDashboardLegacy)"
+      ]
+    },
+    "pages/Settings.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(Settings)"
+      ]
+    },
+    "pages/SkillsPage.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "SkillsPage"
+      ]
+    },
+    "pages/TeamSelection.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(TeamSelection)"
+      ]
+    },
+    "pages/TradeCenterPage.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(TradeCenterPage)"
+      ]
+    },
+    "pages/TrainingCenter.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "TrainingCenter"
+      ]
+    },
+    "pages/TrophyRoom.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(TrophyRoom)"
+      ]
+    }
+  },
+  "components": {
+    "components/3d/EnhancedFieldVisualizer.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/3d/LiveGameVisualizer.tsx"
+      ],
+      "exports": [
+        "default(EnhancedFieldVisualizer)",
+        "EnhancedFieldVisualizer"
+      ],
+      "props": [
+        [
+          "EnhancedFieldVisualizerProps",
+          "gameId?: number;\n  showPlayers?: boolean;\n  detailLevel?: \"low\" | \"medium\" | \"high\";\n  homeColor?: string;\n  awayColor?: string;\n  showYardLines?: boolean;\n  showNumbers?: boolean;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          170,
+          "{/* Ball marker placeholder */}"
+        ]
+      ]
+    },
+    "components/3d/EnhancedPlayerCharacter.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/3d/LiveGameVisualizer.tsx"
+      ],
+      "exports": [
+        "default(EnhancedPlayerCharacter)",
+        "EnhancedPlayerCharacter"
+      ],
+      "props": [
+        [
+          "EnhancedPlayerCharacterProps",
+          "playerData: PlayerVisualData;\n  position: [number, number, number];\n  isAnimating?: boolean;\n  targetPosition?: [number, number, number];\n  showNumber?: boolean;\n  detailLevel?: \"low\" | \"medium\" | \"high\";"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/3d/FieldVisualizer.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/3d/SceneContainer.tsx"
+      ],
+      "exports": [
+        "FieldVisualizer"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/3d/LiveGameVisualizer.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "default(LiveGameVisualizer)",
+        "LiveGameVisualizer"
+      ],
+      "props": [
+        [
+          "LiveGameVisualizerProps",
+          "gameId: number;\n  apiUrl?: string;\n  autoConnect?: boolean;\n  enableBroadcast?: boolean;\n  showControls?: boolean;\n  detailLevel?: \"low\" | \"medium\" | \"high\";"
+        ]
+      ],
+      "mock_hits": [
+        [
+          105,
+          "const mockPlayResult: BroadcastPlayResult = {"
+        ],
+        [
+          118,
+          "dispatchBroadcast({ type: \"PLAY_CALLED\", playResult: mockPlayResult });"
+        ],
+        [
+          120,
+          "const clips = director.generateClipSequence(mockPlayResult, BroadcastPhase.PRE_PLAY);"
+        ],
+        [
+          129,
+          "dispatchBroadcast({ type: \"WHISTLE\", playResult: mockPlayResult });"
+        ],
+        [
+          131,
+          "const nextPhase = director.determineNextPhase(BroadcastPhase.POST_PLAY, mockPlayResult);"
+        ]
+      ]
+    },
+    "components/3d/PlayAnimator.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "PlayAnimator"
+      ],
+      "props": [
+        [
+          "PlayAnimatorProps",
+          "onAnimationComplete?: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/3d/PlayerCharacter.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/3d/FieldVisualizer.tsx"
+      ],
+      "exports": [
+        "PlayerCharacter"
+      ],
+      "props": [
+        [
+          "PlayerCharacterProps",
+          "position: [number, number, number];\n  team: \"offense\" | \"defense\";\n  playerNumber?: number;\n  isAnimating?: boolean;\n  targetPosition?: [number, number, number];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/3d/SceneContainer.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "SceneContainer"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          36,
+          "/* Placeholder Content (The \"Hive\" Core) - Only show on Dashboard/others */"
+        ]
+      ]
+    },
+    "components/ErrorBoundary.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(ErrorBoundary)",
+        "ErrorBoundaryProps",
+        "ErrorBoundaryState",
+        "FallbackProps"
+      ],
+      "props": [
+        [
+          "ErrorBoundaryProps",
+          "/** Child components to wrap */\n  children: ReactNode;\n  /** Custom fallback UI to render on error */\n  fallback?: ReactNode | ((props: FallbackProps) => ReactNode);\n  /** Callback when an error is caught */\n  onError?: (error: Error, errorInfo: ErrorInfo) => void;\n  /** Callback when user clicks retry */\n  onRetry?: () => void;\n  /** Maximum number of retry attempts before giving up */\n  maxRetries?: number;\n  /** Whether to show error details in non-production */\n  showDetails?: boolean;\n  /** Custom error boundary name for logging context */\n  name?: string;"
+        ],
+        [
+          "FallbackProps",
+          "error: Error | null;\n  errorInfo: ErrorInfo | null;\n  resetError: () => void;\n  retryCount: number;\n  isRetrying: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/FieldView.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "FieldView"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          7,
+          "// For Phase 1, we just render static placeholders."
+        ]
+      ]
+    },
+    "components/GameClock.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "GameClock"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/GridironVisualizer.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "GridironVisualizerProps",
+        "GridironVisualizer"
+      ],
+      "props": [
+        [
+          "GridironVisualizerProps",
+          "turfData?: TurfGridData;\n  players?: PlayerCognitiveTelemetry[];\n  ballPosition?: { x: number; y: number"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/Navigation.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "layouts/MainLayout.tsx"
+      ],
+      "exports": [
+        "default(Navigation)",
+        "Navigation"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/NotFound.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(NotFound)"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          6,
+          "<div className=\"page-placeholder\">"
+        ]
+      ]
+    },
+    "components/PlayByPlayFeed.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "PlayByPlayFeed"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/RootErrorBoundary.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(RootErrorBoundary)"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          6,
+          "<div className=\"page-placeholder\">"
+        ]
+      ]
+    },
+    "components/RouteErrorBoundary.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "router.tsx"
+      ],
+      "exports": [
+        "default(RouteErrorBoundary)"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          15,
+          "<div className=\"page-placeholder\">"
+        ],
+        [
+          26,
+          "<div className=\"page-placeholder\">"
+        ],
+        [
+          39,
+          "<div className=\"page-placeholder\">"
+        ]
+      ]
+    },
+    "components/ScoreBoard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "default(ScoreBoard)",
+        "ScoreBoard"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/audio/SoundtrackPlayer.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "layouts/MainLayout.tsx"
+      ],
+      "exports": [
+        "default(SoundtrackPlayer)"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/coaching/CoachCard.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "CoachCard"
+      ],
+      "props": [
+        [
+          "CoachCardProps",
+          "name: string;\n  role: string;\n  tier: CoachTier | string;\n  archetype: CoachArchetype | string;\n  playbookOffense?: string;\n  playbookDefense?: string;\n  experience: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/coaching/CoachSettings.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/FrontOffice.tsx"
+      ],
+      "exports": [
+        "default(CoachSettings)"
+      ],
+      "props": [
+        [
+          "CoachSettingsProps",
+          "teamId: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/coaching/CoachingDynastyTree.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/coaching/CoachingTree.tsx"
+      ],
+      "exports": [
+        "CoachingDynastyTree"
+      ],
+      "props": [
+        [
+          "CoachingDynastyTreeProps",
+          "initialProfile?: CoachDynastyProfile;\n  initialSynergy?: StaffSynergyBreakdown;\n  onSkillUnlock?: (nodeId: string) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/coaching/CoachingTree.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/Playbook.tsx"
+      ],
+      "exports": [
+        "CoachingTree"
+      ],
+      "props": [
+        [
+          "CoachNodeProps",
+          "name: string;\n  role: string;\n  specialty: string;\n  color: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/coaching/CoachingUnlockPanel.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(CoachingUnlockPanel)"
+      ],
+      "props": [
+        [
+          "CoachingUnlockPanelProps",
+          "playerId: number;\n  availableTraits: Trait[];\n  onUnlockComplete: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/coaching/GameplanDashboard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/Playbook.tsx"
+      ],
+      "exports": [
+        "GameplanDashboard"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          47,
+          "// Mock familiarity depending on strategy for demo"
+        ],
+        [
+          87,
+          "// Mock familiarity depending on strategy for demo"
+        ]
+      ]
+    },
+    "components/common/AnnotationPopover.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/common/FeedbackWidget.tsx"
+      ],
+      "exports": [
+        "default(AnnotationPopover)"
+      ],
+      "props": [
+        [
+          "AnnotationPopoverProps",
+          "element: ElementMetadata | null;\n  screenshot?: string | null;\n  onSave: (note: string, researchRequested: boolean) => void;\n  onCancel: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/ElementInspector.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/common/FeedbackWidget.tsx"
+      ],
+      "exports": [
+        "default(ElementInspector)"
+      ],
+      "props": [
+        [
+          "ElementInspectorProps",
+          "isActive: boolean;\n  onElementSelect: (metadata: ElementMetadata) => void;\n  onDeactivate: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/FeedbackWidget.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "layouts/MainLayout.tsx"
+      ],
+      "exports": [
+        "default(FeedbackWidget)"
+      ],
+      "props": [
+        [
+          "FeedbackWidgetProps",
+          "currentPage?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/NewsFeed.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(NewsFeed)"
+      ],
+      "props": [
+        [
+          "NewsFeedProps",
+          "limit?: number;\n  showRefresh?: boolean;\n  compact?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/RegionSelector.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/common/FeedbackWidget.tsx"
+      ],
+      "exports": [
+        "default(RegionSelector)"
+      ],
+      "props": [
+        [
+          "RegionSelectorProps",
+          "isActive: boolean;\n  onCapture: (imageData: string, rect: DOMRect) => void;\n  onCancel: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/ScreenshotEditor.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/common/FeedbackWidget.tsx"
+      ],
+      "exports": [
+        "default(ScreenshotEditor)"
+      ],
+      "props": [
+        [
+          "ScreenshotEditorProps",
+          "annotation: Annotation;\n  onSave: (updatedAnnotation: Annotation) => void;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/TaskListPanel.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/common/FeedbackWidget.tsx"
+      ],
+      "exports": [
+        "default(TaskListPanel)"
+      ],
+      "props": [
+        [
+          "TaskListPanelProps",
+          "annotations: Annotation[];\n  onEdit: (annotation: Annotation) => void;\n  onRemove: (id: string) => void;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/TraitBadge.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/coaching/CoachingUnlockPanel.tsx"
+      ],
+      "exports": [
+        "default(TraitBadge)"
+      ],
+      "props": [
+        [
+          "TraitBadgeProps",
+          "trait: Trait;\n  showTooltip?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/common/TraitTooltip.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/common/TraitBadge.tsx"
+      ],
+      "exports": [
+        "default(TraitTooltip)"
+      ],
+      "props": [
+        [
+          "TraitTooltipProps",
+          "trait: Trait;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/debug/PhysicsDebugOverlay.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "PhysicsDebugOverlay"
+      ],
+      "props": [
+        [
+          "PhysicsDebugOverlayProps",
+          "play: PlayTrajectory;\n  canvasRef: React.RefObject<FieldCanvasRef | null>;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/dev/TraitManager.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "TraitManager"
+      ],
+      "props": [
+        [
+          "TraitManagerProps",
+          "playerId: number;\n  playerName?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/draft/DraftAssistant.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx"
+      ],
+      "exports": [
+        "DraftAssistant"
+      ],
+      "props": [
+        [
+          "DraftAssistantProps",
+          "seasonId: number;\n  teamId: number;\n  pickNumber: number;\n  availablePlayers: number[];\n  onPlayerSelect?: (prospect: Prospect) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/draft/FeedbackCollector.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/draft/DraftAssistant.tsx",
+        "components/trades/TradeAnalyzer.tsx",
+        "components/trades/TradeCenter.tsx",
+        "components/trades/TradeNegotiator.tsx"
+      ],
+      "exports": [
+        "FeedbackData",
+        "FeedbackCollector"
+      ],
+      "props": [
+        [
+          "FeedbackCollectorProps",
+          "contextId: string; // ID of the recommendation (e.g., draft pick ID or trade ID)\n  contextType: \"draft\" | \"trade\";\n  onFeedbackSubmit?: (feedback: FeedbackData) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/draft/GenesisReveal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/offseason/DraftBoard.tsx"
+      ],
+      "exports": [
+        "GenesisReveal"
+      ],
+      "props": [
+        [
+          "GenesisRevealProps",
+          "prospectName: string;\n  data: CombineResult;\n  onClose: () => void;\n  onReveal: () => void;\n  isRevealed: boolean;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          140,
+          "for now we render placeholders if missing or just what we have)"
+        ]
+      ]
+    },
+    "components/draft/GpsSpeedViz.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/offseason/DraftBoard.tsx"
+      ],
+      "exports": [
+        "GpsSpeedViz"
+      ],
+      "props": [
+        [
+          "GpsSpeedVizProps",
+          "speedMph: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/draft/TradePhone.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx"
+      ],
+      "exports": [
+        "TradePhone"
+      ],
+      "props": [
+        [
+          "TradePhoneProps",
+          "onAnswer: () => void;\n  hasOffer: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/draft/WarRoomTicker.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx"
+      ],
+      "exports": [
+        "WarRoomTicker"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/game/CoachingWidget.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "CoachingWidget"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/game/CrowdNoiseMeter.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "CrowdNoiseLevel",
+        "CrowdNoiseMeter"
+      ],
+      "props": [
+        [
+          "CrowdNoiseMeterProps",
+          "decibels: number; // 50 to 120\n  stadiumName?: string;\n  isAwayTeamOnOffense: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/FatigueIndicator.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(FatigueIndicator)"
+      ],
+      "props": [
+        [
+          "FatigueIndicatorProps",
+          "fatigue: number; // 0.0 to 1.0 (0% to 100%)\n  showLabel?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/FieldCanvas.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/debug/PhysicsDebugOverlay.tsx",
+        "components/game/ReplayScrubber.tsx",
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "FieldCanvasRef",
+        "FieldCanvas"
+      ],
+      "props": [
+        [
+          "FieldCanvasProps",
+          "currentPlay?: PlayTrajectory;\n  isPlaying: boolean;\n  onPlayComplete?: () => void;\n  playbackSpeed?: number;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          205,
+          "color={p.player_id < 11 ? 0xff0000 : 0x0000ff} // Mock Offense/Defense based on ID"
+        ]
+      ]
+    },
+    "components/game/GameCanvas.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/FieldView.tsx",
+        "components/game/FieldCanvas.tsx"
+      ],
+      "exports": [
+        "GameCanvas"
+      ],
+      "props": [
+        [
+          "GameCanvasProps",
+          "width?: number;\n  height?: number;\n  children?: React.ReactNode;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/GameStats.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "GameStats"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          141,
+          "<StatRow label=\"First Downs\" value=\"--\" /> {/* Placeholder */}"
+        ]
+      ]
+    },
+    "components/game/InteractionBadge.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/game/InteractionTimeline.tsx"
+      ],
+      "exports": [
+        "default(InteractionBadge)"
+      ],
+      "props": [
+        [
+          "InteractionBadgeProps",
+          "outcome: InteractionOutcome;\n  showLabel?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/InteractionTimeline.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/PlayByPlayFeed.tsx"
+      ],
+      "exports": [
+        "default(InteractionTimeline)"
+      ],
+      "props": [
+        [
+          "InteractionTimelineProps",
+          "interactions: InteractionResult[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/MomentumIndicator.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/ScoreBoard.tsx",
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "MomentumIndicator"
+      ],
+      "props": [
+        [
+          "MomentumIndicatorProps",
+          "label?: string;\n  state: MomentumState;\n  align?: \"left\" | \"right\";\n  size?: \"sm\" | \"md\";"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/PlayerSprite.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/FieldView.tsx",
+        "components/game/FieldCanvas.tsx"
+      ],
+      "exports": [
+        "PlayerSprite"
+      ],
+      "props": [
+        [
+          "PlayerSpriteProps",
+          "/** Player ID - required for dynamic position updates via dataSource */\n  id?: number;\n  /** Static X position (used when dataSource not provided) */\n  x: number;\n  /** Static Y position (used when dataSource not provided) */\n  y: number;\n  /** Fill color for the player sprite */\n  color: number;\n  /** Whether player is on offense (affects direction indicator) */\n  isOffense?: boolean;\n  /** Dynamic position source - when provided with id, sprite updates position from this ref */\n  dataSource?: React.MutableRefObject<Map<number, { x: number; y: number"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/ReplayScrubber.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "ReplayScrubber"
+      ],
+      "props": [
+        [
+          "ReplayScrubberProps",
+          "canvasRef: React.RefObject<FieldCanvasRef>;\n  duration: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/game/WeatherWidget.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/LiveSim.tsx"
+      ],
+      "exports": [
+        "WeatherWidget"
+      ],
+      "props": [
+        [
+          "WeatherWidgetProps",
+          "weather: GameWeather;\n  location?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/history/LogoTimeline.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "LogoTimeline"
+      ],
+      "props": [],
+      "mock_hits": [
+        [
+          5,
+          "const MOCK_HISTORY = ["
+        ],
+        [
+          28,
+          "{MOCK_HISTORY.map((era, i) => ("
+        ],
+        [
+          38,
+          "<div className=\"logo-timeline__logo-placeholder\" />"
+        ]
+      ]
+    },
+    "components/immersive/BroadcastPanel.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx",
+        "pages/OffseasonDashboard.tsx",
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "BroadcastPanel"
+      ],
+      "props": [
+        [
+          "BroadcastPanelProps",
+          "title: string;\n  isLive?: boolean;\n  className?: string;\n  children: React.ReactNode;\n  \"data-testid\"?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/immersive/ParallaxScene.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx",
+        "pages/OffseasonDashboard.tsx",
+        "pages/SeasonDashboard.tsx",
+        "pages/TeamSelection.tsx"
+      ],
+      "exports": [
+        "ParallaxScene"
+      ],
+      "props": [
+        [
+          "ParallaxSceneProps",
+          "className?: string;\n  children: React.ReactNode;\n  rain?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/immersive/RibbonTicker.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx",
+        "pages/SeasonDashboard.tsx",
+        "pages/TeamSelection.tsx"
+      ],
+      "exports": [
+        "RibbonTicker"
+      ],
+      "props": [
+        [
+          "RibbonTickerProps",
+          "items: Array<string>;\n  speedSec?: number;\n  \"data-testid\"?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/immersive/SpotlightButton.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "SpotlightButtonProps",
+        "SpotlightButton"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/immersive/TiltCard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TeamSelection.tsx"
+      ],
+      "exports": [
+        "TiltCard"
+      ],
+      "props": [
+        [
+          "TiltCardProps",
+          "className?: string;\n  children: React.ReactNode;\n  intensity?: number; // degrees\n  glow?: boolean;\n  onClick?: React.MouseEventHandler<HTMLDivElement>;\n  \"data-testid\"?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/medical/BodyMap.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/MedicalCenter.tsx"
+      ],
+      "exports": [
+        "BodyZoneKey",
+        "BodyMapHealthData",
+        "BodyMap"
+      ],
+      "props": [
+        [
+          "BodyPartPathProps",
+          "id: BodyZoneKey;\n  name: string;\n  health: number;\n  isSelected: boolean;\n  onClick: (id: BodyZoneKey) => void;\n  d: string;"
+        ],
+        [
+          "BodyMapProps",
+          "healthData: BodyMapHealthData;\n  selectedZone?: BodyZoneKey | null;\n  onZoneSelect: (zone: BodyZoneKey) => void;\n  playerName?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/medical/FatigueMonitor.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/MedicalCenter.tsx"
+      ],
+      "exports": [
+        "FatigueMonitor"
+      ],
+      "props": [
+        [
+          "FatigueMonitorProps",
+          "fatigue?: FatigueState | null;\n  currentWearLevel?: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/medical/GenesisBiometricCard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/MedicalCenter.tsx"
+      ],
+      "exports": [
+        "GenesisBiometricCard"
+      ],
+      "props": [
+        [
+          "GenesisBiometricCardProps",
+          "biometrics?: BioMetrics | null;\n  playerName?: string;\n  position?: string;\n  isScoutedInitially?: boolean;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          23,
+          "// Defaults derived or mocked if backend biometrics are loading"
+        ]
+      ]
+    },
+    "components/medical/OrthopedicTriageModal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/MedicalCenter.tsx"
+      ],
+      "exports": [
+        "OrthopedicTriageModal"
+      ],
+      "props": [
+        [
+          "OrthopedicTriageModalProps",
+          "isOpen: boolean;\n  playerId?: number;\n  playerName?: string;\n  zoneKey: string;\n  zoneName: string;\n  currentIntegrity: number;\n  baselineWeeks?: number;\n  onClose: () => void;\n  onConfirmProtocol: (protocol: MedicalProtocolType) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/medical/TreatmentModal.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "TreatmentModal"
+      ],
+      "props": [
+        [
+          "TreatmentModalProps",
+          "isOpen: boolean;\n  playerId?: number;\n  playerName?: string;\n  partName: string;\n  currentHealth: number;\n  injurySeverity?: number;\n  weeksRemaining?: number;\n  onClose: () => void;\n  onConfirm: (treatment: TreatmentType) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/news/NewsFeedWidget.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/news/index.ts"
+      ],
+      "exports": [
+        "default(NewsFeedWidget)",
+        "NewsFeedWidget"
+      ],
+      "props": [
+        [
+          "NewsFeedWidgetProps",
+          "seasonId: number;\n  week?: number;\n  maxItems?: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/news/StorylineTracker.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/news/index.ts"
+      ],
+      "exports": [
+        "default(StorylineTracker)",
+        "StorylineTracker"
+      ],
+      "props": [
+        [
+          "StorylineTrackerProps",
+          "teamId?: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/news/WeeklyRecapModal.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/news/index.ts"
+      ],
+      "exports": [
+        "default(WeeklyRecapModal)",
+        "WeeklyRecapModal"
+      ],
+      "props": [
+        [
+          "WeeklyRecapModalProps",
+          "seasonId: number;\n  week: number;\n  isOpen: boolean;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/news/index.ts": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/offseason/DraftBoard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx",
+        "pages/OffseasonDashboard.tsx"
+      ],
+      "exports": [
+        "DraftBoard"
+      ],
+      "props": [
+        [
+          "DraftBoardProps",
+          "prospects: Prospect[];\n  teamNeeds?: TeamNeed[];\n  onProspectSelect?: (prospect: Prospect) => void;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          300,
+          "playerId={String(scoutingReportProspect.id)} // Assuming prospect.id is number, mock service expects string"
+        ]
+      ]
+    },
+    "components/offseason/DraftTicker.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx"
+      ],
+      "exports": [
+        "DraftTicker"
+      ],
+      "props": [
+        [
+          "DraftTickerProps",
+          "recentPicks: DraftPickSummary[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/OffseasonTimeline.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/OffseasonDashboard.tsx"
+      ],
+      "exports": [
+        "OffseasonTimeline"
+      ],
+      "props": [
+        [
+          "OffseasonTimelineProps",
+          "currentPhase: string;\n  phaseStats?: {\n    [key: string]: PhaseStat;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/PlayerProgression.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/OffseasonDashboard.tsx"
+      ],
+      "exports": [
+        "PlayerProgression"
+      ],
+      "props": [
+        [
+          "PlayerProgressionProps",
+          "progressionData: ProgressionData[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/SalaryCapWidget.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/OffseasonDashboard.tsx"
+      ],
+      "exports": [
+        "SalaryCapWidget"
+      ],
+      "props": [
+        [
+          "SalaryCapWidgetProps",
+          "data: SalaryCapData;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/ScoutIntelligenceLens.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/offseason/DraftBoard.tsx"
+      ],
+      "exports": [
+        "ScoutIntelligenceLens"
+      ],
+      "props": [
+        [
+          "ScoutIntelligenceLensProps",
+          "currentLens: ScoutBiasLens;\n  onLensChange: (lens: ScoutBiasLens) => void;\n  selectedProspect?: ProspectIntelligence | null;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/TeamNeeds.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/OffseasonDashboard.tsx"
+      ],
+      "exports": [
+        "TeamNeeds"
+      ],
+      "props": [
+        [
+          "TeamNeedsProps",
+          "needs: TeamNeed[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/offseason/TradeModal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DraftRoom.tsx"
+      ],
+      "exports": [
+        "TradeModal"
+      ],
+      "props": [
+        [
+          "TradeModalProps",
+          "seasonId: number;\n  currentTeamId: number;\n  onClose: () => void;\n  onTrade: (targetTeamId: number) => void;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          72,
+          "// We'll assume for this MVP integration we just pass empty to trigger the \"general fairness\" check or mock it."
+        ],
+        [
+          73,
+          "// A better approach is to pass a dummy ID or update props."
+        ]
+      ]
+    },
+    "components/playbook/FamiliarityBar.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/coaching/GameplanDashboard.tsx"
+      ],
+      "exports": [
+        "FamiliarityBar"
+      ],
+      "props": [
+        [
+          "FamiliarityBarProps",
+          "score: number; // 0.0 to 1.0\n  showLabel?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/player/ArchetypeBadge.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/ui/PlayerCard.tsx",
+        "pages/SkillsPage.tsx"
+      ],
+      "exports": [
+        "ArchetypeBadge"
+      ],
+      "props": [
+        [
+          "ArchetypeBadgeProps",
+          "archetype: PlayerArchetype | string;\n  size?: \"sm\" | \"md\" | \"lg\";\n  showTooltip?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/player/PlayerBackstoryModal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/ui/PlayerCard.tsx"
+      ],
+      "exports": [
+        "PlayerBackstoryModal"
+      ],
+      "props": [
+        [
+          "PlayerBackstoryModalProps",
+          "playerId: string;\n  playerName: string;\n  isOpen: boolean;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/scouting/ScoutingReportModal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/offseason/DraftBoard.tsx"
+      ],
+      "exports": [
+        "ScoutingReportModal"
+      ],
+      "props": [
+        [
+          "ScoutingReportModalProps",
+          "playerId: string;\n  playerName: string;\n  position: string;\n  isOpen: boolean;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/LeagueLeaders.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "LeagueLeaders"
+      ],
+      "props": [
+        [
+          "LeagueLeadersProps",
+          "leaders: LeagueLeadersType | null;\n  loading: boolean;\n  teams: Team[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/NewsFeed.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/OffseasonDashboard.tsx",
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "default(NewsFeed)",
+        "NewsItem",
+        "NewsResponse",
+        "NewsFeed"
+      ],
+      "props": [
+        [
+          "NewsFeedProps",
+          "/** Filter news by team name */\n  teamFilter?: string;\n  /** Maximum items to display */\n  maxItems?: number;\n  /** Enable compact mode for sidebar */\n  compact?: boolean;\n  /** Auto-refresh interval in seconds (0 to disable) */\n  refreshInterval?: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/PlayoffBracket.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "PlayoffBracket"
+      ],
+      "props": [
+        [
+          "PlayoffBracketProps",
+          "/** List of all playoff matchups to display in the bracket. */\n  matchups: PlayoffMatchup[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/QuickActions.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/season/SeasonSummaryCard.tsx"
+      ],
+      "exports": [
+        "QuickActions"
+      ],
+      "props": [
+        [
+          "QuickActionsProps",
+          "actions: Action[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/ScheduleView.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "ScheduleView"
+      ],
+      "props": [
+        [
+          "ScheduleViewProps",
+          "/** List of games to display for the selected week. */\n  games: Game[];\n  /** List of all teams, used for looking up names and logos. */\n  teams: Team[];\n  /** The currently active week in the season. */\n  currentWeek: number;\n  /** Total number of weeks in the season. */\n  totalWeeks: number;\n  /** Callback triggered when the user selects a different week. */\n  onWeekChange: (week: number) => void;\n  /** Callback triggered when the user wants to simulate a specific game. */\n  onSimulateGame?: (gameId: number) => void;\n  /** Whether the schedule data is loading. */\n  loading?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/season/SeasonSummaryCard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "SeasonSummaryCard"
+      ],
+      "props": [
+        [
+          "SeasonSummaryCardProps",
+          "season: Season;\n  progress: number;\n  actions: Action[];\n  champion?: string;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          121,
+          "<span className=\"stat-value\">--</span> {/* Placeholder */}"
+        ]
+      ]
+    },
+    "components/season/StandingsTable.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SeasonDashboard.tsx"
+      ],
+      "exports": [
+        "StandingsTable"
+      ],
+      "props": [
+        [
+          "StandingsTableProps",
+          "/** List of team standings to display. */\n  standings: TeamStanding[];\n  /** Whether the data is currently loading. */\n  loading?: boolean;\n  /** Whether to show a compact version of the table. */\n  compact?: boolean;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/shared/TraitBadge.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "TraitBadge"
+      ],
+      "props": [
+        [
+          "TraitBadgeProps",
+          "name: string;\n  tier: \"GOLD\" | \"SILVER\" | \"BRONZE\" | \"COMMON\";\n  description?: string;\n  iconUrl?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/skills/AbilityUnlockTree.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SkillsPage.tsx"
+      ],
+      "exports": [
+        "AbilityUnlockTree"
+      ],
+      "props": [
+        [
+          "AbilityUnlockTreeProps",
+          "playerId: number;\n  playerLevel: number;\n  playerXp: number;\n  playerPosition: string;\n  abilityStatuses: Record<string, PlayerAbilityStatus>;\n  onUnlockSuccess: (abilityKey: string, remainingXp?: number) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/skills/ConnectionLine.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/skills/SkillTreeCanvas.tsx"
+      ],
+      "exports": [
+        "ConnectionLine"
+      ],
+      "props": [
+        [
+          "ConnectionLineProps",
+          "start: [number, number, number];\n  end: [number, number, number];\n  isUnlocked: boolean;\n  color?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/skills/SkillNode3D.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/skills/SkillTreeCanvas.tsx"
+      ],
+      "exports": [
+        "SkillNode3D"
+      ],
+      "props": [
+        [
+          "SkillNode3DProps",
+          "id: string;\n  position: [number, number, number];\n  iconType: string;\n  isUnlocked: boolean;\n  isEquipped: boolean;\n  tier: string;\n  label: string;\n  onClick: (id: string) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/skills/SkillTreeCanvas.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SkillsPage.tsx"
+      ],
+      "exports": [
+        "SkillTreeCanvas"
+      ],
+      "props": [
+        [
+          "SkillTreeCanvasProps",
+          "layout: SkillTreeLayout;\n  unlockedTraits: string[]; // List of trait IDs\n  equippedTraits: string[]; // List of trait IDs\n  onNodeClick: (traitId: string) => void;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          89,
+          "tier=\"GOLD\" // TODO: Read from actual trait data if available, defaulting for visual demo"
+        ]
+      ]
+    },
+    "components/skills/SkillsOverlay.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SkillsPage.tsx"
+      ],
+      "exports": [
+        "SkillsOverlay"
+      ],
+      "props": [
+        [
+          "SkillsOverlayProps",
+          "selectedTraitId: string | null;\n  selectedTraitDetails: Trait | null;\n  onCloseDetail: () => void;\n  onEquip: (traitId: string) => void;\n  playerPoints: number;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          83,
+          "{/* Mock data for now, would come from real trait */}"
+        ]
+      ]
+    },
+    "components/skills/StarfieldBackground.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/skills/SkillTreeCanvas.tsx",
+        "pages/TrainingCenter.tsx"
+      ],
+      "exports": [
+        "StarfieldBackground"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/skills/TraitBadgeGrid.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/SkillsPage.tsx"
+      ],
+      "exports": [
+        "TraitBadgeGrid"
+      ],
+      "props": [
+        [
+          "TraitBadgeGridProps",
+          "unlockedTraits: string[];\n  allTraits?: Trait[];\n  onTraitClick?: (traitName: string) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/DraggableAsset.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/trades/DroppableZone.tsx",
+        "components/trades/TradeNegotiator.tsx"
+      ],
+      "exports": [
+        "DraggableAsset"
+      ],
+      "props": [
+        [
+          "DraggableAssetProps",
+          "id: string;\n  player: TradePlayer;\n  disabled?: boolean;\n  onClick?: () => void;\n  showRemoveButton?: boolean;\n  onRemove?: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/DroppableZone.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/trades/TradeNegotiator.tsx"
+      ],
+      "exports": [
+        "DroppableZone"
+      ],
+      "props": [
+        [
+          "DroppableZoneProps",
+          "id: string;\n  title: string;\n  players: TradePlayer[];\n  onRemove: (playerId: number) => void;\n  emptyMessage?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/PendingOffers.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/trades/TradeCenter.tsx",
+        "pages/TradeCenterPage.tsx"
+      ],
+      "exports": [
+        "PendingOffers"
+      ],
+      "props": [
+        [
+          "PendingOffersProps",
+          "teamId: number;\n  onCounter?: (offer: TradeOffer) => void;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          25,
+          "// Silent error for now, mock data fallback handles it"
+        ]
+      ]
+    },
+    "components/trades/TradeAnalyzer.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/offseason/TradeModal.tsx",
+        "components/trades/TradeNegotiator.tsx",
+        "components/trades/index.ts"
+      ],
+      "exports": [
+        "TradeAnalyzer"
+      ],
+      "props": [
+        [
+          "TradeAnalyzerProps",
+          "seasonId: number;\n  teamId: number;\n  targetTeamId?: number | null;\n  offeredAssets: number[]; // Player IDs\n  requestedAssets: number[]; // Player IDs"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/TradeBlock.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/trades/index.ts",
+        "pages/TradeCenterPage.tsx"
+      ],
+      "exports": [
+        "default(TradeBlock)",
+        "TradeBlock"
+      ],
+      "props": [
+        [
+          "TradeBlockProps",
+          "seasonId: number;\n  userTeamId: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/TradeCenter.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/trades/index.ts"
+      ],
+      "exports": [
+        "default(TradeCenter)",
+        "TradeCenter"
+      ],
+      "props": [
+        [
+          "TradeCenterProps",
+          "seasonId: number;\n  userTeamId: number;\n  userTeam: Team;"
+        ]
+      ],
+      "mock_hits": [
+        [
+          318,
+          "className=\"trade-drop-zone-placeholder\""
+        ],
+        [
+          478,
+          "className=\"trade-drop-zone-placeholder\""
+        ],
+        [
+          605,
+          "<div className=\"trade-drop-zone-placeholder\">"
+        ]
+      ]
+    },
+    "components/trades/TradeNegotiator.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TradeCenterPage.tsx"
+      ],
+      "exports": [
+        "default(TradeNegotiator)",
+        "TradeNegotiator"
+      ],
+      "props": [
+        [
+          "TradeNegotiatorProps",
+          "seasonId: number;\n  userTeamId: number;\n  initialOffer?: TradeOffer | null; // Support for counter-offers"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/trades/index.ts": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/training/CampSchedulePlanner.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "IntensityLevel",
+        "CampDrillType",
+        "DaySchedule",
+        "CampSchedulePlanner"
+      ],
+      "props": [
+        [
+          "CampSchedulePlannerProps",
+          "onScheduleChange?: (schedule: DaySchedule[]) => void;\n  onSimulateCampWeek?: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/CoachingStyleDial.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TrainingCenter.tsx"
+      ],
+      "exports": [
+        "CoachingStyleDial"
+      ],
+      "props": [
+        [
+          "CoachingStyleDialProps",
+          "styles: CoachingStyle[];\n  selectedStyle?: string;\n  onSelect: (styleName: string) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/CoachingStylePicker.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "CoachingStylePicker"
+      ],
+      "props": [
+        [
+          "CoachingStylePickerProps",
+          "currentStyle: CoachingStyleType;\n  onStyleSelect: (style: CoachingStyleType) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/DrillCard.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "DrillCard"
+      ],
+      "props": [
+        [
+          "DrillCardProps",
+          "drill: Drill;\n  isSelected?: boolean;\n  onSelect?: (drill: Drill) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/DrillCard3D.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/training/DrillSelector.tsx"
+      ],
+      "exports": [
+        "DrillCard3D"
+      ],
+      "props": [
+        [
+          "DrillCard3DProps",
+          "drill: Drill;\n  isSelected: boolean;\n  isRecommended?: boolean;\n  onSelect: (drill: Drill) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/DrillSelector.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TrainingCenter.tsx"
+      ],
+      "exports": [
+        "default(DrillSelector)",
+        "DrillSelector"
+      ],
+      "props": [
+        [
+          "DrillSelectorProps",
+          "position?: string;\n  seasonPhase?: string;\n  onDrillSelect: (drill: Drill) => void;\n  selectedDrill?: Drill | null;\n  playerWeaknesses?: string[]; // New prop for recommendations"
+        ]
+      ],
+      "mock_hits": [
+        [
+          215,
+          "className=\"w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all\""
+        ]
+      ]
+    },
+    "components/training/PlayerProgressChart.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(PlayerProgressChart)",
+        "PlayerProgressChart"
+      ],
+      "props": [
+        [
+          "PlayerProgressChartProps",
+          "playerId: number;\n  playerName: string;\n  position: string;\n  stats: StatProgress[];\n  weeklyXP?: number[];"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/TrainingSessionResult.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TrainingCenter.tsx"
+      ],
+      "exports": [
+        "TrainingSessionResult"
+      ],
+      "props": [
+        [
+          "TrainingSessionResultProps",
+          "result: TrainingResult;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/training/WeeklyScheduleTimeline.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TrainingCenter.tsx"
+      ],
+      "exports": [
+        "WeeklyScheduleTimeline"
+      ],
+      "props": [
+        [
+          "WeeklyScheduleTimelineProps",
+          "selectedDay?: string;\n  onSelectDay: (day: string) => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/transitions/PageTransition.tsx": {
+      "reachable": false,
+      "imported_by": [
+        "components/transitions/index.ts"
+      ],
+      "exports": [
+        "default(PageTransition)",
+        "PageTransition",
+        "SlideTransition",
+        "FadeBlurTransition",
+        "StaggeredTransition"
+      ],
+      "props": [
+        [
+          "PageTransitionProps",
+          "children: React.ReactNode;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/transitions/index.ts": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/transitions/transitionVariants.ts": {
+      "reachable": false,
+      "imported_by": [
+        "components/transitions/PageTransition.tsx",
+        "components/transitions/index.ts"
+      ],
+      "exports": [
+        "staggerChildVariants",
+        "pageVariants",
+        "slideVariants",
+        "fadeBlurVariants",
+        "transitionVariants"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/trophy/TrophyAssets.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/trophy/TrophyCaseScene.tsx"
+      ],
+      "exports": [
+        "LombardiTrophy",
+        "MvpTrophy",
+        "DivisionTitleTrophy"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/trophy/TrophyCaseScene.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/TrophyRoom.tsx"
+      ],
+      "exports": [
+        "TrophyCaseScene"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/ui/Badge.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "Badge"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/ui/Card.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/coaching/CoachSettings.tsx",
+        "components/game/CoachingWidget.tsx"
+      ],
+      "exports": [
+        "Card",
+        "CardHeader",
+        "CardTitle",
+        "CardContent",
+        "CardFooter"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/ui/ChemistryBadge.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/DepthChart.tsx"
+      ],
+      "exports": [
+        "ChemistryBadge"
+      ],
+      "props": [
+        [
+          "ChemistryBadgeProps",
+          "level: number; // 0.0 to 1.0\n  consecutiveGames: number;\n  status: string; // \"NONE\", \"DEVELOPING\", \"STRONG\", \"ELITE\", \"MAXIMUM\"\n  bonuses?: {\n    pass_block: number;\n    run_block: number;\n    awareness: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/DraggableCard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/FrontOffice.tsx",
+        "pages/FrontOffice_Baseline.tsx"
+      ],
+      "exports": [
+        "default(DraggableCard)",
+        "DraggableCard"
+      ],
+      "props": [
+        [
+          "DraggableCardProps",
+          "name: string;\n  position: string;\n  rating: number;\n  team: string;\n  jerseyNumber?: number;\n  speed?: number;\n  strength?: number;\n  agility?: number;\n  acceleration?: number;\n  awareness?: number;\n  devTrait?: \"NORMAL\" | \"STAR\" | \"SUPERSTAR\" | \"XFACTOR\";\n  morale?: string;\n  className?: string;\n  traits?: string[];\n  archetype?: PlayerArchetype | string;\n  onClick?: () => void;\n  testId?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/EnhancedPlayerProfile.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(EnhancedPlayerProfile)",
+        "EnhancedPlayerProfile"
+      ],
+      "props": [
+        [
+          "EnhancedPlayerProfileProps",
+          "playerId: number;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/LoadingSpinner.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/season/LeagueLeaders.tsx",
+        "pages/OffseasonDashboard.tsx",
+        "pages/SeasonDashboard.tsx",
+        "pages/TradeCenterPage.tsx"
+      ],
+      "exports": [
+        "LoadingSpinner"
+      ],
+      "props": [
+        [
+          "LoadingSpinnerProps",
+          "size?: \"small\" | \"medium\" | \"large\";\n  color?: string;\n  text?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/PlayerCard.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/ui/DraggableCard.tsx"
+      ],
+      "exports": [
+        "default(PlayerCard)",
+        "PlayerCard"
+      ],
+      "props": [
+        [
+          "PlayerCardProps",
+          "name: string;\n  position: string;\n  rating: number;\n  team: string;\n  jerseyNumber?: number;\n  speed?: number;\n  strength?: number;\n  agility?: number;\n  acceleration?: number;\n  awareness?: number;\n  devTrait?: \"NORMAL\" | \"STAR\" | \"SUPERSTAR\" | \"XFACTOR\";\n  morale?: string;\n  className?: string;\n  traits?: string[];\n  archetype?: PlayerArchetype | string;\n  onClick?: () => void;\n  testId?: string;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/PlayerModal.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "components/season/LeagueLeaders.tsx"
+      ],
+      "exports": [
+        "PlayerModal"
+      ],
+      "props": [
+        [
+          "PlayerModalProps",
+          "playerId: number;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/PrimeCard.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "PrimeCard"
+      ],
+      "props": [
+        [
+          "PrimeCardProps",
+          "children: ReactNode;\n  className?: string;\n  title?: string;\n  icon?: ReactNode;\n  variant?: \"default\" | \"danger\" | \"glass\";\n  delay?: number;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/Sidebar.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "Sidebar"
+      ],
+      "props": [],
+      "mock_hits": []
+    },
+    "components/ui/Telestrator.tsx": {
+      "reachable": true,
+      "imported_by": [
+        "pages/Playbook.tsx"
+      ],
+      "exports": [
+        "Telestrator"
+      ],
+      "props": [
+        [
+          "TelestratorProps",
+          "isActive: boolean;\n  onClose: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    },
+    "components/ui/TraitNotification.tsx": {
+      "reachable": false,
+      "imported_by": [],
+      "exports": [
+        "default(TraitNotification)",
+        "TraitNotificationProps"
+      ],
+      "props": [
+        [
+          "TraitNotificationProps",
+          "traitName: string;\n  playerName: string;\n  type?: \"UNLOCK\" | \"UPGRADE\" | \"LOST\";\n  duration?: number;\n  onDismiss?: () => void;"
+        ]
+      ],
+      "mock_hits": []
+    }
+  }
+}

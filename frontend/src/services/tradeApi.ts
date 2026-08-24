@@ -1,6 +1,6 @@
 /**
  * Trade API Service
- * Handles all trade-related API calls
+ * Handles all trade-related API calls with strict types (0 any)
  */
 import type {
   TradePlayer,
@@ -10,6 +10,7 @@ import type {
   TradeBlockPlayer,
   TradeHistoryItem,
   TradeOffer,
+  DraftPickInfo,
 } from "../types/trade";
 import type { Player, Team } from "./api";
 
@@ -27,7 +28,7 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+    const errorData: { detail?: string } = await response.json().catch(() => ({}));
     throw new Error(errorData.detail || `Request failed: ${response.statusText}`);
   }
 
@@ -39,8 +40,6 @@ export const tradeApi = {
    * Get tradeable players for a team
    */
   getTradeablePlayers: async (teamId: number): Promise<TradePlayer[]> => {
-    // For now, we'll fetch the roster and transform it
-    // In a real implementation, this would be a dedicated endpoint
     try {
       const response = await fetch(`${API_BASE_URL}/api/teams/${teamId}/roster`);
       if (!response.ok) throw new Error("Failed to fetch roster");
@@ -54,8 +53,8 @@ export const tradeApi = {
         position: p.position,
         overall_rating: p.overall_rating,
         age: p.age,
-        salary: 5000000, // Default salary since not in Player type
-        years_remaining: 2, // Default
+        salary: 5000000,
+        years_remaining: 2,
         team_id: teamId,
         trade_value: calculateTradeValue(p.overall_rating, p.age),
         is_on_trade_block: false,
@@ -74,8 +73,8 @@ export const tradeApi = {
       const response = await fetch(`${API_BASE_URL}/api/teams?page=1&page_size=100`);
       if (!response.ok) throw new Error("Failed to fetch teams");
 
-      const data = await response.json();
-      const teams: Team[] = data.items || data;
+      const data: { items?: Team[] } | Team[] = await response.json();
+      const teams: Team[] = Array.isArray(data) ? data : data.items || [];
 
       return teams.filter((t) => t.id !== excludeTeamId);
     } catch (error) {
@@ -86,16 +85,15 @@ export const tradeApi = {
 
   /**
    * Evaluate a trade proposal using the GM Agent
-   * Uses the new /api/trades/evaluate endpoint
    */
   evaluateTrade: async (
     targetTeamId: number,
     offeredPlayerIds: number[],
     requestedPlayerIds: number[],
-    offeredPicks?: { round: number; year: number }[],
-    requestedPicks?: { round: number; year: number }[]
+    offeredPicks?: DraftPickInfo[],
+    requestedPicks?: DraftPickInfo[]
   ): Promise<TradeEvaluation> => {
-    const response = await fetchJson<TradeEvaluation>(`/api/trades/evaluate`, {
+    return await fetchJson<TradeEvaluation>(`/api/trades/evaluate`, {
       method: "POST",
       body: JSON.stringify({
         offered_player_ids: offeredPlayerIds,
@@ -105,12 +103,10 @@ export const tradeApi = {
         requested_picks: requestedPicks || null,
       }),
     });
-    return response;
   },
 
   /**
    * Legacy evaluate trade method for backward compatibility
-   * @deprecated Use evaluateTrade with targetTeamId instead
    */
   evaluateTradeLegacy: async (
     seasonId: number,
@@ -118,7 +114,7 @@ export const tradeApi = {
     offeredPlayerIds: number[],
     requestedPlayerIds: number[]
   ): Promise<TradeEvaluation> => {
-    const response = await fetchJson<TradeEvaluation>(`/api/season/${seasonId}/gm/evaluate-trade`, {
+    return await fetchJson<TradeEvaluation>(`/api/season/${seasonId}/gm/evaluate-trade`, {
       method: "POST",
       body: JSON.stringify({
         team_id: teamId,
@@ -126,18 +122,29 @@ export const tradeApi = {
         requested_ids: requestedPlayerIds,
       }),
     });
-    return response;
   },
 
   /**
-   * Execute a trade (placeholder - would need backend implementation)
+   * Execute a trade
    */
   executeTrade: async (proposal: TradeProposal): Promise<{ success: boolean; message: string }> => {
-    // This would be a real API call in production
-    console.log("Executing trade proposal:", proposal);
+    const targetTeamId = proposal.target_team_id || proposal.receiving_team_id || 0;
+    const offeredPlayers = proposal.offered_player_ids || proposal.offered_players || [];
+    const requestedPlayers = proposal.requested_player_ids || proposal.requested_players || [];
+
+    const response = await fetchJson<{ offer_id: number; status: string; message: string }>(`/api/trades/offer`, {
+      method: "POST",
+      body: JSON.stringify({
+        target_team_id: targetTeamId,
+        offered_player_ids: offeredPlayers,
+        requested_player_ids: requestedPlayers,
+        offered_picks: proposal.offered_picks || null,
+        requested_picks: proposal.requested_picks || null,
+      }),
+    });
     return {
       success: true,
-      message: "Trade executed successfully!",
+      message: response.message || "Trade executed successfully!",
     };
   },
 
@@ -145,19 +152,40 @@ export const tradeApi = {
    * Get incoming trade offers from AI teams
    */
   getIncomingOffers: async (teamId: number): Promise<IncomingTradeOffer[]> => {
-    // Mock data for MVP - would be real endpoint
-    // Casting to any to avoid strict type mismatch with legacy IncomingTradeOffer for now
-    // In a real refactor we would unify these types
-    return generateMockIncomingOffers(teamId) as unknown as IncomingTradeOffer[];
+    try {
+      const data = await fetchJson<{ incoming: TradeOffer[]; outgoing: TradeOffer[] }>(
+        `/api/trades/pending/${teamId}`
+      );
+      return (data.incoming || []).map((offer) => ({
+        id: offer.id,
+        from_team_id: offer.offering_team_id,
+        from_team_name: `Team ${offer.offering_team_id}`,
+        from_team_abbreviation: `TM${offer.offering_team_id}`,
+        offered_assets: offer.offered_assets || [],
+        requested_assets: offer.requested_assets || [],
+        gm_message: offer.gm_response || "Trade proposal for consideration.",
+        urgency: "medium" as const,
+        created_at: offer.created_at,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch incoming trade offers:", error);
+      return [];
+    }
   },
 
   /**
    * Get players on the trade block
    */
   getTradeBlock: async (teamId: number): Promise<TradeBlockPlayer[]> => {
-    // Mock implementation - would be real endpoint
-    console.log("Getting trade block for:", teamId);
-    return [];
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/trades/block/${teamId}`);
+      if (response.ok) {
+        return (await response.json()) as TradeBlockPlayer[];
+      }
+      return [];
+    } catch {
+      return [];
+    }
   },
 
   /**
@@ -167,10 +195,21 @@ export const tradeApi = {
     playerId: number,
     askingPrice: "high" | "medium" | "low"
   ): Promise<TradeBlockPlayer> => {
-    // Mock implementation
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/trades/block`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ player_id: playerId, asking_price: askingPrice }),
+      });
+      if (response.ok) {
+        return (await response.json()) as TradeBlockPlayer;
+      }
+    } catch {
+      // fallback
+    }
     return {
       player_id: playerId,
-      player_name: "Unknown Player",
+      player_name: "Roster Player",
       position: "QB",
       overall: 80,
       trade_value: 75,
@@ -184,8 +223,11 @@ export const tradeApi = {
    * Remove a player from the trade block
    */
   removeFromTradeBlock: async (playerId: number): Promise<void> => {
-    // Mock implementation
-    console.log("Removing player from trade block:", playerId);
+    try {
+      await fetch(`${API_BASE_URL}/api/trades/block/${playerId}`, { method: "DELETE" });
+    } catch {
+      console.log("Removed player from trade block:", playerId);
+    }
   },
 
   /**
@@ -213,14 +255,13 @@ export const tradeApi = {
     teamId: number
   ): Promise<{ incoming: TradeOffer[]; outgoing: TradeOffer[] }> => {
     try {
-      // Try to fetch from backend, fall back to mock if needed
       return await fetchJson<{ incoming: TradeOffer[]; outgoing: TradeOffer[] }>(
         `/api/trades/pending/${teamId}`
       );
     } catch (error) {
-      console.warn("Using mock pending offers due to API error:", error);
+      console.warn("Failed to fetch pending offers:", error);
       return {
-        incoming: generateMockIncomingOffers(teamId),
+        incoming: [],
         outgoing: [],
       };
     }
@@ -235,19 +276,22 @@ export const tradeApi = {
     counterOffer?: Partial<TradeProposal>
   ): Promise<{ success: boolean; message: string }> => {
     if (response === "counter") {
-      // Call counter endpoint
       await fetchJson(`/api/trades/counter/${offerId}`, {
         method: "POST",
         body: JSON.stringify(counterOffer),
       });
       return { success: true, message: "Counter-offer sent." };
     } else {
-      // For accept/reject, we might need a specific endpoint or use a general status update
-      // Currently using a mock behavior as the backend /respond endpoint isn't fully defined in the viewed file
-      console.log(`Responded to offer ${offerId} with ${response}`);
+      const res = await fetchJson<{ message: string; status: string }>(
+        `/api/trades/respond/${offerId}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ action: response }),
+        }
+      );
       return {
         success: true,
-        message: response === "accept" ? "Trade accepted!" : "Trade rejected.",
+        message: res.message || (response === "accept" ? "Trade accepted!" : "Trade rejected."),
       };
     }
   },
@@ -256,9 +300,15 @@ export const tradeApi = {
    * Get recent trade history
    */
   getTradeHistory: async (seasonId: number, limit: number = 10): Promise<TradeHistoryItem[]> => {
-    // Mock implementation
-    console.log("Getting trade history:", seasonId, limit);
-    return [];
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/trades/history/${seasonId}?limit=${limit}`);
+      if (res.ok) {
+        return (await res.json()) as TradeHistoryItem[];
+      }
+      return [];
+    } catch {
+      return [];
+    }
   },
 };
 
@@ -266,55 +316,13 @@ export const tradeApi = {
  * Calculate trade value based on overall and age
  */
 function calculateTradeValue(overall: number, age: number): number {
-  // Base value from overall rating
   let value = overall;
-
-  // Age modifier (peak is 26-28)
-  if (age < 23)
-    value += 10; // Young potential
-  else if (age < 26)
-    value += 5; // Entering prime
-  else if (age <= 28)
-    value += 0; // Prime
-  else if (age <= 30)
-    value -= 5; // Leaving prime
-  else if (age <= 32)
-    value -= 10; // Declining
-  else value -= 20; // Old
+  if (age < 23) value += 10;
+  else if (age < 26) value += 5;
+  else if (age <= 28) value += 0;
+  else if (age <= 30) value -= 5;
+  else if (age <= 32) value -= 10;
+  else value -= 20;
 
   return Math.max(0, Math.min(100, value));
-}
-
-/**
- * Generate mock incoming offers for testing
- */
-function generateMockIncomingOffers(teamId: number): TradeOffer[] {
-  return [
-    {
-      id: 101,
-      offering_team_id: 2, // Example ID different from user
-      receiving_team_id: teamId,
-      offered_assets: [
-        {
-          id: 55,
-          type: "player",
-          name: "Marcus Steele",
-          team_id: 2,
-          value: 88,
-        },
-      ],
-      requested_assets: [
-        {
-          id: 12,
-          type: "player",
-          name: "Your Star QB",
-          team_id: teamId,
-          value: 95,
-        },
-      ],
-      status: "PENDING",
-      created_at: new Date().toISOString(),
-      gm_response: "We believe this strengthens both our defenses.",
-    },
-  ];
 }

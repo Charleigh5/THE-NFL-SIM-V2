@@ -219,7 +219,10 @@ async def clear_tables(async_db_session):
     await async_db_session.execute(text("PRAGMA foreign_keys=OFF"))
 
     for table in reversed(Base.metadata.sorted_tables):
-        await async_db_session.execute(table.delete())
+        try:
+            await async_db_session.execute(table.delete())
+        except Exception:
+            pass
 
     await async_db_session.execute(text("PRAGMA foreign_keys=ON"))
     await async_db_session.commit()

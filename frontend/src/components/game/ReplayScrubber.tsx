@@ -3,7 +3,7 @@ import { Play, Pause } from "lucide-react";
 import type { FieldCanvasRef } from "./FieldCanvas";
 
 interface ReplayScrubberProps {
-  canvasRef: React.RefObject<FieldCanvasRef>;
+  canvasRef: React.RefObject<FieldCanvasRef | null>;
   duration: number;
 }
 

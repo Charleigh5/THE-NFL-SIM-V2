@@ -1,15 +1,24 @@
 """
 News API Endpoints
-
-Provides REST API for fetching league news, player news, and injury reports
-from the MCP sports_news server.
+==================
+Consolidated REST API for league news, team news, player news, injury reports,
+AI-generated living world feeds, weekly recaps, storylines, and category metadata.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Path
-from pydantic import BaseModel
-from typing import List, Dict, Optional
 import logging
 from datetime import datetime
+from typing import List, Dict, Optional, Any
+
+from fastapi import APIRouter, HTTPException, Query, Path, Depends, status
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.models.news_item import NewsItem as NewsItemModel, NewsCategory
+from app.models.weekly_recap import WeeklyRecap as WeeklyRecapModel
+from app.services.news_feed_service import NewsFeedService
+from app.services.weekly_recap_service import WeeklyRecapService
+from app.services.storyline_service import StorylineEventService
 
 router = APIRouter(prefix="/news", tags=["news"])
 logger = logging.getLogger(__name__)
@@ -20,7 +29,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 class NewsItem(BaseModel):
-    """Individual news item"""
+    """Individual news item schema."""
     headline: str
     source: str
     date: str
@@ -31,14 +40,14 @@ class NewsItem(BaseModel):
 
 
 class NewsResponse(BaseModel):
-    """News feed response"""
+    """News feed response schema."""
     items: List[NewsItem]
     total: int
     last_updated: str
 
 
 class InjuryReport(BaseModel):
-    """Injury report item"""
+    """Injury report item schema."""
     team_abbreviation: str
     player_name: str
     status: str
@@ -46,14 +55,77 @@ class InjuryReport(BaseModel):
 
 
 class InjuryReportResponse(BaseModel):
-    """Injury reports response"""
+    """Injury reports response schema."""
     week: int
     reports: Dict[str, List[InjuryReport]]
     last_updated: str
 
 
+class LivingNewsItem(BaseModel):
+    """AI-generated news item from the Living World Engine."""
+    id: int
+    season_id: int
+    week: int
+    team_id: Optional[int] = None
+    player_id: Optional[int] = None
+    category: str
+    headline: str
+    content: str
+    image_url: Optional[str] = None
+    importance_score: float = Field(ge=0.0, le=1.0)
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class NewsFeedResponse(BaseModel):
+    """Paginated Living World news feed."""
+    items: List[LivingNewsItem]
+    total_count: int
+    page: int
+    page_size: int
+    has_more: bool
+
+
+class WeeklyRecapResponse(BaseModel):
+    """Weekly recap from the Living World Engine."""
+    id: int
+    season_id: int
+    week: int
+    summary_text: str
+    mvp_player_id: Optional[int] = None
+    play_of_the_week_id: Optional[str] = None
+    surprising_result: Optional[str] = None
+    media_assets: Optional[List[str]] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class StorylineItem(BaseModel):
+    """Active storyline from the Living World Engine."""
+    type: str
+    team_id: Optional[int] = None
+    player_id: Optional[int] = None
+    start_week: int
+    intensity: int = Field(ge=1, le=5)
+    event_count: int
+
+
+class StorylineListResponse(BaseModel):
+    """List of active storylines."""
+    storylines: List[StorylineItem]
+
+
+class ErrorResponse(BaseModel):
+    """Standard error response."""
+    detail: str
+
+
 # ============================================================================
-# MOCK DATA GENERATOR
+# MOCK / FALLBACK DATA GENERATORS
 # ============================================================================
 
 def _generate_mock_league_news() -> List[NewsItem]:
@@ -151,49 +223,8 @@ def _generate_mock_player_news(player_name: str) -> List[NewsItem]:
     ]
 
 
-def generate_rivalry_headline(
-    team_a: str,
-    team_b: str,
-    score_diff: int,
-    is_renewal: bool = True
-) -> NewsItem:
-    """
-    NFL Identity Blueprint: Generate rivalry headlines for close games.
-
-    Args:
-        team_a: First team name
-        team_b: Second team name
-        score_diff: Absolute score difference
-        is_renewal: Whether this is renewing an existing rivalry
-
-    Returns:
-        NewsItem with rivalry headline
-    """
-    if score_diff == 0:
-        headline = f"INSTANT CLASSIC: {team_a} and {team_b} battle to OT thriller!"
-    elif score_diff == 1:
-        headline = f"ONE-POINT HEARTBREAKER: {team_a} edges {team_b} in nail-biter!"
-    elif score_diff == 2:
-        headline = f"SAFETY MARGIN: {team_a} holds off {team_b} by just 2 points!"
-    elif score_diff == 3:
-        headline = f"FIELD GOAL DECIDES IT: {team_a} survives {team_b} thriller!"
-    else:
-        headline = f"RIVALRY RENEWED: {team_a} vs {team_b} delivers another classic!"
-
-    if is_renewal:
-        headline = "RIVALRY RENEWED: " + headline.replace("RIVALRY RENEWED: ", "")
-
-    return NewsItem(
-        headline=headline,
-        source="NFL Network",
-        date=datetime.now().strftime("%Y-%m-%d"),
-        category="rivalry",
-        is_breaking=True
-    )
-
-
 # ============================================================================
-# ENDPOINTS
+# LEAGUE, TEAM & PLAYER NEWS ENDPOINTS
 # ============================================================================
 
 @router.get("/league", response_model=NewsResponse)
@@ -201,19 +232,10 @@ async def get_league_news(
     limit: int = Query(10, ge=1, le=50, description="Number of news items to return"),
     category: Optional[str] = Query(None, description="Filter by category")
 ):
-    """
-    Get latest league-wide news.
-
-    Integrates with MCP sports_news server for dynamic content.
-    Falls back to mock data for simulation immersion.
-    """
+    """Get latest league-wide news."""
     logger.info(f"Fetching league news (limit={limit}, category={category})")
-
     try:
-        # TODO: Integrate with actual MCP sports_news server when available
-        # For now, use mock data for simulation immersion
         news_items = _generate_mock_league_news()
-
         if category:
             news_items = [item for item in news_items if item.category == category]
 
@@ -232,18 +254,10 @@ async def get_team_news(
     team_name: str,
     limit: int = Query(5, ge=1, le=20, description="Number of news items to return")
 ):
-    """
-    Get news specific to a team.
-
-    Args:
-        team_name: Team name or abbreviation
-        limit: Maximum number of items to return
-    """
+    """Get news specific to a team."""
     logger.info(f"Fetching news for team: {team_name}")
-
     try:
         news_items = _generate_mock_team_news(team_name)
-
         return NewsResponse(
             items=news_items[:limit],
             total=len(news_items),
@@ -259,18 +273,10 @@ async def get_player_news(
     player_name: str,
     limit: int = Query(5, ge=1, le=20, description="Number of news items to return")
 ):
-    """
-    Get news specific to a player.
-
-    Args:
-        player_name: Player's full name
-        limit: Maximum number of items to return
-    """
+    """Get news specific to a player."""
     logger.info(f"Fetching news for player: {player_name}")
-
     try:
         news_items = _generate_mock_player_news(player_name)
-
         return NewsResponse(
             items=news_items[:limit],
             total=len(news_items),
@@ -285,15 +291,9 @@ async def get_player_news(
 async def get_injury_reports(
     week: int = Path(..., ge=1, le=18, description="NFL week number")
 ):
-    """
-    Get injury reports for a specific week.
-
-    Returns injury status for players across all teams.
-    """
+    """Get injury reports for a specific week."""
     logger.info(f"Fetching injury reports for week {week}")
-
     try:
-        # Mock injury report data
         mock_reports = {
             "KC": [
                 InjuryReport(
@@ -338,108 +338,45 @@ async def get_injury_reports(
 
 
 # ============================================================================
-# LIVING WORLD ENDPOINTS (Database-backed AI-generated content)
+# LIVING WORLD / RECAPS / STORYLINES ENDPOINTS (Consolidated)
 # ============================================================================
 
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from pydantic import Field
-from app.core.database import get_db
-from app.models.news_item import NewsItem as NewsItemModel, NewsCategory
-from app.models.weekly_recap import WeeklyRecap as WeeklyRecapModel
-from app.services.news_feed_service import NewsFeedService
-from app.services.weekly_recap_service import WeeklyRecapService
-from app.services.storyline_service import StorylineEventService
-
-
-class LivingNewsItem(BaseModel):
-    """AI-generated news item from the Living World Engine."""
-    id: int
-    season_id: int
-    week: int
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
-    category: str
-    headline: str
-    content: str
-    image_url: Optional[str] = None
-    importance_score: float = Field(ge=0.0, le=1.0)
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class LivingNewsFeedResponse(BaseModel):
-    """Paginated Living World news feed."""
-    items: List[LivingNewsItem]
-    total_count: int
-    page: int
-    page_size: int
-    has_more: bool
-
-
-class WeeklyRecapResponse(BaseModel):
-    """Weekly recap from the Living World Engine."""
-    id: int
-    season_id: int
-    week: int
-    summary_text: str
-    mvp_player_id: Optional[int] = None
-    play_of_the_week_id: Optional[str] = None
-    surprising_result: Optional[str] = None
-    media_assets: Optional[List[str]] = None
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class StorylineItem(BaseModel):
-    """Active storyline from the Living World Engine."""
-    type: str
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
-    start_week: int
-    intensity: int = Field(ge=1, le=5)
-    event_count: int
-
-
-class StorylineListResponse(BaseModel):
-    """List of active storylines."""
-    storylines: List[StorylineItem]
-
-
+@router.get(
+    "/feed",
+    response_model=NewsFeedResponse,
+    summary="Get Living World News Feed"
+)
 @router.get(
     "/living/feed",
-    response_model=LivingNewsFeedResponse,
-    summary="Get Living World News Feed",
-    description="AI-generated news from in-game events."
+    response_model=NewsFeedResponse,
+    include_in_schema=False
 )
 async def get_living_news_feed(
-    season_id: int = Query(..., description="Season ID"),
+    season_id: int = Query(2025, description="Season ID"),
     week: Optional[int] = Query(None, ge=1, le=22, description="Week number"),
+    category: Optional[str] = Query(None, description="Filter by category"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db)
 ):
-    """
-    Get AI-generated news from the Living World Engine.
-
-    This news is generated from actual in-game events (touchdowns, sacks, trades, etc.)
-    and persisted in the database.
-    """
+    """Get AI-generated news from the Living World Engine."""
     logger.info(f"Fetching Living World news for season {season_id}, week {week}")
 
     service = NewsFeedService()
     all_items = service.get_news(db, season_id=season_id, week=week, limit=1000)
+
+    if category:
+        all_items = [
+            item for item in all_items
+            if (hasattr(item.category, "value") and item.category.value == category) or str(item.category) == category
+        ]
 
     total_count = len(all_items)
     start_idx = (page - 1) * page_size
     end_idx = start_idx + page_size
     paginated_items = all_items[start_idx:end_idx]
 
-    return LivingNewsFeedResponse(
+    return NewsFeedResponse(
         items=[LivingNewsItem.model_validate(item) for item in paginated_items],
         total_count=total_count,
         page=page,
@@ -449,21 +386,21 @@ async def get_living_news_feed(
 
 
 @router.get(
+    "/recap/{season_id}/{week}",
+    response_model=WeeklyRecapResponse,
+    summary="Get Weekly Recap"
+)
+@router.get(
     "/living/recap/{season_id}/{week}",
     response_model=WeeklyRecapResponse,
-    summary="Get Weekly Recap",
-    description="Get the 'SportsCenter' style weekly recap."
+    include_in_schema=False
 )
 async def get_living_weekly_recap(
     season_id: int,
     week: int,
     db: Session = Depends(get_db)
 ):
-    """
-    Get the AI-generated weekly recap.
-
-    Includes summary text, MVP, play of the week, and surprising results.
-    """
+    """Get the AI-generated weekly recap."""
     logger.info(f"Fetching weekly recap for season {season_id}, week {week}")
 
     service = WeeklyRecapService()
@@ -479,23 +416,23 @@ async def get_living_weekly_recap(
 
 
 @router.post(
+    "/recap/{season_id}/{week}/generate",
+    response_model=WeeklyRecapResponse,
+    status_code=201,
+    summary="Generate Weekly Recap"
+)
+@router.post(
     "/living/recap/{season_id}/{week}/generate",
     response_model=WeeklyRecapResponse,
     status_code=201,
-    summary="Generate Weekly Recap",
-    description="Trigger AI generation of the weekly recap."
+    include_in_schema=False
 )
 async def generate_living_weekly_recap(
     season_id: int,
     week: int,
     db: Session = Depends(get_db)
 ):
-    """
-    Generate the weekly recap for a specific week.
-
-    This aggregates all events from the week and creates the recap.
-    Idempotent - returns existing recap if already generated.
-    """
+    """Generate or retrieve the weekly recap for a specific week."""
     logger.info(f"Generating weekly recap for season {season_id}, week {week}")
 
     service = WeeklyRecapService()
@@ -505,20 +442,19 @@ async def generate_living_weekly_recap(
 
 
 @router.get(
+    "/storylines",
+    response_model=StorylineListResponse,
+    summary="Get Active Storylines"
+)
+@router.get(
     "/living/storylines",
     response_model=StorylineListResponse,
-    summary="Get Active Storylines",
-    description="Get all active multi-week narrative storylines."
+    include_in_schema=False
 )
 async def get_living_storylines(
     team_id: Optional[int] = Query(None, description="Filter by team ID")
 ):
-    """
-    Get active storylines from the Living World Engine.
-
-    Storylines are multi-week narratives like "Hot Streak" or "QB Controversy"
-    that develop based on in-game events.
-    """
+    """Get all active multi-week narrative storylines."""
     logger.info(f"Fetching active storylines (team_id={team_id})")
 
     service = StorylineEventService()
@@ -532,8 +468,7 @@ async def get_living_storylines(
 @router.get(
     "/categories",
     response_model=List[str],
-    summary="Get News Categories",
-    description="Get all available news category types."
+    summary="Get News Categories"
 )
 async def get_available_news_categories():
     """Return all available Living World news category values."""

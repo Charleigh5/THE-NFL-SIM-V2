@@ -84,6 +84,13 @@ export const PlayAnimator = ({ onAnimationComplete }: PlayAnimatorProps) => {
     animatePlay(latestPlay);
   }, [latestPlay, animatePlay]);
 
-  // Return animation state for rendering
-  return { isAnimating };
+  // Return animation telemetry overlay for rendering
+  if (!isAnimating) return null;
+
+  return (
+    <div className="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-black/80 border border-cyan-500/50 backdrop-blur-md text-cyan-300 text-xs px-4 py-1.5 rounded-full shadow-lg flex items-center gap-2 font-mono">
+      <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+      Simulating 3D Play Telemetry...
+    </div>
+  );
 };

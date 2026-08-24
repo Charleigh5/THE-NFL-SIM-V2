@@ -15,6 +15,8 @@ import { MomentumIndicator } from "../components/game/MomentumIndicator";
 import { CrowdNoiseMeter } from "../components/game/CrowdNoiseMeter";
 import { GridironVisualizer } from "../components/GridironVisualizer";
 import { LiveGameVisualizer } from "../components/3d/LiveGameVisualizer";
+import { ReplayScrubber } from "../components/game/ReplayScrubber";
+import { PlayAnimator } from "../components/3d/PlayAnimator";
 import { soundEffects } from "../services/soundEffects";
 import { Play, Pause, FastForward, Activity, BarChart2, Layers, Tv } from "lucide-react";
 
@@ -228,6 +230,7 @@ export const LiveSim = () => {
             ) : viewMode === "field" ? (
               <>
                 <PhysicsDebugOverlay play={mockTrajectory} canvasRef={canvasRef} />
+                <PlayAnimator onAnimationComplete={() => console.log("Play telemetry animation complete")} />
                 <FieldCanvas
                   ref={canvasRef}
                   isPlaying={isLive}
@@ -235,6 +238,14 @@ export const LiveSim = () => {
                   playbackSpeed={1.0}
                   onPlayComplete={() => console.log("Play complete")}
                 />
+
+                {/* Replay Timeline Scrubber */}
+                <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 w-80 max-w-[90%]">
+                  <ReplayScrubber
+                    canvasRef={canvasRef}
+                    duration={mockTrajectory.duration || 2.0}
+                  />
+                </div>
 
                 {/* Weather Overlay */}
                 <div className="absolute top-4 right-4 z-10 transition-opacity hover:opacity-100 opacity-90">
