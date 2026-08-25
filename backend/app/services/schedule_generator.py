@@ -145,48 +145,50 @@ class ScheduleGenerator:
         existing_matchups: List[Tuple[Team, Team]]
     ) -> List[Tuple[Team, Team]]:
         """
-        Fill in remaining games to ensure each team has 17 games.
-
-        This method finds teams with fewer than 17 games and pairs them up,
-        avoiding duplicate matchups.
-
-        Args:
-            teams: List of all teams.
-            existing_matchups: List of matchups already generated.
-
-        Returns:
-            List[Tuple[Team, Team]]: List of additional (Home, Away) tuples.
+        Fill in remaining games to ensure each team has exactly 17 games (272 total regular season games).
         """
-        # Count games per team
         game_count = {team.id: 0 for team in teams}
         for home, away in existing_matchups:
             game_count[home.id] += 1
             game_count[away.id] += 1
 
         matchups = []
-        team_list = sorted(teams, key=lambda t: game_count[t.id])
+        max_attempts = 15000
+        attempts = 0
 
-        # Pair up teams that need more games
-        for i, team1 in enumerate(team_list):
-            if game_count[team1.id] >= 17:
-                continue
+        while any(count < 17 for count in game_count.values()) and attempts < max_attempts:
+            attempts += 1
+            needy_teams = [t for t in teams if game_count[t.id] < 17]
+            if len(needy_teams) < 2:
+                break
 
-            for team2 in team_list[i+1:]:
-                if game_count[team2.id] >= 17:
-                    continue
+            self.rng.shuffle(needy_teams)
+            team1 = needy_teams[0]
 
-                # Check if they already play
-                already_playing = any(
-                    (h.id == team1.id and a.id == team2.id) or
-                    (h.id == team2.id and a.id == team1.id)
-                    for h, a in existing_matchups + matchups
+            best_partner = None
+            min_h2h = 999
+
+            for team2 in needy_teams[1:]:
+                h2h = sum(
+                    1 for h, a in existing_matchups + matchups
+                    if (h.id == team1.id and a.id == team2.id) or (h.id == team2.id and a.id == team1.id)
                 )
+                if h2h < min_h2h:
+                    min_h2h = h2h
+                    best_partner = team2
+                    if h2h == 0:
+                        break
 
-                if not already_playing and game_count[team1.id] < 17 and game_count[team2.id] < 17:
-                    matchups.append((team1, team2))
-                    game_count[team1.id] += 1
-                    game_count[team2.id] += 1
-                    break
+            if best_partner:
+                h_count1 = sum(1 for h, a in existing_matchups + matchups if h.id == team1.id)
+                h_count2 = sum(1 for h, a in existing_matchups + matchups if h.id == best_partner.id)
+                if h_count1 <= h_count2:
+                    matchups.append((team1, best_partner))
+                else:
+                    matchups.append((best_partner, team1))
+
+                game_count[team1.id] += 1
+                game_count[best_partner.id] += 1
 
         return matchups
 
@@ -195,50 +197,41 @@ class ScheduleGenerator:
         matchups: List[Tuple[Team, Team]],
         season_id: int,
         start_date: datetime,
-        games_per_week: int
+        games_per_week: int = 16
     ) -> List[Game]:
         """
-        Assign matchups to specific weeks and create Game objects.
-
-        Shuffles matchups to randomize the schedule, then distributes them across weeks.
-        Flags Thanksgiving games for Lions and Cowboys in Week 12.
-
-        Args:
-            matchups: List of (Home, Away) tuples.
-            season_id: Season ID.
-            start_date: Date of the first Sunday.
-            games_per_week: Target number of games per week.
-
-        Returns:
-            List[Game]: List of Game objects ready to be saved to DB.
+        Assign matchups to specific weeks (1-18) and create Game objects.
         """
-        # Shuffle for randomness
         self.rng.shuffle(matchups)
 
+        # Resolve season year from Season model if available
+        season_year = start_date.year
+        if season_id:
+            season_obj = self.db.query(Season).filter(Season.id == season_id).first()
+            if season_obj and hasattr(season_obj, 'year') and season_obj.year:
+                season_year = season_obj.year
+
         games = []
-        week = 1
-        current_date = start_date
+        total_matchups = len(matchups)
+        total_weeks = 18
 
         for i, (home_team, away_team) in enumerate(matchups):
-            if i > 0 and i % games_per_week == 0:
-                week += 1
-                current_date += timedelta(days=7)
+            # Distribute across 18 weeks
+            week = min(total_weeks, (i * total_weeks // total_matchups) + 1)
+            game_date = start_date + timedelta(days=7 * (week - 1))
 
-            # Determine game type
             game_type = GameType.REGULAR
-
-            # Check for Thanksgiving games (Week 12, traditional hosts)
             if week == THANKSGIVING_WEEK:
                 if hasattr(home_team, 'abbreviation') and home_team.abbreviation in THANKSGIVING_HOSTS:
                     game_type = GameType.THANKSGIVING
 
             game = Game(
                 season_id=season_id,
-                season=start_date.year,  # Legacy field
+                season=season_year,
                 week=week,
                 home_team_id=home_team.id,
                 away_team_id=away_team.id,
-                date=current_date,
+                date=game_date,
                 is_played=False,
                 game_type=game_type
             )
