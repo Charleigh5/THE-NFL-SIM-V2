@@ -80,7 +80,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Ceiling</span>
                   <span className="text-green-400 font-semibold">
-                    {report.ceiling || report.ceiling_projection || (report as any).ceiling_grade || "Pro Bowl"}
+                    {report.ceiling || report.ceiling_projection || report.ceiling_grade || "Pro Bowl"}
                   </span>
                 </div>
                 <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
@@ -92,7 +92,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Floor</span>
                   <span className="text-amber-400 font-semibold">
-                    {report.floor || report.floor_projection || (report as any).floor_grade || "Starter"}
+                    {report.floor || report.floor_projection || report.floor_grade || "Starter"}
                   </span>
                 </div>
                 <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
@@ -131,7 +131,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                   Executive Summary
                 </h4>
                 <p className="text-slate-200 leading-relaxed text-lg font-light">
-                  {report.summary || (report as any).notes || "Elite athletic prospect with high starting potential."}
+                  {report.summary || report.notes || "Elite athletic prospect with high starting potential."}
                 </p>
               </div>
 

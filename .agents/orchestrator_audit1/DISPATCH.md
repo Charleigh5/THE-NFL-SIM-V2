@@ -6,4 +6,8 @@
 
 ## 2026-08-24T05:08:11Z
 **From**: Sentinel / Parent (759ee02f-9fc5-4da2-8e72-610fb1a839d6)
-**Directive**: The rate limit window has fully cleared. Check status of worker for Milestone 3 (Deduplication & Schema Harmonization), respawn or continue worker_m3 if interrupted, and drive remaining milestones (M3, M4, M5, and final audit) to completion.
+**Directive**: Check status of worker for Milestone 3, respawn or continue worker_m3 if interrupted, and drive remaining milestones to completion.
+
+## 2026-08-24T10:08:11Z
+**From**: Sentinel / Parent (759ee02f-9fc5-4da2-8e72-610fb1a839d6)
+**Directive**: The rate limit window has fully cleared. Check status of Milestone 4 review/audit panel, pass the Milestone 4 gate, proceed with Milestone 5 (Formal Audit Spec & Matrix Sync), and report completion to the Sentinel.

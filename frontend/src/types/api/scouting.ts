@@ -30,6 +30,9 @@ export interface ScoutingReport {
   // Back-compatibility aliases
   ceiling?: string;
   floor?: string;
+  ceiling_grade?: string;
+  floor_grade?: string;
+  notes?: string;
   generated_at?: string;
 }
 

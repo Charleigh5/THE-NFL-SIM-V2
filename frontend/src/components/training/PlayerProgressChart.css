@@ -1,5 +1,12 @@
 .player-progress-chart {
-  @apply flex flex-col items-center justify-center p-6 bg-gray-900/80 rounded-2xl border border-white/5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: rgba(17, 24, 39, 0.8);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Stat bar hover effect */
@@ -23,11 +30,11 @@
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .player-progress-chart {
-    @apply p-4;
+    padding: 1rem;
   }
 
   .player-progress-chart h3 {
-    @apply text-blue-400;
+    color: #60a5fa;
   }
 }
 

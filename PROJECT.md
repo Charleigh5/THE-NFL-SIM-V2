@@ -24,8 +24,8 @@
 | M1 | UI Component Mounting & Route Integration | Mount unmounted components in views (LiveSim, MedicalCenter, FrontOffice/DepthChart, Dashboard, TrophyRoom) | none | DONE |
 | M2 | Live FastAPI Endpoint Implementation & Wire-up | Expose triage, coaching tree, scouting APIs; fix frontend services and replace mock fallbacks | M1 | DONE |
 | M3 | Logic & Schema Deduplication | Harmonize chemistry/archetypes, eliminate duplicate routers/services, guarantee strict schema parity with 0 `any` types | M2 | DONE |
-| M4 | Full-Stack Verification & Playwright Tests | Run pytest unit tests, Monte Carlo statistical calibration, frontend build, and Playwright E2E specs | M3 | IN_PROGRESS |
-| M5 | Formal Audit Spec & Matrix Sync | Author AUDIT-001 task report and update FEATURE_STATUS_MATRIX.md | M4 | PLANNED |
+| M4 | Full-Stack Verification & Playwright Tests | Run pytest unit tests, Monte Carlo statistical calibration, frontend build, and Playwright E2E specs | M3 | DONE |
+| M5 | Formal Audit Spec & Matrix Sync | Author AUDIT-001 task report and update FEATURE_STATUS_MATRIX.md | M4 | DONE |
 
 ## Interface Contracts
 ### Medical Triage API

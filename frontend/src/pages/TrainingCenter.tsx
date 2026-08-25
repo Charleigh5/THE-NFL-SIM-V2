@@ -6,8 +6,12 @@ import { DrillSelector } from "../components/training/DrillSelector";
 import { CoachingStyleDial } from "../components/training/CoachingStyleDial";
 import { WeeklyScheduleTimeline } from "../components/training/WeeklyScheduleTimeline";
 import { TrainingSessionResult } from "../components/training/TrainingSessionResult";
+import { CampSchedulePlanner } from "../components/training/CampSchedulePlanner";
+import { CoachingStylePicker } from "../components/training/CoachingStylePicker";
+import { PlayerProgressChart } from "../components/training/PlayerProgressChart";
 import { trainingApi } from "../services/trainingApi";
 import type { Drill, CoachingStyle, TrainingResult } from "../types/training";
+import { CoachingStyleType } from "../types/training";
 import { ChevronLeft, User, AlertTriangle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -164,7 +168,7 @@ export const TrainingCenter: React.FC = () => {
           </motion.header>
 
           {/* Coaching Dial & Schedule */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
             <motion.section
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -188,6 +192,26 @@ export const TrainingCenter: React.FC = () => {
             </motion.section>
           </div>
 
+          {/* Coaching Style Philosophy Picker */}
+          <div className="mb-12">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-gray-400 mb-3">
+              Coaching Philosophy Matrix
+            </h3>
+            <CoachingStylePicker
+              currentStyle={
+                Object.values(CoachingStyleType).includes(selectedStyle as CoachingStyleType)
+                  ? (selectedStyle as CoachingStyleType)
+                  : CoachingStyleType.SMART
+              }
+              onStyleSelect={(style) => setSelectedStyle(style)}
+            />
+          </div>
+
+          {/* Tactical 7-Day Camp Planner */}
+          <div className="mb-16">
+            <CampSchedulePlanner />
+          </div>
+
           {/* Main Content - DrillSelector */}
           <main>
             {loading ? (
@@ -203,6 +227,25 @@ export const TrainingCenter: React.FC = () => {
               />
             )}
           </main>
+
+          {/* Player Attribute Progression Trajectory */}
+          <div className="mt-12 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
+              Player Attribute Progression Trajectory
+            </h3>
+            <PlayerProgressChart
+              playerId={playerData?.player_id ?? 1}
+              playerName={playerData?.player_name ?? "Joe Burrow"}
+              position={playerData?.position ?? "QB"}
+              stats={[
+                { stat: "Speed", current: 88, previous: 85, max: 99, color: "#fbbf24" },
+                { stat: "Throwing", current: 94, previous: 92, max: 99, color: "#06b6d4" },
+                { stat: "Awareness", current: 95, previous: 90, max: 99, color: "#a855f7" },
+                { stat: "Stamina", current: 92, previous: 92, max: 99, color: "#3b82f6" },
+              ]}
+              weeklyXP={[120, 180, 240, 210, 320]}
+            />
+          </div>
         </div>
       </div>
 

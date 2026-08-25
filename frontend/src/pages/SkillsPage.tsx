@@ -4,6 +4,7 @@ import { SkillTreeCanvas } from "../components/skills/SkillTreeCanvas";
 import { SkillsOverlay } from "../components/skills/SkillsOverlay";
 import { AbilityUnlockTree } from "../components/skills/AbilityUnlockTree";
 import { TraitBadgeGrid } from "../components/skills/TraitBadgeGrid";
+import { TraitManager } from "../components/dev/TraitManager";
 import { ArchetypeBadge } from "../components/player/ArchetypeBadge";
 import { SKILL_TREE_LAYOUTS } from "../config/SkillTreeConfig";
 import type { Trait as TraitType } from "../types/trait";
@@ -261,7 +262,15 @@ export const SkillsPage: React.FC = () => {
         )}
 
         {activeTab === "TRAITS" && (
-          <TraitBadgeGrid unlockedTraits={unlockedTraits} onTraitClick={handleUnlockOrEquip} />
+          <div className="space-y-8">
+            <TraitBadgeGrid unlockedTraits={unlockedTraits} onTraitClick={handleUnlockOrEquip} />
+            <div className="pt-6 border-t border-slate-800">
+              <TraitManager
+                playerId={player.id}
+                playerName={`${player.first_name} ${player.last_name}`}
+              />
+            </div>
+          </div>
         )}
 
         {activeTab === "3D_TREE" && (

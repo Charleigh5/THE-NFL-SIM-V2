@@ -1,5 +1,5 @@
 .drill-selector {
-  @apply w-full;
+  width: 100%;
 }
 
 /* Search input focus glow */

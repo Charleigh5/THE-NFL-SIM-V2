@@ -6,6 +6,7 @@ import { GenesisBiometricCard } from "../components/medical/GenesisBiometricCard
 import { FatigueMonitor } from "../components/medical/FatigueMonitor";
 import { OrthopedicTriageModal } from "../components/medical/OrthopedicTriageModal";
 import { TreatmentModal } from "../components/medical/TreatmentModal";
+import FatigueIndicator from "../components/game/FatigueIndicator";
 import type { MedicalProtocolType } from "../types/deepDive";
 import { medicalApi } from "../services/medicalApi";
 import type { InjuredPlayer, BioMetrics, FatigueState, TreatmentType } from "../types/medical";
@@ -307,6 +308,12 @@ export const MedicalCenter: React.FC = () => {
               <span className="text-[10px] font-mono text-slate-500">
                 ({player.weeks_remaining}w)
               </span>
+              <div className="hidden md:block ml-2 w-16">
+                <FatigueIndicator
+                  fatigue={player.severity ? player.severity * 0.15 : 0.2}
+                  showLabel={false}
+                />
+              </div>
             </button>
           ))}
         </div>
@@ -370,6 +377,12 @@ export const MedicalCenter: React.FC = () => {
                     <div className="text-sm font-bold font-mono text-cyan-400">
                       {activePlayer.weeks_remaining} Weeks
                     </div>
+                  </div>
+                  <div className="w-24">
+                    <FatigueIndicator
+                      fatigue={activePlayer.severity ? activePlayer.severity * 0.12 : 0.2}
+                      showLabel={true}
+                    />
                   </div>
                   <div className="flex items-center gap-2">
                     <button

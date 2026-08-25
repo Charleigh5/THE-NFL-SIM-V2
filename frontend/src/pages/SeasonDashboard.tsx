@@ -12,6 +12,7 @@ import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { LeagueLeaders } from "../components/season/LeagueLeaders";
 import { SeasonSummaryCard } from "../components/season/SeasonSummaryCard";
 import { NewsFeed } from "../components/season/NewsFeed";
+import { WeeklyRecapModal } from "../components/news/WeeklyRecapModal";
 import type { LeagueLeaders as LeagueLeadersType } from "../types/stats";
 import { ParallaxScene } from "../components/immersive/ParallaxScene";
 import { RibbonTicker } from "../components/immersive/RibbonTicker";
@@ -46,6 +47,7 @@ const SeasonDashboard: React.FC = () => {
   >("overview");
   const [loading, setLoading] = useState<boolean>(!loaderData?.season);
   const [simulating, setSimulating] = useState<boolean>(false);
+  const [showRecapModal, setShowRecapModal] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   // Initial data fetch - only run if loaderData was not provided
@@ -355,6 +357,14 @@ const SeasonDashboard: React.FC = () => {
       disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
       tooltip: "View playoff bracket",
     },
+    {
+      id: "weekly-recap",
+      label: "Weekly Wrap-Up",
+      icon: "📺",
+      onClick: () => setShowRecapModal(true),
+      disabled: !season,
+      tooltip: "View SportsCenter style weekly highlights & recap",
+    },
   ];
 
   return (
@@ -615,6 +625,14 @@ const SeasonDashboard: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* Weekly Recap Modal */}
+        <WeeklyRecapModal
+          seasonId={season.id}
+          week={season.current_week}
+          isOpen={showRecapModal}
+          onClose={() => setShowRecapModal(false)}
+        />
       </div>
     </ParallaxScene>
   );

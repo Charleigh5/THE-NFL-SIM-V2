@@ -1,12 +1,18 @@
+import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
 import Navigation from "../components/Navigation";
 import FeedbackWidget from "../components/common/FeedbackWidget";
 import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
-import { routeVariants } from "../styles/motion";
+import { PageTransition } from "../components/transitions/PageTransition";
+import TraitNotification from "../components/ui/TraitNotification";
 
 const MainLayout = () => {
   const location = useLocation();
+  const [activeNotification, setActiveNotification] = useState<{
+    traitName: string;
+    playerName: string;
+    type?: "UNLOCK" | "UPGRADE" | "LOST";
+  } | null>(null);
 
   // Extract page name from pathname
   const currentPage = location.pathname.split("/").filter(Boolean).pop() || "Dashboard";
@@ -25,20 +31,20 @@ const MainLayout = () => {
         </div>
 
         <div className="relative z-10 p-8">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={location.pathname}
-              variants={routeVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="route-stage"
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
         </div>
       </main>
+
+      {activeNotification && (
+        <TraitNotification
+          traitName={activeNotification.traitName}
+          playerName={activeNotification.playerName}
+          type={activeNotification.type}
+          onDismiss={() => setActiveNotification(null)}
+        />
+      )}
 
       <FeedbackWidget currentPage={currentPage} />
       <SoundtrackPlayer />
