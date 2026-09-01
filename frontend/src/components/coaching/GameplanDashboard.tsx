@@ -25,14 +25,21 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
     async function loadSynergy() {
       try {
         const res = await api.get<SynergyData>(`/api/coaches/staff/synergy/${teamId}`);
-        if (res.data && typeof res.data === "object" && res.data.overall_chemistry_score !== undefined) {
+        if (
+          res.data &&
+          typeof res.data === "object" &&
+          res.data.overall_chemistry_score !== undefined
+        ) {
           setSynergy(res.data);
         } else {
           setSynergy({
             offensive_synergy_score: 85,
             defensive_synergy_score: 80,
             overall_chemistry_score: 83,
-            scheme_alignment_notes: ["Aligned West Coast execution", "Complementary Cover 3 scheme"],
+            scheme_alignment_notes: [
+              "Aligned West Coast execution",
+              "Complementary Cover 3 scheme",
+            ],
           });
         }
       } catch {
@@ -91,7 +98,9 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Scroll className="text-yellow-500" />
-            <h3 className="text-xl font-bold text-white">Week {week} Opponent Intel: Baltimore Ravens</h3>
+            <h3 className="text-xl font-bold text-white">
+              Week {week} Opponent Intel: Baltimore Ravens
+            </h3>
           </div>
           <p className="text-gray-400 text-sm">
             Scouting Report: Heavy reliance on Run/RPO. Weakness in secondary depth. Suggested:{" "}
@@ -106,7 +115,10 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
               <Users size={14} /> Staff Chemistry
             </div>
             <div className="text-lg font-bold text-white">
-              {synergy.overall_chemistry_score}% <span className="text-xs text-gray-400 font-normal">(Off: {synergy.offensive_synergy_score}% | Def: {synergy.defensive_synergy_score}%)</span>
+              {synergy.overall_chemistry_score}%{" "}
+              <span className="text-xs text-gray-400 font-normal">
+                (Off: {synergy.offensive_synergy_score}% | Def: {synergy.defensive_synergy_score}%)
+              </span>
             </div>
             <div className="text-[11px] text-gray-400 mt-1">
               {synergy.scheme_alignment_notes?.[0] || "Optimal coordinator alignment"}
@@ -208,4 +220,3 @@ export const GameplanDashboard: React.FC<{ teamId?: number; seasonId?: number; w
     </div>
   );
 };
-

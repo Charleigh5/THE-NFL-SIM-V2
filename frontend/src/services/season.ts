@@ -162,15 +162,20 @@ export const seasonApi = {
   },
 
   tradeCurrentPick: async (seasonId: number, targetTeamId: number): Promise<DraftPickDetail> => {
-    const response = await api.post<DraftPickDetail>(`/api/season/${seasonId}/draft/trade-current`, {
-      target_team_id: targetTeamId,
-    });
+    const response = await api.post<DraftPickDetail>(
+      `/api/season/${seasonId}/draft/trade-current`,
+      {
+        target_team_id: targetTeamId,
+      }
+    );
     return response.data;
   },
 
   simulateNextPick: async (seasonId: number): Promise<DraftPickSummary | null> => {
     try {
-      const response = await api.post<DraftPickSummary>(`/api/season/${seasonId}/draft/simulate-next`);
+      const response = await api.post<DraftPickSummary>(
+        `/api/season/${seasonId}/draft/simulate-next`
+      );
       return response.data;
     } catch {
       return null;
@@ -183,7 +188,9 @@ export const seasonApi = {
 
   getTeamNeeds: async (seasonId: number, teamId: number): Promise<TeamNeed[]> => {
     try {
-      const response = await api.get<TeamNeed[]>(`/api/season/${seasonId}/offseason/needs/${teamId}`);
+      const response = await api.get<TeamNeed[]>(
+        `/api/season/${seasonId}/offseason/needs/${teamId}`
+      );
       return response.data;
     } catch {
       return [

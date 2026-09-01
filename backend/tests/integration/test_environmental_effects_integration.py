@@ -39,7 +39,14 @@ class TestEnvironmentalEffects:
             'strength': 75,
             'tackle': 70,
             'ball_security': 80,
-            'pocket_presence': 50
+            'pocket_presence': 50,
+            'weight': 220,
+            'height': 72,
+            'break_tackle': 75,
+            'trucking': 75,
+            'elusiveness': 75,
+            'carrying_vision': 75,
+            'trait_assignments': []
         }
         defaults.update(attributes)
 
@@ -66,7 +73,7 @@ class TestEnvironmentalEffects:
         assert abs(dist_mod - 0.95) < 0.01, f"Expected 0.95 distance, got {dist_mod}"
 
     def test_rain_reduces_passing_accuracy(self):
-        """Rain should reduce passing accuracy by 10%"""
+        """Rain should reduce passing accuracy by 12% per calibrated NFL data"""
         weather = GameWeather(
             temperature=55.0,
             wind_speed=8.0,
@@ -77,8 +84,8 @@ class TestEnvironmentalEffects:
         effects = WeatherEffects(weather)
         acc_mod, dist_mod = effects.get_passing_modifiers()
 
-        # Rain: 0.9 accuracy
-        assert abs(acc_mod - 0.9) < 0.01, f"Expected 0.9 accuracy, got {acc_mod}"
+        # Rain: 0.88 accuracy
+        assert abs(acc_mod - 0.88) < 0.01, f"Expected 0.88 accuracy, got {acc_mod}"
 
     def test_high_wind_affects_passing(self):
         """High wind should reduce both accuracy and distance"""
@@ -92,9 +99,9 @@ class TestEnvironmentalEffects:
         effects = WeatherEffects(weather)
         acc_mod, dist_mod = effects.get_passing_modifiers()
 
-        # Wind > 10: -1% acc per mph over 10 = -15% = 0.85
-        # Wind > 10: -0.5% dist per mph over 10 = -7.5% = 0.925
-        assert abs(acc_mod - 0.85) < 0.01, f"Expected 0.85 accuracy, got {acc_mod}"
+        # Wind > 10: -0.8% acc per mph over 10 = 1.0 - (15 * 0.008) = 0.88
+        # Wind > 10: -0.5% dist per mph over 10 = 1.0 - (15 * 0.005) = 0.925
+        assert abs(acc_mod - 0.88) < 0.01, f"Expected 0.88 accuracy, got {acc_mod}"
         assert abs(dist_mod - 0.925) < 0.01, f"Expected 0.925 distance, got {dist_mod}"
 
     def test_wet_field_increases_fumbles(self):

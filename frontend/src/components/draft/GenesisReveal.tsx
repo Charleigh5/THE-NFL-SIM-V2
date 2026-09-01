@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Lock, Activity, AlertTriangle } from "lucide-react";
 import type { CombineResult } from "../../types/combine";
+import { PlayerAvatar } from "../ui/PlayerAvatar";
 
 interface GenesisRevealProps {
   prospectName: string;
@@ -8,6 +10,8 @@ interface GenesisRevealProps {
   onClose: () => void;
   onReveal: () => void;
   isRevealed: boolean;
+  playerId?: number;
+  position?: string;
 }
 
 export const GenesisReveal = ({
@@ -16,6 +20,8 @@ export const GenesisReveal = ({
   onClose,
   onReveal,
   isRevealed,
+  playerId,
+  position = "ATH",
 }: GenesisRevealProps) => {
   const [decrypting, setDecrypting] = useState(false);
 
@@ -30,7 +36,9 @@ export const GenesisReveal = ({
     }, 500); // 500ms decryption animation
   };
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
       style={{ zIndex: 99999 }}
@@ -41,7 +49,21 @@ export const GenesisReveal = ({
         style={{ zIndex: 100000 }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 p-6 border-b border-white/10 text-center relative">
+        <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 p-6 border-b border-white/10 text-center relative flex flex-col items-center">
+          {playerId && (
+            <div className="mb-2">
+              <PlayerAvatar
+                playerId={playerId}
+                teamAbbr="DRAFT"
+                pose="headshot"
+                size="md"
+                position={position}
+                playerName={prospectName}
+                className="w-14 h-14 rounded-xl border border-cyan-400/40 shadow-lg"
+                primaryColor="#22d3ee"
+              />
+            </div>
+          )}
           <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 tracking-tight">
             GENESIS <span className="text-white font-light">INSIGHTS</span>
           </h2>
@@ -228,6 +250,7 @@ export const GenesisReveal = ({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

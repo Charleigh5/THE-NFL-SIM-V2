@@ -22,6 +22,7 @@ import {
   Activity,
   Target,
 } from "lucide-react";
+import { PlayerAvatar } from "./PlayerAvatar";
 import "./EnhancedPlayerProfile.css";
 
 // ============================================================================
@@ -209,6 +210,15 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
           ) : (
             profile && (
               <div className="epp-header-content">
+                <PlayerAvatar
+                  playerId={profile.id}
+                  pose="hero_pose"
+                  size="hero"
+                  playerName={`${profile.first_name} ${profile.last_name}`}
+                  position={profile.position}
+                  jerseyNumber={profile.jersey_number}
+                  className="w-32 h-40 mr-4 shrink-0 shadow-xl"
+                />
                 <div className="epp-player-identity">
                   <div className="epp-jersey">#{profile.jersey_number}</div>
                   <div className="epp-name">

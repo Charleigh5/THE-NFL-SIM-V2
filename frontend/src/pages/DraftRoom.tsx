@@ -57,7 +57,7 @@ export const DraftRoom: React.FC = () => {
       if (pick && pick.team_id) {
         try {
           const needs = await seasonApi.getTeamNeeds(sid, pick.team_id);
-          setTeamNeeds(needs || []);
+          setTeamNeeds(Array.isArray(needs) ? needs : []);
         } catch {
           setTeamNeeds([]);
         }
@@ -136,6 +136,20 @@ export const DraftRoom: React.FC = () => {
     }
   };
 
+  const [generatingClass, setGeneratingClass] = useState(false);
+
+  const handleGenerateDraftClass = async () => {
+    setGeneratingClass(true);
+    try {
+      const newProspects = await draftService.generateDraftClass(256);
+      setProspects(newProspects);
+    } catch (err) {
+      console.error("Failed to generate draft class:", err);
+    } finally {
+      setGeneratingClass(false);
+    }
+  };
+
   // Handle no season state from loader
   if (loaderData?.noSeason) {
     return (
@@ -208,13 +222,13 @@ export const DraftRoom: React.FC = () => {
 
             <BroadcastPanel title="Team Needs">
               <div className={styles.needsList}>
-                {teamNeeds.map((need) => (
+                {(Array.isArray(teamNeeds) ? teamNeeds : []).map((need) => (
                   <div key={need.position} className={styles.needItem}>
                     <div className={styles.needInfo}>
                       <span className={styles.needPos}>{need.position}</span>
-                      <progress className={styles.needProgress} value={need.need_score} max={5} />
+                      <progress className={styles.needProgress} value={need.need_score ?? 0} max={5} />
                     </div>
-                    <span className={styles.needScore}>{need.need_score.toFixed(1)}</span>
+                    <span className={styles.needScore}>{(need.need_score ?? 0).toFixed(1)}</span>
                   </div>
                 ))}
               </div>
@@ -222,6 +236,14 @@ export const DraftRoom: React.FC = () => {
 
             <BroadcastPanel title="War Room Controls">
               <div className={styles.controlsContainer}>
+                <button
+                  className={styles.actionButton}
+                  onClick={handleGenerateDraftClass}
+                  disabled={generatingClass}
+                >
+                  {generatingClass ? "Generating..." : "Generate Draft Class"}
+                </button>
+
                 <button
                   className={styles.actionButton}
                   onClick={handleSimulateDraft}

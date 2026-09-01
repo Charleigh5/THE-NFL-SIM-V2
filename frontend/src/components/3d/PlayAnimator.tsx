@@ -80,8 +80,17 @@ export const PlayAnimator = ({ onAnimationComplete }: PlayAnimatorProps) => {
   useEffect(() => {
     if (!latestPlay) return;
 
-    // Animate based on play type
-    animatePlay(latestPlay);
+    let isMounted = true;
+    const timer = setTimeout(() => {
+      if (isMounted) {
+        void animatePlay(latestPlay);
+      }
+    }, 0);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
   }, [latestPlay, animatePlay]);
 
   // Return animation telemetry overlay for rendering

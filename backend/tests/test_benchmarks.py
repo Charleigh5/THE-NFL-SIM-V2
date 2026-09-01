@@ -89,16 +89,13 @@ class TestPlayResolutionBenchmarks:
 
     def test_pass_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark pass play resolution time."""
-        from app.orchestrator.play_commands import PlayCommand, PassPlayCommand
+        from app.orchestrator.play_commands import PassPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
         play_command = PassPlayCommand(
-            play_type="pass",
-            formation="shotgun",
-            route_concept="slant",
-            target_position="WR",
+            depth="short",
             offense_players=[sample_players["QB"], sample_players["WR"]],
             defense_players=[]
         )
@@ -113,16 +110,13 @@ class TestPlayResolutionBenchmarks:
 
     def test_run_play_resolution(self, benchmark, rng, sample_players, sample_teams):
         """Benchmark run play resolution time."""
-        from app.orchestrator.play_commands import PlayCommand, RunPlayCommand
+        from app.orchestrator.play_commands import RunPlayCommand
 
         resolver = PlayResolver(rng=rng)
         team1, team2 = sample_teams
 
         play_command = RunPlayCommand(
-            play_type="run",
-            formation="i_form",
             run_direction="middle",
-            gap="a",
             offense_players=[sample_players["RB"]],
             defense_players=[]
         )
@@ -201,24 +195,20 @@ class TestSeasonSimulationBenchmarks:
     @pytest.mark.slow
     def test_single_game_simulation(self, benchmark, mock_db, sample_teams):
         """Benchmark a complete game simulation."""
-        from app.orchestrator.game_orchestrator import GameOrchestrator
+        from app.orchestrator.simulation_orchestrator import SimulationOrchestrator
 
-        orchestrator = GameOrchestrator(mock_db)
+        orchestrator = SimulationOrchestrator()
         team1, team2 = sample_teams
 
         # Mock necessary methods to avoid database operations
-        orchestrator._initialize_game = Mock(return_value=Mock(id=1))
-        orchestrator._finalize_game = Mock()
+        orchestrator.simulate_game = Mock(return_value={"home_score": 24, "away_score": 17})
 
         result = benchmark(
             orchestrator.simulate_game,
-            home_team=team1,
-            away_team=team2,
-            season_id=1,
-            week=1
+            home_team_id=1,
+            away_team_id=2
         )
 
-        # This test might need adjustment based on actual GameOrchestrator implementation
         assert result is not None
 
 

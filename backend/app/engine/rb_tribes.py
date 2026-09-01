@@ -95,10 +95,20 @@ class RBTribeClassifier:
         Returns:
             RBTribe enum value
         """
-        speed = getattr(player, "speed", None) or 70
-        elusiveness = getattr(player, "elusiveness", getattr(player, "agility", None)) or 70
-        strength = getattr(player, "strength", None) or 70
-        age = getattr(player, "age", None) or 25
+        def _get_num(attr_name: str, fallback: int) -> int:
+            val = getattr(player, attr_name, None)
+            if isinstance(val, (int, float)):
+                return int(val)
+            return fallback
+
+        speed = _get_num("speed", 70)
+        elusiveness_val = getattr(player, "elusiveness", None)
+        if isinstance(elusiveness_val, (int, float)):
+            elusiveness = int(elusiveness_val)
+        else:
+            elusiveness = _get_num("agility", 70)
+        strength = _get_num("strength", 70)
+        age = _get_num("age", 25)
 
         # Check for FEAST_OR_FAMINE (elite speed + elusiveness)
         if speed >= cls.SPEED_ELITE and elusiveness >= cls.ELUSIVENESS_ELITE:

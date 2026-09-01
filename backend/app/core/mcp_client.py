@@ -50,6 +50,7 @@ class MCPHostClient:
             raise
 
     async def _connect_stdio(self):
+        import os
         command = self.config.get("command")
         args = self.config.get("args", [])
         env = self.config.get("env", None)
@@ -57,10 +58,22 @@ class MCPHostClient:
         if not command:
             raise ValueError("Command is required for stdio transport")
 
+        resolved_args = []
+        for arg in args:
+            if isinstance(arg, str) and not os.path.exists(arg) and os.path.exists(os.path.join("backend", arg)):
+                resolved_args.append(os.path.join("backend", arg))
+            else:
+                resolved_args.append(arg)
+
+        resolved_env = dict(env) if env else {}
+        backend_dir = os.path.abspath("backend") if os.path.exists("backend") else os.path.abspath(".")
+        current_pp = resolved_env.get("PYTHONPATH", "")
+        resolved_env["PYTHONPATH"] = f"{backend_dir}{os.pathsep}{current_pp}" if current_pp else backend_dir
+
         server_params = StdioServerParameters(
             command=command,
-            args=args,
-            env=env
+            args=resolved_args,
+            env=resolved_env
         )
 
         read, write = await self.exit_stack.enter_async_context(stdio_client(server_params))

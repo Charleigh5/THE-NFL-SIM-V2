@@ -7,20 +7,26 @@ from app.models.weekly_recap import WeeklyRecap
 from app.models.rpg_event import RPGEvent
 from app.models.news_item import NewsItem
 from app.engine.event_bus import EventType
+from app.services.ai.ai_provider import get_ai_registry, AIProviderType
 
-def mock_gemini_recap_script(week: int, events: List[RPGEvent], top_news: List[NewsItem]) -> str:
+
+def format_deterministic_recap_script(week: int, events: List[RPGEvent], top_news: List[NewsItem]) -> str:
     lines = [f"# Week {week} Around the League", ""]
 
     if top_news:
         lines.append("## Top Stories")
         for news in top_news:
-             lines.append(f"**{news.headline}**: {news.content[:100]}...")
+            lines.append(f"**{news.headline}**: {news.content[:100]}...")
         lines.append("")
 
     lines.append("## Action Report")
     lines.append(f"A total of {len(events)} major events were recorded this week.")
 
     return "\n".join(lines)
+
+
+# Backwards compatibility alias
+mock_gemini_recap_script = format_deterministic_recap_script
 
 class WeeklyRecapService:
     """

@@ -45,11 +45,15 @@ export interface Player {
   team_id: number;
   height?: number;
   weight?: number;
+  college?: string;
   speed?: number;
   strength?: number;
   agility?: number;
   acceleration?: number;
   awareness?: number;
+  injury_status?: string;
+  development_trait?: string;
+  archetype?: string;
 }
 
 export interface PlayerStats {

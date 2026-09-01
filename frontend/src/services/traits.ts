@@ -27,7 +27,10 @@ export const traitsApi = {
 
   // Assign a trait to a player
   assignTrait: async (playerId: number, assignment: TraitAssignment): Promise<PlayerTrait> => {
-    const response = await apiClient.post<PlayerTrait>(`/api/traits/players/${playerId}`, assignment);
+    const response = await apiClient.post<PlayerTrait>(
+      `/api/traits/players/${playerId}`,
+      assignment
+    );
     return response.data;
   },
 };

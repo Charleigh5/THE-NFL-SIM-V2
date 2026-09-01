@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from sqlalchemy.orm import selectinload, joinedload, Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from pydantic import BaseModel, ConfigDict
 import logging
 from starlette.concurrency import run_in_threadpool
@@ -23,10 +23,8 @@ from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerPr
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.schemas import draft as draft_schemas
 from app.models.stats import PlayerGameStats
-from app.models.stats import PlayerGameStats
 from app.models.player import Player
 from app.schemas.weather import GameWeatherSchema
-from sqlalchemy import func, desc
 
 
 router = APIRouter(prefix="/api/season", tags=["season"])

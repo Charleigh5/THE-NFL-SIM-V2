@@ -8,6 +8,7 @@ import { GpsSpeedViz } from "../draft/GpsSpeedViz";
 import { Eye, Dumbbell, FileText } from "lucide-react";
 import { ScoutingReportModal } from "../scouting/ScoutingReportModal";
 import { ScoutIntelligenceLens } from "./ScoutIntelligenceLens";
+import { PlayerAvatar } from "../ui/PlayerAvatar";
 import "./DraftBoard.css";
 
 interface DraftBoardProps {
@@ -165,11 +166,23 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
                 <div className="prospect-rank">#{rank}</div>
 
                 <div className="prospect-main">
-                  <div className="prospect-header">
-                    <span className={`pos-badge pos-${p.position}`}>{p.position}</span>
-                    <span className="prospect-name">
-                      {p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim()}
-                    </span>
+                  <div className="prospect-header flex items-center gap-3">
+                    <PlayerAvatar
+                      playerId={p.id}
+                      pose="headshot"
+                      size="sm"
+                      position={p.position}
+                      playerName={p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim()}
+                      className="shrink-0 rounded-md"
+                    />
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className={`pos-badge pos-${p.position}`}>{p.position}</span>
+                        <span className="prospect-name">
+                          {p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="prospect-details">
@@ -255,11 +268,22 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
         )}
       </div>
 
-      {revealingProspect && revealingProspect.combine && (
+      {revealingProspect && (
         <GenesisReveal
           prospectName={revealingProspect.name}
-          data={revealingProspect.combine}
+          data={
+            revealingProspect.combine || {
+              forty_yard_dash: 4.52,
+              bench_press: 22,
+              vertical_jump: 35.5,
+              broad_jump: 122,
+              three_cone_drill: 7.05,
+              twenty_yard_shuttle: 4.18,
+            }
+          }
           isRevealed={!!revealingProspect.genesis_revealed}
+          playerId={revealingProspect.id}
+          position={revealingProspect.position}
           onClose={() => setRevealingProspect(null)}
           onReveal={async () => {
             try {
@@ -270,12 +294,21 @@ export const DraftBoard: React.FC<DraftBoardProps> = ({
               );
 
               // Update local state with new data
+              const baseCombine: CombineResult = revealingProspect.combine || {
+                forty_yard_dash: 4.52,
+                bench_press: 22,
+                vertical_jump: 35.5,
+                broad_jump: 122,
+                three_cone_drill: 7.05,
+                twenty_yard_shuttle: 4.18,
+              };
+
               const updatedProspect: Prospect = {
                 ...revealingProspect,
                 combine: {
-                  ...revealingProspect.combine!,
+                  ...baseCombine,
                   ...revealedData.revealed_stats,
-                } as unknown as CombineResult, // Safe cast after spread to ensure all required fields are present and correctly typed
+                } as unknown as CombineResult,
                 genesis_revealed: true,
               };
 

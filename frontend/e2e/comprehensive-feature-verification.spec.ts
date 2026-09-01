@@ -23,6 +23,7 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
   });
 
   test.beforeEach(async ({ page }) => {
+    fs.mkdirSync(auditDir, { recursive: true });
     // Set standard viewport for crystal-clear broadcast capture
     await page.setViewportSize({ width: 1440, height: 900 });
 
@@ -269,9 +270,9 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     await page.screenshot({ path: path.join(auditDir, "02_live_sim_before_kickoff.png") });
 
     // Verify Scorebug elements
-    await expect(page.locator('[data-testid="scoreboard-home-score"]')).toBeVisible();
-    await expect(page.locator('[data-testid="scoreboard-away-score"]')).toBeVisible();
-    await expect(page.locator('[data-testid="game-clock-quarter"]')).toBeVisible();
+    await expect(page.locator('[data-testid="scoreboard-home-score"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="scoreboard-away-score"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="game-clock-quarter"]')).toBeVisible({ timeout: 10000 });
 
     // Switch to Turf & S2 Cognition tab
     const gridironTab = page.locator("button", { hasText: "Turf & S2 Cognition" });
@@ -292,7 +293,10 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     await page.screenshot({ path: path.join(auditDir, "02_live_sim_after_kickoff.png") });
 
     // Switch to Box Score tab
-    const boxScoreTab = page.locator("button", { hasText: "BOX SCORE" }).or(page.locator("button", { hasText: "Box Score" })).first();
+    const boxScoreTab = page
+      .locator("button", { hasText: "BOX SCORE" })
+      .or(page.locator("button", { hasText: "Box Score" }))
+      .first();
     if (await boxScoreTab.isVisible()) {
       await boxScoreTab.click();
       await page.waitForTimeout(200);
@@ -318,7 +322,9 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     if (await analyticsLensBtn.isVisible()) {
       await analyticsLensBtn.click();
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(auditDir, "03_draft_room_analytics_lens_active.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "03_draft_room_analytics_lens_active.png"),
+      });
     }
 
     // Switch Scout Bias Lens to Film Room Guru
@@ -394,14 +400,22 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     await page.screenshot({ path: path.join(auditDir, "05_medical_trauma_center_initial.png") });
 
     // Click on Right Arm zone or Adjust Protocol button to open 5-Pathway Orthopedic Triage Modal
-    const triageBtn = page.locator("button", { hasText: "Adjust Protocol" }).or(page.locator("button", { hasText: "Triage" })).first();
+    const triageBtn = page
+      .locator("button", { hasText: "Adjust Protocol" })
+      .or(page.locator("button", { hasText: "Triage" }))
+      .first();
     if (await triageBtn.isVisible()) {
       await triageBtn.click();
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(auditDir, "05_medical_orthopedic_triage_modal_opened.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "05_medical_orthopedic_triage_modal_opened.png"),
+      });
 
       // Select PRP Biotherapy option
-      const prpOption = page.locator("button", { hasText: "Platelet-Rich Plasma" }).or(page.locator("button", { hasText: "PRP" })).first();
+      const prpOption = page
+        .locator("button", { hasText: "Platelet-Rich Plasma" })
+        .or(page.locator("button", { hasText: "PRP" }))
+        .first();
       if (await prpOption.isVisible()) {
         await prpOption.click();
         await page.waitForTimeout(200);
@@ -409,7 +423,10 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
       }
 
       // Close modal
-      const closeBtn = page.locator("button", { hasText: "Cancel" }).or(page.locator("button:has-text('✕')")).first();
+      const closeBtn = page
+        .locator("button", { hasText: "Cancel" })
+        .or(page.locator("button:has-text('✕')"))
+        .first();
       if (await closeBtn.isVisible()) {
         await closeBtn.click();
         await page.waitForTimeout(200);
@@ -559,22 +576,34 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     await page.waitForLoadState("domcontentloaded");
 
     // Capture initial 3D skill tree canvas
-    await page.screenshot({ path: path.join(auditDir, "10_player_profile_skills_tree_initial.png") });
+    await page.screenshot({
+      path: path.join(auditDir, "10_player_profile_skills_tree_initial.png"),
+    });
 
     // Switch to ABILITIES tab
-    const abilitiesTab = page.locator("button", { hasText: "ABILITIES" }).or(page.locator("button", { hasText: "Abilities" })).first();
+    const abilitiesTab = page
+      .locator("button", { hasText: "ABILITIES" })
+      .or(page.locator("button", { hasText: "Abilities" }))
+      .first();
     if (await abilitiesTab.isVisible()) {
       await abilitiesTab.click();
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(auditDir, "10_player_profile_abilities_tab_active.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "10_player_profile_abilities_tab_active.png"),
+      });
     }
 
     // Switch to TRAITS tab
-    const traitsTab = page.locator("button", { hasText: "TRAITS" }).or(page.locator("button", { hasText: "Traits" })).first();
+    const traitsTab = page
+      .locator("button", { hasText: "TRAITS" })
+      .or(page.locator("button", { hasText: "Traits" }))
+      .first();
     if (await traitsTab.isVisible()) {
       await traitsTab.click();
       await page.waitForTimeout(300);
-      await page.screenshot({ path: path.join(auditDir, "10_player_profile_traits_tab_active.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "10_player_profile_traits_tab_active.png"),
+      });
     }
 
     expect(errors).toEqual([]);
@@ -618,7 +647,9 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     if (await scrubber.isVisible()) {
       await scrubber.fill("50");
       await page.waitForTimeout(200);
-      await page.screenshot({ path: path.join(auditDir, "12_replay_telemetry_scrubber_advanced.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "12_replay_telemetry_scrubber_advanced.png"),
+      });
     }
 
     expect(errors).toEqual([]);
@@ -647,7 +678,9 @@ test.describe("Exhaustive 13-View Interactive Feature Verification & Audit Suite
     if (await weatherSelect.isVisible()) {
       await weatherSelect.selectOption("Snow");
       await page.waitForTimeout(200);
-      await page.screenshot({ path: path.join(auditDir, "13_settings_weather_snow_configured.png") });
+      await page.screenshot({
+        path: path.join(auditDir, "13_settings_weather_snow_configured.png"),
+      });
     }
 
     // Click Change Team

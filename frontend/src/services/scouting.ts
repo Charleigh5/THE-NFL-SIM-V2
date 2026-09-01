@@ -63,7 +63,11 @@ export const scoutingService = {
     } catch {
       try {
         const fallbackResponse = await api.get<ScoutingReport>(`/api/scouts/report/${playerId}`);
-        if (fallbackResponse.data && fallbackResponse.data.strengths && Array.isArray(fallbackResponse.data.strengths)) {
+        if (
+          fallbackResponse.data &&
+          fallbackResponse.data.strengths &&
+          Array.isArray(fallbackResponse.data.strengths)
+        ) {
           return fallbackResponse.data;
         }
         return {
@@ -97,8 +101,9 @@ export const scoutingService = {
   },
 
   getDraftTradeUrgency: async (teamId: string | number, position: string = "QB") => {
-    const response = await api.get(`/api/scouts/trade-urgency/${teamId}?target_position=${position}`);
+    const response = await api.get(
+      `/api/scouts/trade-urgency/${teamId}?target_position=${position}`
+    );
     return response.data;
   },
 };
-

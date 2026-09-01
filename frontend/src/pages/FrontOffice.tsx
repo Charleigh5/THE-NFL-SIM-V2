@@ -245,6 +245,7 @@ export const FrontOffice = () => {
             {filteredAndSortedRoster.map((player) => (
               <DraggableCard
                 key={player.id}
+                playerId={player.id}
                 name={`${player.first_name.charAt(0)}. ${player.last_name}`}
                 position={player.position}
                 rating={player.overall_rating}

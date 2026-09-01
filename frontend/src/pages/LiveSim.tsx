@@ -230,7 +230,9 @@ export const LiveSim = () => {
             ) : viewMode === "field" ? (
               <>
                 <PhysicsDebugOverlay play={mockTrajectory} canvasRef={canvasRef} />
-                <PlayAnimator onAnimationComplete={() => console.log("Play telemetry animation complete")} />
+                <PlayAnimator
+                  onAnimationComplete={() => console.log("Play telemetry animation complete")}
+                />
                 <FieldCanvas
                   ref={canvasRef}
                   isPlaying={isLive}
@@ -241,10 +243,7 @@ export const LiveSim = () => {
 
                 {/* Replay Timeline Scrubber */}
                 <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 w-80 max-w-[90%]">
-                  <ReplayScrubber
-                    canvasRef={canvasRef}
-                    duration={mockTrajectory.duration || 2.0}
-                  />
+                  <ReplayScrubber canvasRef={canvasRef} duration={mockTrajectory.duration || 2.0} />
                 </div>
 
                 {/* Weather Overlay */}

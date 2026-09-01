@@ -11,9 +11,18 @@ Phase 10: Hyper-Immersion
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from enum import Enum
 import random
+from pydantic import BaseModel
+from app.services.ai.ai_provider import get_ai_registry, AIProviderType
+
+
+class BroadcastCommentaryAI(BaseModel):
+    """Structured AI-generated commentary payload."""
+    call: str
+    energy_level: int = 8
+    color_analysis: Optional[str] = None
 
 
 class BroadcastStyle(str, Enum):
@@ -237,6 +246,39 @@ class BroadcastingService:
             commentary = f"{commentary} {situational}"
 
         return commentary
+
+    async def generate_commentary_ai(
+        self,
+        play_type: str,
+        play_data: Dict,
+        context: GameContext
+    ) -> BroadcastCommentaryAI:
+        """
+        Generate contextual broadcast commentary using AI provider with fallback.
+        """
+        registry = get_ai_registry()
+        provider = registry.get_provider()
+
+        prompt = (
+            f"Generate a dynamic {self.style.value} broadcast call for the following NFL play:\n"
+            f"Play Type: {play_type}\n"
+            f"Play Details: {play_data}\n"
+            f"Situation: {context.possession_team} possession, Q{context.quarter} {context.time_remaining}, "
+            f"Down: {context.down} & {context.yards_to_go}, Score: {context.home_team} {context.home_score} - {context.away_team} {context.away_score}."
+        )
+
+        if provider.provider_type != AIProviderType.DETERMINISTIC_FALLBACK and provider.is_available:
+            result = await provider.generate_structured(prompt, BroadcastCommentaryAI)
+            if result:
+                return result
+
+        # Fallback to deterministic template
+        fallback_call = self.generate_play_commentary(play_type, play_data, context)
+        return BroadcastCommentaryAI(
+            call=fallback_call,
+            energy_level=9 if play_type in ["TOUCHDOWN", "TURNOVER", "SACK"] else 6,
+            color_analysis=self._get_situational_addon(play_type, context) or None
+        )
 
     def _get_situational_addon(self, play_type: str, context: GameContext) -> str:
         """Add situational context to commentary."""

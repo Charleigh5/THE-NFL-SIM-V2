@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import clsx from "clsx";
-import { User, BookOpen, Flame, Star, Award, Shield } from "lucide-react";
+import { BookOpen, Flame, Star, Award, Shield } from "lucide-react";
 import { PlayerBackstoryModal } from "../player/PlayerBackstoryModal";
 import { ArchetypeBadge } from "../player/ArchetypeBadge";
 import { PlayerArchetype } from "../../types/archetypes";
 import { soundEffects } from "../../services/soundEffects";
+import { PlayerAvatar } from "./PlayerAvatar";
 import "./PlayerCard.css";
 
 interface PlayerCardProps {
+  playerId?: number;
   name: string;
   position: string;
   rating: number;
@@ -28,6 +30,7 @@ interface PlayerCardProps {
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
+  playerId,
   name,
   position,
   rating,
@@ -144,8 +147,17 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           )}
 
           {/* Player Silhouette Icon */}
-          <div className="w-18 h-18 rounded-full bg-gradient-to-tr from-black/80 to-white/10 border border-white/15 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
-            <User size={44} className="text-white/80 filter drop-shadow" />
+          <div className="w-18 h-18 rounded-full border border-white/15 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform overflow-hidden">
+            <PlayerAvatar
+              playerId={playerId}
+              teamAbbr={team}
+              pose="headshot"
+              size="lg"
+              position={position}
+              jerseyNumber={jerseyNumber}
+              playerName={name}
+              className="w-full h-full"
+            />
           </div>
         </div>
 

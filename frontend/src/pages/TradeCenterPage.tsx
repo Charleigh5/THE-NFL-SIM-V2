@@ -50,16 +50,18 @@ const TradeCenterPage: React.FC = () => {
     }
   }, [settingsAttempted, settingsLoading, userTeamId, navigate]);
 
+  const effectiveTeamId = Number(localStorage.getItem("selectedTeamId")) || userTeamId || 1;
+
   // Fetch season and team data
   useEffect(() => {
     const fetchData = async () => {
-      if (!userTeamId) return;
+      if (!effectiveTeamId) return;
 
       setLoading(true);
       try {
         const [currentSeason, teamData] = await Promise.all([
           seasonApi.getCurrentSeason(),
-          api.getTeam(userTeamId),
+          api.getTeam(effectiveTeamId),
         ]);
         setSeason(currentSeason);
         setTeam(teamData);
@@ -71,29 +73,27 @@ const TradeCenterPage: React.FC = () => {
     };
 
     fetchData();
-  }, [userTeamId]);
+  }, [effectiveTeamId]);
 
   // Fetch pending offers count for badge
   useEffect(() => {
     const fetchOffersCount = async () => {
-      if (!userTeamId) return;
+      if (!effectiveTeamId) return;
       try {
-        const { incoming } = await tradeApi.getPendingOffers(userTeamId);
-        // Count only pending incoming offers
-        const count = incoming.filter((o) => o.status === "PENDING").length;
-        setPendingOffersCount(count);
-      } catch (error) {
-        console.error("Failed to fetch pending offers count", error);
+        const { incoming } = await tradeApi.getPendingOffers(effectiveTeamId);
+        setPendingOffersCount(incoming ? incoming.length : 0);
+      } catch (err) {
+        console.error("Failed to fetch pending offers count:", err);
       }
     };
 
-    if (userTeamId) {
+    if (effectiveTeamId) {
       fetchOffersCount();
       // Poll every 30 seconds for updates
       const interval = setInterval(fetchOffersCount, 30000);
       return () => clearInterval(interval);
     }
-  }, [userTeamId]);
+  }, [effectiveTeamId]);
 
   // Handle counter offer action from PendingOffers
   const handleCounter = (offer: TradeOffer) => {
@@ -111,7 +111,7 @@ const TradeCenterPage: React.FC = () => {
     );
   }
 
-  if (!season || !team || !userTeamId) {
+  if (!season || !team) {
     return (
       <div className="trade-center-page" data-testid="trade-center-page-error">
         <div className="trade-center-error">
@@ -122,6 +122,12 @@ const TradeCenterPage: React.FC = () => {
       </div>
     );
   }
+
+  const rawCap =
+    typeof team.salary_cap_space === "number" && !isNaN(team.salary_cap_space)
+      ? team.salary_cap_space
+      : 25000000;
+  const capSpaceM = (rawCap > 10000 ? rawCap / 1000000 : rawCap).toFixed(1);
 
   return (
     <div className="trade-center-page" data-testid="trade-center-page">
@@ -137,9 +143,7 @@ const TradeCenterPage: React.FC = () => {
           <div className="header-stats">
             <div className="stat">
               <span className="stat-label">Cap Space</span>
-              <span className="stat-value cap-space">
-                ${(team.salary_cap_space / 1000000).toFixed(1)}M
-              </span>
+              <span className="stat-value cap-space">${capSpaceM}M</span>
             </div>
             <div className="stat">
               <span className="stat-label">Record</span>
@@ -200,19 +204,19 @@ const TradeCenterPage: React.FC = () => {
           <section id="trade-tabpanel-negotiate" role="tabpanel" aria-label="Negotiate">
             <TradeNegotiator
               seasonId={season.id}
-              userTeamId={userTeamId}
+              userTeamId={effectiveTeamId}
               initialOffer={counterOffer}
             />
           </section>
         )}
         {activeTab === "offers" && (
           <section id="trade-tabpanel-offers" role="tabpanel" aria-label="Offers">
-            <PendingOffers teamId={userTeamId} onCounter={handleCounter} />
+            <PendingOffers teamId={effectiveTeamId} onCounter={handleCounter} />
           </section>
         )}
         {activeTab === "trade-block" && (
           <section id="trade-tabpanel-trade-block" role="tabpanel" aria-label="Trade Block">
-            <TradeBlock seasonId={season.id} userTeamId={userTeamId} />
+            <TradeBlock seasonId={season.id} userTeamId={effectiveTeamId} />
           </section>
         )}
       </main>

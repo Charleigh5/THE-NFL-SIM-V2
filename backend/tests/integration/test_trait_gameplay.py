@@ -32,8 +32,8 @@ async def test_field_general_team_boost():
     roster = {1: qb, 2: wr}
 
     # Mock trait service to return Field General for QB
-    with patch.object(service.trait_service, 'get_player_traits') as mock_get_traits:
-        def get_traits_side_effect(player_id):
+    with patch.object(service.trait_service, 'get_player_traits', new_callable=AsyncMock) as mock_get_traits:
+        async def get_traits_side_effect(player_id):
             if player_id == 1:  # QB
                 # Return Field General trait
                 for trait_def in TRAIT_CATALOG.values():
@@ -135,8 +135,8 @@ async def test_green_dot_defensive_boost():
     roster = {1: lb, 2: cb}
 
     # Mock trait service to return Green Dot for LB
-    with patch.object(service.trait_service, 'get_player_traits') as mock_get_traits:
-        def get_traits_side_effect(player_id):
+    with patch.object(service.trait_service, 'get_player_traits', new_callable=AsyncMock) as mock_get_traits:
+        async def get_traits_side_effect(player_id):
             if player_id == 1:  # LB
                 for trait_def in TRAIT_CATALOG.values():
                     if trait_def.name == "Green Dot (Defensive Captain)":
@@ -173,7 +173,7 @@ async def test_multiple_traits_on_player():
     roster = {1: wr}
 
     # Mock trait service to return multiple traits
-    with patch.object(service.trait_service, 'get_player_traits') as mock_get_traits:
+    with patch.object(service.trait_service, 'get_player_traits', new_callable=AsyncMock) as mock_get_traits:
         mock_traits = []
         for trait_def in TRAIT_CATALOG.values():
             if trait_def.name == "Possession Receiver":

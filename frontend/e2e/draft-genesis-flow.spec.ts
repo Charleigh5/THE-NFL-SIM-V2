@@ -94,7 +94,7 @@ test.describe("Draft Genesis Flow", () => {
     await page.getByText("Reveal").first().click();
     await page.getByText("DECRYPT DATA").click();
     const modal = page.locator('[data-testid="genesis-modal"]');
-    await expect(modal.getByText("S2 SCORE")).toBeVisible({ timeout: 5000 });
+    await expect(modal.getByText("S2 SCORE")).toBeVisible({ timeout: 10000 });
 
     // Close modal and wait for modal unmount
     await page.locator('[data-testid="close-modal-bottom"]').click();

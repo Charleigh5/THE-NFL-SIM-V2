@@ -31,6 +31,7 @@ const TeamSelection: React.FC = () => {
   const handleSelectTeam = async (teamId: number, abbreviation: string) => {
     soundEffects.playWhistle();
     soundEffects.playCrowdRoar();
+    localStorage.setItem("selectedTeamId", teamId.toString());
     setActiveTeamId(abbreviation);
     await setUserTeam(teamId);
 

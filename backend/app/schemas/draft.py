@@ -114,3 +114,27 @@ class DraftProspect(BaseModel):
     s2_cognition_score: Optional[int] = None   # 0-99
     medical_flags: Optional[List[str]] = None
     genesis_revealed: bool = False
+
+    # --- Visual Asset Paths ---
+    visual_assets: Optional[Dict[str, str]] = None
+
+
+class DraftClassGenerateRequest(BaseModel):
+    """Request to generate a procedural rookie draft class."""
+    model_config = ConfigDict(from_attributes=True)
+
+    season_id: Optional[int] = Field(default=None, description="Season ID associated with draft class")
+    count: int = Field(default=256, ge=32, le=512, description="Number of prospects to generate")
+    seed: Optional[int] = Field(default=None, description="Deterministic seed for reproducibility")
+
+
+class DraftClassGenerateResponse(BaseModel):
+    """Response containing generated draft class summary."""
+    model_config = ConfigDict(from_attributes=True)
+
+    success: bool = True
+    count: int
+    seed: Optional[int] = None
+    message: str
+    prospects: List[DraftProspect]
+

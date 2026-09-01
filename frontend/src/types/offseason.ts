@@ -33,6 +33,12 @@ export interface Prospect {
   combine?: CombineResult;
   genesis_revealed?: boolean;
   scouting_report?: ProspectScoutingReport;
+  visual_assets?: {
+    headshot: string;
+    hero_pose: string;
+    action_pose: string;
+    celebration: string;
+  };
 }
 
 export interface ProspectScoutingReport {

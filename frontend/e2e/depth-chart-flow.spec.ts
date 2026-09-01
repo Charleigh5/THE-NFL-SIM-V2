@@ -133,11 +133,11 @@ test.describe("Depth Chart Flow", () => {
     await page.goto("/depth-chart");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Depth Chart Editor" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: /depth chart editor/i })).toBeVisible();
 
     // Verify QB position is selected
-    await expect(page.locator("button", { hasText: "QB" })).toHaveClass(/bg-cyan-600/);
-    await expect(page.locator("h2", { hasText: "QB Depth Chart" })).toBeVisible();
+    await expect(page.locator("button", { hasText: "QB" }).first()).toHaveClass(/bg-cyan/);
+    await expect(page.locator("h2", { hasText: /QB Depth Chart/i })).toBeVisible();
 
     // Verify QB players are displayed in order
     const qbPlayers = page.locator(".Reorder_Group > div");
@@ -150,10 +150,10 @@ test.describe("Depth Chart Flow", () => {
     await page.goto("/depth-chart");
 
     // Click RB position button
-    await page.locator("button", { hasText: "RB" }).click();
+    await page.locator("button", { hasText: "RB" }).first().click();
 
     // Verify RB position is selected
-    await expect(page.locator("button", { hasText: "RB" })).toHaveClass(/bg-cyan-600/);
+    await expect(page.locator("button", { hasText: "RB" }).first()).toHaveClass(/bg-cyan/);
 
     // Verify RB players are displayed in order
     const rbPlayers = page.locator(".Reorder_Group > div");

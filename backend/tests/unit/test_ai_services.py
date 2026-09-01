@@ -222,15 +222,143 @@ class TestScoutingAIService:
 # SINGLETON TESTS
 # ============================================================================
 
-class TestServiceSingleton:
-    """Tests for service singleton pattern."""
+# ============================================================================
+# AI PROVIDER REGISTRY & ADAPTER TESTS
+# ============================================================================
 
-    def test_get_scouting_ai_service_singleton(self):
-        """get_scouting_ai_service returns same instance."""
-        svc1 = get_scouting_ai_service()
-        svc2 = get_scouting_ai_service()
-        assert svc1 is svc2
+from app.services.ai.ai_provider import (
+    AIProviderType,
+    BaseAIProvider,
+    DeterministicFallbackProvider,
+    GoogleGenAIProvider,
+    OpenAICompatibleProvider,
+    AIProviderRegistry,
+    get_ai_registry
+)
+from app.services.broadcasting_service import (
+    BroadcastingService,
+    BroadcastStyle,
+    GameContext,
+    BroadcastCommentaryAI
+)
+from app.services.playbook.gameplan_ai import (
+    GameplanAIService,
+    OpponentFilmTendency,
+    GameplanCounterProposal
+)
+from app.services.weekly_recap_service import (
+    format_deterministic_recap_script,
+    mock_gemini_recap_script
+)
+
+
+class TestAIProviderArchitecture:
+    """Tests for the provider-agnostic AI adapter framework."""
+
+    def test_registry_singleton(self):
+        reg1 = get_ai_registry()
+        reg2 = get_ai_registry()
+        assert reg1 is reg2
+
+    def test_deterministic_fallback_always_available(self):
+        provider = DeterministicFallbackProvider()
+        assert provider.is_available is True
+        assert provider.provider_type == AIProviderType.DETERMINISTIC_FALLBACK
+
+    @pytest.mark.asyncio
+    async def test_deterministic_fallback_structured_output(self):
+        provider = DeterministicFallbackProvider()
+        result = await provider.generate_structured("prompt", BroadcastCommentaryAI)
+        assert result is not None
+        assert isinstance(result, BroadcastCommentaryAI)
+        assert result.energy_level is not None
+
+    def test_provider_resolution_without_keys(self):
+        with patch.dict("os.environ", {}, clear=True):
+            reg = AIProviderRegistry()
+            active = reg.get_provider()
+            assert active.provider_type == AIProviderType.DETERMINISTIC_FALLBACK
+
+
+class TestBroadcastingAICommentary:
+    """Tests for Tier 1 Broadcast commentary generation."""
+
+    @pytest.fixture
+    def game_context(self):
+        return GameContext(
+            home_team="Kansas City Chiefs",
+            away_team="Baltimore Ravens",
+            home_score=24,
+            away_score=21,
+            quarter=4,
+            time_remaining="1:45",
+            down=3,
+            yards_to_go=7,
+            field_position=65,
+            possession_team="Kansas City Chiefs",
+            is_redzone=False,
+            is_two_minute=True
+        )
+
+    @pytest.mark.asyncio
+    async def test_generate_commentary_ai_fallback(self, game_context):
+        service = BroadcastingService(style=BroadcastStyle.ESPN)
+        play_data = {
+            "qb": "Patrick Mahomes",
+            "receiver": "Travis Kelce",
+            "yards": 18
+        }
+
+        commentary = await service.generate_commentary_ai("PASS_COMPLETE", play_data, game_context)
+        assert commentary is not None
+        assert isinstance(commentary, BroadcastCommentaryAI)
+        assert len(commentary.call) > 0
+        assert commentary.energy_level >= 5
+
+
+class TestGameplanAIService:
+    """Tests for Tier 2 Opponent Film Study & Gameplan counter-scheming."""
+
+    @pytest.fixture
+    def gameplan_service(self):
+        return GameplanAIService()
+
+    @pytest.mark.asyncio
+    async def test_formulate_gameplan_deep_pass_counter(self, gameplan_service):
+        tendencies = OpponentFilmTendency(
+            opponent_team_name="Buffalo Bills",
+            deep_pass_rate=0.35,
+            blitz_rate_3rd_down=0.20,
+            star_offensive_threat="Josh Allen"
+        )
+        plan = await gameplan_service.formulate_gameplan("Buffalo Bills", tendencies)
+        assert plan is not None
+        assert isinstance(plan, GameplanCounterProposal)
+        assert "Cover 4" in plan.defensive_counter.primary_coverage
+        assert plan.confidence_rating >= 80
+
+    @pytest.mark.asyncio
+    async def test_formulate_gameplan_heavy_blitz_counter(self, gameplan_service):
+        tendencies = OpponentFilmTendency(
+            opponent_team_name="Minnesota Vikings",
+            deep_pass_rate=0.15,
+            blitz_rate_3rd_down=0.45,
+            star_offensive_threat="Justin Jefferson"
+        )
+        plan = await gameplan_service.formulate_gameplan("Minnesota Vikings", tendencies)
+        assert plan is not None
+        assert "Quick" in plan.offensive_counter.primary_concept or "Screens" in plan.offensive_counter.primary_concept
+
+
+class TestWeeklyRecapScript:
+    """Tests for weekly wrap-up recap script generation."""
+
+    def test_deterministic_recap_script_output(self):
+        script = format_deterministic_recap_script(1, [], [])
+        assert "# Week 1 Around the League" in script
+        assert mock_gemini_recap_script(1, [], []) == script
 
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+

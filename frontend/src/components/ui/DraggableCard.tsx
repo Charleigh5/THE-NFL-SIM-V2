@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PlayerArchetype } from "../../types/archetypes";
 
 interface DraggableCardProps {
+  playerId?: number;
   name: string;
   position: string;
   rating: number;

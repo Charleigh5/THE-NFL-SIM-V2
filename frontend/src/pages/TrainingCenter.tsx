@@ -74,7 +74,7 @@ export const TrainingCenter: React.FC = () => {
   }, [playerId]);
 
   const handleDrillSelect = useCallback((drill: Drill) => {
-    setSelectedDrill(drill);
+    setSelectedDrill((prev) => (prev?.name === drill.name ? null : drill));
   }, []);
 
   const handleTrain = async () => {

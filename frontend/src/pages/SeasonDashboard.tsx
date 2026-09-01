@@ -451,9 +451,17 @@ const SeasonDashboard: React.FC = () => {
                           >
                             <div className="game-info-row">
                               <div className="team-row">
-                                <span className="team-name">{game.away_team?.name}</span>
+                                <span className="team-name">
+                                  {game.away_team?.name ||
+                                    teams.find((t) => t.id === game.away_team_id)?.name ||
+                                    `Away Team`}
+                                </span>
                                 <span className="team-record">vs</span>
-                                <span className="team-name">{game.home_team?.name}</span>
+                                <span className="team-name">
+                                  {game.home_team?.name ||
+                                    teams.find((t) => t.id === game.home_team_id)?.name ||
+                                    `Home Team`}
+                                </span>
                               </div>
                               <div className="game-date">
                                 {new Date(game.scheduled_date).toLocaleDateString()}
@@ -497,13 +505,21 @@ const SeasonDashboard: React.FC = () => {
                           >
                             <div className="game-info-row">
                               <div className="team-row">
-                                <span className="team-name">{game.away_team?.name}</span>
+                                <span className="team-name">
+                                  {game.away_team?.name ||
+                                    teams.find((t) => t.id === game.away_team_id)?.name ||
+                                    `Away Team`}
+                                </span>
                                 <span className="score">{game.away_score}</span>
                               </div>
                               <span className="vs">@</span>
                               <div className="team-row">
                                 <span className="score">{game.home_score}</span>
-                                <span className="team-name">{game.home_team?.name}</span>
+                                <span className="team-name">
+                                  {game.home_team?.name ||
+                                    teams.find((t) => t.id === game.home_team_id)?.name ||
+                                    `Home Team`}
+                                </span>
                               </div>
                             </div>
                             {game.weather_info && (

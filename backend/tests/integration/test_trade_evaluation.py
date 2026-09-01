@@ -13,9 +13,11 @@ def clear_cache():
 
 @pytest.fixture
 def setup_trade_data(db_session):
-    # Create Team
-    team = Team(id=1, name="Cardinals", city="Arizona", abbreviation="ARI", conference="NFC", division="West")
-    db_session.add(team)
+    # Create Teams
+    team1 = Team(id=1, name="Cardinals", city="Arizona", abbreviation="ARI", conference="NFC", division="West")
+    team2 = Team(id=2, name="Chiefs", city="Kansas City", abbreviation="KC", conference="AFC", division="West")
+    db_session.add(team1)
+    db_session.add(team2)
 
     # Create Players with all required fields (best practice: always include NOT NULL fields)
     p1 = Player(
@@ -44,7 +46,7 @@ def setup_trade_data(db_session):
     db_session.add(p1)
     db_session.add(p2)
     db_session.commit()
-    return team, p1, p2
+    return team1, p1, p2
 
 def test_evaluate_trade_endpoint(client, setup_trade_data):
     """Test the trade evaluation API endpoint."""

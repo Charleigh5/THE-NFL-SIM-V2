@@ -43,6 +43,16 @@ class PlayerSchema(BaseModel):
     depth_chart_rank: int = 999
     age: int
     experience: int
+    height: int | None = 72
+    weight: int | None = 200
+    college: str | None = None
+    speed: int | None = 50
+    acceleration: int | None = 50
+    strength: int | None = 50
+    agility: int | None = 50
+    awareness: int | None = 50
+    injury_status: str | None = "ACTIVE"
+    development_trait: str | None = "NORMAL"
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -101,10 +111,9 @@ async def update_depth_chart(
     """
     logger.info(f"Updating depth chart for team {team_id}, position {update.position}")
 
-    # Verify all players belong to the team and position
+    # Verify all players belong to the team
     stmt = select(Player).where(
         Player.team_id == team_id,
-        Player.position == update.position,
         Player.id.in_(update.player_ids)
     )
     result = await db.execute(stmt)
@@ -113,7 +122,7 @@ async def update_depth_chart(
     player_map = {p.id: p for p in players}
 
     if len(players) != len(update.player_ids):
-        raise HTTPException(status_code=400, detail="Some players not found or do not belong to this team/position")
+        raise HTTPException(status_code=400, detail="Some players not found or do not belong to this team")
 
     for rank, player_id in enumerate(update.player_ids):
         player = player_map[player_id]

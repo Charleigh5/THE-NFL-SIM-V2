@@ -1,5 +1,7 @@
 import random
+from typing import Union, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.player import Player, Position
 from app.core.random_utils import DeterministicRNG
 
@@ -15,7 +17,7 @@ POSITION_WEIGHTS = {
 }
 
 class RookieGenerator:
-    def __init__(self, db: Session, seed: int = None):
+    def __init__(self, db: Union[Session, AsyncSession], seed: Optional[int] = None):
         self.db = db
         # Use provided seed or a random one if not provided, but encapsulated in DeterministicRNG
         self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
@@ -40,7 +42,6 @@ class RookieGenerator:
         except Exception as e:
             print(f"MCP Warning: Could not fetch league averages: {e}")
 
-        generated_count = 0
         players = []
 
         for _ in range(count):
@@ -58,7 +59,10 @@ class RookieGenerator:
             players.append(player)
 
         self.db.add_all(players)
-        self.db.commit()
+        if isinstance(self.db, AsyncSession):
+            await self.db.commit()
+        else:
+            self.db.commit()
         return players
 
     def _create_rookie(self, position: Position, stats_context: dict = None) -> Player:

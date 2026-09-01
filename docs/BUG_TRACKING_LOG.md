@@ -8,7 +8,7 @@
 
 | Field              | Value                                                                             |
 | ------------------ | --------------------------------------------------------------------------------- |
-| **Status**         | 🔴 OPEN                                                                           |
+| **Status**         | 🟢 RESOLVED                                                                       |
 | **Severity**       | Critical                                                                          |
 | **First Reported** | 2025-12-18 01:28                                                                  |
 | **Symptoms**       | App shows completely white/blank page. React fails to mount into `#root` element. |
@@ -51,7 +51,133 @@
 2. Fixed `TrainingCenter.tsx` - same issue
 3. Re-added AudioProvider and SoundtrackPlayer
 
-**Status:** Awaiting user verification\_
+**Status:** 🟢 RESOLVED
+
+---
+
+## BUG-002: Missing `timedelta` Import in Season Initialization Endpoint
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | High                                                               |
+| **First Reported** | 2026-08-31 20:06                                                   |
+| **Symptoms**       | HTTP 500 `NameError: name 'timedelta' is not defined` on season init. |
+| **Environment**    | FastAPI backend (`backend/app/api/endpoints/season.py`)            |
+
+### Root Cause
+`season.py` utilized `timedelta(days=7)` to schedule regular season game weeks without importing `timedelta` from `datetime`.
+
+### Resolution
+Added `from datetime import datetime, timedelta` to `backend/app/api/endpoints/season.py` and consolidated redundant imports. Verified via unit and integration tests.
+
+---
+
+## BUG-003: CombineResult Property Mismatch in DraftBoard Fallback
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | Medium                                                             |
+| **First Reported** | 2026-08-31 20:06                                                   |
+| **Symptoms**       | TypeScript compilation error `Object literal may only specify known properties` on `CombineResult`. |
+| **Environment**    | Frontend TypeScript build (`src/components/offseason/DraftBoard.tsx`)|
+
+### Root Cause
+Fallback object for `CombineResult` included deprecated `player_id` and `position` fields not present on the strict domain interface.
+
+### Resolution
+Removed extraneous fields from the `CombineResult` fallback object in `DraftBoard.tsx`. Verified via `tsc -b && vite build`.
+
+---
+
+## BUG-004: TypeError Comparing MagicMock in Running Back Archetypes
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | High                                                               |
+| **First Reported** | 2026-08-31 20:06                                                   |
+| **Symptoms**       | `TypeError: '>=' not supported between instances of 'MagicMock' and 'int'` during benchmark and unit simulation tests. |
+| **Environment**    | Simulation Engine (`backend/app/engine/rb_tribes.py`)              |
+
+### Root Cause
+`classify_rb_tribe` compared player attributes (`trucking`, `break_tackle`, `elusiveness`) directly with integer thresholds without validating whether attributes were mocked.
+
+### Resolution
+Implemented safe attribute extractor `_get_num` in `rb_tribes.py` that coerces mocks and falsy values to integer defaults.
+
+---
+
+## BUG-005: Unawaited Coroutine in Trait Gameplay Service Mock
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | Medium                                                             |
+| **First Reported** | 2026-08-31 20:06                                                   |
+| **Symptoms**       | `TypeError: 'list' object can't be awaited` in trait gameplay integration test. |
+| **Environment**    | Backend Tests (`backend/tests/integration/test_trait_gameplay.py`) |
+
+### Root Cause
+`PreGameService._apply_team_traits` awaited `trait_service.get_player_traits`, but the test mocked it as a synchronous function returning a plain list.
+
+### Resolution
+Converted mock return helper to an `AsyncMock` returning an awaitable coroutine list.
+
+---
+
+## BUG-006: MCP Stdio Subprocess Path Resolution
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | Medium                                                             |
+| **First Reported** | 2026-08-31 20:06                                                   |
+| **Symptoms**       | `FileNotFoundError` when launching stdio MCP servers from repo root.|
+| **Environment**    | MCP Client (`backend/app/core/mcp_client.py`)                      |
+
+### Root Cause
+Stdio server commands assumed execution directly from inside `backend/`, causing relative paths to fail when run from the root directory.
+
+### Resolution
+Added path resolution logic in `mcp_client.py` checking both root and `backend/` relative paths and injecting `PYTHONPATH`.
+
+---
+
+## BUG-007: Foreign Key Constraint Failure in Trade Evaluation Tests
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | High                                                               |
+| **First Reported** | 2026-08-31 20:10                                                   |
+| **Symptoms**       | `IntegrityError: FOREIGN KEY constraint failed` when inserting player with `team_id=2`. |
+| **Environment**    | Integration Tests (`backend/tests/integration/test_trade_evaluation.py`) |
+
+### Root Cause
+`setup_trade_data` fixture inserted Player 2 with `team_id=2` but only created Team 1 in the database session.
+
+### Resolution
+Created and committed both `team1` and `team2` in `setup_trade_data` fixture.
+
+---
+
+## BUG-008: Undefined `need_score` Crash in Draft Room
+
+| Field              | Value                                                              |
+| ------------------ | ------------------------------------------------------------------ |
+| **Status**         | 🟢 RESOLVED                                                        |
+| **Severity**       | High                                                               |
+| **First Reported** | 2026-08-31 20:17                                                   |
+| **Symptoms**       | `TypeError: Cannot read properties of undefined (reading 'toFixed')` rendering team needs list. |
+| **Environment**    | Frontend UI (`src/pages/DraftRoom.tsx`)                            |
+
+### Root Cause
+`need.need_score` was accessed directly with `.toFixed(1)` without nullish coalescing when mock or server data omitted `need_score`.
+
+### Resolution
+Added nullish coalescing `(need.need_score ?? 0).toFixed(1)` and array boundary validation `Array.isArray(teamNeeds)` in `DraftRoom.tsx`.
 
 ---
 

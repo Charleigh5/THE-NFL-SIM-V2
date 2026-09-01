@@ -87,6 +87,14 @@ test.describe("Draft Room E2E", () => {
         json: { id: 1, team_id: USER_TEAM_ID, round: 1, pick_number: 1 },
       });
     });
+    await page.route("**/api/season/*/draft/current*", async (route) => {
+      await route.fulfill({
+        json: { id: 1, team_id: USER_TEAM_ID, round: 1, pick_number: 1 },
+      });
+    });
+    await page.route("**/api/season/*/draft/needs*", async (route) => {
+      await route.fulfill({ json: [] });
+    });
     await page.route("**/api/season/*/needs*", async (route) => {
       await route.fulfill({ json: [] });
     });
@@ -197,7 +205,7 @@ test.describe("Draft Room E2E", () => {
 
     // Verify selection state (could be highlight, modal, or side panel)
     // Look for draft action button becoming available
-    const draftBtn = page.locator('[data-testid="draft-player-btn"], button:has-text("Draft")');
+    const draftBtn = page.locator('[data-testid="draft-player-btn"], button:has-text("Draft")').first();
     if (await draftBtn.isVisible()) {
       await expect(draftBtn).toBeEnabled();
     }

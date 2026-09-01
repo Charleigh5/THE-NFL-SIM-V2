@@ -82,4 +82,40 @@ export const draftService = {
     );
     return response.data;
   },
+
+  generateDraftClass: async (count: number = 256, seed?: number): Promise<Prospect[]> => {
+    const response = await api.post<{
+      success: boolean;
+      count: number;
+      prospects: Prospect[];
+    }>("/api/draft/generate", {
+      count,
+      seed,
+    });
+    return (response.data.prospects || []).map((p) => ({
+      ...p,
+      name: p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim(),
+    }));
+  },
+
+  generateProspectAssets: async (
+    playerId: number
+  ): Promise<{
+    success: boolean;
+    player_id: number;
+    player_name: string;
+    position: string;
+    asset_urls: Record<string, string>;
+    prompts: Record<string, string>;
+  }> => {
+    const response = await api.post<{
+      success: boolean;
+      player_id: number;
+      player_name: string;
+      position: string;
+      asset_urls: Record<string, string>;
+      prompts: Record<string, string>;
+    }>(`/api/draft/prospects/${playerId}/generate-assets`);
+    return response.data;
+  },
 };

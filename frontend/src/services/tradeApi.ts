@@ -132,16 +132,19 @@ export const tradeApi = {
     const offeredPlayers = proposal.offered_player_ids || proposal.offered_players || [];
     const requestedPlayers = proposal.requested_player_ids || proposal.requested_players || [];
 
-    const response = await fetchJson<{ offer_id: number; status: string; message: string }>(`/api/trades/offer`, {
-      method: "POST",
-      body: JSON.stringify({
-        target_team_id: targetTeamId,
-        offered_player_ids: offeredPlayers,
-        requested_player_ids: requestedPlayers,
-        offered_picks: proposal.offered_picks || null,
-        requested_picks: proposal.requested_picks || null,
-      }),
-    });
+    const response = await fetchJson<{ offer_id: number; status: string; message: string }>(
+      `/api/trades/offer`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          target_team_id: targetTeamId,
+          offered_player_ids: offeredPlayers,
+          requested_player_ids: requestedPlayers,
+          offered_picks: proposal.offered_picks || null,
+          requested_picks: proposal.requested_picks || null,
+        }),
+      }
+    );
     return {
       success: true,
       message: response.message || "Trade executed successfully!",

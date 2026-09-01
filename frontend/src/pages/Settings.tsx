@@ -34,7 +34,9 @@ const Settings: React.FC = () => {
               <option value="All-Pro">All-Pro</option>
               <option value="Hall of Fame">Hall of Fame</option>
             </select>
-            <p className="setting-description">Affects simulation logic, AI play-calling, and trade valuation difficulty.</p>
+            <p className="setting-description">
+              Affects simulation logic, AI play-calling, and trade valuation difficulty.
+            </p>
           </div>
         </div>
 
@@ -43,14 +45,20 @@ const Settings: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="setting-item">
               <label>Default Weather Condition</label>
-              <select defaultValue="Clear" className="setting-select" aria-label="Weather Condition">
+              <select
+                defaultValue="Clear"
+                className="setting-select"
+                aria-label="Weather Condition"
+              >
                 <option value="Clear">Clear & Sunny (72°F)</option>
                 <option value="Rain">Heavy Downpour (Turf Friction -25%)</option>
                 <option value="Snow">Frozen Tundra Snowstorm (20°F)</option>
                 <option value="Fog">Dense Fog / Low Visibility</option>
                 <option value="Dome">Controlled Climate Dome (68°F 0 MPH)</option>
               </select>
-              <p className="setting-description">Calibrates ball aerodynamics, fumble probability, and player traction friction.</p>
+              <p className="setting-description">
+                Calibrates ball aerodynamics, fumble probability, and player traction friction.
+              </p>
             </div>
 
             <div className="setting-item">
@@ -66,7 +74,9 @@ const Settings: React.FC = () => {
                 />
                 <span className="font-mono text-cyan-400 font-bold text-sm">12 MPH</span>
               </div>
-              <p className="setting-description">Crosswind vector alters deep ball trajectories and field goal kick physics.</p>
+              <p className="setting-description">
+                Crosswind vector alters deep ball trajectories and field goal kick physics.
+              </p>
             </div>
           </div>
         </div>
@@ -78,7 +88,9 @@ const Settings: React.FC = () => {
             <div className="p-3 bg-black/50 rounded-lg border border-cyan-500/30 font-mono text-xs text-cyan-300 break-all">
               HMAC-SHA256: 8f74e9a2b1c6d830495f2a1b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d
             </div>
-            <p className="setting-description">Deterministic commit-reveal seed ensures 100% reproducible 60Hz physics replay.</p>
+            <p className="setting-description">
+              Deterministic commit-reveal seed ensures 100% reproducible 60Hz physics replay.
+            </p>
           </div>
         </div>
 
