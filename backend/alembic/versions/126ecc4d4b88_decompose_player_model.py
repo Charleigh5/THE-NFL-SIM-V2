@@ -201,9 +201,7 @@ def upgrade() -> None:
     """)
 
     # 3. Player Injury
-    op.execute("""
-
-    """)
+    pass
 
     # 4. Player Physics
     op.execute("""
