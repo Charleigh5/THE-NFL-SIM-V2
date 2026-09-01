@@ -8,8 +8,8 @@ from typing import Dict, Optional, Tuple, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from app.core.logging_config import get_logger, ErrorCategory, log_error
-from app.models.stadium import Stadium, StadiumClimate
-from app.models.weather import GameWeather
+from app.models.stadium import Stadium
+from app.models.weather import GameWeather, StadiumClimate
 
 logger = get_logger(__name__)
 

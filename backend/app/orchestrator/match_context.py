@@ -81,16 +81,16 @@ class MatchContext:
 
     async def load_rosters(self):
         """Loads full rosters for both teams from the database, initializes weather, and eager-loads traits."""
-        # 1. Initialize Weather (Async)
-        stadium_id = self.weather_config.get("stadium_id", 0)
-        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
-
-        try:
-            weather_result = await WeatherService.calculate_simulation_weather(self.db, stadium_id, game_time)
-            self.weather_conditions = weather_result.get("modifiers", {})
-            self.weather_data = weather_result.get("conditions", {})
-        except Exception as e:
-            logger.warning("failed_to_calculate_simulation_weather", error=str(e))
+        # 1. Initialize Weather (Async) if configured
+        stadium_id = self.weather_config.get("stadium_id")
+        if stadium_id is not None and self.db is not None:
+            game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+            try:
+                weather_result = await WeatherService.calculate_simulation_weather(self.db, stadium_id, game_time)
+                self.weather_conditions = weather_result.get("modifiers", {})
+                self.weather_data = weather_result.get("conditions", {})
+            except Exception as e:
+                logger.warning("failed_to_calculate_simulation_weather", error=str(e))
 
         # 2. Load Home Team with eager-loaded traits
         stmt_home = (
