@@ -37,11 +37,15 @@ class MatchContext:
         self.weather_config = weather_config or {}
 
         # New Context Fields
-        # Populate using WeatherService
-        stadium_id = self.weather_config.get("stadium_id", 0)
-        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+        # Weather is now initialized asynchronously in load_rosters
+        self.weather_conditions: Dict[str, float] = {
+            "passing": 0.0,
+            "rushing": 0.0,
+            "fumble": 0.0,
+            "fg_accuracy": 0.0
+        }
+        self.weather_data: Dict[str, Any] = {} # Stores full weather info (temp, wind, etc.)
 
-        self.weather_conditions: Dict[str, float] = WeatherService.get_weather_modifiers(stadium_id, game_time)
         self.home_ol_chemistry: int = 0
         self.away_ol_chemistry: int = 0
 
@@ -76,8 +80,19 @@ class MatchContext:
         logger.info("match_context_initialized", home=home_team_id, away=away_team_id)
 
     async def load_rosters(self):
-        """Loads full rosters for both teams from the database, including traits."""
-        # Load Home Team with eager-loaded traits
+        """Loads full rosters for both teams from the database, initializes weather, and eager-loads traits."""
+        # 1. Initialize Weather (Async)
+        stadium_id = self.weather_config.get("stadium_id", 0)
+        game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
+
+        try:
+            weather_result = await WeatherService.calculate_simulation_weather(self.db, stadium_id, game_time)
+            self.weather_conditions = weather_result.get("modifiers", {})
+            self.weather_data = weather_result.get("conditions", {})
+        except Exception as e:
+            logger.warning("failed_to_calculate_simulation_weather", error=str(e))
+
+        # 2. Load Home Team with eager-loaded traits
         stmt_home = (
             select(Player)
             .where(Player.team_id == self.home_team_id)
@@ -87,7 +102,7 @@ class MatchContext:
         home_players = result_home.scalars().all()
         self.home_roster = {p.id: p for p in home_players}
 
-        # Load Away Team with eager-loaded traits
+        # 3. Load Away Team with eager-loaded traits
         stmt_away = (
             select(Player)
             .where(Player.team_id == self.away_team_id)
@@ -113,15 +128,15 @@ class MatchContext:
         """Initializes the simulation kernels."""
         self.genesis = GenesisKernel()
 
-        # Determine climate familiarity based on weather config
-        temp = self.weather_config.get("temperature", 70)
-        climate = "Cold" if temp < 40 else ("Hot" if temp > 85 else "Neutral")
+        # Determine climate familiarity based on weather config or weather data
+        temp = self.weather_data.get("temperature") or self.weather_config.get("temperature", 70)
+        home_climate = "Cold" if temp < 40 else ("Hot" if temp > 85 else "Neutral")
 
         # Register all players
         all_players = list(self.home_roster.values()) + list(self.away_roster.values())
         for p in all_players:
             self.genesis.register_player(p.id, {
-                "fatigue": {"home_climate": climate},
+                "fatigue": {"home_climate": home_climate},
                 "anatomy": {}
             })
 
