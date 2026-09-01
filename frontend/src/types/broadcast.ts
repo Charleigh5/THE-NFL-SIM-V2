@@ -196,6 +196,17 @@ export interface TeamVisualData {
   players: PlayerVisualData[];
 }
 
+export interface VisualTeam {
+  id: number | string;
+  name: string;
+  city?: string;
+  abbreviation: string;
+  primary_color: string;
+  secondary_color: string;
+  logo_url?: string | null;
+  players?: PlayerVisualData[];
+}
+
 export interface GameRosterData {
   game_id: number;
   home_team: TeamVisualData;

@@ -4,7 +4,7 @@
  * Uses deterministic hashing for consistent team branding
  */
 
-import { VisualTeam } from '../../types/broadcast';
+import type { VisualTeam } from '../../types/broadcast';
 
 // ============================================================================
 // Type Definitions
@@ -86,7 +86,7 @@ class SeededRandom {
 const SHAPE_TYPES: ShapeDef['type'][] = ['hexagon', 'circle', 'diamond', 'shield', 'abstract', 'star', 'triangle'];
 const FILL_PATTERNS: ShapeDef['fillPattern'][] = ['solid', 'gradient', 'stripes', 'dots', 'chevron'];
 
-function generateShape(rng: SeededRandom, index: number): ShapeDef {
+function generateShape(rng: SeededRandom, _index: number): ShapeDef {
   const type = rng.pick(SHAPE_TYPES);
   const sides = type === 'hexagon' ? 6 : type === 'triangle' ? 3 : undefined;
   
@@ -100,7 +100,7 @@ function generateShape(rng: SeededRandom, index: number): ShapeDef {
 }
 
 function renderShape(shape: ShapeDef, cx: number, cy: number, size: number, colors: string[]): string {
-  const { type, sides, rotation, scale, fillPattern } = shape;
+  const { type, rotation, scale, fillPattern } = shape;
   const scaledSize = size * scale;
   
   let path = '';
@@ -218,7 +218,7 @@ function createStar(cx: number, cy: number, outerRadius: number, points: number,
   return path + ' Z';
 }
 
-function createAbstract(cx: number, cy: number, size: number, rng: SeededRandom, rotation: number): string {
+function createAbstract(cx: number, cy: number, size: number, _rng: SeededRandom, rotation: number): string {
   // Bezier curve-based abstract shape
   const rad = (rotation * Math.PI) / 180;
   const rotate = (x: number, y: number) => ({
