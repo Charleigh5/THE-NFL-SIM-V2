@@ -205,7 +205,9 @@ test.describe("Draft Room E2E", () => {
 
     // Verify selection state (could be highlight, modal, or side panel)
     // Look for draft action button becoming available
-    const draftBtn = page.locator('[data-testid="draft-player-btn"], button:has-text("Draft")').first();
+    const draftBtn = page
+      .locator('[data-testid="draft-player-btn"], button:has-text("Draft")')
+      .first();
     if (await draftBtn.isVisible()) {
       await expect(draftBtn).toBeEnabled();
     }

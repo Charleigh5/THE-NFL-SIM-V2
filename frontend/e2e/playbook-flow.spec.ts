@@ -226,7 +226,9 @@ test.describe("Playbook Flow", () => {
       await drawBtn.click();
     }
 
-    const clearBtn = page.locator('button:has-text("Clear"), [data-testid="telestrator-clear"]').first();
+    const clearBtn = page
+      .locator('button:has-text("Clear"), [data-testid="telestrator-clear"]')
+      .first();
     if (await clearBtn.isVisible({ timeout: 3000 })) {
       await clearBtn.click({ force: true });
     }
