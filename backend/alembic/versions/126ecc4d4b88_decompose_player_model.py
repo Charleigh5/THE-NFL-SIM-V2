@@ -111,7 +111,7 @@ def upgrade() -> None:
 
 
 
-    sa.Column('medical_flags', sa.JSON(), nullable=True),
+
 
     sa.ForeignKeyConstraint(['player_id'], ['player.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -202,12 +202,7 @@ def upgrade() -> None:
 
     # 3. Player Injury
     op.execute("""
-        INSERT INTO player_injury (
-            player_id, medical_flags
-        )
-        SELECT
-            id, medical_flags
-        FROM player
+
     """)
 
     # 4. Player Physics

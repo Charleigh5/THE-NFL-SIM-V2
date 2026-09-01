@@ -52,8 +52,8 @@ class WeatherService:
         Calculates weather conditions for a game based on simulation logic.
 
         Returns a dictionary containing:
-        - modifiers: Dict[str, float]
-        - conditions: Dict[str, Any] (temp, wind, precip, etc.)
+        - modifiers: dict[str, float]
+        - conditions: dict[str, Any] (temp, wind, precip, etc.)
         """
 
         if isinstance(game_date, str):
@@ -226,7 +226,7 @@ class WeatherService:
     # import httpx
     #
     # @staticmethod
-    # async def fetch_live_weather(lat: float, lon: float, api_key: str) -> Dict[str, Any]:
+    # async def fetch_live_weather(lat: float, lon: float, api_key: str) -> dict[str, Any]:
     #     """
     #     Fetches real-time weather from OpenWeatherMap (or similar).
     #     To use:

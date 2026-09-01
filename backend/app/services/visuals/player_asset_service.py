@@ -3,9 +3,9 @@ Player Visual Asset Service
 Handles parametric prompt synthesis, asset resolution, and fallback URLs for all player poses.
 """
 
-from typing import Dict, Optional, Literal
-from pydantic import BaseModel, ConfigDict
+from typing import Literal
 
+from pydantic import BaseModel, ConfigDict
 
 PoseType = Literal["headshot", "hero_pose", "action_pose", "celebration"]
 
@@ -19,9 +19,9 @@ class PlayerVisualAssetMetadata(BaseModel):
     position: str
     height_inches: int
     weight_lbs: int
-    skin_tone: Optional[str] = "medium_brown"
-    visor_style: Optional[str] = None
-    arm_gear: Optional[str] = None
+    skin_tone: str | None = "medium_brown"
+    visor_style: str | None = None
+    arm_gear: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -32,7 +32,7 @@ class PlayerAssetService:
     BASE_ASSET_PATH = "/assets/players"
 
     @classmethod
-    def get_asset_urls(cls, team_abbr: str, player_id: int) -> Dict[str, str]:
+    def get_asset_urls(cls, team_abbr: str, player_id: int) -> dict[str, str]:
         """
         Get deterministic static asset URLs for all 4 player poses.
         """
