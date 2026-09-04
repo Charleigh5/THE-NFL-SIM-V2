@@ -69,6 +69,13 @@ class PlayerBase(BaseModel):
     image_url: Optional[str] = None
     nano_id: Optional[str] = None
 
+    # Society & Psychological DNA
+    psychological_dna: Optional[dict] = None
+    backstory: Optional[dict] = None
+    tension_score: float = 0.0
+    trust_in_coach: int = 80
+    trust_in_qb: int = 80
+
 class PlayerCreate(PlayerBase):
     team_id: Optional[int] = None
 

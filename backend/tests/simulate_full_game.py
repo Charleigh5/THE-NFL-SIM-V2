@@ -2,7 +2,7 @@
 import asyncio
 import sys
 import os
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 
 # Add backend to path
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -56,8 +56,8 @@ async def run_full_game():
     orchestrator.match_context = MatchContext(home_roster, away_roster)
     
     # Mock the save methods to avoid DB errors
-    orchestrator._save_progress = MagicMock()
-    orchestrator.save_game_result = MagicMock()
+    orchestrator._save_progress = AsyncMock()
+    orchestrator.save_game_result = AsyncMock()
     
     # Mock callbacks
     async def on_play(result):

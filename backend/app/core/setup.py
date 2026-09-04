@@ -69,7 +69,8 @@ def configure_routes(app: FastAPI) -> None:
         system, simulation, data, websocket, teams, players, season,
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api, training, live_visualization, broadcast, coaches
+        playbook, physics_api, training, live_visualization, broadcast, coaches,
+        society
     )
     from app.api import combine
 
@@ -83,6 +84,9 @@ def configure_routes(app: FastAPI) -> None:
     # Team and player management
     app.include_router(teams.router, prefix="/api/teams", tags=["teams"])
     app.include_router(players.router, prefix="/api/players", tags=["players"])
+
+    # Society & Locker Room Engine
+    app.include_router(society.router, prefix="/api")
 
     # Season and game management
     app.include_router(season.router)

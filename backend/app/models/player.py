@@ -73,6 +73,13 @@ class Player(Base):
     team_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("team.id"), nullable=True, index=True)
     team: Mapped[Optional["Team"]] = relationship("Team", back_populates="players")
 
+    # --- Society & Psychological DNA (TASK-009) ---
+    psychological_dna: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
+    backstory: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
+    tension_score: Mapped[float] = mapped_column(Float, default=0.0)
+    trust_in_coach: Mapped[int] = mapped_column(Integer, default=80)
+    trust_in_qb: Mapped[int] = mapped_column(Integer, default=80)
+
     # --- RPG Attributes (Proxied to PlayerAttributes) ---
     @hybrid_property
     def speed(self) -> int:
@@ -1012,6 +1019,11 @@ class Player(Base):
         self.jersey_number = 0
         self.overall_rating = 50
         self.depth_chart_rank = 999
+        self.psychological_dna = {}
+        self.backstory = {}
+        self.tension_score = 0.0
+        self.trust_in_coach = 80
+        self.trust_in_qb = 80
 
         # Initialize satellite models so setters work during initialization
         self.attributes = PlayerAttributes()

@@ -49,6 +49,7 @@ export const PHASE_TRANSITIONS: Record<BroadcastPhase, BroadcastPhase[]> = {
  * @throws Error if transition is illegal
  */
 export function validateTransition(from: BroadcastPhase, to: BroadcastPhase): boolean {
+  if (from === to) return true;
   const allowed = PHASE_TRANSITIONS[from];
   if (!allowed || !allowed.includes(to)) {
     throw new Error(
