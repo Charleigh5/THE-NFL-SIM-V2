@@ -226,7 +226,11 @@ export const DraftRoom: React.FC = () => {
                   <div key={need.position} className={styles.needItem}>
                     <div className={styles.needInfo}>
                       <span className={styles.needPos}>{need.position}</span>
-                      <progress className={styles.needProgress} value={need.need_score ?? 0} max={5} />
+                      <progress
+                        className={styles.needProgress}
+                        value={need.need_score ?? 0}
+                        max={5}
+                      />
                     </div>
                     <span className={styles.needScore}>{(need.need_score ?? 0).toFixed(1)}</span>
                   </div>

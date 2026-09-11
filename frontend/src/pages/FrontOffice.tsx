@@ -9,19 +9,7 @@ import type { Player, Team } from "../services/api";
 import { Users, Filter, ArrowUpDown, DollarSign, X } from "lucide-react";
 
 type PositionFilter =
-  | "ALL"
-  | "OFF"
-  | "DEF"
-  | "ST"
-  | "QB"
-  | "RB"
-  | "WR"
-  | "TE"
-  | "OL"
-  | "DL"
-  | "LB"
-  | "DB"
-  | "K/P";
+  "ALL" | "OFF" | "DEF" | "ST" | "QB" | "RB" | "WR" | "TE" | "OL" | "DL" | "LB" | "DB" | "K/P";
 type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
 
 export const FrontOffice = () => {

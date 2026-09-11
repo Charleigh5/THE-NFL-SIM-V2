@@ -125,12 +125,7 @@ export interface TradeHistoryItem {
 
 // Canonical TradeOfferStatus with WITHDRAWN
 export type TradeOfferStatus =
-  | "PENDING"
-  | "ACCEPTED"
-  | "REJECTED"
-  | "COUNTERED"
-  | "EXPIRED"
-  | "WITHDRAWN";
+  "PENDING" | "ACCEPTED" | "REJECTED" | "COUNTERED" | "EXPIRED" | "WITHDRAWN";
 
 export type TradeEvaluationResult = TradeEvaluation;
 export type TradeDecision = TradeEvaluation["decision"];

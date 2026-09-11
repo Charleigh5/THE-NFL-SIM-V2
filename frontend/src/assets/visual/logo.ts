@@ -4,7 +4,7 @@
  * Uses deterministic hashing for consistent team branding
  */
 
-import type { VisualTeam } from '../../types/broadcast';
+import type { VisualTeam } from "../../types/broadcast";
 
 // ============================================================================
 // Type Definitions
@@ -20,11 +20,11 @@ export interface LogoConfig {
 }
 
 export interface ShapeDef {
-  type: 'hexagon' | 'circle' | 'diamond' | 'shield' | 'abstract' | 'star' | 'triangle';
+  type: "hexagon" | "circle" | "diamond" | "shield" | "abstract" | "star" | "triangle";
   sides?: number;
   rotation: number;
   scale: number;
-  fillPattern: 'solid' | 'gradient' | 'stripes' | 'dots' | 'chevron';
+  fillPattern: "solid" | "gradient" | "stripes" | "dots" | "chevron";
 }
 
 export interface GeneratedLogo {
@@ -46,7 +46,7 @@ export interface GeneratedLogo {
 function djb2Hash(str: string): number {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    hash = (hash << 5) + hash + str.charCodeAt(i);
     hash = hash & hash; // Convert to 32bit integer
   }
   return Math.abs(hash);
@@ -83,13 +83,27 @@ class SeededRandom {
 // Shape Generators
 // ============================================================================
 
-const SHAPE_TYPES: ShapeDef['type'][] = ['hexagon', 'circle', 'diamond', 'shield', 'abstract', 'star', 'triangle'];
-const FILL_PATTERNS: ShapeDef['fillPattern'][] = ['solid', 'gradient', 'stripes', 'dots', 'chevron'];
+const SHAPE_TYPES: ShapeDef["type"][] = [
+  "hexagon",
+  "circle",
+  "diamond",
+  "shield",
+  "abstract",
+  "star",
+  "triangle",
+];
+const FILL_PATTERNS: ShapeDef["fillPattern"][] = [
+  "solid",
+  "gradient",
+  "stripes",
+  "dots",
+  "chevron",
+];
 
-function generateShape(rng: SeededRandom, _index: number): ShapeDef {
+function generateShape(rng: SeededRandom): ShapeDef {
   const type = rng.pick(SHAPE_TYPES);
-  const sides = type === 'hexagon' ? 6 : type === 'triangle' ? 3 : undefined;
-  
+  const sides = type === "hexagon" ? 6 : type === "triangle" ? 3 : undefined;
+
   return {
     type,
     sides,
@@ -99,47 +113,54 @@ function generateShape(rng: SeededRandom, _index: number): ShapeDef {
   };
 }
 
-function renderShape(shape: ShapeDef, cx: number, cy: number, size: number, colors: string[]): string {
+function renderShape(
+  shape: ShapeDef,
+  cx: number,
+  cy: number,
+  size: number,
+  colors: string[]
+): string {
   const { type, rotation, scale, fillPattern } = shape;
   const scaledSize = size * scale;
-  
-  let path = '';
-  
+
+  let path = "";
+
   switch (type) {
-    case 'hexagon':
+    case "hexagon":
       path = createPolygon(cx, cy, scaledSize, 6, rotation);
       break;
-    case 'circle':
+    case "circle":
       path = `<circle cx="${cx}" cy="${cy}" r="${scaledSize}" />`;
       break;
-    case 'diamond':
+    case "diamond":
       path = createPolygon(cx, cy, scaledSize, 4, rotation + 45);
       break;
-    case 'shield':
+    case "shield":
       path = createShield(cx, cy, scaledSize, rotation);
       break;
-    case 'abstract':
+    case "abstract":
       path = createAbstract(cx, cy, scaledSize, rngForGlobal, rotation);
       break;
-    case 'star':
+    case "star":
       path = createStar(cx, cy, scaledSize, 5, rotation);
       break;
-    case 'triangle':
+    case "triangle":
       path = createPolygon(cx, cy, scaledSize, 3, rotation);
       break;
   }
-  
+
   const gradientId = `grad-${Math.round(cx)}-${Math.round(cy)}`;
-  const fill = fillPattern === 'gradient' 
-    ? `url(#${gradientId})`
-    : fillPattern === 'stripes'
-    ? `url(#stripes-${Math.round(cx)})`
-    : fillPattern === 'dots'
-    ? `url(#dots-${Math.round(cy)})`
-    : colors[0];
-  
-  let defs = '';
-  if (fillPattern === 'gradient') {
+  const fill =
+    fillPattern === "gradient"
+      ? `url(#${gradientId})`
+      : fillPattern === "stripes"
+        ? `url(#stripes-${Math.round(cx)})`
+        : fillPattern === "dots"
+          ? `url(#dots-${Math.round(cy)})`
+          : colors[0];
+
+  let defs = "";
+  if (fillPattern === "gradient") {
     defs = `
       <defs>
         <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -147,7 +168,7 @@ function renderShape(shape: ShapeDef, cx: number, cy: number, size: number, colo
           <stop offset="100%" style="stop-color:${colors[1]};stop-opacity:1" />
         </linearGradient>
       </defs>`;
-  } else if (fillPattern === 'stripes') {
+  } else if (fillPattern === "stripes") {
     defs = `
       <defs>
         <pattern id="stripes-${Math.round(cx)}" patternUnits="userSpaceOnUse" width="10" height="10">
@@ -156,7 +177,7 @@ function renderShape(shape: ShapeDef, cx: number, cy: number, size: number, colo
           <line x1="0" y1="10" x2="10" y2="0" stroke="${colors[1]}" strokeWidth="2" />
         </pattern>
       </defs>`;
-  } else if (fillPattern === 'dots') {
+  } else if (fillPattern === "dots") {
     defs = `
       <defs>
         <pattern id="dots-${Math.round(cy)}" patternUnits="userSpaceOnUse" width="10" height="10">
@@ -165,23 +186,29 @@ function renderShape(shape: ShapeDef, cx: number, cy: number, size: number, colo
         </pattern>
       </defs>`;
   }
-  
+
   return `${defs}<path d="${path}" fill="${fill}" opacity="0.85" />`;
 }
 
-function createPolygon(cx: number, cy: number, radius: number, sides: number, rotation: number): string {
+function createPolygon(
+  cx: number,
+  cy: number,
+  radius: number,
+  sides: number,
+  rotation: number
+): string {
   const points: string[] = [];
   const angleStep = (2 * Math.PI) / sides;
   const rotationRad = (rotation * Math.PI) / 180;
-  
+
   for (let i = 0; i < sides; i++) {
     const angle = i * angleStep + rotationRad;
     const x = cx + radius * Math.cos(angle);
     const y = cy + radius * Math.sin(angle);
     points.push(`${x.toFixed(2)},${y.toFixed(2)}`);
   }
-  
-  return `M ${points.join(' L ')} Z`;
+
+  return `M ${points.join(" L ")} Z`;
 }
 
 function createShield(cx: number, cy: number, size: number, rotation: number): string {
@@ -190,49 +217,61 @@ function createShield(cx: number, cy: number, size: number, rotation: number): s
     x: cx + (x - cx) * Math.cos(rad) - (y - cy) * Math.sin(rad),
     y: cy + (x - cx) * Math.sin(rad) + (y - cy) * Math.cos(rad),
   });
-  
+
   const top = rotate(cx, cy - size);
   const leftMid = rotate(cx - size * 0.8, cy);
   const bottom = rotate(cx, cy + size * 1.2);
   const rightMid = rotate(cx + size * 0.8, cy);
-  
+
   return `M ${top.x.toFixed(2)},${top.y.toFixed(2)} 
           Q ${leftMid.x.toFixed(2)},${leftMid.y.toFixed(2)} ${bottom.x.toFixed(2)},${bottom.y.toFixed(2)}
           Q ${rightMid.x.toFixed(2)},${rightMid.y.toFixed(2)} ${top.x.toFixed(2)},${top.y.toFixed(2)} Z`;
 }
 
-function createStar(cx: number, cy: number, outerRadius: number, points: number, rotation: number): string {
+function createStar(
+  cx: number,
+  cy: number,
+  outerRadius: number,
+  points: number,
+  rotation: number
+): string {
   const innerRadius = outerRadius * 0.4;
   const step = Math.PI / points;
   const rotationRad = (rotation * Math.PI) / 180 - Math.PI / 2;
-  
-  let path = '';
+
+  let path = "";
   for (let i = 0; i < points * 2; i++) {
     const radius = i % 2 === 0 ? outerRadius : innerRadius;
     const angle = i * step + rotationRad;
     const x = cx + radius * Math.cos(angle);
     const y = cy + radius * Math.sin(angle);
-    path += (i === 0 ? 'M ' : 'L ') + `${x.toFixed(2)},${y.toFixed(2)}`;
+    path += (i === 0 ? "M " : "L ") + `${x.toFixed(2)},${y.toFixed(2)}`;
   }
-  
-  return path + ' Z';
+
+  return path + " Z";
 }
 
-function createAbstract(cx: number, cy: number, size: number, _rng: SeededRandom, rotation: number): string {
+function createAbstract(
+  cx: number,
+  cy: number,
+  size: number,
+  _rng: SeededRandom,
+  rotation: number
+): string {
   // Bezier curve-based abstract shape
   const rad = (rotation * Math.PI) / 180;
   const rotate = (x: number, y: number) => ({
     x: cx + (x - cx) * Math.cos(rad) - (y - cy) * Math.sin(rad),
     y: cy + (x - cx) * Math.sin(rad) + (y - cy) * Math.cos(rad),
   });
-  
+
   const p1 = rotate(cx - size * 0.5, cy - size * 0.3);
   const c1 = rotate(cx - size * 0.8, cy + size * 0.2);
   const c2 = rotate(cx - size * 0.3, cy + size * 0.8);
   const p2 = rotate(cx + size * 0.4, cy + size * 0.6);
   const c3 = rotate(cx + size * 0.9, cy + size * 0.1);
   const c4 = rotate(cx + size * 0.6, cy - size * 0.5);
-  
+
   return `M ${p1.x.toFixed(2)},${p1.y.toFixed(2)} 
           C ${c1.x.toFixed(2)},${c1.y.toFixed(2)} ${c2.x.toFixed(2)},${c2.y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}
           C ${c3.x.toFixed(2)},${c3.y.toFixed(2)} ${c4.x.toFixed(2)},${c4.y.toFixed(2)} ${p1.x.toFixed(2)},${p1.y.toFixed(2)} Z`;
@@ -259,15 +298,15 @@ export class ProceduralLogoGenerator {
 
     const config: LogoConfig = {
       teamId: String(team.id),
-      city: team.city || 'Unknown',
-      name: team.name || 'Team',
-      primaryColor: team.primary_color || '#003366',
-      secondaryColor: team.secondary_color || '#FF6600',
+      city: team.city || "Unknown",
+      name: team.name || "Team",
+      primaryColor: team.primary_color || "#003366",
+      secondaryColor: team.secondary_color || "#FF6600",
       seed: djb2Hash(`${team.city}${team.name}${team.abbreviation}`),
     };
 
     rngForGlobal = new SeededRandom(config.seed);
-    
+
     // Generate 2-4 layered shapes
     const numShapes = rngForGlobal.nextInt(2, 4);
     const shapes: ShapeDef[] = [];
@@ -280,8 +319,8 @@ export class ProceduralLogoGenerator {
     const centerX = size / 2;
     const centerY = size / 2;
     const baseRadius = size * 0.4;
-    
-    let shapesSvg = '';
+
+    let shapesSvg = "";
     shapes.forEach((shape, idx) => {
       const offset = idx * 15;
       shapesSvg += renderShape(
@@ -334,7 +373,7 @@ export class ProceduralLogoGenerator {
     const g = parseInt(hexColor.slice(3, 5), 16);
     const b = parseInt(hexColor.slice(5, 7), 16);
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+    return luminance > 0.5 ? "#000000" : "#FFFFFF";
   }
 
   /**
@@ -342,14 +381,19 @@ export class ProceduralLogoGenerator {
    * Higher is better (more distinct from common patterns)
    */
   private calculateUniqueness(shapes: ShapeDef[], seed: number): number {
-    const typeDiversity = new Set(shapes.map(s => s.type)).size / shapes.length;
-    const patternDiversity = new Set(shapes.map(s => s.fillPattern)).size / shapes.length;
-    const rotationVariance = shapes.reduce((acc, s, i) => {
-      if (i === 0) return acc;
-      return acc + Math.abs(s.rotation - shapes[i - 1].rotation);
-    }, 0) / (shapes.length * 360);
-    
-    return Math.min(1, (typeDiversity + patternDiversity + rotationVariance) / 3 + seed % 100 / 1000);
+    const typeDiversity = new Set(shapes.map((s) => s.type)).size / shapes.length;
+    const patternDiversity = new Set(shapes.map((s) => s.fillPattern)).size / shapes.length;
+    const rotationVariance =
+      shapes.reduce((acc, s, i) => {
+        if (i === 0) return acc;
+        return acc + Math.abs(s.rotation - shapes[i - 1].rotation);
+      }, 0) /
+      (shapes.length * 360);
+
+    return Math.min(
+      1,
+      (typeDiversity + patternDiversity + rotationVariance) / 3 + (seed % 100) / 1000
+    );
   }
 
   /**
@@ -359,15 +403,15 @@ export class ProceduralLogoGenerator {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         const size = 200 * scale;
         canvas.width = size;
         canvas.height = size;
-        const ctx = canvas.getContext('2d')!;
+        const ctx = canvas.getContext("2d")!;
         ctx.drawImage(img, 0, 0, size, size);
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL("image/png"));
       };
-      img.src = 'data:image/svg+xml;base64,' + btoa(logo.svg);
+      img.src = "data:image/svg+xml;base64," + btoa(logo.svg);
     });
   }
 
