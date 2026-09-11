@@ -22,6 +22,12 @@ class PlayerContract(Base):
     # Contract Details
     contract_years: Mapped[int] = mapped_column(Integer, default=1)
     contract_salary: Mapped[int] = mapped_column(Integer, default=1000000)
+    annual_base_salary: Mapped[int] = mapped_column(Integer, default=1000000)
+    signing_bonus_total: Mapped[int] = mapped_column(Integer, default=0)
+    signing_bonus_proration: Mapped[int] = mapped_column(Integer, default=0)
+    void_years: Mapped[int] = mapped_column(Integer, default=0)
+    guaranteed_total: Mapped[int] = mapped_column(Integer, default=0)
+    post_june_1_designation: Mapped[bool] = mapped_column(Boolean, default=False)
     is_rookie: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Retirement & Legacy

@@ -15,9 +15,21 @@ class SalaryCapService:
     def __init__(self, db: Session) -> None:
         self.db = db
 
+    def calculate_top51_cap(self, team_id: int, season_id: Optional[int] = None) -> int:
+        """
+        NFL CBA Top-51 Rule Calculation.
+        During the offseason, only the top 51 largest contract_salary amounts
+        on the active roster count towards team salary cap obligations.
+        """
+        stmt_players = select(Player).where(Player.team_id == team_id)
+        players = list(self.db.execute(stmt_players).scalars().all())
+        sorted_salaries = sorted([int(p.contract_salary or 0) for p in players], reverse=True)
+        return sum(sorted_salaries[:51])
+
     def get_team_cap_breakdown(self, team_id: int, season_id: int) -> Dict[str, Any]:
         """
         Get a detailed breakdown of a team's salary cap situation.
+        Applies the NFL CBA Top-51 rule when season is not in REGULAR_SEASON.
         """
         stmt = select(Team).where(Team.id == team_id)
         team = self.db.execute(stmt).scalar_one_or_none()
@@ -28,8 +40,21 @@ class SalaryCapService:
         stmt_players = select(Player).where(Player.team_id == team_id)
         players = list(self.db.execute(stmt_players).scalars().all())
 
-        # Calculate total cap usage
-        used_cap = sum(p.contract_salary for p in players)
+        # Check season status for NFL CBA Top-51 offseason rule
+        stmt_season = select(Season).where(Season.id == season_id)
+        season = self.db.execute(stmt_season).scalar_one_or_none()
+
+        is_offseason = False
+        if season:
+            status_val = season.status.value if hasattr(season.status, "value") else str(season.status)
+            is_offseason = status_val != "REGULAR_SEASON"
+
+        # Calculate total cap usage (Top-51 rule applies in offseason)
+        if is_offseason:
+            sorted_salaries = sorted([int(p.contract_salary or 0) for p in players], reverse=True)
+            used_cap = sum(sorted_salaries[:51])
+        else:
+            used_cap = sum(int(p.contract_salary or 0) for p in players)
 
         # Get top 5 contracts
         top_contracts = sorted(players, key=lambda p: p.contract_salary, reverse=True)[:5]
@@ -98,5 +123,6 @@ class SalaryCapService:
             "top_contracts": top_contracts_data,
             "position_breakdown": pos_breakdown,
             "league_avg_available": int(league_avg_space),
-            "projected_rookie_impact": projected_rookie_impact
+            "projected_rookie_impact": projected_rookie_impact,
+            "is_top51_applied": is_offseason,
         }

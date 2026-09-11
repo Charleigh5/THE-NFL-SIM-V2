@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSimulationStore } from "../store/useSimulationStore";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { simulationService } from "../services/simulation";
@@ -18,18 +18,157 @@ import { LiveGameVisualizer } from "../components/3d/LiveGameVisualizer";
 import { ReplayScrubber } from "../components/game/ReplayScrubber";
 import { PlayAnimator } from "../components/3d/PlayAnimator";
 import { soundEffects } from "../services/soundEffects";
-import { Play, Pause, FastForward, Activity, BarChart2, Layers, Tv } from "lucide-react";
+import { Play, Pause, FastForward, Activity, BarChart2, Layers, Tv, Sparkles, Radio } from "lucide-react";
+import { PlayCallingHUD } from "../components/game/PlayCallingHUD";
+import type { PlayCategory } from "../components/game/PlayCallingHUD";
+import { FourthDownModal } from "../components/game/FourthDownModal";
+import { ClockManagementBar } from "../components/game/ClockManagementBar";
+import { apiClient } from "../services/api";
+import { FloatingBaldwinPill } from "../components/hud/FloatingBaldwinPill";
+import { MomentumFlowRibbon } from "../components/hud/MomentumFlowRibbon";
+import { useKeyboardAudibles } from "../hooks/useKeyboardAudibles";
+import { hudTelemetryApi } from "../services/hudTelemetryApi";
+import type { FourthDownTelemetryPayload } from "../types/hudTelemetry";
+import { SpatialAudioSettingsModal } from "../components/audio/SpatialAudioSettingsModal";
 
 type ViewMode = "field" | "stats" | "gridiron" | "3d";
 
 export const LiveSim = () => {
-  const { isLive, setLiveStatus, engineData, gameState } = useSimulationStore();
+  const { isLive, setLiveStatus, engineData, gameState, playLog } = useSimulationStore();
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("field");
+  const [isCoachMode, setIsCoachMode] = useState(true);
+  const [showFourthDownModal, setShowFourthDownModal] = useState(false);
+  const [lastFourthDownSeen, setLastFourthDownSeen] = useState<number | null>(null);
+  const [hudConceptIndex, setHudConceptIndex] = useState<number | null>(null);
+  const [audibleCategory, setAudibleCategory] = useState<PlayCategory | null>(null);
+  const [fourthDownTelemetry, setFourthDownTelemetry] = useState<FourthDownTelemetryPayload | null>(null);
+  const [showFloatingPill, setShowFloatingPill] = useState<boolean>(true);
+  const [showAudioModal, setShowAudioModal] = useState<boolean>(false);
+  const lastPlayIdRef = useRef<string | number | null>(null);
   const canvasRef = useRef<FieldCanvasRef | null>(null);
 
   const wsUrl = isLive ? "ws://localhost:8000/ws/simulation/live" : null;
   useWebSocket(wsUrl);
+
+  // Live 4th-down telemetry evaluation
+  useEffect(() => {
+    if (gameState.down === 4) {
+      hudTelemetryApi
+        .getFourthDownTelemetry({
+          yardLine: gameState.yardLine || 50,
+          yardsToGo: gameState.distance || 1,
+          scoreDifferential: (gameState.homeScore || 0) - (gameState.awayScore || 0),
+          quarter: gameState.quarter || 4,
+          timeRemainingSeconds: 300,
+          timeouts: 3,
+        })
+        .then((res) => {
+          setFourthDownTelemetry(res);
+          setShowFloatingPill(true);
+        })
+        .catch(console.error);
+    } else {
+      setFourthDownTelemetry(null);
+    }
+  }, [
+    gameState.down,
+    gameState.yardLine,
+    gameState.distance,
+    gameState.homeScore,
+    gameState.awayScore,
+    gameState.quarter,
+  ]);
+
+  // Handle confirming 4th-down recommendation via Space or click
+  const handleConfirmFourthDown = async (action: "GO" | "FIELD_GOAL" | "PUNT") => {
+    soundEffects.playWhistle();
+    try {
+      await apiClient.post("/api/playcalling/call-play", {
+        game_id: Number(useSimulationStore.getState().gameId) || 1,
+        team_id: gameState.possession === "home" ? 1 : 2,
+        play_type: action === "GO" ? "RUN" : action,
+        concept_id:
+          action === "GO" ? "inside_zone" : action === "FIELD_GOAL" ? "fg_unit" : "punt_unit",
+        tempo: "NORMAL",
+      });
+      setShowFloatingPill(false);
+      setShowFourthDownModal(false);
+    } catch (err) {
+      console.error("Failed to execute 4th-down action:", err);
+    }
+  };
+
+  // Tactile Keyboard Audibles Hotkey Engine
+  useKeyboardAudibles({
+    enabled: isCoachMode,
+    onSnapOrConfirm: () => {
+      if (fourthDownTelemetry && showFloatingPill) {
+        handleConfirmFourthDown(fourthDownTelemetry.recommendation);
+      } else if (!isLive) {
+        handleStartSimulation();
+      }
+    },
+    onSelectConceptIndex: (index) => {
+      setHudConceptIndex(index);
+    },
+    onToggleAudible: () => {
+      setAudibleCategory((prev) => (prev === "PASS" ? "RUN" : "PASS"));
+    },
+    onCallTimeout: async () => {
+      try {
+        await apiClient.post("/api/playcalling/timeout", {
+          game_id: Number(useSimulationStore.getState().gameId) || 1,
+          team_id: gameState.possession === "home" ? 1 : 2,
+        });
+      } catch (err) {
+        console.error("Failed to call timeout:", err);
+      }
+    },
+    onDismissOrPause: () => {
+      setShowFloatingPill(false);
+      setShowFourthDownModal(false);
+    },
+  });
+
+  // Automatically prompt on 4th down if coach mode is active
+  useEffect(() => {
+    if (gameState.down === 4 && isCoachMode && lastFourthDownSeen !== 4) {
+      setShowFourthDownModal(true);
+      setLastFourthDownSeen(4);
+    } else if (gameState.down !== 4) {
+      setLastFourthDownSeen(null);
+    }
+  }, [gameState.down, isCoachMode, lastFourthDownSeen]);
+
+  // Synchronize incoming plays with spatial audio collisions and crowd reactions
+  useEffect(() => {
+    if (!playLog || playLog.length === 0) return;
+    const latestPlay = playLog[0];
+    const playKey = latestPlay.play_id ? String(latestPlay.play_id) : latestPlay.description;
+    if (lastPlayIdRef.current === playKey) return;
+    lastPlayIdRef.current = playKey;
+
+    const desc = (latestPlay.description || "").toUpperCase();
+    const currentYard = gameState.yardLine ?? 50;
+
+    if (desc.includes("TOUCHDOWN") || desc.includes(" TD")) {
+      soundEffects.playStadiumHorn();
+      soundEffects.updateCrowdIntensity(4.0, 0.9);
+    } else if (desc.includes("INTERCEPT") || desc.includes("FUMBLE") || desc.includes("TURNOVER")) {
+      soundEffects.playSpatialWhistle(currentYard);
+      soundEffects.updateCrowdIntensity(-3.0, 0.2);
+    } else if (latestPlay.yards_gained >= 15) {
+      soundEffects.playSpatialHit(currentYard, 26.65, 1500);
+      soundEffects.updateCrowdIntensity(2.5, 0.7);
+    } else if (latestPlay.yards_gained < 0 || desc.includes("SACK")) {
+      soundEffects.playSpatialHit(currentYard, 26.65, 1200);
+      soundEffects.updateCrowdIntensity(-1.8, 0.35);
+    } else {
+      soundEffects.playSpatialHit(currentYard, 26.65, 850);
+      soundEffects.updateCrowdIntensity(0.5, 0.5);
+    }
+  }, [playLog, gameState.yardLine]);
 
   const handleStartSimulation = async () => {
     soundEffects.playWhistle();
@@ -151,6 +290,26 @@ export const LiveSim = () => {
           <MomentumIndicator label="Away Momentum" state={gameState.awayMomentum} align="right" />
         </div>
         <ScoreBoard />
+        <ClockManagementBar
+          homeTimeouts={gameState.homeTimeouts ?? 3}
+          awayTimeouts={gameState.awayTimeouts ?? 3}
+          isHomeTeam={gameState.possession === "home"}
+          onTimeoutCall={(teamId) => {
+            console.log("Timeout requested for team:", teamId);
+          }}
+          onEmergencyPlay={(action) => {
+            console.log("Emergency action executed:", action);
+          }}
+        />
+
+        {/* Live Win Probability & EPA Momentum Flow Ribbon */}
+        <MomentumFlowRibbon
+          gameId={Number(useSimulationStore.getState().gameId) || 1}
+          homeAbbr="GB"
+          awayAbbr="CHI"
+          homeScore={gameState.homeScore ?? 24}
+          awayScore={gameState.awayScore ?? 20}
+        />
       </div>
 
       {/* Main Stadium Gridiron Arena */}
@@ -215,6 +374,29 @@ export const LiveSim = () => {
               <BarChart2 className="w-4 h-4" />
               Box Score
             </button>
+
+            <button
+              onClick={() => {
+                soundEffects.playSnap();
+                setShowAudioModal(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition-all ml-auto"
+              title="Open Spatial Audio Settings"
+            >
+              <Radio className="w-3.5 h-3.5 text-emerald-400" />
+              Spatial Audio
+            </button>
+
+            <button
+              onClick={() => {
+                soundEffects.playSnap();
+                useSimulationStore.getState().updateGameState({ down: 4, distance: 1, yardLine: 58 });
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              Simulate 4th & 1
+            </button>
           </div>
 
           {/* Viewport Canvas Container */}
@@ -250,6 +432,17 @@ export const LiveSim = () => {
                 <div className="absolute top-4 right-4 z-10 transition-opacity hover:opacity-100 opacity-90">
                   <WeatherWidget weather={weather} location="Lambeau Field" />
                 </div>
+
+                {/* Floating Baldwin 4th-Down Decision Pill */}
+                {fourthDownTelemetry && showFloatingPill && (
+                  <div className="absolute top-4 right-4 z-30 animate-fadeIn max-w-[340px]">
+                    <FloatingBaldwinPill
+                      telemetry={fourthDownTelemetry}
+                      onConfirmRecommendation={handleConfirmFourthDown}
+                      onDismiss={() => setShowFloatingPill(false)}
+                    />
+                  </div>
+                )}
 
                 {/* Coaching Overlay */}
                 <div className="absolute top-4 left-4 z-10 transition-opacity hover:opacity-100 opacity-90">
@@ -304,6 +497,42 @@ export const LiveSim = () => {
               <GameStats />
             )}
           </div>
+
+          {/* Interactive Play-Calling HUD */}
+          <PlayCallingHUD
+            gameId={Number(useSimulationStore.getState().gameId) || 1}
+            teamId={gameState.possession === "home" ? 1 : 2}
+            isOffense={gameState.possession === "home"}
+            down={gameState.down || 1}
+            distance={gameState.distance || 10}
+            yardline={gameState.yardLine || 25}
+            scoreDiff={(gameState.homeScore || 0) - (gameState.awayScore || 0)}
+            isCoachMode={isCoachMode}
+            onToggleCoachMode={setIsCoachMode}
+            onOpenFourthDownModal={() => {
+              if (!fourthDownTelemetry) {
+                hudTelemetryApi
+                  .getFourthDownTelemetry({
+                    yardLine: gameState.yardLine || 50,
+                    yardsToGo: gameState.distance || 1,
+                    scoreDifferential: (gameState.homeScore || 0) - (gameState.awayScore || 0),
+                  })
+                  .then((res) => {
+                    setFourthDownTelemetry(res);
+                    setShowFloatingPill(true);
+                  })
+                  .catch(console.error);
+              } else {
+                setShowFloatingPill(true);
+              }
+              setShowFourthDownModal(true);
+            }}
+            selectedIndex={hudConceptIndex}
+            externalCategory={audibleCategory}
+            onPlayCallSubmitted={(playType, conceptId) => {
+              console.log("Play call submitted:", playType, conceptId);
+            }}
+          />
         </div>
 
         {/* Play-by-Play Commentary Feed */}
@@ -311,6 +540,25 @@ export const LiveSim = () => {
           <PlayByPlayFeed />
         </div>
       </div>
+
+      {/* Ben Baldwin 4th-Down Decision Modal */}
+      <FourthDownModal
+        isOpen={showFourthDownModal}
+        down={gameState.down || 4}
+        distance={gameState.distance || 1}
+        yardline={gameState.yardLine || 50}
+        scoreDiff={(gameState.homeScore || 0) - (gameState.awayScore || 0)}
+        onClose={() => setShowFourthDownModal(false)}
+        onSelectAction={(action) => {
+          console.log("4th down action chosen:", action);
+          setShowFourthDownModal(false);
+        }}
+      />
+      {/* Spatial Audio Settings Modal */}
+      <SpatialAudioSettingsModal
+        isOpen={showAudioModal}
+        onClose={() => setShowAudioModal(false)}
+      />
     </div>
   );
 };

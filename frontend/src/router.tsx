@@ -23,6 +23,8 @@ import { Playbook } from "./pages/Playbook";
 import TeamSelection from "./pages/TeamSelection";
 import Settings from "./pages/Settings";
 import { SkillsPage } from "./pages/SkillsPage";
+import FreeAgency from "./pages/FreeAgency";
+import LockerRoom from "./pages/LockerRoom";
 import NotFound from "./components/NotFound.tsx";
 import RootErrorBoundary from "./components/RootErrorBoundary.tsx";
 import RouteErrorBoundary from "./components/RouteErrorBoundary.tsx";
@@ -356,6 +358,16 @@ export const router = createBrowserRouter([
         errorElement: <RouteErrorBoundary />,
       },
       {
+        path: "free-agency",
+        element: <FreeAgency />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "empire/free-agency",
+        element: <FreeAgency />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: "offseason/draft",
         element: <DraftRoom />,
         loader: draftRoomLoader,
@@ -437,6 +449,16 @@ export const router = createBrowserRouter([
         // Route alias
         path: "medical",
         element: <MedicalCenter />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "locker-room",
+        element: <LockerRoom />,
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: "society/locker-room",
+        element: <LockerRoom />,
         errorElement: <RouteErrorBoundary />,
       },
       {

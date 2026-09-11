@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -11,8 +11,14 @@ import {
   ShieldAlert,
   Clock,
   HeartPulse,
+  Loader2,
+  TrendingUp,
 } from "lucide-react";
-import type { MedicalProtocolType, OrthopedicProtocolOption } from "../../types/deepDive";
+import type { MedicalProtocolType, OrthopedicProtocolOption, TriageDecisionResult } from "../../types/deepDive";
+import { medicalApi } from "../../services/medicalApi";
+import { RTPTrajectoryGraph } from "./RTPTrajectoryGraph";
+import { orthopedicApi } from "../../services/orthopedicApi";
+import type { TreatmentTrajectory } from "../../types/orthopedicRtp";
 
 interface OrthopedicTriageModalProps {
   isOpen: boolean;
@@ -23,7 +29,7 @@ interface OrthopedicTriageModalProps {
   currentIntegrity: number;
   baselineWeeks?: number;
   onClose: () => void;
-  onConfirmProtocol: (protocol: MedicalProtocolType) => void;
+  onConfirmProtocol: (protocol: MedicalProtocolType, result?: TriageDecisionResult) => void;
 }
 
 export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
@@ -38,8 +44,16 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
   onConfirmProtocol,
 }) => {
   const [selectedProtocol, setSelectedProtocol] = useState<MedicalProtocolType>("REST");
+  const [liveProtocols, setLiveProtocols] = useState<OrthopedicProtocolOption[] | null>(null);
+  const [isLoadingProtocols, setIsLoadingProtocols] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showCurves, setShowCurves] = useState<boolean>(false);
+  const [trajectories, setTrajectories] = useState<TreatmentTrajectory[]>([]);
+  const [specialistCleared, setSpecialistCleared] = useState<boolean>(false);
 
-  const protocols = React.useMemo<OrthopedicProtocolOption[]>(() => {
+  // Deterministic local fallback protocols if network is unavailable
+  const fallbackProtocols = useMemo<OrthopedicProtocolOption[]>(() => {
     return [
       {
         protocol: "REST",
@@ -103,7 +117,57 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
     ];
   }, [baselineWeeks, zoneName, currentIntegrity]);
 
+  // Fetch live protocols from GET /api/medical/players/{player_id}/triage/protocols on open
+  useEffect(() => {
+    if (!isOpen || !playerId) {
+      setLiveProtocols(null);
+      setErrorMessage(null);
+      return;
+    }
+
+    let isCancelled = false;
+    setIsLoadingProtocols(true);
+    setErrorMessage(null);
+
+    medicalApi
+      .getPlayerTriageProtocols(playerId)
+      .then((res) => {
+        if (isCancelled) return;
+        if (res && res.protocols && res.protocols.length > 0) {
+          setLiveProtocols(res.protocols);
+        } else {
+          setLiveProtocols(fallbackProtocols);
+        }
+      })
+      .catch((err) => {
+        if (isCancelled) return;
+        console.warn("Using fallback orthopedic triage protocols:", err);
+        setLiveProtocols(fallbackProtocols);
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoadingProtocols(false);
+        }
+      });
+
+    orthopedicApi
+      .getOrthopedicEvaluation(playerId)
+      .then((evalRes) => {
+        if (!isCancelled && evalRes) {
+          setTrajectories(evalRes.trajectories);
+          setSpecialistCleared(evalRes.hasSpecialistClearance);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [isOpen, playerId, fallbackProtocols]);
+
   if (!isOpen) return null;
+
+  const displayProtocols = liveProtocols || fallbackProtocols;
 
   const protocolIcons: Record<MedicalProtocolType, React.FC<{ className?: string }>> = {
     REST: BedDouble,
@@ -111,6 +175,29 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
     ARTHROSCOPIC_SURGERY: Scissors,
     RECONSTRUCTIVE_SURGERY: HeartPulse,
     CORTISONE_STABILIZATION: ShieldAlert,
+  };
+
+  const handleApply = async () => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      // Submit decision to POST /api/medical/players/{player_id}/triage/apply
+      const result = await medicalApi.applyOrthopedicTriage(
+        playerId,
+        selectedProtocol,
+        zoneKey
+      );
+      onConfirmProtocol(selectedProtocol, result);
+      onClose();
+    } catch (error) {
+      console.error("Failed to apply triage protocol:", error);
+      // Fallback: invoke callback optimistically even if offline
+      onConfirmProtocol(selectedProtocol);
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -132,6 +219,11 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                 <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 text-[10px] font-mono uppercase font-bold">
                   Orthopedic Triage Hub
                 </span>
+                {isLoadingProtocols && (
+                  <span className="flex items-center gap-1 text-[10px] font-mono text-cyan-400">
+                    <Loader2 className="w-3 h-3 animate-spin" /> Live Syncing...
+                  </span>
+                )}
                 <h3 className="text-lg font-bold text-white tracking-wide">{zoneName} Triage</h3>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -153,10 +245,54 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
           </button>
         </div>
 
+        {errorMessage && (
+          <div className="mt-3 p-3 rounded-xl bg-amber-950/50 border border-amber-800 text-amber-300 text-xs font-mono">
+            {errorMessage}
+          </div>
+        )}
+
+        {/* Trajectory Curves Toggle & Specialist Clearance Badge */}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setShowCurves(!showCurves)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-bold hover:bg-cyan-900/60 transition-all"
+          >
+            <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{showCurves ? "Hide 12-Week Curves" : "View 12-Week Gompertz Curves"}</span>
+          </button>
+
+          {specialistCleared && (
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/80 border border-emerald-600/60 text-emerald-300 text-[11px] font-mono font-bold">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Specialist Cleared (-50% Risk)</span>
+            </span>
+          )}
+        </div>
+
+        {showCurves && trajectories.length > 0 && (
+          <div className="mt-3">
+            <RTPTrajectoryGraph
+              trajectories={trajectories}
+              activeProtocol={
+                selectedProtocol === "REST"
+                  ? "CONSERVATIVE"
+                  : selectedProtocol === "PRP_THERAPY"
+                  ? "BIOLOGIC_PRP"
+                  : selectedProtocol === "ARTHROSCOPIC_SURGERY"
+                  ? "ARTHROSCOPIC"
+                  : selectedProtocol === "RECONSTRUCTIVE_SURGERY"
+                  ? "OPEN_SURGERY"
+                  : "CORTISONE"
+              }
+            />
+          </div>
+        )}
+
         {/* 5 Clinical Protocols */}
         <div className="mt-4 space-y-3 max-h-[420px] overflow-y-auto pr-1">
-          {protocols.map((option) => {
-            const Icon = protocolIcons[option.protocol];
+          {displayProtocols.map((option) => {
+            const Icon = protocolIcons[option.protocol] || Activity;
             const isSelected = selectedProtocol === option.protocol;
 
             return (
@@ -237,16 +373,19 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
         <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
           <button
             onClick={onClose}
+            disabled={isSubmitting}
             className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold rounded-xl transition-colors uppercase tracking-wider"
           >
             Cancel
           </button>
 
           <button
-            onClick={() => onConfirmProtocol(selectedProtocol)}
-            className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black text-xs font-mono font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all uppercase tracking-wider active:scale-95"
+            onClick={handleApply}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black text-xs font-mono font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all uppercase tracking-wider active:scale-95 disabled:opacity-50"
           >
-            Apply Protocol & Begin Recovery
+            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSubmitting ? "Applying Protocol..." : "Apply Protocol & Begin Recovery"}
           </button>
         </div>
       </motion.div>

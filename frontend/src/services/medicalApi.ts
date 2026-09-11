@@ -8,6 +8,25 @@ import type {
   InjuredPlayer,
   SurgeryRisk,
 } from "../types/medical";
+import type {
+  MedicalProtocolType,
+  OrthopedicProtocolOption,
+  TriageDecisionResult,
+} from "../types/deepDive";
+
+export interface InjuryDiagnosis {
+  injury_type?: string;
+  severity: number;
+  weeks_to_recovery: number;
+  body_zone: string;
+  current_integrity: number;
+}
+
+export interface TriageProtocolsResponse {
+  player_id: number;
+  current_diagnosis: InjuryDiagnosis;
+  protocols: OrthopedicProtocolOption[];
+}
 
 export const medicalApi = {
   /**
@@ -61,6 +80,31 @@ export const medicalApi = {
    */
   async getSurgeryRisk(playerId: number): Promise<SurgeryRisk> {
     const response = await apiClient.get<SurgeryRisk>(`/api/medical/surgery-risk/${playerId}`);
+    return response.data;
+  },
+
+  /**
+   * Fetch available 5-pathway orthopedic triage protocols for an injured player.
+   */
+  async getPlayerTriageProtocols(playerId: number): Promise<TriageProtocolsResponse> {
+    const response = await apiClient.get<TriageProtocolsResponse>(
+      `/api/medical/players/${playerId}/triage/protocols`
+    );
+    return response.data;
+  },
+
+  /**
+   * Apply an orthopedic triage protocol (REST, PRP_THERAPY, ARTHROSCOPIC_SURGERY, RECONSTRUCTIVE_SURGERY, CORTISONE_STABILIZATION).
+   */
+  async applyOrthopedicTriage(
+    playerId: number,
+    protocol: MedicalProtocolType | string,
+    zoneKey?: string
+  ): Promise<TriageDecisionResult> {
+    const response = await apiClient.post<TriageDecisionResult>(
+      `/api/medical/players/${playerId}/triage/apply`,
+      { protocol, zone_key: zoneKey }
+    );
     return response.data;
   },
 };

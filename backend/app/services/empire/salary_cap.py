@@ -157,6 +157,22 @@ class Contract:
         )
         return remaining_prorate
 
+    def get_post_june1_dead_money(self, cut_year: int) -> Tuple[int, int]:
+        """
+        Calculate dead money split across two league years for a post-June 1st cut:
+        - Current league year takes only cut_year's prorated signing bonus allocation.
+        - Following league year absorbs the remaining unamortized signing bonus balance.
+        """
+        current_year_dead = sum(
+            y.signing_bonus_prorate for y in self.years
+            if y.year == cut_year
+        )
+        following_year_dead = sum(
+            y.signing_bonus_prorate for y in self.years
+            if y.year > cut_year
+        )
+        return current_year_dead, following_year_dead
+
 
 @dataclass
 class TeamCapState:
@@ -345,6 +361,33 @@ class SalaryCapEngine:
         """Calculate dead money from cutting a player."""
         return contract.get_dead_money(cut_after_year)
 
+    def calculate_post_june1_dead_money(
+        self,
+        contract: Any,
+        cut_year: int,
+    ) -> Tuple[int, int]:
+        """
+        Calculate post-June 1st dead money split across two league years:
+        - Current league year absorbs only cut_year's prorated signing bonus allocation.
+        - Following league year absorbs the remaining unamortized signing bonus balance.
+
+        Returns:
+            Tuple[int, int]: (current_year_dead, following_year_dead)
+        """
+        if hasattr(contract, "get_post_june1_dead_money"):
+            return contract.get_post_june1_dead_money(cut_year)
+
+        current_dead = 0
+        following_dead = 0
+        for y in getattr(contract, "years", []):
+            prorate = getattr(y, "signing_bonus_prorate", 0) or getattr(y, "signing_bonus_proration", 0)
+            y_num = getattr(y, "year", None)
+            if y_num == cut_year:
+                current_dead += int(prorate)
+            elif y_num is not None and y_num > cut_year:
+                following_dead += int(prorate)
+        return current_dead, following_dead
+
     def calculate_cap_savings(
         self,
         contract: Contract,
@@ -457,4 +500,10 @@ class SalaryCapEngine:
             "cap_space": state.cap_space,
             "contracts_count": len(state.contracts),
         }
+
+
+def calculate_post_june1_dead_money(contract: Any, cut_year: int) -> Tuple[int, int]:
+    """Module-level function calculating post-June 1st dead money split."""
+    engine = SalaryCapEngine()
+    return engine.calculate_post_june1_dead_money(contract, cut_year)
 

@@ -12,7 +12,7 @@ from app.schemas.deep_dive import (
     TriageDecisionResult,
 )
 
-router = APIRouter(prefix="/api/medical", tags=["medical"])
+medical_router = APIRouter(prefix="/api/medical", tags=["medical"])
 
 class BodyHealthResponse(BaseModel):
     player_id: int
@@ -29,13 +29,13 @@ class BodyHealthResponse(BaseModel):
 def get_medical_service(db: Session = Depends(get_db)) -> MedicalService:
     return MedicalService(db)
 
-@router.get("/player/{player_id}", response_model=BodyHealthResponse)
+@medical_router.get("/player/{player_id}", response_model=BodyHealthResponse)
 async def get_player_health(
     player_id: int,
     service: MedicalService = Depends(get_medical_service),
     db: Session = Depends(get_db)
 ):
-    from app.models.player import Player
+    from app.models.player import Player, InjuryStatus
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -58,7 +58,7 @@ async def get_player_health(
         right_leg_health=health.right_leg_health,
         left_leg_health=health.left_leg_health,
         general_wear=health.general_wear,
-        is_injured=player.injury_status != "HEALTHY"
+        is_injured=player.injury_status not in (InjuryStatus.ACTIVE, "ACTIVE")
     )
 
 class ApplyWearRequest(BaseModel):
@@ -66,7 +66,7 @@ class ApplyWearRequest(BaseModel):
     snaps: int
     position: str
 
-@router.post("/apply-wear")
+@medical_router.post("/apply-wear")
 async def apply_wear(
     request: ApplyWearRequest,
     service: MedicalService = Depends(get_medical_service),
@@ -93,7 +93,7 @@ class TreatmentDecisionResponse(BaseModel):
     performance_penalty: Optional[Dict[str, int]] = None
 
 
-@router.post("/treatment", response_model=TreatmentDecisionResponse)
+@medical_router.post("/treatment", response_model=TreatmentDecisionResponse)
 async def apply_treatment(
     request: TreatmentDecisionRequest,
     service: MedicalService = Depends(get_medical_service),
@@ -188,7 +188,7 @@ class InjuredPlayerResponse(BaseModel):
     weeks_remaining: int
 
 
-@router.get("/team/{team_id}/injuries", response_model=List[InjuredPlayerResponse])
+@medical_router.get("/team/{team_id}/injuries", response_model=List[InjuredPlayerResponse])
 async def get_team_injuries(
     team_id: int,
     db: Session = Depends(get_db)
@@ -225,7 +225,7 @@ class SurgeryRiskResponse(BaseModel):
     estimated_recovery_reduction: float
 
 
-@router.get("/surgery-risk/{player_id}", response_model=SurgeryRiskResponse)
+@medical_router.get("/surgery-risk/{player_id}", response_model=SurgeryRiskResponse)
 async def calculate_surgery_risk(
     player_id: int,
     db: Session = Depends(get_db)
@@ -285,8 +285,8 @@ class TriageDecisionRequest(BaseModel):
     zone_key: Optional[str] = None
 
 
-@router.get("/players/{player_id}/triage/protocols", response_model=TriageProtocolsResponse)
-@router.get("/triage/protocols/{player_id}", response_model=TriageProtocolsResponse)
+@medical_router.get("/players/{player_id}/triage/protocols", response_model=TriageProtocolsResponse)
+@medical_router.get("/triage/protocols/{player_id}", response_model=TriageProtocolsResponse)
 async def get_player_triage_protocols(
     player_id: int,
     db: Session = Depends(get_db)
@@ -351,7 +351,7 @@ async def get_player_triage_protocols(
     )
 
 
-@router.get("/triage/options", response_model=List[OrthopedicProtocolOption])
+@medical_router.get("/triage/options", response_model=List[OrthopedicProtocolOption])
 async def get_triage_protocol_options():
     """Get general clinical protocol options for orthopedic triage."""
     return orthopedic_triage_service.get_protocol_options(
@@ -362,7 +362,7 @@ async def get_triage_protocol_options():
     )
 
 
-@router.post("/players/{player_id}/triage/apply", response_model=TriageDecisionResult)
+@medical_router.post("/players/{player_id}/triage/apply", response_model=TriageDecisionResult)
 async def apply_player_triage_protocol(
     player_id: int,
     request: TriageDecisionRequest,
@@ -403,9 +403,60 @@ async def apply_player_triage_protocol(
     else:
         player.injury_status = InjuryStatus.ACTIVE
 
+    # Persist final_integrity_forecast to body_health
+    from app.models.medical import BodyPart, InjuryEvent
+    bh = player.body_health
+    if bh is None:
+        bh = BodyPart(player_id=player.id)
+        db.add(bh)
+        player.body_health = bh
+    elif isinstance(bh, list) and len(bh) > 0:
+        bh = bh[0]
+
+    zone_mapping = {
+        "head": "head_health",
+        "neck": "neck_health",
+        "torso": "torso_health",
+        "right_arm": "right_arm_health",
+        "rightarm": "right_arm_health",
+        "left_arm": "left_arm_health",
+        "leftarm": "left_arm_health",
+        "right_leg": "right_leg_health",
+        "rightleg": "right_leg_health",
+        "left_leg": "left_leg_health",
+        "leftleg": "left_leg_health",
+    }
+    normalized_key = zone_key.lower().replace(" ", "").replace("-", "")
+    attr_name = zone_mapping.get(normalized_key, f"{zone_key}_health" if hasattr(bh, f"{zone_key}_health") else None)
+    if attr_name and hasattr(bh, attr_name):
+        setattr(bh, attr_name, float(result.final_integrity_forecast))
+
+    # Persist InjuryEvent record
+    injury_event = InjuryEvent(
+        player_id=player.id,
+        season_id=getattr(player, "season_id", None),
+        week=None,
+        injury_name=player.injury_type or f"{zone_key.replace('_', ' ').title()} Trauma",
+        body_part=zone_key,
+        severity=player.injury_severity or 2,
+        duration_weeks=result.projected_recovery_weeks,
+        is_career_ending=False,
+        treatment_chosen=request.protocol.value if hasattr(request.protocol, "value") else str(request.protocol),
+    )
+    db.add(injury_event)
+
     db.commit()
     db.refresh(player)
 
     return result
+
+
+from app.api.endpoints.playcalling import router as playcalling_router
+
+# Composite router exporting both medical and playcalling routes
+router = APIRouter()
+router.include_router(medical_router)
+router.include_router(playcalling_router)
+
 
 

@@ -30,3 +30,24 @@ export interface PlayTrajectory {
   frames: PhysicsFrame[];
   duration: number; // seconds
 }
+
+export interface VectorizedBenchmarkDTO {
+  kernel_type: string;
+  simulated_frames: number;
+  total_play_duration_seconds: number;
+  execution_time_ms: number;
+  per_tick_latency_us: number;
+  allocations_in_hot_loop: number;
+  speedup_factor: number;
+  simd_active: boolean;
+  frames_per_second_capacity: number;
+  ring_buffer_capacity: number;
+}
+
+export interface PhysicsEngineTelemetry {
+  frameRate: number;
+  tickLatencyUs: number;
+  activePlayers: number;
+  bufferUtilization: number;
+  isSimdActive: boolean;
+}

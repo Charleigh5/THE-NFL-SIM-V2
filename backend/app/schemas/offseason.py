@@ -102,5 +102,41 @@ class FreeAgentMarketPlayer(BaseModel):
     projected_years: int
     tier: str
     top_interested_teams: List[str]
-    
+
+    # Optional alias fields for backwards compatibility
+    name: Optional[str] = None
+    experience: Optional[int] = None
+    projected_market_value: Optional[float] = None
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    def __init__(self, **data):
+        if "name" in data and "player_name" not in data:
+            data["player_name"] = data["name"]
+        if "projected_market_value" in data and "projected_aav" not in data:
+            data["projected_aav"] = float(data["projected_market_value"])
+        if "player_name" in data and "name" not in data:
+            data["name"] = data["player_name"]
+        if "projected_aav" in data and "projected_market_value" not in data:
+            data["projected_market_value"] = float(data["projected_aav"])
+        super().__init__(**data)
+
+
+class FreeAgentBidRequest(BaseModel):
+    player_id: int
+    team_id: int
+    years: int
+    total_amount: int
+    signing_bonus: int = 0
+    guaranteed_amount: int = 0
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class FreeAgentBidResponse(BaseModel):
+    status: str
+    accepted: bool
+    message: str
+    updated_cap_space: int
+
     model_config = ConfigDict(from_attributes=True)
