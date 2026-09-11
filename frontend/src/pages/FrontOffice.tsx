@@ -21,19 +21,7 @@ import {
 } from "../components/common/VirtualizedTable";
 
 type PositionFilter =
-  | "ALL"
-  | "OFF"
-  | "DEF"
-  | "ST"
-  | "QB"
-  | "RB"
-  | "WR"
-  | "TE"
-  | "OL"
-  | "DL"
-  | "LB"
-  | "DB"
-  | "K/P";
+  "ALL" | "OFF" | "DEF" | "ST" | "QB" | "RB" | "WR" | "TE" | "OL" | "DL" | "LB" | "DB" | "K/P";
 type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
 type ViewMode = "table" | "cards";
 

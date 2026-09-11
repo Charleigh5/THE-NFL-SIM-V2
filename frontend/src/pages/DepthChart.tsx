@@ -229,8 +229,7 @@ const UNIT_TABS: { id: DepthUnit; label: string; icon: string }[] = [
 
 export const DepthChart: React.FC = () => {
   const loaderData = useLoaderData() as
-    | { teams?: Team[]; team?: Team; roster?: Player[] }
-    | undefined;
+    { teams?: Team[]; team?: Team; roster?: Player[] } | undefined;
   const { activeTeamId, activeTeam, setActiveTeamId } = useTheme();
   const { userTeamId, setUserTeam, fetchSettings } = useSettingsStore();
 

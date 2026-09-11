@@ -5,10 +5,7 @@
  */
 
 export type ScoutBiasLens =
-  | "CONSENSUS"
-  | "FILM_TRADITIONALIST"
-  | "ANALYTICS_METRICS"
-  | "REGIONAL_SCOUT";
+  "CONSENSUS" | "FILM_TRADITIONALIST" | "ANALYTICS_METRICS" | "REGIONAL_SCOUT";
 
 export interface ProspectIntelligence {
   id: number;

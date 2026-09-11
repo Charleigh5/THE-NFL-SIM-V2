@@ -2,13 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 export type BodyZoneKey =
-  | "head"
-  | "neck"
-  | "torso"
-  | "rightArm"
-  | "leftArm"
-  | "rightLeg"
-  | "leftLeg";
+  "head" | "neck" | "torso" | "rightArm" | "leftArm" | "rightLeg" | "leftLeg";
 
 export interface BodyMapHealthData {
   head: number;

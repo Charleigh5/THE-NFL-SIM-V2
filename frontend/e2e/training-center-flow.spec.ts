@@ -81,8 +81,12 @@ test.describe("Training Center Flow", () => {
   });
 
   test("should load training center page", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("Coaching Philosophy", { exact: true }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /training center/i })).toBeVisible({
+      timeout: 10000,
+    });
+    await expect(page.getByText("Coaching Philosophy", { exact: true }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("should allow selecting coaching style", async ({ page }) => {
