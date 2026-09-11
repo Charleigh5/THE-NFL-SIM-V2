@@ -19,9 +19,11 @@ class MedicalService:
         Calculate and apply wear & tear after a game.
         """
         if not player.body_health:
-            self.initialize_body_health(player.id)
-
-        health = player.body_health[0] # One-to-one list
+            health = self.initialize_body_health(player.id)
+        elif isinstance(player.body_health, list):
+            health = player.body_health[0] if len(player.body_health) > 0 else self.initialize_body_health(player.id)
+        else:
+            health = player.body_health
 
         # Base wear calculation
         # RB/LB take more wear than WR/CB
@@ -67,7 +69,13 @@ class MedicalService:
         if not player or not player.body_health:
             return
 
-        health = player.body_health[0]
+        if isinstance(player.body_health, list):
+            health = player.body_health[0] if len(player.body_health) > 0 else None
+        else:
+            health = player.body_health
+
+        if not health:
+            return
 
         # Recovery rate
         recovery_rate = 5.0 # Base

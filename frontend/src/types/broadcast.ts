@@ -90,7 +90,11 @@ export interface OverlayCue {
 export interface ClipCue {
   id: string;
   clipType:
-    "formation_sweep" | "matchup_card" | "situation_lower_third" | "replay_angle" | "celebration";
+    | "formation_sweep"
+    | "matchup_card"
+    | "situation_lower_third"
+    | "replay_angle"
+    | "celebration";
   cameras: CameraShot[];
   overlays: OverlayCue[];
   duration: number;

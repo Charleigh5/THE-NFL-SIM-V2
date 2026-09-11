@@ -70,7 +70,7 @@ def configure_routes(app: FastAPI) -> None:
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
         playbook, physics_api, training, live_visualization, broadcast, coaches,
-        society
+        society, playcalling, capology, cap_ledger, social_graph, orthopedic, hud_telemetry
     )
     from app.api import combine
 
@@ -85,13 +85,22 @@ def configure_routes(app: FastAPI) -> None:
     app.include_router(teams.router, prefix="/api/teams", tags=["teams"])
     app.include_router(players.router, prefix="/api/players", tags=["players"])
 
+    # Capology & Double-Entry Ledger Engine
+    app.include_router(capology.router)
+    app.include_router(cap_ledger.router)
+
     # Society & Locker Room Engine
     app.include_router(society.router, prefix="/api")
+    app.include_router(social_graph.router, prefix="/api")
 
     # Season and game management
     app.include_router(season.router)
     app.include_router(genesis.router)
     app.include_router(draft.router)
+
+    # In-Game Play Calling & 4th Down Decision Engine
+    app.include_router(playcalling.router)
+    app.include_router(hud_telemetry.router, prefix="/api")
 
     # Settings and configuration
     app.include_router(settings_endpoint.router)
@@ -115,6 +124,7 @@ def configure_routes(app: FastAPI) -> None:
 
     # Medical and gameplans
     app.include_router(medical.router)
+    app.include_router(orthopedic.router, prefix="/api")
     app.include_router(gameplans.router)
     app.include_router(training.router, prefix="/api/training", tags=["training"])
 

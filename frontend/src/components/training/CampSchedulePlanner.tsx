@@ -3,7 +3,12 @@ import { Calendar, Sun, Moon, Battery } from "lucide-react";
 
 export type IntensityLevel = "WALKTHROUGH" | "STANDARD" | "FULL_PADS";
 export type CampDrillType =
-  "OKLAHOMA" | "7_ON_7" | "INDIVIDUAL" | "FILM_STUDY" | "SCRIMMAGE" | "CONDITIONING";
+  | "OKLAHOMA"
+  | "7_ON_7"
+  | "INDIVIDUAL"
+  | "FILM_STUDY"
+  | "SCRIMMAGE"
+  | "CONDITIONING";
 
 export interface DaySchedule {
   dayNumber: number;

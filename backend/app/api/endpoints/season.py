@@ -17,9 +17,19 @@ from app.services.schedule_generator import ScheduleGenerator
 from app.services.standings_calculator import StandingsCalculator, TeamStanding
 from app.services.week_simulator import WeekSimulator
 from app.services.playoff_service import PlayoffService
+from fastapi.routing import APIRoute
 from app.services.offseason_service import OffseasonService
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
-from app.schemas.offseason import TeamNeed, Prospect, DraftPickSummary, PlayerProgressionResult, DraftPickDetail
+from app.schemas.offseason import (
+    TeamNeed,
+    Prospect,
+    DraftPickSummary,
+    PlayerProgressionResult,
+    DraftPickDetail,
+    FreeAgentMarketPlayer,
+    FreeAgentBidRequest,
+    FreeAgentBidResponse,
+)
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.schemas import draft as draft_schemas
 from app.models.stats import PlayerGameStats
@@ -887,6 +897,75 @@ async def simulate_free_agency(season_id: int, db: AsyncSession = Depends(get_as
     result = await run_in_threadpool(fa_sync)
     logger.info(f"Free agency complete for season {season_id}")
     return result
+
+
+@router.get("/{season_id}/free-agency/market", response_model=List[FreeAgentMarketPlayer])
+@handle_errors
+async def get_free_agency_market(
+    season_id: int,
+    limit: int = 50,
+    db: AsyncSession = Depends(get_async_db)
+):
+    """
+    Get available free agent market players with projected valuations.
+    """
+    def market_sync():
+        with SessionLocal() as sync_db:
+            from app.services.free_agency_engine import FreeAgencyEngine
+            engine = FreeAgencyEngine(sync_db)
+            return engine.get_market_overview(season_id, limit=limit)
+
+    return await run_in_threadpool(market_sync)
+
+
+@router.post("/{season_id}/free-agency/bid", response_model=FreeAgentBidResponse)
+@handle_errors
+async def submit_free_agency_bid(
+    season_id: int,
+    bid: FreeAgentBidRequest,
+    db: AsyncSession = Depends(get_async_db)
+):
+    """
+    Submit a user GM contract bid for a free agent and evaluate competitive AI GM counter-offers.
+    """
+    def bid_sync():
+        with SessionLocal() as sync_db:
+            from app.services.free_agency_engine import FreeAgencyEngine
+            engine = FreeAgencyEngine(sync_db)
+            return engine.process_user_bid(
+                season_id=season_id,
+                player_id=bid.player_id,
+                team_id=bid.team_id,
+                years=bid.years,
+                total_amount=bid.total_amount,
+                signing_bonus=bid.signing_bonus,
+                guaranteed_amount=bid.guaranteed_amount,
+            )
+
+    return await run_in_threadpool(bid_sync)
+
+
+# Route aliases for plural /api/seasons/{season_id}/free-agency/...
+router.routes.append(
+    APIRoute(
+        path="/api/seasons/{season_id}/free-agency/market",
+        endpoint=get_free_agency_market,
+        methods=["GET"],
+        response_model=List[FreeAgentMarketPlayer],
+        name="get_free_agency_market_plural",
+        tags=["season"],
+    )
+)
+router.routes.append(
+    APIRoute(
+        path="/api/seasons/{season_id}/free-agency/bid",
+        endpoint=submit_free_agency_bid,
+        methods=["POST"],
+        response_model=FreeAgentBidResponse,
+        name="submit_free_agency_bid_plural",
+        tags=["season"],
+    )
+)
 
 
 @router.post("/{season_id}/draft/suggest-pick")

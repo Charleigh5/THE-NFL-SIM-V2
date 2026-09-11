@@ -6,11 +6,36 @@ import { api } from "../services/api";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
 import type { Player, Team } from "../services/api";
-import { Users, Filter, ArrowUpDown, DollarSign, X } from "lucide-react";
+import {
+  Users,
+  Filter,
+  ArrowUpDown,
+  DollarSign,
+  X,
+  Table as TableIcon,
+  LayoutGrid,
+} from "lucide-react";
+import {
+  VirtualizedTable,
+  type VirtualizedTableColumn,
+} from "../components/common/VirtualizedTable";
 
 type PositionFilter =
-  "ALL" | "OFF" | "DEF" | "ST" | "QB" | "RB" | "WR" | "TE" | "OL" | "DL" | "LB" | "DB" | "K/P";
+  | "ALL"
+  | "OFF"
+  | "DEF"
+  | "ST"
+  | "QB"
+  | "RB"
+  | "WR"
+  | "TE"
+  | "OL"
+  | "DL"
+  | "LB"
+  | "DB"
+  | "K/P";
 type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
+type ViewMode = "table" | "cards";
 
 export const FrontOffice = () => {
   const [roster, setRoster] = useState<Player[]>([]);
@@ -20,6 +45,7 @@ export const FrontOffice = () => {
   const [loading, setLoading] = useState(true);
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("OVR");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const { activeTeam } = useTheme();
 
   useEffect(() => {
@@ -76,6 +102,155 @@ export const FrontOffice = () => {
 
     return list;
   }, [roster, positionFilter, sortBy]);
+
+  // Virtualized Table Columns for 53-man roster view
+  const tableColumns: VirtualizedTableColumn<Player>[] = useMemo(
+    () => [
+      {
+        id: "jersey",
+        header: "#",
+        width: 55,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.jersey_number,
+        cell: (p) => (
+          <span
+            data-testid={`player-card-${p.id}`}
+            className="font-header text-sm text-yellow-400 font-bold"
+          >
+            #{p.jersey_number ?? 0}
+          </span>
+        ),
+      },
+      {
+        id: "name",
+        header: "Player Name",
+        minWidth: 150,
+        sortable: true,
+        sortKey: (p) => `${p.first_name} ${p.last_name}`,
+        cell: (p) => (
+          <div className="flex flex-col">
+            <span className="font-header text-sm text-white uppercase tracking-tight">
+              {p.first_name} {p.last_name}
+            </span>
+            <span className="text-[10px] font-mono text-gray-400">
+              {p.college || "NFL Veteran"}
+            </span>
+          </div>
+        ),
+      },
+      {
+        id: "position",
+        header: "Pos",
+        width: 65,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.position,
+        cell: (p) => (
+          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-mono text-xs font-bold">
+            {p.position}
+          </span>
+        ),
+      },
+      {
+        id: "overall",
+        header: "OVR",
+        width: 65,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.overall_rating,
+        cell: (p) => {
+          const ovr = p.overall_rating;
+          const ratingColor =
+            ovr >= 90
+              ? "text-yellow-400 font-bold"
+              : ovr >= 80
+              ? "text-emerald-400 font-semibold"
+              : ovr >= 70
+              ? "text-cyan-400"
+              : "text-gray-300";
+          return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
+        },
+      },
+      {
+        id: "age",
+        header: "Age",
+        width: 55,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.age,
+        cell: (p) => <span className="text-gray-300 font-mono text-xs">{p.age}</span>,
+      },
+      {
+        id: "exp",
+        header: "Exp",
+        width: 65,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.experience,
+        cell: (p) => (
+          <span className="text-gray-400 font-mono text-xs">{p.experience ?? 0} yrs</span>
+        ),
+      },
+      {
+        id: "speed",
+        header: "SPD",
+        width: 60,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.speed,
+        cell: (p) => (
+          <span className="text-emerald-400 font-mono text-xs font-bold">
+            {p.speed ?? 85}
+          </span>
+        ),
+      },
+      {
+        id: "strength",
+        header: "STR",
+        width: 60,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.strength,
+        cell: (p) => (
+          <span className="text-cyan-400 font-mono text-xs font-bold">
+            {p.strength ?? 80}
+          </span>
+        ),
+      },
+      {
+        id: "agility",
+        header: "AGI",
+        width: 60,
+        align: "center",
+        sortable: true,
+        sortKey: (p) => p.agility,
+        cell: (p) => (
+          <span className="text-amber-400 font-mono text-xs font-bold">
+            {p.agility ?? 84}
+          </span>
+        ),
+      },
+      {
+        id: "actions",
+        header: "Action",
+        width: 90,
+        align: "center",
+        cell: (p) => (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedPlayer(p);
+            }}
+            className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-gray-200 hover:text-white font-header text-[11px] uppercase tracking-wider rounded transition-all"
+          >
+            Inspect
+          </button>
+        ),
+      },
+    ],
+    []
+  );
 
   if (loading) {
     return (
@@ -161,7 +336,7 @@ export const FrontOffice = () => {
         </div>
       </header>
 
-      {/* Position Filter & Sort Bar */}
+      {/* Position Filter, Sort & View Mode Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-broadcast-dark/80 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg">
         {/* Position Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
@@ -186,34 +361,62 @@ export const FrontOffice = () => {
           ))}
         </div>
 
-        {/* Sort Selector */}
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="text-gray-400 flex items-center gap-1">
-            <ArrowUpDown size={12} /> Sort:
-          </span>
-          {(["OVR", "AGE", "SPEED", "STRENGTH"] as SortOption[]).map((opt) => (
+        {/* Sort & View Mode Selector */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-xs font-mono">
+            <span className="text-gray-400 flex items-center gap-1">
+              <ArrowUpDown size={12} /> Sort:
+            </span>
+            {(["OVR", "AGE", "SPEED", "STRENGTH"] as SortOption[]).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => {
+                  soundEffects.playSnap();
+                  setSortBy(opt);
+                }}
+                className={`px-2.5 py-1 rounded transition-colors ${
+                  sortBy === opt
+                    ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-bold"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+
+          {/* View Mode Toggle: Table / Cards */}
+          <div className="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/10">
             <button
-              key={opt}
-              onClick={() => {
-                soundEffects.playSnap();
-                setSortBy(opt);
-              }}
-              className={`px-2.5 py-1 rounded transition-colors ${
-                sortBy === opt
-                  ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-bold"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              onClick={() => setViewMode("table")}
+              title="Virtualized Table View (60 FPS)"
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === "table"
+                  ? "bg-white/20 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
-              {opt}
+              <TableIcon size={14} />
             </button>
-          ))}
+            <button
+              onClick={() => setViewMode("cards")}
+              title="Card Grid View"
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === "cards"
+                  ? "bg-white/20 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <LayoutGrid size={14} />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Roster Deck & Coach Settings */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
-          className="lg:col-span-2 broadcast-glass p-6 rounded-2xl border border-white/15 min-h-[500px] shadow-2xl"
+          className="lg:col-span-2 broadcast-glass p-6 rounded-2xl border border-white/15 min-h-[500px] shadow-2xl flex flex-col"
           data-testid="roster-section"
         >
           <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
@@ -226,26 +429,40 @@ export const FrontOffice = () => {
             </span>
           </div>
 
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[640px] overflow-y-auto pr-2 custom-scrollbar"
-            data-testid="roster-grid"
-          >
-            {filteredAndSortedRoster.map((player) => (
-              <DraggableCard
-                key={player.id}
-                playerId={player.id}
-                name={`${player.first_name.charAt(0)}. ${player.last_name}`}
-                position={player.position}
-                rating={player.overall_rating}
-                team={team?.abbreviation || "UNK"}
-                jerseyNumber={player.jersey_number}
-                speed={player.speed || 85}
-                strength={player.strength || 80}
-                agility={player.agility || 84}
-                onClick={() => setSelectedPlayer(player)}
-                testId={`player-card-${player.id}`}
+          {/* Roster Viewport (Virtualized Table or Card Grid) */}
+          <div data-testid="roster-grid" className="flex-1">
+            {viewMode === "table" ? (
+              <VirtualizedTable
+                data={filteredAndSortedRoster}
+                columns={tableColumns}
+                height={560}
+                estimateRowHeight={50}
+                overscan={12}
+                getRowId={(player) => player.id}
+                onRowClick={(player) => setSelectedPlayer(player)}
+                emptyMessage="No players found in this unit filter."
+                testId="virtualized-roster-table"
               />
-            ))}
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[640px] overflow-y-auto pr-2 custom-scrollbar">
+                {filteredAndSortedRoster.map((player) => (
+                  <DraggableCard
+                    key={player.id}
+                    playerId={player.id}
+                    name={`${player.first_name.charAt(0)}. ${player.last_name}`}
+                    position={player.position}
+                    rating={player.overall_rating}
+                    team={team?.abbreviation || "UNK"}
+                    jerseyNumber={player.jersey_number}
+                    speed={player.speed || 85}
+                    strength={player.strength || 80}
+                    agility={player.agility || 84}
+                    onClick={() => setSelectedPlayer(player)}
+                    testId={`player-card-${player.id}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

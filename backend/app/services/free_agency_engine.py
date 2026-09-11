@@ -14,7 +14,12 @@ from sqlalchemy import select, func
 from app.models.player import Player, Position
 from app.models.team import Team
 from app.models.player_contract import PlayerContract
-from app.schemas.offseason import FreeAgentSigning, FreeAgentMarketPlayer
+from app.schemas.offseason import (
+    FreeAgentSigning,
+    FreeAgentMarketPlayer,
+    FreeAgentBidRequest,
+    FreeAgentBidResponse,
+)
 
 
 # Target roster counts per position for standard 53-man depth
@@ -423,15 +428,185 @@ class FreeAgencyEngine:
 
             market_list.append(FreeAgentMarketPlayer(
                 player_id=p.id,
-                name=f"{p.first_name} {p.last_name}",
+                player_name=f"{p.first_name} {p.last_name}",
                 position=pos,
                 overall_rating=p.overall_rating,
                 age=p.age or 26,
-                experience=p.experience or 3,
-                projected_market_value=aav,
+                projected_aav=float(aav),
                 projected_years=years,
                 tier=tier,
                 top_interested_teams=interested
             ))
 
         return market_list
+
+    # =========================================================================
+    # PHASE 5: USER GM BIDDING & COMPETITIVE RESOLUTION
+    # =========================================================================
+
+    def process_user_bid(
+        self,
+        season_id: int,
+        player_id: int,
+        team_id: int,
+        years: int,
+        total_amount: int,
+        signing_bonus: int = 0,
+        guaranteed_amount: int = 0,
+    ) -> FreeAgentBidResponse:
+        """
+        Process user GM contract bid on a free agent and evaluate competitive AI GM counter-offers.
+        """
+        stmt_p = select(Player).where(Player.id == player_id)
+        player = self.db.execute(stmt_p).scalar_one_or_none()
+        if not player:
+            return FreeAgentBidResponse(
+                status="REJECTED",
+                accepted=False,
+                message=f"Player with ID {player_id} not found.",
+                updated_cap_space=0,
+            )
+
+        if player.team_id is not None:
+            return FreeAgentBidResponse(
+                status="REJECTED",
+                accepted=False,
+                message=f"{player.first_name} {player.last_name} is already signed to a team.",
+                updated_cap_space=0,
+            )
+
+        stmt_t = select(Team).where(Team.id == team_id)
+        team = self.db.execute(stmt_t).scalar_one_or_none()
+        if not team:
+            return FreeAgentBidResponse(
+                status="REJECTED",
+                accepted=False,
+                message=f"Team with ID {team_id} not found.",
+                updated_cap_space=0,
+            )
+
+        years = max(1, years)
+        user_aav = total_amount // years
+        current_cap = float(team.salary_cap_space or 0.0)
+
+        # Prorate signing bonus (max 5 years per NFL CBA)
+        prorate_years = min(years, 5)
+        prorated_bonus = signing_bonus // prorate_years if prorate_years > 0 else 0
+        base_salary = max(MIN_SALARY, user_aav - prorated_bonus)
+        year_1_cap_hit = base_salary + prorated_bonus
+
+        if current_cap < year_1_cap_hit:
+            return FreeAgentBidResponse(
+                status="REJECTED",
+                accepted=False,
+                message=f"Bid rejected: Year 1 cap hit (${year_1_cap_hit:,}) exceeds available cap space (${int(current_cap):,}).",
+                updated_cap_space=int(current_cap),
+            )
+
+        market_aav, market_years, market_guaranteed = self.calculate_market_value(player)
+
+        # Insulting lowball offer rejection (<65% of market AAV)
+        aav_ratio = user_aav / max(1, market_aav)
+        if aav_ratio < 0.65:
+            return FreeAgentBidResponse(
+                status="REJECTED",
+                accepted=False,
+                message=f"{player.first_name} {player.last_name} has rejected your offer. The contract terms are well below fair market value.",
+                updated_cap_space=int(current_cap),
+            )
+
+        # Evaluate User Offer Score (0-100)
+        gtd_ratio = guaranteed_amount / max(1, market_guaranteed) if market_guaranteed > 0 else 1.0
+        prestige_bonus = (team.prestige - 50) * 0.15
+        user_score = (aav_ratio * 50.0) + (min(1.5, gtd_ratio) * 35.0) + prestige_bonus
+        if years >= market_years:
+            user_score += 5.0
+
+        # Evaluate AI GM competing offers
+        stmt_ai_teams = select(Team).where(Team.id != team_id).order_by(Team.prestige.desc()).limit(10)
+        ai_teams = list(self.db.execute(stmt_ai_teams).scalars().all())
+
+        competing_offers: List[Tuple[Team, float, int, int]] = []
+        pos = player.position if isinstance(player.position, str) else player.position.value
+
+        for ai_team in ai_teams:
+            ai_cap = float(ai_team.salary_cap_space or 40_000_000.0)
+            if ai_cap < market_aav:
+                continue
+
+            stmt_r = select(Player).where(Player.team_id == ai_team.id)
+            roster = list(self.db.execute(stmt_r).scalars().all())
+            pos_count = sum(1 for rp in roster if (rp.position if isinstance(rp.position, str) else rp.position.value) == pos)
+            roster_counts = {pos: pos_count}
+
+            interest = self.calculate_team_interest(ai_team, player, roster_counts, market_aav, ai_cap)
+            if interest >= 40.0:
+                ai_bid_aav = int(market_aav * (1.0 + (interest - 50.0) * 0.005))
+                ai_bid_aav = max(MIN_SALARY, min(ai_bid_aav, int(ai_cap)))
+                ai_score = interest + (ai_bid_aav / max(1, market_aav)) * 30.0 + (ai_team.prestige - 50) * 0.15
+                competing_offers.append((ai_team, ai_score, ai_bid_aav, market_years))
+
+        competing_offers.sort(key=lambda o: o[1], reverse=True)
+
+        if competing_offers and competing_offers[0][1] > user_score:
+            winning_team, ai_score, ai_aav, ai_years = competing_offers[0]
+            # AI team signs player
+            player.team_id = winning_team.id
+            player.contract_years = ai_years
+            player.contract_salary = ai_aav
+
+            if hasattr(player, "contract") and player.contract:
+                player.contract.contract_years = ai_years
+                player.contract.contract_salary = ai_aav
+                player.contract.is_rookie = False
+                player.contract.is_retired = False
+            else:
+                contract = PlayerContract(
+                    player_id=player.id,
+                    contract_years=ai_years,
+                    contract_salary=ai_aav,
+                    is_rookie=False,
+                    is_retired=False,
+                )
+                self.db.add(contract)
+
+            winning_team.salary_cap_space = max(0.0, float(winning_team.salary_cap_space or 0.0) - ai_aav)
+            self.db.commit()
+
+            return FreeAgentBidResponse(
+                status="OUTBID",
+                accepted=False,
+                message=f"{player.first_name} {player.last_name} chose a competing offer from the {winning_team.city} {winning_team.name} (${ai_aav:,}/year).",
+                updated_cap_space=int(current_cap),
+            )
+
+        # User wins bidding!
+        player.team_id = team.id
+        player.contract_years = years
+        player.contract_salary = user_aav
+
+        if hasattr(player, "contract") and player.contract:
+            player.contract.contract_years = years
+            player.contract.contract_salary = user_aav
+            player.contract.is_rookie = False
+            player.contract.is_retired = False
+        else:
+            contract = PlayerContract(
+                player_id=player.id,
+                contract_years=years,
+                contract_salary=user_aav,
+                is_rookie=False,
+                is_retired=False,
+            )
+            self.db.add(contract)
+
+        new_cap = max(0.0, current_cap - year_1_cap_hit)
+        team.salary_cap_space = new_cap
+        self.db.commit()
+
+        return FreeAgentBidResponse(
+            status="ACCEPTED",
+            accepted=True,
+            message=f"Offer Accepted! {player.first_name} {player.last_name} has signed a {years}-year deal with the {team.city} {team.name}.",
+            updated_cap_space=int(new_cap),
+        )

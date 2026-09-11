@@ -23,6 +23,16 @@ import hashlib
 import json
 import logging
 
+from app.engine.vectorized_physics import (
+    VectorizedPhysicsKernel,
+    ZeroAllocPlayBuffer,
+    CircularTelemetryRingBuffer,
+    STATE_NAME_TO_INT,
+    STATE_TACKLED,
+    STATE_BLOCKING,
+    STATE_IDLE,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -221,8 +231,9 @@ class FramePhysicsEngine:
     reproducible results.
     """
 
-    def __init__(self, rng: Any):
+    def __init__(self, rng: Any, use_vectorized: bool = True):
         self.rng = rng
+        self.use_vectorized = use_vectorized
         self.frames: List[PhysicsFrame] = []
         self.collisions: List[Collision] = []
         self.current_frame = 0
@@ -233,6 +244,9 @@ class FramePhysicsEngine:
         # Player registry
         self.players: Dict[int, PhysicsPlayer] = {}
         self.ball = PhysicsBall()
+
+        # SIMD Vectorized Kernel & Preallocated Buffers
+        self.vector_kernel: Optional[VectorizedPhysicsKernel] = None
 
     def initialize_play(
         self,
@@ -295,6 +309,90 @@ class FramePhysicsEngine:
                 carrier_id=qb.player_id
             )
             qb.has_ball = True
+
+        # Initialize SIMD Vectorized Physics Kernel
+        if self.use_vectorized:
+            self._sync_to_vector_kernel()
+
+    def _sync_to_vector_kernel(self) -> None:
+        """Initialize and populate the SIMD VectorizedPhysicsKernel."""
+        player_list = []
+        carrier_id = self.ball.carrier_id
+        for p in self.players.values():
+            accel_rating = getattr(p, "acceleration_rating", 70)
+            accel_rate = ACCELERATION_RATE * (accel_rating / 100.0)
+            player_list.append({
+                "player_id": p.player_id,
+                "x": float(p.position.x),
+                "y": float(p.position.y),
+                "vx": float(p.velocity.x),
+                "vy": float(p.velocity.y),
+                "is_offense": p.is_offense,
+                "max_speed": float(p.max_speed),
+                "accel_rate": float(accel_rate),
+                "agility": float(getattr(p, "agility_rating", 70)),
+                "tackle": float(getattr(p, "tackle_rating", 50)),
+                "state": p.state.value,
+                "target_x": float(p.target_position.x) if p.target_position else None,
+                "target_y": float(p.target_position.y) if p.target_position else None,
+            })
+        self.vector_kernel = VectorizedPhysicsKernel(max_players=max(22, len(player_list)))
+        self.vector_kernel.load_players(player_list, ball_carrier_id=carrier_id)
+        self.vector_kernel.ball[0] = float(self.ball.position.x)
+        self.vector_kernel.ball[1] = float(self.ball.position.y)
+        self.vector_kernel.ball[2] = float(self.ball.height)
+        self.vector_kernel.ball[3] = float(self.ball.velocity.x)
+        self.vector_kernel.ball[4] = float(self.ball.velocity.y)
+        self.vector_kernel.ball_is_in_air = bool(self.ball.is_in_air)
+        self.vector_kernel.ball_is_loose = bool(self.ball.is_loose)
+
+    def _sync_dynamic_to_kernel(self) -> None:
+        """Propagate external modifications to positions, velocities, target_positions, or player states to the SIMD kernel."""
+        if not self.vector_kernel:
+            return
+        for i in range(self.vector_kernel.num_players):
+            pid = int(self.vector_kernel.player_ids[i])
+            p = self.players.get(pid)
+            if p:
+                self.vector_kernel.pos[i, 0] = float(p.position.x)
+                self.vector_kernel.pos[i, 1] = float(p.position.y)
+                self.vector_kernel.vel[i, 0] = float(p.velocity.x)
+                self.vector_kernel.vel[i, 1] = float(p.velocity.y)
+                if p.target_position:
+                    self.vector_kernel.target_pos[i, 0] = float(p.target_position.x)
+                    self.vector_kernel.target_pos[i, 1] = float(p.target_position.y)
+                    self.vector_kernel.has_target[i] = True
+                else:
+                    self.vector_kernel.has_target[i] = False
+
+                self.vector_kernel.states[i] = STATE_NAME_TO_INT.get(p.state.value, STATE_IDLE)
+                self.vector_kernel.has_ball[i] = bool(p.has_ball)
+                if p.has_ball:
+                    self.vector_kernel.carrier_idx = i
+
+    def _sync_from_vector_kernel(self) -> None:
+        """Propagate updated coordinates from NumPy SIMD arrays back into PhysicsPlayer and PhysicsBall."""
+        if not self.vector_kernel:
+            return
+        for i in range(self.vector_kernel.num_players):
+            pid = int(self.vector_kernel.player_ids[i])
+            p = self.players.get(pid)
+            if p:
+                p.position.x = float(self.vector_kernel.pos[i, 0])
+                p.position.y = float(self.vector_kernel.pos[i, 1])
+                p.velocity.x = float(self.vector_kernel.vel[i, 0])
+                p.velocity.y = float(self.vector_kernel.vel[i, 1])
+                if not self.vector_kernel.has_target[i]:
+                    p.target_position = None
+
+                if self.vector_kernel.states[i] == STATE_TACKLED:
+                    p.state = PlayerState.TACKLED
+
+        # Ball sync
+        self.ball.position.x = float(self.vector_kernel.ball[0])
+        self.ball.position.y = float(self.vector_kernel.ball[1])
+        self.ball.height = float(self.vector_kernel.ball[2])
+        self.ball.is_in_air = bool(self.vector_kernel.ball_is_in_air)
 
     def _get_offensive_position(
         self,
@@ -403,8 +501,14 @@ class FramePhysicsEngine:
         """
         Update all player and ball positions for one frame.
 
-        Uses simple kinematics with acceleration towards target.
+        Uses SIMD vectorized acceleration when active, with object fallback.
         """
+        if self.use_vectorized and self.vector_kernel:
+            self._sync_dynamic_to_kernel()
+            self.vector_kernel.update_physics(delta_t)
+            self._sync_from_vector_kernel()
+            return
+
         for player in self.players.values():
             if player.state == PlayerState.TACKLED:
                 # Stopped movement
@@ -467,8 +571,26 @@ class FramePhysicsEngine:
         """
         Detect player-to-player collisions this frame.
 
-        Returns list of collisions between offensive and defensive players.
+        Uses SIMD broadcasting matrix when active, with object fallback.
         """
+        if self.use_vectorized and self.vector_kernel:
+            self._sync_dynamic_to_kernel()
+            simd_hits = self.vector_kernel.detect_collisions_simd()
+            collisions: List[Collision] = []
+            for off_idx, def_idx, col_type, force in simd_hits:
+                off_pid = int(self.vector_kernel.player_ids[off_idx])
+                def_pid = int(self.vector_kernel.player_ids[def_idx])
+                collisions.append(
+                    Collision(
+                        frame_id=self.current_frame,
+                        player1_id=off_pid,
+                        player2_id=def_pid,
+                        collision_type=col_type,
+                        impact_force=force,
+                    )
+                )
+            return collisions
+
         collisions = []
 
         offense_players = [p for p in self.players.values() if p.is_offense]
@@ -574,6 +696,9 @@ class FramePhysicsEngine:
 
     def _record_frame(self, events: Optional[List[str]] = None) -> None:
         """Record current state as a frame."""
+        if self.use_vectorized and self.vector_kernel:
+            self.vector_kernel.snapshot_frame(self.current_frame, events)
+
         frame = PhysicsFrame(
             frame_id=self.current_frame,
             timestamp=self.elapsed_time,
@@ -599,6 +724,12 @@ class FramePhysicsEngine:
             events=events or []
         )
         self.frames.append(frame)
+
+    def benchmark_vectorized_execution(self, frames: int = 300) -> Dict[str, Any]:
+        """Run a benchmark of the vectorized physics kernel."""
+        if not self.vector_kernel:
+            self._sync_to_vector_kernel()
+        return self.vector_kernel.benchmark_play_execution(frames)
 
     # =========================================================================
     # RESULT GENERATION (B-067)

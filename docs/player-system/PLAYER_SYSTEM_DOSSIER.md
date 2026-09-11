@@ -2,7 +2,7 @@
 
 > **Living Document** - This comprehensive reference is updated whenever player-related systems change.
 >
-> **Last Updated:** 2026-08-15
+> **Last Updated:** 2026-09-06
 > **Maintainer:** Auto-updated via workflow `/update-player-dossier`
 
 ---
@@ -873,6 +873,29 @@ Team Interest Score (0-100):
 ## Rookie Contract:
 contract_years = 4, contract_salary = 500,000 + (overall * 10,000)
 
+## NFL CBA Capology & Signing Bonus Proration:
+- **5-Year Maximum Proration Ceiling**: Under NFL CBA Article 13, upfront signing bonuses are amortized evenly over the life of the contract up to a strict maximum of 5 league years:
+  $$\text{proration\_years} = \min(\text{contract\_years}, 5)$$
+  $$\text{annual\_signing\_bonus\_proration} = \frac{\text{signing\_bonus}}{\text{proration\_years}}$$
+  $$\text{annual\_base\_salary} = \frac{\text{total\_value} - \text{signing\_bonus}}{\text{contract\_years}}$$
+  $$\text{year\_1\_cap\_hit} = \text{annual\_base\_salary} + \text{annual\_signing\_bonus\_proration}$$
+- **Post-June 1st Dead Money Split (CBA Article 13 § 3)**:
+  - When a player is designated as a post-June 1st release, the dead money acceleration is partitioned across two league years:
+    1. *Current League Year ($Y_0$)*: Absorbs exclusively the scheduled signing bonus proration allocated to Year 0:
+       $$\text{Dead Money}_{Y_0} = \text{Bonus Proration}_{Y_0}$$
+    2. *Following League Year ($Y_1$)*: Absorbs the sum of all remaining future unamortized signing bonus proration:
+       $$\text{Dead Money}_{Y_1} = \sum_{y > Y_0} \text{Bonus Proration}_y$$
+  - Recorded in the franchise's persistent multi-year `dead_money_ledger`.
+- **Top-51 Offseason Salary Cap Rule**:
+  - During offseason and preseason roster expansion (up to 90 athletes), counting all contracts would cause immediate artificial cap non-compliance.
+  - When `season.status != SeasonStatus.REGULAR_SEASON`, the engine (`SalaryCapService.calculate_top51_cap`) sorts all rostered player salaries descending and computes total active salary obligations strictly from the **sum of the top 51 highest salaries**.
+  - Upon advancement to the regular season, the calculation transitions to full 53-man active roster accounting.
+- **Interactive Free Agency Bidding & Multi-Team Auction (`FreeAgencyEngine.process_user_bid`)**:
+  - Verifies GM cap space against Year 1 Cap Hit in real time.
+  - Evaluates contract competitiveness score against position market AAV; offers <65% of market AAV are automatically rejected as lowballs.
+  - Concurrently simulates counter-offers from top interested AI GM franchises.
+  - Atomically signs player, mutates team cap room, creates `PlayerContract`, and updates roster status upon winning bid.
+
 ---
 
 ## 11. Injury System & GENESIS Biometrics
@@ -923,7 +946,42 @@ Effect: Drop 1-3 physical stats by 1-3 points each, injury_resistance permanentl
 - head_health, neck_health, torso_health, right_arm_health, left_arm_health, right_leg_health, left_leg_health
 - general_wear (temporary fatigue/bruising, recovers weekly)
 
-InjuryEvent model tracks: player_id, season_id, week, injury_name, body_part, severity, duration_weeks, is_career_ending, treatment_chosen (REST/SURGERY/PLAY_THROUGH)
+## Clinical Orthopedic Triage Pathways & RTP Synchronization:
+The orthopedic triage engine (`orthopedic_triage_service.py`, `medical.py`) models 5 distinct clinical intervention pathways:
+| Pathway | Clinical Mechanism | Recovery Duration | Complication Risk | Structural Integrity Outcome |
+| :--- | :--- | :--- | :--- | :--- |
+| **`REST`** | Conservative biological immobilization | 1.0x baseline | 0% | Full 100% tissue restoration; zero long-term degradation |
+| **`PRP_THERAPY`** | Platelet-rich plasma autologous biotherapy | 0.70x baseline (-30%) | 5% | 90-95% integrity restoration; minor variance |
+| **`ARTHROSCOPIC_SURGERY`** | Minimally invasive scope debridement | 0.50x baseline (-50%) | 12% | 80-85% integrity restoration; slight cartilage sacrifice |
+| **`RECONSTRUCTIVE_SURGERY`** | Complete graft reconstruction (ACL/labrum) | Seasonal shutdown | 20% | High structural stability for multi-year career longevity |
+| **`CORTISONE_STABILIZATION`** | Field joint injection & structural bracing | Immediate (0 weeks) | 25% | 2.5x hazard multiplier; permanent -10% structural health drop |
+
+### Body Health Integrity Forecast & Dynamic Persistence:
+- When a triage protocol is applied via `POST /api/medical/players/{player_id}/triage/apply`, the service calculates `final_integrity_forecast` based on age, durability, and intervention type.
+- The target anatomical zone on `Player.body_health` (scalar `BodyPart` model) is dynamically updated with the forecast value.
+- An immutable `InjuryEvent` audit record is inserted containing: `player_id`, `season_id`, `week`, `injury_name`, `body_part`, `severity`, `duration_weeks`, and `treatment_chosen`.
+
+### Return-to-Play (RTP) Roster Synchronization:
+- `InjuryStatus` enum alignment strictly enforces:
+  - `ACTIVE`: Fully healthy player available for active game roster and depth chart inclusion (`is_injured=False`).
+  - `QUESTIONABLE`: Minor wear / day-to-day (1-2 weeks).
+  - `DOUBTFUL`: Moderate sprain (2-3 weeks).
+  - `OUT`: Severe strain / short-term recovery (3-6 weeks).
+  - `IR`: Major trauma / surgical recovery (>6 weeks; opens roster spot).
+### Non-Linear Gompertz Return-to-Play Trajectory & Specialist Referral (TASK-016):
+- **Gompertz Double-Exponential Model:** Biological tissue repair does not progress linearly; it follows a sigmoidal/Gompertz trajectory:
+  $$H(t) = H_0 + (100 - H_0) \cdot e^{-e^{-k(t - t_0)}}$$
+  where $H_0$ is baseline post-injury health, $k$ is treatment velocity parameter ($k \in [0.45, 0.95]$), and $t_0$ is the inflection week.
+- **Outside Specialist Consultation (Elite Orthopedic Council):**
+  - External second opinion centers: Andrews Sports Medicine Institute (Birmingham, AL), Kerlan-Jobe Orthopaedic Clinic (Los Angeles, CA), and Hospital for Special Surgery (New York, NY).
+  - 15% occult pathology discovery rate uncovering micro-tears and subchondral avulsions missed by standard team diagnostics.
+  - Grants a permanent 50% reduction in surgical complication risk for the athlete (`specialist_cleared = True`).
+- **In-Game 60Hz Cortisone Hazard Multiplier:**
+  - Cortisone provides 95% pain-masking effectiveness on game day, permitting active play.
+  - Introduces an acute $2.5\times$ re-rupture hazard triggered during high-G athletic cuts ($\Delta \vec{v} > 4.5\text{ m/s}^2$) and collision momentum spikes ($p > 850\text{ kg}\cdot\text{m/s}$).
+  - Monitored via snap load safety meter against the recommended 25-snap exposure limit.
+
+InjuryEvent model tracks: player_id, season_id, week, injury_name, body_part, severity, duration_weeks, is_career_ending, treatment_chosen (REST/PRP_THERAPY/ARTHROSCOPIC_SURGERY/RECONSTRUCTIVE_SURGERY/CORTISONE_STABILIZATION)
 
 ## GENESIS Biometrics (genesis/biometrics.py):
 BiometricProfile:
@@ -1197,6 +1255,12 @@ Include ALL files:
   - `RECONSTRUCTIVE_SURGERY`: Full graft reconstruction for long-term multi-year joint longevity.
   - `CORTISONE_STABILIZATION`: Field joint bracing allowing players to suit up immediately under 2.5x hazard risk.
 
+### 15.3 Orthopedic RTP Gompertz Trajectory & Re-Injury Hazards (TASK-016)
+- **Files:** [`backend/app/schemas/orthopedic_rtp.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/schemas/orthopedic_rtp.py), [`backend/app/services/orthopedic_engine.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/services/orthopedic_engine.py), [`backend/app/api/endpoints/orthopedic.py`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/backend/app/api/endpoints/orthopedic.py), [`frontend/src/types/orthopedicRtp.ts`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/types/orthopedicRtp.ts), [`frontend/src/services/orthopedicApi.ts`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/services/orthopedicApi.ts), [`frontend/src/components/medical/RTPTrajectoryGraph.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/medical/RTPTrajectoryGraph.tsx), [`frontend/src/components/medical/SpecialistReferralModal.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/medical/SpecialistReferralModal.tsx), [`frontend/src/components/medical/CortisoneRiskBanner.tsx`](file:///c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2/frontend/src/components/medical/CortisoneRiskBanner.tsx)
+- **Non-Linear Tissue Repair Mechanics:** 12-week Gompertz tissue recovery curves parameterized by player age, recovery trait, and injury severity grade ($H(t) = H_0 + (100 - H_0) \cdot e^{-e^{-k(t - t_0)}}$).
+- **Outside Specialist Referral Engine:** Independent consultations at Andrews Sports Medicine, Kerlan-Jobe, or Hospital for Special Surgery (HSS) with 15% occult pathology discovery and 50% surgical complication risk reduction.
+- **In-Game 60Hz Cortisone Hazard Multiplier:** 95% pain-masking effectiveness on game day paired with an acute $2.5\times$ catastrophic re-rupture hazard triggered on high-G cuts ($\Delta \vec{v} > 4.5\text{ m/s}^2$) and collision impacts ($p > 850\text{ kg}\cdot\text{m/s}$).
+
 ---
 
 ## 16. Changelog
@@ -1206,4 +1270,6 @@ Include ALL files:
 | 2025-12-11 | Initial comprehensive dossier created | All player files |
 | 2026-08-15 | Major update: Documented satellite model decomposition | player models & services |
 | 2026-08-22 | SUBSYS-002 Coaching Dynasty Tree & SUBSYS-003 Orthopedic Trauma Triage | `coaching_dynasty_service.py`, `orthopedic_triage_service.py`, `CoachingDynastyTree.tsx`, `OrthopedicTriageModal.tsx` |
+| 2026-09-06 | Documented 5-year bonus proration, post-June 1st cap splits, Top-51 rule, 5-pathway orthopedic triage, body health integrity forecast persistence, and RTP roster synchronization | `salary_cap_service.py`, `capologist.py`, `free_agency_engine.py`, `medical.py`, `orthopedic_triage_service.py` |
+| 2026-09-07 | TASK-016: Implemented 12-week non-linear Gompertz RTP trajectory models, outside specialist 2nd opinion referrals, and in-game 60Hz cortisone 2.5x acute re-rupture hazard | `orthopedic_rtp.py`, `orthopedic_engine.py`, `orthopedic.py`, `orthopedicRtp.ts`, `orthopedicApi.ts`, `RTPTrajectoryGraph.tsx`, `SpecialistReferralModal.tsx`, `CortisoneRiskBanner.tsx`, `MedicalCenter.tsx` |
 

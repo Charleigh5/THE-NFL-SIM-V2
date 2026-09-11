@@ -7,84 +7,111 @@ import { FatigueMonitor } from "../components/medical/FatigueMonitor";
 import { OrthopedicTriageModal } from "../components/medical/OrthopedicTriageModal";
 import { TreatmentModal } from "../components/medical/TreatmentModal";
 import FatigueIndicator from "../components/game/FatigueIndicator";
-import type { MedicalProtocolType } from "../types/deepDive";
+import type { MedicalProtocolType, TriageDecisionResult } from "../types/deepDive";
 import { medicalApi } from "../services/medicalApi";
 import type { InjuredPlayer, BioMetrics, FatigueState, TreatmentType } from "../types/medical";
-import { ShieldCheck, Stethoscope, AlertCircle, HeartPulse, Activity } from "lucide-react";
+import { ShieldCheck, Stethoscope, AlertCircle, HeartPulse, Activity, CheckCircle2, Loader2, Building2 } from "lucide-react";
+import { useTheme } from "../context/useTheme";
+import { RTPTrajectoryGraph } from "../components/medical/RTPTrajectoryGraph";
+import { SpecialistReferralModal } from "../components/medical/SpecialistReferralModal";
+import { CortisoneRiskBanner } from "../components/medical/CortisoneRiskBanner";
+import { orthopedicApi } from "../services/orthopedicApi";
+import type { OrthopedicEvaluationResponse, MedicalProtocol } from "../types/orthopedicRtp";
 import "../components/medical/MedicalCenter.css";
 
 export const MedicalCenter: React.FC = () => {
   const [selectedPart, setSelectedPart] = useState<BodyZoneKey | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showTreatmentModal, setShowTreatmentModal] = useState(false);
+  const [showSpecialistModal, setShowSpecialistModal] = useState(false);
+  const [orthopedicEval, setOrthopedicEval] = useState<OrthopedicEvaluationResponse | null>(null);
+  const [selectedTrajectoryProtocol, setSelectedTrajectoryProtocol] = useState<MedicalProtocol>("CONSERVATIVE");
   const [activePlayerIndex, setActivePlayerIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isLoadingRoster, setIsLoadingRoster] = useState<boolean>(true);
 
-  // Roster injury list
-  const [injuredRoster, setInjuredRoster] = useState<InjuredPlayer[]>([
-    {
-      player_id: 101,
-      first_name: "Kyler",
-      last_name: "Murray",
-      position: "QB",
-      injury_type: "Right Knee - Knee Sprain",
-      injury_status: "QUESTIONABLE",
-      severity: 4,
-      weeks_remaining: 3,
-      body_part: "rightLeg",
-    },
-    {
-      player_id: 102,
-      first_name: "James",
-      last_name: "Conner",
-      position: "RB",
-      injury_type: "Left Leg - Hamstring Tightness",
-      injury_status: "OUT",
-      severity: 3,
-      weeks_remaining: 2,
-      body_part: "leftLeg",
-    },
-    {
-      player_id: 103,
-      first_name: "Hollywood",
-      last_name: "Brown",
-      position: "WR",
-      injury_type: "Neck - Cervical Strain",
-      injury_status: "ACTIVE",
-      severity: 2,
-      weeks_remaining: 1,
-      body_part: "neck",
-    },
-  ]);
+  // Live injured roster from backend
+  const [injuredRoster, setInjuredRoster] = useState<InjuredPlayer[]>([]);
+
+  // Franchise context
+  const { activeTeamId } = useTheme();
+  const currentTeamId = Number(activeTeamId) || 1;
 
   // Active player health matrix
   const [healthData, setHealthData] = useState<BodyMapHealthData>({
-    head: 95,
-    neck: 88,
-    torso: 92,
-    rightArm: 68, // Injured
-    leftArm: 98,
-    rightLeg: 94,
-    leftLeg: 82,
-    generalWear: 14,
+    head: 100,
+    neck: 100,
+    torso: 100,
+    rightArm: 100,
+    leftArm: 100,
+    rightLeg: 100,
+    leftLeg: 100,
+    generalWear: 0,
   });
 
   const [biometrics, setBiometrics] = useState<BioMetrics | null>(null);
   const [fatigue, setFatigue] = useState<FatigueState | null>(null);
 
-  const activePlayer = injuredRoster[activePlayerIndex] || injuredRoster[0];
-
-  // Fetch live player medical and biometrics when active player changes
+  // 1. Fetch live team injuries on mount and franchise change
   useEffect(() => {
     let isCancelled = false;
-    if (!activePlayer) return;
+    setIsLoadingRoster(true);
 
+    medicalApi
+      .getTeamInjuries(currentTeamId)
+      .then((data) => {
+        if (!isCancelled) {
+          setInjuredRoster(data || []);
+          setActivePlayerIndex(0);
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch live team injuries, falling back to empty roster:", err);
+        if (!isCancelled) {
+          setInjuredRoster([]);
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoadingRoster(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentTeamId]);
+
+  const activePlayer: InjuredPlayer | undefined = injuredRoster[activePlayerIndex];
+
+  // 2. Fetch live player medical and biometrics when active player changes
+  useEffect(() => {
+    let isCancelled = false;
+    if (!activePlayer) {
+      setHealthData({
+        head: 100,
+        neck: 100,
+        torso: 100,
+        rightArm: 100,
+        leftArm: 100,
+        rightLeg: 100,
+        leftLeg: 100,
+        generalWear: 0,
+      });
+      setBiometrics(null);
+      setFatigue(null);
+      setOrthopedicEval(null);
+      return;
+    }
+
+    setLoading(true);
     Promise.all([
       medicalApi.getPlayerHealth(activePlayer.player_id).catch(() => null),
       medicalApi.getPlayerBioMetrics(activePlayer.player_id).catch(() => null),
       medicalApi.getPlayerFatigue(activePlayer.player_id).catch(() => null),
+      orthopedicApi.getOrthopedicEvaluation(activePlayer.player_id).catch(() => null),
     ])
-      .then(([healthRes, bioRes, fatigueRes]) => {
+      .then(([healthRes, bioRes, fatigueRes, evalRes]) => {
         if (isCancelled) return;
         if (healthRes) {
           setHealthData({
@@ -100,6 +127,7 @@ export const MedicalCenter: React.FC = () => {
         }
         if (bioRes) setBiometrics(bioRes);
         if (fatigueRes) setFatigue(fatigueRes);
+        if (evalRes) setOrthopedicEval(evalRes);
         setLoading(false);
       })
       .catch(() => {
@@ -116,64 +144,82 @@ export const MedicalCenter: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleProtocolConfirm = async (protocol: MedicalProtocolType) => {
+  const handleProtocolConfirm = async (
+    protocol: MedicalProtocolType,
+    result?: TriageDecisionResult
+  ) => {
     if (!activePlayer || !selectedPart) return;
 
-    let weeksReduction = 1.0;
-    let newStatus: "OUT" | "DOUBTFUL" | "QUESTIONABLE" | "ACTIVE" = "OUT";
-    let integrityGain = 10;
+    if (result) {
+      // Direct live application result from backend
+      setHealthData((prev) => ({
+        ...prev,
+        [selectedPart]: result.final_integrity_forecast,
+        generalWear: Math.max(0, (prev.generalWear || 10) - 5),
+      }));
 
-    if (protocol === "PRP_THERAPY") {
-      weeksReduction = 0.7;
-      integrityGain = 20;
-    } else if (protocol === "ARTHROSCOPIC_SURGERY") {
-      weeksReduction = 0.5;
-      integrityGain = 25;
-    } else if (protocol === "RECONSTRUCTIVE_SURGERY") {
-      weeksReduction = 1.2;
-      integrityGain = 30;
-    } else if (protocol === "CORTISONE_STABILIZATION") {
-      weeksReduction = 0.0;
-      newStatus = "QUESTIONABLE";
-      integrityGain = 5;
-    }
+      setInjuredRoster((prev) =>
+        prev.map((p, idx) =>
+          idx === activePlayerIndex
+            ? {
+                ...p,
+                weeks_remaining: result.projected_recovery_weeks,
+                injury_status:
+                  protocol === "CORTISONE_STABILIZATION"
+                    ? "QUESTIONABLE"
+                    : result.projected_recovery_weeks > 0
+                    ? "OUT"
+                    : "ACTIVE",
+              }
+            : p
+        )
+      );
+    } else {
+      let weeksReduction = 1.0;
+      let newStatus: "OUT" | "DOUBTFUL" | "QUESTIONABLE" | "ACTIVE" = "OUT";
+      let integrityGain = 10;
 
-    try {
-      const treatmentMapping: TreatmentType =
-        protocol === "CORTISONE_STABILIZATION"
-          ? "PLAY_THROUGH"
-          : protocol.includes("SURGERY")
-            ? "SURGERY"
-            : "REST";
+      if (protocol === "PRP_THERAPY") {
+        weeksReduction = 0.7;
+        integrityGain = 20;
+      } else if (protocol === "ARTHROSCOPIC_SURGERY") {
+        weeksReduction = 0.5;
+        integrityGain = 25;
+      } else if (protocol === "RECONSTRUCTIVE_SURGERY") {
+        weeksReduction = 1.2;
+        integrityGain = 30;
+      } else if (protocol === "CORTISONE_STABILIZATION") {
+        weeksReduction = 0.0;
+        newStatus = "QUESTIONABLE";
+        integrityGain = 5;
+      }
 
-      await medicalApi.applyTreatment({
-        player_id: activePlayer.player_id,
-        treatment: treatmentMapping,
-      });
-    } catch {
-      console.warn(
-        "Medical API endpoint returned error or offline mode, applying optimistic update"
+      setHealthData((prev) => ({
+        ...prev,
+        [selectedPart]: Math.min(100, (prev[selectedPart] || 70) + integrityGain),
+        generalWear: Math.max(0, (prev.generalWear || 10) - 5),
+      }));
+
+      setInjuredRoster((prev) =>
+        prev.map((p, idx) =>
+          idx === activePlayerIndex
+            ? {
+                ...p,
+                weeks_remaining: Math.max(0, Math.round(p.weeks_remaining * weeksReduction)),
+                injury_status: newStatus,
+              }
+            : p
+        )
       );
     }
 
-    // Optimistic UI updates
-    setHealthData((prev) => ({
-      ...prev,
-      [selectedPart]: Math.min(100, (prev[selectedPart] || 70) + integrityGain),
-      generalWear: Math.max(0, (prev.generalWear || 10) - 5),
-    }));
-
-    setInjuredRoster((prev) =>
-      prev.map((p, idx) =>
-        idx === activePlayerIndex
-          ? {
-              ...p,
-              weeks_remaining: Math.max(0, Math.round(p.weeks_remaining * weeksReduction)),
-              injury_status: newStatus,
-            }
-          : p
-      )
-    );
+    // Refresh live roster from API to synchronize
+    try {
+      const refreshed = await medicalApi.getTeamInjuries(currentTeamId);
+      setInjuredRoster(refreshed);
+    } catch {
+      // Keep local state if refresh fails
+    }
 
     setShowModal(false);
   };
@@ -229,6 +275,10 @@ export const MedicalCenter: React.FC = () => {
     setShowTreatmentModal(false);
   };
 
+  const activePlayerName = activePlayer
+    ? `${activePlayer.first_name} ${activePlayer.last_name}`
+    : "Franchise Active Roster";
+
   return (
     <div
       data-testid="medical-center-page"
@@ -260,7 +310,8 @@ export const MedicalCenter: React.FC = () => {
                 Roster Health
               </span>
               <div className="text-sm font-bold text-emerald-400 flex items-center gap-1.5 justify-end">
-                <Activity className="w-4 h-4" /> 92% Ready
+                <Activity className="w-4 h-4" />{" "}
+                {injuredRoster.length === 0 ? "100% Ready" : `${Math.max(70, 100 - injuredRoster.length * 4)}% Ready`}
               </div>
             </div>
 
@@ -280,42 +331,51 @@ export const MedicalCenter: React.FC = () => {
           data-testid="injury-list"
           className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar"
         >
-          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider whitespace-nowrap">
+          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider whitespace-nowrap flex items-center gap-2">
             Active Roster Scans:
+            {isLoadingRoster && <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />}
           </span>
-          {injuredRoster.map((player, idx) => (
-            <button
-              key={player.player_id}
-              onClick={() => setActivePlayerIndex(idx)}
-              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all border whitespace-nowrap ${
-                activePlayerIndex === idx
-                  ? "bg-cyan-950/80 border-cyan-500 text-white shadow-lg shadow-cyan-950/50"
-                  : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/80"
-              }`}
-            >
-              <div
-                className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-[10px] ${
-                  player.injury_status === "OUT"
-                    ? "bg-red-950 text-red-400 border border-red-800"
-                    : "bg-amber-950 text-amber-400 border border-amber-800"
+
+          {injuredRoster.length === 0 ? (
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs font-mono">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              All 53 Athletes Healthy & Cleared for Competition
+            </div>
+          ) : (
+            injuredRoster.map((player, idx) => (
+              <button
+                key={player.player_id}
+                onClick={() => setActivePlayerIndex(idx)}
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all border whitespace-nowrap ${
+                  activePlayerIndex === idx
+                    ? "bg-cyan-950/80 border-cyan-500 text-white shadow-lg shadow-cyan-950/50"
+                    : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/80"
                 }`}
               >
-                {player.position}
-              </div>
-              <span>
-                {player.first_name} {player.last_name}
-              </span>
-              <span className="text-[10px] font-mono text-slate-500">
-                ({player.weeks_remaining}w)
-              </span>
-              <div className="hidden md:block ml-2 w-16">
-                <FatigueIndicator
-                  fatigue={player.severity ? player.severity * 0.15 : 0.2}
-                  showLabel={false}
-                />
-              </div>
-            </button>
-          ))}
+                <div
+                  className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-[10px] ${
+                    player.injury_status === "OUT"
+                      ? "bg-red-950 text-red-400 border border-red-800"
+                      : "bg-amber-950 text-amber-400 border border-amber-800"
+                  }`}
+                >
+                  {player.position}
+                </div>
+                <span>
+                  {player.first_name} {player.last_name}
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">
+                  ({player.weeks_remaining}w)
+                </span>
+                <div className="hidden md:block ml-2 w-16">
+                  <FatigueIndicator
+                    fatigue={player.severity ? player.severity * 0.15 : 0.2}
+                    showLabel={false}
+                  />
+                </div>
+              </button>
+            ))
+          )}
         </div>
 
         {/* Main Grid: Body Map + Biometrics + Roster Report */}
@@ -337,7 +397,7 @@ export const MedicalCenter: React.FC = () => {
               healthData={healthData}
               selectedZone={selectedPart}
               onZoneSelect={handlePartSelect}
-              playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
+              playerName={activePlayerName}
             />
           </div>
 
@@ -346,77 +406,133 @@ export const MedicalCenter: React.FC = () => {
             {/* GENESIS Biometrics Card */}
             <GenesisBiometricCard
               biometrics={biometrics}
-              playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
-              position={activePlayer.position}
+              playerName={activePlayerName}
+              position={activePlayer?.position || "ATH"}
             />
 
             {/* Fatigue & Bio-Energy Monitor */}
             <FatigueMonitor fatigue={fatigue} currentWearLevel={healthData.generalWear} />
+
+            {/* Cortisone In-Game Hazard Warning Banner */}
+            {activePlayer && (activePlayer.injury_status === "QUESTIONABLE" || orthopedicEval?.isCortisoneActive) && (
+              <div className="mb-4">
+                <CortisoneRiskBanner
+                  playerName={activePlayerName}
+                  hazardMultiplier={orthopedicEval?.cortisoneInGameHazardMultiplier || 2.5}
+                  snapsPlayed={activePlayer.severity ? activePlayer.severity * 4 : 12}
+                />
+              </div>
+            )}
 
             {/* Current Diagnosis Card */}
             <div className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl">
               <h3 className="text-sm font-bold text-white tracking-wide uppercase flex items-center gap-2 mb-3">
                 <AlertCircle className="w-4 h-4 text-amber-400" /> Active Medical Chart
               </h3>
-              <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800">
-                <div>
-                  <div className="text-xs text-slate-400 font-mono">Acute Condition</div>
-                  <div className="text-base font-bold text-slate-100 mt-0.5">
-                    {activePlayer.injury_type || "Mild Soft Tissue Fatigue"}
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 text-right">
+              {activePlayer ? (
+                <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800">
                   <div>
-                    <div className="text-[10px] text-slate-500 font-mono uppercase">Severity</div>
-                    <div className="text-sm font-bold font-mono text-amber-400">
-                      {activePlayer.severity}/10
+                    <div className="text-xs text-slate-400 font-mono">Acute Condition</div>
+                    <div className="text-base font-bold text-slate-100 mt-0.5">
+                      {activePlayer.injury_type || "Mild Soft Tissue Fatigue"}
                     </div>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-mono uppercase">Est. Out</div>
-                    <div className="text-sm font-bold font-mono text-cyan-400">
-                      {activePlayer.weeks_remaining} Weeks
+                  <div className="flex items-center gap-4 text-right">
+                    <div>
+                      <div className="text-[10px] text-slate-500 font-mono uppercase">Severity</div>
+                      <div className="text-sm font-bold font-mono text-amber-400">
+                        {activePlayer.severity}/10
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-slate-500 font-mono uppercase">Est. Out</div>
+                      <div className="text-sm font-bold font-mono text-cyan-400">
+                        {activePlayer.weeks_remaining} Weeks
+                      </div>
+                    </div>
+                    <div className="w-24">
+                      <FatigueIndicator
+                        fatigue={activePlayer.severity ? activePlayer.severity * 0.12 : 0.2}
+                        showLabel={true}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowSpecialistModal(true)}
+                        className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1.5"
+                      >
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span>2nd Opinion</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
+                          setShowModal(true);
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                      >
+                        Adjust Protocol
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
+                          setShowTreatmentModal(true);
+                        }}
+                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                      >
+                        Treatment Plan
+                      </button>
                     </div>
                   </div>
-                  <div className="w-24">
-                    <FatigueIndicator
-                      fatigue={activePlayer.severity ? activePlayer.severity * 0.12 : 0.2}
-                      showLabel={true}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
-                        setShowModal(true);
-                      }}
-                      className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
-                    >
-                      Adjust Protocol
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
-                        setShowTreatmentModal(true);
-                      }}
-                      className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
-                    >
-                      Treatment Plan
-                    </button>
-                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-xs font-mono">
+                  <span className="flex items-center gap-2 text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4" /> No active player chart required.
+                  </span>
+                  <span className="text-slate-500">100% Active Squad Availability</span>
+                </div>
+              )}
             </div>
+
+            {/* 12-Week Gompertz RTP Trajectory Graph */}
+            {orthopedicEval && orthopedicEval.trajectories && orthopedicEval.trajectories.length > 0 && (
+              <div className="mt-5">
+                <RTPTrajectoryGraph
+                  trajectories={orthopedicEval.trajectories}
+                  activeProtocol={selectedTrajectoryProtocol}
+                  onSelectProtocol={(p) => setSelectedTrajectoryProtocol(p)}
+                />
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Outside Specialist 2nd Opinion Modal */}
+        <AnimatePresence>
+          {showSpecialistModal && activePlayer && (
+            <SpecialistReferralModal
+              isOpen={showSpecialistModal}
+              playerId={activePlayer.player_id}
+              playerName={activePlayerName}
+              injuryType={activePlayer.injury_type || "Acute Musculoskeletal Trauma"}
+              onClose={() => setShowSpecialistModal(false)}
+              onConsultSuccess={() => {
+                if (activePlayer) {
+                  orthopedicApi.getOrthopedicEvaluation(activePlayer.player_id).then(setOrthopedicEval);
+                }
+              }}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Orthopedic Triage Modal */}
         <AnimatePresence>
-          {showModal && (
+          {showModal && activePlayer && (
             <OrthopedicTriageModal
               isOpen={showModal}
               playerId={activePlayer.player_id}
-              playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
+              playerName={activePlayerName}
               zoneKey={selectedPart || "rightArm"}
               zoneName={selectedPart ? selectedPart.toUpperCase() : "ANATOMICAL ZONE"}
               currentIntegrity={selectedPart ? healthData[selectedPart] : 75}
@@ -429,11 +545,11 @@ export const MedicalCenter: React.FC = () => {
 
         {/* 4-Pathway / Surgical Treatment Modal */}
         <AnimatePresence>
-          {showTreatmentModal && (
+          {showTreatmentModal && activePlayer && (
             <TreatmentModal
               isOpen={showTreatmentModal}
               playerId={activePlayer.player_id}
-              playerName={`${activePlayer.first_name} ${activePlayer.last_name}`}
+              playerName={activePlayerName}
               partName={selectedPart ? selectedPart.toUpperCase() : "ANATOMICAL ZONE"}
               currentHealth={selectedPart ? healthData[selectedPart] : 75}
               injurySeverity={activePlayer.severity}

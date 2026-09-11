@@ -122,3 +122,57 @@ export interface GenesisRevealData {
   confidence_level: number;
   scouting_accuracy: number;
 }
+
+export interface FreeAgentSigning {
+  player_id: number;
+  player_name: string;
+  position: string;
+  overall_rating: number;
+  age: number;
+  team_id: number;
+  team_name: string;
+  years: number;
+  total_salary: number;
+  aav: number;
+  guaranteed_money: number;
+  grade: string;
+  competing_offers_count: number;
+  contract_years?: number;
+  total_value?: number;
+  annual_avg?: number;
+  guaranteed?: number;
+  signing_grade?: string;
+  signing_round?: number;
+  bidding_teams_count?: number;
+}
+
+export interface FreeAgentMarketPlayer {
+  player_id: number;
+  player_name: string;
+  position: string;
+  overall_rating: number;
+  age: number;
+  projected_aav: number;
+  projected_years: number;
+  tier: string;
+  top_interested_teams: string[];
+  name?: string;
+  experience?: number;
+  projected_market_value?: number;
+}
+
+export interface FreeAgentBidRequest {
+  player_id: number;
+  team_id: number;
+  years: number;
+  total_amount: number;
+  signing_bonus: number;
+  guaranteed_amount: number;
+}
+
+export interface FreeAgentBidResponse {
+  status: string;
+  accepted: boolean;
+  message: string;
+  updated_cap_space: number;
+}
