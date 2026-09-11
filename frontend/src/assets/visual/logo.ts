@@ -311,7 +311,7 @@ export class ProceduralLogoGenerator {
     const numShapes = rngForGlobal.nextInt(2, 4);
     const shapes: ShapeDef[] = [];
     for (let i = 0; i < numShapes; i++) {
-      shapes.push(generateShape(rngForGlobal, i));
+      shapes.push(generateShape(rngForGlobal));
     }
 
     // Render SVG
