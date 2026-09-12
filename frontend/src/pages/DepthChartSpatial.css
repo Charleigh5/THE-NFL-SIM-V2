@@ -12,7 +12,13 @@
   pointer-events: none;
   z-index: 1;
   background:
-    linear-gradient(90deg, rgba(5, 10, 15, 0.78), transparent 18%, transparent 82%, rgba(5, 10, 15, 0.78)),
+    linear-gradient(
+      90deg,
+      rgba(5, 10, 15, 0.78),
+      transparent 18%,
+      transparent 82%,
+      rgba(5, 10, 15, 0.78)
+    ),
     radial-gradient(circle at 50% 18%, rgba(54, 191, 255, 0.08), transparent 44%);
 }
 
@@ -45,8 +51,11 @@
 .depth-warroom-board {
   position: relative;
   border-color: rgba(92, 208, 255, 0.18) !important;
-  background:
-    linear-gradient(180deg, rgba(10, 23, 33, 0.93), rgba(3, 10, 15, 0.96)) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 23, 33, 0.93),
+    rgba(3, 10, 15, 0.96)
+  ) !important;
   box-shadow:
     0 38px 80px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -66,8 +75,11 @@
   position: relative;
   overflow: hidden;
   border-color: rgba(109, 213, 255, 0.12) !important;
-  background:
-    linear-gradient(100deg, rgba(17, 30, 42, 0.96), rgba(7, 15, 22, 0.92)) !important;
+  background: linear-gradient(
+    100deg,
+    rgba(17, 30, 42, 0.96),
+    rgba(7, 15, 22, 0.92)
+  ) !important;
   box-shadow:
     0 8px 26px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.045);
@@ -99,8 +111,7 @@
 
 .depth-player-magnet[data-rank="1"] {
   border-color: rgba(52, 211, 153, 0.34) !important;
-  background:
-    linear-gradient(100deg, rgba(8, 45, 37, 0.72), rgba(7, 18, 25, 0.95)) !important;
+  background: linear-gradient(100deg, rgba(8, 45, 37, 0.72), rgba(7, 18, 25, 0.95)) !important;
 }
 
 .depth-drag-handle {
