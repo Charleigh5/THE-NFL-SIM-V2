@@ -917,8 +917,8 @@ export const DepthChart: React.FC = () => {
               </div>
             ) : positionPlayers.length === 0 ? (
               <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-xl text-gray-500 font-mono">
-                No eligible players are currently available for {selectedPosition}. Review the roster or
-                choose another position group.
+                No eligible players are currently available for {selectedPosition}. Review the
+                roster or choose another position group.
               </div>
             ) : (
               <Reorder.Group
