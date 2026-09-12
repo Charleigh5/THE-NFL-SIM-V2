@@ -51,11 +51,7 @@
 .depth-warroom-board {
   position: relative;
   border-color: rgba(92, 208, 255, 0.18) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 23, 33, 0.93),
-    rgba(3, 10, 15, 0.96)
-  ) !important;
+  background: linear-gradient(180deg, rgba(10, 23, 33, 0.93), rgba(3, 10, 15, 0.96)) !important;
   box-shadow:
     0 38px 80px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -75,11 +71,7 @@
   position: relative;
   overflow: hidden;
   border-color: rgba(109, 213, 255, 0.12) !important;
-  background: linear-gradient(
-    100deg,
-    rgba(17, 30, 42, 0.96),
-    rgba(7, 15, 22, 0.92)
-  ) !important;
+  background: linear-gradient(100deg, rgba(17, 30, 42, 0.96), rgba(7, 15, 22, 0.92)) !important;
   box-shadow:
     0 8px 26px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.045);
