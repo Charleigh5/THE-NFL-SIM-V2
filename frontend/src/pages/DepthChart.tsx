@@ -545,7 +545,9 @@ export const DepthChart: React.FC = () => {
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (e) {
       console.error("Failed to save depth chart:", e);
-      setSaveError("Depth chart could not be saved. Your local ordering is preserved; retry when the data service is available.");
+      setSaveError(
+        "Depth chart could not be saved. Your local ordering is preserved; retry when the data service is available."
+      );
     } finally {
       setSaving(false);
     }
@@ -610,7 +612,10 @@ export const DepthChart: React.FC = () => {
   const isDirty = Boolean(draftOrders[selectedPosition]?.length);
 
   return (
-    <SpatialSceneShell manifest={DEPTH_CHART_SCENE} className="depth-warroom-page p-4 md:p-8 text-white min-h-screen font-body relative overflow-hidden">
+    <SpatialSceneShell
+      manifest={DEPTH_CHART_SCENE}
+      className="depth-warroom-page p-4 md:p-8 text-white min-h-screen font-body relative overflow-hidden"
+    >
       {/* Background Stadium Carbon Texture */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.06),transparent_50%)] pointer-events-none" />
 
@@ -711,8 +716,8 @@ export const DepthChart: React.FC = () => {
           >
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div className="text-sm font-semibold">
-              Depth chart for <span className="font-bold text-white">{selectedPosition}</span>{" "}
-              saved successfully.
+              Depth chart for <span className="font-bold text-white">{selectedPosition}</span> saved
+              successfully.
             </div>
           </motion.div>
         )}
@@ -826,7 +831,8 @@ export const DepthChart: React.FC = () => {
               <div className="bg-white/5 border border-white/5 rounded-xl p-3">
                 <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
                 <div className="text-2xl font-black font-heading text-white mt-1">
-                  {averageGroupOvr ?? "—"} <span className="text-xs text-cyan-400 font-mono">OVR</span>
+                  {averageGroupOvr ?? "—"}{" "}
+                  <span className="text-xs text-cyan-400 font-mono">OVR</span>
                 </div>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-xl p-3">
@@ -911,7 +917,8 @@ export const DepthChart: React.FC = () => {
               </div>
             ) : positionPlayers.length === 0 ? (
               <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-xl text-gray-500 font-mono">
-                No eligible players are currently available for {selectedPosition}. Review the roster or choose another position group.
+                No eligible players are currently available for {selectedPosition}. Review the roster or
+                choose another position group.
               </div>
             ) : (
               <Reorder.Group
@@ -1025,7 +1032,9 @@ export const DepthChart: React.FC = () => {
                             </span>
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                               ACC:{" "}
-                              <strong className="text-cyan-400">{player.acceleration ?? "—"}</strong>
+                              <strong className="text-cyan-400">
+                                {player.acceleration ?? "—"}
+                              </strong>
                             </span>
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                               STR:{" "}
