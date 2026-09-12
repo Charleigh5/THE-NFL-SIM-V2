@@ -859,7 +859,7 @@ export const DepthChart: React.FC = () => {
                 <div className="text-xs text-gray-300 mt-1 flex items-center gap-3">
                   <span>OVR {starterPlayer.overall_rating ?? "—"}</span>
                   <span>•</span>
-                  <span>{starterPlayer.college || "NFL Veteran"}</span>
+                  <span>{starterPlayer.college || "—"}</span>
                   <span>•</span>
                   <span>{starterPlayer.experience} Yrs</span>
                 </div>
@@ -938,17 +938,14 @@ export const DepthChart: React.FC = () => {
                         const draggingId = draggingIdRef.current;
                         if (!draggingId || draggingId === player.id) return;
 
-                        setPositionPlayers((prev) => {
-                          const fromIndex = prev.findIndex((p) => p.id === draggingId);
-                          const toIndex = prev.findIndex((p) => p.id === player.id);
-                          if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex)
-                            return prev;
+                        const fromIndex = positionPlayers.findIndex((p) => p.id === draggingId);
+                        const toIndex = positionPlayers.findIndex((p) => p.id === player.id);
+                        if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
 
-                          const next = [...prev];
-                          const [moved] = next.splice(fromIndex, 1);
-                          next.splice(toIndex, 0, moved);
-                          return next;
-                        });
+                        const next = [...positionPlayers];
+                        const [moved] = next.splice(fromIndex, 1);
+                        next.splice(toIndex, 0, moved);
+                        commitDraftOrder(next);
                       }}
                       className={`depth-player-magnet bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/10 border transition-all duration-200 group ${
                         index === 0 ? "border-emerald-500/30 bg-emerald-950/10" : "border-white/5"
@@ -1014,11 +1011,11 @@ export const DepthChart: React.FC = () => {
                             <span>
                               {player.height
                                 ? `${Math.floor(player.height / 12)}'${player.height % 12}"`
-                                : "6'1\""}
+                                : "—"}
                             </span>
                             <span>{player.weight ? `${player.weight} lbs` : "—"}</span>
                             <span>•</span>
-                            <span>{player.college || "NCAA"}</span>
+                            <span>{player.college || "—"}</span>
                           </div>
 
                           {/* Attribute Chips */}
