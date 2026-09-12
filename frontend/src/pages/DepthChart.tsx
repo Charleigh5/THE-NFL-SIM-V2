@@ -10,6 +10,9 @@ import { ChemistryBadge } from "../components/ui/ChemistryBadge";
 import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import { PlayerAvatar } from "../components/ui/PlayerAvatar";
 import { soundEffects } from "../services/soundEffects";
+import { SpatialSceneShell } from "../components/spatial/SpatialSceneShell";
+import { DEPTH_CHART_SCENE } from "../components/spatial/spatialSceneManifest";
+import "./DepthChartSpatial.css";
 
 // ============================================================================
 // NCAA & MADDEN UNIT / POSITION TAXONOMY
@@ -251,6 +254,8 @@ export const DepthChart: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [draftOrders, setDraftOrders] = useState<Record<string, number[]>>({});
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
 
   // Manual reorder fallback for Playwright E2E and touch devices
@@ -400,11 +405,24 @@ export const DepthChart: React.FC = () => {
       const bRank = b.depth_chart_rank ?? 999;
       if (aRank !== bRank) return aRank - bRank;
 
-      return (b.overall_rating || 50) - (a.overall_rating || 50);
+      return (b.overall_rating ?? -1) - (a.overall_rating ?? -1);
     });
 
+    const draftOrder = draftOrders[selectedPosition];
+    if (draftOrder && draftOrder.length > 0) {
+      const draftRank = new Map(draftOrder.map((id, index) => [id, index]));
+      matched.sort((a, b) => {
+        const aIndex = draftRank.get(a.id);
+        const bIndex = draftRank.get(b.id);
+        if (aIndex === undefined && bIndex === undefined) return 0;
+        if (aIndex === undefined) return 1;
+        if (bIndex === undefined) return -1;
+        return aIndex - bIndex;
+      });
+    }
+
     setPositionPlayers(matched);
-  }, [roster, selectedPosition, currentPosConfig]);
+  }, [roster, selectedPosition, currentPosConfig, draftOrders]);
 
   // Active Team Object
   const currentTeam = useMemo(() => {
@@ -426,6 +444,9 @@ export const DepthChart: React.FC = () => {
   // Handle Team Switch
   const handleTeamChange = (newTeamId: number) => {
     soundEffects.playWhistle();
+    setDraftOrders({});
+    setSaveError(null);
+    setSaveSuccess(false);
     setSelectedTeamId(newTeamId);
     localStorage.setItem("selectedTeamId", newTeamId.toString());
     setUserTeam(newTeamId);
@@ -437,8 +458,18 @@ export const DepthChart: React.FC = () => {
   };
 
   // Reorder Handlers
+  const commitDraftOrder = (nextOrder: Player[]) => {
+    setPositionPlayers(nextOrder);
+    setDraftOrders((previous) => ({
+      ...previous,
+      [selectedPosition]: nextOrder.map((player) => player.id),
+    }));
+    setSaveError(null);
+    setSaveSuccess(false);
+  };
+
   const handleReorder = (newOrder: Player[]) => {
-    setPositionPlayers(newOrder);
+    commitDraftOrder(newOrder);
   };
 
   const promotePlayer = (index: number) => {
@@ -447,7 +478,7 @@ export const DepthChart: React.FC = () => {
     const next = [...positionPlayers];
     const [item] = next.splice(index, 1);
     next.splice(index - 1, 0, item);
-    setPositionPlayers(next);
+    commitDraftOrder(next);
   };
 
   const demotePlayer = (index: number) => {
@@ -456,15 +487,15 @@ export const DepthChart: React.FC = () => {
     const next = [...positionPlayers];
     const [item] = next.splice(index, 1);
     next.splice(index + 1, 0, item);
-    setPositionPlayers(next);
+    commitDraftOrder(next);
   };
 
   const autoReorderByOVR = () => {
     soundEffects.playSnap();
     const sorted = [...positionPlayers].sort(
-      (a, b) => (b.overall_rating || 50) - (a.overall_rating || 50)
+      (a, b) => (b.overall_rating ?? -1) - (a.overall_rating ?? -1)
     );
-    setPositionPlayers(sorted);
+    commitDraftOrder(sorted);
   };
 
   const handleReset = async () => {
@@ -473,6 +504,13 @@ export const DepthChart: React.FC = () => {
     try {
       const data = await api.getTeamRoster(selectedTeamId);
       setRoster(data);
+      setDraftOrders((previous) => {
+        const next = { ...previous };
+        delete next[selectedPosition];
+        return next;
+      });
+      setSaveError(null);
+      setSaveSuccess(false);
     } catch (e) {
       console.error("Failed to reset roster:", e);
     } finally {
@@ -482,6 +520,7 @@ export const DepthChart: React.FC = () => {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(null);
     soundEffects.playCrowdRoar();
     try {
       const playerIds = positionPlayers.map((p) => p.id);
@@ -496,19 +535,27 @@ export const DepthChart: React.FC = () => {
         return p;
       });
       setRoster(updatedRoster);
+      setDraftOrders((previous) => {
+        const next = { ...previous };
+        delete next[selectedPosition];
+        return next;
+      });
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (e) {
       console.error("Failed to save depth chart:", e);
-      alert("Failed to save depth chart.");
+      setSaveError("Depth chart could not be saved. Your local ordering is preserved; retry when the data service is available.");
     } finally {
       setSaving(false);
     }
   };
 
   // Helper for OVR Badge color tiers
-  const getOvrTierClass = (ovr: number) => {
+  const getOvrTierClass = (ovr: number | null | undefined) => {
+    if (typeof ovr !== "number") {
+      return "bg-slate-950 text-gray-400 border-slate-700";
+    }
     if (ovr >= 99) {
       return "bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-lg shadow-amber-500/50";
     }
@@ -551,17 +598,27 @@ export const DepthChart: React.FC = () => {
 
   // Group stats
   const averageGroupOvr = useMemo(() => {
-    if (positionPlayers.length === 0) return 0;
-    const sum = positionPlayers.reduce((acc, p) => acc + (p.overall_rating || 50), 0);
-    return Math.round(sum / positionPlayers.length);
+    const knownRatings = positionPlayers
+      .map((player) => player.overall_rating)
+      .filter((rating): rating is number => typeof rating === "number");
+    if (knownRatings.length === 0) return null;
+    const sum = knownRatings.reduce((total, rating) => total + rating, 0);
+    return Math.round(sum / knownRatings.length);
   }, [positionPlayers]);
 
   const starterPlayer = positionPlayers[0];
+  const isDirty = Boolean(draftOrders[selectedPosition]?.length);
 
   return (
-    <div className="p-4 md:p-8 text-white min-h-screen bg-broadcast-dark font-body relative overflow-hidden">
+    <SpatialSceneShell manifest={DEPTH_CHART_SCENE} className="depth-warroom-page p-4 md:p-8 text-white min-h-screen font-body relative overflow-hidden">
       {/* Background Stadium Carbon Texture */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.06),transparent_50%)] pointer-events-none" />
+
+      <div className="relative z-10 mb-4">
+        <span className="depth-scene-kicker">
+          SCN-005 // Magnetic War Room // Production plate NEEDS_ASSET
+        </span>
+      </div>
 
       {/* Top Header: Franchise Command & NCAA/Madden Banner */}
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 pb-6 border-b border-white/10">
@@ -631,7 +688,7 @@ export const DepthChart: React.FC = () => {
 
             <button
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || !isDirty}
               className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white text-xs font-heading font-black tracking-wider uppercase disabled:opacity-50 transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
@@ -648,13 +705,29 @@ export const DepthChart: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            role="status"
+            aria-live="polite"
             className="mb-6 p-4 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 flex items-center gap-3 backdrop-blur-md shadow-lg shadow-emerald-950/50"
           >
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div className="text-sm font-semibold">
               Depth chart for <span className="font-bold text-white">{selectedPosition}</span>{" "}
-              successfully updated and synced across game sim engines!
+              saved successfully.
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {saveError && (
+          <motion.div
+            role="alert"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="depth-save-error relative z-10 mb-6 rounded-xl p-4 text-sm font-semibold"
+          >
+            {saveError}
           </motion.div>
         )}
       </AnimatePresence>
@@ -667,6 +740,7 @@ export const DepthChart: React.FC = () => {
             return (
               <button
                 key={tab.id}
+                aria-pressed={isActive}
                 onClick={() => {
                   soundEffects.playSnap();
                   setActiveUnit(tab.id);
@@ -700,6 +774,8 @@ export const DepthChart: React.FC = () => {
             return (
               <button
                 key={pos.code}
+                data-testid={`position-tab-${pos.code}`}
+                aria-pressed={isSelected}
                 onClick={() => {
                   soundEffects.playSnap();
                   setSelectedPosition(pos.code);
@@ -750,7 +826,7 @@ export const DepthChart: React.FC = () => {
               <div className="bg-white/5 border border-white/5 rounded-xl p-3">
                 <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
                 <div className="text-2xl font-black font-heading text-white mt-1">
-                  {averageGroupOvr} <span className="text-xs text-cyan-400 font-mono">OVR</span>
+                  {averageGroupOvr ?? "—"} <span className="text-xs text-cyan-400 font-mono">OVR</span>
                 </div>
               </div>
               <div className="bg-white/5 border border-white/5 rounded-xl p-3">
@@ -781,7 +857,7 @@ export const DepthChart: React.FC = () => {
                   {starterPlayer.first_name} {starterPlayer.last_name}
                 </div>
                 <div className="text-xs text-gray-300 mt-1 flex items-center gap-3">
-                  <span>OVR {starterPlayer.overall_rating}</span>
+                  <span>OVR {starterPlayer.overall_rating ?? "—"}</span>
                   <span>•</span>
                   <span>{starterPlayer.college || "NFL Veteran"}</span>
                   <span>•</span>
@@ -809,7 +885,7 @@ export const DepthChart: React.FC = () => {
 
         {/* Right Column: Interactive Reorderable Depth List (8 Cols) */}
         <div className="lg:col-span-8">
-          <div className="bg-black/40 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
+          <div className="depth-warroom-board bg-black/40 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
               <div>
                 <h2 className="text-xl font-heading font-black text-white tracking-wide uppercase">
@@ -820,8 +896,11 @@ export const DepthChart: React.FC = () => {
                 </p>
               </div>
 
-              <div className="text-xs font-mono text-gray-400">
-                {positionPlayers.length} Athletes Loaded
+              <div className="flex items-center gap-3">
+                {isDirty && <span className="depth-dirty-badge">Unsaved order</span>}
+                <div className="text-xs font-mono text-gray-400">
+                  {positionPlayers.length} Athletes Loaded
+                </div>
               </div>
             </div>
 
@@ -832,8 +911,7 @@ export const DepthChart: React.FC = () => {
               </div>
             ) : positionPlayers.length === 0 ? (
               <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-xl text-gray-500 font-mono">
-                No players currently assigned to {selectedPosition}. Use "+ Add Athlete" to assign
-                players from your 53-man roster.
+                No eligible players are currently available for {selectedPosition}. Review the roster or choose another position group.
               </div>
             ) : (
               <Reorder.Group
@@ -845,7 +923,7 @@ export const DepthChart: React.FC = () => {
               >
                 {positionPlayers.map((player, index) => {
                   const rankBadge = getRankBadge(index);
-                  const ovrClass = getOvrTierClass(player.overall_rating || 50);
+                  const ovrClass = getOvrTierClass(player.overall_rating);
 
                   return (
                     <Reorder.Item
@@ -853,11 +931,8 @@ export const DepthChart: React.FC = () => {
                       key={player.id}
                       value={player}
                       dragListener={false}
-                      style={{ touchAction: "none" }}
-                      onPointerDown={() => {
-                        isPointerDownRef.current = true;
-                        draggingIdRef.current = player.id;
-                      }}
+                      data-testid={`depth-player-${player.id}`}
+                      data-rank={index + 1}
                       onPointerEnter={() => {
                         if (!isPointerDownRef.current) return;
                         const draggingId = draggingIdRef.current;
@@ -875,7 +950,7 @@ export const DepthChart: React.FC = () => {
                           return next;
                         });
                       }}
-                      className={`bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-grab active:cursor-grabbing hover:bg-white/10 border transition-all duration-200 group ${
+                      className={`depth-player-magnet bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/10 border transition-all duration-200 group ${
                         index === 0 ? "border-emerald-500/30 bg-emerald-950/10" : "border-white/5"
                       }`}
                     >
@@ -910,7 +985,7 @@ export const DepthChart: React.FC = () => {
                           className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center border font-heading font-black flex-shrink-0 ${ovrClass}`}
                         >
                           <span className="text-lg leading-none">
-                            {player.overall_rating || 50}
+                            {player.overall_rating ?? "—"}
                           </span>
                           <span className="text-[9px] font-mono tracking-tighter opacity-80 uppercase">
                             OVR
@@ -941,7 +1016,7 @@ export const DepthChart: React.FC = () => {
                                 ? `${Math.floor(player.height / 12)}'${player.height % 12}"`
                                 : "6'1\""}
                             </span>
-                            <span>{player.weight ? `${player.weight} lbs` : "215 lbs"}</span>
+                            <span>{player.weight ? `${player.weight} lbs` : "—"}</span>
                             <span>•</span>
                             <span>{player.college || "NCAA"}</span>
                           </div>
@@ -949,19 +1024,19 @@ export const DepthChart: React.FC = () => {
                           {/* Attribute Chips */}
                           <div className="flex items-center gap-2 mt-2">
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
-                              SPD: <strong className="text-cyan-400">{player.speed || 80}</strong>
+                              SPD: <strong className="text-cyan-400">{player.speed ?? "—"}</strong>
                             </span>
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                               ACC:{" "}
-                              <strong className="text-cyan-400">{player.acceleration || 80}</strong>
+                              <strong className="text-cyan-400">{player.acceleration ?? "—"}</strong>
                             </span>
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                               STR:{" "}
-                              <strong className="text-cyan-400">{player.strength || 75}</strong>
+                              <strong className="text-cyan-400">{player.strength ?? "—"}</strong>
                             </span>
                             <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                               AWR:{" "}
-                              <strong className="text-cyan-400">{player.awareness || 78}</strong>
+                              <strong className="text-cyan-400">{player.awareness ?? "—"}</strong>
                             </span>
                           </div>
                         </div>
@@ -978,6 +1053,7 @@ export const DepthChart: React.FC = () => {
                               promotePlayer(index);
                             }}
                             disabled={index === 0}
+                            aria-label={`Promote ${player.first_name} ${player.last_name}`}
                             className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded disabled:opacity-20 transition-colors"
                             title="Promote player in depth chart"
                           >
@@ -990,6 +1066,7 @@ export const DepthChart: React.FC = () => {
                               demotePlayer(index);
                             }}
                             disabled={index === positionPlayers.length - 1}
+                            aria-label={`Demote ${player.first_name} ${player.last_name}`}
                             className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded disabled:opacity-20 transition-colors"
                             title="Demote player in depth chart"
                           >
@@ -1004,14 +1081,25 @@ export const DepthChart: React.FC = () => {
                             e.stopPropagation();
                             setSelectedPlayerId(player.id);
                           }}
+                          aria-label={`Open dossier for ${player.first_name} ${player.last_name}`}
                           className="px-3 py-1.5 rounded-lg bg-cyan-950/80 border border-cyan-700 text-cyan-300 hover:text-white hover:bg-cyan-800 text-xs font-mono font-semibold transition-all shadow-sm"
                           title="Inspect Detailed Player Dossier"
                         >
                           Dossier
                         </button>
 
-                        {/* Drag Handle Icon */}
-                        <div className="text-white/20 group-hover:text-white/60 cursor-grab p-1">
+                        {/* Dedicated drag handle prevents dossier/action clicks from starting a reorder. */}
+                        <button
+                          type="button"
+                          className="depth-drag-handle"
+                          data-testid={`depth-drag-handle-${player.id}`}
+                          aria-label={`Drag ${player.first_name} ${player.last_name} to reorder depth chart`}
+                          onPointerDown={(event) => {
+                            event.stopPropagation();
+                            isPointerDownRef.current = true;
+                            draggingIdRef.current = player.id;
+                          }}
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="18"
@@ -1022,6 +1110,7 @@ export const DepthChart: React.FC = () => {
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
+                            aria-hidden="true"
                           >
                             <circle cx="9" cy="12" r="1" />
                             <circle cx="9" cy="5" r="1" />
@@ -1030,7 +1119,7 @@ export const DepthChart: React.FC = () => {
                             <circle cx="15" cy="5" r="1" />
                             <circle cx="15" cy="19" r="1" />
                           </svg>
-                        </div>
+                        </button>
                       </div>
                     </Reorder.Item>
                   );
@@ -1048,7 +1137,7 @@ export const DepthChart: React.FC = () => {
           onClose={() => setSelectedPlayerId(null)}
         />
       )}
-    </div>
+    </SpatialSceneShell>
   );
 };
 
