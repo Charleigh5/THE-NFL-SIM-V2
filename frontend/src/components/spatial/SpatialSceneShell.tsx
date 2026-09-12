@@ -7,6 +7,7 @@ import styles from "./SpatialSceneShell.module.css";
 interface SpatialSceneShellProps {
   manifest: SpatialSceneManifest;
   className?: string;
+  testId?: string;
   children: React.ReactNode;
 }
 
@@ -17,7 +18,12 @@ interface SpatialSceneShellProps {
  * atmosphere, and a stable interaction plane without adding another permanent
  * WebGL canvas on top of the app-wide Three.js/weather layers.
  */
-export function SpatialSceneShell({ manifest, className, children }: SpatialSceneShellProps) {
+export function SpatialSceneShell({
+  manifest,
+  className,
+  testId = "spatial-scene",
+  children,
+}: SpatialSceneShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const pendingRef = useRef({ x: 0, y: 0 });
@@ -26,7 +32,7 @@ export function SpatialSceneShell({ manifest, className, children }: SpatialScen
   const isAutomated =
     typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
 
-  const motionDisabled = Boolean(shouldReduceMotion || isAutomated);
+  const motionDisabled = Boolean(shouldReduceMotion);
 
   useEffect(() => {
     return () => {
@@ -78,7 +84,7 @@ export function SpatialSceneShell({ manifest, className, children }: SpatialScen
     <div
       ref={rootRef}
       className={clsx(styles.scene, className)}
-      data-testid="depth-chart-scene"
+      data-testid={testId}
       data-scene-id={manifest.id}
       data-render-mode={manifest.renderMode}
       data-asset-status={manifest.assetStatus}
