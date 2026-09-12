@@ -177,8 +177,11 @@ test.describe("Depth Chart Flow", () => {
   });
 
   test("honors reduced motion for the spatial scene shell", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/depth-chart");
+    await expect(page.getByTestId("depth-chart-scene")).toHaveAttribute("data-motion", "full");
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.reload();
 
     await expect(page.getByTestId("depth-chart-scene")).toHaveAttribute("data-motion", "reduced");
   });
