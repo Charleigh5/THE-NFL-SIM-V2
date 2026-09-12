@@ -25,44 +25,44 @@ const MainLayout = () => {
 
   return (
     <MotionConfig reducedMotion="user">
-    <div className="min-h-screen bg-broadcast-black text-white selection:bg-brand selection:text-white">
-      {/* Global environmental layers are route-governed so indoor spatial scenes do not stack canvases/effects. */}
-      {scenePolicy.globalStadiumBackdrop && <ThreeStadiumBackdrop />}
-      {scenePolicy.weatherFx && <DynamicWeatherFXOverlay />}
+      <div className="min-h-screen bg-broadcast-black text-white selection:bg-brand selection:text-white">
+        {/* Global environmental layers are route-governed so indoor spatial scenes do not stack canvases/effects. */}
+        {scenePolicy.globalStadiumBackdrop && <ThreeStadiumBackdrop />}
+        {scenePolicy.weatherFx && <DynamicWeatherFXOverlay />}
 
-      <Navigation />
+        <Navigation />
 
-      {/* Main Content Area - Shifted for fixed nav */}
-      <main className="md:ml-64 relative min-h-screen overflow-x-hidden" role="main">
-        {/* Broadcast Background Elements */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-          {/* Omni-present stadium lights glow */}
-          <div className="absolute top-[-20%] left-[20%] w-[500px] h-[500px] bg-brand/20 blur-[120px] rounded-full mix-blend-screen" />
-          <div className="absolute bottom-[-20%] right-[10%] w-[600px] h-[600px] bg-blue-900/10 blur-[100px] rounded-full mix-blend-screen" />
-        </div>
+        {/* Main Content Area - Shifted for fixed nav */}
+        <main className="md:ml-64 relative min-h-screen overflow-x-hidden" role="main">
+          {/* Broadcast Background Elements */}
+          <div className="fixed inset-0 pointer-events-none z-0">
+            {/* Omni-present stadium lights glow */}
+            <div className="absolute top-[-20%] left-[20%] w-[500px] h-[500px] bg-brand/20 blur-[120px] rounded-full mix-blend-screen" />
+            <div className="absolute bottom-[-20%] right-[10%] w-[600px] h-[600px] bg-blue-900/10 blur-[100px] rounded-full mix-blend-screen" />
+          </div>
 
-        <div className="relative z-10 p-8">
-          <PageTransition>
-            <Outlet />
-          </PageTransition>
-        </div>
-      </main>
+          <div className="relative z-10 p-8">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </div>
+        </main>
 
-      {/* Indoor scene routes can suppress the global environmental console. */}
-      {scenePolicy.weatherHud && <WeatherControlHUD />}
+        {/* Indoor scene routes can suppress the global environmental console. */}
+        {scenePolicy.weatherHud && <WeatherControlHUD />}
 
-      {activeNotification && (
-        <TraitNotification
-          traitName={activeNotification.traitName}
-          playerName={activeNotification.playerName}
-          type={activeNotification.type}
-          onDismiss={() => setActiveNotification(null)}
-        />
-      )}
+        {activeNotification && (
+          <TraitNotification
+            traitName={activeNotification.traitName}
+            playerName={activeNotification.playerName}
+            type={activeNotification.type}
+            onDismiss={() => setActiveNotification(null)}
+          />
+        )}
 
-      <FeedbackWidget currentPage={currentPage} />
-      <SoundtrackPlayer />
-    </div>
+        <FeedbackWidget currentPage={currentPage} />
+        <SoundtrackPlayer />
+      </div>
     </MotionConfig>
   );
 };
