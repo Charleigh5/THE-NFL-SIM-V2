@@ -614,6 +614,7 @@ export const DepthChart: React.FC = () => {
   return (
     <SpatialSceneShell
       manifest={DEPTH_CHART_SCENE}
+      testId="depth-chart-scene"
       className="depth-warroom-page p-4 md:p-8 text-white min-h-screen font-body relative overflow-hidden"
     >
       {/* Background Stadium Carbon Texture */}
