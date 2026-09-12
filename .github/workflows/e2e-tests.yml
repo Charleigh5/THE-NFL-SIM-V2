@@ -38,6 +38,15 @@ jobs:
       - name: Run E2E tests
         run: cd frontend && npm run test:e2e
 
+      - name: Upload Depth Chart spatial proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: depth-chart-spatial-proof
+          path: frontend/test-results/**/depth-chart-war-room.png
+          retention-days: 3
+          if-no-files-found: ignore
+
       - name: Prepare bounded E2E failure artifact
         if: failure()
         id: prepare-e2e-artifact
