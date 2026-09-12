@@ -1,0 +1,185 @@
+.depth-warroom-page {
+  position: relative;
+  min-height: 100vh;
+  color: white;
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+
+.depth-warroom-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 10, 15, 0.78),
+      transparent 18%,
+      transparent 82%,
+      rgba(5, 10, 15, 0.78)
+    ),
+    radial-gradient(circle at 50% 18%, rgba(54, 191, 255, 0.08), transparent 44%);
+}
+
+.depth-scene-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(91, 207, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(3, 12, 19, 0.72);
+  box-shadow: inset 0 0 18px rgba(32, 178, 255, 0.05);
+  color: rgb(137 221 255);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.depth-scene-kicker::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgb(34 211 238);
+  box-shadow: 0 0 13px rgba(34, 211, 238, 0.75);
+}
+
+.depth-warroom-board {
+  position: relative;
+  border-color: rgba(92, 208, 255, 0.18) !important;
+  background: linear-gradient(180deg, rgba(10, 23, 33, 0.93), rgba(3, 10, 15, 0.96)) !important;
+  box-shadow:
+    0 38px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 60px rgba(28, 177, 243, 0.025) !important;
+}
+
+.depth-warroom-board::after {
+  content: "";
+  position: absolute;
+  inset: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  border-radius: 0.75rem;
+  pointer-events: none;
+}
+
+.depth-player-magnet {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(109, 213, 255, 0.12) !important;
+  background: linear-gradient(100deg, rgba(17, 30, 42, 0.96), rgba(7, 15, 22, 0.92)) !important;
+  box-shadow:
+    0 8px 26px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.depth-player-magnet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0 35%,
+    rgba(133, 225, 255, 0.08) 49%,
+    transparent 63%
+  );
+  transform: translateX(-45%);
+  transition:
+    opacity 160ms ease,
+    transform 320ms ease;
+}
+
+.depth-player-magnet:hover::before,
+.depth-player-magnet:focus-within::before {
+  opacity: 1;
+  transform: translateX(35%);
+}
+
+.depth-player-magnet[data-rank="1"] {
+  border-color: rgba(52, 211, 153, 0.34) !important;
+  background: linear-gradient(100deg, rgba(8, 45, 37, 0.72), rgba(7, 18, 25, 0.95)) !important;
+}
+
+.depth-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.38);
+  touch-action: none;
+  cursor: grab;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.depth-drag-handle:hover,
+.depth-drag-handle:focus-visible {
+  border-color: rgba(73, 207, 255, 0.5);
+  background: rgba(0, 174, 239, 0.12);
+  color: rgb(165 230 255);
+  outline: none;
+}
+
+.depth-drag-handle:active {
+  cursor: grabbing;
+}
+
+.depth-dirty-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  background: rgba(120, 53, 15, 0.2);
+  color: rgb(253 230 138);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.depth-dirty-badge::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: rgb(251 191 36);
+  box-shadow: 0 0 9px rgba(251, 191, 36, 0.55);
+}
+
+.depth-save-error {
+  border: 1px solid rgba(248, 113, 113, 0.55);
+  background: rgba(69, 10, 10, 0.82);
+  color: rgb(254 202 202);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-player-magnet::before {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .depth-warroom-page {
+    overflow-x: clip;
+  }
+
+  .depth-player-magnet {
+    border-radius: 0.85rem;
+  }
+}
