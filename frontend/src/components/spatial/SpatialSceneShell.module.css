@@ -27,7 +27,11 @@
   height: 34%;
   transform: translate3d(calc(var(--scene-x) * -0.2), calc(var(--scene-y) * -0.2), 0);
   background:
-    repeating-linear-gradient(90deg, transparent 0 7%, rgba(255, 255, 255, 0.025) 7.2% 7.45%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 7%,
+      rgba(255, 255, 255, 0.025) 7.2% 7.45%
+    ),
     radial-gradient(ellipse at center, rgba(45, 182, 255, 0.24), transparent 68%);
   filter: blur(0.2px);
 }
@@ -37,13 +41,12 @@
   inset: 10% 4% 8%;
   transform:
     translate3d(calc(var(--scene-x) * -0.4), calc(var(--scene-y) * -0.32), 0)
-    perspective(1200px)
-    rotateX(1.2deg);
+    perspective(1200px) rotateX(1.2deg);
   border: 1px solid rgba(115, 211, 255, 0.16);
   border-radius: 30px;
   background:
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px) 0 0 / 52px 52px,
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px) 0 0 / 52px 52px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0 / 52px 52px,
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px) 0 0 / 52px 52px,
     linear-gradient(145deg, rgba(8, 19, 29, 0.92), rgba(2, 7, 11, 0.97));
   box-shadow:
     0 70px 130px rgba(0, 0, 0, 0.72),
@@ -57,8 +60,12 @@
   bottom: 0;
   width: 16%;
   opacity: 0.72;
-  background:
-    linear-gradient(90deg, rgba(0,0,0,0.95), rgba(12,22,31,0.72) 58%, transparent);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.95),
+    rgba(12, 22, 31, 0.72) 58%,
+    transparent
+  );
 }
 
 .leftPillar {
@@ -79,22 +86,25 @@
   height: 68%;
   transform:
     translate3d(calc(var(--scene-x) * 0.7), calc(var(--scene-y) * 0.36), 0)
-    perspective(700px)
-    rotateX(66deg);
+    perspective(700px) rotateX(66deg);
   transform-origin: center top;
   opacity: 0.23;
   background:
-    repeating-linear-gradient(90deg, transparent 0 7.8%, rgba(46, 188, 255, 0.18) 8% 8.2%),
-    repeating-linear-gradient(0deg, transparent 0 62px, rgba(255,255,255,0.08) 63px 64px);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 80%);
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 7.8%,
+      rgba(46, 188, 255, 0.18) 8% 8.2%
+    ),
+    repeating-linear-gradient(0deg, transparent 0 62px, rgba(255, 255, 255, 0.08) 63px 64px);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 80%);
 }
 
 .vignette {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at center, transparent 45%, rgba(0,0,0,0.68) 100%),
-    linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.52));
+    radial-gradient(circle at center, transparent 45%, rgba(0, 0, 0, 0.68) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.52));
 }
 
 .content {
