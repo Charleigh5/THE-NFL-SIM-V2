@@ -29,9 +29,6 @@ export function SpatialSceneShell({
   const pendingRef = useRef({ x: 0, y: 0 });
   const shouldReduceMotion = useReducedMotion();
 
-  const isAutomated =
-    typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
-
   const motionDisabled = Boolean(shouldReduceMotion);
 
   useEffect(() => {
