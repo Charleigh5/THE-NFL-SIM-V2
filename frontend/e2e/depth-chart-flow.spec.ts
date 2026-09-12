@@ -162,14 +162,46 @@ test.describe("Depth Chart Flow", () => {
     await expect(rbPlayers.nth(1)).toContainText("Keaontay Ingram");
   });
 
+  test("preserves an unsaved position draft when switching away and back", async ({ page }) => {
+    await page.goto("/depth-chart");
+
+    await page.getByRole("button", { name: "Demote Kyler Murray" }).click();
+    await expect(page.getByTestId("depth-player-2")).toHaveAttribute("data-rank", "1");
+    await expect(page.getByText("Unsaved order")).toBeVisible();
+
+    await page.getByTestId("position-tab-RB").click();
+    await page.getByTestId("position-tab-QB").click();
+
+    await expect(page.getByTestId("depth-player-2")).toHaveAttribute("data-rank", "1");
+    await expect(page.getByText("Unsaved order")).toBeVisible();
+  });
+
+  test("honors reduced motion for the spatial scene shell", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/depth-chart");
+
+    await expect(page.getByTestId("depth-chart-scene")).toHaveAttribute("data-motion", "reduced");
+  });
+
+  test("captures the spatial proof slice as a Playwright artifact", async ({ page }, testInfo) => {
+    await page.goto("/depth-chart");
+    await expect(page.getByTestId("depth-chart-scene")).toHaveAttribute("data-scene-id", "SCN-005");
+    await expect(page.getByRole("heading", { name: /depth chart editor/i })).toBeVisible();
+
+    await page.screenshot({
+      path: testInfo.outputPath("depth-chart-war-room.png"),
+      fullPage: true,
+    });
+  });
+
   test("should reorder players and save changes", async ({ page }) => {
     await page.goto("/depth-chart");
 
-    // Drag and drop Kyler Murray (index 0) to position 1 (after David Blough)
-    const kyler = page.locator(".Reorder_Group > div").nth(0);
-    const david = page.locator(".Reorder_Group > div").nth(1);
+    // Drag only from the dedicated handle so action buttons cannot accidentally reorder.
+    const kylerHandle = page.getByTestId("depth-drag-handle-1");
+    const david = page.getByTestId("depth-player-2");
 
-    await kyler.hover();
+    await kylerHandle.hover();
     await page.mouse.down();
     await david.hover();
     await page.mouse.up();
@@ -191,10 +223,7 @@ test.describe("Depth Chart Flow", () => {
     expect(postData.position).toBe("QB");
     expect(postData.player_ids).toEqual([2, 1]); // Expect new order
 
-    // Verify alert message
-    page.on("dialog", async (dialog) => {
-      expect(dialog.message()).toContain("Depth chart saved successfully!");
-      await dialog.accept();
-    });
+    // Save confirmation is an accessible in-page status, not a browser dialog.
+    await expect(page.getByRole("status")).toContainText(/saved successfully/i);
   });
 });
