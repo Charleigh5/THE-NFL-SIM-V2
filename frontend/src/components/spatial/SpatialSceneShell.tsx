@@ -17,19 +17,14 @@ interface SpatialSceneShellProps {
  * atmosphere, and a stable interaction plane without adding another permanent
  * WebGL canvas on top of the app-wide Three.js/weather layers.
  */
-export function SpatialSceneShell({
-  manifest,
-  className,
-  children,
-}: SpatialSceneShellProps) {
+export function SpatialSceneShell({ manifest, className, children }: SpatialSceneShellProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const pendingRef = useRef({ x: 0, y: 0 });
   const shouldReduceMotion = useReducedMotion();
 
   const isAutomated =
-    typeof navigator !== "undefined" &&
-    (navigator as unknown as { webdriver?: boolean }).webdriver;
+    typeof navigator !== "undefined" && (navigator as unknown as { webdriver?: boolean }).webdriver;
 
   const motionDisabled = Boolean(shouldReduceMotion || isAutomated);
 
