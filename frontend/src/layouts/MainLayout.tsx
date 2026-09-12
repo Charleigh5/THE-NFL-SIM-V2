@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MotionConfig } from "framer-motion";
 import { Outlet, useLocation } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import FeedbackWidget from "../components/common/FeedbackWidget";
@@ -8,6 +9,7 @@ import TraitNotification from "../components/ui/TraitNotification";
 import { DynamicWeatherFXOverlay } from "../components/weather/DynamicWeatherFXOverlay";
 import { ThreeStadiumBackdrop } from "../components/weather/ThreeStadiumBackdrop";
 import { WeatherControlHUD } from "../components/weather/WeatherControlHUD";
+import { getSpatialRoutePolicy } from "../components/spatial/spatialSceneManifest";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -19,14 +21,14 @@ const MainLayout = () => {
 
   // Extract page name from pathname
   const currentPage = location.pathname.split("/").filter(Boolean).pop() || "Dashboard";
+  const scenePolicy = getSpatialRoutePolicy(location.pathname);
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-broadcast-black text-white selection:bg-brand selection:text-white">
-      {/* 3D Photorealistic Stadium Backdrop */}
-      <ThreeStadiumBackdrop />
-
-      {/* AAAA Dynamic Weather Particle & Snow/Rain Overlay */}
-      <DynamicWeatherFXOverlay />
+      {/* Global environmental layers are route-governed so indoor spatial scenes do not stack canvases/effects. */}
+      {scenePolicy.globalStadiumBackdrop && <ThreeStadiumBackdrop />}
+      {scenePolicy.weatherFx && <DynamicWeatherFXOverlay />}
 
       <Navigation />
 
@@ -46,8 +48,8 @@ const MainLayout = () => {
         </div>
       </main>
 
-      {/* Floating Interactive Environmental Weather Console */}
-      <WeatherControlHUD />
+      {/* Indoor scene routes can suppress the global environmental console. */}
+      {scenePolicy.weatherHud && <WeatherControlHUD />}
 
       {activeNotification && (
         <TraitNotification
@@ -61,6 +63,7 @@ const MainLayout = () => {
       <FeedbackWidget currentPage={currentPage} />
       <SoundtrackPlayer />
     </div>
+    </MotionConfig>
   );
 };
 
