@@ -57,7 +57,9 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs">
             <span className="text-slate-300 font-medium">Active Playing Years</span>
-            <span className="font-bold text-cyan-400">{realYears} {realYears === 1 ? "Year" : "Years"}</span>
+            <span className="font-bold text-cyan-400">
+              {realYears} {realYears === 1 ? "Year" : "Years"}
+            </span>
           </div>
           <input
             type="range"
@@ -118,11 +120,15 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
         </div>
         <div>
           <span className="text-[10px] text-slate-400 block uppercase">Annual Bonus Cap Hit</span>
-          <span className="font-bold text-emerald-400">${(annualProration / 1_000_000).toFixed(2)}M/yr</span>
+          <span className="font-bold text-emerald-400">
+            ${(annualProration / 1_000_000).toFixed(2)}M/yr
+          </span>
         </div>
         <div>
           <span className="text-[10px] text-slate-400 block uppercase">Dead Cap Acceleration</span>
-          <span className={`font-bold ${unamortizedAtVoid > 0 ? "text-rose-400" : "text-slate-400"}`}>
+          <span
+            className={`font-bold ${unamortizedAtVoid > 0 ? "text-rose-400" : "text-slate-400"}`}
+          >
             {unamortizedAtVoid > 0 ? `$${(unamortizedAtVoid / 1_000_000).toFixed(2)}M` : "$0.00M"}
           </span>
         </div>
@@ -134,7 +140,9 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
           <div className="flex items-center gap-2">
             <Split className="w-4 h-4 text-purple-400" />
             <div>
-              <span className="text-xs font-semibold text-slate-200 block">Post-June 1st Designation</span>
+              <span className="text-xs font-semibold text-slate-200 block">
+                Post-June 1st Designation
+              </span>
               <span className="text-[10px] text-slate-400 block">
                 Splits dead money acceleration 50/50 over 2 league years
               </span>

@@ -112,9 +112,13 @@ export async function getPhysicsConstants(): Promise<PhysicsConstants> {
 /**
  * Get 60Hz SIMD Vectorized Physics Kernel benchmark metrics.
  */
-export async function getVectorizedBenchmark(frames: number = 300): Promise<import("../types/physics").VectorizedBenchmarkDTO> {
+export async function getVectorizedBenchmark(
+  frames: number = 300
+): Promise<import("../types/physics").VectorizedBenchmarkDTO> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/physics/vectorized-benchmark?frames=${frames}`);
+    const response = await fetch(
+      `${API_BASE_URL}/api/physics/vectorized-benchmark?frames=${frames}`
+    );
     if (!response.ok) {
       throw new Error(`Failed to fetch benchmark: ${response.statusText}`);
     }

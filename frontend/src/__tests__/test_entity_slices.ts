@@ -18,8 +18,10 @@ console.log("===================================================================
 
 // Helper to create mock store state container
 function createTestStore() {
-  let state: EntityState<FreeAgentMarketPlayer, number> =
-    createInitialEntityState<FreeAgentMarketPlayer, number>();
+  let state: EntityState<FreeAgentMarketPlayer, number> = createInitialEntityState<
+    FreeAgentMarketPlayer,
+    number
+  >();
 
   const actions = createEntitySliceActions<FreeAgentMarketPlayer, number>((updater) => {
     state = {
@@ -168,7 +170,9 @@ console.log("\nTest 4: UpdateOne & Referential Stability of Siblings...");
     kelceRefAfter,
     "CRITICAL: Sibling entity reference MUST remain strictly identical (prev === next) to prevent re-render cascades!"
   );
-  console.log("  [PASS] Referential stability verified: Sibling player reference remained 100% identical.");
+  console.log(
+    "  [PASS] Referential stability verified: Sibling player reference remained 100% identical."
+  );
 }
 
 // 5. RemoveOne & Selection Cleanup
@@ -197,18 +201,70 @@ console.log("\nTest 5: RemoveOne & Selection Cleanup Invariants...");
   assert.equal(s.allIds.length, 0);
   assert.equal(s.byId[401], undefined);
   assert.equal(s.selectedId, null, "selectedId must reset to null when selected player is removed");
-  console.log("  [PASS] RemoveOne purged entity and reset active selection without dangling pointer.");
+  console.log(
+    "  [PASS] RemoveOne purged entity and reset active selection without dangling pointer."
+  );
 }
 
 // 6. Deterministic Filter Engine
 console.log("\nTest 6: High-Performance Filter Engine (computeFilteredPlayers)...");
 {
   const players: FreeAgentMarketPlayer[] = [
-    { player_id: 1, player_name: "Lamar Jackson", position: "QB", overall_rating: 97, age: 27, projected_aav: 52000000, projected_years: 5, tier: "Tier 1", top_interested_teams: ["BAL"] },
-    { player_id: 2, player_name: "Christian McCaffrey", position: "RB", overall_rating: 98, age: 28, projected_aav: 16000000, projected_years: 3, tier: "Tier 1", top_interested_teams: ["SF"] },
-    { player_id: 3, player_name: "Fred Warner", position: "MLB", overall_rating: 96, age: 28, projected_aav: 20000000, projected_years: 4, tier: "Tier 1", top_interested_teams: ["SF"] },
-    { player_id: 4, player_name: "Justin Tucker", position: "K", overall_rating: 91, age: 35, projected_aav: 6000000, projected_years: 2, tier: "Tier 2", top_interested_teams: ["BAL"] },
-    { player_id: 5, player_name: "Sam Darnold", position: "QB", overall_rating: 81, age: 27, projected_aav: 10000000, projected_years: 1, tier: "Tier 3", top_interested_teams: ["MIN"] },
+    {
+      player_id: 1,
+      player_name: "Lamar Jackson",
+      position: "QB",
+      overall_rating: 97,
+      age: 27,
+      projected_aav: 52000000,
+      projected_years: 5,
+      tier: "Tier 1",
+      top_interested_teams: ["BAL"],
+    },
+    {
+      player_id: 2,
+      player_name: "Christian McCaffrey",
+      position: "RB",
+      overall_rating: 98,
+      age: 28,
+      projected_aav: 16000000,
+      projected_years: 3,
+      tier: "Tier 1",
+      top_interested_teams: ["SF"],
+    },
+    {
+      player_id: 3,
+      player_name: "Fred Warner",
+      position: "MLB",
+      overall_rating: 96,
+      age: 28,
+      projected_aav: 20000000,
+      projected_years: 4,
+      tier: "Tier 1",
+      top_interested_teams: ["SF"],
+    },
+    {
+      player_id: 4,
+      player_name: "Justin Tucker",
+      position: "K",
+      overall_rating: 91,
+      age: 35,
+      projected_aav: 6000000,
+      projected_years: 2,
+      tier: "Tier 2",
+      top_interested_teams: ["BAL"],
+    },
+    {
+      player_id: 5,
+      player_name: "Sam Darnold",
+      position: "QB",
+      overall_rating: 81,
+      age: 27,
+      projected_aav: 10000000,
+      projected_years: 1,
+      tier: "Tier 3",
+      top_interested_teams: ["MIN"],
+    },
   ];
 
   const byId = Object.fromEntries(players.map((p) => [p.player_id, p]));
@@ -242,7 +298,22 @@ console.log("\nTest 7: Large-Scale Benchmark (2,500 Entities)...");
 {
   const store = createTestStore();
   const largeRoster: FreeAgentMarketPlayer[] = [];
-  const positions = ["QB", "RB", "WR", "TE", "OT", "OG", "C", "DE", "DT", "LB", "CB", "S", "K", "P"];
+  const positions = [
+    "QB",
+    "RB",
+    "WR",
+    "TE",
+    "OT",
+    "OG",
+    "C",
+    "DE",
+    "DT",
+    "LB",
+    "CB",
+    "S",
+    "K",
+    "P",
+  ];
 
   for (let i = 1; i <= 2500; i++) {
     const pos = positions[i % positions.length];
@@ -280,8 +351,12 @@ console.log("\nTest 7: Large-Scale Benchmark (2,500 Entities)...");
   const updateTimeMs = performance.now() - startUpdates;
 
   console.log(`  -> Ingestion Latency (2,500 entities): ${ingestTimeMs.toFixed(3)} ms`);
-  console.log(`  -> Filter Execution Latency (2,500 entities): ${filterTimeMs.toFixed(3)} ms (matched ${filterResult.filteredIds.length})`);
-  console.log(`  -> 100 Atomic Dictionary Updates: ${updateTimeMs.toFixed(3)} ms (${(updateTimeMs / 100).toFixed(4)} ms/op)`);
+  console.log(
+    `  -> Filter Execution Latency (2,500 entities): ${filterTimeMs.toFixed(3)} ms (matched ${filterResult.filteredIds.length})`
+  );
+  console.log(
+    `  -> 100 Atomic Dictionary Updates: ${updateTimeMs.toFixed(3)} ms (${(updateTimeMs / 100).toFixed(4)} ms/op)`
+  );
 
   assert.ok(ingestTimeMs < 50.0, "Ingest of 2,500 entities must complete under 50ms");
   assert.ok(filterTimeMs < 10.0, "Filter over 2,500 entities must complete under 10ms");

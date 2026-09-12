@@ -9,7 +9,44 @@ import type {
   MultiYearLedgerStatementResponse,
   LedgerSimulateRequest,
   LedgerSimulateResponse,
+  CapAccountType,
+  CapTransactionType,
 } from "../types/capLedger";
+
+interface ApiLedgerEntryDTO {
+  id?: number;
+  account_id: number;
+  account_type: CapAccountType;
+  amount: number;
+}
+
+interface ApiLedgerTransactionDTO {
+  id: string;
+  team_id: number;
+  player_id?: number;
+  player_name?: string;
+  transaction_type: CapTransactionType;
+  league_year: number;
+  timestamp: string;
+  description: string;
+  is_committed: boolean;
+  entries: ApiLedgerEntryDTO[];
+  net_cap_delta: number;
+}
+
+interface ApiTeamLedgerStatementDTO {
+  team_id: number;
+  team_name: string;
+  league_year: number;
+  total_salary_cap: number;
+  available_cap_room: number;
+  active_salary_liability: number;
+  dead_money_liability: number;
+  unamortized_bonus_pool: number;
+  is_balanced: boolean;
+  proof_of_balance_delta: number;
+  transactions?: ApiLedgerTransactionDTO[];
+}
 
 const API_BASE = "http://localhost:8000/api/cap-ledger";
 
@@ -39,7 +76,7 @@ export const capLedgerApi = {
           unamortizedBonusPool: data.unamortized_bonus_pool,
           isBalanced: data.is_balanced,
           proofOfBalanceDelta: data.proof_of_balance_delta,
-          transactions: (data.transactions || []).map((tx: any) => ({
+          transactions: (data.transactions || []).map((tx: ApiLedgerTransactionDTO) => ({
             id: tx.id,
             teamId: tx.team_id,
             playerId: tx.player_id,
@@ -49,7 +86,7 @@ export const capLedgerApi = {
             timestamp: tx.timestamp,
             description: tx.description,
             isCommitted: tx.is_committed,
-            entries: (tx.entries || []).map((e: any) => ({
+            entries: (tx.entries || []).map((e: ApiLedgerEntryDTO) => ({
               id: e.id,
               accountId: e.account_id,
               accountType: e.account_type,
@@ -84,9 +121,7 @@ export const capLedgerApi = {
           timestamp: new Date().toISOString(),
           description: "2026 Hard Cap Baseline Established under CBA Article 13",
           isCommitted: true,
-          entries: [
-            { id: 1, accountId: 1, accountType: "CAP_ROOM", amount: BASE_SALARY_CAP },
-          ],
+          entries: [{ id: 1, accountId: 1, accountType: "CAP_ROOM", amount: BASE_SALARY_CAP }],
           netCapDelta: BASE_SALARY_CAP,
         },
         {
@@ -126,7 +161,7 @@ export const capLedgerApi = {
           teamName: data.team_name,
           baseLeagueYear: data.base_league_year,
           isFullyCompliant: data.is_fully_compliant,
-          yearlyStatements: (data.yearly_statements || []).map((s: any) => ({
+          yearlyStatements: (data.yearly_statements || []).map((s: ApiTeamLedgerStatementDTO) => ({
             teamId: s.team_id,
             teamName: s.team_name,
             leagueYear: s.league_year,
@@ -207,7 +242,7 @@ export const capLedgerApi = {
           netCapDelta: data.net_cap_delta,
           isBalanced: data.is_balanced,
           proofOfBalanceDelta: data.proof_of_balance_delta,
-          stagedEntries: (data.staged_entries || []).map((e: any) => ({
+          stagedEntries: (data.staged_entries || []).map((e: ApiLedgerEntryDTO) => ({
             accountId: e.account_id,
             accountType: e.account_type,
             amount: e.amount,

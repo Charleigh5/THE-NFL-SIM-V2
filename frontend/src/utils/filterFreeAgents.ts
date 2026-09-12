@@ -40,23 +40,18 @@ export function computeFilteredPlayers(
     // Position Filter
     if (positionFilter === "OFF") {
       if (
-        !["QB", "RB", "WR", "TE", "OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(
-          player.position
-        )
+        !["QB", "RB", "WR", "TE", "OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(player.position)
       )
         continue;
     } else if (positionFilter === "DEF") {
       if (
-        !["DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "EDGE"].includes(
-          player.position
-        )
+        !["DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "EDGE"].includes(player.position)
       )
         continue;
     } else if (positionFilter === "ST") {
       if (!["K", "P", "LS"].includes(player.position)) continue;
     } else if (positionFilter === "OL") {
-      if (!["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(player.position))
-        continue;
+      if (!["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(player.position)) continue;
     } else if (positionFilter === "DL") {
       if (!["DE", "DT", "EDGE"].includes(player.position)) continue;
     } else if (positionFilter === "DB") {

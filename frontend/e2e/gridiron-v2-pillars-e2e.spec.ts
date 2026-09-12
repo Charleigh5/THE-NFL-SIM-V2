@@ -23,11 +23,41 @@ const mockLedgerStatement = {
   discrepancy: 0,
   formula: "Hard Cap ($255.40M) = Room ($210.40M) + Active ($35.00M) + Dead Money ($0.00M)",
   accounts: [
-    { account_id: 1, account_code: "1000", account_name: "TOTAL_LEAGUE_CAP", balance: 255400000, normal_side: "CREDIT" },
-    { account_id: 2, account_code: "2000", account_name: "AVAILABLE_CAP_ROOM", balance: 210400000, normal_side: "DEBIT" },
-    { account_id: 3, account_code: "2100", account_name: "ACTIVE_SALARY_LIABILITY", balance: 35000000, normal_side: "CREDIT" },
-    { account_id: 4, account_code: "2200", account_name: "UNAMORTIZED_BONUS_POOL", balance: 32000000, normal_side: "DEBIT" },
-    { account_id: 5, account_code: "2300", account_name: "DEAD_MONEY_LIABILITY", balance: 0, normal_side: "CREDIT" },
+    {
+      account_id: 1,
+      account_code: "1000",
+      account_name: "TOTAL_LEAGUE_CAP",
+      balance: 255400000,
+      normal_side: "CREDIT",
+    },
+    {
+      account_id: 2,
+      account_code: "2000",
+      account_name: "AVAILABLE_CAP_ROOM",
+      balance: 210400000,
+      normal_side: "DEBIT",
+    },
+    {
+      account_id: 3,
+      account_code: "2100",
+      account_name: "ACTIVE_SALARY_LIABILITY",
+      balance: 35000000,
+      normal_side: "CREDIT",
+    },
+    {
+      account_id: 4,
+      account_code: "2200",
+      account_name: "UNAMORTIZED_BONUS_POOL",
+      balance: 32000000,
+      normal_side: "DEBIT",
+    },
+    {
+      account_id: 5,
+      account_code: "2300",
+      account_name: "DEAD_MONEY_LIABILITY",
+      balance: 0,
+      normal_side: "CREDIT",
+    },
   ],
 };
 
@@ -166,8 +196,18 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
               timestamp: "2026-09-09T00:50:41",
               net_cap_delta: 35000000,
               entries: [
-                { account_code: "2000", account_name: "AVAILABLE_CAP_ROOM", entry_type: "CREDIT", amount: 35000000 },
-                { account_code: "2100", account_name: "ACTIVE_SALARY_LIABILITY", entry_type: "DEBIT", amount: 35000000 },
+                {
+                  account_code: "2000",
+                  account_name: "AVAILABLE_CAP_ROOM",
+                  entry_type: "CREDIT",
+                  amount: 35000000,
+                },
+                {
+                  account_code: "2100",
+                  account_name: "ACTIVE_SALARY_LIABILITY",
+                  entry_type: "DEBIT",
+                  amount: 35000000,
+                },
               ],
             },
           ],
@@ -180,8 +220,22 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
         json: {
           team_id: 1,
           projections: [
-            { season: 2024, projected_cap: 255400000, committed_active: 35000000, dead_money: 0, projected_space: 210400000, is_balanced: true },
-            { season: 2025, projected_cap: 260000000, committed_active: 42000000, dead_money: 0, projected_space: 218000000, is_balanced: true },
+            {
+              season: 2024,
+              projected_cap: 255400000,
+              committed_active: 35000000,
+              dead_money: 0,
+              projected_space: 210400000,
+              is_balanced: true,
+            },
+            {
+              season: 2025,
+              projected_cap: 260000000,
+              committed_active: 42000000,
+              dead_money: 0,
+              projected_space: 218000000,
+              is_balanced: true,
+            },
           ],
         },
       });
@@ -190,11 +244,16 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await page.goto("/free-agency");
 
     // 1. Verify Header & Institutional Cap Bar
-    await expect(page.locator("text=Double-Entry Capology Ledger").first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("text=Double-Entry Capology Ledger").first()).toBeVisible({
+      timeout: 10000,
+    });
     await expect(page.locator("text=Zero-Sum Active").first()).toBeVisible();
 
     // 2. Open Double-Entry Audit Modal
-    const auditBtn = page.locator('[data-testid="open-cap-ledger-audit-btn"]').or(page.getByRole("button", { name: /Audit Ledger & Statement|Audit Statement/i })).first();
+    const auditBtn = page
+      .locator('[data-testid="open-cap-ledger-audit-btn"]')
+      .or(page.getByRole("button", { name: /Audit Ledger & Statement|Audit Statement/i }))
+      .first();
     await expect(auditBtn).toBeVisible();
     await auditBtn.click();
 
@@ -221,18 +280,20 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     }
 
     // 4. Test Opening Bidding Modal
-    const bidBtn = page.getByRole("button", { name: /Bid \/ Proposal|Submit Bid|Make Offer/i }).first();
+    const bidBtn = page
+      .getByRole("button", { name: /Bid \/ Proposal|Submit Bid|Make Offer/i })
+      .first();
     if (await bidBtn.isVisible()) {
       await bidBtn.click();
-      await expect(page.getByRole("heading", { name: /Contract Proposal|Contract Offer|Submit Bid/i })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: /Contract Proposal|Contract Offer|Submit Bid/i })
+      ).toBeVisible();
       // Dismiss modal
       await page.keyboard.press("Escape");
     }
   });
 
-  test("User Flow 2: Live Sim 60Hz SIMD Physics, Spatial Audio & Baldwin HUD", async ({
-    page,
-  }) => {
+  test("User Flow 2: Live Sim 60Hz SIMD Physics, Spatial Audio & Baldwin HUD", async ({ page }) => {
     // Mock Telemetry and Baldwin APIs
     await page.route("**/api/hud/telemetry/fourth-down", async (route) => {
       await route.fulfill({ json: mockFourthDownTelemetry });
@@ -255,7 +316,9 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await page.goto("/live-sim");
 
     // 1. Verify Header
-    await expect(page.locator("h1", { hasText: "Game Day Simulation" })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("h1", { hasText: "Game Day Simulation" })).toBeVisible({
+      timeout: 10000,
+    });
 
     // 2. Verify 60Hz SIMD Physics Debug Overlay
     await expect(page.locator("text=60HZ SIMD PHYSICS")).toBeVisible();
@@ -269,7 +332,9 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await audioBtn.click();
 
     // Verify Modal Headings & Controls
-    await expect(page.getByRole("heading", { name: /Spatial Audio & Soundscape Settings/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Spatial Audio & Soundscape Settings/i })
+    ).toBeVisible();
     await expect(page.locator("text=2D SPATIAL STEREO PANNING")).toBeVisible();
     await expect(page.locator("text=ADAPTIVE EPA CROWD ENGINE")).toBeVisible();
     await expect(page.locator("text=SOUND EFFECTS & CADENCE")).toBeVisible();
@@ -288,7 +353,9 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
 
     // Close Modal via DONE button
     await page.getByRole("button", { name: /Done/i }).click();
-    await expect(page.getByRole("heading", { name: /Spatial Audio & Soundscape Settings/i })).not.toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Spatial Audio & Soundscape Settings/i })
+    ).not.toBeVisible();
 
     // 4. Test 4th-Down Baldwin Simulation Trigger
     const sim4thBtn = page.getByRole("button", { name: /Simulate 4th & 1/i });
@@ -296,7 +363,9 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await sim4thBtn.click();
 
     // Verify Baldwin decision pill or modal mounts
-    await expect(page.locator("text=GO FOR IT").or(page.locator("text=4TH DOWN DECISION"))).toBeVisible({ timeout: 5000 });
+    await expect(
+      page.locator("text=GO FOR IT").or(page.locator("text=4TH DOWN DECISION"))
+    ).toBeVisible({ timeout: 5000 });
   });
 
   test("User Flow 3: Medical Center Orthopedic Gompertz Curves and Triage", async ({ page }) => {
@@ -322,7 +391,9 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await page.goto("/medical-center");
 
     // Verify Medical Center header
-    await expect(page.locator("h1", { hasText: /Medical Center|Orthopedic Triage/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("h1", { hasText: /Medical Center|Orthopedic Triage/i })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("User Flow 4: Locker Room Social Topology and Culture Feed", async ({ page }) => {
@@ -332,11 +403,23 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
           team_id: 1,
           nodes: [
             { id: 101, name: "Jordan Love", tension: 25.0, status: "STABLE", role: "CAPTAIN" },
-            { id: 102, name: "Jaire Alexander", tension: 78.5, status: "AGITATED", role: "VETERAN" },
+            {
+              id: 102,
+              name: "Jaire Alexander",
+              tension: 78.5,
+              status: "AGITATED",
+              role: "VETERAN",
+            },
           ],
           edges: [{ source: 101, target: 102, relationship: "FRICTION", weight: 0.8 }],
           holdouts: [],
-          media_leaks: [{ id: 1, headline: "Tension reported in Green Bay locker room", reporter: "Adam Schefter" }],
+          media_leaks: [
+            {
+              id: 1,
+              headline: "Tension reported in Green Bay locker room",
+              reporter: "Adam Schefter",
+            },
+          ],
         },
       });
     });
@@ -344,6 +427,8 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
     await page.goto("/locker-room");
 
     // Verify Locker Room header
-    await expect(page.locator("h1", { hasText: /Locker Room|Culture/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("h1", { hasText: /Locker Room|Culture/i })).toBeVisible({
+      timeout: 10000,
+    });
   });
 });

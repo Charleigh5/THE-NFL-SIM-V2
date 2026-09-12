@@ -75,11 +75,13 @@ export const MomentumFlowRibbon: React.FC<MomentumFlowRibbonProps> = ({
   const points = nodes.map((n, i) => `${getX(i)},${getY(n.homeWinProb)}`).join(" ");
 
   // Generate fill paths: Home Area (above 50%) and Away Area (below 50%)
-  const homeAreaPath = `M ${getX(0)},${midY} ` +
+  const homeAreaPath =
+    `M ${getX(0)},${midY} ` +
     nodes.map((n, i) => `L ${getX(i)},${Math.min(midY, getY(n.homeWinProb))}`).join(" ") +
     ` L ${getX(nodes.length - 1)},${midY} Z`;
 
-  const awayAreaPath = `M ${getX(0)},${midY} ` +
+  const awayAreaPath =
+    `M ${getX(0)},${midY} ` +
     nodes.map((n, i) => `L ${getX(i)},${Math.max(midY, getY(n.homeWinProb))}`).join(" ") +
     ` L ${getX(nodes.length - 1)},${midY} Z`;
 
@@ -97,7 +99,8 @@ export const MomentumFlowRibbon: React.FC<MomentumFlowRibbonProps> = ({
             Win Probability & EPA Momentum Ribbon
           </span>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold">
-            {homeAbbr} {(data.currentHomeWp * 100).toFixed(1)}% vs {awayAbbr} {(data.currentAwayWp * 100).toFixed(1)}%
+            {homeAbbr} {(data.currentHomeWp * 100).toFixed(1)}% vs {awayAbbr}{" "}
+            {(data.currentAwayWp * 100).toFixed(1)}%
           </span>
         </div>
 

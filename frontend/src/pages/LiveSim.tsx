@@ -18,7 +18,17 @@ import { LiveGameVisualizer } from "../components/3d/LiveGameVisualizer";
 import { ReplayScrubber } from "../components/game/ReplayScrubber";
 import { PlayAnimator } from "../components/3d/PlayAnimator";
 import { soundEffects } from "../services/soundEffects";
-import { Play, Pause, FastForward, Activity, BarChart2, Layers, Tv, Sparkles, Radio } from "lucide-react";
+import {
+  Play,
+  Pause,
+  FastForward,
+  Activity,
+  BarChart2,
+  Layers,
+  Tv,
+  Sparkles,
+  Radio,
+} from "lucide-react";
 import { PlayCallingHUD } from "../components/game/PlayCallingHUD";
 import type { PlayCategory } from "../components/game/PlayCallingHUD";
 import { FourthDownModal } from "../components/game/FourthDownModal";
@@ -42,7 +52,9 @@ export const LiveSim = () => {
   const [lastFourthDownSeen, setLastFourthDownSeen] = useState<number | null>(null);
   const [hudConceptIndex, setHudConceptIndex] = useState<number | null>(null);
   const [audibleCategory, setAudibleCategory] = useState<PlayCategory | null>(null);
-  const [fourthDownTelemetry, setFourthDownTelemetry] = useState<FourthDownTelemetryPayload | null>(null);
+  const [fourthDownTelemetry, setFourthDownTelemetry] = useState<FourthDownTelemetryPayload | null>(
+    null
+  );
   const [showFloatingPill, setShowFloatingPill] = useState<boolean>(true);
   const [showAudioModal, setShowAudioModal] = useState<boolean>(false);
   const lastPlayIdRef = useRef<string | number | null>(null);
@@ -390,7 +402,9 @@ export const LiveSim = () => {
             <button
               onClick={() => {
                 soundEffects.playSnap();
-                useSimulationStore.getState().updateGameState({ down: 4, distance: 1, yardLine: 58 });
+                useSimulationStore
+                  .getState()
+                  .updateGameState({ down: 4, distance: 1, yardLine: 58 });
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-all"
             >
@@ -555,10 +569,7 @@ export const LiveSim = () => {
         }}
       />
       {/* Spatial Audio Settings Modal */}
-      <SpatialAudioSettingsModal
-        isOpen={showAudioModal}
-        onClose={() => setShowAudioModal(false)}
-      />
+      <SpatialAudioSettingsModal isOpen={showAudioModal} onClose={() => setShowAudioModal(false)} />
     </div>
   );
 };

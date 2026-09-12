@@ -21,7 +21,9 @@ function assert(condition: boolean, message: string): void {
 
 function assertEquals<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
-    throw new Error(`[EQUALS_FAILED] ${message} - Expected: ${String(expected)}, Received: ${String(actual)}`);
+    throw new Error(
+      `[EQUALS_FAILED] ${message} - Expected: ${String(expected)}, Received: ${String(actual)}`
+    );
   }
 }
 
@@ -84,7 +86,12 @@ console.log("\n[TEST 2] Kinetic Collision Momentum & Frequency Scaling Invariant
     lightHit.subFreq > heavyHit.subFreq,
     `Sub-bass freq must decrease with momentum (Light: ${lightHit.subFreq}Hz vs Heavy: ${heavyHit.subFreq}Hz)`
   );
-  assertInRange(heavyHit.subFreq, 95, 115, "Heavy hit sub-bass must reach deep register (95-115Hz)");
+  assertInRange(
+    heavyHit.subFreq,
+    95,
+    115,
+    "Heavy hit sub-bass must reach deep register (95-115Hz)"
+  );
 
   // Snap transient frequency must increase with higher momentum (sharper pad clack)
   assert(
@@ -123,8 +130,16 @@ console.log("\n[TEST 3] EPA-Driven Resonant Crowd Reaction Classifier");
 
   // Neutral / standard gain plays
   assertEquals(classifyCrowdReaction(0.0), "MURMUR", "0.0 EPA must trigger MURMUR");
-  assertEquals(classifyCrowdReaction(0.8), "MURMUR", "Standard 4-yd run (+0.8 EPA) must trigger MURMUR");
-  assertEquals(classifyCrowdReaction(-0.6), "MURMUR", "Incomplete pass (-0.6 EPA) must trigger MURMUR");
+  assertEquals(
+    classifyCrowdReaction(0.8),
+    "MURMUR",
+    "Standard 4-yd run (+0.8 EPA) must trigger MURMUR"
+  );
+  assertEquals(
+    classifyCrowdReaction(-0.6),
+    "MURMUR",
+    "Incomplete pass (-0.6 EPA) must trigger MURMUR"
+  );
 
   console.log("  ✅ 3.1 Positive explosive EPA swings (>= 1.5) map strictly to ROAR.");
   console.log("  ✅ 3.2 Negative turnover EPA swings (<= -1.5) map strictly to GROAN.");
@@ -198,7 +213,11 @@ console.log("\n[TEST 5] Headless / Node Safety & Method Invocation Invariants");
     console.error(err);
   }
 
-  assertEquals(threwError, false, "All audio methods must run safely in headless / SSR environments without throwing");
+  assertEquals(
+    threwError,
+    false,
+    "All audio methods must run safely in headless / SSR environments without throwing"
+  );
   console.log("  ✅ 5.1 Zero unhandled exceptions during headless method execution.");
   console.log("  ✅ 5.2 Formant cadence calls ('hut', 'audible', 'set') execute safely.");
 }
@@ -210,7 +229,7 @@ console.log("\n[TEST 6] Micro-Benchmark Performance Stress Test");
   const start = performance.now();
 
   for (let i = 0; i < iterations; i++) {
-    const x = (i % 120);
+    const x = i % 120;
     calculateSpatialPan(x);
     calculateHitIntensity(400 + (i % 2000), 0.5);
     classifyCrowdReaction((i % 10) - 5);
@@ -222,7 +241,10 @@ console.log("\n[TEST 6] Micro-Benchmark Performance Stress Test");
   console.log(`  ⏱️  5,000 full DSP mathematical evaluations: ${durationMs.toFixed(3)} ms`);
   console.log(`  ⚡ Latency per mathematical derivation: ${usPerOp.toFixed(3)} μs`);
 
-  assert(durationMs < 10.0, `5,000 DSP derivations must execute in < 10ms (Actual: ${durationMs.toFixed(3)}ms)`);
+  assert(
+    durationMs < 10.0,
+    `5,000 DSP derivations must execute in < 10ms (Actual: ${durationMs.toFixed(3)}ms)`
+  );
   console.log("  ✅ 6.1 Performance budget satisfied (<0.002ms per derivation).");
 }
 

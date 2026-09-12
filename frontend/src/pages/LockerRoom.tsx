@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Flame, RefreshCw, MessageSquare, AlertTriangle, Network, Radio, Gauge } from "lucide-react";
+import {
+  Flame,
+  RefreshCw,
+  MessageSquare,
+  AlertTriangle,
+  Network,
+  Radio,
+  Gauge,
+} from "lucide-react";
 import { LockerRoomTelemetry } from "../components/society/LockerRoomTelemetry";
 import { ClosedDoorCouncilModal } from "../components/society/ClosedDoorCouncilModal";
 import { LockerRoomGraphCanvas } from "../components/social/LockerRoomGraphCanvas";
@@ -13,10 +21,7 @@ import type {
   LockerRoomResolutionRequest,
   LockerRoomResolutionResponse,
 } from "../types/society";
-import type {
-  LockerRoomSocialNetworkResponse,
-  HoldoutAction,
-} from "../types/socialGraph";
+import type { LockerRoomSocialNetworkResponse, HoldoutAction } from "../types/socialGraph";
 
 export const LockerRoom: React.FC = () => {
   const storedTeamId = localStorage.getItem("selectedTeamId");
@@ -53,8 +58,7 @@ export const LockerRoom: React.FC = () => {
       // Compute average tension from roster if tension_score present
       if (rosterData.length > 0) {
         const scores = rosterData.map(
-          (p) =>
-            ((p as unknown as { tension_score?: number }).tension_score ?? 35.0)
+          (p) => (p as unknown as { tension_score?: number }).tension_score ?? 35.0
         );
         const avg = scores.reduce((sum, val) => sum + val, 0) / scores.length;
         setTeamTension(avg);
@@ -105,7 +109,9 @@ export const LockerRoom: React.FC = () => {
         headline: "Locker Room Friction: Disgruntled Receiver Questions Target Share",
         dialogue: [
           {
-            speaker_name: roster[0] ? `${roster[0].first_name} ${roster[0].last_name}` : "Star Player",
+            speaker_name: roster[0]
+              ? `${roster[0].first_name} ${roster[0].last_name}`
+              : "Star Player",
             speaker_role: "disgruntled_star",
             speaker_id: roster[0]?.id || 1,
             text: "Coach, I didn't work all offseason to run decoy clear-outs. I need the ball in my hands to win games, and two targets in the second half isn't going to cut it.",
@@ -117,13 +123,17 @@ export const LockerRoom: React.FC = () => {
             text: "We called the plays that gave us the best look against their Cover-3. When you start freelancing routes, it breaks the entire progression for the quarterback.",
           },
           {
-            speaker_name: roster[1] ? `${roster[1].first_name} ${roster[1].last_name}` : "Team Captain",
+            speaker_name: roster[1]
+              ? `${roster[1].first_name} ${roster[1].last_name}`
+              : "Team Captain",
             speaker_role: "team_captain",
             speaker_id: roster[1]?.id || 2,
             text: "Look, we all want the rock, but film doesn't lie. When we execute the concept as installed, the offense moves. Let's keep the focus between these four walls.",
           },
           {
-            speaker_name: roster[0] ? `${roster[0].first_name} ${roster[0].last_name}` : "Star Player",
+            speaker_name: roster[0]
+              ? `${roster[0].first_name} ${roster[0].last_name}`
+              : "Star Player",
             speaker_role: "disgruntled_star",
             speaker_id: roster[0]?.id || 1,
             text: "I respect you, Cap, but my playmaking speaks for itself. If we want to make the postseason, the ball has to come through me.",
@@ -142,28 +152,33 @@ export const LockerRoom: React.FC = () => {
             id: "promise_usage",
             label: "Commit to Scripted Early Touches",
             description: "Direct offensive coordinator to script primary looks for star player.",
-            projected_impact: "+12 Morale to star player, -5 Coach Authority, sets high target expectation.",
+            projected_impact:
+              "+12 Morale to star player, -5 Coach Authority, sets high target expectation.",
           },
           {
             id: "demand_accountability",
             label: "Enforce Coaching Authority & Discipline",
-            description: "Back the head coach and demand conformity to offensive scheme or face benching.",
+            description:
+              "Back the head coach and demand conformity to offensive scheme or face benching.",
             projected_impact: "+10 Coach Authority, -10 Morale to star player, tests resilience.",
           },
           {
             id: "players_meeting",
             label: "Mandate Closed-Door Players-Only Meeting",
             description: "Empower team captains to lead a players-only alignment session.",
-            projected_impact: "+5 Team Chemistry, -15 Tension for active roster, builds peer leadership.",
+            projected_impact:
+              "+5 Team Chemistry, -15 Tension for active roster, builds peer leadership.",
           },
           {
             id: "explore_trade",
             label: "Instruct Front Office to Field Trade Inquiries",
             description: "Quietly test league trade market before trade deadline.",
-            projected_impact: "Removes internal tension, alerts league GMs, prepares draft capital return.",
+            projected_impact:
+              "Removes internal tension, alerts league GMs, prepares draft capital return.",
           },
         ],
-        summary: "Primary offensive weapon expressed serious frustration regarding scheme and target share.",
+        summary:
+          "Primary offensive weapon expressed serious frustration regarding scheme and target share.",
       };
 
       setActiveEvent(fallbackEvent);
@@ -342,7 +357,10 @@ export const LockerRoom: React.FC = () => {
               : "text-gray-400 hover:text-white hover:bg-white/5"
           }`}
         >
-          <Radio size={15} className={socialGraph?.active_leaks?.length ? "text-red-400 animate-pulse" : ""} />
+          <Radio
+            size={15}
+            className={socialGraph?.active_leaks?.length ? "text-red-400 animate-pulse" : ""}
+          />
           <span>Media Leaks Wire</span>
           {socialGraph && socialGraph.active_leaks.length > 0 && (
             <span className="px-1.5 py-0.5 rounded-full bg-red-500 text-[10px] font-mono text-white font-bold">
@@ -374,9 +392,7 @@ export const LockerRoom: React.FC = () => {
       )}
 
       {/* Tab 2: Media Leaks Wire */}
-      {activeTab === "wire" && socialGraph && (
-        <MediaLeaksFeed leaks={socialGraph.active_leaks} />
-      )}
+      {activeTab === "wire" && socialGraph && <MediaLeaksFeed leaks={socialGraph.active_leaks} />}
 
       {/* Tab 3: Locker Room Telemetry Component */}
       {activeTab === "telemetry" && (

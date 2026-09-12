@@ -116,7 +116,10 @@ export const PhysicsDebugOverlay: React.FC<PhysicsDebugOverlayProps> = ({ play, 
           TIME: <span className="text-white font-bold">{data.time}s</span>
         </div>
         <div className="text-gray-400">
-          BALL: <span className="text-emerald-300">({data.ball.x}, {data.ball.y})</span>
+          BALL:{" "}
+          <span className="text-emerald-300">
+            ({data.ball.x}, {data.ball.y})
+          </span>
         </div>
         <div className="text-gray-400">
           ALT: <span className="text-emerald-300">{data.ball.h}y</span>
@@ -169,8 +172,7 @@ export const PhysicsDebugOverlay: React.FC<PhysicsDebugOverlayProps> = ({ play, 
                 <div className="flex justify-between">
                   <span className="text-gray-400">HEAP ALLOCATIONS:</span>
                   <span className="text-emerald-400 font-bold flex items-center gap-1">
-                    <CheckCircle2 className="w-2.5 h-2.5" />
-                    0 IN LOOP
+                    <CheckCircle2 className="w-2.5 h-2.5" />0 IN LOOP
                   </span>
                 </div>
                 <div className="flex justify-between">

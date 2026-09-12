@@ -53,12 +53,14 @@ export const CortisoneRiskBanner: React.FC<CortisoneRiskBannerProps> = ({
             </div>
             <h4 className="text-sm font-bold text-white tracking-wide mt-0.5 flex items-center gap-2">
               Cortisone Masking Active •{" "}
-              <span className="text-red-400 font-mono">{hazardMultiplier}x Acute Re-Rupture Hazard</span>
+              <span className="text-red-400 font-mono">
+                {hazardMultiplier}x Acute Re-Rupture Hazard
+              </span>
             </h4>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Pain receptor transmission masked to <strong>95% game-day effectiveness</strong>. Severe tissue
-              vulnerability during high-G athletic cuts (&Delta;v &gt; 4.5 m/s&sup2;) and contact impacts (p &gt; 850
-              kg&middot;m/s).
+              Pain receptor transmission masked to <strong>95% game-day effectiveness</strong>.
+              Severe tissue vulnerability during high-G athletic cuts (&Delta;v &gt; 4.5 m/s&sup2;)
+              and contact impacts (p &gt; 850 kg&middot;m/s).
             </p>
           </div>
         </div>

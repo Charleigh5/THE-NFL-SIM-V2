@@ -43,18 +43,9 @@ interface FreeAgencyMarketProps {
   teamId?: number;
 }
 
-export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
-  seasonId = 1,
-  teamId = 1,
-}) => {
+export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1, teamId = 1 }) => {
   const filteredPlayers = useFilteredFreeAgents();
-  const {
-    isLoading: loading,
-    error,
-    capSpace,
-    team,
-    totalCount,
-  } = useFreeAgencyMarketStatus();
+  const { isLoading: loading, error, capSpace, team, totalCount } = useFreeAgencyMarketStatus();
   const { positionFilter, tierFilter, searchQuery } = useFreeAgencyFilterState();
   const {
     loadMarketData,
@@ -77,7 +68,8 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
   // Capology & Void Years Enhancement states (TASK-014)
   const [voidYears, setVoidYears] = useState<number>(0);
   const [postJune1, setPostJune1] = useState<boolean>(false);
-  const [multiYearProjection, setMultiYearProjection] = useState<MultiYearCapProjectionResponse | null>(null);
+  const [multiYearProjection, setMultiYearProjection] =
+    useState<MultiYearCapProjectionResponse | null>(null);
   const [isSimulatingCap, setIsSimulatingCap] = useState<boolean>(false);
 
   useEffect(() => {
@@ -220,9 +212,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
         status: "ERROR",
         accepted: false,
         message:
-          err instanceof Error
-            ? err.message
-            : "Network error while submitting contract bid.",
+          err instanceof Error ? err.message : "Network error while submitting contract bid.",
         updated_cap_space: capSpace,
       });
     } finally {
@@ -249,10 +239,10 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
           const badgeColor = isTier1
             ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
             : isTier2
-            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
-            : isTier3
-            ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
-            : "bg-gray-500/20 text-gray-300 border-gray-500/40";
+              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+              : isTier3
+                ? "bg-blue-500/20 text-blue-300 border-blue-500/40"
+                : "bg-gray-500/20 text-gray-300 border-gray-500/40";
 
           return (
             <span
@@ -306,10 +296,10 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
             ovr >= 90
               ? "text-yellow-400 font-bold"
               : ovr >= 82
-              ? "text-emerald-400 font-semibold"
-              : ovr >= 75
-              ? "text-cyan-400"
-              : "text-gray-300";
+                ? "text-emerald-400 font-semibold"
+                : ovr >= 75
+                  ? "text-cyan-400"
+                  : "text-gray-300";
           return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
         },
       },
@@ -366,9 +356,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
                 </span>
               ))}
               {teams.length > 3 && (
-                <span className="text-[9px] text-gray-400 self-center">
-                  +{teams.length - 3}
-                </span>
+                <span className="text-[9px] text-gray-400 self-center">+{teams.length - 3}</span>
               )}
             </div>
           );
@@ -595,7 +583,8 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
                   {selectedPlayer.player_name || selectedPlayer.name}
                 </h2>
                 <p className="text-[11px] font-mono text-gray-400">
-                  Expected Market AAV: ${(selectedPlayer.projected_aav / 1000000).toFixed(2)}M • {selectedPlayer.projected_years} yrs
+                  Expected Market AAV: ${(selectedPlayer.projected_aav / 1000000).toFixed(2)}M •{" "}
+                  {selectedPlayer.projected_years} yrs
                 </p>
               </div>
             </div>
@@ -700,7 +689,8 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
                       <ShieldAlert size={12} className="text-amber-400" /> Total Guaranteed Money:
                     </span>
                     <span className="text-amber-400 font-bold">
-                      ${(bidGuaranteed / 1000000).toFixed(2)}M ({capologyPreview.guaranteedPercentage}%)
+                      ${(bidGuaranteed / 1000000).toFixed(2)}M (
+                      {capologyPreview.guaranteedPercentage}%)
                     </span>
                   </div>
                   <input
@@ -718,7 +708,8 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({
                 <div className="p-4 rounded-xl bg-slate-900/90 border border-white/10 space-y-2 mt-4">
                   <div className="flex items-center justify-between pb-2 border-b border-white/10">
                     <span className="text-xs font-header uppercase tracking-wider text-gray-300 flex items-center gap-1">
-                      <TrendingUp size={13} className="text-emerald-400" /> Capology Proration Breakdown
+                      <TrendingUp size={13} className="text-emerald-400" /> Capology Proration
+                      Breakdown
                     </span>
                     <span className="text-[10px] font-mono text-gray-400">
                       CBA Max Proration: {capologyPreview.prorationYears} yrs

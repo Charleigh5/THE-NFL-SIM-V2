@@ -14,7 +14,8 @@ export const CompPickWarningBadge: React.FC<CompPickWarningBadgeProps> = ({ impa
       <div className="flex items-center gap-2 p-2.5 bg-emerald-950/40 border border-emerald-800/40 rounded-lg text-xs text-emerald-300">
         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
         <span>
-          <strong>CBA Appendix V:</strong> Under $3.0M APY threshold. No compensatory draft picks will be cancelled.
+          <strong>CBA Appendix V:</strong> Under $3.0M APY threshold. No compensatory draft picks
+          will be cancelled.
         </span>
       </div>
     );
@@ -34,9 +35,7 @@ export const CompPickWarningBadge: React.FC<CompPickWarningBadgeProps> = ({ impa
               Tier {impact.cfa_tier} CFA
             </span>
           </div>
-          <p className="text-xs text-amber-200/90 leading-relaxed">
-            {impact.impact_summary}
-          </p>
+          <p className="text-xs text-amber-200/90 leading-relaxed">{impact.impact_summary}</p>
         </div>
       </div>
 

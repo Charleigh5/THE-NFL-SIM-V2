@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  TrendingUp,
-  Info,
-  Calendar,
-} from "lucide-react";
-import type {
-  TreatmentTrajectory,
-  MedicalProtocol,
-} from "../../types/orthopedicRtp";
+import { TrendingUp, Info, Calendar } from "lucide-react";
+import type { TreatmentTrajectory, MedicalProtocol } from "../../types/orthopedicRtp";
 
 interface RTPTrajectoryGraphProps {
   trajectories: TreatmentTrajectory[];
@@ -162,7 +155,9 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
           <Calendar className="w-4 h-4 text-cyan-400" />
           <span className="text-slate-400">Timeline Milestone:</span>
           <span className="text-white font-bold px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800">
-            {scrubWeek === 0 ? "Week 0 (Immediate Post-Trauma)" : `Week ${scrubWeek} Post-Treatment`}
+            {scrubWeek === 0
+              ? "Week 0 (Immediate Post-Trauma)"
+              : `Week ${scrubWeek} Post-Treatment`}
           </span>
         </div>
 
@@ -393,8 +388,8 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
                         traj.complicationRiskPct > 20
                           ? "text-red-400"
                           : traj.complicationRiskPct > 10
-                          ? "text-amber-400"
-                          : "text-emerald-400"
+                            ? "text-amber-400"
+                            : "text-emerald-400"
                       }
                     >
                       {traj.complicationRiskPct}%
@@ -403,7 +398,9 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
                   <div className="flex justify-between">
                     <span>Cost:</span>
                     <strong className="text-slate-200">
-                      {traj.totalMedicalCost === 0 ? "Free" : `$${traj.totalMedicalCost.toLocaleString()}`}
+                      {traj.totalMedicalCost === 0
+                        ? "Free"
+                        : `$${traj.totalMedicalCost.toLocaleString()}`}
                     </strong>
                   </div>
                 </div>

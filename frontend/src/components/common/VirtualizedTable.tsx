@@ -83,8 +83,8 @@ function VirtualRowInner<T>({
         isSelected
           ? "bg-yellow-500/20 text-yellow-300 border-l-2 border-l-yellow-400 font-bold"
           : virtualRow.index % 2 === 0
-          ? "bg-transparent"
-          : "bg-white/[0.02]"
+            ? "bg-transparent"
+            : "bg-white/[0.02]"
       } ${customClass}`}
     >
       {columns.map((col) => {
@@ -92,8 +92,8 @@ function VirtualRowInner<T>({
           col.align === "center"
             ? "justify-center text-center"
             : col.align === "right"
-            ? "justify-end text-right"
-            : "justify-start text-left";
+              ? "justify-end text-right"
+              : "justify-start text-left";
 
         return (
           <div
@@ -104,15 +104,9 @@ function VirtualRowInner<T>({
               maxWidth: col.maxWidth,
               flex: col.width ? undefined : 1,
             }}
-            className={`flex items-center px-2 py-2 truncate ${alignClass} ${
-              col.className || ""
-            }`}
+            className={`flex items-center px-2 py-2 truncate ${alignClass} ${col.className || ""}`}
           >
-            {col.cell
-              ? col.cell(item, virtualRow.index)
-              : col.accessor
-              ? col.accessor(item)
-              : null}
+            {col.cell ? col.cell(item, virtualRow.index) : col.accessor ? col.accessor(item) : null}
           </div>
         );
       })}
@@ -210,9 +204,7 @@ export function VirtualizedTable<T>({
 
           const strA = String(valA).toLowerCase();
           const strB = String(valB).toLowerCase();
-          return sortDirection === "asc"
-            ? strA.localeCompare(strB)
-            : strB.localeCompare(strA);
+          return sortDirection === "asc" ? strA.localeCompare(strB) : strB.localeCompare(strA);
         });
       }
     }
@@ -231,8 +223,7 @@ export function VirtualizedTable<T>({
   const virtualRows = rowVirtualizer.getVirtualItems();
   const totalSize = rowVirtualizer.getTotalSize();
 
-  const containerHeight =
-    typeof height === "number" ? `${height}px` : height;
+  const containerHeight = typeof height === "number" ? `${height}px` : height;
 
   return (
     <div
@@ -249,8 +240,8 @@ export function VirtualizedTable<T>({
             col.align === "center"
               ? "justify-center text-center"
               : col.align === "right"
-              ? "justify-end text-right"
-              : "justify-start text-left";
+                ? "justify-end text-right"
+                : "justify-start text-left";
 
           return (
             <div
@@ -263,9 +254,7 @@ export function VirtualizedTable<T>({
                 flex: col.width ? undefined : 1,
               }}
               className={`flex items-center gap-1.5 px-2 font-semibold transition-colors ${alignClass} ${
-                col.sortable
-                  ? "cursor-pointer hover:text-white"
-                  : ""
+                col.sortable ? "cursor-pointer hover:text-white" : ""
               } ${col.headerClassName || ""}`}
             >
               <span>{col.header}</span>
@@ -310,13 +299,9 @@ export function VirtualizedTable<T>({
           >
             {virtualRows.map((virtualRow) => {
               const item = processedData[virtualRow.index];
-              const rowId = getRowId
-                ? getRowId(item, virtualRow.index)
-                : virtualRow.index;
+              const rowId = getRowId ? getRowId(item, virtualRow.index) : virtualRow.index;
               const isSelected = selectedRowId !== undefined && selectedRowId === rowId;
-              const customClass = rowClassName
-                ? rowClassName(item, virtualRow.index)
-                : "";
+              const customClass = rowClassName ? rowClassName(item, virtualRow.index) : "";
 
               return (
                 <MemoizedVirtualRow
@@ -339,9 +324,7 @@ export function VirtualizedTable<T>({
       <div className="flex items-center justify-between px-3 py-1.5 bg-slate-950/90 border-t border-white/10 text-[11px] font-mono text-gray-400">
         <span>
           Showing <strong className="text-white">{processedData.length}</strong> entries
-          {processedData.length !== data.length && (
-            <span> (filtered from {data.length})</span>
-          )}
+          {processedData.length !== data.length && <span> (filtered from {data.length})</span>}
         </span>
         <span className="text-[10px] text-gray-400 uppercase tracking-wider">
           Virtualized 60 FPS Engine

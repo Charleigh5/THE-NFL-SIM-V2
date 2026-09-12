@@ -30,9 +30,7 @@ export const capologyApi = {
   /**
    * Fetches baseline 5-year outlook for a franchise without an active proposal.
    */
-  getFiveYearOutlook: async (
-    teamId: number
-  ): Promise<YearlyCapLiability[]> => {
+  getFiveYearOutlook: async (teamId: number): Promise<YearlyCapLiability[]> => {
     const res = await api.get<YearlyCapLiability[]>(
       `/api/capology/teams/${teamId}/five-year-outlook`
     );

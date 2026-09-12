@@ -7,10 +7,7 @@ import type {
 } from "../types/offseason";
 import type { Team } from "../services/api";
 import { api } from "../services/api";
-import {
-  createInitialEntityState,
-  createEntitySliceActions,
-} from "./slices/createEntitySlice";
+import { createInitialEntityState, createEntitySliceActions } from "./slices/createEntitySlice";
 import type { EntityState, EntitySliceActions } from "../types/entityState";
 import {
   computeFilteredPlayers,
@@ -66,7 +63,6 @@ export interface FreeAgencyStoreState {
   removePlayer: (playerId: number) => void;
   updateCapSpace: (newCap: number) => void;
 }
-
 
 export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
   const entityActions = createEntitySliceActions<FreeAgentMarketPlayer, number>((updater) => {
@@ -190,7 +186,6 @@ export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
       set({ filteredPlayers });
     },
 
-
     openBidModal: (playerId: number) => {
       const player = get().players.byId[playerId];
       if (!player) return;
@@ -228,7 +223,15 @@ export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
 
     submitBid: async () => {
       const state = get();
-      const { selectedPlayerId, teamId, seasonId, bidYears, bidTotalAmount, bidSigningBonus, bidGuaranteed } = state;
+      const {
+        selectedPlayerId,
+        teamId,
+        seasonId,
+        bidYears,
+        bidTotalAmount,
+        bidSigningBonus,
+        bidGuaranteed,
+      } = state;
       if (selectedPlayerId === null) return false;
 
       set({ submittingBid: true, bidResponse: null });
@@ -253,9 +256,7 @@ export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
         if (res.data.accepted) {
           set((state) => ({
             capSpace: res.data.updated_cap_space,
-            filteredPlayers: state.filteredPlayers.filter(
-              (p) => p.player_id !== selectedPlayerId
-            ),
+            filteredPlayers: state.filteredPlayers.filter((p) => p.player_id !== selectedPlayerId),
           }));
           // Atomically remove signed player from normalized dictionary
           entityActions.removeOne(selectedPlayerId);
@@ -268,9 +269,7 @@ export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
             status: "ERROR",
             accepted: false,
             message:
-              err instanceof Error
-                ? err.message
-                : "Network error while submitting contract bid.",
+              err instanceof Error ? err.message : "Network error while submitting contract bid.",
             updated_cap_space: state.capSpace,
           },
         });
@@ -296,11 +295,9 @@ export const useFreeAgencyStore = create<FreeAgencyStoreState>((set, get) => {
 /**
  * Granular shallow selectors for zero-cascade component re-renders
  */
-export const useFilteredFreeAgents = () =>
-  useFreeAgencyStore((state) => state.filteredPlayers);
+export const useFilteredFreeAgents = () => useFreeAgencyStore((state) => state.filteredPlayers);
 
-export const useFilteredFreeAgentIds = () =>
-  useFreeAgencyStore((state) => state.players.filterIds);
+export const useFilteredFreeAgentIds = () => useFreeAgencyStore((state) => state.players.filterIds);
 
 export const useFreeAgent = (playerId: number) =>
   useFreeAgencyStore((state) => state.players.byId[playerId]);

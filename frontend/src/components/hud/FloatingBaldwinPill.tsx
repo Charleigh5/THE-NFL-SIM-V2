@@ -96,17 +96,18 @@ export const FloatingBaldwinPill: React.FC<FloatingBaldwinPillProps> = ({
               {telemetry.recommendation === "GO"
                 ? "GO FOR IT"
                 : telemetry.recommendation === "FIELD_GOAL"
-                ? "FIELD GOAL"
-                : "PUNT"}
+                  ? "FIELD GOAL"
+                  : "PUNT"}
             </span>
 
-            <span className="text-xs font-mono font-bold text-white">
-              +{netWpFormatted}% WP
-            </span>
+            <span className="text-xs font-mono font-bold text-white">+{netWpFormatted}% WP</span>
           </div>
 
           <div className="text-[11px] text-slate-300 font-mono mt-1">
-            4th & {telemetry.yardsToGo} at {telemetry.yardLine > 50 ? `OPP ${100 - telemetry.yardLine}` : `OWN ${telemetry.yardLine}`}
+            4th & {telemetry.yardsToGo} at{" "}
+            {telemetry.yardLine > 50
+              ? `OPP ${100 - telemetry.yardLine}`
+              : `OWN ${telemetry.yardLine}`}
           </div>
         </div>
 

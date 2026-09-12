@@ -14,7 +14,11 @@ import {
   Loader2,
   TrendingUp,
 } from "lucide-react";
-import type { MedicalProtocolType, OrthopedicProtocolOption, TriageDecisionResult } from "../../types/deepDive";
+import type {
+  MedicalProtocolType,
+  OrthopedicProtocolOption,
+  TriageDecisionResult,
+} from "../../types/deepDive";
 import { medicalApi } from "../../services/medicalApi";
 import { RTPTrajectoryGraph } from "./RTPTrajectoryGraph";
 import { orthopedicApi } from "../../services/orthopedicApi";
@@ -183,11 +187,7 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
 
     try {
       // Submit decision to POST /api/medical/players/{player_id}/triage/apply
-      const result = await medicalApi.applyOrthopedicTriage(
-        playerId,
-        selectedProtocol,
-        zoneKey
-      );
+      const result = await medicalApi.applyOrthopedicTriage(playerId, selectedProtocol, zoneKey);
       onConfirmProtocol(selectedProtocol, result);
       onClose();
     } catch (error) {
@@ -278,12 +278,12 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
                 selectedProtocol === "REST"
                   ? "CONSERVATIVE"
                   : selectedProtocol === "PRP_THERAPY"
-                  ? "BIOLOGIC_PRP"
-                  : selectedProtocol === "ARTHROSCOPIC_SURGERY"
-                  ? "ARTHROSCOPIC"
-                  : selectedProtocol === "RECONSTRUCTIVE_SURGERY"
-                  ? "OPEN_SURGERY"
-                  : "CORTISONE"
+                    ? "BIOLOGIC_PRP"
+                    : selectedProtocol === "ARTHROSCOPIC_SURGERY"
+                      ? "ARTHROSCOPIC"
+                      : selectedProtocol === "RECONSTRUCTIVE_SURGERY"
+                        ? "OPEN_SURGERY"
+                        : "CORTISONE"
               }
             />
           </div>

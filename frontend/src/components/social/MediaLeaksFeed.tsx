@@ -9,11 +9,7 @@ import {
   TrendingUp,
   Share2,
 } from "lucide-react";
-import type {
-  MediaLeakPost,
-  LeakOutlet,
-  LeakSentiment,
-} from "../../types/socialGraph";
+import type { MediaLeakPost, LeakOutlet, LeakSentiment } from "../../types/socialGraph";
 
 interface MediaLeaksFeedProps {
   leaks: MediaLeakPost[];
@@ -43,7 +39,10 @@ const OUTLET_BADGES: Record<LeakOutlet, { label: string; bg: string; text: strin
   },
 };
 
-const SENTIMENT_ICONS: Record<LeakSentiment, { icon: React.ReactNode; label: string; badge: string }> = {
+const SENTIMENT_ICONS: Record<
+  LeakSentiment,
+  { icon: React.ReactNode; label: string; badge: string }
+> = {
   SCANDAL: {
     icon: <Flame size={13} className="text-red-400 animate-pulse" />,
     label: "CRITICAL INCIDENT",
@@ -66,10 +65,7 @@ const SENTIMENT_ICONS: Record<LeakSentiment, { icon: React.ReactNode; label: str
   },
 };
 
-export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({
-  leaks,
-  onPlayerClick,
-}) => {
+export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerClick }) => {
   const [filter, setFilter] = useState<string>("ALL");
 
   const filteredLeaks = leaks.filter((leak) => {

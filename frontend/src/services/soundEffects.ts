@@ -44,7 +44,10 @@ export function calculateSpatialPan(fieldX: number): number {
  * Calculates physical acoustic attributes for collisions based on kinetic momentum (kg * m/s).
  * Standard tackle: ~850 kg*m/s. Big hits: 1500 - 2500 kg*m/s.
  */
-export function calculateHitIntensity(momentum: number, baseVolume: number = 0.5): HitIntensityProfile {
+export function calculateHitIntensity(
+  momentum: number,
+  baseVolume: number = 0.5
+): HitIntensityProfile {
   const clampedMom = Math.max(200, Math.min(3000, momentum));
   const normalized = (clampedMom - 200) / 2800; // [0.0, 1.0]
 
@@ -116,7 +119,11 @@ class GridironSoundEngine {
   /**
    * Connects a gain node to destination directly or through StereoPannerNode if supported.
    */
-  private connectWithPan(sourceNode: AudioNode, ctx: AudioContext, panValue: number = 0): AudioNode {
+  private connectWithPan(
+    sourceNode: AudioNode,
+    ctx: AudioContext,
+    panValue: number = 0
+  ): AudioNode {
     if (this.spatialAudioEnabled && typeof ctx.createStereoPanner === "function") {
       try {
         const panner = ctx.createStereoPanner();
@@ -206,7 +213,8 @@ class GridironSoundEngine {
    * Play spatial collision hit with sub-bass thud and transient pad clack.
    * Field coordinates: fieldX in yards [0, 120].
    */
-  public playSpatialHit(fieldX: number = 60, _fieldY: number = 26.65, momentum: number = 850): void {
+  public playSpatialHit(fieldX: number = 60, fieldY: number = 26.65, momentum: number = 850): void {
+    void fieldY;
     if (this.isMuted || !this.sfxEnabled) return;
     const ctx = this.initCtx();
     if (!ctx) return;
@@ -387,7 +395,8 @@ class GridironSoundEngine {
    * EPA-Driven Resonant Crowd Engine.
    * Generates dynamic pink-noise acoustic swells responding to big plays or turnovers.
    */
-  public updateCrowdIntensity(epaDelta: number, _homeWinProb: number = 0.5): void {
+  public updateCrowdIntensity(epaDelta: number, homeWinProb: number = 0.5): void {
+    void homeWinProb;
     if (this.isMuted || !this.crowdEnabled) return;
     const ctx = this.initCtx();
     if (!ctx) return;
@@ -400,7 +409,9 @@ class GridironSoundEngine {
       const data = buffer.getChannelData(0);
 
       // Pinkish noise generator
-      let b0 = 0, b1 = 0, b2 = 0;
+      let b0 = 0,
+        b1 = 0,
+        b2 = 0;
       for (let i = 0; i < bufferSize; i++) {
         const white = Math.random() * 2 - 1;
         b0 = 0.99886 * b0 + white * 0.0555179;

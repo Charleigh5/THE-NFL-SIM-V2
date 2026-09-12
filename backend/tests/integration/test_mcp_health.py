@@ -1,3 +1,4 @@
+import os
 import pytest
 import asyncio
 import logging
@@ -17,8 +18,13 @@ async def test_mcp_server_health():
     3. Graceful disconnection
     """
     # Load configuration
-    # Point to the correct config file location relative to project root
-    registry.config_path = "backend/mcp_config.json"
+    # Point to the correct config file location relative to project root or cwd
+    if os.path.exists("mcp_config.json"):
+        registry.config_path = "mcp_config.json"
+    elif os.path.exists("backend/mcp_config.json"):
+        registry.config_path = "backend/mcp_config.json"
+    else:
+        registry.config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "mcp_config.json"))
     registry.load_config()
 
     servers = registry.config.get("servers", [])

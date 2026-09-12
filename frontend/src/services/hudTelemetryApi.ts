@@ -7,6 +7,7 @@
 
 import { apiClient } from "./api";
 import type {
+  DecisionStrength,
   FourthDownTelemetryPayload,
   FourthDownTelemetryRequest,
   MomentumFlowResponse,
@@ -86,7 +87,7 @@ export const hudTelemetryApi = {
         quarter: res.data.quarter,
         timeRemainingSeconds: res.data.time_remaining_seconds,
         recommendation: res.data.recommendation,
-        recommendationStrength: res.data.recommendation_strength as any,
+        recommendationStrength: res.data.recommendation_strength as DecisionStrength,
         wpGo: res.data.wp_go,
         wpFg: res.data.wp_fg,
         wpPunt: res.data.wp_punt,
@@ -155,13 +156,16 @@ export const hudTelemetryApi = {
     const yardsToGoal = 100 - yl;
     const kickDist = yardsToGoal + 17;
 
-    const convProb = Math.max(0.1, Math.min(0.95, 1.0 / (1.0 + Math.exp(-(1.25 - 0.3 * distance)))));
+    const convProb = Math.max(
+      0.1,
+      Math.min(0.95, 1.0 / (1.0 + Math.exp(-(1.25 - 0.3 * distance))))
+    );
     const fgProb =
       kickDist > 65
         ? 0.05
         : kickDist <= 22
-        ? 0.98
-        : Math.max(0.05, Math.min(0.98, 1.0 / (1.0 + Math.exp(-(4.2 - 0.11 * (kickDist - 20))))));
+          ? 0.98
+          : Math.max(0.05, Math.min(0.98, 1.0 / (1.0 + Math.exp(-(4.2 - 0.11 * (kickDist - 20))))));
 
     let rec: "GO" | "FIELD_GOAL" | "PUNT" = "GO";
     if (distance <= 2 && yl >= 40) {
@@ -204,13 +208,97 @@ export const hudTelemetryApi = {
     awayScore = 20
   ): MomentumFlowResponse {
     const sampleNodes: GameMomentumPlayNode[] = [
-      { playIndex: 0, quarter: 1, gameClock: "15:00", down: 1, distance: 10, yardLine: 25, description: "Kickoff returned to GB 25", homeWinProb: 0.52, awayWinProb: 0.48, playEpa: 0.05, isKeyEvent: false },
-      { playIndex: 1, quarter: 1, gameClock: "11:20", down: 1, distance: 10, yardLine: 55, description: "J. Jacobs 22 yd burst to CHI 23", homeWinProb: 0.64, awayWinProb: 0.36, playEpa: 1.85, isKeyEvent: true },
-      { playIndex: 2, quarter: 1, gameClock: "08:15", down: 2, distance: 4, yardLine: 82, description: "J. Love TD pass to J. Reed", homeWinProb: 0.74, awayWinProb: 0.26, playEpa: 3.20, isKeyEvent: true },
-      { playIndex: 3, quarter: 2, gameClock: "04:30", down: 4, distance: 1, yardLine: 62, description: "4th & 1 converted on QB Sneak", homeWinProb: 0.81, awayWinProb: 0.19, playEpa: 2.10, isKeyEvent: true },
-      { playIndex: 4, quarter: 3, gameClock: "10:10", down: 3, distance: 7, yardLine: 40, description: "CHI TD pass 40 yds", homeWinProb: 0.68, awayWinProb: 0.32, playEpa: -2.85, isKeyEvent: true },
-      { playIndex: 5, quarter: 4, gameClock: "05:00", down: 4, distance: 2, yardLine: 58, description: "Baldwin Recommends GO FOR IT", homeWinProb: 0.76, awayWinProb: 0.24, playEpa: 1.95, isKeyEvent: true },
-      { playIndex: 6, quarter: 4, gameClock: "01:45", down: 3, distance: 4, yardLine: 72, description: "J. Jacobs first down rush seals win", homeWinProb: 0.96, awayWinProb: 0.04, playEpa: 2.50, isKeyEvent: true },
+      {
+        playIndex: 0,
+        quarter: 1,
+        gameClock: "15:00",
+        down: 1,
+        distance: 10,
+        yardLine: 25,
+        description: "Kickoff returned to GB 25",
+        homeWinProb: 0.52,
+        awayWinProb: 0.48,
+        playEpa: 0.05,
+        isKeyEvent: false,
+      },
+      {
+        playIndex: 1,
+        quarter: 1,
+        gameClock: "11:20",
+        down: 1,
+        distance: 10,
+        yardLine: 55,
+        description: "J. Jacobs 22 yd burst to CHI 23",
+        homeWinProb: 0.64,
+        awayWinProb: 0.36,
+        playEpa: 1.85,
+        isKeyEvent: true,
+      },
+      {
+        playIndex: 2,
+        quarter: 1,
+        gameClock: "08:15",
+        down: 2,
+        distance: 4,
+        yardLine: 82,
+        description: "J. Love TD pass to J. Reed",
+        homeWinProb: 0.74,
+        awayWinProb: 0.26,
+        playEpa: 3.2,
+        isKeyEvent: true,
+      },
+      {
+        playIndex: 3,
+        quarter: 2,
+        gameClock: "04:30",
+        down: 4,
+        distance: 1,
+        yardLine: 62,
+        description: "4th & 1 converted on QB Sneak",
+        homeWinProb: 0.81,
+        awayWinProb: 0.19,
+        playEpa: 2.1,
+        isKeyEvent: true,
+      },
+      {
+        playIndex: 4,
+        quarter: 3,
+        gameClock: "10:10",
+        down: 3,
+        distance: 7,
+        yardLine: 40,
+        description: "CHI TD pass 40 yds",
+        homeWinProb: 0.68,
+        awayWinProb: 0.32,
+        playEpa: -2.85,
+        isKeyEvent: true,
+      },
+      {
+        playIndex: 5,
+        quarter: 4,
+        gameClock: "05:00",
+        down: 4,
+        distance: 2,
+        yardLine: 58,
+        description: "Baldwin Recommends GO FOR IT",
+        homeWinProb: 0.76,
+        awayWinProb: 0.24,
+        playEpa: 1.95,
+        isKeyEvent: true,
+      },
+      {
+        playIndex: 6,
+        quarter: 4,
+        gameClock: "01:45",
+        down: 3,
+        distance: 4,
+        yardLine: 72,
+        description: "J. Jacobs first down rush seals win",
+        homeWinProb: 0.96,
+        awayWinProb: 0.04,
+        playEpa: 2.5,
+        isKeyEvent: true,
+      },
     ];
 
     return {

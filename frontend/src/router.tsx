@@ -25,6 +25,7 @@ import Settings from "./pages/Settings";
 import { SkillsPage } from "./pages/SkillsPage";
 import FreeAgency from "./pages/FreeAgency";
 import LockerRoom from "./pages/LockerRoom";
+import { EnvironmentalWeatherLab } from "./pages/EnvironmentalWeatherLab";
 import NotFound from "./components/NotFound.tsx";
 import RootErrorBoundary from "./components/RootErrorBoundary.tsx";
 import RouteErrorBoundary from "./components/RouteErrorBoundary.tsx";
@@ -490,6 +491,11 @@ export const router = createBrowserRouter([
       {
         path: "settings",
         element: <Settings />,
+      },
+      {
+        path: "weather-lab",
+        element: <EnvironmentalWeatherLab />,
+        errorElement: <RouteErrorBoundary />,
       },
       {
         path: "team-selection",

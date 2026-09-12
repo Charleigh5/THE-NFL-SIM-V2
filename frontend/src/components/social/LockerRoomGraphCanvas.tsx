@@ -1,21 +1,6 @@
 import React, { useState, useMemo } from "react";
-import {
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  Search,
-  Flame,
-  Shield,
-  Star,
-  Activity,
-  X,
-} from "lucide-react";
-import type {
-  GraphNode,
-  GraphEdge,
-  RelationshipType,
-  SocialRole,
-} from "../../types/socialGraph";
+import { ZoomIn, ZoomOut, RotateCcw, Search, Flame, Shield, Star, Activity, X } from "lucide-react";
+import type { GraphNode, GraphEdge, RelationshipType, SocialRole } from "../../types/socialGraph";
 
 interface LockerRoomGraphCanvasProps {
   nodes: GraphNode[];
@@ -51,7 +36,10 @@ const CLIQUE_COLORS: Record<string, { stroke: string; fill: string; bg: string; 
   },
 };
 
-const EDGE_STYLES: Record<RelationshipType, { stroke: string; strokeDasharray?: string; strokeWidth: number }> = {
+const EDGE_STYLES: Record<
+  RelationshipType,
+  { stroke: string; strokeDasharray?: string; strokeWidth: number }
+> = {
   BOND: { stroke: "#10b981", strokeWidth: 2 },
   MENTORSHIP: { stroke: "#a855f7", strokeWidth: 2 },
   FRICTION: { stroke: "#ef4444", strokeDasharray: "5,4", strokeWidth: 2.5 },
@@ -89,9 +77,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
 
   // Filter edges to only those connecting active nodes
   const filteredEdges = useMemo(() => {
-    return edges.filter(
-      (e) => activeNodeIds.has(e.source) && activeNodeIds.has(e.target)
-    );
+    return edges.filter((e) => activeNodeIds.has(e.source) && activeNodeIds.has(e.target));
   }, [edges, activeNodeIds]);
 
   // Lookup node by ID for edge line rendering
@@ -216,7 +202,9 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                     className="w-1.5 h-1.5 rounded-full"
                     style={{ backgroundColor: style.stroke }}
                   />
-                  <span>{cName.split(" ")[0]} ({count})</span>
+                  <span>
+                    {cName.split(" ")[0]} ({count})
+                  </span>
                 </button>
               );
             })}
@@ -292,22 +280,60 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
 
             {/* Subtle Node Drop Shadow */}
             <filter id="node-shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.8" />
+              <feDropShadow
+                dx="0"
+                dy="2"
+                stdDeviation="3"
+                floodColor="#000000"
+                floodOpacity="0.8"
+              />
             </filter>
           </defs>
 
           {/* Clique Region Label Backdrops */}
           <g opacity="0.35">
-            <text x="280" y="55" fill="#10b981" fontSize="13" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
+            <text
+              x="280"
+              y="55"
+              fill="#10b981"
+              fontSize="13"
+              fontFamily="monospace"
+              textAnchor="middle"
+              fontWeight="bold"
+            >
               OFFENSIVE LEADERSHIP CLIQUE
             </text>
-            <text x="720" y="55" fill="#06b6d4" fontSize="13" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
+            <text
+              x="720"
+              y="55"
+              fill="#06b6d4"
+              fontSize="13"
+              fontFamily="monospace"
+              textAnchor="middle"
+              fontWeight="bold"
+            >
               DEFENSIVE CORE CLIQUE
             </text>
-            <text x="500" y="570" fill="#a855f7" fontSize="13" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
+            <text
+              x="500"
+              y="570"
+              fill="#a855f7"
+              fontSize="13"
+              fontFamily="monospace"
+              textAnchor="middle"
+              fontWeight="bold"
+            >
               VETERAN FACTION
             </text>
-            <text x="500" y="95" fill="#f43f5e" fontSize="13" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
+            <text
+              x="500"
+              y="95"
+              fill="#f43f5e"
+              fontSize="13"
+              fontFamily="monospace"
+              textAnchor="middle"
+              fontWeight="bold"
+            >
               DISGRUNTLED REBELS
             </text>
           </g>
@@ -468,7 +494,9 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                 <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
                   <span>{activeFocusNode.position}</span>
                   <span>•</span>
-                  <span className="text-emerald-400 font-bold">{activeFocusNode.overall_rating} OVR</span>
+                  <span className="text-emerald-400 font-bold">
+                    {activeFocusNode.overall_rating} OVR
+                  </span>
                   <span>•</span>
                   <span className="flex items-center gap-1 text-yellow-300">
                     {getRoleBadge(activeFocusNode.role)}
@@ -497,8 +525,8 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                       activeFocusNode.tension_score >= 75
                         ? "text-red-400"
                         : activeFocusNode.tension_score >= 40
-                        ? "text-amber-400"
-                        : "text-emerald-400"
+                          ? "text-amber-400"
+                          : "text-emerald-400"
                     }`}
                   >
                     {activeFocusNode.tension_score.toFixed(1)} / 100
@@ -510,8 +538,8 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                       activeFocusNode.tension_score >= 75
                         ? "bg-red-500"
                         : activeFocusNode.tension_score >= 40
-                        ? "bg-amber-500"
-                        : "bg-emerald-500"
+                          ? "bg-amber-500"
+                          : "bg-emerald-500"
                     }`}
                     style={{ width: `${Math.min(100, activeFocusNode.tension_score)}%` }}
                   />
@@ -535,7 +563,9 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
             {/* Backstory Snippet */}
             {activeFocusNode.backstory_summary && (
               <div className="mt-3 p-2 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono text-gray-300">
-                <span className="text-gray-500 block text-[10px] uppercase tracking-wider mb-0.5">Dossier:</span>
+                <span className="text-gray-500 block text-[10px] uppercase tracking-wider mb-0.5">
+                  Dossier:
+                </span>
                 {activeFocusNode.backstory_summary}
               </div>
             )}
@@ -560,10 +590,10 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                           rel.type === "FRICTION"
                             ? "bg-red-500/20 text-red-300"
                             : rel.type === "MENTORSHIP"
-                            ? "bg-purple-500/20 text-purple-300"
-                            : rel.type === "RIVALRY"
-                            ? "bg-amber-500/20 text-amber-300"
-                            : "bg-emerald-500/20 text-emerald-300"
+                              ? "bg-purple-500/20 text-purple-300"
+                              : rel.type === "RIVALRY"
+                                ? "bg-amber-500/20 text-amber-300"
+                                : "bg-emerald-500/20 text-emerald-300"
                         }`}
                       >
                         {rel.type}

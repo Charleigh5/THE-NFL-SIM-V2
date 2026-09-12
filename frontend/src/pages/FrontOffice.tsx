@@ -165,10 +165,10 @@ export const FrontOffice = () => {
             ovr >= 90
               ? "text-yellow-400 font-bold"
               : ovr >= 80
-              ? "text-emerald-400 font-semibold"
-              : ovr >= 70
-              ? "text-cyan-400"
-              : "text-gray-300";
+                ? "text-emerald-400 font-semibold"
+                : ovr >= 70
+                  ? "text-cyan-400"
+                  : "text-gray-300";
           return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
         },
       },
@@ -200,9 +200,7 @@ export const FrontOffice = () => {
         sortable: true,
         sortKey: (p) => p.speed,
         cell: (p) => (
-          <span className="text-emerald-400 font-mono text-xs font-bold">
-            {p.speed ?? 85}
-          </span>
+          <span className="text-emerald-400 font-mono text-xs font-bold">{p.speed ?? 85}</span>
         ),
       },
       {
@@ -213,9 +211,7 @@ export const FrontOffice = () => {
         sortable: true,
         sortKey: (p) => p.strength,
         cell: (p) => (
-          <span className="text-cyan-400 font-mono text-xs font-bold">
-            {p.strength ?? 80}
-          </span>
+          <span className="text-cyan-400 font-mono text-xs font-bold">{p.strength ?? 80}</span>
         ),
       },
       {
@@ -226,9 +222,7 @@ export const FrontOffice = () => {
         sortable: true,
         sortKey: (p) => p.agility,
         cell: (p) => (
-          <span className="text-amber-400 font-mono text-xs font-bold">
-            {p.agility ?? 84}
-          </span>
+          <span className="text-amber-400 font-mono text-xs font-bold">{p.agility ?? 84}</span>
         ),
       },
       {

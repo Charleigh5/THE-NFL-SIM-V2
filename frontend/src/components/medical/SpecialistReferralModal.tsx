@@ -12,10 +12,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import type {
-  SecondOpinionCenter,
-  SecondOpinionConsultResult,
-} from "../../types/orthopedicRtp";
+import type { SecondOpinionCenter, SecondOpinionConsultResult } from "../../types/orthopedicRtp";
 import { orthopedicApi } from "../../services/orthopedicApi";
 
 interface SpecialistReferralModalProps {
@@ -126,8 +123,8 @@ export const SpecialistReferralModal: React.FC<SpecialistReferralModalProps> = (
                 Outside Specialist Consultation
               </h3>
               <p className="text-xs text-slate-400">
-                Athlete: <strong className="text-slate-200">{playerName}</strong> • Primary Diagnosis:{" "}
-                <span className="text-amber-400 font-mono font-bold">{injuryType}</span>
+                Athlete: <strong className="text-slate-200">{playerName}</strong> • Primary
+                Diagnosis: <span className="text-amber-400 font-mono font-bold">{injuryType}</span>
               </p>
             </div>
           </div>
@@ -151,7 +148,9 @@ export const SpecialistReferralModal: React.FC<SpecialistReferralModalProps> = (
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 text-slate-400 gap-2">
               <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
-              <span className="text-xs font-mono">Connecting to National Orthopedic Network...</span>
+              <span className="text-xs font-mono">
+                Connecting to National Orthopedic Network...
+              </span>
             </div>
           ) : consultResult ? (
             /* Result View */
@@ -186,7 +185,8 @@ export const SpecialistReferralModal: React.FC<SpecialistReferralModalProps> = (
                 </div>
 
                 <div className="text-xs font-mono text-slate-300 mb-2">
-                  Chief Attending: <strong className="text-white">{consultResult.chiefSurgeon}</strong>
+                  Chief Attending:{" "}
+                  <strong className="text-white">{consultResult.chiefSurgeon}</strong>
                 </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed bg-black/40 p-3 rounded-xl border border-slate-800">
@@ -211,9 +211,9 @@ export const SpecialistReferralModal: React.FC<SpecialistReferralModalProps> = (
             /* Clinic Selector */
             <div className="space-y-3">
               <div className="text-xs text-slate-400 leading-relaxed">
-                Refer athlete to an independent institute for ultra-high-resolution 3T MRI review and
-                surgical consultation. Uncovers occult tears (15% probability) and reduces downstream
-                surgical complication risks by <strong>50%</strong>.
+                Refer athlete to an independent institute for ultra-high-resolution 3T MRI review
+                and surgical consultation. Uncovers occult tears (15% probability) and reduces
+                downstream surgical complication risks by <strong>50%</strong>.
               </div>
 
               {centers.map((center) => {
@@ -266,7 +266,9 @@ export const SpecialistReferralModal: React.FC<SpecialistReferralModalProps> = (
                     </div>
 
                     <div className="text-right whitespace-nowrap">
-                      <div className="text-[10px] text-slate-500 font-mono uppercase">Consult Fee</div>
+                      <div className="text-[10px] text-slate-500 font-mono uppercase">
+                        Consult Fee
+                      </div>
                       <div className="text-sm font-bold font-mono text-emerald-400 flex items-center justify-end">
                         <DollarSign className="w-3.5 h-3.5" />
                         {center.consultationCost.toLocaleString()}

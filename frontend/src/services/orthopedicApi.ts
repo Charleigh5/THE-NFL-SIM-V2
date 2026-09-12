@@ -182,7 +182,7 @@ export function generateFallbackEvaluation(
       weeks: 8,
       compRisk: 8.0,
       cost: 65000,
-      k: 0.70,
+      k: 0.7,
       t0: 5.0,
       hTarget: 99.0,
       initialOffset: -15,
@@ -208,7 +208,8 @@ export function generateFallbackEvaluation(
     for (let w = 0; w <= 12; w++) {
       const health = computeGompertzPoint(w, startH, p.hTarget, p.k, p.t0);
       const reInj = Math.max(2, Math.min(95, (100 - health) * 0.7 * p.hazardMult));
-      const eff = p.protocol === "CORTISONE" && w <= 3 ? 95 : Math.min(100, Math.round(health * 1.03));
+      const eff =
+        p.protocol === "CORTISONE" && w <= 3 ? 95 : Math.min(100, Math.round(health * 1.03));
       curve.push({
         week: w,
         healthPercentage: health,
@@ -279,7 +280,10 @@ export const orthopedicApi = {
       );
       return mapEvaluationResponse(response.data);
     } catch (err) {
-      console.warn("Failed to fetch live evaluation, generating fallback Gompertz trajectories:", err);
+      console.warn(
+        "Failed to fetch live evaluation, generating fallback Gompertz trajectories:",
+        err
+      );
       return generateFallbackEvaluation(playerId);
     }
   },

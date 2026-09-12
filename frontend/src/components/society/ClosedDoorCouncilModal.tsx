@@ -44,26 +44,33 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
     {
       id: "promise_usage",
       label: "Commit to Scripted Early Touches",
-      description: "Direct offensive coordinator to script primary looks for aggrieved star in upcoming game.",
-      projected_impact: "+12 Morale to star player, -5 Coach Authority, sets high target expectation.",
+      description:
+        "Direct offensive coordinator to script primary looks for aggrieved star in upcoming game.",
+      projected_impact:
+        "+12 Morale to star player, -5 Coach Authority, sets high target expectation.",
     },
     {
       id: "demand_accountability",
       label: "Enforce Coaching Authority & Discipline",
-      description: "Back the head coach and demand conformity to offensive scheme or face reduction in snaps.",
+      description:
+        "Back the head coach and demand conformity to offensive scheme or face reduction in snaps.",
       projected_impact: "+10 Coach Authority, -10 Morale to star player, tests mental resilience.",
     },
     {
       id: "players_meeting",
       label: "Mandate Closed-Door Players-Only Meeting",
-      description: "Empower team captains to lead a players-only locker room alignment and air grievances.",
-      projected_impact: "+5 Team Chemistry, -15 Tension for active roster, builds peer leadership cohesion.",
+      description:
+        "Empower team captains to lead a players-only locker room alignment and air grievances.",
+      projected_impact:
+        "+5 Team Chemistry, -15 Tension for active roster, builds peer leadership cohesion.",
     },
     {
       id: "explore_trade",
       label: "Instruct Front Office to Field Trade Inquiries",
-      description: "Quietly test league trade market before trade deadline to maximize asset return.",
-      projected_impact: "Removes internal tension, alerts league GMs, prepares draft capital return.",
+      description:
+        "Quietly test league trade market before trade deadline to maximize asset return.",
+      projected_impact:
+        "Removes internal tension, alerts league GMs, prepares draft capital return.",
     },
   ];
 
@@ -220,8 +227,8 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
                     isStar
                       ? "bg-red-950/40 border-red-500/20 mr-4"
                       : isCoach
-                      ? "bg-blue-950/40 border-blue-500/20 ml-4"
-                      : "bg-amber-950/40 border-amber-500/20 mx-2"
+                        ? "bg-blue-950/40 border-blue-500/20 ml-4"
+                        : "bg-amber-950/40 border-amber-500/20 mx-2"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">

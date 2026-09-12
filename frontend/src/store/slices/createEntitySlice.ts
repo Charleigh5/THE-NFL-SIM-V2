@@ -3,7 +3,10 @@ import type { EntityKey, EntityState, EntitySliceActions } from "../../types/ent
 /**
  * Creates a clean, empty initial entity state
  */
-export function createInitialEntityState<T, K extends EntityKey = string | number>(): EntityState<T, K> {
+export function createInitialEntityState<T, K extends EntityKey = string | number>(): EntityState<
+  T,
+  K
+> {
   return {
     byId: {} as Record<K, T>,
     allIds: [],
@@ -57,8 +60,8 @@ export function createEntitySliceActions<T, K extends EntityKey = string | numbe
           filterIds: exists
             ? state.filterIds
             : state.filterIds.includes(id)
-            ? state.filterIds
-            : [...state.filterIds, id],
+              ? state.filterIds
+              : [...state.filterIds, id],
         };
       });
     },

@@ -24,13 +24,15 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
 }) => {
   const [config, setConfig] = useState<SpatialAudioConfig>(() => soundEffects.getConfig());
   const [lastAuditioned, setLastAuditioned] = useState<string | null>(null);
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
 
-  // Sync state if modal opens
-  useEffect(() => {
+  // Sync state when modal opens
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setConfig(soundEffects.getConfig());
     }
-  }, [isOpen]);
+  }
 
   // Handle ESC key to close
   useEffect(() => {
@@ -138,7 +140,11 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                   }`}
                   aria-label={config.isMuted ? "Unmute Audio" : "Mute Audio"}
                 >
-                  {config.isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  {config.isMuted ? (
+                    <VolumeX className="w-4 h-4" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -194,7 +200,9 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() =>
-                    runAudition("Left Endzone Hit", () => soundEffects.playSpatialHit(10, 26.65, 1400))
+                    runAudition("Left Endzone Hit", () =>
+                      soundEffects.playSpatialHit(10, 26.65, 1400)
+                    )
                   }
                   className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5"
                 >
@@ -212,7 +220,9 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                 </button>
                 <button
                   onClick={() =>
-                    runAudition("Right Endzone Hit", () => soundEffects.playSpatialHit(110, 26.65, 1400))
+                    runAudition("Right Endzone Hit", () =>
+                      soundEffects.playSpatialHit(110, 26.65, 1400)
+                    )
                   }
                   className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5"
                 >
@@ -261,7 +271,9 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() =>
-                    runAudition("Explosive Roar (+3.5 EPA)", () => soundEffects.updateCrowdIntensity(3.5, 0.8))
+                    runAudition("Explosive Roar (+3.5 EPA)", () =>
+                      soundEffects.updateCrowdIntensity(3.5, 0.8)
+                    )
                   }
                   className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5"
                 >
@@ -270,7 +282,9 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                 </button>
                 <button
                   onClick={() =>
-                    runAudition("Turnover Groan (-2.5 EPA)", () => soundEffects.updateCrowdIntensity(-2.5, 0.2))
+                    runAudition("Turnover Groan (-2.5 EPA)", () =>
+                      soundEffects.updateCrowdIntensity(-2.5, 0.2)
+                    )
                   }
                   className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5"
                 >
@@ -318,14 +332,18 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               </span>
               <div className="grid grid-cols-3 gap-2">
                 <button
-                  onClick={() => runAudition("Cadence 'Hut'", () => soundEffects.playCadence("hut"))}
+                  onClick={() =>
+                    runAudition("Cadence 'Hut'", () => soundEffects.playCadence("hut"))
+                  }
                   className="px-2 py-1.5 rounded-lg text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1"
                 >
                   <Play className="w-3 h-3" />
                   Cadence "Hut"
                 </button>
                 <button
-                  onClick={() => runAudition("Ref Whistle", () => soundEffects.playSpatialWhistle(60))}
+                  onClick={() =>
+                    runAudition("Ref Whistle", () => soundEffects.playSpatialWhistle(60))
+                  }
                   className="px-2 py-1.5 rounded-lg text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1"
                 >
                   <Play className="w-3 h-3" />

@@ -41,7 +41,9 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
       </div>
 
       {/* 5-Column Bar Grid */}
-      <div className={`grid grid-cols-5 gap-2.5 pt-2 ${loading ? "opacity-60 transition-opacity" : ""}`}>
+      <div
+        className={`grid grid-cols-5 gap-2.5 pt-2 ${loading ? "opacity-60 transition-opacity" : ""}`}
+      >
         {schedule.map((item) => {
           const projectedMillions = (item.projected_cap / 1_000_000).toFixed(1);
           const committedPct = Math.min(100, (item.committed_salaries / maxCap) * 100);
@@ -58,7 +60,9 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
               {/* Year & Projected Cap */}
               <div className="text-center mb-2">
                 <span className="text-xs font-bold text-slate-200 block">{item.year}</span>
-                <span className="text-[10px] text-slate-400 font-mono">${projectedMillions}M Cap</span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  ${projectedMillions}M Cap
+                </span>
               </div>
 
               {/* Stacked Vertical Bar */}
@@ -129,9 +133,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
             <span>Accelerated Dead Money</span>
           </div>
         </div>
-        <div className="text-[10px] text-slate-500">
-          Source: NFL CBA 5.5% annual cap inflator
-        </div>
+        <div className="text-[10px] text-slate-500">Source: NFL CBA 5.5% annual cap inflator</div>
       </div>
     </div>
   );

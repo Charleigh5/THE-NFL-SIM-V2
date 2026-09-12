@@ -102,7 +102,8 @@ class CapLedgerService:
                 self._memory_accounts[key] = created_accounts
                 return created_accounts
             except Exception:
-                pass
+                if self.db:
+                    self.db.rollback()
 
         # In-memory fallback initialization
         if key not in self._memory_accounts:
@@ -303,7 +304,8 @@ class CapLedgerService:
                     contract.void_years = void_years
                     self.db.commit()
             except Exception:
-                pass
+                if self.db:
+                    self.db.rollback()
 
         return tx
 

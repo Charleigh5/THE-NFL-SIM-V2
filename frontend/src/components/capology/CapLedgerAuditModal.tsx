@@ -39,21 +39,34 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
   const [statement, setStatement] = useState<TeamLedgerStatementDTO | null>(null);
   const [multiYear, setMultiYear] = useState<MultiYearLedgerStatementResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [prevTrackKey, setPrevTrackKey] = useState<string>(() => `${isOpen}_${teamId}`);
+
+  const currentTrackKey = `${isOpen}_${teamId}`;
+  if (currentTrackKey !== prevTrackKey) {
+    setPrevTrackKey(currentTrackKey);
+    if (isOpen) {
+      setLoading(true);
+    }
+  }
 
   useEffect(() => {
     if (!isOpen) return;
-    setLoading(true);
+    let isCurrent = true;
 
-    Promise.all([
-      capLedgerApi.getTeamStatement(teamId),
-      capLedgerApi.getMultiYearStatement(teamId),
-    ])
+    Promise.all([capLedgerApi.getTeamStatement(teamId), capLedgerApi.getMultiYearStatement(teamId)])
       .then(([stmtData, multiData]) => {
+        if (!isCurrent) return;
         setStatement(stmtData);
         setMultiYear(multiData);
       })
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (isCurrent) setLoading(false);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
   }, [isOpen, teamId]);
 
   if (!isOpen) return null;
@@ -90,7 +103,8 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                 )}
               </div>
               <p className="text-xs text-slate-400 font-mono">
-                {statement?.teamName || "NFL Franchise"} • League Year {statement?.leagueYear || 2026} • CBA Article 13 & Appendix V
+                {statement?.teamName || "NFL Franchise"} • League Year{" "}
+                {statement?.leagueYear || 2026} • CBA Article 13 & Appendix V
               </p>
             </div>
           </div>
@@ -141,7 +155,9 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
               {/* Account Balance Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 <div className="p-3.5 bg-slate-950/60 border border-white/10 rounded-xl">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Total Hard Cap</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                    Total Hard Cap
+                  </div>
                   <div className="text-lg font-mono font-extrabold text-white mt-0.5">
                     ${((statement?.totalSalaryCap || 255_400_000) / 1_000_000).toFixed(2)}M
                   </div>
@@ -149,7 +165,9 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                 </div>
 
                 <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400">Cap Room (Free)</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400">
+                    Cap Room (Free)
+                  </div>
                   <div className="text-lg font-mono font-extrabold text-emerald-300 mt-0.5">
                     ${((statement?.availableCapRoom || 0) / 1_000_000).toFixed(2)}M
                   </div>
@@ -157,7 +175,9 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                 </div>
 
                 <div className="p-3.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">Active Liabilities</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
+                    Active Liabilities
+                  </div>
                   <div className="text-lg font-mono font-extrabold text-cyan-300 mt-0.5">
                     ${((statement?.activeSalaryLiability || 0) / 1_000_000).toFixed(2)}M
                   </div>
@@ -165,7 +185,9 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                 </div>
 
                 <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-rose-400">Dead Money</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-rose-400">
+                    Dead Money
+                  </div>
                   <div className="text-lg font-mono font-extrabold text-rose-300 mt-0.5">
                     ${((statement?.deadMoneyLiability || 0) / 1_000_000).toFixed(2)}M
                   </div>
@@ -173,11 +195,15 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                 </div>
 
                 <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl col-span-2 md:col-span-1">
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">Bonus Pool</div>
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
+                    Bonus Pool
+                  </div>
                   <div className="text-lg font-mono font-extrabold text-amber-300 mt-0.5">
                     ${((statement?.unamortizedBonusPool || 0) / 1_000_000).toFixed(2)}M
                   </div>
-                  <div className="text-[10px] text-amber-500/80 font-mono">Unamortized Proration</div>
+                  <div className="text-[10px] text-amber-500/80 font-mono">
+                    Unamortized Proration
+                  </div>
                 </div>
               </div>
 
@@ -189,7 +215,8 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                     <strong className="text-white">Proof of Balance:</strong> Hard Cap ($
                     {((statement?.totalSalaryCap || 0) / 1_000_000).toFixed(2)}M) = Room ($
                     {((statement?.availableCapRoom || 0) / 1_000_000).toFixed(2)}M) + Active ($
-                    {((statement?.activeSalaryLiability || 0) / 1_000_000).toFixed(2)}M) + Dead Money ($
+                    {((statement?.activeSalaryLiability || 0) / 1_000_000).toFixed(2)}M) + Dead
+                    Money ($
                     {((statement?.deadMoneyLiability || 0) / 1_000_000).toFixed(2)}M)
                   </span>
                 </div>
@@ -237,8 +264,8 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                                   tx.netCapDelta > 0
                                     ? "text-emerald-400"
                                     : tx.netCapDelta < 0
-                                    ? "text-rose-400"
-                                    : "text-slate-400"
+                                      ? "text-rose-400"
+                                      : "text-slate-400"
                                 }`}
                               >
                                 {tx.netCapDelta > 0 ? (
@@ -246,8 +273,8 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                                 ) : tx.netCapDelta < 0 ? (
                                   <ArrowDownRight className="w-4 h-4" />
                                 ) : null}
-                                {tx.netCapDelta > 0 ? "+" : ""}
-                                ${(tx.netCapDelta / 1_000_000).toFixed(2)}M Cap Room
+                                {tx.netCapDelta > 0 ? "+" : ""}$
+                                {(tx.netCapDelta / 1_000_000).toFixed(2)}M Cap Room
                               </div>
                               <div className="text-[10px] text-slate-500 font-mono">Net Delta</div>
                             </div>
@@ -269,7 +296,9 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                                       entry.amount > 0 ? "text-cyan-400" : "text-emerald-400"
                                     }`}
                                   >
-                                    {entry.amount > 0 ? `Debit: +$${(entry.amount / 1_000_000).toFixed(2)}M` : `Credit: -$${(Math.abs(entry.amount) / 1_000_000).toFixed(2)}M`}
+                                    {entry.amount > 0
+                                      ? `Debit: +$${(entry.amount / 1_000_000).toFixed(2)}M`
+                                      : `Credit: -$${(Math.abs(entry.amount) / 1_000_000).toFixed(2)}M`}
                                   </span>
                                 </div>
                               ))}

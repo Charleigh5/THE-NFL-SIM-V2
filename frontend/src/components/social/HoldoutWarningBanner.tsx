@@ -36,7 +36,8 @@ export const HoldoutWarningBanner: React.FC<HoldoutWarningBannerProps> = ({
               </h4>
             </div>
             <p className="text-gray-300 text-xs mt-0.5">
-              All 53 rostered athletes are currently active and compliant with franchise contract commitments.
+              All 53 rostered athletes are currently active and compliant with franchise contract
+              commitments.
             </p>
           </div>
         </div>
@@ -75,7 +76,8 @@ export const HoldoutWarningBanner: React.FC<HoldoutWarningBannerProps> = ({
               <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-red-400 flex items-center gap-1">
                 <ShieldAlert size={14} />
-                CRITICAL HOLDOUT ALERT • {holdoutNodes.length} ATHLETE{holdoutNodes.length > 1 ? "S" : ""} BOYCOTTING
+                CRITICAL HOLDOUT ALERT • {holdoutNodes.length} ATHLETE
+                {holdoutNodes.length > 1 ? "S" : ""} BOYCOTTING
               </span>
             </div>
 
@@ -89,8 +91,9 @@ export const HoldoutWarningBanner: React.FC<HoldoutWarningBannerProps> = ({
             </div>
 
             <p className="text-gray-300 text-xs mt-1 max-w-2xl font-body">
-              {activeHoldout.name} has formally ceased team walkthroughs and practice participation citing contract undervaluation.
-              Game-day availability is frozen until resolved by front office leadership.
+              {activeHoldout.name} has formally ceased team walkthroughs and practice participation
+              citing contract undervaluation. Game-day availability is frozen until resolved by
+              front office leadership.
             </p>
 
             {/* Holdout Player Selector (if multiple) */}

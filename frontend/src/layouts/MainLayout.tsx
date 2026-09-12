@@ -5,6 +5,9 @@ import FeedbackWidget from "../components/common/FeedbackWidget";
 import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
 import { PageTransition } from "../components/transitions/PageTransition";
 import TraitNotification from "../components/ui/TraitNotification";
+import { DynamicWeatherFXOverlay } from "../components/weather/DynamicWeatherFXOverlay";
+import { ThreeStadiumBackdrop } from "../components/weather/ThreeStadiumBackdrop";
+import { WeatherControlHUD } from "../components/weather/WeatherControlHUD";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -19,6 +22,12 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-broadcast-black text-white selection:bg-brand selection:text-white">
+      {/* 3D Photorealistic Stadium Backdrop */}
+      <ThreeStadiumBackdrop />
+
+      {/* AAAA Dynamic Weather Particle & Snow/Rain Overlay */}
+      <DynamicWeatherFXOverlay />
+
       <Navigation />
 
       {/* Main Content Area - Shifted for fixed nav */}
@@ -36,6 +45,9 @@ const MainLayout = () => {
           </PageTransition>
         </div>
       </main>
+
+      {/* Floating Interactive Environmental Weather Console */}
+      <WeatherControlHUD />
 
       {activeNotification && (
         <TraitNotification

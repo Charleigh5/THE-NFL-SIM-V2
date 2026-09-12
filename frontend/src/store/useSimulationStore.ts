@@ -114,5 +114,6 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
 }));
 
 if (typeof window !== "undefined") {
-  (window as unknown as { useSimulationStore: typeof useSimulationStore }).useSimulationStore = useSimulationStore;
+  (window as unknown as { useSimulationStore: typeof useSimulationStore }).useSimulationStore =
+    useSimulationStore;
 }

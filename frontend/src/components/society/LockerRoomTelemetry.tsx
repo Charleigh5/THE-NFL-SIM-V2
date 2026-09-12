@@ -10,10 +10,7 @@ import {
   Brain,
   MessageSquare,
 } from "lucide-react";
-import type {
-  LockerRoomEventResponse,
-  PsychologicalDNA,
-} from "../../types/society";
+import type { LockerRoomEventResponse, PsychologicalDNA } from "../../types/society";
 import type { Player } from "../../services/api";
 
 interface LockerRoomTelemetryProps {
@@ -40,14 +37,14 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
   const tensionBadgeColor = isCritical
     ? "bg-red-500/20 text-red-400 border-red-500/40 animate-pulse"
     : isSimmering
-    ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
-    : "bg-emerald-500/20 text-emerald-400 border-emerald-500/40";
+      ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
+      : "bg-emerald-500/20 text-emerald-400 border-emerald-500/40";
 
   const tensionStatusText = isCritical
     ? "CRITICAL FRICTION (Tier 2 Gate Triggered)"
     : isSimmering
-    ? "SIMMERING DISCONTENT"
-    : "OPTIMAL HARMONY";
+      ? "SIMMERING DISCONTENT"
+      : "OPTIMAL HARMONY";
 
   // Identify players with active grievances (tension >= 75.0 or in activeEvent)
   const aggrievedPlayerIds = new Set(activeEvent?.active_actors || []);
@@ -110,8 +107,8 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
                     isCritical
                       ? "text-red-500"
                       : isSimmering
-                      ? "text-amber-400"
-                      : "text-emerald-400"
+                        ? "text-amber-400"
+                        : "text-emerald-400"
                   }`}
                   fill="none"
                 />
@@ -182,7 +179,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
               <span className="text-gray-300">Head Coach Authority:</span>
               <span className="font-bold text-amber-300">
                 {activeEvent
-                  ? Object.values(activeEvent.consequences.trust_coach_deltas)[0] ?? "-8"
+                  ? (Object.values(activeEvent.consequences.trust_coach_deltas)[0] ?? "-8")
                   : "0"}{" "}
                 pts
               </span>
@@ -193,7 +190,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
               <span className="text-gray-300">Quarterback Chemistry:</span>
               <span className="font-bold text-cyan-300">
                 {activeEvent
-                  ? Object.values(activeEvent.consequences.trust_qb_deltas)[0] ?? "0"
+                  ? (Object.values(activeEvent.consequences.trust_qb_deltas)[0] ?? "0")
                   : "0"}{" "}
                 pts
               </span>
@@ -218,10 +215,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
         <div className="broadcast-glass p-5 rounded-2xl border border-white/15 shadow-xl flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <span className="text-xs font-mono uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
-              <AlertTriangle
-                size={14}
-                className={activeEvent ? "text-red-400" : "text-gray-400"}
-              />
+              <AlertTriangle size={14} className={activeEvent ? "text-red-400" : "text-gray-400"} />
               Closed-Door Council Gate
             </span>
             <span
@@ -306,8 +300,8 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
               const pTension =
                 (player as unknown as { tension_score?: number }).tension_score ?? 82.5;
               const pDNA =
-                (player as unknown as { psychological_dna?: PsychologicalDNA })
-                  .psychological_dna || defaultDNA;
+                (player as unknown as { psychological_dna?: PsychologicalDNA }).psychological_dna ||
+                defaultDNA;
 
               return (
                 <div

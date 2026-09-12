@@ -96,7 +96,8 @@ const TACTICAL_CONCEPTS: TacticalConcept[] = [
     category: "PASS",
     playType: "PASS",
     riskReward: "BALANCED",
-    description: "High-low 3-level stretch attacking Cover 3 sideline zone with deep corner and out.",
+    description:
+      "High-low 3-level stretch attacking Cover 3 sideline zone with deep corner and out.",
     tags: ["Zone Buster", "Intermediate", "Sideline"],
   },
   {
@@ -124,7 +125,8 @@ const TACTICAL_CONCEPTS: TacticalConcept[] = [
     category: "DEFENSE",
     playType: "PASS",
     riskReward: "BALANCED",
-    description: "Deep middle run-through by MLB with dual half-field safeties bracketing boundaries.",
+    description:
+      "Deep middle run-through by MLB with dual half-field safeties bracketing boundaries.",
     tags: ["Intermediate", "Middle Shield", "Zone"],
   },
   {
@@ -133,7 +135,8 @@ const TACTICAL_CONCEPTS: TacticalConcept[] = [
     category: "DEFENSE",
     playType: "PASS",
     riskReward: "BALANCED",
-    description: "Lockdown press man coverage across perimeter with single-high centerfield safety.",
+    description:
+      "Lockdown press man coverage across perimeter with single-high centerfield safety.",
     tags: ["Aggressive", "Press", "Tight Window"],
   },
   {
@@ -142,7 +145,8 @@ const TACTICAL_CONCEPTS: TacticalConcept[] = [
     category: "DEFENSE",
     playType: "PASS",
     riskReward: "AGGRESSIVE",
-    description: "5-man overload rush sending inside linebackers through A/B gaps with 3-under 3-deep.",
+    description:
+      "5-man overload rush sending inside linebackers through A/B gaps with 3-under 3-deep.",
     tags: ["Sack Threat", "Pressure", "High Risk"],
   },
   // SPECIAL TEAMS
@@ -295,17 +299,31 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
               </span>
               <span
                 className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
-                  isCoachMode ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-slate-800 text-slate-400"
+                  isCoachMode
+                    ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                    : "bg-slate-800 text-slate-400"
                 }`}
               >
                 {isCoachMode ? "Coach Mode (User)" : "Spectator Mode (AI)"}
               </span>
             </div>
             <p className="text-[11px] font-mono text-slate-400">
-              Down: <strong className="text-white">{down} & {distance}</strong> • Ball:{" "}
-              <span className="text-cyan-400">{yardline >= 50 ? `OPP ${100 - yardline}` : `OWN ${yardline}`}</span> • Diff:{" "}
-              <span className="text-emerald-400">{scoreDiff > 0 ? `+${scoreDiff}` : scoreDiff}</span> • Play Clock:{" "}
-              <span className={`font-bold ${playClock <= 5 ? "text-red-400 animate-ping" : "text-amber-400"}`}>
+              Down:{" "}
+              <strong className="text-white">
+                {down} & {distance}
+              </strong>{" "}
+              • Ball:{" "}
+              <span className="text-cyan-400">
+                {yardline >= 50 ? `OPP ${100 - yardline}` : `OWN ${yardline}`}
+              </span>{" "}
+              • Diff:{" "}
+              <span className="text-emerald-400">
+                {scoreDiff > 0 ? `+${scoreDiff}` : scoreDiff}
+              </span>{" "}
+              • Play Clock:{" "}
+              <span
+                className={`font-bold ${playClock <= 5 ? "text-red-400 animate-ping" : "text-amber-400"}`}
+              >
                 :{playClock.toString().padStart(2, "0")}
               </span>
             </p>
@@ -469,7 +487,8 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
             <div className="text-xs font-mono text-slate-400">
               {selectedConcept ? (
                 <span>
-                  Ready to snap: <strong className="text-white">{selectedConcept.name}</strong> ({selectedConcept.category})
+                  Ready to snap: <strong className="text-white">{selectedConcept.name}</strong> (
+                  {selectedConcept.category})
                 </span>
               ) : (
                 <span>Press [1]-[4] to choose concept • [A] for audible • [T] for timeout</span>

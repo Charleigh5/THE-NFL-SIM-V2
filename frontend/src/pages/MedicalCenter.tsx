@@ -10,7 +10,16 @@ import FatigueIndicator from "../components/game/FatigueIndicator";
 import type { MedicalProtocolType, TriageDecisionResult } from "../types/deepDive";
 import { medicalApi } from "../services/medicalApi";
 import type { InjuredPlayer, BioMetrics, FatigueState, TreatmentType } from "../types/medical";
-import { ShieldCheck, Stethoscope, AlertCircle, HeartPulse, Activity, CheckCircle2, Loader2, Building2 } from "lucide-react";
+import {
+  ShieldCheck,
+  Stethoscope,
+  AlertCircle,
+  HeartPulse,
+  Activity,
+  CheckCircle2,
+  Loader2,
+  Building2,
+} from "lucide-react";
 import { useTheme } from "../context/useTheme";
 import { RTPTrajectoryGraph } from "../components/medical/RTPTrajectoryGraph";
 import { SpecialistReferralModal } from "../components/medical/SpecialistReferralModal";
@@ -19,13 +28,25 @@ import { orthopedicApi } from "../services/orthopedicApi";
 import type { OrthopedicEvaluationResponse, MedicalProtocol } from "../types/orthopedicRtp";
 import "../components/medical/MedicalCenter.css";
 
+const DEFAULT_HEALTH_DATA: BodyMapHealthData = {
+  head: 100,
+  neck: 100,
+  torso: 100,
+  rightArm: 100,
+  leftArm: 100,
+  rightLeg: 100,
+  leftLeg: 100,
+  generalWear: 0,
+};
+
 export const MedicalCenter: React.FC = () => {
   const [selectedPart, setSelectedPart] = useState<BodyZoneKey | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showTreatmentModal, setShowTreatmentModal] = useState(false);
   const [showSpecialistModal, setShowSpecialistModal] = useState(false);
   const [orthopedicEval, setOrthopedicEval] = useState<OrthopedicEvaluationResponse | null>(null);
-  const [selectedTrajectoryProtocol, setSelectedTrajectoryProtocol] = useState<MedicalProtocol>("CONSERVATIVE");
+  const [selectedTrajectoryProtocol, setSelectedTrajectoryProtocol] =
+    useState<MedicalProtocol>("CONSERVATIVE");
   const [activePlayerIndex, setActivePlayerIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [isLoadingRoster, setIsLoadingRoster] = useState<boolean>(true);
@@ -38,24 +59,35 @@ export const MedicalCenter: React.FC = () => {
   const currentTeamId = Number(activeTeamId) || 1;
 
   // Active player health matrix
-  const [healthData, setHealthData] = useState<BodyMapHealthData>({
-    head: 100,
-    neck: 100,
-    torso: 100,
-    rightArm: 100,
-    leftArm: 100,
-    rightLeg: 100,
-    leftLeg: 100,
-    generalWear: 0,
-  });
-
+  const [healthData, setHealthData] = useState<BodyMapHealthData>(DEFAULT_HEALTH_DATA);
   const [biometrics, setBiometrics] = useState<BioMetrics | null>(null);
   const [fatigue, setFatigue] = useState<FatigueState | null>(null);
+
+  const [prevTeamId, setPrevTeamId] = useState<number>(currentTeamId);
+  if (currentTeamId !== prevTeamId) {
+    setPrevTeamId(currentTeamId);
+    setIsLoadingRoster(true);
+  }
+
+  const activePlayer: InjuredPlayer | undefined = injuredRoster[activePlayerIndex];
+  const activePlayerId = activePlayer?.player_id;
+
+  const [prevPlayerId, setPrevPlayerId] = useState<number | undefined>(activePlayerId);
+  if (activePlayerId !== prevPlayerId) {
+    setPrevPlayerId(activePlayerId);
+    if (!activePlayerId) {
+      setHealthData(DEFAULT_HEALTH_DATA);
+      setBiometrics(null);
+      setFatigue(null);
+      setOrthopedicEval(null);
+    } else {
+      setLoading(true);
+    }
+  }
 
   // 1. Fetch live team injuries on mount and franchise change
   useEffect(() => {
     let isCancelled = false;
-    setIsLoadingRoster(true);
 
     medicalApi
       .getTeamInjuries(currentTeamId)
@@ -82,29 +114,11 @@ export const MedicalCenter: React.FC = () => {
     };
   }, [currentTeamId]);
 
-  const activePlayer: InjuredPlayer | undefined = injuredRoster[activePlayerIndex];
-
   // 2. Fetch live player medical and biometrics when active player changes
   useEffect(() => {
+    if (!activePlayer) return;
     let isCancelled = false;
-    if (!activePlayer) {
-      setHealthData({
-        head: 100,
-        neck: 100,
-        torso: 100,
-        rightArm: 100,
-        leftArm: 100,
-        rightLeg: 100,
-        leftLeg: 100,
-        generalWear: 0,
-      });
-      setBiometrics(null);
-      setFatigue(null);
-      setOrthopedicEval(null);
-      return;
-    }
 
-    setLoading(true);
     Promise.all([
       medicalApi.getPlayerHealth(activePlayer.player_id).catch(() => null),
       medicalApi.getPlayerBioMetrics(activePlayer.player_id).catch(() => null),
@@ -168,8 +182,8 @@ export const MedicalCenter: React.FC = () => {
                   protocol === "CORTISONE_STABILIZATION"
                     ? "QUESTIONABLE"
                     : result.projected_recovery_weeks > 0
-                    ? "OUT"
-                    : "ACTIVE",
+                      ? "OUT"
+                      : "ACTIVE",
               }
             : p
         )
@@ -311,7 +325,9 @@ export const MedicalCenter: React.FC = () => {
               </span>
               <div className="text-sm font-bold text-emerald-400 flex items-center gap-1.5 justify-end">
                 <Activity className="w-4 h-4" />{" "}
-                {injuredRoster.length === 0 ? "100% Ready" : `${Math.max(70, 100 - injuredRoster.length * 4)}% Ready`}
+                {injuredRoster.length === 0
+                  ? "100% Ready"
+                  : `${Math.max(70, 100 - injuredRoster.length * 4)}% Ready`}
               </div>
             </div>
 
@@ -414,15 +430,17 @@ export const MedicalCenter: React.FC = () => {
             <FatigueMonitor fatigue={fatigue} currentWearLevel={healthData.generalWear} />
 
             {/* Cortisone In-Game Hazard Warning Banner */}
-            {activePlayer && (activePlayer.injury_status === "QUESTIONABLE" || orthopedicEval?.isCortisoneActive) && (
-              <div className="mb-4">
-                <CortisoneRiskBanner
-                  playerName={activePlayerName}
-                  hazardMultiplier={orthopedicEval?.cortisoneInGameHazardMultiplier || 2.5}
-                  snapsPlayed={activePlayer.severity ? activePlayer.severity * 4 : 12}
-                />
-              </div>
-            )}
+            {activePlayer &&
+              (activePlayer.injury_status === "QUESTIONABLE" ||
+                orthopedicEval?.isCortisoneActive) && (
+                <div className="mb-4">
+                  <CortisoneRiskBanner
+                    playerName={activePlayerName}
+                    hazardMultiplier={orthopedicEval?.cortisoneInGameHazardMultiplier || 2.5}
+                    snapsPlayed={activePlayer.severity ? activePlayer.severity * 4 : 12}
+                  />
+                </div>
+              )}
 
             {/* Current Diagnosis Card */}
             <div className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl">
@@ -496,15 +514,17 @@ export const MedicalCenter: React.FC = () => {
             </div>
 
             {/* 12-Week Gompertz RTP Trajectory Graph */}
-            {orthopedicEval && orthopedicEval.trajectories && orthopedicEval.trajectories.length > 0 && (
-              <div className="mt-5">
-                <RTPTrajectoryGraph
-                  trajectories={orthopedicEval.trajectories}
-                  activeProtocol={selectedTrajectoryProtocol}
-                  onSelectProtocol={(p) => setSelectedTrajectoryProtocol(p)}
-                />
-              </div>
-            )}
+            {orthopedicEval &&
+              orthopedicEval.trajectories &&
+              orthopedicEval.trajectories.length > 0 && (
+                <div className="mt-5">
+                  <RTPTrajectoryGraph
+                    trajectories={orthopedicEval.trajectories}
+                    activeProtocol={selectedTrajectoryProtocol}
+                    onSelectProtocol={(p) => setSelectedTrajectoryProtocol(p)}
+                  />
+                </div>
+              )}
           </div>
         </div>
 
@@ -519,7 +539,9 @@ export const MedicalCenter: React.FC = () => {
               onClose={() => setShowSpecialistModal(false)}
               onConsultSuccess={() => {
                 if (activePlayer) {
-                  orthopedicApi.getOrthopedicEvaluation(activePlayer.player_id).then(setOrthopedicEval);
+                  orthopedicApi
+                    .getOrthopedicEvaluation(activePlayer.player_id)
+                    .then(setOrthopedicEval);
                 }
               }}
             />

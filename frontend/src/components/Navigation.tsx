@@ -19,6 +19,7 @@ import {
   Activity,
   Briefcase,
   Award,
+  CloudRain,
 } from "lucide-react";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
@@ -44,6 +45,7 @@ export const Navigation: React.FC = () => {
     { path: "/playbook", label: "PLAYBOOK", icon: BookOpen, tag: "SCHEME" },
     { path: "/live-sim", label: "GAME DAY", icon: Trophy, tag: "SIM" },
     { path: "/medical-center", label: "MEDICAL", icon: Activity, tag: "REHAB" },
+    { path: "/weather-lab", label: "WEATHER LAB", icon: CloudRain, tag: "AAAA" },
     { path: "/empire/trade-center", label: "TRADE DESK", icon: ArrowLeftRight, tag: "DEALS" },
     { path: "/offseason", label: "OFFSEASON", icon: Briefcase, tag: "PHASES" },
     { path: "/offseason/draft", label: "DRAFT ROOM", icon: Sparkles, tag: "WAR ROOM" },

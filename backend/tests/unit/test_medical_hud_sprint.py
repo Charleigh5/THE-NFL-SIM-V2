@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.main import app
 from app.core.database import SessionLocal
+from app.models.team import Team
 from app.models.player import Player, InjuryStatus, Position
 from app.models.player_attributes import PlayerAttributes
 from app.models.player_injury import PlayerInjury
@@ -24,6 +25,18 @@ from app.services.medical_service import MedicalService
 from app.engine.fourth_down_calculator import FourthDownCalculator, FourthDownRecommendation
 from app.schemas.deep_dive import MedicalProtocolType
 from tests.conftest import create_player
+
+
+@pytest.fixture(autouse=True)
+def ensure_default_team(db_session: Session):
+    """Ensure a team with id=1 exists so foreign key constraints are satisfied."""
+    team = db_session.query(Team).filter(Team.id == 1).first()
+    if not team:
+        team = Team(id=1, name="Chiefs", city="Kansas City", abbreviation="KC")
+        db_session.add(team)
+        db_session.commit()
+    return team
+
 
 
 # =============================================================================

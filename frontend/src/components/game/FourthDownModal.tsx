@@ -2,16 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { apiClient } from "../../services/api";
 import { soundEffects } from "../../services/soundEffects";
-import {
-  TrendingUp,
-  Target,
-  ArrowRight,
-  Shield,
-  Zap,
-  X,
-  Loader2,
-  CheckCircle,
-} from "lucide-react";
+import { TrendingUp, Target, ArrowRight, Shield, Zap, X, Loader2, CheckCircle } from "lucide-react";
 
 export interface FourthDownRecommendationData {
   recommendation: "GO" | "FIELD_GOAL" | "PUNT";
@@ -54,13 +45,23 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
   const [data, setData] = useState<FourthDownRecommendationData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedAction, setSelectedAction] = useState<"GO" | "FIELD_GOAL" | "PUNT">("GO");
+  const [prevTrackKey, setPrevTrackKey] = useState<string>(
+    () => `${isOpen}_${down}_${distance}_${yardline}`
+  );
+
+  const currentTrackKey = `${isOpen}_${down}_${distance}_${yardline}_${scoreDiff}_${timeRemaining}_${timeouts}`;
+  if (currentTrackKey !== prevTrackKey) {
+    setPrevTrackKey(currentTrackKey);
+    if (isOpen) {
+      setLoading(true);
+    }
+  }
 
   // Fetch Ben Baldwin 4th-down decision modeling
   useEffect(() => {
     if (!isOpen) return;
 
     let isCancelled = false;
-    setLoading(true);
 
     apiClient
       .post<FourthDownRecommendationData>("/api/playcalling/fourth-down-recommendation", {
@@ -84,13 +85,18 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
         const yardsToGoal = 100 - yardline;
         const fgDist = yardsToGoal + 17;
         const fallbackFg = fgDist <= 65 ? Math.max(0.1, 0.95 - (fgDist - 25) * 0.02) : 0.0;
-        const rec = distance <= 2 || (yardline >= 60 && fgDist > 55) ? "GO" : fgDist <= 48 ? "FIELD_GOAL" : "PUNT";
+        const rec =
+          distance <= 2 || (yardline >= 60 && fgDist > 55)
+            ? "GO"
+            : fgDist <= 48
+              ? "FIELD_GOAL"
+              : "PUNT";
 
         if (!isCancelled) {
           setData({
             recommendation: rec,
             wp_go: 0.55,
-            wp_fg: 0.50,
+            wp_fg: 0.5,
             wp_punt: 0.42,
             ep_go: 2.1,
             ep_fg: 1.5,
@@ -156,7 +162,8 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                 </span>
               </div>
               <h3 className="text-xl font-bold text-white tracking-wide mt-0.5">
-                4th & {distance} • Ball at {yardline >= 50 ? `Opp ${100 - yardline}` : `Own ${yardline}`}
+                4th & {distance} • Ball at{" "}
+                {yardline >= 50 ? `Opp ${100 - yardline}` : `Own ${yardline}`}
               </h3>
             </div>
           </div>
@@ -190,16 +197,14 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                   <span className="text-[10px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-black/40">
                     {data.recommendation_strength}
                   </span>
-                  <span className="text-xs font-mono font-semibold">
-                    Optimal Expected Decision
-                  </span>
+                  <span className="text-xs font-mono font-semibold">Optimal Expected Decision</span>
                 </div>
                 <div className="text-2xl font-black tracking-tight">
                   {data.recommendation === "GO"
                     ? "GO FOR IT"
                     : data.recommendation === "FIELD_GOAL"
-                    ? "ATTEMPT FIELD GOAL"
-                    : "PUNT"}
+                      ? "ATTEMPT FIELD GOAL"
+                      : "PUNT"}
                 </div>
                 <p className="text-xs mt-1 text-slate-200 opacity-90 leading-relaxed">
                   {data.summary}
@@ -215,8 +220,8 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                     (data.recommendation === "GO"
                       ? data.wp_go
                       : data.recommendation === "FIELD_GOAL"
-                      ? data.wp_fg
-                      : data.wp_punt) * 100
+                        ? data.wp_fg
+                        : data.wp_punt) * 100
                   )}
                   %
                 </span>
@@ -238,20 +243,18 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                   <span className="font-bold text-xs uppercase text-slate-200 flex items-center gap-1.5">
                     <Zap className="w-3.5 h-3.5 text-emerald-400" /> Go For It
                   </span>
-                  {selectedAction === "GO" && (
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  )}
+                  {selectedAction === "GO" && <CheckCircle className="w-4 h-4 text-emerald-400" />}
                 </div>
                 <div className="space-y-1 text-[11px] font-mono">
                   <div className="flex justify-between text-slate-400">
                     <span>Win Prob:</span>
-                    <strong className="text-emerald-300">
-                      {Math.round(data.wp_go * 100)}%
-                    </strong>
+                    <strong className="text-emerald-300">{Math.round(data.wp_go * 100)}%</strong>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Exp Points:</span>
-                    <strong className="text-slate-200">{data.ep_go > 0 ? `+${data.ep_go}` : data.ep_go}</strong>
+                    <strong className="text-slate-200">
+                      {data.ep_go > 0 ? `+${data.ep_go}` : data.ep_go}
+                    </strong>
                   </div>
                   <div className="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
                     <span>Conv Odds:</span>
@@ -282,13 +285,13 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                 <div className="space-y-1 text-[11px] font-mono">
                   <div className="flex justify-between text-slate-400">
                     <span>Win Prob:</span>
-                    <strong className="text-blue-300">
-                      {Math.round(data.wp_fg * 100)}%
-                    </strong>
+                    <strong className="text-blue-300">{Math.round(data.wp_fg * 100)}%</strong>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Exp Points:</span>
-                    <strong className="text-slate-200">{data.ep_fg > 0 ? `+${data.ep_fg}` : data.ep_fg}</strong>
+                    <strong className="text-slate-200">
+                      {data.ep_fg > 0 ? `+${data.ep_fg}` : data.ep_fg}
+                    </strong>
                   </div>
                   <div className="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
                     <span>{data.fg_distance}y Make:</span>
@@ -312,20 +315,18 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
                   <span className="font-bold text-xs uppercase text-slate-200 flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-amber-400" /> Punt
                   </span>
-                  {selectedAction === "PUNT" && (
-                    <CheckCircle className="w-4 h-4 text-amber-400" />
-                  )}
+                  {selectedAction === "PUNT" && <CheckCircle className="w-4 h-4 text-amber-400" />}
                 </div>
                 <div className="space-y-1 text-[11px] font-mono">
                   <div className="flex justify-between text-slate-400">
                     <span>Win Prob:</span>
-                    <strong className="text-amber-300">
-                      {Math.round(data.wp_punt * 100)}%
-                    </strong>
+                    <strong className="text-amber-300">{Math.round(data.wp_punt * 100)}%</strong>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Exp Points:</span>
-                    <strong className="text-slate-200">{data.ep_punt > 0 ? `+${data.ep_punt}` : data.ep_punt}</strong>
+                    <strong className="text-slate-200">
+                      {data.ep_punt > 0 ? `+${data.ep_punt}` : data.ep_punt}
+                    </strong>
                   </div>
                   <div className="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
                     <span>Field Pos:</span>
