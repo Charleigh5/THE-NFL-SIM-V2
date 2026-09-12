@@ -258,6 +258,8 @@ export const DepthChart: React.FC = () => {
   const [draftOrders, setDraftOrders] = useState<Record<string, number[]>>({});
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
 
+  const draftKey = `${selectedTeamId}:${selectedPosition}`;
+
   // Manual reorder fallback for Playwright E2E and touch devices
   const draggingIdRef = useRef<number | null>(null);
   const isPointerDownRef = useRef(false);
@@ -408,7 +410,7 @@ export const DepthChart: React.FC = () => {
       return (b.overall_rating ?? -1) - (a.overall_rating ?? -1);
     });
 
-    const draftOrder = draftOrders[selectedPosition];
+    const draftOrder = draftOrders[draftKey];
     if (draftOrder && draftOrder.length > 0) {
       const draftRank = new Map(draftOrder.map((id, index) => [id, index]));
       matched.sort((a, b) => {
@@ -422,7 +424,7 @@ export const DepthChart: React.FC = () => {
     }
 
     setPositionPlayers(matched);
-  }, [roster, selectedPosition, currentPosConfig, draftOrders]);
+  }, [roster, selectedPosition, currentPosConfig, draftOrders, draftKey]);
 
   // Active Team Object
   const currentTeam = useMemo(() => {
@@ -462,7 +464,7 @@ export const DepthChart: React.FC = () => {
     setPositionPlayers(nextOrder);
     setDraftOrders((previous) => ({
       ...previous,
-      [selectedPosition]: nextOrder.map((player) => player.id),
+      [draftKey]: nextOrder.map((player) => player.id),
     }));
     setSaveError(null);
     setSaveSuccess(false);
@@ -506,7 +508,7 @@ export const DepthChart: React.FC = () => {
       setRoster(data);
       setDraftOrders((previous) => {
         const next = { ...previous };
-        delete next[selectedPosition];
+        delete next[draftKey];
         return next;
       });
       setSaveError(null);
@@ -537,7 +539,7 @@ export const DepthChart: React.FC = () => {
       setRoster(updatedRoster);
       setDraftOrders((previous) => {
         const next = { ...previous };
-        delete next[selectedPosition];
+        delete next[draftKey];
         return next;
       });
 
@@ -609,7 +611,7 @@ export const DepthChart: React.FC = () => {
   }, [positionPlayers]);
 
   const starterPlayer = positionPlayers[0];
-  const isDirty = Boolean(draftOrders[selectedPosition]?.length);
+  const isDirty = Boolean(draftOrders[draftKey]?.length);
 
   return (
     <SpatialSceneShell
