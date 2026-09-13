@@ -3,7 +3,16 @@ import { GameplanDashboard } from "../components/coaching/GameplanDashboard";
 import { CoachingTree } from "../components/coaching/CoachingTree";
 import { Telestrator } from "../components/ui/Telestrator";
 import { soundEffects } from "../services/soundEffects";
-import { BookOpen, Compass, Pencil, Trash2, ArrowRight } from "lucide-react";
+import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
+import {
+  BookOpen,
+  Compass,
+  Pencil,
+  Trash2,
+  ArrowRight,
+  Sparkles,
+  Layers,
+} from "lucide-react";
 import "../components/coaching/CoachingUnlockPanel.module.css";
 
 interface FootballPlay {
@@ -78,10 +87,155 @@ const PLAYBOOK_LIBRARY: FootballPlay[] = [
   },
 ];
 
+const SPATIAL_MODE_STORAGE_KEY = "nfl_sim_playbook_spatial_mode";
+
 export const Playbook = () => {
   const [activeTab, setActiveTab] = useState<"GAMEPLAN" | "CHALKBOARD" | "STAFF">("GAMEPLAN");
   const [selectedPlay, setSelectedPlay] = useState<FootballPlay>(PLAYBOOK_LIBRARY[0]);
   const [isTelestratorActive, setIsTelestratorActive] = useState(false);
+  const [viewMode, setViewMode] = useState<"spatial" | "tactical">(() => {
+    try {
+      const stored = localStorage.getItem(SPATIAL_MODE_STORAGE_KEY);
+      return stored === "tactical" ? "tactical" : "spatial";
+    } catch {
+      return "spatial";
+    }
+  });
+
+  const handleModeToggle = (mode: "spatial" | "tactical") => {
+    soundEffects.playSnap();
+    setViewMode(mode);
+    try {
+      localStorage.setItem(SPATIAL_MODE_STORAGE_KEY, mode);
+    } catch {
+      // Ignore localStorage errors
+    }
+  };
+
+  const renderTabContent = () => (
+    <>
+      {activeTab === "GAMEPLAN" && <GameplanDashboard />}
+
+      {activeTab === "CHALKBOARD" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Play Selector List (4 Cols) */}
+          <div className="lg:col-span-4 space-y-3">
+            <h3 className="font-header text-xl uppercase tracking-wider text-white flex items-center gap-2">
+              <BookOpen size={18} className="text-yellow-400" />
+              Playbook Formations
+            </h3>
+
+            <div className="space-y-2">
+              {PLAYBOOK_LIBRARY.map((play) => (
+                <div
+                  key={play.id}
+                  onClick={() => {
+                    soundEffects.playSnap();
+                    setSelectedPlay(play);
+                  }}
+                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                    selectedPlay.id === play.id
+                      ? "bg-gradient-to-r from-broadcast-metal to-black border-yellow-400/80 shadow-lg"
+                      : "bg-black/40 border-white/5 hover:border-white/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-header text-lg text-white uppercase">{play.name}</span>
+                    <span
+                      className={`text-[9px] font-mono px-2 py-0.5 rounded font-bold ${
+                        play.type === "PASS"
+                          ? "bg-cyan-500/20 text-cyan-300"
+                          : play.type === "RUN"
+                            ? "bg-emerald-500/20 text-emerald-300"
+                            : "bg-red-500/20 text-red-300"
+                      }`}
+                    >
+                      {play.type}
+                    </span>
+                  </div>
+
+                  <div className="text-xs font-mono text-gray-400 mt-1">
+                    {play.formation} • {play.personnel}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Play Art Chalkboard Diagram Viewport (8 Cols) */}
+          <div className="lg:col-span-8 rounded-2xl bg-gradient-to-b from-[#0a180f] to-[#040a06] border-2 border-white/20 p-6 relative overflow-hidden shadow-2xl">
+            {/* Turf Grass & Hash Lines Texture */}
+            <div className="absolute inset-0 turf-hash-pattern opacity-20 pointer-events-none" />
+
+            {/* Header Info */}
+            <div className="relative z-10 flex items-start justify-between pb-4 border-b border-white/15">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
+                  {selectedPlay.formation}
+                </span>
+                <h2 className="font-header text-3xl text-white uppercase tracking-tight leading-none mt-0.5">
+                  {selectedPlay.name}
+                </h2>
+                <p className="text-xs text-gray-300 mt-1 max-w-xl">{selectedPlay.description}</p>
+              </div>
+
+              <div className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-right">
+                <span className="text-[10px] font-mono text-gray-400 block uppercase">
+                  Personnel
+                </span>
+                <span className="text-xs font-bold text-yellow-400">
+                  {selectedPlay.personnel}
+                </span>
+              </div>
+            </div>
+
+            {/* Chalk Route Assignment Deck */}
+            <div className="relative z-10 my-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+              {selectedPlay.routes.map((r, i) => (
+                <div
+                  key={i}
+                  className="p-3 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-3 h-3 rounded-full shrink-0"
+                      style={{ backgroundColor: r.color }}
+                    />
+                    <span className="font-bold text-xs text-white font-mono">{r.player}</span>
+                  </div>
+                  <span className="text-xs text-gray-300 font-mono flex items-center gap-1">
+                    <ArrowRight size={12} className="text-gray-400" /> {r.route}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Interactive Chalkboard Grid Canvas Graphic */}
+            <div className="relative z-10 h-48 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center p-4">
+              <div className="text-center space-y-2">
+                <Compass size={32} className="text-emerald-400 mx-auto animate-spin-slow" />
+                <span className="font-header text-lg uppercase tracking-wider text-gray-300 block">
+                  Interactive Gridiron Route Diagramming
+                </span>
+                <p className="text-xs text-gray-500 font-mono">
+                  Click "Draw Chalk" above to sketch audibles, hot routes, and blitz pressures.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "STAFF" && (
+        <div className="flex flex-col items-center">
+          <h2 className="text-2xl font-header uppercase tracking-wider text-white mb-4">
+            Coaching Dynasty Tree
+          </h2>
+          <CoachingTree />
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div className="space-y-6 font-body">
@@ -102,8 +256,36 @@ export const Playbook = () => {
           </p>
         </div>
 
-        {/* Tab Controls & Drawing Button */}
-        <div className="flex items-center gap-3">
+        {/* Tab Controls, Drawing Button & Dual-Mode Switcher */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Dual-Mode Ergonomics Toggle: SPATIAL FILM ROOM vs TACTICAL PLAYBOOK */}
+          <div className="flex bg-black/60 p-1 rounded-xl border border-white/15">
+            <button
+              type="button"
+              onClick={() => handleModeToggle("spatial")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-header uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                viewMode === "spatial"
+                  ? "bg-cyan-500 text-black font-bold shadow-md shadow-cyan-500/30"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Sparkles size={13} />
+              <span>SPATIAL FILM ROOM</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeToggle("tactical")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-header uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                viewMode === "tactical"
+                  ? "bg-cyan-500 text-black font-bold shadow-md shadow-cyan-500/30"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Layers size={13} />
+              <span>TACTICAL PLAYBOOK</span>
+            </button>
+          </div>
+
           <div className="flex gap-2">
             <button
               onClick={() => {
@@ -175,134 +357,52 @@ export const Playbook = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <div
-        className="broadcast-glass p-6 rounded-2xl border border-white/15 min-h-[600px] shadow-2xl relative"
-        data-testid="telestrator-canvas"
-      >
-        <div className="sr-only">TELESTRATOR_CANVAS_TARGET</div>
-
-        {activeTab === "GAMEPLAN" && <GameplanDashboard />}
-
-        {activeTab === "CHALKBOARD" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Play Selector List (4 Cols) */}
-            <div className="lg:col-span-4 space-y-3">
-              <h3 className="font-header text-xl uppercase tracking-wider text-white flex items-center gap-2">
-                <BookOpen size={18} className="text-yellow-400" />
-                Playbook Formations
-              </h3>
-
-              <div className="space-y-2">
-                {PLAYBOOK_LIBRARY.map((play) => (
-                  <div
-                    key={play.id}
-                    onClick={() => {
-                      soundEffects.playSnap();
-                      setSelectedPlay(play);
-                    }}
-                    className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                      selectedPlay.id === play.id
-                        ? "bg-gradient-to-r from-broadcast-metal to-black border-yellow-400/80 shadow-lg"
-                        : "bg-black/40 border-white/5 hover:border-white/20"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-header text-lg text-white uppercase">{play.name}</span>
-                      <span
-                        className={`text-[9px] font-mono px-2 py-0.5 rounded font-bold ${
-                          play.type === "PASS"
-                            ? "bg-cyan-500/20 text-cyan-300"
-                            : play.type === "RUN"
-                              ? "bg-emerald-500/20 text-emerald-300"
-                              : "bg-red-500/20 text-red-300"
-                        }`}
-                      >
-                        {play.type}
-                      </span>
-                    </div>
-
-                    <div className="text-xs font-mono text-gray-400 mt-1">
-                      {play.formation} • {play.personnel}
-                    </div>
-                  </div>
-                ))}
+      {/* Main Viewport Content Area: Spatial Film Room vs Tactical Playbook */}
+      {viewMode === "spatial" ? (
+        <SpatialSceneViewport
+          backgroundSrc="/assets/spatial/lions_film_room_1789227195650.jpg"
+          overscan={1.06}
+          className="min-h-[calc(100vh-220px)] rounded-2xl overflow-hidden border border-white/10 p-4 sm:p-6"
+        >
+          {/* Spatial Film Room Scene Projection Header */}
+          <div className="mb-4 bg-slate-950/75 backdrop-blur-xl border border-white/15 p-4 rounded-xl shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+              <div>
+                <h2 className="text-base sm:text-lg font-header uppercase tracking-wider text-white">
+                  Detroit Lions Strategic Film Room
+                </h2>
+                <p className="text-xs text-cyan-300/80 font-mono">
+                  Tiered Auditorium & Tactical Projection Theater
+                </p>
               </div>
             </div>
-
-            {/* Play Art Chalkboard Diagram Viewport (8 Cols) */}
-            <div className="lg:col-span-8 rounded-2xl bg-gradient-to-b from-[#0a180f] to-[#040a06] border-2 border-white/20 p-6 relative overflow-hidden shadow-2xl">
-              {/* Turf Grass & Hash Lines Texture */}
-              <div className="absolute inset-0 turf-hash-pattern opacity-20 pointer-events-none" />
-
-              {/* Header Info */}
-              <div className="relative z-10 flex items-start justify-between pb-4 border-b border-white/15">
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
-                    {selectedPlay.formation}
-                  </span>
-                  <h2 className="font-header text-3xl text-white uppercase tracking-tight leading-none mt-0.5">
-                    {selectedPlay.name}
-                  </h2>
-                  <p className="text-xs text-gray-300 mt-1 max-w-xl">{selectedPlay.description}</p>
-                </div>
-
-                <div className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-right">
-                  <span className="text-[10px] font-mono text-gray-400 block uppercase">
-                    Personnel
-                  </span>
-                  <span className="text-xs font-bold text-yellow-400">
-                    {selectedPlay.personnel}
-                  </span>
-                </div>
-              </div>
-
-              {/* Chalk Route Assignment Deck */}
-              <div className="relative z-10 my-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-                {selectedPlay.routes.map((r, i) => (
-                  <div
-                    key={i}
-                    className="p-3 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-3 h-3 rounded-full shrink-0"
-                        style={{ backgroundColor: r.color }}
-                      />
-                      <span className="font-bold text-xs text-white font-mono">{r.player}</span>
-                    </div>
-                    <span className="text-xs text-gray-300 font-mono flex items-center gap-1">
-                      <ArrowRight size={12} className="text-gray-400" /> {r.route}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Interactive Chalkboard Grid Canvas Graphic */}
-              <div className="relative z-10 h-48 rounded-xl bg-black/50 border border-white/10 flex items-center justify-center p-4">
-                <div className="text-center space-y-2">
-                  <Compass size={32} className="text-emerald-400 mx-auto animate-spin-slow" />
-                  <span className="font-header text-lg uppercase tracking-wider text-gray-300 block">
-                    Interactive Gridiron Route Diagramming
-                  </span>
-                  <p className="text-xs text-gray-500 font-mono">
-                    Click "Draw Chalk" above to sketch audibles, hot routes, and blitz pressures.
-                  </p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold uppercase tracking-wider">
+                Spatial Film Room Active
+              </span>
             </div>
           </div>
-        )}
 
-        {activeTab === "STAFF" && (
-          <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-header uppercase tracking-wider text-white mb-4">
-              Coaching Dynasty Tree
-            </h2>
-            <CoachingTree />
+          {/* Spatial Frosted Glass Canvas Container */}
+          <div
+            className="bg-slate-950/75 backdrop-blur-xl border border-white/15 p-6 rounded-2xl min-h-[600px] shadow-2xl relative"
+            data-testid="telestrator-canvas"
+          >
+            <div className="sr-only">TELESTRATOR_CANVAS_TARGET</div>
+            {renderTabContent()}
           </div>
-        )}
-      </div>
+        </SpatialSceneViewport>
+      ) : (
+        /* Direct 2D Tactical Playbook View */
+        <div
+          className="broadcast-glass p-6 rounded-2xl border border-white/15 min-h-[600px] shadow-2xl relative"
+          data-testid="telestrator-canvas"
+        >
+          <div className="sr-only">TELESTRATOR_CANVAS_TARGET</div>
+          {renderTabContent()}
+        </div>
+      )}
 
       <Telestrator isActive={isTelestratorActive} onClose={() => setIsTelestratorActive(false)} />
     </div>

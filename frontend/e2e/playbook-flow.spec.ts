@@ -236,4 +236,73 @@ test.describe("Playbook Flow", () => {
     // Page should still be functional
     await expect(page.locator("h1", { hasText: /playbook/i })).toBeVisible();
   });
+
+  test("should support dual-mode toggle between spatial film room and tactical playbook", async ({
+    page,
+  }) => {
+    await page.goto("/playbook");
+
+    // Default mode is spatial film room
+    const spatialBtn = page.locator('button:has-text("SPATIAL FILM ROOM")');
+    const tacticalBtn = page.locator('button:has-text("TACTICAL PLAYBOOK")');
+
+    await expect(spatialBtn).toBeVisible();
+    await expect(tacticalBtn).toBeVisible();
+
+    // Scene title & subtitle should be visible in Spatial Film Room mode
+    await expect(page.locator("text=Detroit Lions Strategic Film Room")).toBeVisible();
+    await expect(
+      page.locator("text=Tiered Auditorium & Tactical Projection Theater")
+    ).toBeVisible();
+
+    // Switch to Tactical Playbook mode
+    await tacticalBtn.click();
+
+    // Check localStorage preference
+    const modeAfterTactical = await page.evaluate(() =>
+      localStorage.getItem("nfl_sim_playbook_spatial_mode")
+    );
+    expect(modeAfterTactical).toBe("tactical");
+
+    // Telestrator canvas container is still visible in 2D mode
+    await expect(page.locator('[data-testid="telestrator-canvas"]')).toBeVisible();
+    // In tactical mode, spatial scene header is not present
+    await expect(page.locator("text=Detroit Lions Strategic Film Room")).not.toBeVisible();
+
+    // Switch back to Spatial Film Room mode
+    await spatialBtn.click();
+
+    const modeAfterSpatial = await page.evaluate(() =>
+      localStorage.getItem("nfl_sim_playbook_spatial_mode")
+    );
+    expect(modeAfterSpatial).toBe("spatial");
+    await expect(page.locator("text=Detroit Lions Strategic Film Room")).toBeVisible();
+  });
+
+  test("should maintain responsive active tab switching in spatial mode", async ({ page }) => {
+    await page.goto("/playbook");
+
+    // Switch to Play Art tab
+    const playArtTab = page.locator('button:has-text("Play Art")');
+    await expect(playArtTab).toBeVisible();
+    await playArtTab.click();
+
+    await expect(page.locator("text=Playbook Formations").first()).toBeVisible();
+    await expect(page.locator("text=Four Verticals (Fade Seam)").first()).toBeVisible();
+
+    // Switch to Coaching Staff tab
+    const staffTab = page.locator('button:has-text("Coaching Staff")');
+    await expect(staffTab).toBeVisible();
+    await staffTab.click();
+
+    await expect(page.locator("text=Coaching Dynasty Tree").first()).toBeVisible();
+
+    // Switch back to Weekly Install tab
+    const installTab = page.locator('button:has-text("Weekly Install")');
+    await expect(installTab).toBeVisible();
+    await installTab.click();
+
+    await expect(page.locator("h1", { hasText: "Playbook" })).toBeVisible();
+  });
 });
+

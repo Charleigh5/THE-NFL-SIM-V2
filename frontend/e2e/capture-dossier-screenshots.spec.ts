@@ -56,39 +56,75 @@ test.describe("Full Dossier Screenshot Suite", () => {
       await route.fulfill({ json: [] });
     });
 
-    await page.route("**/api/training/**", async (route) => {
+    await page.route("**/api/training/drills*", async (route) => {
       await route.fulfill({
         json: {
           drills: [
             {
+              id: "1",
               name: "Oklahoma Drill",
               position: "ALL",
-              category: "PHYSICAL",
-              description: "Contact drill",
+              category: "STRENGTH",
+              target_stat: "strength",
+              secondary_stats: ["tackling"],
+              energyCost: 20,
+              fatigue_cost: 20,
+              xpMultiplier: 1.5,
+              xp_multiplier: 1.5,
+              injuryRisk: "HIGH",
+              injury_risk: 0.15,
+              description: "Full contact blocking and tackling drill",
+              season_filter: ["regular"],
             },
             {
+              id: "2",
               name: "7-on-7 Skeleton",
               position: "QB",
-              category: "TACTICAL",
-              description: "Pass coverage",
-            },
-          ],
-          styles: [
-            {
-              name: "smart",
-              display_name: "Smart",
-              xp_multiplier: 1.0,
-              injury_risk_multiplier: 0.8,
-            },
-            {
-              name: "old_school",
-              display_name: "Old School",
+              category: "SPEED",
+              target_stat: "speed",
+              secondary_stats: ["catching"],
+              energyCost: 15,
+              fatigue_cost: 15,
+              xpMultiplier: 1.2,
               xp_multiplier: 1.2,
-              injury_risk_multiplier: 1.5,
+              injuryRisk: "LOW",
+              injury_risk: 0.02,
+              description: "Passing game timing and precision work",
+              season_filter: ["regular"],
             },
           ],
+          total: 2,
         },
       });
+    });
+
+    await page.route("**/api/training/styles*", async (route) => {
+      await route.fulfill({
+        json: [
+          {
+            name: "smart",
+            display_name: "Smart",
+            description: "Balanced approach",
+            xp_multiplier: 1.0,
+            injury_risk_multiplier: 1.0,
+            fatigue_multiplier: 1.0,
+            recovery_multiplier: 1.0,
+          },
+          {
+            name: "old_school",
+            display_name: "Old School",
+            description: "High intensity, high risk",
+            xp_multiplier: 1.5,
+            injury_risk_multiplier: 1.5,
+            fatigue_multiplier: 1.3,
+            recovery_multiplier: 0.8,
+          },
+        ],
+      });
+    });
+
+    await page.route("**/api/training/schedule*", async (route) => {
+      await route.fulfill({ json: { schedule: [] } });
     });
   });
 

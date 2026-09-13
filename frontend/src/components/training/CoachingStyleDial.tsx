@@ -23,7 +23,7 @@ export const CoachingStyleDial: React.FC<CoachingStyleDialProps> = ({
         <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2" />
 
         <div className="flex justify-center items-center gap-8 relative z-10">
-          {styles.map((style) => {
+          {(Array.isArray(styles) ? styles : []).map((style) => {
             const isSelected = selectedStyle === style.name;
 
             return (
