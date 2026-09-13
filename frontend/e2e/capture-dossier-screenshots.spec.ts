@@ -172,10 +172,179 @@ test.describe("Full Dossier Screenshot Suite", () => {
   });
 
   test("Capture 05 - Front Office", async ({ page }) => {
+    page.on("console", (msg) => console.log(`[Browser Console - 05] ${msg.type()}: ${msg.text()}`));
+    page.on("pageerror", (err) => console.error(`[Browser Error - 05] ${err.message}`));
+
+    await page.route("**/api/teams/1", async (route) => {
+      await route.fulfill({
+        json: {
+          id: 1,
+          name: "Lions",
+          city: "Detroit",
+          abbreviation: "DET",
+          conference: "NFC",
+          division: "North",
+          wins: 12,
+          losses: 5,
+          ties: 0,
+          salary_cap_space: 18450000,
+          primary_color: "#0076B6",
+          secondary_color: "#B0B7BC",
+        },
+      });
+    });
+
+    await page.route("**/api/teams/1/roster", async (route) => {
+      await route.fulfill({
+        json: [
+          {
+            id: 1,
+            first_name: "Jared",
+            last_name: "Goff",
+            position: "QB",
+            overall_rating: 89,
+            jersey_number: 16,
+            age: 29,
+            experience: 8,
+            college: "California",
+            speed: 76,
+            strength: 74,
+            agility: 78,
+          },
+          {
+            id: 2,
+            first_name: "Amon-Ra",
+            last_name: "St. Brown",
+            position: "WR",
+            overall_rating: 94,
+            jersey_number: 14,
+            age: 24,
+            experience: 3,
+            college: "USC",
+            speed: 91,
+            strength: 78,
+            agility: 95,
+          },
+          {
+            id: 3,
+            first_name: "Jahmyr",
+            last_name: "Gibbs",
+            position: "RB",
+            overall_rating: 88,
+            jersey_number: 26,
+            age: 22,
+            experience: 1,
+            college: "Alabama",
+            speed: 95,
+            strength: 76,
+            agility: 94,
+          },
+          {
+            id: 4,
+            first_name: "Penei",
+            last_name: "Sewell",
+            position: "OL",
+            overall_rating: 96,
+            jersey_number: 58,
+            age: 23,
+            experience: 3,
+            college: "Oregon",
+            speed: 82,
+            strength: 96,
+            agility: 85,
+          },
+          {
+            id: 5,
+            first_name: "Aidan",
+            last_name: "Hutchinson",
+            position: "DL",
+            overall_rating: 93,
+            jersey_number: 97,
+            age: 24,
+            experience: 2,
+            college: "Michigan",
+            speed: 86,
+            strength: 92,
+            agility: 88,
+          },
+          {
+            id: 6,
+            first_name: "Sam",
+            last_name: "LaPorta",
+            position: "TE",
+            overall_rating: 88,
+            jersey_number: 87,
+            age: 23,
+            experience: 1,
+            college: "Iowa",
+            speed: 87,
+            strength: 81,
+            agility: 89,
+          },
+        ],
+      });
+    });
+
+    await page.addInitScript(() => {
+      localStorage.setItem("selectedTeamId", "1");
+      localStorage.setItem("nfl_sim_front_office_mode", "lockers");
+    });
     await page.goto("/empire/front-office");
-    await page.waitForTimeout(1000);
+    await page.waitForSelector('[data-testid="front-office-header"]', { timeout: 10000 });
+    await page.waitForTimeout(1500);
     await page.screenshot({
       path: path.join(screenshotsDir, "05_front_office.png"),
+      fullPage: true,
+    });
+  });
+
+  test("Capture 05B - Coach Office", async ({ page }) => {
+    page.on("console", (msg) => console.log(`[Browser Console - 05B] ${msg.type()}: ${msg.text()}`));
+    page.on("pageerror", (err) => console.error(`[Browser Error - 05B] ${err.message}`));
+
+    await page.route("**/api/teams/1", async (route) => {
+      await route.fulfill({
+        json: {
+          id: 1,
+          name: "Lions",
+          city: "Detroit",
+          abbreviation: "DET",
+          conference: "NFC",
+          division: "North",
+          wins: 12,
+          losses: 5,
+          ties: 0,
+          salary_cap_space: 18450000,
+          primary_color: "#0076B6",
+          secondary_color: "#B0B7BC",
+        },
+      });
+    });
+
+    await page.route("**/api/teams/*/coach/settings", async (route) => {
+      await route.fulfill({
+        json: {
+          run_pass_ratio: 54,
+          aggressiveness: 88,
+          tempo: 75,
+          fourth_down_aggression: 88,
+          trick_play_frequency: 25,
+          clock_management_style: "AGGRESSIVE",
+          two_pt_conversion_threshold: 60,
+          timeout_aggressiveness: 70,
+        },
+      });
+    });
+
+    await page.addInitScript(() => {
+      localStorage.setItem("selectedTeamId", "1");
+      localStorage.setItem("nfl_sim_front_office_mode", "office");
+    });
+    await page.goto("/empire/front-office");
+    await page.waitForSelector('[data-testid="front-office-header"]', { timeout: 10000 });
+    await page.waitForTimeout(1500);
+    await page.screenshot({
+      path: path.join(screenshotsDir, "05b_coach_office.png"),
       fullPage: true,
     });
   });

@@ -1,7 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
-import { DraggableCard } from "../components/ui/DraggableCard";
+import React, { useEffect, useState, useMemo } from "react";
 import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import CoachSettings from "../components/coaching/CoachSettings";
+import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
+import { PlayerAvatar } from "../components/ui/PlayerAvatar";
 import { api } from "../services/api";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
@@ -13,12 +14,16 @@ import {
   DollarSign,
   X,
   Table as TableIcon,
-  LayoutGrid,
+  Shield,
+  ClipboardList,
+  Award,
 } from "lucide-react";
 import {
   VirtualizedTable,
   type VirtualizedTableColumn,
 } from "../components/common/VirtualizedTable";
+
+export type FrontOfficeMode = "lockers" | "office" | "table";
 
 type PositionFilter =
   | "ALL"
@@ -34,10 +39,168 @@ type PositionFilter =
   | "LB"
   | "DB"
   | "K/P";
-type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
-type ViewMode = "table" | "cards";
 
-export const FrontOffice = () => {
+type SortOption = "OVR" | "AGE" | "SPEED" | "STRENGTH";
+
+const LOCKER_PARALLAX = {
+  maxOffsetX: 14,
+  maxOffsetY: 8,
+  maxRotateX: 1.8,
+  maxRotateY: 2.5,
+};
+
+const OFFICE_PARALLAX = {
+  maxOffsetX: 16,
+  maxOffsetY: 10,
+  maxRotateX: 2.2,
+  maxRotateY: 3.0,
+};
+
+interface LockerStallCardProps {
+  player: Player;
+  teamAbbr?: string;
+  onClick: () => void;
+}
+
+/**
+ * First-Person Honolulu Blue Player Locker Stall
+ * Designed under Adly Frontier UI Architect principles with metallic brushed nameplates,
+ * crisp corner radius, Honolulu Blue (#0076B6) framing, and deterministic interactive states.
+ */
+const LockerStallCard: React.FC<LockerStallCardProps> = ({
+  player,
+  teamAbbr = "DET",
+  onClick,
+}) => {
+  const ovr = player.overall_rating;
+  const ovrBadgeStyle =
+    ovr >= 90
+      ? "from-amber-400 to-yellow-500 text-black shadow-amber-500/30"
+      : ovr >= 80
+      ? "from-emerald-400 to-teal-500 text-black shadow-emerald-500/30"
+      : ovr >= 70
+      ? "from-cyan-400 to-blue-500 text-black shadow-cyan-500/30"
+      : "from-zinc-400 to-zinc-500 text-black shadow-zinc-500/30";
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      data-testid={`player-card-${player.id}`}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      className="group relative flex flex-col rounded-lg overflow-hidden border border-[#0076B6]/40 hover:border-[#0076B6] bg-gradient-to-b from-[#06101e] via-[#040810] to-[#020306] shadow-xl hover:shadow-[0_0_24px_rgba(0,118,182,0.4)] transition-all duration-200 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#0076B6] active:scale-[0.98]"
+    >
+      {/* Metallic Brushed Aluminum Nameplate Header with Rivet Corners */}
+      <div className="relative bg-gradient-to-r from-zinc-700 via-zinc-400 to-zinc-700 p-[1px] shadow-inner">
+        <div className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 px-3 py-1.5 flex items-center justify-between border-b border-zinc-600/80">
+          {/* Rivet Left + Player Jersey & Name */}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 border border-zinc-900 shadow-sm shrink-0" />
+            <span className="font-header text-xs tracking-wider text-white uppercase font-bold truncate">
+              #{player.jersey_number ?? 0} {player.last_name}
+            </span>
+          </div>
+
+          {/* OVR Badge + Rivet Right */}
+          <div className="flex items-center gap-2 shrink-0">
+            <div
+              className={`px-1.5 py-0.5 rounded font-header font-black text-xs uppercase tracking-tight shadow-md bg-gradient-to-r ${ovrBadgeStyle}`}
+            >
+              {ovr} <span className="text-[9px] font-mono font-bold">OVR</span>
+            </div>
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 border border-zinc-900 shadow-sm shrink-0" />
+          </div>
+        </div>
+      </div>
+
+      {/* Locker Stall Cavity Interior */}
+      <div className="relative p-4 flex flex-col items-center justify-between flex-1 min-h-[220px] overflow-hidden">
+        {/* Background Honolulu Blue Giant Number Watermark */}
+        <span className="absolute -right-2 -bottom-3 font-header font-black italic text-7xl text-[#0076B6]/15 select-none pointer-events-none -skew-x-12">
+          #{player.jersey_number ?? 0}
+        </span>
+
+        {/* Top Slotted Locker Air Vents */}
+        <div className="w-full flex justify-center gap-1.5 mb-3 opacity-60">
+          <span className="h-1 w-6 bg-white/10 rounded-full" />
+          <span className="h-1 w-6 bg-white/10 rounded-full" />
+          <span className="h-1 w-6 bg-white/10 rounded-full" />
+        </div>
+
+        {/* Player Avatar in Locker Gear */}
+        <div className="relative my-1">
+          <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-[#0076B6]/50 shadow-[0_0_16px_rgba(0,118,182,0.3)] group-hover:border-[#0076B6] group-hover:scale-105 transition-all bg-slate-900">
+            <PlayerAvatar
+              playerId={player.id}
+              teamAbbr={teamAbbr}
+              pose="headshot"
+              size="lg"
+              position={player.position}
+              jerseyNumber={player.jersey_number}
+              playerName={`${player.first_name} ${player.last_name}`}
+              className="w-full h-full"
+              primaryColor="#0076B6"
+            />
+          </div>
+          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-[#0076B6] border border-cyan-400 text-white font-mono text-[10px] font-bold tracking-wider shadow-md">
+            {player.position}
+          </span>
+        </div>
+
+        {/* Player Identity */}
+        <div className="text-center mt-3 mb-2 z-10">
+          <h3 className="font-header text-base uppercase tracking-tight text-white group-hover:text-cyan-300 transition-colors leading-tight">
+            {player.first_name} {player.last_name}
+          </h3>
+          <p className="text-[10px] font-mono text-gray-400 mt-0.5">
+            {player.college || "NFL Veteran"} • {player.experience ?? 0} yrs
+          </p>
+        </div>
+
+        {/* Athletic Stat Bar Breakdown */}
+        <div className="w-full grid grid-cols-3 gap-1.5 pt-2 border-t border-white/10 text-center font-mono z-10">
+          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">SPD</span>
+            <span className="font-bold text-xs text-emerald-400 leading-none">
+              {player.speed ?? 85}
+            </span>
+          </div>
+          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">STR</span>
+            <span className="font-bold text-xs text-cyan-400 leading-none">
+              {player.strength ?? 80}
+            </span>
+          </div>
+          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">AGI</span>
+            <span className="font-bold text-xs text-amber-400 leading-none">
+              {player.agility ?? 84}
+            </span>
+          </div>
+        </div>
+
+        {/* Locker Shelf Action Tag */}
+        <div className="w-full mt-3 pt-2 flex items-center justify-between text-[11px] font-mono text-cyan-300/80 group-hover:text-cyan-200 transition-colors border-t border-[#0076B6]/20 z-10">
+          <span className="flex items-center gap-1">
+            <Shield size={11} className="text-[#0076B6]" />
+            Stall #{player.jersey_number ?? 0}
+          </span>
+          <span className="font-header uppercase tracking-wider text-[10px] text-[#0076B6] group-hover:text-cyan-300">
+            Dossier &rarr;
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const FrontOffice: React.FC = () => {
   const [roster, setRoster] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [enhancedPlayerId, setEnhancedPlayerId] = useState<number | null>(null);
@@ -45,8 +208,29 @@ export const FrontOffice = () => {
   const [loading, setLoading] = useState(true);
   const [positionFilter, setPositionFilter] = useState<PositionFilter>("ALL");
   const [sortBy, setSortBy] = useState<SortOption>("OVR");
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
+
+  // Tri-Mode Spatial Controller: 'lockers' | 'office' | 'table'
+  const [mode, setMode] = useState<FrontOfficeMode>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("nfl_sim_front_office_mode") as FrontOfficeMode | null;
+      if (saved === "lockers" || saved === "office" || saved === "table") {
+        return saved;
+      }
+    }
+    return "lockers";
+  });
+
   const { activeTeam } = useTheme();
+
+  const handleModeChange = (newMode: FrontOfficeMode) => {
+    soundEffects.playSnap?.();
+    setMode(newMode);
+    try {
+      localStorage.setItem("nfl_sim_front_office_mode", newMode);
+    } catch (err) {
+      console.error("Failed to persist front office mode", err);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,13 +287,13 @@ export const FrontOffice = () => {
     return list;
   }, [roster, positionFilter, sortBy]);
 
-  // Virtualized Table Columns for 53-man roster view
+  // Virtualized Table Columns for 53-man roster view (Editorial Monograph Aesthetics)
   const tableColumns: VirtualizedTableColumn<Player>[] = useMemo(
     () => [
       {
         id: "jersey",
         header: "#",
-        width: 55,
+        width: 60,
         align: "center",
         sortable: true,
         sortKey: (p) => p.jersey_number,
@@ -125,7 +309,7 @@ export const FrontOffice = () => {
       {
         id: "name",
         header: "Player Name",
-        minWidth: 150,
+        minWidth: 160,
         sortable: true,
         sortKey: (p) => `${p.first_name} ${p.last_name}`,
         cell: (p) => (
@@ -165,10 +349,10 @@ export const FrontOffice = () => {
             ovr >= 90
               ? "text-yellow-400 font-bold"
               : ovr >= 80
-                ? "text-emerald-400 font-semibold"
-                : ovr >= 70
-                  ? "text-cyan-400"
-                  : "text-gray-300";
+              ? "text-emerald-400 font-semibold"
+              : ovr >= 70
+              ? "text-cyan-400"
+              : "text-gray-300";
           return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
         },
       },
@@ -234,9 +418,10 @@ export const FrontOffice = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
+              soundEffects.playSnap?.();
               setSelectedPlayer(p);
             }}
-            className="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-gray-200 hover:text-white font-header text-[11px] uppercase tracking-wider rounded transition-all"
+            className="px-2.5 py-1 bg-white/10 hover:bg-[#0076B6]/30 hover:border-[#0076B6]/50 text-gray-200 hover:text-white font-header text-[11px] uppercase tracking-wider rounded border border-white/5 transition-all"
           >
             Inspect
           </button>
@@ -250,7 +435,7 @@ export const FrontOffice = () => {
     return (
       <div className="text-white p-8 flex items-center justify-center min-h-[50vh]">
         <span className="font-header text-2xl uppercase tracking-wider text-gray-400 animate-pulse">
-          Loading Franchise Roster...
+          Loading Front Office...
         </span>
       </div>
     );
@@ -275,13 +460,13 @@ export const FrontOffice = () => {
     <div className="space-y-6 font-body" data-testid="front-office-page">
       {/* Header Banner */}
       <header
-        className="relative rounded-2xl overflow-hidden broadcast-glass p-6 border border-white/15 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4"
+        className="relative rounded-lg overflow-hidden bg-slate-950/80 backdrop-blur-xl p-6 border border-white/10 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4"
         data-testid="front-office-header"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-black/60 border-2 border-white/15 p-2 shadow-xl flex items-center justify-center shrink-0">
+          <div className="w-16 h-16 rounded-md bg-black/60 border border-white/15 p-2 shadow-xl flex items-center justify-center shrink-0">
             <img
-              src={`/logos/${activeTeam?.abbreviation || "GB"}.png`}
+              src={`/logos/${activeTeam?.abbreviation || team?.abbreviation || "GB"}.png`}
               alt={team?.name || "Team"}
               className="w-full h-full object-contain filter drop-shadow"
               onError={(e) => {
@@ -292,7 +477,7 @@ export const FrontOffice = () => {
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
                 Active 53-Man Franchise Roster
               </span>
@@ -307,9 +492,9 @@ export const FrontOffice = () => {
         </div>
 
         {/* Cap Space & Health Vitals */}
-        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md px-4 py-3 rounded-xl border border-white/10">
+        <div className="flex items-center gap-4 bg-black/50 backdrop-blur-md px-4 py-3 rounded-md border border-white/10">
           <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1">
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1 font-mono">
               <DollarSign size={12} className="text-emerald-400" /> Cap Room
             </span>
             <span className="font-header text-2xl text-emerald-400 leading-none mt-0.5">
@@ -320,7 +505,7 @@ export const FrontOffice = () => {
           <div className="h-8 w-[1px] bg-white/15" />
 
           <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1">
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1 font-mono">
               <Users size={12} className="text-yellow-400" /> Roster
             </span>
             <span className="font-header text-2xl text-white leading-none mt-0.5">
@@ -330,8 +515,8 @@ export const FrontOffice = () => {
         </div>
       </header>
 
-      {/* Position Filter, Sort & View Mode Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-broadcast-dark/80 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg">
+      {/* Position Filter, Sort & Tri-Mode Spatial Controller Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 backdrop-blur-md p-3 rounded-lg border border-white/10 shadow-lg">
         {/* Position Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <span className="text-xs font-mono text-gray-400 mr-1 flex items-center gap-1">
@@ -340,14 +525,15 @@ export const FrontOffice = () => {
           {positions.map((pos) => (
             <button
               key={pos}
+              data-testid={`filter-${pos.toLowerCase()}`}
               onClick={() => {
-                soundEffects.playSnap();
+                soundEffects.playSnap?.();
                 setPositionFilter(pos);
               }}
-              className={`px-3 py-1 rounded-md text-xs font-header uppercase tracking-wider transition-all ${
+              className={`px-3 py-1 rounded-md text-xs font-header uppercase tracking-wider transition-all duration-150 ${
                 positionFilter === pos
-                  ? "bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-md shadow-red-600/30"
-                  : "bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white"
+                  ? "bg-gradient-to-r from-[#0076B6] to-[#005582] text-white font-bold shadow-md shadow-[#0076B6]/30 border border-[#0076B6]/50"
+                  : "bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/5"
               }`}
             >
               {pos}
@@ -355,8 +541,8 @@ export const FrontOffice = () => {
           ))}
         </div>
 
-        {/* Sort & View Mode Selector */}
-        <div className="flex items-center gap-4">
+        {/* Sort & Tri-Mode Spatial Controller */}
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 text-xs font-mono">
             <span className="text-gray-400 flex items-center gap-1">
               <ArrowUpDown size={12} /> Sort:
@@ -365,13 +551,13 @@ export const FrontOffice = () => {
               <button
                 key={opt}
                 onClick={() => {
-                  soundEffects.playSnap();
+                  soundEffects.playSnap?.();
                   setSortBy(opt);
                 }}
-                className={`px-2.5 py-1 rounded transition-colors ${
+                className={`px-2.5 py-1 rounded-md transition-colors ${
                   sortBy === opt
                     ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 font-bold"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
                 }`}
               >
                 {opt}
@@ -379,53 +565,326 @@ export const FrontOffice = () => {
             ))}
           </div>
 
-          {/* View Mode Toggle: Table / Cards */}
-          <div className="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/10">
+          {/* Tri-Mode Spatial Controller Switcher */}
+          <div className="flex items-center bg-black/60 p-1 rounded-md border border-white/10 gap-1">
             <button
-              onClick={() => setViewMode("table")}
-              title="Virtualized Table View (60 FPS)"
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === "table"
-                  ? "bg-white/20 text-white shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
+              data-testid="mode-toggle-lockers"
+              onClick={() => handleModeChange("lockers")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-header uppercase tracking-wider transition-all duration-150 ${
+                mode === "lockers"
+                  ? "bg-gradient-to-r from-[#0076B6] to-[#005582] text-white font-bold shadow-md shadow-[#0076B6]/30 border border-[#0076B6]/50"
+                  : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
               }`}
+              title="Spatial Lockers (Ford Field Honolulu Blue Viewport)"
             >
-              <TableIcon size={14} />
+              <Shield
+                size={13}
+                className={mode === "lockers" ? "text-cyan-300" : "text-gray-400"}
+              />
+              <span>Spatial Lockers</span>
             </button>
+
             <button
-              onClick={() => setViewMode("cards")}
-              title="Card Grid View"
-              className={`p-1.5 rounded-md transition-colors ${
-                viewMode === "cards"
-                  ? "bg-white/20 text-white shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
+              data-testid="mode-toggle-office"
+              onClick={() => handleModeChange("office")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-header uppercase tracking-wider transition-all duration-150 ${
+                mode === "office"
+                  ? "bg-gradient-to-r from-[#0076B6] to-[#005582] text-white font-bold shadow-md shadow-[#0076B6]/30 border border-[#0076B6]/50"
+                  : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
               }`}
+              title="Coach Office (Dan Campbell's Executive Corner Office)"
             >
-              <LayoutGrid size={14} />
+              <ClipboardList
+                size={13}
+                className={mode === "office" ? "text-cyan-300" : "text-gray-400"}
+              />
+              <span>Coach Office</span>
+            </button>
+
+            <button
+              data-testid="mode-toggle-table"
+              onClick={() => handleModeChange("table")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-header uppercase tracking-wider transition-all duration-150 ${
+                mode === "table"
+                  ? "bg-gradient-to-r from-[#0076B6] to-[#005582] text-white font-bold shadow-md shadow-[#0076B6]/30 border border-[#0076B6]/50"
+                  : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+              }`}
+              title="Tactical Table (Virtualized Monograph Ledger)"
+            >
+              <TableIcon
+                size={13}
+                className={mode === "table" ? "text-cyan-300" : "text-gray-400"}
+              />
+              <span>Tactical Table</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Roster Deck & Coach Settings */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div
-          className="lg:col-span-2 broadcast-glass p-6 rounded-2xl border border-white/15 min-h-[500px] shadow-2xl flex flex-col"
-          data-testid="roster-section"
+      {/* Main Mode Viewport Projections */}
+
+      {/* 1. SPATIAL LOCKERS: Ford Field Honolulu Blue Player Locker Stalls */}
+      {mode === "lockers" && (
+        <SpatialSceneViewport
+          backgroundSrc="/assets/spatial/ford_field_locker_roster_1789187061053.jpg"
+          overscan={1.06}
+          parallaxBounds={LOCKER_PARALLAX}
+          className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
         >
-          <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
-            <h2 className="font-header text-2xl uppercase tracking-wider text-white flex items-center gap-2">
-              <Users size={20} className="text-yellow-400" />
-              Active Roster ({filteredAndSortedRoster.length})
-            </h2>
-            <span className="text-xs font-mono text-gray-400">
-              Click athlete to inspect attributes
-            </span>
+          {/* Locker Room Ambient Header */}
+          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-md bg-black/60 border border-[#0076B6]/40 flex items-center justify-center p-2 text-[#0076B6] shadow-[0_0_16px_rgba(0,118,182,0.3)]">
+                <Shield size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">
+                    Ford Field First-Person Locker Room
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-header uppercase tracking-tight text-white leading-tight">
+                  Honolulu Blue & Silver 53-Man Stall Matrix
+                </h2>
+                <p className="text-gray-400 text-xs font-mono mt-0.5">
+                  First-Person Player Lockers with Metallic Nameplates & Biometric Dossiers
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono px-3 py-1.5 rounded-md bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase tracking-wider">
+                Active Roster: {filteredAndSortedRoster.length} / 53
+              </span>
+            </div>
           </div>
 
-          {/* Roster Viewport (Virtualized Table or Card Grid) */}
-          <div data-testid="roster-grid" className="flex-1">
-            {viewMode === "table" ? (
+          {/* Active Roster Locker Grid Container */}
+          <div
+            className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl"
+            data-testid="roster-section"
+          >
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
+              <h2 className="font-header text-2xl uppercase tracking-wider text-white flex items-center gap-2">
+                <Users size={20} className="text-yellow-400" />
+                Active Roster ({filteredAndSortedRoster.length})
+              </h2>
+              <span className="text-xs font-mono text-gray-400">
+                Click locker stall or nameplate to inspect dossier
+              </span>
+            </div>
+
+            <div
+              data-testid="roster-grid"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 max-h-[720px] overflow-y-auto pr-2 custom-scrollbar"
+            >
+              {filteredAndSortedRoster.map((player) => (
+                <LockerStallCard
+                  key={player.id}
+                  player={player}
+                  teamAbbr={team?.abbreviation || activeTeam?.abbreviation || "DET"}
+                  onClick={() => {
+                    soundEffects.playSnap?.();
+                    setSelectedPlayer(player);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </SpatialSceneViewport>
+      )}
+
+      {/* 2. COACH OFFICE: Dan Campbell Executive Corner Office Framing */}
+      {mode === "office" && (
+        <SpatialSceneViewport
+          backgroundSrc="/assets/spatial/dan_campbell_office_1789188197446.jpg"
+          overscan={1.06}
+          parallaxBounds={OFFICE_PARALLAX}
+          className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
+        >
+          {/* Dan Campbell Executive Office Header Banner */}
+          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-md bg-black/60 border border-white/10 flex items-center justify-center p-2 text-cyan-400">
+                <ClipboardList size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">
+                    Executive Corner Office • Allen Park HQ
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-header uppercase tracking-tight text-white leading-tight">
+                  Dan Campbell Coaching Command & Tactical Tendencies
+                </h2>
+                <p className="text-gray-400 text-xs font-mono mt-0.5">
+                  "We're going to bite a kneecap off, and when we stand up, we're going to take
+                  another one."
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="px-3 py-1.5 rounded-md bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-mono text-xs font-bold uppercase tracking-wider">
+                Culture: 100% Grit
+              </div>
+              <div className="px-3 py-1.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider">
+                4th Down Rate: 88%
+              </div>
+            </div>
+          </div>
+
+          {/* Main Grid: Tactical Tendencies & CoachSettings (8 cols) + Side Active Roster (4 cols) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left 8 Cols: Coach Settings & Tactical Directives */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Tactical Tendency Briefing Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                  <div className="flex items-center gap-2 text-amber-400 font-header text-sm uppercase mb-2">
+                    <Shield size={16} /> 4th-Down Aggression
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed font-body">
+                    Hyper-aggressive conversion mentality. Green light on 4th & 3 or less across
+                    midfield.
+                  </p>
+                  <div className="mt-3 text-[10px] font-mono text-emerald-400 uppercase font-bold">
+                    League Rank: #1 Aggressive
+                  </div>
+                </div>
+
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                  <div className="flex items-center gap-2 text-cyan-400 font-header text-sm uppercase mb-2">
+                    <ClipboardList size={16} /> Power Run & Play-Action
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed font-body">
+                    Heavy 12/13 personnel, pulling interior guards, explosive deep shot post
+                    play-action.
+                  </p>
+                  <div className="mt-3 text-[10px] font-mono text-cyan-400 uppercase font-bold">
+                    Run-Pass Split: 54% / 46%
+                  </div>
+                </div>
+
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                  <div className="flex items-center gap-2 text-purple-400 font-header text-sm uppercase mb-2">
+                    <Award size={16} /> Defensive Front Havoc
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed font-body">
+                    Attacking A-gap mug fronts, 5-man disguised creepers, tight press-man on
+                    boundary.
+                  </p>
+                  <div className="mt-3 text-[10px] font-mono text-purple-400 uppercase font-bold">
+                    Blitz Frequency: 38.5%
+                  </div>
+                </div>
+              </div>
+
+              {/* Embedded CoachSettings Component */}
+              {team && (
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl">
+                  <div className="border-b border-white/10 pb-3 mb-4">
+                    <h3 className="font-header text-xl uppercase tracking-wider text-white">
+                      Tactical Playcalling & Gameplan Sliders
+                    </h3>
+                    <p className="text-xs font-mono text-gray-400">
+                      Configure offensive tempo, red-zone strategy, and defensive coverage shell
+                    </p>
+                  </div>
+                  <CoachSettings teamId={team.id} />
+                </div>
+              )}
+            </div>
+
+            {/* Right 4 Cols: Tactical Roster Depth Sheet with Critical Selectors */}
+            <div
+              className="lg:col-span-4 bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-5 shadow-2xl flex flex-col"
+              data-testid="roster-section"
+            >
+              <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                <h2 className="font-header text-lg uppercase tracking-wider text-white flex items-center gap-2">
+                  <Users size={18} className="text-yellow-400" />
+                  Active Roster ({filteredAndSortedRoster.length})
+                </h2>
+                <span className="text-[10px] font-mono text-cyan-300">Staff Sheet</span>
+              </div>
+
+              <div
+                data-testid="roster-grid"
+                className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 custom-scrollbar"
+              >
+                {filteredAndSortedRoster.map((player) => (
+                  <div
+                    key={player.id}
+                    data-testid={`player-card-${player.id}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      soundEffects.playSnap?.();
+                      setSelectedPlayer(player);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedPlayer(player);
+                      }
+                    }}
+                    className="group flex items-center justify-between p-3 rounded-md border border-white/10 hover:border-[#0076B6] bg-black/40 hover:bg-[#0076B6]/10 transition-all duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#0076B6]"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="font-header text-sm text-yellow-400 font-bold shrink-0">
+                        #{player.jersey_number ?? 0}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-header text-sm text-white uppercase truncate group-hover:text-cyan-300 transition-colors">
+                          {player.first_name} {player.last_name}
+                        </p>
+                        <span className="text-[10px] font-mono text-gray-400">
+                          {player.position} • {player.age} yo
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="px-2 py-0.5 rounded bg-white/10 font-header text-sm text-white font-bold">
+                        {player.overall_rating}
+                      </div>
+                      <span className="text-xs font-mono text-cyan-400 group-hover:translate-x-0.5 transition-transform">
+                        &rarr;
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </SpatialSceneViewport>
+      )}
+
+      {/* 3. TACTICAL TABLE: Direct 2D Virtualized Monograph Ledger */}
+      {mode === "table" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div
+            className="lg:col-span-2 bg-slate-950/90 border border-white/10 rounded-lg p-6 shadow-2xl flex flex-col min-h-[560px]"
+            data-testid="roster-section"
+          >
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+              <div>
+                <h2 className="font-header text-2xl uppercase tracking-wider text-white flex items-center gap-2">
+                  <TableIcon size={20} className="text-cyan-400" />
+                  Active Roster ({filteredAndSortedRoster.length})
+                </h2>
+                <p className="text-xs font-mono text-gray-400 mt-0.5">
+                  High-Density Tactical Personnel Ledger • Virtualized 60 FPS
+                </p>
+              </div>
+              <span className="text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300">
+                Click row to inspect dossier
+              </span>
+            </div>
+
+            <div data-testid="roster-grid" className="flex-1">
               <VirtualizedTable
                 data={filteredAndSortedRoster}
                 columns={tableColumns}
@@ -433,67 +892,51 @@ export const FrontOffice = () => {
                 estimateRowHeight={50}
                 overscan={12}
                 getRowId={(player) => player.id}
-                onRowClick={(player) => setSelectedPlayer(player)}
+                onRowClick={(player) => {
+                  soundEffects.playSnap?.();
+                  setSelectedPlayer(player);
+                }}
                 emptyMessage="No players found in this unit filter."
                 testId="virtualized-roster-table"
               />
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[640px] overflow-y-auto pr-2 custom-scrollbar">
-                {filteredAndSortedRoster.map((player) => (
-                  <DraggableCard
-                    key={player.id}
-                    playerId={player.id}
-                    name={`${player.first_name.charAt(0)}. ${player.last_name}`}
-                    position={player.position}
-                    rating={player.overall_rating}
-                    team={team?.abbreviation || "UNK"}
-                    jerseyNumber={player.jersey_number}
-                    speed={player.speed || 85}
-                    strength={player.strength || 80}
-                    agility={player.agility || 84}
-                    onClick={() => setSelectedPlayer(player)}
-                    testId={`player-card-${player.id}`}
-                  />
-                ))}
-              </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Coach Settings Sidebar */}
-        {team && (
-          <div className="lg:col-span-1 broadcast-glass p-6 rounded-2xl border border-white/15 shadow-2xl">
-            <CoachSettings teamId={team.id} />
-          </div>
-        )}
-      </div>
+          {/* Coach Settings Sidebar */}
+          {team && (
+            <div className="lg:col-span-1 bg-slate-950/90 border border-white/10 rounded-lg p-6 shadow-2xl">
+              <CoachSettings teamId={team.id} />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Detailed Player Modal */}
       {selectedPlayer && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
           data-testid="player-modal"
           onClick={() => setSelectedPlayer(null)}
         >
           <div
-            className="broadcast-glass rounded-2xl border border-white/20 p-6 max-w-lg w-full relative shadow-2xl"
+            className="bg-slate-950/95 border border-white/20 rounded-lg p-6 max-w-lg w-full relative shadow-2xl backdrop-blur-xl"
             data-testid="player-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setSelectedPlayer(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors focus:outline-none focus:ring-1 focus:ring-white/20"
               aria-label="Close player details"
               data-testid="close-modal-button"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             {/* Header */}
             <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
-              <div className="w-16 h-16 rounded-xl bg-black/60 border-2 border-white/20 flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 rounded-md bg-black/60 border border-white/20 flex items-center justify-center shadow-lg">
                 <span className="font-header text-3xl text-yellow-400">
-                  #{selectedPlayer.jersey_number || 0}
+                  #{selectedPlayer.jersey_number ?? 0}
                 </span>
               </div>
               <div>
@@ -508,7 +951,7 @@ export const FrontOffice = () => {
 
             {/* Attribute Grid */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="bg-black/40 p-3 rounded-xl border border-white/5">
+              <div className="bg-black/40 p-3 rounded-md border border-white/5">
                 <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
                   Overall Rating
                 </p>
@@ -517,14 +960,14 @@ export const FrontOffice = () => {
                 </p>
               </div>
 
-              <div className="bg-black/40 p-3 rounded-xl border border-white/5">
+              <div className="bg-black/40 p-3 rounded-md border border-white/5">
                 <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
                   Age
                 </p>
                 <p className="text-3xl font-header text-white">{selectedPlayer.age}</p>
               </div>
 
-              <div className="bg-black/40 p-3 rounded-xl border border-white/5">
+              <div className="bg-black/40 p-3 rounded-md border border-white/5">
                 <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
                   Speed
                 </p>
@@ -533,7 +976,7 @@ export const FrontOffice = () => {
                 </p>
               </div>
 
-              <div className="bg-black/40 p-3 rounded-xl border border-white/5">
+              <div className="bg-black/40 p-3 rounded-md border border-white/5">
                 <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
                   Strength
                 </p>
@@ -555,12 +998,49 @@ export const FrontOffice = () => {
               </div>
             </div>
 
+            {/* Traits Section if available */}
+            {(selectedPlayer as any).traits && (selectedPlayer as any).traits.length > 0 && (
+              <div
+                className="mt-4 pt-3 border-t border-white/10 traits-section"
+                data-testid="player-traits"
+              >
+                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
+                  Player Traits
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {(selectedPlayer as any).traits.map((trait: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
+                    >
+                      {trait}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Contract Section if available */}
+            {(selectedPlayer as any).contract && (
+              <div
+                className="mt-3 pt-3 border-t border-white/10 contract-info"
+                data-testid="player-contract"
+              >
+                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1">
+                  Contract Terms
+                </p>
+                <p className="text-xs font-mono text-emerald-400 font-bold">
+                  {(selectedPlayer as any).contract.salary || "$45M / 3 Yrs"}
+                </p>
+              </div>
+            )}
+
             <button
               onClick={() => {
                 setEnhancedPlayerId(selectedPlayer.id);
                 setSelectedPlayer(null);
               }}
-              className="w-full mt-4 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-header text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all"
+              className="w-full mt-5 py-2.5 bg-gradient-to-r from-[#0076B6] to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white font-header text-sm uppercase tracking-wider rounded-md shadow-lg transition-all focus:outline-none focus:ring-1 focus:ring-cyan-400"
             >
               Open In-Depth Biometrics & Traits Dossier
             </button>
