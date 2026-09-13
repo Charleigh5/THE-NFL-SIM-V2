@@ -31,6 +31,17 @@ test.describe("Full Dossier Screenshot Suite", () => {
       await route.fulfill({ json: mockPlayers });
     });
 
+    await page.route("**/api/teams/*/chemistry", async (route) => {
+      await route.fulfill({
+        json: {
+          chemistry_level: 2,
+          consecutive_games: 4,
+          status: "SYNERGIZED",
+          bonuses: { pass_block: 2, run_block: 2, awareness: 1 },
+        },
+      });
+    });
+
     await page.route("**/api/news/**", async (route) => {
       await route.fulfill({
         json: { items: [], total: 0, last_updated: new Date().toISOString() },
@@ -134,8 +145,64 @@ test.describe("Full Dossier Screenshot Suite", () => {
   });
 
   test("Capture 06 - Depth Chart", async ({ page }) => {
+    await page.route("**/api/teams/*/roster", async (route) => {
+      await route.fulfill({
+        json: [
+          {
+            id: 1,
+            first_name: "Jared",
+            last_name: "Goff",
+            position: "QB",
+            overall_rating: 89,
+            age: 29,
+            jersey_number: 16,
+            speed: 76,
+            acceleration: 78,
+            strength: 74,
+            awareness: 91,
+            depth_chart_rank: 1,
+            experience: 8,
+            college: "California",
+          },
+          {
+            id: 2,
+            first_name: "Hendon",
+            last_name: "Hooker",
+            position: "QB",
+            overall_rating: 74,
+            age: 26,
+            jersey_number: 12,
+            speed: 84,
+            acceleration: 86,
+            strength: 72,
+            awareness: 75,
+            depth_chart_rank: 2,
+            experience: 1,
+            college: "Tennessee",
+          },
+          {
+            id: 3,
+            first_name: "Nate",
+            last_name: "Sudfeld",
+            position: "QB",
+            overall_rating: 65,
+            age: 30,
+            jersey_number: 10,
+            speed: 68,
+            acceleration: 70,
+            strength: 65,
+            awareness: 70,
+            depth_chart_rank: 3,
+            experience: 7,
+            college: "Indiana",
+          },
+        ],
+      });
+    });
+
     await page.goto("/empire/depth-chart");
-    await page.waitForTimeout(1000);
+    await page.waitForSelector(".Reorder_Group", { timeout: 10000 });
+    await page.waitForTimeout(600);
     await page.screenshot({
       path: path.join(screenshotsDir, "06_depth_chart.png"),
       fullPage: true,
