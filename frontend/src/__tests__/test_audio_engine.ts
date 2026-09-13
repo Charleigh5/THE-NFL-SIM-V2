@@ -208,6 +208,14 @@ console.log("\n[TEST 5] Headless / Node Safety & Method Invocation Invariants");
     soundEffects.updateCrowdIntensity(-2.0, 0.15);
     soundEffects.playStadiumHorn();
     soundEffects.playSnap();
+    soundEffects.playTacticalTick();
+    soundEffects.playMagnetSnap();
+    soundEffects.playLockerDoorLatch();
+    soundEffects.startFacilityAmbience("locker");
+    soundEffects.startFacilityAmbience("office");
+    soundEffects.startFacilityAmbience("weight_room");
+    soundEffects.startFacilityAmbience("war_room");
+    soundEffects.stopFacilityAmbience();
   } catch (err) {
     threwError = true;
     console.error(err);

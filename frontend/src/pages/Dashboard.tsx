@@ -25,6 +25,7 @@ import { soundEffects } from "../services/soundEffects";
 import { StorylineTracker } from "../components/news/StorylineTracker";
 import { NewsFeedWidget } from "../components/news/NewsFeedWidget";
 import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
+import { SpatialAtmosphereLayer } from "../components/spatial/SpatialAtmosphereLayer";
 import type { ParallaxBounds } from "../types/spatial";
 import type { Season } from "../types/season";
 
@@ -245,6 +246,9 @@ export const Dashboard = () => {
             className="absolute -top-24 left-1/4 w-96 h-96 rounded-full opacity-25 blur-3xl pointer-events-none"
             style={{ backgroundColor: "var(--theme-primary, #203731)" }}
           />
+
+          {/* Dynamic Ambient Monitor Glow & Subtle Screen Flicker behind War Room Analytics Video Wall */}
+          <SpatialAtmosphereLayer facilityType="war_room" intensity="medium" />
 
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 items-center gap-6">
             {/* HOME TEAM */}
@@ -575,6 +579,7 @@ export const Dashboard = () => {
         /* SPATIAL COMMAND CENTER: 2.5D Multiplane Viewport with Frosted Glass Container */
         <SpatialSceneViewport
           backgroundSrc="/assets/spatial/team_analytics_warroom_1789227266940.jpg"
+          atmosphereType="war_room"
           overscan={1.06}
           parallaxBounds={DASHBOARD_PARALLAX}
           className="w-full min-h-screen py-6 sm:py-8"

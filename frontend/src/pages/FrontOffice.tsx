@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import CoachSettings from "../components/coaching/CoachSettings";
 import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
+import { SpatialAtmosphereLayer } from "../components/spatial/SpatialAtmosphereLayer";
 import { PlayerAvatar } from "../components/ui/PlayerAvatar";
 import { api } from "../services/api";
 import { useTheme } from "../context/useTheme";
@@ -87,10 +88,14 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
       role="button"
       tabIndex={0}
       data-testid={`player-card-${player.id}`}
-      onClick={onClick}
+      onClick={() => {
+        soundEffects.playLockerDoorLatch();
+        onClick();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
+          soundEffects.playLockerDoorLatch();
           onClick();
         }
       }}
@@ -195,6 +200,120 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
             Dossier &rarr;
           </span>
         </div>
+      </div>
+    </div>
+  );
+};
+
+interface DanCampbellWhiteboardProps {
+  opponentName?: string;
+  week?: number;
+}
+
+/**
+ * Dan Campbell Dynamic Whiteboard
+ * ===============================
+ * Tactical game-plan chalkboard/notepad detailing keys to victory for the upcoming week.
+ * Styled with metallic dry-erase framing, Adly Frontier UI Architect aesthetics,
+ * and high-contrast tactical football directives.
+ */
+const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
+  opponentName = "OPPONENT",
+  week = 5,
+}) => {
+  return (
+    <div
+      data-testid="dan-campbell-whiteboard"
+      className="relative rounded-xl overflow-hidden border-2 border-zinc-700 bg-gradient-to-b from-[#0e1724] via-[#09101a] to-[#05090f] p-5 shadow-2xl shadow-black/80"
+    >
+      {/* Aluminum Board Frame Header with Rivets */}
+      <div className="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-white/15 gap-2">
+        <div className="flex items-center gap-2.5">
+          <span className="w-3 h-3 rounded-full bg-red-500 shadow-md shadow-red-500/50 animate-pulse" />
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 font-bold block">
+              Allen Park Command Tactical Whiteboard &bull; Dan Campbell Game Plan
+            </span>
+            <h3 className="font-header text-xl sm:text-2xl uppercase tracking-wider text-white">
+              WEEK {week} VS {opponentName}: KEYS TO VICTORY
+            </h3>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-1 rounded bg-black/60 border border-[#0076B6]/40 font-mono text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
+            ALL GRIT &bull; 100%
+          </span>
+        </div>
+      </div>
+
+      {/* Chalkboard / Whiteboard Tactical Directives */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+        {/* Key 1 */}
+        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-red-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-red-400 font-bold font-header text-sm tracking-wide">
+              1. ATTACK A-GAP MUG FRONTS
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-bold uppercase">
+              DEF FRONT
+            </span>
+          </div>
+          <p className="text-gray-300 leading-relaxed font-body text-xs">
+            Overload interior protection with double A-gap mug alignments. Disguise 5-man creepers on 3rd down and collapse the pocket.
+          </p>
+          <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
+            <span>Pressure Win Rate:</span>
+            <span className="text-red-400 font-bold">38.5%+</span>
+          </div>
+        </div>
+
+        {/* Key 2 */}
+        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-amber-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-amber-400 font-bold font-header text-sm tracking-wide">
+              2. 4TH & 2 OR LESS = 100% GO
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold uppercase">
+              ATTACK
+            </span>
+          </div>
+          <p className="text-gray-300 leading-relaxed font-body text-xs">
+            Zero hesitation across midfield. We dictate the terms and impose physical will. Short-yardage wedge sneak with heavy personnel.
+          </p>
+          <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
+            <span>Aggression Index:</span>
+            <span className="text-amber-400 font-bold">#1 NFL (88%)</span>
+          </div>
+        </div>
+
+        {/* Key 3 */}
+        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-cyan-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-cyan-400 font-bold font-header text-sm tracking-wide">
+              3. ESTABLISH 12-PERSONNEL POWER RUN
+            </span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold uppercase">
+              GROUND
+            </span>
+          </div>
+          <p className="text-gray-300 leading-relaxed font-body text-xs">
+            Double-team the 3-technique, pull the backside guard on Counter GT, and chew 4.8 YPC. Set up deep explosive post shot off play-action.
+          </p>
+          <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
+            <span>Downhill Target:</span>
+            <span className="text-cyan-400 font-bold">140+ YDS</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Handwritten Dry-Erase Footer Quote */}
+      <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-gray-400">
+        <span className="italic text-yellow-300/90 font-semibold">
+          &ldquo;When you get knocked down, you get up and bite off a kneecap. That's who we are.&rdquo; &mdash; Coach Dan Campbell
+        </span>
+        <span className="text-cyan-400 font-bold uppercase tracking-wider">
+          STATUS: GAMEDAY LOCKED IN
+        </span>
       </div>
     </div>
   );
@@ -627,10 +746,13 @@ export const FrontOffice: React.FC = () => {
       {mode === "lockers" && (
         <SpatialSceneViewport
           backgroundSrc="/assets/spatial/ford_field_locker_roster_1789187061053.jpg"
+          atmosphereType="locker"
           overscan={1.06}
           parallaxBounds={LOCKER_PARALLAX}
           className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
         >
+          {/* Subtle Locker Atmosphere Mist Overlay */}
+          <SpatialAtmosphereLayer facilityType="locker" intensity="subtle" />
           {/* Locker Room Ambient Header */}
           <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -699,10 +821,13 @@ export const FrontOffice: React.FC = () => {
       {mode === "office" && (
         <SpatialSceneViewport
           backgroundSrc="/assets/spatial/dan_campbell_office_1789188197446.jpg"
+          atmosphereType="office"
           overscan={1.06}
           parallaxBounds={OFFICE_PARALLAX}
           className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
         >
+          {/* Subtle Office Daylight and Ambient Overlay */}
+          <SpatialAtmosphereLayer facilityType="office" intensity="subtle" />
           {/* Dan Campbell Executive Office Header Banner */}
           <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -739,6 +864,12 @@ export const FrontOffice: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left 8 Cols: Coach Settings & Tactical Directives */}
             <div className="lg:col-span-8 space-y-6">
+              {/* Dan Campbell Dynamic Tactical Whiteboard */}
+              <DanCampbellWhiteboard
+                opponentName={activeTeam?.abbreviation === "KC" ? "SAN FRANCISCO 49ERS" : "KANSAS CITY CHIEFS"}
+                week={5}
+              />
+
               {/* Tactical Tendency Briefing Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
@@ -792,7 +923,10 @@ export const FrontOffice: React.FC = () => {
                       Configure offensive tempo, red-zone strategy, and defensive coverage shell
                     </p>
                   </div>
-                  <CoachSettings teamId={team.id} />
+                  <CoachSettings
+                    teamId={team.id}
+                    onTacticalTick={() => soundEffects.playTacticalTick()}
+                  />
                 </div>
               )}
             </div>
@@ -1034,6 +1168,90 @@ export const FrontOffice: React.FC = () => {
                 </p>
               </div>
             )}
+
+            {/* Authentic Equipment Loadout Panel */}
+            <div
+              className="mt-4 pt-3 border-t border-white/10"
+              data-testid="player-equipment-loadout"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 flex items-center gap-1.5 font-bold">
+                  <Shield size={12} className="text-[#0076B6]" />
+                  Gameday Equipment Loadout
+                </p>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase font-bold">
+                  NFL Certified
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
+                {/* 1. Helmet & Visor */}
+                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">Helmet &amp; Visor</span>
+                    <span
+                      className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
+                      style={{ backgroundColor: activeTeam?.colors?.primary || team?.primary_color || "#0076B6" }}
+                      title="Team Shell Color"
+                    />
+                  </div>
+                  <p className="text-white font-semibold text-[11px] truncate">
+                    Riddell SpeedFlex Precision
+                  </p>
+                  <p className="text-cyan-400 text-[10px] mt-0.5">
+                    Visor: {["QB", "K", "P"].includes(selectedPlayer.position) ? "Clear High-Def Shield" : "Smoke Iridium 20% Tint"}
+                  </p>
+                </div>
+
+                {/* 2. Gloves */}
+                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">Grip Gloves</span>
+                    <span
+                      className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
+                      style={{ backgroundColor: activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC" }}
+                      title="Team Accent Color"
+                    />
+                  </div>
+                  <p className="text-white font-semibold text-[11px] truncate">
+                    Nike Vapor Jet 7.0
+                  </p>
+                  <p className="text-amber-400 text-[10px] mt-0.5">
+                    Magnigrip+ Tack &bull; Strap
+                  </p>
+                </div>
+
+                {/* 3. Jersey Loadout */}
+                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">Jersey Loadout</span>
+                    <span className="text-[11px] font-header text-yellow-400 font-bold leading-none">
+                      #{selectedPlayer.jersey_number ?? 0}
+                    </span>
+                  </div>
+                  <p className="text-white font-semibold text-[11px] truncate">
+                    Nike Vapor F.U.S.E. Mesh
+                  </p>
+                  <p className="text-gray-300 text-[10px] mt-0.5">
+                    Douglas CP 25 Pro Kevlar
+                  </p>
+                </div>
+
+                {/* 4. Cleats & Spatting */}
+                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">Cleats &amp; Spatting</span>
+                    <span className="text-[9px] text-emerald-400 font-bold">Molded</span>
+                  </div>
+                  <p className="text-white font-semibold text-[11px] truncate">
+                    Nike Vapor Edge Pro 360
+                  </p>
+                  <p className="text-cyan-300 text-[10px] mt-0.5">
+                    Carbon Plate &bull; Turf Tape
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <button
               onClick={() => {

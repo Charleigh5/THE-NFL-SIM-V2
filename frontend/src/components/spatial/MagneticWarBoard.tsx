@@ -99,7 +99,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
           onReorder(next);
         }
       }
-      soundEffects.playSnap();
+      soundEffects.playMagnetSnap();
     };
 
     const endPointerDrag = () => {
@@ -137,12 +137,12 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
       if (activeKeyboardIndex === null) {
         // Pick up
         setActiveKeyboardIndex(index);
-        soundEffects.playSnap();
+        soundEffects.playMagnetSnap();
         announce(`Grabbed ${player.first_name} ${player.last_name}, currently rank ${index + 1}. Use Up and Down arrow keys to reposition, Enter or Space to place.`);
       } else if (activeKeyboardIndex === index) {
         // Place down
         setActiveKeyboardIndex(null);
-        soundEffects.playSnap();
+        soundEffects.playMagnetSnap();
         announce(`Placed ${player.first_name} ${player.last_name} at rank ${index + 1}.`);
       } else {
         // Swap with target
@@ -151,7 +151,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         next.splice(index, 0, moved);
         onReorder(next);
         setActiveKeyboardIndex(null);
-        soundEffects.playSnap();
+        soundEffects.playMagnetSnap();
         announce(`Moved ${moved.first_name} ${moved.last_name} to rank ${index + 1}.`);
       }
     } else if (e.key === "ArrowUp") {
@@ -159,7 +159,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
       if (activeKeyboardIndex !== null && activeKeyboardIndex > 0) {
         onPromote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex - 1);
-        soundEffects.playSnap();
+        soundEffects.playMagnetSnap();
         announce(`${player.first_name} ${player.last_name} moved up to rank ${activeKeyboardIndex}.`);
       }
     } else if (e.key === "ArrowDown") {
@@ -167,7 +167,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
       if (activeKeyboardIndex !== null && activeKeyboardIndex < players.length - 1) {
         onDemote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex + 1);
-        soundEffects.playSnap();
+        soundEffects.playMagnetSnap();
         announce(`${player.first_name} ${player.last_name} moved down to rank ${activeKeyboardIndex + 2}.`);
       }
     } else if (e.key === "Escape") {

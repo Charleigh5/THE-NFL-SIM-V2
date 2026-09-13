@@ -29,6 +29,7 @@ export interface HitIntensityProfile {
 
 export type CrowdReactionType = "ROAR" | "GROAN" | "MURMUR";
 export type CadenceType = "hut" | "audible" | "set";
+export type FacilityAmbienceType = "locker" | "office" | "weight_room" | "war_room";
 
 /**
  * Maps field Cartesian X coordinate [0, 120] (including endzones) to stereo pan [-0.85, 0.85]
@@ -80,6 +81,9 @@ class GridironSoundEngine {
   private spatialAudioEnabled: boolean = true;
   private crowdEnabled: boolean = true;
   private sfxEnabled: boolean = true;
+  private ambientSource: AudioBufferSourceNode | null = null;
+  private ambientGain: GainNode | null = null;
+  private currentFacilityType: FacilityAmbienceType | null = null;
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -147,6 +151,9 @@ class GridironSoundEngine {
     if (typeof window !== "undefined") {
       localStorage.setItem("gridiron_audio_muted", String(muted));
     }
+    if (muted && (this.ambientGain || this.ambientSource)) {
+      this.stopFacilityAmbience();
+    }
   }
 
   public getMuted(): boolean {
@@ -157,6 +164,13 @@ class GridironSoundEngine {
     this.volume = Math.max(0, Math.min(1, vol));
     if (typeof window !== "undefined") {
       localStorage.setItem("gridiron_audio_volume", String(this.volume));
+    }
+    if (this.ambientGain && this.ctx && !this.isMuted) {
+      try {
+        this.ambientGain.gain.setValueAtTime(0.04 * this.volume, this.ctx.currentTime);
+      } catch {
+        // Safe fallback
+      }
     }
   }
 
@@ -563,6 +577,246 @@ class GridironSoundEngine {
 
   public playCrowdRoar(): void {
     this.updateCrowdIntensity(3.0, 0.7);
+  }
+
+  /**
+   * Procedural Micro-transient notch click (short 4ms high-frequency oscillator spike ~1800Hz with exponential falloff)
+   * Designed for slider ticks.
+   */
+  public playTacticalTick(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1800, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.004);
+
+      gain.gain.setValueAtTime(0.18 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.004);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.005);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Procedural Weighted ceramic snap sound (dual-frequency transient ~420Hz and 140Hz with 18ms decay)
+   * Designed for depth chart magnets.
+   */
+  public playMagnetSnap(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = "triangle";
+      osc1.frequency.setValueAtTime(420, now);
+      osc1.frequency.exponentialRampToValueAtTime(180, now + 0.018);
+
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(140, now);
+      osc2.frequency.exponentialRampToValueAtTime(60, now + 0.018);
+
+      gain.gain.setValueAtTime(0.32 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.02);
+      osc2.stop(now + 0.02);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Procedural Metallic latch sound (transient metallic ring ~1100Hz + damping 35ms)
+   * Designed for locker stall inspect.
+   */
+  public playLockerDoorLatch(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const ringOsc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(1100, now);
+      osc.frequency.exponentialRampToValueAtTime(750, now + 0.035);
+
+      ringOsc.type = "sine";
+      ringOsc.frequency.setValueAtTime(2350, now);
+      ringOsc.frequency.exponentialRampToValueAtTime(1800, now + 0.035);
+
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(1100, now);
+      filter.Q.setValueAtTime(4.0, now);
+
+      gain.gain.setValueAtTime(0.26 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+      osc.connect(filter);
+      ringOsc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      ringOsc.start(now);
+      osc.stop(now + 0.04);
+      ringOsc.stop(now + 0.04);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Start facility background ambience:
+   * Low-pass filtered gentle brown noise at -28dB (gain 0.04 * volume).
+   * Gracefully stop if called again or if user mutes.
+   */
+  public startFacilityAmbience(facilityType: FacilityAmbienceType): void {
+    if (this.isMuted) return;
+
+    // Gracefully stop previous ambience if running
+    if (this.ambientSource || this.ambientGain) {
+      this.stopFacilityAmbience();
+    }
+
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      this.currentFacilityType = facilityType;
+      const sampleRate = ctx.sampleRate;
+      const bufferLength = sampleRate * 3; // 3-second seamless looping buffer
+      const buffer = ctx.createBuffer(1, bufferLength, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      // Brownian (red) noise generator: 1/f^2 integration
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferLength; i++) {
+        const white = Math.random() * 2 - 1;
+        lastOut = (lastOut + 0.02 * white) / 1.02;
+        data[i] = lastOut * 3.5;
+      }
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      // Low-pass filter tailored to facility acoustics
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      switch (facilityType) {
+        case "locker":
+          filter.frequency.setValueAtTime(360, ctx.currentTime);
+          filter.Q.setValueAtTime(1.2, ctx.currentTime);
+          break;
+        case "office":
+          filter.frequency.setValueAtTime(220, ctx.currentTime);
+          filter.Q.setValueAtTime(0.7, ctx.currentTime);
+          break;
+        case "weight_room":
+          filter.frequency.setValueAtTime(440, ctx.currentTime);
+          filter.Q.setValueAtTime(1.5, ctx.currentTime);
+          break;
+        case "war_room":
+          filter.frequency.setValueAtTime(280, ctx.currentTime);
+          filter.Q.setValueAtTime(0.9, ctx.currentTime);
+          break;
+      }
+
+      // Gain: -28dB corresponds to amplitude ~0.0398 (~0.04 * volume)
+      const gainNode = ctx.createGain();
+      const targetGain = 0.04 * this.volume;
+      const now = ctx.currentTime;
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.linearRampToValueAtTime(targetGain, now + 0.3);
+
+      source.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      source.start(now);
+      this.ambientSource = source;
+      this.ambientGain = gainNode;
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Stop facility ambience:
+   * Smoothly ramps gain to 0 over 0.3s and stops the ambient source node.
+   */
+  public stopFacilityAmbience(): void {
+    if (!this.ambientSource && !this.ambientGain) return;
+
+    const source = this.ambientSource;
+    const gainNode = this.ambientGain;
+    this.ambientSource = null;
+    this.ambientGain = null;
+    this.currentFacilityType = null;
+
+    if (this.ctx && gainNode && source) {
+      try {
+        const now = this.ctx.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+        gainNode.gain.linearRampToValueAtTime(0.0001, now + 0.3);
+
+        setTimeout(() => {
+          try {
+            source.stop();
+            source.disconnect();
+            gainNode.disconnect();
+          } catch {
+            // Ignore if already stopped/disconnected
+          }
+        }, 320);
+      } catch {
+        try {
+          source.stop();
+        } catch {
+          // Ignore
+        }
+      }
+    } else if (source) {
+      try {
+        source.stop();
+      } catch {
+        // Ignore
+      }
+    }
+  }
+
+  public getCurrentFacilityAmbience(): FacilityAmbienceType | null {
+    return this.currentFacilityType;
   }
 }
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { soundEffects } from "../../services/soundEffects";
 import { Card, CardHeader, CardContent, CardTitle } from "../ui/Card";
 import "./CoachSettings.css";
 
 interface CoachSettingsProps {
   teamId: number;
+  onTacticalTick?: () => void;
 }
 
 interface Philosophy {
@@ -18,7 +20,7 @@ interface Philosophy {
   timeout_aggressiveness?: number;
 }
 
-const CoachSettings: React.FC<CoachSettingsProps> = ({ teamId }) => {
+const CoachSettings: React.FC<CoachSettingsProps> = ({ teamId, onTacticalTick }) => {
   const [philosophy, setPhilosophy] = useState<Philosophy>({
     run_pass_ratio: 50,
     aggressiveness: 50,
@@ -52,6 +54,8 @@ const CoachSettings: React.FC<CoachSettingsProps> = ({ teamId }) => {
   }, [teamId]);
 
   const handleChange = (field: keyof Philosophy, value: number | string) => {
+    soundEffects.playTacticalTick();
+    onTacticalTick?.();
     setPhilosophy((prev) => ({ ...prev, [field]: value }));
   };
 
