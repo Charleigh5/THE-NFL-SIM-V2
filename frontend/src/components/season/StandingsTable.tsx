@@ -195,7 +195,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                 <td className="team-cell text-left">
                   <span className="team-name">
                     {renderClinchedIndicator(team)}
-                    {compact ? team.team_abbreviation : team.team_name}
+                    {compact ? (
+                      team.team_abbreviation
+                    ) : (
+                      <>
+                        <span className="team-name-full">{team.team_name}</span>
+                        <span className="team-name-short">{team.team_abbreviation}</span>
+                      </>
+                    )}
                   </span>
                   {!compact && <span className="team-abbr">{team.team_abbreviation}</span>}
                 </td>

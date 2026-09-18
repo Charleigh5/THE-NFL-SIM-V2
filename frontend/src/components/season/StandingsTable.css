@@ -4,6 +4,7 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   font-family: "Inter", sans-serif;
+  container-type: inline-size;
 }
 
 .standings-header {
@@ -129,6 +130,14 @@
   gap: 6px;
 }
 
+.team-name-short {
+  display: none;
+}
+
+.team-name-full {
+  display: inline;
+}
+
 .clinch-indicator {
   font-size: 11px;
   font-weight: 700;
@@ -142,6 +151,31 @@
 .team-abbr {
   color: #888;
   font-size: 12px;
+}
+
+/* Abbreviate team names on containers or viewports under 360px */
+@container (max-width: 360px) {
+  .team-name-full {
+    display: none;
+  }
+  .team-name-short {
+    display: inline;
+  }
+  .team-abbr {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .team-name-full {
+    display: none;
+  }
+  .team-name-short {
+    display: inline;
+  }
+  .team-abbr {
+    display: none;
+  }
 }
 
 .stat-cell {
