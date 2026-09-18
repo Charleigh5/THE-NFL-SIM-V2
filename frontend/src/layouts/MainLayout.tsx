@@ -21,7 +21,7 @@ const MainLayout = () => {
   const currentPage = location.pathname.split("/").filter(Boolean).pop() || "Dashboard";
 
   return (
-    <div className="min-h-screen bg-broadcast-black text-white selection:bg-brand selection:text-white">
+    <div className="min-h-screen bg-transparent text-white selection:bg-brand selection:text-white">
       {/* 3D Photorealistic Stadium Backdrop */}
       <ThreeStadiumBackdrop />
 
@@ -31,7 +31,7 @@ const MainLayout = () => {
       <Navigation />
 
       {/* Main Content Area - Shifted for fixed nav */}
-      <main className="md:ml-64 relative min-h-screen overflow-x-hidden" role="main">
+      <main className="ml-20 md:ml-64 relative min-h-screen overflow-x-hidden bg-transparent" role="main">
         {/* Broadcast Background Elements */}
         <div className="fixed inset-0 pointer-events-none z-0">
           {/* Omni-present stadium lights glow */}

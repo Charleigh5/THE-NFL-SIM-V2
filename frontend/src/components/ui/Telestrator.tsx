@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PenTool, Trash2, X } from "lucide-react";
 import clsx from "clsx";
 
@@ -21,6 +21,17 @@ export const Telestrator = ({ isActive, onClose }: TelestratorProps) => {
   const [paths, setPaths] = useState<string[]>([]);
   const [color, setColor] = useState("#00f0ff");
   const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (!isActive) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isActive, onClose]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const rect = svgRef.current?.getBoundingClientRect();

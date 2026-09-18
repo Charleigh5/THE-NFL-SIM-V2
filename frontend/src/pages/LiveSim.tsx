@@ -449,7 +449,7 @@ export const LiveSim = () => {
 
                 {/* Floating Baldwin 4th-Down Decision Pill */}
                 {fourthDownTelemetry && showFloatingPill && (
-                  <div className="absolute top-4 right-4 z-30 animate-fadeIn max-w-[340px]">
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 animate-fadeIn max-w-[340px]">
                     <FloatingBaldwinPill
                       telemetry={fourthDownTelemetry}
                       onConfirmRecommendation={handleConfirmFourthDown}

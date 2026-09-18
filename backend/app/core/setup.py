@@ -70,7 +70,8 @@ def configure_routes(app: FastAPI) -> None:
         genesis, feedback, draft, settings as settings_endpoint, traits,
         news, agent_tasks, trades, scouts, medical, gameplans, abilities,
         playbook, physics_api, training, live_visualization, broadcast, coaches,
-        society, playcalling, capology, cap_ledger, social_graph, orthopedic, hud_telemetry
+        society, playcalling, capology, cap_ledger, social_graph, orthopedic, hud_telemetry,
+        roster_sync, spatial_visualization
     )
     from app.api import combine
 
@@ -80,10 +81,12 @@ def configure_routes(app: FastAPI) -> None:
     app.include_router(data.router)
     app.include_router(websocket.router)
     app.include_router(live_visualization.router)
+    app.include_router(spatial_visualization.router)
 
     # Team and player management
     app.include_router(teams.router, prefix="/api/teams", tags=["teams"])
     app.include_router(players.router, prefix="/api/players", tags=["players"])
+    app.include_router(roster_sync.router)
 
     # Capology & Double-Entry Ledger Engine
     app.include_router(capology.router)

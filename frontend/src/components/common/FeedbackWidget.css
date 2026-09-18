@@ -5,9 +5,9 @@
 
 .feedback-widget {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
+  bottom: 84px;
+  right: 140px;
+  z-index: 50;
   font-family: "Inter", "Segoe UI", sans-serif;
 }
 

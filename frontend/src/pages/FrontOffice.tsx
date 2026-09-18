@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import CoachSettings from "../components/coaching/CoachSettings";
 import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
 import { SpatialAtmosphereLayer } from "../components/spatial/SpatialAtmosphereLayer";
+import { LiveRosterSyncCard } from "../components/roster/LiveRosterSyncCard";
 import { PlayerAvatar } from "../components/ui/PlayerAvatar";
 import { api } from "../services/api";
 import { useTheme } from "../context/useTheme";
@@ -23,8 +25,18 @@ import {
   VirtualizedTable,
   type VirtualizedTableColumn,
 } from "../components/common/VirtualizedTable";
+import { EquipmentHeroStage } from "../components/equipment";
+import { TactileCard } from "../components/tactile";
 
 export type FrontOfficeMode = "lockers" | "office" | "table";
+
+interface ExtendedPlayer extends Player {
+  traits?: string[];
+  contract?: {
+    salary?: string;
+    years?: number;
+  };
+}
 
 type PositionFilter =
   | "ALL"
@@ -61,52 +73,47 @@ interface LockerStallCardProps {
   player: Player;
   teamAbbr?: string;
   onClick: () => void;
+  isSelected?: boolean;
 }
 
 /**
  * First-Person Honolulu Blue Player Locker Stall
- * Designed under Adly Frontier UI Architect principles with metallic brushed nameplates,
- * crisp corner radius, Honolulu Blue (#0076B6) framing, and deterministic interactive states.
+ * Equipped with TactileCard 12-state matrix, strict 0-4px corner radius, directional hard shadows,
+ * 3D pointer tilt, specular sheen reflection, and synthesized Web Audio haptic clicks.
  */
 const LockerStallCard: React.FC<LockerStallCardProps> = ({
   player,
   teamAbbr = "DET",
   onClick,
+  isSelected = false,
 }) => {
   const ovr = player.overall_rating;
   const ovrBadgeStyle =
     ovr >= 90
-      ? "from-amber-400 to-yellow-500 text-black shadow-amber-500/30"
+      ? "from-amber-400 to-yellow-500 text-black shadow-hard-xs"
       : ovr >= 80
-      ? "from-emerald-400 to-teal-500 text-black shadow-emerald-500/30"
-      : ovr >= 70
-      ? "from-cyan-400 to-blue-500 text-black shadow-cyan-500/30"
-      : "from-zinc-400 to-zinc-500 text-black shadow-zinc-500/30";
+        ? "from-emerald-400 to-teal-500 text-black shadow-hard-xs"
+        : ovr >= 70
+          ? "from-cyan-400 to-blue-500 text-black shadow-hard-xs"
+          : "from-zinc-400 to-zinc-500 text-black shadow-hard-xs";
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      data-testid={`player-card-${player.id}`}
-      onClick={() => {
+    <TactileCard
+      testId={`player-card-${player.id}`}
+      selected={isSelected}
+      elevation="raised"
+      onAction={() => {
         soundEffects.playLockerDoorLatch();
         onClick();
       }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          soundEffects.playLockerDoorLatch();
-          onClick();
-        }
-      }}
-      className="group relative flex flex-col rounded-lg overflow-hidden border border-[#0076B6]/40 hover:border-[#0076B6] bg-gradient-to-b from-[#06101e] via-[#040810] to-[#020306] shadow-xl hover:shadow-[0_0_24px_rgba(0,118,182,0.4)] transition-all duration-200 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#0076B6] active:scale-[0.98]"
+      className="group relative flex flex-col rounded-[2px] overflow-hidden border border-[#0076B6]/40 hover:border-[#0076B6] bg-gradient-to-b from-[#06101e] via-[#040810] to-[#020306] shadow-hard-primary cursor-pointer transition-colors duration-150"
     >
       {/* Metallic Brushed Aluminum Nameplate Header with Rivet Corners */}
-      <div className="relative bg-gradient-to-r from-zinc-700 via-zinc-400 to-zinc-700 p-[1px] shadow-inner">
+      <div className="relative bg-gradient-to-r from-zinc-700 via-zinc-400 to-zinc-700 p-[1px]">
         <div className="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 px-3 py-1.5 flex items-center justify-between border-b border-zinc-600/80">
           {/* Rivet Left + Player Jersey & Name */}
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 border border-zinc-900 shadow-sm shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-[1px] bg-zinc-400 border border-zinc-900 shadow-hard-xs shrink-0" />
             <span className="font-header text-xs tracking-wider text-white uppercase font-bold truncate">
               #{player.jersey_number ?? 0} {player.last_name}
             </span>
@@ -115,11 +122,11 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
           {/* OVR Badge + Rivet Right */}
           <div className="flex items-center gap-2 shrink-0">
             <div
-              className={`px-1.5 py-0.5 rounded font-header font-black text-xs uppercase tracking-tight shadow-md bg-gradient-to-r ${ovrBadgeStyle}`}
+              className={`px-1.5 py-0.5 rounded-[2px] font-header font-black text-xs uppercase tracking-tight shadow-hard-xs bg-gradient-to-r ${ovrBadgeStyle}`}
             >
               {ovr} <span className="text-[9px] font-mono font-bold">OVR</span>
             </div>
-            <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 border border-zinc-900 shadow-sm shrink-0" />
+            <span className="w-1.5 h-1.5 rounded-[1px] bg-zinc-400 border border-zinc-900 shadow-hard-xs shrink-0" />
           </div>
         </div>
       </div>
@@ -131,16 +138,16 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
           #{player.jersey_number ?? 0}
         </span>
 
-        {/* Top Slotted Locker Air Vents */}
+        {/* Top Slotted Locker Air Vents (strict 0-4px corners) */}
         <div className="w-full flex justify-center gap-1.5 mb-3 opacity-60">
-          <span className="h-1 w-6 bg-white/10 rounded-full" />
-          <span className="h-1 w-6 bg-white/10 rounded-full" />
-          <span className="h-1 w-6 bg-white/10 rounded-full" />
+          <span className="h-1 w-6 bg-white/10 rounded-[1px]" />
+          <span className="h-1 w-6 bg-white/10 rounded-[1px]" />
+          <span className="h-1 w-6 bg-white/10 rounded-[1px]" />
         </div>
 
         {/* Player Avatar in Locker Gear */}
         <div className="relative my-1">
-          <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-[#0076B6]/50 shadow-[0_0_16px_rgba(0,118,182,0.3)] group-hover:border-[#0076B6] group-hover:scale-105 transition-all bg-slate-900">
+          <div className="w-20 h-20 rounded-[2px] overflow-hidden border-2 border-[#0076B6]/50 shadow-hard-sm group-hover:border-[#0076B6] group-hover:scale-105 transition-all bg-slate-900">
             <PlayerAvatar
               playerId={player.id}
               teamAbbr={teamAbbr}
@@ -153,7 +160,7 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
               primaryColor="#0076B6"
             />
           </div>
-          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-[#0076B6] border border-cyan-400 text-white font-mono text-[10px] font-bold tracking-wider shadow-md">
+          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-[2px] bg-[#0076B6] border border-cyan-400 text-white font-mono text-[10px] font-bold tracking-wider shadow-hard-xs">
             {player.position}
           </span>
         </div>
@@ -170,19 +177,19 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
 
         {/* Athletic Stat Bar Breakdown */}
         <div className="w-full grid grid-cols-3 gap-1.5 pt-2 border-t border-white/10 text-center font-mono z-10">
-          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">SPD</span>
             <span className="font-bold text-xs text-emerald-400 leading-none">
               {player.speed ?? 85}
             </span>
           </div>
-          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">STR</span>
             <span className="font-bold text-xs text-cyan-400 leading-none">
               {player.strength ?? 80}
             </span>
           </div>
-          <div className="bg-black/50 p-1.5 rounded border border-white/5">
+          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">AGI</span>
             <span className="font-bold text-xs text-amber-400 leading-none">
               {player.agility ?? 84}
@@ -201,7 +208,7 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
           </span>
         </div>
       </div>
-    </div>
+    </TactileCard>
   );
 };
 
@@ -259,7 +266,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Overload interior protection with double A-gap mug alignments. Disguise 5-man creepers on 3rd down and collapse the pocket.
+            Overload interior protection with double A-gap mug alignments. Disguise 5-man creepers
+            on 3rd down and collapse the pocket.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Pressure Win Rate:</span>
@@ -278,7 +286,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Zero hesitation across midfield. We dictate the terms and impose physical will. Short-yardage wedge sneak with heavy personnel.
+            Zero hesitation across midfield. We dictate the terms and impose physical will.
+            Short-yardage wedge sneak with heavy personnel.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Aggression Index:</span>
@@ -297,7 +306,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Double-team the 3-technique, pull the backside guard on Counter GT, and chew 4.8 YPC. Set up deep explosive post shot off play-action.
+            Double-team the 3-technique, pull the backside guard on Counter GT, and chew 4.8 YPC.
+            Set up deep explosive post shot off play-action.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Downhill Target:</span>
@@ -309,7 +319,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
       {/* Handwritten Dry-Erase Footer Quote */}
       <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-gray-400">
         <span className="italic text-yellow-300/90 font-semibold">
-          &ldquo;When you get knocked down, you get up and bite off a kneecap. That's who we are.&rdquo; &mdash; Coach Dan Campbell
+          &ldquo;When you get knocked down, you get up and bite off a kneecap. That's who we
+          are.&rdquo; &mdash; Coach Dan Campbell
         </span>
         <span className="text-cyan-400 font-bold uppercase tracking-wider">
           STATUS: GAMEDAY LOCKED IN
@@ -354,8 +365,11 @@ export const FrontOffice: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const teamData = await api.getTeam(1);
-        const rosterData = await api.getTeamRoster(1);
+        const savedTeamId =
+          typeof window !== "undefined" ? localStorage.getItem("selectedTeamId") : null;
+        const teamId = savedTeamId ? parseInt(savedTeamId, 10) : 1;
+        const teamData = await api.getTeam(teamId);
+        const rosterData = await api.getTeamRoster(teamId);
         setTeam(teamData);
         setRoster(rosterData);
       } catch (error) {
@@ -367,6 +381,22 @@ export const FrontOffice: React.FC = () => {
 
     fetchData();
   }, []);
+
+  // Global Escape key dismiss for player modal / detail dossier
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (selectedPlayer) {
+          setSelectedPlayer(null);
+        }
+        if (enhancedPlayerId) {
+          setEnhancedPlayerId(null);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedPlayer, enhancedPlayerId]);
 
   const filteredAndSortedRoster = useMemo(() => {
     let list = [...roster];
@@ -468,10 +498,10 @@ export const FrontOffice: React.FC = () => {
             ovr >= 90
               ? "text-yellow-400 font-bold"
               : ovr >= 80
-              ? "text-emerald-400 font-semibold"
-              : ovr >= 70
-              ? "text-cyan-400"
-              : "text-gray-300";
+                ? "text-emerald-400 font-semibold"
+                : ovr >= 70
+                  ? "text-cyan-400"
+                  : "text-gray-300";
           return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
         },
       },
@@ -634,6 +664,11 @@ export const FrontOffice: React.FC = () => {
         </div>
       </header>
 
+      {/* Live Roster Intelligence Sync Control Card */}
+      <div className="mb-4">
+        <LiveRosterSyncCard />
+      </div>
+
       {/* Position Filter, Sort & Tri-Mode Spatial Controller Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 backdrop-blur-md p-3 rounded-lg border border-white/10 shadow-lg">
         {/* Position Filter Tabs */}
@@ -784,7 +819,7 @@ export const FrontOffice: React.FC = () => {
 
           {/* Active Roster Locker Grid Container */}
           <div
-            className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl"
+            className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-6 shadow-hard-lg"
             data-testid="roster-section"
           >
             <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
@@ -806,6 +841,7 @@ export const FrontOffice: React.FC = () => {
                   key={player.id}
                   player={player}
                   teamAbbr={team?.abbreviation || activeTeam?.abbreviation || "DET"}
+                  isSelected={selectedPlayer?.id === player.id}
                   onClick={() => {
                     soundEffects.playSnap?.();
                     setSelectedPlayer(player);
@@ -866,7 +902,9 @@ export const FrontOffice: React.FC = () => {
             <div className="lg:col-span-8 space-y-6">
               {/* Dan Campbell Dynamic Tactical Whiteboard */}
               <DanCampbellWhiteboard
-                opponentName={activeTeam?.abbreviation === "KC" ? "SAN FRANCISCO 49ERS" : "KANSAS CITY CHIEFS"}
+                opponentName={
+                  activeTeam?.abbreviation === "KC" ? "SAN FRANCISCO 49ERS" : "KANSAS CITY CHIEFS"
+                }
                 week={5}
               />
 
@@ -929,6 +967,25 @@ export const FrontOffice: React.FC = () => {
                   />
                 </div>
               )}
+
+              {/* Tactical Office Equipment Bay & Lombardi Trophy Showcase */}
+              <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-5 shadow-2xl">
+                <div className="border-b border-white/10 pb-3 mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-header text-xl uppercase tracking-wider text-white flex items-center gap-2">
+                      <Shield size={18} className="text-cyan-400" />
+                      Tactical Armor &amp; Trophy Bay
+                    </h3>
+                    <p className="text-xs font-mono text-gray-400">
+                      3D Gameday Equipment Loadout &amp; Lombardi Trophy Inspection
+                    </p>
+                  </div>
+                  <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase">
+                    Interactive 3D WebGL
+                  </span>
+                </div>
+                <EquipmentHeroStage />
+              </div>
             </div>
 
             {/* Right 4 Cols: Tactical Roster Depth Sheet with Critical Selectors */}
@@ -1046,7 +1103,9 @@ export const FrontOffice: React.FC = () => {
       )}
 
       {/* Detailed Player Modal */}
-      {selectedPlayer && (
+      {selectedPlayer &&
+        typeof document !== "undefined" &&
+        createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
           data-testid="player-modal"
@@ -1068,11 +1127,16 @@ export const FrontOffice: React.FC = () => {
 
             {/* Header */}
             <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
-              <div className="w-16 h-16 rounded-md bg-black/60 border border-white/20 flex items-center justify-center shadow-lg">
-                <span className="font-header text-3xl text-yellow-400">
-                  #{selectedPlayer.jersey_number ?? 0}
-                </span>
-              </div>
+              <PlayerAvatar
+                playerId={selectedPlayer.id}
+                playerName={`${selectedPlayer.first_name} ${selectedPlayer.last_name}`}
+                position={selectedPlayer.position}
+                jerseyNumber={selectedPlayer.jersey_number ?? 0}
+                teamAbbr={team?.abbreviation || "DET"}
+                primaryColor={team?.primary_color || activeTeam?.colors?.primary}
+                size="lg"
+                className="w-16 h-16 rounded-md border border-white/20 shrink-0 shadow-lg"
+              />
               <div>
                 <h2 className="font-header text-3xl text-white uppercase leading-tight">
                   {selectedPlayer.first_name} {selectedPlayer.last_name}
@@ -1133,29 +1197,32 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             {/* Traits Section if available */}
-            {(selectedPlayer as any).traits && (selectedPlayer as any).traits.length > 0 && (
-              <div
-                className="mt-4 pt-3 border-t border-white/10 traits-section"
-                data-testid="player-traits"
-              >
-                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
-                  Player Traits
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {(selectedPlayer as any).traits.map((trait: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
-                    >
-                      {trait}
-                    </span>
-                  ))}
+            {(selectedPlayer as ExtendedPlayer).traits &&
+              ((selectedPlayer as ExtendedPlayer).traits?.length ?? 0) > 0 && (
+                <div
+                  className="mt-4 pt-3 border-t border-white/10 traits-section"
+                  data-testid="player-traits"
+                >
+                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
+                    Player Traits
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(selectedPlayer as ExtendedPlayer).traits?.map(
+                      (trait: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
+                        >
+                          {trait}
+                        </span>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Contract Section if available */}
-            {(selectedPlayer as any).contract && (
+            {(selectedPlayer as ExtendedPlayer).contract && (
               <div
                 className="mt-3 pt-3 border-t border-white/10 contract-info"
                 data-testid="player-contract"
@@ -1164,7 +1231,7 @@ export const FrontOffice: React.FC = () => {
                   Contract Terms
                 </p>
                 <p className="text-xs font-mono text-emerald-400 font-bold">
-                  {(selectedPlayer as any).contract.salary || "$45M / 3 Yrs"}
+                  {(selectedPlayer as ExtendedPlayer).contract?.salary || "$45M / 3 Yrs"}
                 </p>
               </div>
             )}
@@ -1179,19 +1246,39 @@ export const FrontOffice: React.FC = () => {
                   <Shield size={12} className="text-[#0076B6]" />
                   Gameday Equipment Loadout
                 </p>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase font-bold">
-                  NFL Certified
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase font-bold">
+                    3D Inspector
+                  </span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase font-bold">
+                    NFL Certified
+                  </span>
+                </div>
+              </div>
+
+              {/* 3D Equipment Mini Stage */}
+              <div className="mb-3">
+                <EquipmentHeroStage
+                  compact
+                  activeModel="helmet"
+                  showControls={false}
+                  className="!p-2 bg-black/40"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
                 {/* 1. Helmet & Visor */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Helmet &amp; Visor</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Helmet &amp; Visor
+                    </span>
                     <span
                       className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{ backgroundColor: activeTeam?.colors?.primary || team?.primary_color || "#0076B6" }}
+                      style={{
+                        backgroundColor:
+                          activeTeam?.colors?.primary || team?.primary_color || "#0076B6",
+                      }}
                       title="Team Shell Color"
                     />
                   </div>
@@ -1199,32 +1286,40 @@ export const FrontOffice: React.FC = () => {
                     Riddell SpeedFlex Precision
                   </p>
                   <p className="text-cyan-400 text-[10px] mt-0.5">
-                    Visor: {["QB", "K", "P"].includes(selectedPlayer.position) ? "Clear High-Def Shield" : "Smoke Iridium 20% Tint"}
+                    Visor:{" "}
+                    {["QB", "K", "P"].includes(selectedPlayer.position)
+                      ? "Clear High-Def Shield"
+                      : "Smoke Iridium 20% Tint"}
                   </p>
                 </div>
 
                 {/* 2. Gloves */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Grip Gloves</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Grip Gloves
+                    </span>
                     <span
                       className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{ backgroundColor: activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC" }}
+                      style={{
+                        backgroundColor:
+                          activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC",
+                      }}
                       title="Team Accent Color"
                     />
                   </div>
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor Jet 7.0
                   </p>
-                  <p className="text-amber-400 text-[10px] mt-0.5">
-                    Magnigrip+ Tack &bull; Strap
-                  </p>
+                  <p className="text-amber-400 text-[10px] mt-0.5">Magnigrip+ Tack &bull; Strap</p>
                 </div>
 
                 {/* 3. Jersey Loadout */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Jersey Loadout</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Jersey Loadout
+                    </span>
                     <span className="text-[11px] font-header text-yellow-400 font-bold leading-none">
                       #{selectedPlayer.jersey_number ?? 0}
                     </span>
@@ -1232,23 +1327,21 @@ export const FrontOffice: React.FC = () => {
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor F.U.S.E. Mesh
                   </p>
-                  <p className="text-gray-300 text-[10px] mt-0.5">
-                    Douglas CP 25 Pro Kevlar
-                  </p>
+                  <p className="text-gray-300 text-[10px] mt-0.5">Douglas CP 25 Pro Kevlar</p>
                 </div>
 
                 {/* 4. Cleats & Spatting */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Cleats &amp; Spatting</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Cleats &amp; Spatting
+                    </span>
                     <span className="text-[9px] text-emerald-400 font-bold">Molded</span>
                   </div>
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor Edge Pro 360
                   </p>
-                  <p className="text-cyan-300 text-[10px] mt-0.5">
-                    Carbon Plate &bull; Turf Tape
-                  </p>
+                  <p className="text-cyan-300 text-[10px] mt-0.5">Carbon Plate &bull; Turf Tape</p>
                 </div>
               </div>
             </div>
@@ -1263,7 +1356,8 @@ export const FrontOffice: React.FC = () => {
               Open In-Depth Biometrics & Traits Dossier
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* In-Depth Enhanced Player Profile Modal */}

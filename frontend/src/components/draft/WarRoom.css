@@ -65,12 +65,12 @@
 /* TRADE PHONE */
 .trade-phone-container {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 84px;
+  right: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1000;
+  z-index: 40;
 }
 
 .trade-phone-btn {
