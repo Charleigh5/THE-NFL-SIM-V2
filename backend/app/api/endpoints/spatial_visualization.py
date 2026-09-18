@@ -9,7 +9,7 @@ blender_service = BlenderService()
 
 
 @router.post("/game/{game_id}/play/{play_id}/evaluate-cutscene", response_model=CutsceneStatusResponse)
-async def evaluate_cutscene(game_id: int, play_id: int, req: CutsceneTriggerRequest):
+async def evaluate_cutscene(game_id: int, play_id: int, req: CutsceneTriggerRequest, render_mode: str = "auto"):
     """Evaluates whether to render high-definition Blender cutscene or bypass."""
     should_trigger, _ = gate.should_trigger_cutscene(req.drama_index, req.impact_force)
     if not should_trigger:
@@ -19,7 +19,7 @@ async def evaluate_cutscene(game_id: int, play_id: int, req: CutsceneTriggerRequ
             video_url=None,
             render_duration_ms=0.0
         )
-    return blender_service.request_cutscene_render(play_id, req.drama_index, req.impact_force)
+    return blender_service.request_cutscene_render(play_id, req.drama_index, req.impact_force, render_mode=render_mode)
 
 
 @router.get("/status")
