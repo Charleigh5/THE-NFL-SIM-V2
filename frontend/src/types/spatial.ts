@@ -36,12 +36,7 @@ export interface SpatialSceneContract {
   fov?: number;
 }
 
-export type MagneticPlateState =
-  | "IDLE"
-  | "DRAGGING"
-  | "HOVER"
-  | "PROPOSED"
-  | "COMMITTED";
+export type MagneticPlateState = "IDLE" | "DRAGGING" | "HOVER" | "PROPOSED" | "COMMITTED";
 
 export interface ProposedDepthChange {
   playerId: number;
