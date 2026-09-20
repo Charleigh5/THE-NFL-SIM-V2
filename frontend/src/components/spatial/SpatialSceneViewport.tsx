@@ -62,7 +62,7 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
   // Check system prefers-reduced-motion
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
+    // setReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
