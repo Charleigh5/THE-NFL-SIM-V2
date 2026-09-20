@@ -4,15 +4,7 @@ import { CoachingTree } from "../components/coaching/CoachingTree";
 import { Telestrator } from "../components/ui/Telestrator";
 import { soundEffects } from "../services/soundEffects";
 import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
-import {
-  BookOpen,
-  Compass,
-  Pencil,
-  Trash2,
-  ArrowRight,
-  Sparkles,
-  Layers,
-} from "lucide-react";
+import { BookOpen, Compass, Pencil, Trash2, ArrowRight, Sparkles, Layers } from "lucide-react";
 import "../components/coaching/CoachingUnlockPanel.module.css";
 
 interface FootballPlay {
@@ -183,9 +175,7 @@ export const Playbook = () => {
                 <span className="text-[10px] font-mono text-gray-400 block uppercase">
                   Personnel
                 </span>
-                <span className="text-xs font-bold text-yellow-400">
-                  {selectedPlay.personnel}
-                </span>
+                <span className="text-xs font-bold text-yellow-400">{selectedPlay.personnel}</span>
               </div>
             </div>
 

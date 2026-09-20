@@ -78,7 +78,10 @@ export const TrainingCenter: React.FC = () => {
         const styleData = await trainingApi.getCoachingStyles();
         if (Array.isArray(styleData)) {
           setStyles(styleData);
-        } else if (styleData && Array.isArray((styleData as unknown as { styles?: CoachingStyle[] }).styles)) {
+        } else if (
+          styleData &&
+          Array.isArray((styleData as unknown as { styles?: CoachingStyle[] }).styles)
+        ) {
           setStyles((styleData as unknown as { styles: CoachingStyle[] }).styles);
         } else {
           setStyles([]);
@@ -286,9 +289,7 @@ export const TrainingCenter: React.FC = () => {
       {/* Main Content - DrillSelector */}
       <main>
         {loading ? (
-          <div className="text-center py-20 text-gray-500 animate-pulse">
-            Initializing Sim...
-          </div>
+          <div className="text-center py-20 text-gray-500 animate-pulse">Initializing Sim...</div>
         ) : (
           <DrillSelector
             position={playerData?.position}
