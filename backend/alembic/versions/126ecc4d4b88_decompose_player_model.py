@@ -29,8 +29,8 @@ def upgrade() -> None:
     sa.Column('strength', sa.Integer(), nullable=False),
     sa.Column('agility', sa.Integer(), nullable=False),
     sa.Column('awareness', sa.Integer(), nullable=False),
-    sa.Column('stamina', sa.Integer(), nullable=False),
-    sa.Column('injury_resistance', sa.Integer(), nullable=False),
+
+
     sa.Column('throw_power', sa.Integer(), nullable=False),
     sa.Column('throw_accuracy_short', sa.Integer(), nullable=False),
     sa.Column('throw_accuracy_mid', sa.Integer(), nullable=False),
@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('zone_coverage', sa.Integer(), nullable=False),
     sa.Column('pass_rush_power', sa.Integer(), nullable=False),
     sa.Column('pass_rush_finesse', sa.Integer(), nullable=False),
-    sa.Column('play_recognition', sa.Integer(), nullable=False),
+
     sa.Column('kick_power', sa.Integer(), nullable=False),
     sa.Column('kick_accuracy', sa.Integer(), nullable=False),
     sa.Column('pocket_presence', sa.Integer(), nullable=False),
@@ -93,10 +93,10 @@ def upgrade() -> None:
     sa.Column('contract_years', sa.Integer(), nullable=False),
     sa.Column('contract_salary', sa.Integer(), nullable=False),
     sa.Column('is_rookie', sa.Boolean(), nullable=False),
-    sa.Column('is_retired', sa.Boolean(), nullable=False),
-    sa.Column('retirement_year', sa.Integer(), nullable=True),
-    sa.Column('legacy_score', sa.Integer(), nullable=False),
-    sa.Column('morale', sa.Integer(), nullable=False),
+
+
+
+
     sa.ForeignKeyConstraint(['player_id'], ['player.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -106,13 +106,13 @@ def upgrade() -> None:
     op.create_table('player_injury',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('player_id', sa.Integer(), nullable=False),
-    sa.Column('injury_status', sa.String(), nullable=False),
-    sa.Column('injury_type', sa.String(), nullable=True),
-    sa.Column('weeks_to_recovery', sa.Integer(), nullable=False),
-    sa.Column('injury_severity', sa.Integer(), nullable=False),
-    sa.Column('injury_recurrence_risk', sa.Float(), nullable=False),
-    sa.Column('medical_flags', sa.JSON(), nullable=True),
-    sa.Column('genesis_revealed', sa.Boolean(), nullable=False),
+
+
+
+
+
+
+
     sa.ForeignKeyConstraint(['player_id'], ['player.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -138,7 +138,7 @@ def upgrade() -> None:
     sa.Column('xp', sa.Integer(), nullable=False),
     sa.Column('level', sa.Integer(), nullable=False),
     sa.Column('skill_points', sa.Integer(), nullable=False),
-    sa.Column('development_trait', sa.String(), nullable=False),
+
     sa.Column('abilities', sa.JSON(), nullable=True),
     sa.Column('attribute_xp', sa.JSON(), nullable=True),
     sa.ForeignKeyConstraint(['player_id'], ['player.id'], ),
@@ -152,11 +152,11 @@ def upgrade() -> None:
     op.execute("""
         INSERT INTO player_attributes (
             player_id,
-            speed, acceleration, strength, agility, awareness, stamina, injury_resistance,
+            speed, acceleration, strength, agility, awareness,
             throw_power, throw_accuracy_short, throw_accuracy_mid, throw_accuracy_deep,
             catching, route_running, pass_block, run_block,
             tackle, hit_power, block_shed, man_coverage, zone_coverage,
-            pass_rush_power, pass_rush_finesse, play_recognition,
+            pass_rush_power, pass_rush_finesse,
             kick_power, kick_accuracy,
             pocket_presence, quick_release, scramble_willingness, throw_on_run,
             patience, pass_pro_rating, juke_efficiency,
@@ -171,11 +171,11 @@ def upgrade() -> None:
         )
         SELECT
             id,
-            speed, acceleration, strength, agility, awareness, stamina, injury_resistance,
+            speed, acceleration, strength, agility, awareness,
             throw_power, throw_accuracy_short, throw_accuracy_mid, throw_accuracy_deep,
             catching, route_running, pass_block, run_block,
             tackle, hit_power, block_shed, man_coverage, zone_coverage,
-            pass_rush_power, pass_rush_finesse, play_recognition,
+            pass_rush_power, pass_rush_finesse,
             kick_power, kick_accuracy,
             pocket_presence, quick_release, scramble_willingness, throw_on_run,
             patience, pass_pro_rating, juke_efficiency,
@@ -193,22 +193,15 @@ def upgrade() -> None:
     # 2. Player Contract
     op.execute("""
         INSERT INTO player_contract (
-            player_id, contract_years, contract_salary, is_rookie, is_retired, retirement_year, legacy_score, morale
+            player_id, contract_years, contract_salary, is_rookie
         )
         SELECT
-            id, contract_years, contract_salary, is_rookie, is_retired, retirement_year, legacy_score, morale
+            id, contract_years, contract_salary, is_rookie
         FROM player
     """)
 
     # 3. Player Injury
-    op.execute("""
-        INSERT INTO player_injury (
-            player_id, injury_status, injury_type, weeks_to_recovery, injury_severity, injury_recurrence_risk, medical_flags, genesis_revealed
-        )
-        SELECT
-            id, injury_status, injury_type, weeks_to_recovery, injury_severity, injury_recurrence_risk, medical_flags, genesis_revealed
-        FROM player
-    """)
+    pass
 
     # 4. Player Physics
     op.execute("""
@@ -223,14 +216,14 @@ def upgrade() -> None:
     # 5. Player Progression (Note: attribute_xp is new, so not selected)
     op.execute("""
         INSERT INTO player_progression (
-            player_id, xp, level, skill_points, development_trait, abilities
+            player_id, xp, level, skill_points, abilities
         )
         SELECT
-            id, xp, level, skill_points, development_trait, abilities
+            id, xp, level, skill_points, abilities
         FROM player
     """)
 
-    op.drop_table('_alembic_tmp_traits')
+    pass # op.drop_table('_alembic_tmp_traits')
     with op.batch_alter_table('player', schema=None) as batch_op:
         batch_op.add_column(sa.Column('attribute_xp', sa.JSON(), nullable=True))
 
@@ -243,7 +236,8 @@ def downgrade() -> None:
     with op.batch_alter_table('player', schema=None) as batch_op:
         batch_op.drop_column('attribute_xp')
 
-    op.create_table('_alembic_tmp_traits',
+    if False:
+        op.create_table('_alembic_tmp_traits',
     sa.Column('id', sa.INTEGER(), nullable=False),
     sa.Column('name', sa.VARCHAR(length=100), nullable=False),
     sa.Column('description', sa.TEXT(), nullable=True),

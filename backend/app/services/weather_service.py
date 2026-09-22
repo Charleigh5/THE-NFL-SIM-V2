@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import random
 import datetime
-import math
-from typing import Dict, Optional, Tuple, Any
+import random
+from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.stadium import Stadium
-from app.models.weather import GameWeather, StadiumClimate
+from app.models.weather import StadiumClimate
 
 logger = get_logger(__name__)
 
@@ -29,7 +29,7 @@ class WeatherService:
     MODIFIER_COLD_FUMBLE = 0.15 # < 20F
 
     @staticmethod
-    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> Dict[str, float]:
+    def get_weather_modifiers(stadium_id: int, game_datetime: str) -> dict[str, float]:
         """
         Legacy synchronous method. Returns neutral modifiers.
         Used if MatchContext is initialized without DB access or async capabilities.
@@ -47,13 +47,13 @@ class WeatherService:
         db: AsyncSession,
         stadium_id: int,
         game_date: datetime.datetime | str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Calculates weather conditions for a game based on simulation logic.
 
         Returns a dictionary containing:
-        - modifiers: Dict[str, float]
-        - conditions: Dict[str, Any] (temp, wind, precip, etc.)
+        - modifiers: dict[str, float]
+        - conditions: dict[str, Any] (temp, wind, precip, etc.)
         """
 
         if isinstance(game_date, str):
@@ -141,7 +141,7 @@ class WeatherService:
             return WeatherService._default_weather()
 
     @staticmethod
-    def _calculate_modifiers(temp: float, wind_speed: float, condition: str) -> Dict[str, float]:
+    def _calculate_modifiers(temp: float, wind_speed: float, condition: str) -> dict[str, float]:
         modifiers = {
             "passing": 0.0,
             "rushing": 0.0,
@@ -173,14 +173,14 @@ class WeatherService:
         return modifiers
 
     @staticmethod
-    def _default_weather() -> Dict[str, Any]:
+    def _default_weather() -> dict[str, Any]:
         return {
             "modifiers": {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0},
             "conditions": {"temperature": 70, "wind_speed": 0, "condition": "Sunny", "is_dome": False}
         }
 
     @staticmethod
-    def _dome_weather() -> Dict[str, Any]:
+    def _dome_weather() -> dict[str, Any]:
         return {
             "modifiers": {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0},
             "conditions": {"temperature": 72, "wind_speed": 0, "condition": "Dome", "is_dome": True}
@@ -200,8 +200,8 @@ class WeatherService:
             "1": 30.0, "2": 32.0, "3": 45.0, "4": 55.0, "5": 65.0, "6": 75.0,
             "7": 80.0, "8": 78.0, "9": 70.0, "10": 58.0, "11": 45.0, "12": 35.0
         }
-        precip = {k: 0.15 for k in avg_temp}
-        wind = {k: 12.0 for k in avg_temp}
+        precip = dict.fromkeys(avg_temp, 0.15)
+        wind = dict.fromkeys(avg_temp, 12.0)
 
         # Override for specific known IDs if we knew them, or random variance
         # Adding some randomness to the seed so every stadium isn't identical
@@ -226,7 +226,7 @@ class WeatherService:
     # import httpx
     #
     # @staticmethod
-    # async def fetch_live_weather(lat: float, lon: float, api_key: str) -> Dict[str, Any]:
+    # async def fetch_live_weather(lat: float, lon: float, api_key: str) -> dict[str, Any]:
     #     """
     #     Fetches real-time weather from OpenWeatherMap (or similar).
     #     To use:
