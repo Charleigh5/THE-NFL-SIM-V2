@@ -36,10 +36,34 @@ interface MagneticWarBoardProps {
 }
 
 const STRINGS_CONFIG = [
-  { rank: 1, label: "STARTER • 1ST STRING", accent: "emerald", border: "border-emerald-500/50", bg: "bg-emerald-950/20" },
-  { rank: 2, label: "2ND STRING", accent: "cyan", border: "border-cyan-500/40", bg: "bg-cyan-950/20" },
-  { rank: 3, label: "3RD STRING", accent: "blue", border: "border-blue-500/30", bg: "bg-blue-950/20" },
-  { rank: 4, label: "PRACTICE SQUAD / RESERVE", accent: "slate", border: "border-slate-600/40", bg: "bg-slate-900/30" },
+  {
+    rank: 1,
+    label: "STARTER • 1ST STRING",
+    accent: "emerald",
+    border: "border-emerald-500/50",
+    bg: "bg-emerald-950/20",
+  },
+  {
+    rank: 2,
+    label: "2ND STRING",
+    accent: "cyan",
+    border: "border-cyan-500/40",
+    bg: "bg-cyan-950/20",
+  },
+  {
+    rank: 3,
+    label: "3RD STRING",
+    accent: "blue",
+    border: "border-blue-500/30",
+    bg: "bg-blue-950/20",
+  },
+  {
+    rank: 4,
+    label: "PRACTICE SQUAD / RESERVE",
+    accent: "slate",
+    border: "border-slate-600/40",
+    bg: "bg-slate-900/30",
+  },
 ];
 
 export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
@@ -66,6 +90,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
 
   // Manual reorder fallback for Playwright E2E and pointer drag
   const draggingIdRef = useRef<number | null>(null);
+  const [draggingId, setDraggingId] = useState<number | null>(null);
   const isPointerDownRef = useRef(false);
   const lastSwappedTargetRef = useRef<number | null>(null);
 
@@ -105,6 +130,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
     const endPointerDrag = () => {
       isPointerDownRef.current = false;
       draggingIdRef.current = null;
+      setDraggingId(null);
       lastSwappedTargetRef.current = null;
     };
 
@@ -138,7 +164,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         // Pick up
         setActiveKeyboardIndex(index);
         soundEffects.playMagnetSnap();
-        announce(`Grabbed ${player.first_name} ${player.last_name}, currently rank ${index + 1}. Use Up and Down arrow keys to reposition, Enter or Space to place.`);
+        announce(
+          `Grabbed ${player.first_name} ${player.last_name}, currently rank ${index + 1}. Use Up and Down arrow keys to reposition, Enter or Space to place.`
+        );
       } else if (activeKeyboardIndex === index) {
         // Place down
         setActiveKeyboardIndex(null);
@@ -160,7 +188,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         onPromote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex - 1);
         soundEffects.playMagnetSnap();
-        announce(`${player.first_name} ${player.last_name} moved up to rank ${activeKeyboardIndex}.`);
+        announce(
+          `${player.first_name} ${player.last_name} moved up to rank ${activeKeyboardIndex}.`
+        );
       }
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -168,7 +198,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         onDemote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex + 1);
         soundEffects.playMagnetSnap();
-        announce(`${player.first_name} ${player.last_name} moved down to rank ${activeKeyboardIndex + 2}.`);
+        announce(
+          `${player.first_name} ${player.last_name} moved down to rank ${activeKeyboardIndex + 2}.`
+        );
       }
     } else if (e.key === "Escape") {
       if (activeKeyboardIndex !== null) {
@@ -179,12 +211,14 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
     }
   };
 
-
   // Helper for OVR Badge color tiers
   const getOvrTierClass = (ovr: number) => {
-    if (ovr >= 99) return "from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-amber-500/50";
-    if (ovr >= 90) return "from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-cyan-500/40";
-    if (ovr >= 80) return "from-emerald-400 to-green-600 text-white border-emerald-300 shadow-emerald-500/30";
+    if (ovr >= 99)
+      return "from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-amber-500/50";
+    if (ovr >= 90)
+      return "from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-cyan-500/40";
+    if (ovr >= 80)
+      return "from-emerald-400 to-green-600 text-white border-emerald-300 shadow-emerald-500/30";
     if (ovr >= 70) return "from-blue-600 to-slate-700 text-white border-blue-400";
     return "from-slate-700 to-slate-900 text-gray-300 border-slate-700";
   };
@@ -234,7 +268,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
             {proposedChanges.length > 0 && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold animate-pulse">
                 <ShieldAlert className="w-4 h-4 text-amber-400" />
-                <span>{proposedChanges.length} Change{proposedChanges.length > 1 ? "s" : ""} Staged</span>
+                <span>
+                  {proposedChanges.length} Change{proposedChanges.length > 1 ? "s" : ""} Staged
+                </span>
               </div>
             )}
 
@@ -306,20 +342,19 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
             >
               {players.map((player, index) => {
                 const isStarter = index === 0;
-                const slotConfig =
-                  STRINGS_CONFIG[index] || {
-                    rank: index + 1,
-                    label: `${index + 1}TH STRING`,
-                    accent: "slate",
-                    border: "border-slate-700/50",
-                    bg: "bg-slate-900/20",
-                  };
+                const slotConfig = STRINGS_CONFIG[index] || {
+                  rank: index + 1,
+                  label: `${index + 1}TH STRING`,
+                  accent: "slate",
+                  border: "border-slate-700/50",
+                  bg: "bg-slate-900/20",
+                };
 
                 const isProposed = proposedChanges.some(
                   (c) => c.playerId === player.id && c.proposedRank === index + 1
                 );
                 const isKeyboardActive = activeKeyboardIndex === index;
-                const isDraggingThis = draggingIdRef.current === player.id;
+                const isDraggingThis = draggingId === player.id;
 
                 const triggerTargetSwap = (targetId: number) => {
                   if (!isPointerDownRef.current) return;
@@ -359,14 +394,18 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                     onPointerDown={(e) => {
                       isPointerDownRef.current = true;
                       draggingIdRef.current = player.id;
+                      setDraggingId(player.id);
                       lastSwappedTargetRef.current = player.id;
                       try {
                         (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
-                      } catch {}
+                      } catch {
+                        /* ignore */
+                      }
                     }}
                     onMouseDown={() => {
                       isPointerDownRef.current = true;
                       draggingIdRef.current = player.id;
+                      setDraggingId(player.id);
                       lastSwappedTargetRef.current = player.id;
                     }}
                     onPointerEnter={() => triggerTargetSwap(player.id)}
@@ -377,9 +416,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                       isKeyboardActive
                         ? "ring-2 ring-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.6)] scale-[1.01] z-20"
                         : ""
-                    } ${
-                      isDraggingThis ? "opacity-40" : "opacity-100"
-                    } ${
+                    } ${isDraggingThis ? "opacity-40" : "opacity-100"} ${
                       isStarter
                         ? "border-emerald-500/40 bg-gradient-to-r from-emerald-950/30 via-slate-900/80 to-slate-950/90 shadow-lg shadow-emerald-950/20"
                         : "border-slate-700/40 bg-gradient-to-r from-[#0a1628]/90 via-slate-900/80 to-slate-950/90 hover:border-slate-500/60"
@@ -459,7 +496,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                             </span>
                             <span>{player.weight ? `${player.weight} lbs` : "215 lbs"}</span>
                             <span className="text-slate-500">•</span>
-                            <span className="truncate max-w-[120px]">{player.college || "NFL Veteran"}</span>
+                            <span className="truncate max-w-[120px]">
+                              {player.college || "NFL Veteran"}
+                            </span>
                             <span className="text-slate-500 hidden sm:inline">•</span>
                             <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
                               SPD {player.speed || 80}
@@ -540,7 +579,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         <div className="mt-6 pt-4 border-t border-slate-400/20 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-gray-400 gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-            <span>Tactical whiteboard active • Use mouse drag or keyboard (Space + Arrow keys)</span>
+            <span>
+              Tactical whiteboard active • Use mouse drag or keyboard (Space + Arrow keys)
+            </span>
           </div>
           <div>{players.length} Athletes Roster Matrix</div>
         </div>
