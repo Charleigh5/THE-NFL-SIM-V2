@@ -557,9 +557,12 @@ export const DepthChart: React.FC = () => {
 
   // Helper for OVR Badge color tiers
   const getOvrTierClass = (ovr: number) => {
-    if (ovr >= 99) return "bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-lg shadow-amber-500/50";
-    if (ovr >= 90) return "bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-lg shadow-cyan-500/40";
-    if (ovr >= 80) return "bg-gradient-to-br from-emerald-400 to-green-600 text-white border-emerald-300 shadow-md shadow-emerald-500/30";
+    if (ovr >= 99)
+      return "bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-lg shadow-amber-500/50";
+    if (ovr >= 90)
+      return "bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-lg shadow-cyan-500/40";
+    if (ovr >= 80)
+      return "bg-gradient-to-br from-emerald-400 to-green-600 text-white border-emerald-300 shadow-md shadow-emerald-500/30";
     if (ovr >= 70) return "bg-gradient-to-br from-blue-600 to-slate-700 text-white border-blue-400";
     return "bg-slate-800 text-gray-300 border-slate-700";
   };
@@ -830,7 +833,9 @@ export const DepthChart: React.FC = () => {
                 {/* Room Metrics */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                    <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
+                    <div className="text-[10px] font-mono text-gray-400 uppercase">
+                      ROOM AVERAGE
+                    </div>
                     <div className="text-2xl font-black font-heading text-white mt-0.5">
                       {averageGroupOvr} <span className="text-xs text-cyan-400 font-mono">OVR</span>
                     </div>
@@ -863,7 +868,9 @@ export const DepthChart: React.FC = () => {
                       {starterPlayer.first_name} {starterPlayer.last_name}
                     </div>
                     <div className="text-xs text-gray-300 mt-0.5 flex items-center gap-2">
-                      <span className="text-emerald-300 font-bold">OVR {starterPlayer.overall_rating}</span>
+                      <span className="text-emerald-300 font-bold">
+                        OVR {starterPlayer.overall_rating}
+                      </span>
                       <span>•</span>
                       <span>{starterPlayer.college || "NFL Veteran"}</span>
                       <span>•</span>
@@ -873,19 +880,20 @@ export const DepthChart: React.FC = () => {
                 )}
 
                 {/* Unit Chemistry Integration */}
-                {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) && chemistry && (
-                  <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/30">
-                    <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <span>⚗️ Trench Chemistry Synergy</span>
+                {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) &&
+                  chemistry && (
+                    <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/30">
+                      <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span>⚗️ Trench Chemistry Synergy</span>
+                      </div>
+                      <ChemistryBadge
+                        level={chemistry.chemistry_level}
+                        consecutiveGames={chemistry.consecutive_games}
+                        status={chemistry.status}
+                        bonuses={chemistry.bonuses}
+                      />
                     </div>
-                    <ChemistryBadge
-                      level={chemistry.chemistry_level}
-                      consecutiveGames={chemistry.consecutive_games}
-                      status={chemistry.status}
-                      bonuses={chemistry.bonuses}
-                    />
-                  </div>
-                )}
+                  )}
               </div>
             </div>
 
@@ -944,7 +952,9 @@ export const DepthChart: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3 mb-6">
                   <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                    <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
+                    <div className="text-[10px] font-mono text-gray-400 uppercase">
+                      ROOM AVERAGE
+                    </div>
                     <div className="text-2xl font-black font-heading text-white mt-1">
                       {averageGroupOvr} <span className="text-xs text-cyan-400 font-mono">OVR</span>
                     </div>
@@ -1056,7 +1066,9 @@ export const DepthChart: React.FC = () => {
                             });
                           }}
                           className={`bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-grab active:cursor-grabbing hover:bg-white/10 border transition-all duration-200 group ${
-                            index === 0 ? "border-emerald-500/30 bg-emerald-950/10" : "border-white/5"
+                            index === 0
+                              ? "border-emerald-500/30 bg-emerald-950/10"
+                              : "border-white/5"
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -1118,11 +1130,14 @@ export const DepthChart: React.FC = () => {
 
                               <div className="flex items-center gap-2 mt-2">
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
-                                  SPD: <strong className="text-cyan-400">{player.speed || 80}</strong>
+                                  SPD:{" "}
+                                  <strong className="text-cyan-400">{player.speed || 80}</strong>
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   ACC:{" "}
-                                  <strong className="text-cyan-400">{player.acceleration || 80}</strong>
+                                  <strong className="text-cyan-400">
+                                    {player.acceleration || 80}
+                                  </strong>
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   STR:{" "}
@@ -1130,7 +1145,9 @@ export const DepthChart: React.FC = () => {
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   AWR:{" "}
-                                  <strong className="text-cyan-400">{player.awareness || 78}</strong>
+                                  <strong className="text-cyan-400">
+                                    {player.awareness || 78}
+                                  </strong>
                                 </span>
                               </div>
                             </div>

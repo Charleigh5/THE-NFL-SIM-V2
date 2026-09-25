@@ -70,12 +70,16 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
   className = "",
   intensity = "subtle",
 }) => {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+    return false;
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
@@ -88,8 +92,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
   const officeDustMotes = useMemo(() => createDeterministicParticles(12, 137), []);
   const stadiumVaporMotes = useMemo(() => createDeterministicParticles(16, 211), []);
 
-  const intensityMultiplier =
-    intensity === "cinematic" ? 1.4 : intensity === "medium" ? 1.0 : 0.75;
+  const intensityMultiplier = intensity === "cinematic" ? 1.4 : intensity === "medium" ? 1.0 : 0.75;
 
   return (
     <div
@@ -192,13 +195,9 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
       {/* ========================================================================= */}
       {facilityType === "war_room" && (
         <div
-          className={`w-full h-full relative ${
-            reducedMotion ? "" : "spatial-animated-element"
-          }`}
+          className={`w-full h-full relative ${reducedMotion ? "" : "spatial-animated-element"}`}
           style={
-            reducedMotion
-              ? undefined
-              : { animation: "warroom-flicker 8s ease-in-out infinite" }
+            reducedMotion ? undefined : { animation: "warroom-flicker 8s ease-in-out infinite" }
           }
         >
           {/* Subtle CRT / Multi-Monitor Scanline Grid */}
@@ -225,9 +224,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             style={{
               background: `radial-gradient(circle, rgba(37, 99, 235, ${
                 0.14 * intensityMultiplier
-              }) 0%, rgba(16, 185, 129, ${
-                0.05 * intensityMultiplier
-              }) 50%, transparent 75%)`,
+              }) 0%, rgba(16, 185, 129, ${0.05 * intensityMultiplier}) 50%, transparent 75%)`,
             }}
           />
 
@@ -240,9 +237,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
               background:
                 "linear-gradient(90deg, transparent 0%, rgba(0, 118, 182, 0) 15%, rgba(0, 212, 255, 0.45) 50%, rgba(0, 118, 182, 0) 85%, transparent 100%)",
               filter: "blur(0.5px)",
-              animation: reducedMotion
-                ? undefined
-                : "warroom-flare-pulse 6s ease-in-out infinite",
+              animation: reducedMotion ? undefined : "warroom-flare-pulse 6s ease-in-out infinite",
             }}
           />
 
@@ -335,16 +330,12 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
           {weather === "rain" && (
             <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
               <div
-                className={`w-full h-[200%] ${
-                  reducedMotion ? "" : "spatial-animated-element"
-                }`}
+                className={`w-full h-[200%] ${reducedMotion ? "" : "spatial-animated-element"}`}
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(110deg, transparent 0px, transparent 38px, rgba(255, 255, 255, 0.35) 39px, transparent 41px)",
                   backgroundSize: "60px 100px",
-                  animation: reducedMotion
-                    ? undefined
-                    : "rain-streak-fall 1.2s linear infinite",
+                  animation: reducedMotion ? undefined : "rain-streak-fall 1.2s linear infinite",
                 }}
               />
             </div>
@@ -401,9 +392,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
               background:
                 "conic-gradient(from 260deg at 100% 40%, rgba(224, 242, 254, 0.25) 0deg, rgba(186, 230, 253, 0.08) 18deg, transparent 40deg)",
               filter: "blur(20px)",
-              animation: reducedMotion
-                ? undefined
-                : "projector-shimmer 4s ease-in-out infinite",
+              animation: reducedMotion ? undefined : "projector-shimmer 4s ease-in-out infinite",
             }}
           />
 

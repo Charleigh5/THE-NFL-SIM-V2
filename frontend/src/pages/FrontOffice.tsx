@@ -68,20 +68,16 @@ interface LockerStallCardProps {
  * Designed under Adly Frontier UI Architect principles with metallic brushed nameplates,
  * crisp corner radius, Honolulu Blue (#0076B6) framing, and deterministic interactive states.
  */
-const LockerStallCard: React.FC<LockerStallCardProps> = ({
-  player,
-  teamAbbr = "DET",
-  onClick,
-}) => {
+const LockerStallCard: React.FC<LockerStallCardProps> = ({ player, teamAbbr = "DET", onClick }) => {
   const ovr = player.overall_rating;
   const ovrBadgeStyle =
     ovr >= 90
       ? "from-amber-400 to-yellow-500 text-black shadow-amber-500/30"
       : ovr >= 80
-      ? "from-emerald-400 to-teal-500 text-black shadow-emerald-500/30"
-      : ovr >= 70
-      ? "from-cyan-400 to-blue-500 text-black shadow-cyan-500/30"
-      : "from-zinc-400 to-zinc-500 text-black shadow-zinc-500/30";
+        ? "from-emerald-400 to-teal-500 text-black shadow-emerald-500/30"
+        : ovr >= 70
+          ? "from-cyan-400 to-blue-500 text-black shadow-cyan-500/30"
+          : "from-zinc-400 to-zinc-500 text-black shadow-zinc-500/30";
 
   return (
     <div
@@ -259,7 +255,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Overload interior protection with double A-gap mug alignments. Disguise 5-man creepers on 3rd down and collapse the pocket.
+            Overload interior protection with double A-gap mug alignments. Disguise 5-man creepers
+            on 3rd down and collapse the pocket.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Pressure Win Rate:</span>
@@ -278,7 +275,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Zero hesitation across midfield. We dictate the terms and impose physical will. Short-yardage wedge sneak with heavy personnel.
+            Zero hesitation across midfield. We dictate the terms and impose physical will.
+            Short-yardage wedge sneak with heavy personnel.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Aggression Index:</span>
@@ -297,7 +295,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
             </span>
           </div>
           <p className="text-gray-300 leading-relaxed font-body text-xs">
-            Double-team the 3-technique, pull the backside guard on Counter GT, and chew 4.8 YPC. Set up deep explosive post shot off play-action.
+            Double-team the 3-technique, pull the backside guard on Counter GT, and chew 4.8 YPC.
+            Set up deep explosive post shot off play-action.
           </p>
           <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/10 flex justify-between font-mono">
             <span>Downhill Target:</span>
@@ -309,7 +308,8 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
       {/* Handwritten Dry-Erase Footer Quote */}
       <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-gray-400">
         <span className="italic text-yellow-300/90 font-semibold">
-          &ldquo;When you get knocked down, you get up and bite off a kneecap. That's who we are.&rdquo; &mdash; Coach Dan Campbell
+          &ldquo;When you get knocked down, you get up and bite off a kneecap. That's who we
+          are.&rdquo; &mdash; Coach Dan Campbell
         </span>
         <span className="text-cyan-400 font-bold uppercase tracking-wider">
           STATUS: GAMEDAY LOCKED IN
@@ -468,10 +468,10 @@ export const FrontOffice: React.FC = () => {
             ovr >= 90
               ? "text-yellow-400 font-bold"
               : ovr >= 80
-              ? "text-emerald-400 font-semibold"
-              : ovr >= 70
-              ? "text-cyan-400"
-              : "text-gray-300";
+                ? "text-emerald-400 font-semibold"
+                : ovr >= 70
+                  ? "text-cyan-400"
+                  : "text-gray-300";
           return <span className={`text-base font-header ${ratingColor}`}>{ovr}</span>;
         },
       },
@@ -866,7 +866,9 @@ export const FrontOffice: React.FC = () => {
             <div className="lg:col-span-8 space-y-6">
               {/* Dan Campbell Dynamic Tactical Whiteboard */}
               <DanCampbellWhiteboard
-                opponentName={activeTeam?.abbreviation === "KC" ? "SAN FRANCISCO 49ERS" : "KANSAS CITY CHIEFS"}
+                opponentName={
+                  activeTeam?.abbreviation === "KC" ? "SAN FRANCISCO 49ERS" : "KANSAS CITY CHIEFS"
+                }
                 week={5}
               />
 
@@ -1133,29 +1135,32 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             {/* Traits Section if available */}
-            {(selectedPlayer as any).traits && (selectedPlayer as any).traits.length > 0 && (
-              <div
-                className="mt-4 pt-3 border-t border-white/10 traits-section"
-                data-testid="player-traits"
-              >
-                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
-                  Player Traits
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {(selectedPlayer as any).traits.map((trait: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
-                    >
-                      {trait}
-                    </span>
-                  ))}
+            {(selectedPlayer as { traits?: string[] }).traits &&
+              ((selectedPlayer as { traits?: string[] }).traits?.length || 0) > 0 && (
+                <div
+                  className="mt-4 pt-3 border-t border-white/10 traits-section"
+                  data-testid="player-traits"
+                >
+                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
+                    Player Traits
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {((selectedPlayer as { traits?: string[] }).traits || []).map(
+                      (trait: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
+                        >
+                          {trait}
+                        </span>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Contract Section if available */}
-            {(selectedPlayer as any).contract && (
+            {(selectedPlayer as { contract?: { salary?: string } }).contract && (
               <div
                 className="mt-3 pt-3 border-t border-white/10 contract-info"
                 data-testid="player-contract"
@@ -1164,7 +1169,8 @@ export const FrontOffice: React.FC = () => {
                   Contract Terms
                 </p>
                 <p className="text-xs font-mono text-emerald-400 font-bold">
-                  {(selectedPlayer as any).contract.salary || "$45M / 3 Yrs"}
+                  {(selectedPlayer as { contract?: { salary?: string } }).contract?.salary ||
+                    "$45M / 3 Yrs"}
                 </p>
               </div>
             )}
@@ -1188,10 +1194,15 @@ export const FrontOffice: React.FC = () => {
                 {/* 1. Helmet & Visor */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Helmet &amp; Visor</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Helmet &amp; Visor
+                    </span>
                     <span
                       className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{ backgroundColor: activeTeam?.colors?.primary || team?.primary_color || "#0076B6" }}
+                      style={{
+                        backgroundColor:
+                          activeTeam?.colors?.primary || team?.primary_color || "#0076B6",
+                      }}
                       title="Team Shell Color"
                     />
                   </div>
@@ -1199,32 +1210,40 @@ export const FrontOffice: React.FC = () => {
                     Riddell SpeedFlex Precision
                   </p>
                   <p className="text-cyan-400 text-[10px] mt-0.5">
-                    Visor: {["QB", "K", "P"].includes(selectedPlayer.position) ? "Clear High-Def Shield" : "Smoke Iridium 20% Tint"}
+                    Visor:{" "}
+                    {["QB", "K", "P"].includes(selectedPlayer.position)
+                      ? "Clear High-Def Shield"
+                      : "Smoke Iridium 20% Tint"}
                   </p>
                 </div>
 
                 {/* 2. Gloves */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Grip Gloves</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Grip Gloves
+                    </span>
                     <span
                       className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{ backgroundColor: activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC" }}
+                      style={{
+                        backgroundColor:
+                          activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC",
+                      }}
                       title="Team Accent Color"
                     />
                   </div>
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor Jet 7.0
                   </p>
-                  <p className="text-amber-400 text-[10px] mt-0.5">
-                    Magnigrip+ Tack &bull; Strap
-                  </p>
+                  <p className="text-amber-400 text-[10px] mt-0.5">Magnigrip+ Tack &bull; Strap</p>
                 </div>
 
                 {/* 3. Jersey Loadout */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Jersey Loadout</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Jersey Loadout
+                    </span>
                     <span className="text-[11px] font-header text-yellow-400 font-bold leading-none">
                       #{selectedPlayer.jersey_number ?? 0}
                     </span>
@@ -1232,23 +1251,21 @@ export const FrontOffice: React.FC = () => {
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor F.U.S.E. Mesh
                   </p>
-                  <p className="text-gray-300 text-[10px] mt-0.5">
-                    Douglas CP 25 Pro Kevlar
-                  </p>
+                  <p className="text-gray-300 text-[10px] mt-0.5">Douglas CP 25 Pro Kevlar</p>
                 </div>
 
                 {/* 4. Cleats & Spatting */}
                 <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">Cleats &amp; Spatting</span>
+                    <span className="text-[9px] text-gray-400 uppercase font-bold">
+                      Cleats &amp; Spatting
+                    </span>
                     <span className="text-[9px] text-emerald-400 font-bold">Molded</span>
                   </div>
                   <p className="text-white font-semibold text-[11px] truncate">
                     Nike Vapor Edge Pro 360
                   </p>
-                  <p className="text-cyan-300 text-[10px] mt-0.5">
-                    Carbon Plate &bull; Turf Tape
-                  </p>
+                  <p className="text-cyan-300 text-[10px] mt-0.5">Carbon Plate &bull; Turf Tape</p>
                 </div>
               </div>
             </div>
