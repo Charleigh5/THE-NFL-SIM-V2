@@ -195,7 +195,9 @@ export const Dashboard = () => {
         {/* System & Season Metrics */}
         <div className="flex items-center gap-4 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg">
           <div className="flex flex-col items-start md:items-end">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">Network HUD</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">
+              Network HUD
+            </span>
             <div className="system-status flex items-center gap-1.5 mt-0.5">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="badge font-header text-base text-emerald-400">
@@ -218,7 +220,9 @@ export const Dashboard = () => {
           <div className="h-8 w-[1px] bg-white/15" />
 
           <div className="flex flex-col items-start md:items-end">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">Current</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">
+              Current
+            </span>
             <span className="season-week font-header text-[clamp(1.5rem,3vw,2rem)] text-cyan-400 leading-none mt-0.5">
               WEEK {currentSeason?.current_week ?? 1}
             </span>
@@ -229,12 +233,7 @@ export const Dashboard = () => {
   );
 
   const dashboardContent = (
-    <motion.div
-      className="space-y-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
+    <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="show">
       {/* ========================================================================= */}
       {/* 1. MATCHUP OF THE WEEK CLASH CARD */}
       {/* ========================================================================= */}
@@ -359,7 +358,9 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-white leading-none">53 / 53</span>
+            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-white leading-none">
+              53 / 53
+            </span>
             <span className="text-xs text-gray-400">Active NFL Roster</span>
           </div>
 
@@ -393,7 +394,9 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-emerald-400 leading-none">$18.4M</span>
+            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-emerald-400 leading-none">
+              $18.4M
+            </span>
             <span className="text-xs text-gray-400">Available Cap Space</span>
           </div>
 

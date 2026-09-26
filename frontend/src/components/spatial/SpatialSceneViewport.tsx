@@ -47,7 +47,11 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
   // Viewport intersection state
   const isIntersecting = useRef(true);
 
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
 
   // Derive webpSrc if backgroundSrc is a .jpg or .png format
   const webpSrc = useMemo(() => {
@@ -62,7 +66,6 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
   // Check system prefers-reduced-motion
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
@@ -131,10 +134,7 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
     const LERP_FACTOR = 0.08;
 
     const tick = () => {
-      if (
-        (typeof document !== "undefined" && document.hidden) ||
-        !isIntersecting.current
-      ) {
+      if ((typeof document !== "undefined" && document.hidden) || !isIntersecting.current) {
         isRunning.current = false;
         rafRef.current = null;
         return;
@@ -267,12 +267,7 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
       </div>
 
       {/* Atmospheric Particle & Lighting FX Layer (GPU-composited between background and foreground) */}
-      {atmosphereType && (
-        <SpatialAtmosphereLayer
-          facilityType={atmosphereType}
-          weather={weather}
-        />
-      )}
+      {atmosphereType && <SpatialAtmosphereLayer facilityType={atmosphereType} weather={weather} />}
 
       {/* Foreground Interactive Content Layer: Standard Unskewed 2D Projection */}
       <div className="relative z-10 w-full h-full">{children}</div>
