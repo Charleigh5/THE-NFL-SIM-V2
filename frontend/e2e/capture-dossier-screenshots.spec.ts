@@ -299,7 +299,9 @@ test.describe("Full Dossier Screenshot Suite", () => {
   });
 
   test("Capture 05B - Coach Office", async ({ page }) => {
-    page.on("console", (msg) => console.log(`[Browser Console - 05B] ${msg.type()}: ${msg.text()}`));
+    page.on("console", (msg) =>
+      console.log(`[Browser Console - 05B] ${msg.type()}: ${msg.text()}`)
+    );
     page.on("pageerror", (err) => console.error(`[Browser Error - 05B] ${err.message}`));
 
     await page.route("**/api/teams/1", async (route) => {

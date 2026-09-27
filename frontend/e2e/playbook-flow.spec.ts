@@ -305,4 +305,3 @@ test.describe("Playbook Flow", () => {
     await expect(page.locator("h1", { hasText: "Playbook" })).toBeVisible();
   });
 });
-
