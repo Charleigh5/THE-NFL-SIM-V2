@@ -1,19 +1,7 @@
 import type { FreeAgentMarketPlayer } from "../types/offseason";
 
 export type PositionFilter =
-  | "ALL"
-  | "OFF"
-  | "DEF"
-  | "ST"
-  | "QB"
-  | "RB"
-  | "WR"
-  | "TE"
-  | "OL"
-  | "DL"
-  | "LB"
-  | "DB"
-  | "K/P";
+  "ALL" | "OFF" | "DEF" | "ST" | "QB" | "RB" | "WR" | "TE" | "OL" | "DL" | "LB" | "DB" | "K/P";
 
 export type TierFilter = "ALL" | "Tier 1" | "Tier 2" | "Tier 3" | "Tier 4";
 

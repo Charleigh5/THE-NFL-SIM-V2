@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 export type FacilityAtmosphereType =
-  | "locker"
-  | "office"
-  | "weight_room"
-  | "war_room"
-  | "stadium"
-  | "film_room";
+  "locker" | "office" | "weight_room" | "war_room" | "stadium" | "film_room";
 
 export type WeatherType = "clear" | "rain" | "snow" | "dome";
 

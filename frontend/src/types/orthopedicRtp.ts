@@ -8,11 +8,7 @@
  */
 
 export type MedicalProtocol =
-  | "CONSERVATIVE"
-  | "BIOLOGIC_PRP"
-  | "ARTHROSCOPIC"
-  | "OPEN_SURGERY"
-  | "CORTISONE";
+  "CONSERVATIVE" | "BIOLOGIC_PRP" | "ARTHROSCOPIC" | "OPEN_SURGERY" | "CORTISONE";
 
 export interface RTPCurvePoint {
   week: number;

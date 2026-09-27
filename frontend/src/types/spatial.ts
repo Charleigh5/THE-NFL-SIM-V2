@@ -7,11 +7,7 @@
  */
 
 export type SpatialRenderClass =
-  | "FLAT"
-  | "DEPTH_WARP"
-  | "MULTIPLANE_2_5D"
-  | "HYBRID_CANVAS"
-  | "FULL_SPATIAL_3D";
+  "FLAT" | "DEPTH_WARP" | "MULTIPLANE_2_5D" | "HYBRID_CANVAS" | "FULL_SPATIAL_3D";
 
 export type SpatialQualityTier = "ULTRA" | "HIGH" | "BALANCED" | "LOW";
 
