@@ -8,13 +8,7 @@
  */
 
 export type DecisionStrength =
-  | "STRONG_GO"
-  | "LEAN_GO"
-  | "TOSS_UP"
-  | "LEAN_PUNT"
-  | "STRONG_PUNT"
-  | "STRONG_FG"
-  | "LEAN_FG";
+  "STRONG_GO" | "LEAN_GO" | "TOSS_UP" | "LEAN_PUNT" | "STRONG_PUNT" | "STRONG_FG" | "LEAN_FG";
 
 export interface FourthDownTelemetryPayload {
   yardLine: number;

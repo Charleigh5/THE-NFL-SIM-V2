@@ -1,11 +1,7 @@
 import { create } from "zustand";
 
 export type WeatherCondition =
-  | "CLEAR_NIGHT"
-  | "VICE_HEATWAVE"
-  | "LAMBEAU_BLIZZARD"
-  | "ARROWHEAD_DOWNPOUR"
-  | "FOXBOROUGH_AUTUMN";
+  "CLEAR_NIGHT" | "VICE_HEATWAVE" | "LAMBEAU_BLIZZARD" | "ARROWHEAD_DOWNPOUR" | "FOXBOROUGH_AUTUMN";
 
 export interface WeatherPreset {
   name: string;

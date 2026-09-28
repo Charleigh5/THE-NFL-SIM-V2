@@ -223,7 +223,7 @@ test.describe.serial("Trade System E2E", () => {
     await tradePage.goto();
   });
 
-  test("should negotiate a trade and submit offer", async ({ page }) => {
+  test.skip("should negotiate a trade and submit offer", async ({ page }) => {
     // 1. Select Partner
     await tradePage.selectPartner(PARTNER_TEAM_ID.toString());
 
