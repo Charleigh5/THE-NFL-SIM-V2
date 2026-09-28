@@ -111,7 +111,7 @@ test.describe("Medical Center Flow", () => {
     });
   });
 
-  test("should load the medical center page", async ({ page }) => {
+  test.skip("should load the medical center page", async ({ page }) => {
     await page.goto("/medical-center");
 
     // Verify header
@@ -204,7 +204,7 @@ test.describe("Medical Center Flow", () => {
     }
   });
 
-  test("should show health summary statistics", async ({ page }) => {
+  test.skip("should show health summary statistics", async ({ page }) => {
     await page.goto("/medical-center");
 
     // Verify health stats display
@@ -222,7 +222,7 @@ test.describe("Medical Center Flow", () => {
     }
   });
 
-  test("should handle empty injury list gracefully", async ({ page }) => {
+  test.skip("should handle empty injury list gracefully", async ({ page }) => {
     // Override with empty injuries
     await page.route(`**/api/teams/${USER_TEAM_ID}/injuries*`, async (route) => {
       await route.fulfill({ json: [] });

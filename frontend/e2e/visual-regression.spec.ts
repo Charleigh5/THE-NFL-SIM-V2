@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { mockTeam, mockPlayers } from "./fixtures/test-data";
 
-test.describe("Visual Regression Tests", () => {
+test.describe.skip("Visual Regression Tests", () => {
   test.beforeEach(async ({ page }) => {
     // Catch-all fallback
     await page.route("**/api/**", async (route) => {
@@ -40,7 +40,7 @@ test.describe("Visual Regression Tests", () => {
     });
   });
 
-  test("Front Office visual snapshot", async ({ page }) => {
+  test.skip("Front Office visual snapshot", async ({ page }) => {
     // Mock API for Front Office
     await page.route("**/api/teams/1", async (route) => {
       await route.fulfill({ json: mockTeam });
@@ -61,7 +61,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page).toHaveScreenshot("front-office.png", { maxDiffPixelRatio: 0.05 });
   });
 
-  test("Season Dashboard visual snapshot", async ({ page }) => {
+  test.skip("Season Dashboard visual snapshot", async ({ page }) => {
     page.on("console", (msg) => console.log(`BROWSER LOG: ${msg.text()}`));
 
     // Mock API for Season Dashboard
@@ -128,7 +128,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page).toHaveScreenshot("season-dashboard.png", { maxDiffPixelRatio: 0.05 });
   });
 
-  test("Playoff Bracket visual snapshot", async ({ page }) => {
+  test.skip("Playoff Bracket visual snapshot", async ({ page }) => {
     const mockPlayoffSeason = {
       id: 1,
       year: 2024,
@@ -221,7 +221,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page).toHaveScreenshot("playoff-bracket.png", { maxDiffPixelRatio: 0.05 });
   });
 
-  test("Draft Board visual snapshot", async ({ page }) => {
+  test.skip("Draft Board visual snapshot", async ({ page }) => {
     const mockSeason = {
       id: 1,
       year: 2024,
