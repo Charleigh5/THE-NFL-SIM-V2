@@ -49,6 +49,7 @@ def upgrade() -> None:
 
 
     with op.batch_alter_table('team', schema=None) as batch_op:
+        batch_op.add_column(sa.Column('stadium_id', sa.Integer(), nullable=True))
         batch_op.create_foreign_key('fk_team_stadium_id', 'stadium', ['stadium_id'], ['id'])
 
     # ### end Alembic commands ###
