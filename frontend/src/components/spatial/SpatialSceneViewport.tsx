@@ -8,6 +8,7 @@ import {
 
 interface SpatialSceneViewportProps {
   backgroundSrc: string;
+  backgroundAlt?: string;
   overscan?: number;
   parallaxBounds?: ParallaxBounds;
   disabled?: boolean;
@@ -26,6 +27,7 @@ const DEFAULT_PARALLAX: ParallaxBounds = {
 
 export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
   backgroundSrc,
+  backgroundAlt,
   overscan = 1.06,
   parallaxBounds = DEFAULT_PARALLAX,
   disabled = false,
@@ -255,7 +257,7 @@ export const SpatialSceneViewport: React.FC<SpatialSceneViewportProps> = ({
             {webpSrc && <source type="image/webp" srcSet={webpSrc} />}
             <img
               src={backgroundSrc}
-              alt="War Room Spatial Background"
+              alt={backgroundAlt || "Spatial Facility Background"}
               className="w-full h-full object-cover object-center filter brightness-95 contrast-[1.03]"
               loading="eager"
             />

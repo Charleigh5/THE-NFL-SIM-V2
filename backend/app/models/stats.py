@@ -59,3 +59,7 @@ class PlayerGameStats(Base):
     pancakes = Column(Integer, default=0)
     sacks_allowed = Column(Integer, default=0)
     pressures_allowed = Column(Integer, default=0)
+
+# Backward compatibility re-export
+from app.models.history import PlayerSeasonStats
+

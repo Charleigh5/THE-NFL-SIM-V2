@@ -19,6 +19,23 @@
   --color-gridiron-firstdown: #facc15;
   --color-gridiron-los: #3b82f6;
 
+  /* Corner Radius Constraints (Strict 0-4px for tactile gridiron hardware) */
+  --radius-tactile-none: 0px;
+  --radius-tactile-xs: 1px;
+  --radius-tactile-sm: 2px;
+  --radius-tactile-md: 4px;
+
+  /* Zero-Blur Directional Hard Shadow Tokens */
+  --shadow-hard-xs: 1px 1px 0px #000000;
+  --shadow-hard-sm: 2px 2px 0px #000000;
+  --shadow-hard-md: 3px 3px 0px #000000;
+  --shadow-hard-lg: 4px 4px 0px #000000;
+  --shadow-hard-primary: 3px 3px 0px var(--theme-primary, #0076B6);
+  --shadow-hard-amber: 3px 3px 0px #F59E0B;
+  --shadow-hard-emerald: 3px 3px 0px #10B981;
+  --shadow-hard-rose: 3px 3px 0px #F43F5E;
+  --shadow-hard-pressed: 1px 1px 0px #000000;
+
   --font-header: "Anton", "Impact", "Arial Black", sans-serif;
   --font-body: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -141,8 +158,9 @@ body {
 }
 
 .broadcast-glass {
-  background: rgba(15, 20, 30, 0.75);
-  backdrop-filter: blur(16px);
+  background: rgba(10, 15, 25, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     0 10px 30px -10px rgba(0, 0, 0, 0.8),
@@ -172,3 +190,33 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--theme-secondary) 80%, #ef4444);
 }
+
+/* Tactile 0-4px Corner & Directional Zero-Blur Hard Shadow Utilities */
+@utility shadow-hard-xs {
+  box-shadow: 1px 1px 0px #000000;
+}
+@utility shadow-hard-sm {
+  box-shadow: 2px 2px 0px #000000;
+}
+@utility shadow-hard-md {
+  box-shadow: 3px 3px 0px #000000;
+}
+@utility shadow-hard-lg {
+  box-shadow: 4px 4px 0px #000000;
+}
+@utility shadow-hard-primary {
+  box-shadow: 3px 3px 0px var(--theme-primary, #0076B6);
+}
+@utility shadow-hard-amber {
+  box-shadow: 3px 3px 0px #F59E0B;
+}
+@utility shadow-hard-emerald {
+  box-shadow: 3px 3px 0px #10B981;
+}
+@utility shadow-hard-rose {
+  box-shadow: 3px 3px 0px #F43F5E;
+}
+@utility shadow-hard-pressed {
+  box-shadow: 1px 1px 0px #000000;
+}
+

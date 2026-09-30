@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { apiClient } from "../../services/api";
 import { soundEffects } from "../../services/soundEffects";
-import { TrendingUp, Target, ArrowRight, Shield, Zap, X, Loader2, CheckCircle } from "lucide-react";
+import { TrendingUp, ArrowRight, X, Loader2, CheckCircle } from "lucide-react";
+import { BlitzBoltIcon, GoalpostsIcon, DownMarkerIcon } from "../icons";
 
 export interface FourthDownRecommendationData {
   recommendation: "GO" | "FIELD_GOAL" | "PUNT";
@@ -241,7 +242,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-xs uppercase text-slate-200 flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-emerald-400" /> Go For It
+                    <BlitzBoltIcon className="w-3.5 h-3.5 text-emerald-400" size={14} /> Go For It
                   </span>
                   {selectedAction === "GO" && <CheckCircle className="w-4 h-4 text-emerald-400" />}
                 </div>
@@ -276,7 +277,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-xs uppercase text-slate-200 flex items-center gap-1.5">
-                    <Target className="w-3.5 h-3.5 text-blue-400" /> Field Goal
+                    <GoalpostsIcon className="w-3.5 h-3.5 text-blue-400" size={14} /> Field Goal
                   </span>
                   {selectedAction === "FIELD_GOAL" && (
                     <CheckCircle className="w-4 h-4 text-blue-400" />
@@ -313,7 +314,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-bold text-xs uppercase text-slate-200 flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-amber-400" /> Punt
+                    <DownMarkerIcon className="w-3.5 h-3.5 text-amber-400" size={14} /> Punt
                   </span>
                   {selectedAction === "PUNT" && <CheckCircle className="w-4 h-4 text-amber-400" />}
                 </div>

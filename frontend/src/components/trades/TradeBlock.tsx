@@ -6,6 +6,14 @@ import React, { useState, useEffect } from "react";
 import type { TradeBlockPlayer, IncomingTradeOffer, TradePlayer } from "../../types/trade";
 import { tradeApi } from "../../services/tradeApi";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  DownMarkerIcon,
+  FootballLacesIcon,
+  ChainGangIcon,
+  BlitzBoltIcon,
+  YardHashesIcon,
+  PlayClockIcon,
+} from "../icons";
 import "./TradeBlock.css";
 
 interface TradeBlockProps {
@@ -166,7 +174,9 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
       <section className="trade-block-section" data-testid="trade-block-section">
         <div className="section-header">
           <h3>
-            <span className="icon">📋</span>
+            <span className="icon">
+              <DownMarkerIcon size={18} className="text-yellow-400 inline-block" />
+            </span>
             Your Trade Block
           </h3>
           <button
@@ -180,7 +190,9 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
 
         {tradeBlockPlayers.length === 0 ? (
           <div className="trade-block-empty">
-            <span className="empty-icon">🏈</span>
+            <span className="empty-icon">
+              <FootballLacesIcon size={32} className="text-amber-500/60 inline-block" />
+            </span>
             <p>No players on the trade block</p>
             <p className="hint">Add players to attract trade offers from other teams</p>
           </div>
@@ -243,7 +255,9 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
       <section className="incoming-offers-section" data-testid="incoming-offers-section">
         <div className="section-header">
           <h3>
-            <span className="icon">📨</span>
+            <span className="icon">
+              <ChainGangIcon size={18} className="text-cyan-400 inline-block" />
+            </span>
             Incoming Trade Offers
             {incomingOffers.length > 0 && (
               <span className="offer-count">{incomingOffers.length}</span>
@@ -253,7 +267,9 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
 
         {incomingOffers.length === 0 ? (
           <div className="offers-empty">
-            <span className="empty-icon">📭</span>
+            <span className="empty-icon">
+              <ChainGangIcon size={32} className="text-slate-600 inline-block" />
+            </span>
             <p>No pending trade offers</p>
             <p className="hint">Adding players to your trade block may attract interest</p>
           </div>
@@ -272,15 +288,25 @@ export const TradeBlock: React.FC<TradeBlockProps> = ({ userTeamId }) => {
                 >
                   <div className="offer-header">
                     <div className="offer-from">
-                      <span className="team-logo">🏈</span>
+                      <span className="team-logo">
+                        <FootballLacesIcon size={16} className="text-amber-400 inline-block" />
+                      </span>
                       <span className="team-name">{offer.from_team_name}</span>
                     </div>
                     <span className={`urgency-badge ${offer.urgency}`}>
-                      {offer.urgency === "high"
-                        ? "⚡ Urgent"
-                        : offer.urgency === "medium"
-                          ? "📌 Standard"
-                          : "🕐 Open"}
+                      {offer.urgency === "high" ? (
+                        <span className="flex items-center gap-1">
+                          <BlitzBoltIcon size={12} className="text-yellow-400" /> Urgent
+                        </span>
+                      ) : offer.urgency === "medium" ? (
+                        <span className="flex items-center gap-1">
+                          <YardHashesIcon size={12} className="text-blue-400" /> Standard
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1">
+                          <PlayClockIcon size={12} className="text-gray-400" /> Open
+                        </span>
+                      )}
                     </span>
                   </div>
 

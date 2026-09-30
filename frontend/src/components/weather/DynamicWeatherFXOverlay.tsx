@@ -130,16 +130,30 @@ export const DynamicWeatherFXOverlay: React.FC = () => {
       });
     };
 
-    window.addEventListener("scroll", updateSurfaces, { passive: true });
-    window.addEventListener("resize", updateSurfaces, { passive: true });
+    let isScrollPending = false;
+    let scrollRafId = 0;
+
+    const throttledUpdateSurfaces = () => {
+      if (!isScrollPending) {
+        isScrollPending = true;
+        scrollRafId = requestAnimationFrame(() => {
+          updateSurfaces();
+          isScrollPending = false;
+        });
+      }
+    };
+
+    window.addEventListener("scroll", throttledUpdateSurfaces, { passive: true });
+    window.addEventListener("resize", throttledUpdateSurfaces, { passive: true });
     window.addEventListener("click", handleDisplace);
     window.addEventListener("mousemove", handleDisplace, { passive: true });
 
     const interval = setInterval(updateSurfaces, 1200);
 
     return () => {
-      window.removeEventListener("scroll", updateSurfaces);
-      window.removeEventListener("resize", updateSurfaces);
+      cancelAnimationFrame(scrollRafId);
+      window.removeEventListener("scroll", throttledUpdateSurfaces);
+      window.removeEventListener("resize", throttledUpdateSurfaces);
       window.removeEventListener("click", handleDisplace);
       window.removeEventListener("mousemove", handleDisplace);
       clearInterval(interval);
@@ -442,8 +456,8 @@ export const DynamicWeatherFXOverlay: React.FC = () => {
           ctx.restore();
         } else if (p.type === "rain") {
           ctx.save();
-          ctx.strokeStyle = `rgba(160, 225, 255, ${p.alpha})`;
-          ctx.lineWidth = p.size * 0.8;
+          ctx.strokeStyle = `rgba(160, 225, 255, ${p.alpha * 0.4})`;
+          ctx.lineWidth = Math.max(0.6, p.size * 0.4);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           // Angle streaks with wind
@@ -504,7 +518,7 @@ export const DynamicWeatherFXOverlay: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-50 w-full h-full"
+      className="fixed inset-0 pointer-events-none z-[1] w-full h-full opacity-60"
       style={{
         mixBlendMode: condition === "VICE_HEATWAVE" ? "screen" : "normal",
       }}

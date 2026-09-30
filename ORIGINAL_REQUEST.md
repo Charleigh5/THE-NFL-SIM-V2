@@ -195,3 +195,147 @@ Document architectural trade-offs in formal Architecture Decision Records (ADRs)
 - [ ] `docs/FEATURE_STATUS_MATRIX.md` reflects updated status for TASK-010 through TASK-013.
 - [ ] `docs/player-system/PLAYER_SYSTEM_DOSSIER.md` is updated and synchronized with implemented mechanics.
 
+## Follow-up — 2026-09-16T04:00:19Z
+
+Implement authentic NFL Gridiron vector iconography, a procedural 3D interactive equipment hero stage in WebGL, and a 12-state tactile matrix with 3D pointer tilt across The NFL Sim Engine.
+
+Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2
+Integrity mode: demo
+
+## Requirements
+
+### R1. Authentic NFL Gridiron Vector Icon Grammar
+Replace generic SaaS icons with dedicated, mathematically precise NFL domain SVG icons (football laces, yard hashes, goalposts, chain gang, referee whistle, penalty flag, defensive blitz bolt, play clock, Lombardi trophy, chalkboard route arrow, helmet, down marker) and update the main navigation and core cards.
+
+### R2. 3D Interactive Equipment Hero Stage
+Provide a high-performance, procedural 3D WebGL inspection stage on the Dashboard and Front Office featuring interactive pointer-tracking lighting, drag rotation, and switchable models for "The Duke" regulation game football, a franchise team helmet with dynamic team colors, and the Lombardi Trophy, with zero external CDN model downloads.
+
+### R3. 12-State Interactive Tactile Matrix & 3D Pointer Tilt
+Equip player cards (Front Office locker stalls) and War Room depth chart tokens with realistic 3D pointer tilt (dynamic rotateX/rotateY/translateZ based on cursor position), specular light reflections, synthesized Web Audio haptic clicks, and full 12-state visual and accessible styling (idle, hover, pressed, focused, dragging, drop-target, selected, disabled, loading, success, warning, error).
+
+## Acceptance Criteria
+
+### Icon Grammar Verification
+- [ ] Dedicated NFL SVG icons render cleanly at standard sizes (16px to 32px) with crisp stroke lines and no distortion.
+- [ ] Navigation sidebar uses authentic football icons instead of generic SaaS icons (no generic sparkles or standard calendars).
+
+### 3D Equipment Hero Verification
+- [ ] Interactive 3D equipment stage renders at 60 FPS on Dashboard and Front Office with smooth interactive drag rotation.
+- [ ] Model switcher smoothly swaps between "The Duke" football, team helmet with active franchise colors, and chrome Lombardi trophy without memory leaks or WebGL context crashes.
+- [ ] Renders completely offline with procedural geometry and materials without external asset loading failures.
+
+### Tactile 3D Tilt & Audio Haptics Verification
+- [ ] Player locker cards and depth chart tokens physically tilt toward the pointer on hover and depress on click.
+- [ ] Audio haptics synthesize subtle clicks on tilt and push without unhandled audio exceptions.
+- [ ] All 12 states have distinct visual indicators and respect the 0-4px corner radius and hard shadow constraints.
+
+### Build & Test Verification
+- [ ] `npm run build` in `frontend/` executes cleanly with zero TypeScript or Vite bundle errors.
+- [ ] Backend test suite (`pytest backend/tests/unit -q`) passes 100% without regression.
+
+## Follow-up — 2026-09-17T04:26:07Z
+
+This is a single self-contained fix; keep it small and focused.
+Remediate the critical UI/UX layout and layering collisions in THE-NFL-SIM-V2 across navigation, floating action widgets, live simulation HUD, and modals to achieve executive-grade broadcast visual readiness.
+
+Working directory: c:/Users/cweir/OneDrive/Desktop/DevOps/THE-NFL-SIM-V2
+Integrity mode: development
+
+## Requirements
+
+### R1. Disentangle Bottom-Right Quad-Stack
+Relocate and layer the 4 conflicting floating widgets (FeedbackWidget, SoundtrackPlayer, WeatherControlHUD, TradePhone) so their hitboxes no longer collide or occlude each other in the bottom-right corner.
+
+### R2. Mobile Navigation Rail Margins
+Update MainLayout.tsx so <main> applies ml-20 md:ml-64, preventing the fixed 80px navigation rail from overlapping content, headers, and controls on viewports under 768px.
+
+### R3. Re-anchor 4th-Down LiveSim HUD
+Re-anchor FloatingBaldwinPill in LiveSim.tsx to top-center (top-4 left-1/2 -translate-x-1/2 z-30) so it does not occlude the WeatherWidget or CrowdNoiseMeter at top-4 right-4.
+
+### R4. Modal React Portal Isolation & Escape Dismissal
+Wrap the quick player profile modal in FrontOffice.tsx in createPortal(..., document.body) to escape 3D container transform clipping. Add window Escape keydown listeners to both FrontOffice.tsx and Telestrator.tsx with proper unmount cleanup.
+
+## Acceptance Criteria
+
+### Layering & Collision Free
+- [ ] No two interactive floating buttons overlap their bounding hitboxes in the bottom-right corner.
+- [ ] Clicking the music player, weather drawer pill, or GM trade phone triggers their respective actions without interference from FeedbackWidget.
+- [ ] On viewports under 768px, page titles and back buttons are completely visible to the right of the 80px navigation rail.
+- [ ] When 4th-down events trigger in LiveSim.tsx, the Baldwin pill renders centered over the field and the weather card remains fully readable.
+- [ ] In FrontOffice.tsx, the player modal breaks out of 3D spatial card transforms and centers on the viewport.
+- [ ] Hitting Escape closes the active drawing canvas in Telestrator.tsx and the player modal in FrontOffice.tsx.
+
+### Build & Verification Integrity
+- [ ] npm run build in frontend/ succeeds with exit code 0 and zero TypeScript errors.
+
+## 2026-09-29T04:14:07Z
+
+<USER_REQUEST>
+Implement top-tier performance optimizations for the NFL Sim Engine: apply route-level code splitting (`React.lazy`) in the React/Vite SPA to shrink the initial entry chunk to `< 450 kB`, and implement an in-memory/Redis Cache-Aside layer on `GET /api/teams/{id}/roster` in FastAPI to reduce 20-worker concurrent latency to `< 15ms`.
+
+Working directory: `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2`
+Integrity mode: development
+
+## Requirements
+
+### R1. Frontend Route-Level Code Splitting & Suspense Loading
+- In `frontend/src/router.tsx`, dynamically code-split secondary and heavy views using `React.lazy()` with `<Suspense>` fallbacks (using `LoadingSpinner`):
+  - Secondary views to split: `DraftRoom`, `TradeCenterPage`, `TrophyRoom`, `MedicalCenter`, `EnvironmentalWeatherLab`, `Playbook`, `SkillsPage`, `FreeAgency`, `LockerRoom`, `OffseasonDashboard`, `SeasonDashboard`.
+  - Core entry views to keep eager: `Dashboard`, `TeamSelection`.
+- In `frontend/vite.config.ts`, preserve and optimize vendor chunking (`vendor-three`, `vendor-pixi`, `vendor-dnd`, `vendor-motion`, `vendor-icons`).
+- Guarantee that after code splitting, `dist/assets/index-*.js` entry chunk is strictly `< 450 kB` (gzip `< 150 kB`).
+- Ensure all route transitions, URL loaders, and back/forward navigation continue to function cleanly with zero React hook errors or unhandled rejections.
+
+### R2. Backend High-Throughput Roster Cache-Aside Layer
+- In `backend/app/core/`, create or integrate a thread-safe in-memory Cache-Aside mechanism (with TTL of 60 seconds) with transparent fallback to Redis if Redis is active.
+- Decorate or wrap `read_team_roster` in `backend/app/api/endpoints/teams.py` (`GET /api/teams/{team_id}/roster`) so repeated queries within the TTL return cached serialized roster representations without database re-querying or ORM instantiation overhead.
+- Implement an invalidation hook `invalidate_team_roster_cache(team_id: int)` called on:
+  - `update_depth_chart` in `teams.py`
+  - Roster synchronization operations in `roster_sync`
+  - Player transactions (trades, signings, releases)
+- Verify that under 20 concurrent workers (`python scripts/load_test.py --endpoint /api/teams/1/roster --concurrency 20 --requests 100`), P95 response latency is strictly `< 15ms` with 100% success rate.
+
+## Verification Resources
+
+- **Frontend Build & Bundle Audit:**
+  ```bash
+  cd frontend && npm run build
+  ```
+  *Assertion:* `dist/assets/index-*.js` file size must be `< 450.00 kB`.
+
+- **Backend Roster Concurrency Benchmark:**
+  ```bash
+  cd backend && python scripts/load_test.py --url http://127.0.0.1:8000 --endpoint /api/teams/1/roster --concurrency 20 --requests 100 --budget-p95 15
+  ```
+  *Assertion:* P95 latency `< 15.0ms`, Error count `0`.
+
+- **Master Benchmark Suite:**
+  ```bash
+  cd backend && python scripts/run_all_benchmarks.py --url http://127.0.0.1:8000
+  ```
+  *Assertion:* All 4 performance tiers report `PASS` with exit code `0`.
+
+- **Regression Test Suite:**
+  ```bash
+  cd backend && python -m pytest tests/unit/
+  ```
+  *Assertion:* Zero test regressions across existing unit and integration test suites.
+
+## Acceptance Criteria
+
+### Build & Bundle Size
+- [ ] `npm run build` succeeds with zero errors, and `dist/assets/index-*.js` size is `< 450 kB`.
+- [ ] Secondary pages load on-demand as separate chunks in network requests.
+
+### Runtime Performance & Caching
+- [ ] Concurrent load test `load_test.py --endpoint /api/teams/1/roster --concurrency 20 --requests 100` passes with P95 latency `< 15ms`.
+- [ ] Cache invalidation function successfully purges the team roster cache upon depth chart updates.
+- [ ] Offline or unreachable Redis instances do not trigger 500 errors; in-memory fallback handles requests gracefully.
+
+### System Integrity
+- [ ] All 1,605+ backend test suites and existing frontend user flows continue to pass with zero regressions.
+- [ ] TypeScript strict compilation completes with zero type errors.
+</USER_REQUEST>
+
+
+

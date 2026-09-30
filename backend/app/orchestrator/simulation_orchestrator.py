@@ -346,16 +346,74 @@ class SimulationOrchestrator:
                 stats_agg[pid] = {
                     "pass_attempts": 0, "pass_completions": 0, "pass_yards": 0, "pass_tds": 0, "pass_ints": 0,
                     "rush_attempts": 0, "rush_yards": 0, "rush_tds": 0,
-                    "targets": 0, "receptions": 0, "rec_yards": 0, "rec_tds": 0
+                    "targets": 0, "receptions": 0, "rec_yards": 0, "rec_tds": 0,
+                    "tackles_solo": 0, "tackles_assist": 0, "sacks": 0.0, "interceptions": 0,
+                    "pass_deflections": 0, "forced_fumbles": 0, "tackles_for_loss": 0, "qb_pressures": 0,
+                    "fg_made": 0, "fg_att": 0, "punt_yards": 0, "punt_att": 0,
+                    "pancakes": 0, "sacks_allowed": 0
                 }
             return stats_agg[pid]
 
+        # Helper rosters categorized by unit for simulation attribution
+        home_dls = []
+        home_lbs = []
+        home_dbs = []
+        home_ols = []
+        home_kickers = []
+        home_punters = []
+
+        away_dls = []
+        away_lbs = []
+        away_dbs = []
+        away_ols = []
+        away_kickers = []
+        away_punters = []
+
+        if self.match_context:
+            for pid, p in self.match_context.home_roster.items():
+                pos = getattr(p, "position", "")
+                if pos in ["DE", "DT", "DL"]: home_dls.append(pid)
+                elif pos in ["LB", "MLB", "OLB"]: home_lbs.append(pid)
+                elif pos in ["CB", "S", "FS", "SS", "DB"]: home_dbs.append(pid)
+                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]: home_ols.append(pid)
+                elif pos in ["K", "PK"]: home_kickers.append(pid)
+                elif pos in ["P"]: home_punters.append(pid)
+
+            for pid, p in self.match_context.away_roster.items():
+                pos = getattr(p, "position", "")
+                if pos in ["DE", "DT", "DL"]: away_dls.append(pid)
+                elif pos in ["LB", "MLB", "OLB"]: away_lbs.append(pid)
+                elif pos in ["CB", "S", "FS", "SS", "DB"]: away_dbs.append(pid)
+                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]: away_ols.append(pid)
+                elif pos in ["K", "PK"]: away_kickers.append(pid)
+                elif pos in ["P"]: away_punters.append(pid)
+
         for play in self.history:
+            desc_lower = (play.description or "").lower()
+
+            # Identify offensive and defensive sides
+            off_team_id = None
+            if play.passer_id and play.passer_id in player_team_map:
+                off_team_id = player_team_map[play.passer_id]
+            elif play.rusher_id and play.rusher_id in player_team_map:
+                off_team_id = player_team_map[play.rusher_id]
+            elif play.receiver_id and play.receiver_id in player_team_map:
+                off_team_id = player_team_map[play.receiver_id]
+
+            is_home_offense = (off_team_id == game.home_team_id) if off_team_id else (self.possession == "home")
+            def_dls = away_dls if is_home_offense else home_dls
+            def_lbs = away_lbs if is_home_offense else home_lbs
+            def_dbs = away_dbs if is_home_offense else home_dbs
+            def_all = def_lbs + def_dls + def_dbs
+            off_ols = home_ols if is_home_offense else away_ols
+            off_kickers = home_kickers if is_home_offense else away_kickers
+            off_punters = home_punters if is_home_offense else away_punters
+
             # Passing
             if play.passer_id:
                 s = get_stats(play.passer_id)
                 s["pass_attempts"] += 1
-                if play.yards_gained > 0 or "complete" in play.description.lower():
+                if play.yards_gained > 0 or "complete" in desc_lower:
                     s["pass_completions"] += 1
                     s["pass_yards"] += play.yards_gained
 
@@ -372,22 +430,90 @@ class SimulationOrchestrator:
                 if play.is_touchdown:
                     s["rush_tds"] += 1
 
+                # Offensive line pancake block attribution on big rush
+                if play.yards_gained >= 10 and off_ols:
+                    ol_pid = self.rng.choice(off_ols)
+                    get_stats(ol_pid)["pancakes"] += 1
+
             # Receiving
             if play.receiver_id:
                 s = get_stats(play.receiver_id)
                 s["targets"] += 1
-                if play.yards_gained > 0 or "complete" in play.description.lower():
+                if play.yards_gained > 0 or "complete" in desc_lower:
                     s["receptions"] += 1
                     s["rec_yards"] += play.yards_gained
                     if play.is_touchdown:
                         s["rec_tds"] += 1
+
+            # Defensive Attribution
+            tackler_ids = getattr(play, "tackler_ids", None) or []
+            if tackler_ids:
+                for tid in tackler_ids:
+                    st = get_stats(tid)
+                    st["tackles_solo"] += 1
+                    if getattr(play, "is_sack", False):
+                        st["sacks"] += 1.0
+                        st["tackles_for_loss"] += 1
+                        st["qb_pressures"] += 1
+                    elif play.yards_gained < 0:
+                        st["tackles_for_loss"] += 1
+                    if getattr(play, "is_turnover", False):
+                        st["interceptions"] += 1
+                        st["pass_deflections"] += 1
+            elif def_all:
+                # Procedurally assign defensive credit
+                if getattr(play, "is_sack", False):
+                    sacker_id = self.rng.choice(def_dls) if def_dls else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    st = get_stats(sacker_id)
+                    st["sacks"] += 1.0
+                    st["tackles_solo"] += 1
+                    st["tackles_for_loss"] += 1
+                    st["qb_pressures"] += 1
+
+                    # Credit OL sack allowed
+                    if off_ols:
+                        ol_pid = self.rng.choice(off_ols)
+                        get_stats(ol_pid)["sacks_allowed"] += 1
+
+                elif getattr(play, "is_turnover", False):
+                    picker_id = self.rng.choice(def_dbs) if def_dbs else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    st = get_stats(picker_id)
+                    st["interceptions"] += 1
+                    st["pass_deflections"] += 1
+                    st["tackles_solo"] += 1
+
+                elif not getattr(play, "is_touchdown", False) and (play.rusher_id or (play.receiver_id and play.yards_gained > 0)):
+                    # Regular tackle on ball carrier
+                    tackler_id = self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all)
+                    st = get_stats(tackler_id)
+                    st["tackles_solo"] += 1
+                    if play.yards_gained < 0:
+                        st["tackles_for_loss"] += 1
+
+                elif "incomplete" in desc_lower and def_dbs:
+                    # Occasional pass breakup
+                    if self.rng.random() < 0.4:
+                        db_id = self.rng.choice(def_dbs)
+                        get_stats(db_id)["pass_deflections"] += 1
+
+            # Kicking / Special Teams
+            if "field goal" in desc_lower and off_kickers:
+                k_id = off_kickers[0]
+                st = get_stats(k_id)
+                st["fg_att"] += 1
+                if "good" in desc_lower and "no good" not in desc_lower:
+                    st["fg_made"] += 1
+            elif "punt" in desc_lower and off_punters:
+                p_id = off_punters[0]
+                st = get_stats(p_id)
+                st["punt_att"] += 1
+                st["punt_yards"] += int(self.rng.uniform(38.0, 52.0))
 
         # 3. Save to DB
         count = 0
         for pid, stats in stats_agg.items():
             team_id = player_team_map.get(pid)
             if not team_id:
-                # Fallback: query player if not in match context (shouldn't happen often)
                 stmt = select(Player).where(Player.id == pid)
                 result = await self.db_session.execute(stmt)
                 player = result.scalar_one_or_none()
@@ -462,8 +588,6 @@ class SimulationOrchestrator:
             self.time_left = "14:45"
 
         logger.debug("Play resolved")
-
-        self._save_progress()
 
         return result
 

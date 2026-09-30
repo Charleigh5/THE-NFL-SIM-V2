@@ -451,12 +451,8 @@ async def apply_player_triage_protocol(
     return result
 
 
-from app.api.endpoints.playcalling import router as playcalling_router
+router = medical_router
 
-# Composite router exporting both medical and playcalling routes
-router = APIRouter()
-router.include_router(medical_router)
-router.include_router(playcalling_router)
 
 
 

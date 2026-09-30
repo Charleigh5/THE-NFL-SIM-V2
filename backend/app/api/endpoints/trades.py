@@ -10,6 +10,7 @@ import logging
 
 from app.core.database import get_async_db, SessionLocal
 from app.core.error_decorators import handle_errors
+from app.core.roster_cache import invalidate_team_roster_cache
 from app.models.player import Player
 from app.models.team import Team
 from app.models.trade_offer import TradeOffer, TradeOfferStatus as DBTradeOfferStatus
@@ -374,6 +375,9 @@ async def respond_to_offer(
         raise HTTPException(status_code=400, detail="Invalid action. Use 'accept', 'reject', or 'auto'.")
 
     await db.commit()
+    if action == "accept":
+        invalidate_team_roster_cache(offer.offering_team_id)
+        invalidate_team_roster_cache(offer.receiving_team_id)
 
     return {"success": True, "message": f"Trade offer {action}ed successfully", "gm_reasoning": gm_reasoning}
 

@@ -27,7 +27,20 @@ class Settings(BaseSettings):
     API_DESCRIPTION: str = "Backend API for the Stellar Sagan NFL Football Simulation."
 
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"]
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5175",
+        "http://localhost:5176",
+        "http://127.0.0.1:5176",
+        "http://localhost:5199",
+        "http://127.0.0.1:5199",
+    ]
     CORS_ALLOW_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: List[str] = ["*"]
     CORS_ALLOW_HEADERS: List[str] = ["*"]
@@ -42,6 +55,17 @@ class Settings(BaseSettings):
     # Application
     DEBUG: bool = False
     ENVIRONMENT: str = "development"  # development, staging, production
+
+    # External Real-Time Roster API Configuration
+    RAPIDAPI_KEY: str | None = None
+    RAPIDAPI_HOST: str = "tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com"
+    SPORTSDATAIO_API_KEY: str | None = None
+    ROSTER_SYNC_PROVIDER: str = "auto"  # 'auto', 'tank01', 'sportsdataio', 'nflverse'
+
+    # Redis & High-Throughput Caching
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_ENABLED: bool = False
+    ROSTER_CACHE_TTL_SECONDS: int = 60
 
     model_config = SettingsConfigDict(
         env_file=".env",

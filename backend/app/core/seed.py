@@ -8,9 +8,10 @@ from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
 from app.data.scouts import TEAM_SCOUTS
 from app.models.scout import Scout
+from app.models.season import Season, SeasonStatus
+from app.models.game import Game
+from app.services.schedule_generator import ScheduleGenerator
 import random
-
-# NFL Data Integration (optional)
 try:
     from app.services.nflverse_service import NflverseService
     from app.services.ratings_generator import generate_player_ratings, calculate_overall_rating_modifier
@@ -245,13 +246,93 @@ def seed_coaches(db: Session):
     logger.info(f"Seeded {coaches_created} coaches successfully.")
 
 
-def seed_players_from_nflverse(db: Session, season: int = 2024):
+def assign_depth_charts(db: Session):
+    """Assign depth_chart_rank (1=starter, 2=backup, etc.) per team per position by overall_rating descending."""
+    teams = db.query(Team).all()
+    for team in teams:
+        players = db.query(Player).filter(Player.team_id == team.id).all()
+        by_pos = {}
+        for p in players:
+            by_pos.setdefault(p.position, []).append(p)
+        for pos, pos_players in by_pos.items():
+            pos_players.sort(key=lambda x: x.overall_rating, reverse=True)
+            for rank, p in enumerate(pos_players, start=1):
+                p.depth_chart_rank = rank
+    db.commit()
+    logger.info("Assigned depth chart ranks for all teams.")
+
+
+def seed_2026_season(db: Session, force: bool = False) -> Season:
+    """
+    Seed the authentic 2026-2027 NFL Season and load the 272-game schedule.
+
+    Args:
+        db: Database session.
+        force: If True, recreate games even if already present.
+
+    Returns:
+        The active 2026 Season record.
+    """
+    season = db.query(Season).filter(Season.year == 2026).first()
+    if not season:
+        # Deactivate any other active seasons
+        db.query(Season).update({Season.is_active: False})
+        season = Season(
+            year=2026,
+            current_week=1,
+            is_active=True,
+            status=SeasonStatus.REGULAR_SEASON,
+            total_weeks=18,
+            playoff_weeks=4,
+        )
+        db.add(season)
+        db.commit()
+        db.refresh(season)
+        logger.info("Created active 2026-2027 Season record.")
+    else:
+        # Ensure active
+        db.query(Season).update({Season.is_active: False})
+        season.is_active = True
+        season.status = SeasonStatus.REGULAR_SEASON
+        season.current_week = 1
+        db.commit()
+        db.refresh(season)
+
+    # Check existing games
+    existing_games = db.query(Game).filter(Game.season_id == season.id).count()
+    if existing_games > 0 and not force:
+        logger.info(f"Season 2026 already has {existing_games} games. Skipping schedule seeding.")
+        return season
+
+    if force and existing_games > 0:
+        logger.info(f"Clearing {existing_games} existing games for 2026 season reload...")
+        db.query(Game).filter(Game.season_id == season.id).delete()
+        db.commit()
+
+    generator = ScheduleGenerator(db)
+    real_games = generator.load_real_schedule(season_id=season.id, year=2026)
+    if real_games:
+        db.add_all(real_games)
+        db.commit()
+        logger.info(f"Seeded {len(real_games)} authentic 2026-2027 NFL schedule games.")
+    else:
+        logger.warning("Could not load real schedule from nflreadpy, generating procedural schedule.")
+        teams = db.query(Team).all()
+        proc_games = generator.generate_schedule(season_id=season.id, teams=teams, year=2026, prefer_real=False)
+        db.add_all(proc_games)
+        db.commit()
+
+    return season
+
+
+def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = False):
     """
     Seed players using real NFL data from nflreadpy.
 
     Args:
         db: Database session.
-        season: NFL season to import (default 2024).
+        season: NFL season to import (default 2026).
+        force: If True, clear existing players and reseed.
     """
     if not HAS_NFLVERSE:
         logger.warning("nflreadpy not available. Falling back to random seeding.")
@@ -259,15 +340,31 @@ def seed_players_from_nflverse(db: Session, season: int = 2024):
         return
 
     existing_players = db.query(Player).count()
-    if existing_players > 0:
+    if existing_players > 0 and not force:
         logger.info(f"Players already seeded ({existing_players} found). Skipping NFL import.")
         return
+
+    if force and existing_players > 0:
+        logger.info(f"Clearing {existing_players} existing players for clean {season} import...")
+        from sqlalchemy import text
+        db.execute(text("PRAGMA foreign_keys = OFF"))
+        for t in [
+            "player_attributes", "player_contract", "player_injury", "player_physics",
+            "player_progression", "player_traits", "player_season_stats", "depthchart",
+            "playergamestats", "body_health", "injury_events", "player"
+        ]:
+            db.execute(text(f"DELETE FROM {t}"))
+        db.commit()
+        db.execute(text("PRAGMA foreign_keys = ON"))
 
     logger.info(f"Seeding players from NFL {season} rosters...")
 
     # Build team lookup
     teams = db.query(Team).all()
     team_lookup = {t.abbreviation: t.id for t in teams}
+    # Account for nflverse team variations
+    team_lookup["LA"] = team_lookup.get("LAR")
+    team_lookup["WSH"] = team_lookup.get("WAS")
 
     # Fetch real data
     service = NflverseService(season=season)
@@ -345,11 +442,16 @@ def seed_players_from_nflverse(db: Session, season: int = 2024):
             pocket_presence=ratings.get("pocket_presence", 50),
             quick_release=ratings.get("quick_release", 50),
         )
+        if player.contract:
+            player.contract.annual_base_salary = player.contract_salary
         players_to_add.append(player)
 
     db.add_all(players_to_add)
     db.commit()
     logger.info(f"Seeded {len(players_to_add)} real NFL players successfully.")
+
+    # Assign depth chart rankings (starter = 1, backup = 2, ...) based on overall_rating descending
+    assign_depth_charts(db)
 
 
 # =============================================================================
@@ -458,13 +560,18 @@ def main():
     Run data_sync_service.py for automated recommendations.
     """
     db = SessionLocal()
-    seed_mode = os.getenv("SEED_MODE", "RANDOM").upper()
+    seed_mode = os.getenv("SEED_MODE", "REAL_2026").upper()
 
     try:
         seed_teams(db)
         seed_traits(db)
 
-        if seed_mode == "REAL_2025" and HAS_NFLVERSE:
+        if seed_mode in ("REAL_2026", "2026", "REAL") and HAS_NFLVERSE:
+            logger.info("SEED_MODE=REAL_2026: Seeding authentic 2026-2027 rosters and schedule...")
+            seed_players_from_nflverse(db, season=2026, force=True)
+            seed_2026_season(db, force=True)
+
+        elif seed_mode == "REAL_2025" and HAS_NFLVERSE:
             # 2025 Mode: Base 2024 rosters + 2025 free agent updates
             logger.info("SEED_MODE=REAL_2025: Using 2024 base + 2025 free agents...")
             seed_players_from_nflverse(db, season=2024)
@@ -479,6 +586,7 @@ def main():
 
         seed_coaches(db)
         seed_scouts(db)
+        seed_2026_season(db, force=False)
 
         # Log update recommendations
         logger.info("=" * 50)

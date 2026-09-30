@@ -1,0 +1,20 @@
+/* DraftLegacy.css - Styles for the legacy draft page */
+
+.draft-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.draft-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.draft-prospect-row {
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 8px;
+}

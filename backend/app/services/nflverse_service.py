@@ -20,10 +20,8 @@ logger = logging.getLogger(__name__)
 
 # Team abbreviation mapping: nflverse -> our DB
 TEAM_ABBR_MAP = {
-    "JAX": "JAC",  # Jacksonville
-    "WSH": "WAS",  # Washington
     "LA": "LAR",   # LA Rams
-    "LV": "LVR",   # Las Vegas (sometimes abbreviated differently)
+    "WSH": "WAS",  # Washington
 }
 
 
@@ -89,7 +87,7 @@ class NflverseService:
     Service for importing real-world NFL data via nflreadpy.
     """
 
-    def __init__(self, season: int = 2024):
+    def __init__(self, season: int = 2026):
         if not HAS_NFLREADPY:
             raise ImportError(
                 "nflreadpy and polars are required. "
@@ -357,8 +355,12 @@ class NflverseService:
             if gsis_id and gsis_id in contracts_map:
                 c_data = contracts_map[gsis_id]
                 player["contract_years"] = int(c_data.get("years", 1)) if c_data.get("years") else 1
-                # APY is in float, convert to int
-                player["contract_salary"] = int(c_data.get("apy", 1000000)) if c_data.get("apy") else 1000000
+                raw_apy = c_data.get("apy")
+                if raw_apy is not None and raw_apy > 0:
+                    # OverTheCap/nflverse values under 1000 are in millions (e.g. 55.0 = $55M); raw dollars otherwise
+                    player["contract_salary"] = int(raw_apy * 1_000_000) if raw_apy < 1000 else int(raw_apy)
+                else:
+                    player["contract_salary"] = 1000000
 
             # Pack Stats for Ratings Generator
             player["ngs"] = ngs_map.get(gsis_id, {})

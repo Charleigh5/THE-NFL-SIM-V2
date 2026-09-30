@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import styles from "./SpatialAtmosphereLayer.module.css";
 
 export type FacilityAtmosphereType =
   | "locker"
@@ -98,108 +99,14 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
       className={`absolute inset-0 pointer-events-none overflow-hidden select-none z-0 spatial-atmosphere-layer ${className}`}
       style={{ contain: "layout paint" }}
     >
-      <style>{`
-        @keyframes warroom-flicker {
-          0%, 100% { opacity: 0.98; }
-          42% { opacity: 0.96; }
-          43% { opacity: 1.0; }
-          78% { opacity: 0.97; }
-          80% { opacity: 0.99; }
-        }
-
-        @keyframes warroom-flare-pulse {
-          0%, 100% {
-            opacity: 0.35;
-            transform: translate3d(0, 0, 0) scaleX(1);
-          }
-          50% {
-            opacity: 0.65;
-            transform: translate3d(0, 0, 0) scaleX(1.15);
-          }
-        }
-
-        @keyframes locker-mist-drift {
-          0% {
-            transform: translate3d(-3%, 0, 0) scaleY(1);
-            opacity: 0.35;
-          }
-          50% {
-            transform: translate3d(3%, -8px, 0) scaleY(1.05);
-            opacity: 0.55;
-          }
-          100% {
-            transform: translate3d(-3%, 0, 0) scaleY(1);
-            opacity: 0.35;
-          }
-        }
-
-        @keyframes atmospheric-mote-float {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          50% {
-            transform: translate3d(12px, -24px, 0);
-          }
-          100% {
-            transform: translate3d(0, 0, 0);
-          }
-        }
-
-        @keyframes chalk-drift {
-          0% {
-            transform: translate3d(-10px, 15px, 0);
-            opacity: 0;
-          }
-          25% {
-            opacity: 0.45;
-          }
-          75% {
-            opacity: 0.45;
-          }
-          100% {
-            transform: translate3d(25px, -45px, 0);
-            opacity: 0;
-          }
-        }
-
-        @keyframes rain-streak-fall {
-          0% {
-            transform: translate3d(0, -100%, 0);
-          }
-          100% {
-            transform: translate3d(-20px, 100%, 0);
-          }
-        }
-
-        @keyframes projector-shimmer {
-          0%, 100% { opacity: 0.22; }
-          50% { opacity: 0.38; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .spatial-animated-element {
-            animation: none !important;
-            transform: none !important;
-          }
-          .spatial-particle-mote {
-            display: none !important;
-          }
-        }
-      `}</style>
-
       {/* ========================================================================= */}
       {/* 1. WAR ROOM (Scene 07): CRT Scanlines, Ambient Monitor Glow, Screen Flicker & Optical Flare */}
       {/* ========================================================================= */}
       {facilityType === "war_room" && (
         <div
           className={`w-full h-full relative ${
-            reducedMotion ? "" : "spatial-animated-element"
+            reducedMotion ? "" : styles.warroomFlicker
           }`}
-          style={
-            reducedMotion
-              ? undefined
-              : { animation: "warroom-flicker 8s ease-in-out infinite" }
-          }
         >
           {/* Subtle CRT / Multi-Monitor Scanline Grid */}
           <div
@@ -231,20 +138,6 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             }}
           />
 
-          {/* Central Blue Optical Flare Streak across Analytics Display Line */}
-          <div
-            className={`absolute top-[18%] left-0 right-0 h-[2px] pointer-events-none ${
-              reducedMotion ? "" : "spatial-animated-element"
-            }`}
-            style={{
-              background:
-                "linear-gradient(90deg, transparent 0%, rgba(0, 118, 182, 0) 15%, rgba(0, 212, 255, 0.45) 50%, rgba(0, 118, 182, 0) 85%, transparent 100%)",
-              filter: "blur(0.5px)",
-              animation: reducedMotion
-                ? undefined
-                : "warroom-flare-pulse 6s ease-in-out infinite",
-            }}
-          />
 
           {/* Soft Optical Flare Core Starburst */}
           <div
@@ -265,14 +158,11 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
           {/* Subtle Ventilation / Hydrotherapy Mist Rising Gradient */}
           <div
             className={`absolute inset-0 pointer-events-none ${
-              reducedMotion ? "" : "spatial-animated-element"
+              reducedMotion ? "" : styles.lockerMist
             }`}
             style={{
               background:
                 "linear-gradient(to top, rgba(0, 118, 182, 0.12) 0%, rgba(148, 163, 184, 0.06) 35%, transparent 70%)",
-              animation: reducedMotion
-                ? undefined
-                : "locker-mist-drift 14s ease-in-out infinite alternate",
             }}
           />
 
@@ -316,7 +206,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             officeDustMotes.map((mote) => (
               <span
                 key={mote.id}
-                className="absolute rounded-full pointer-events-none spatial-particle-mote"
+                className={`absolute rounded-full pointer-events-none spatial-particle-mote ${styles.moteFloat}`}
                 style={{
                   left: mote.left,
                   top: mote.top,
@@ -325,7 +215,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
                   backgroundColor: "rgba(254, 240, 138, 0.85)",
                   boxShadow: "0 0 6px rgba(250, 204, 21, 0.5)",
                   opacity: mote.opacity * intensityMultiplier,
-                  animation: `atmospheric-mote-float ${mote.duration}s ease-in-out infinite`,
+                  animationDuration: `${mote.duration}s`,
                   animationDelay: `${mote.delay}s`,
                 }}
               />
@@ -336,15 +226,12 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
               <div
                 className={`w-full h-[200%] ${
-                  reducedMotion ? "" : "spatial-animated-element"
+                  reducedMotion ? "" : styles.rainStreak
                 }`}
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(110deg, transparent 0px, transparent 38px, rgba(255, 255, 255, 0.35) 39px, transparent 41px)",
                   backgroundSize: "60px 100px",
-                  animation: reducedMotion
-                    ? undefined
-                    : "rain-streak-fall 1.2s linear infinite",
                 }}
               />
             </div>
@@ -371,7 +258,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             weightRoomChalkMotes.map((mote) => (
               <span
                 key={mote.id}
-                className="absolute rounded-full pointer-events-none spatial-particle-mote"
+                className={`absolute rounded-full pointer-events-none spatial-particle-mote ${styles.chalkMote}`}
                 style={{
                   left: mote.left,
                   top: mote.top,
@@ -379,7 +266,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
                   height: `${mote.size * 1.3}px`,
                   backgroundColor: "rgba(255, 255, 255, 0.9)",
                   boxShadow: "0 0 5px rgba(255, 255, 255, 0.6)",
-                  animation: `chalk-drift ${mote.duration + 4}s linear infinite`,
+                  animationDuration: `${mote.duration + 4}s`,
                   animationDelay: `${mote.delay}s`,
                 }}
               />
@@ -395,15 +282,12 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
           {/* Projector Light Beam Cone */}
           <div
             className={`absolute top-1/4 right-0 w-[85vw] h-[55vh] pointer-events-none ${
-              reducedMotion ? "" : "spatial-animated-element"
+              reducedMotion ? "" : styles.projectorBeam
             }`}
             style={{
               background:
                 "conic-gradient(from 260deg at 100% 40%, rgba(224, 242, 254, 0.25) 0deg, rgba(186, 230, 253, 0.08) 18deg, transparent 40deg)",
               filter: "blur(20px)",
-              animation: reducedMotion
-                ? undefined
-                : "projector-shimmer 4s ease-in-out infinite",
             }}
           />
 
@@ -412,7 +296,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             filmRoomProjectorMotes.map((mote) => (
               <span
                 key={mote.id}
-                className="absolute rounded-full pointer-events-none spatial-particle-mote"
+                className={`absolute rounded-full pointer-events-none spatial-particle-mote ${styles.moteFloat}`}
                 style={{
                   left: mote.left,
                   top: mote.top,
@@ -421,7 +305,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
                   backgroundColor: "rgba(224, 242, 254, 0.95)",
                   boxShadow: "0 0 6px rgba(186, 230, 253, 0.7)",
                   opacity: mote.opacity * intensityMultiplier,
-                  animation: `atmospheric-mote-float ${mote.duration}s ease-in-out infinite`,
+                  animationDuration: `${mote.duration}s`,
                   animationDelay: `${mote.delay}s`,
                 }}
               />
@@ -455,7 +339,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             stadiumVaporMotes.map((mote) => (
               <span
                 key={mote.id}
-                className="absolute rounded-full pointer-events-none spatial-particle-mote"
+                className={`absolute rounded-full pointer-events-none spatial-particle-mote ${styles.moteFloat}`}
                 style={{
                   left: mote.left,
                   top: `${parseFloat(mote.top) * 0.4 + 60}%`,
@@ -463,7 +347,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
                   height: `${mote.size * 1.5}px`,
                   backgroundColor: "rgba(255, 255, 255, 0.35)",
                   filter: "blur(3px)",
-                  animation: `atmospheric-mote-float ${mote.duration + 2}s ease-in-out infinite`,
+                  animationDuration: `${mote.duration + 2}s`,
                   animationDelay: `${mote.delay}s`,
                 }}
               />

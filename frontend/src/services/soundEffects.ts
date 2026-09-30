@@ -101,6 +101,32 @@ class GridironSoundEngine {
 
       const savedSfx = localStorage.getItem("gridiron_audio_sfx");
       if (savedSfx !== null) this.sfxEnabled = savedSfx === "true";
+
+      // Preemptive AudioContext unlock on initial user gesture
+      const unlockAudioContext = () => {
+        try {
+          this.initCtx();
+        } catch {
+          // Safe fallback
+        }
+        window.removeEventListener("pointerdown", unlockAudioContext);
+        window.removeEventListener("keydown", unlockAudioContext);
+        window.removeEventListener("touchstart", unlockAudioContext);
+      };
+      window.addEventListener("pointerdown", unlockAudioContext, { once: true, passive: true });
+      window.addEventListener("keydown", unlockAudioContext, { once: true, passive: true });
+      window.addEventListener("touchstart", unlockAudioContext, { once: true, passive: true });
+    }
+  }
+
+  /**
+   * Preemptively unlocks the AudioContext on user gesture without throwing exceptions.
+   */
+  public unlockAudio(): void {
+    try {
+      this.initCtx();
+    } catch {
+      // Safe fallback
     }
   }
 
@@ -695,6 +721,109 @@ class GridironSoundEngine {
   }
 
   /**
+   * Procedural micro-mechanical detent gear notch click.
+   * Synthesized via 1800Hz -> 1200Hz exponential sweep in 5ms at gain 0.08 on tilt threshold crossing.
+   */
+  public playTiltDetent(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1800, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.005);
+
+      gain.gain.setValueAtTime(0.08 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.006);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.006);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Procedural dual-tone mechanical actuation snap.
+   * Combines a 2400Hz -> 800Hz transient snap with a 450Hz -> 120Hz body thud.
+   */
+  public playCardPress(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // High transient mechanical snap
+      osc1.type = "sawtooth";
+      osc1.frequency.setValueAtTime(2400, now);
+      osc1.frequency.exponentialRampToValueAtTime(800, now + 0.008);
+
+      // Low mechanical body thud
+      osc2.type = "triangle";
+      osc2.frequency.setValueAtTime(450, now);
+      osc2.frequency.exponentialRampToValueAtTime(120, now + 0.015);
+
+      gain.gain.setValueAtTime(0.2 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.016);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.016);
+      osc2.stop(now + 0.016);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
+   * Procedural tactile spring release click.
+   * Synthesized via 1200Hz -> 600Hz exponential ramp over 6ms.
+   */
+  public playCardRelease(): void {
+    if (this.isMuted || !this.sfxEnabled) return;
+    const ctx = this.initCtx();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.006);
+
+      gain.gain.setValueAtTime(0.07 * this.volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.007);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.007);
+    } catch {
+      // Safe fallback
+    }
+  }
+
+  /**
    * Start facility background ambience:
    * Low-pass filtered gentle brown noise at -28dB (gain 0.04 * volume).
    * Gracefully stop if called again or if user mutes.
@@ -821,3 +950,7 @@ class GridironSoundEngine {
 }
 
 export const soundEffects = new GridironSoundEngine();
+
+if (typeof window !== "undefined") {
+  (window as unknown as { soundEffects?: GridironSoundEngine }).soundEffects = soundEffects;
+}

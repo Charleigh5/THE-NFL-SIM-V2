@@ -5,10 +5,28 @@ import teamsData from "../data/nfl-teams.json";
 import { ThemeContext } from "./ThemeContext";
 import type { ThemeContextType, BasicTeamInfo } from "./ThemeContext";
 
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [activeTeamId, setActiveTeamId] = useState<string>("GB"); // Default to Packers
+export function getInitialTeam(): string {
+  if (typeof window !== "undefined") {
+    const savedAbbr = localStorage.getItem("selectedTeamAbbr");
+    if (savedAbbr) return savedAbbr;
+    const savedId = localStorage.getItem("selectedTeamId");
+    if (savedId === "11") return "DET";
+  }
+  return "DET"; // Default to Detroit Lions
+}
 
-  const activeTeam = (teamsData as unknown as BasicTeamInfo[]).find((t) => t.id === activeTeamId);
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [activeTeamId, setActiveTeamId] = useState<string>(getInitialTeam);
+
+  const activeTeam =
+    (teamsData as unknown as BasicTeamInfo[]).find((t) => t.id === activeTeamId) ||
+    (teamsData as unknown as BasicTeamInfo[]).find((t) => t.id === "DET");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && activeTeamId) {
+      localStorage.setItem("selectedTeamAbbr", activeTeamId);
+    }
+  }, [activeTeamId]);
 
   useEffect(() => {
     if (!activeTeam) return;

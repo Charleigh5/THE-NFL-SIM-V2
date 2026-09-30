@@ -1,12 +1,13 @@
 import React, { useEffect, useState, startTransition } from "react";
 import type { Season } from "../../types/season";
-import { QuickActions } from "./QuickActions";
+import { LombardiTrophyIcon } from "../icons";
 import "./SeasonSummaryCard.css";
+import "./QuickActions.css";
 
-interface Action {
+export interface Action {
   id: string;
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
   tooltip?: string;
@@ -125,7 +126,9 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
 
       {season.status === "OFF_SEASON" && champion && (
         <div className="champion-display" data-testid="champion-display">
-          <span className="trophy-icon">🏆</span>
+          <span className="trophy-icon">
+            <LombardiTrophyIcon size={28} className="text-yellow-400" />
+          </span>
           <div className="champion-info">
             <h4>Super Bowl Champion</h4>
             <span className="champion-name">{champion}</span>
@@ -133,7 +136,21 @@ export const SeasonSummaryCard: React.FC<SeasonSummaryCardProps> = ({
         </div>
       )}
 
-      <QuickActions actions={actions} />
+      <div className="quick-actions-container" data-testid="quick-actions-container">
+        {actions.map((action) => (
+          <button
+            key={action.id}
+            className="action-button"
+            onClick={action.onClick}
+            disabled={action.disabled}
+            title={action.tooltip}
+            data-testid={`${action.id}-btn`}
+          >
+            <span className="action-icon">{action.icon}</span>
+            <span className="action-label">{action.label}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

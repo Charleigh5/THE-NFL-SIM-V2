@@ -14,7 +14,7 @@ import type { Drill, CoachingStyle, TrainingResult } from "../types/training";
 import { CoachingStyleType } from "../types/training";
 import { ChevronLeft, User, AlertTriangle, Sparkles, Layers } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import { api } from "../services/api";
 
 // Types for player data
 interface PlayerWeaknessData {
@@ -78,7 +78,10 @@ export const TrainingCenter: React.FC = () => {
         const styleData = await trainingApi.getCoachingStyles();
         if (Array.isArray(styleData)) {
           setStyles(styleData);
-        } else if (styleData && Array.isArray((styleData as unknown as { styles?: CoachingStyle[] }).styles)) {
+        } else if (
+          styleData &&
+          Array.isArray((styleData as unknown as { styles?: CoachingStyle[] }).styles)
+        ) {
           setStyles((styleData as unknown as { styles: CoachingStyle[] }).styles);
         } else {
           setStyles([]);
@@ -87,11 +90,16 @@ export const TrainingCenter: React.FC = () => {
         // Fetch player weaknesses if playerId is provided
         if (playerId) {
           try {
-            const response = await axios.get(
-              `http://localhost:8000/api/v1/players/${playerId}/training-profile`
-            );
-            setPlayerData(response.data);
-            setPlayerWeaknesses(response.data.weaknesses || []);
+            const data = await api.getTrainingProfile(Number(playerId));
+            setPlayerData({
+              player_id: data.player_id,
+              player_name: `${data.first_name} ${data.last_name}`,
+              position: data.position,
+              age: 24,
+              weaknesses: data.weaknesses || [],
+              fatigue: 0,
+            });
+            setPlayerWeaknesses(data.weaknesses || []);
           } catch (playerErr) {
             console.warn("Could not fetch player training profile, using defaults", playerErr);
             // Default weaknesses for demo
@@ -286,9 +294,7 @@ export const TrainingCenter: React.FC = () => {
       {/* Main Content - DrillSelector */}
       <main>
         {loading ? (
-          <div className="text-center py-20 text-gray-500 animate-pulse">
-            Initializing Sim...
-          </div>
+          <div className="text-center py-20 text-gray-500 animate-pulse">Initializing Sim...</div>
         ) : (
           <DrillSelector
             position={playerData?.position}

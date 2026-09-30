@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import Dict, Any, List, Optional
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.feedback import UserFeedback
@@ -207,3 +209,41 @@ async def export_updates(request: BatchSubmitRequest):
     except Exception as e:
         logger.error(f"Export failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+
+errors_router = APIRouter(prefix="/api/errors", tags=["errors"])
+
+
+class ErrorLogItem(BaseModel):
+    id: Optional[str] = None
+    timestamp: Optional[str] = None
+    level: Optional[str] = "error"
+    category: Optional[str] = "unknown"
+    message: str
+    stack: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
+    url: Optional[str] = None
+    userAgent: Optional[str] = None
+    sessionId: Optional[str] = None
+    handled: Optional[bool] = None
+
+
+class ErrorBatchRequest(BaseModel):
+    errors: List[ErrorLogItem]
+
+
+@errors_router.post("/log")
+async def log_client_errors(batch: ErrorBatchRequest):
+    """
+    Ingest frontend client telemetry and error logs from errorLogger.ts and ErrorBoundary.
+    """
+    logger.info(f"Ingesting {len(batch.errors)} client error report(s)")
+    for err in batch.errors:
+        entry = IssueEntry(
+            message=f"[{(err.level or 'ERROR').upper()}] {err.message}\nStack: {err.stack or 'N/A'}",
+            context=f"ClientError:{err.category or 'UI'}",
+            page=err.url
+        )
+        await issue_logger.log_issue_async(entry)
+    return {"status": "ok", "received": len(batch.errors)}
+

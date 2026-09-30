@@ -95,4 +95,14 @@ test.describe("Front Office Journey", () => {
     await page.locator('[data-testid="close-modal-button"]').click();
     await expect(page.locator('[data-testid="player-modal"]')).not.toBeVisible();
   });
+
+  test("should close player detail modal with Escape key", async ({ page }) => {
+    await page.goto("/empire/front-office");
+    await page.locator('[data-testid="player-card-1"]').click();
+    await expect(page.locator('[data-testid="player-modal"]')).toBeVisible();
+
+    // Press Escape
+    await page.keyboard.press("Escape");
+    await expect(page.locator('[data-testid="player-modal"]')).not.toBeVisible();
+  });
 });

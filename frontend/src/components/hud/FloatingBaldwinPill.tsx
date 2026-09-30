@@ -6,7 +6,8 @@
  */
 
 import React, { useState } from "react";
-import { Sparkles, X, Check } from "lucide-react";
+import { X, Check } from "lucide-react";
+import { BlitzBoltIcon } from "../icons";
 import type { FourthDownTelemetryPayload } from "../../types/hudTelemetry";
 
 interface FloatingBaldwinPillProps {
@@ -66,7 +67,7 @@ export const FloatingBaldwinPill: React.FC<FloatingBaldwinPillProps> = ({
       {/* Pill Header Bar */}
       <div className="flex items-center justify-between gap-2 pb-2 border-b border-white/10">
         <div className="flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase font-semibold text-slate-300">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+          <BlitzBoltIcon size={14} className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
           <span>Baldwin 4th-Down Pill</span>
           {telemetry.isGarbageTime && (
             <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 text-[9px]">

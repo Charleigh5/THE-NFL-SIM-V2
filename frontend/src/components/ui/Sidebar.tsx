@@ -1,13 +1,19 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Activity, Users, Briefcase, PenTool } from "lucide-react";
 import clsx from "clsx";
+import {
+  HelmetIcon,
+  FootballLacesIcon,
+  PenaltyFlagIcon,
+  ChainGangIcon,
+  ChalkboardRouteIcon,
+} from "../icons";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: Activity, label: "Live Sim", path: "/live-sim" },
-  { icon: Users, label: "Medical", path: "/medical" },
-  { icon: Briefcase, label: "Front Office", path: "/front-office" },
-  { icon: PenTool, label: "Playbook", path: "/playbook" },
+  { icon: HelmetIcon, label: "Dashboard", path: "/" },
+  { icon: FootballLacesIcon, label: "Live Sim", path: "/live-sim" },
+  { icon: PenaltyFlagIcon, label: "Medical", path: "/medical" },
+  { icon: ChainGangIcon, label: "Front Office", path: "/front-office" },
+  { icon: ChalkboardRouteIcon, label: "Playbook", path: "/playbook" },
 ];
 
 export const Sidebar = () => {

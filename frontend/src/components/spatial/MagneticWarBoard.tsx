@@ -8,13 +8,15 @@ import {
   Save,
   CheckCircle2,
   SlidersHorizontal,
-  Sparkles,
+  Flame,
   ShieldAlert,
 } from "lucide-react";
+import clsx from "clsx";
 import type { Player } from "../../services/api";
 import { PlayerAvatar } from "../ui/PlayerAvatar";
 import { soundEffects } from "../../services/soundEffects";
 import type { ProposedDepthChange } from "../../types/spatial";
+import { useTactileTilt } from "../tactile";
 
 interface MagneticWarBoardProps {
   positionCode: string;
@@ -36,11 +38,258 @@ interface MagneticWarBoardProps {
 }
 
 const STRINGS_CONFIG = [
-  { rank: 1, label: "STARTER • 1ST STRING", accent: "emerald", border: "border-emerald-500/50", bg: "bg-emerald-950/20" },
-  { rank: 2, label: "2ND STRING", accent: "cyan", border: "border-cyan-500/40", bg: "bg-cyan-950/20" },
-  { rank: 3, label: "3RD STRING", accent: "blue", border: "border-blue-500/30", bg: "bg-blue-950/20" },
-  { rank: 4, label: "PRACTICE SQUAD / RESERVE", accent: "slate", border: "border-slate-600/40", bg: "bg-slate-900/30" },
+  {
+    rank: 1,
+    label: "STARTER • 1ST STRING",
+    accent: "emerald",
+    border: "border-emerald-500/50",
+    bg: "bg-emerald-950/20",
+  },
+  {
+    rank: 2,
+    label: "2ND STRING",
+    accent: "cyan",
+    border: "border-cyan-500/40",
+    bg: "bg-cyan-950/20",
+  },
+  {
+    rank: 3,
+    label: "3RD STRING",
+    accent: "blue",
+    border: "border-blue-500/30",
+    bg: "bg-blue-950/20",
+  },
+  {
+    rank: 4,
+    label: "PRACTICE SQUAD / RESERVE",
+    accent: "slate",
+    border: "border-slate-600/40",
+    bg: "bg-slate-900/30",
+  },
 ];
+
+interface TactileWarTokenProps {
+  player: Player;
+  index: number;
+  isStarter: boolean;
+  isProposed: boolean;
+  isKeyboardActive: boolean;
+  isDraggingThis: boolean;
+  slotLabel: string;
+  teamAbbreviation: string;
+  getOvrTierClass: (ovr: number) => string;
+  onPromote: (index: number) => void;
+  onDemote: (index: number) => void;
+  onSelectPlayer: (id: number) => void;
+  playersLength: number;
+}
+
+/**
+ * Inner depth chart token equipped with 3D pointer tilt, specular sheen reflection,
+ * 0-4px corner radius, zero-blur hard shadows, and synthesized Web Audio click haptics.
+ * Kept strictly inside Reorder.Item so Framer Reorder layout transforms are unaffected.
+ */
+const TactileWarToken: React.FC<TactileWarTokenProps> = ({
+  player,
+  index,
+  isStarter,
+  isProposed,
+  isKeyboardActive,
+  isDraggingThis,
+  slotLabel,
+  teamAbbreviation,
+  getOvrTierClass,
+  onPromote,
+  onDemote,
+  onSelectPlayer,
+  playersLength,
+}) => {
+  const { ref, style, handlers } = useTactileTilt({
+    maxTilt: 6,
+    enableHaptics: true,
+    disabled: isDraggingThis,
+  });
+
+  const borderClass = isDraggingThis
+    ? "border-2 border-cyan-400 bg-slate-900/90 shadow-hard-lg opacity-90"
+    : isProposed
+      ? "border-amber-500/80 bg-gradient-to-r from-amber-950/30 via-slate-900/80 to-slate-950/90 shadow-hard-amber"
+      : isStarter
+        ? "border-emerald-500/40 bg-gradient-to-r from-emerald-950/30 via-slate-900/80 to-slate-950/90 shadow-hard-emerald"
+        : "border-slate-700/40 bg-gradient-to-r from-[#0a1628]/90 via-slate-900/80 to-slate-950/90 hover:border-slate-500/60 shadow-hard-sm";
+
+  return (
+    <motion.div
+      ref={ref}
+      style={style}
+      onPointerMove={handlers.onPointerMove}
+      onPointerEnter={handlers.onPointerEnter}
+      onPointerLeave={handlers.onPointerLeave}
+      onPointerDown={handlers.onPointerDown}
+      onPointerUp={handlers.onPointerUp}
+      className={clsx(
+        "relative rounded-[2px] border transition-colors duration-150 overflow-hidden",
+        borderClass,
+        isKeyboardActive && "ring-2 ring-cyan-400 shadow-hard-primary"
+      )}
+    >
+      {/* Specular Sheen Overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-20"
+        style={{
+          background:
+            "radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 35%, transparent 65%)",
+          mixBlendMode: "overlay",
+        }}
+      />
+
+      {/* Machined Top Edge Inset Highlight */}
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-20" />
+
+      {/* Magnetic Bevel Plate Container */}
+      <div
+        className="p-3 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 relative z-10"
+        style={{ transform: "translateZ(6px)", transformStyle: "preserve-3d" }}
+      >
+        {/* Left: String Slot & Player Identity */}
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+          {/* Slot Badge */}
+          <div className="flex flex-col items-center justify-center min-w-[3.5rem] sm:min-w-[4rem] py-1 px-2 rounded-[2px] bg-black/50 border border-white/10 flex-shrink-0 shadow-hard-xs">
+            <span className="text-xl sm:text-2xl font-heading font-black text-white leading-none">
+              #{index + 1}
+            </span>
+            <span
+              className={`text-[8px] sm:text-[9px] font-mono font-bold tracking-tight px-1 rounded-[2px] uppercase mt-0.5 ${
+                isStarter ? "text-emerald-400 bg-emerald-950/60" : "text-cyan-400 bg-cyan-950/60"
+              }`}
+            >
+              {isStarter ? "STARTER" : slotLabel}
+            </span>
+          </div>
+
+          {/* Player Headshot Avatar */}
+          <PlayerAvatar
+            playerId={player.id}
+            teamAbbr={teamAbbreviation}
+            pose="headshot"
+            size="md"
+            position={player.position}
+            jerseyNumber={player.jersey_number}
+            playerName={`${player.first_name} ${player.last_name}`}
+            className="flex-shrink-0 border-2 border-slate-400/30 rounded-[2px] hidden sm:block shadow-hard-xs"
+          />
+
+          {/* Metallic OVR Shield Badge */}
+          <div
+            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-[2px] flex flex-col items-center justify-center border-2 bg-gradient-to-br font-heading font-black flex-shrink-0 shadow-hard-xs ${getOvrTierClass(
+              player.overall_rating || 50
+            )}`}
+          >
+            <span className="text-base sm:text-lg leading-none">{player.overall_rating || 50}</span>
+            <span className="text-[8px] font-mono tracking-tighter uppercase opacity-90">OVR</span>
+          </div>
+
+          {/* Player Bio & Tactile Nameplate */}
+          <div className="min-w-0 flex-1 pl-1">
+            <div className="flex items-center gap-2">
+              <span className="font-heading font-black text-base sm:text-lg text-white uppercase tracking-wide group-hover:text-cyan-300 transition-colors whitespace-nowrap">
+                {player.first_name} {player.last_name}
+              </span>
+              <span className="text-xs font-mono text-cyan-400 font-bold flex-shrink-0">
+                #{player.jersey_number}
+              </span>
+
+              {isProposed && (
+                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold px-2 py-0.5 rounded-[2px] bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse flex-shrink-0 shadow-hard-xs">
+                  <Flame className="w-2.5 h-2.5" />
+                  PROPOSED
+                </span>
+              )}
+            </div>
+
+            <div className="text-[11px] sm:text-xs text-slate-300 flex items-center gap-2 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
+              <span>Age {player.age}</span>
+              <span className="text-slate-500">•</span>
+              <span>
+                {player.height
+                  ? `${Math.floor(player.height / 12)}'${player.height % 12}"`
+                  : "6'1\""}
+              </span>
+              <span>{player.weight ? `${player.weight} lbs` : "215 lbs"}</span>
+              <span className="text-slate-500">•</span>
+              <span className="truncate max-w-[120px]">{player.college || "NFL Veteran"}</span>
+              <span className="text-slate-500 hidden sm:inline">•</span>
+              <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
+                SPD {player.speed || 80}
+              </span>
+              <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
+                ACC {player.acceleration || 80}
+              </span>
+              <span className="hidden md:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
+                STR {player.strength || 75}
+              </span>
+              <span className="hidden md:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
+                AWR {player.awareness || 78}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Tactile Controls, Dossier, and Grip */}
+        <div className="flex items-center justify-end gap-2 flex-shrink-0 pl-2 border-l border-white/10">
+          {/* Promoted / Demote Accessible Buttons */}
+          <div className="flex items-center bg-black/50 rounded-[2px] p-0.5 border border-white/10 shadow-hard-xs">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPromote(index);
+              }}
+              disabled={index === 0}
+              className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-[2px] disabled:opacity-20 transition-colors"
+              title="Promote player up one rank"
+            >
+              <ArrowUp className="w-4 h-4 text-emerald-400" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDemote(index);
+              }}
+              disabled={index === playersLength - 1}
+              className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded-[2px] disabled:opacity-20 transition-colors"
+              title="Demote player down one rank"
+            >
+              <ArrowDown className="w-4 h-4 text-amber-400" />
+            </button>
+          </div>
+
+          {/* Dossier Modal Trigger */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectPlayer(player.id);
+            }}
+            className="px-2.5 sm:px-3 py-1.5 rounded-[2px] bg-cyan-950/80 border border-cyan-600/50 text-cyan-300 hover:text-white hover:bg-cyan-800 text-xs font-mono font-semibold transition-all shadow-hard-xs flex-shrink-0"
+            title="Open Detailed Athlete Dossier"
+          >
+            Dossier
+          </button>
+
+          {/* Visual Grip Handle */}
+          <div
+            className="p-1 text-slate-500 group-hover:text-cyan-400 transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing"
+            title="Drag to reposition magnetic plate"
+          >
+            <GripVertical className="w-5 h-5" />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
   positionCode,
@@ -63,6 +312,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
   // Drag and Keyboard focus state
   const [activeKeyboardIndex, setActiveKeyboardIndex] = useState<number | null>(null);
   const [srAnnouncement, setSrAnnouncement] = useState<string>("");
+  const [draggingId, setDraggingId] = useState<number | null>(null);
 
   // Manual reorder fallback for Playwright E2E and pointer drag
   const draggingIdRef = useRef<number | null>(null);
@@ -106,6 +356,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
       isPointerDownRef.current = false;
       draggingIdRef.current = null;
       lastSwappedTargetRef.current = null;
+      setDraggingId(null);
     };
 
     window.addEventListener("pointermove", handlePointerMove);
@@ -138,7 +389,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         // Pick up
         setActiveKeyboardIndex(index);
         soundEffects.playMagnetSnap();
-        announce(`Grabbed ${player.first_name} ${player.last_name}, currently rank ${index + 1}. Use Up and Down arrow keys to reposition, Enter or Space to place.`);
+        announce(
+          `Grabbed ${player.first_name} ${player.last_name}, currently rank ${index + 1}. Use Up and Down arrow keys to reposition, Enter or Space to place.`
+        );
       } else if (activeKeyboardIndex === index) {
         // Place down
         setActiveKeyboardIndex(null);
@@ -160,7 +413,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         onPromote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex - 1);
         soundEffects.playMagnetSnap();
-        announce(`${player.first_name} ${player.last_name} moved up to rank ${activeKeyboardIndex}.`);
+        announce(
+          `${player.first_name} ${player.last_name} moved up to rank ${activeKeyboardIndex}.`
+        );
       }
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -168,7 +423,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         onDemote(activeKeyboardIndex);
         setActiveKeyboardIndex(activeKeyboardIndex + 1);
         soundEffects.playMagnetSnap();
-        announce(`${player.first_name} ${player.last_name} moved down to rank ${activeKeyboardIndex + 2}.`);
+        announce(
+          `${player.first_name} ${player.last_name} moved down to rank ${activeKeyboardIndex + 2}.`
+        );
       }
     } else if (e.key === "Escape") {
       if (activeKeyboardIndex !== null) {
@@ -179,14 +436,16 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
     }
   };
 
-
-  // Helper for OVR Badge color tiers
+  // Helper for OVR Badge color tiers with directional hard shadows
   const getOvrTierClass = (ovr: number) => {
-    if (ovr >= 99) return "from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-amber-500/50";
-    if (ovr >= 90) return "from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-cyan-500/40";
-    if (ovr >= 80) return "from-emerald-400 to-green-600 text-white border-emerald-300 shadow-emerald-500/30";
-    if (ovr >= 70) return "from-blue-600 to-slate-700 text-white border-blue-400";
-    return "from-slate-700 to-slate-900 text-gray-300 border-slate-700";
+    if (ovr >= 99)
+      return "from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-hard-xs";
+    if (ovr >= 90)
+      return "from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-hard-xs";
+    if (ovr >= 80)
+      return "from-emerald-400 to-green-600 text-white border-emerald-300 shadow-hard-xs";
+    if (ovr >= 70) return "from-blue-600 to-slate-700 text-white border-blue-400 shadow-hard-xs";
+    return "from-slate-700 to-slate-900 text-gray-300 border-slate-700 shadow-hard-xs";
   };
 
   return (
@@ -196,12 +455,12 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         {srAnnouncement}
       </div>
 
-      {/* War Board Outer Metallic Framing & Lighting */}
-      <div className="relative rounded-2xl md:rounded-3xl border-2 border-slate-400/35 bg-slate-950/65 backdrop-blur-xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_35px_rgba(0,118,182,0.2)] p-4 sm:p-6 md:p-8 overflow-hidden">
+      {/* War Board Outer Metallic Framing & Lighting (strict 0-4px corners and hard shadows) */}
+      <div className="relative rounded-[2px] border-2 border-slate-400/35 bg-slate-950/65 backdrop-blur-xl shadow-hard-lg p-4 sm:p-6 md:p-8 overflow-hidden">
         {/* Top Metallic Whiteboard Rail */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 mb-6 border-b-2 border-slate-400/30">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#005187] to-[#0076B6] p-1.5 flex items-center justify-center border-2 border-slate-300 shadow-md">
+            <div className="w-12 h-12 rounded-[2px] bg-gradient-to-br from-[#005187] to-[#0076B6] p-1.5 flex items-center justify-center border-2 border-slate-300 shadow-hard-sm">
               <img
                 src={`/logos/${teamAbbreviation}.png`}
                 alt={teamAbbreviation}
@@ -216,7 +475,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                 <span className="text-xs font-mono font-bold tracking-widest text-[#00A8FF] uppercase">
                   WAR ROOM DEPTH BOARD
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-gray-300 border border-white/10">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-white/10 text-gray-300 border border-white/10">
                   {unit}
                 </span>
               </div>
@@ -232,9 +491,11 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
           {/* Tactical Action & Proposed Changes Bar */}
           <div className="flex flex-wrap items-center gap-3">
             {proposedChanges.length > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold animate-pulse">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-[2px] bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-mono font-bold animate-pulse shadow-hard-xs">
                 <ShieldAlert className="w-4 h-4 text-amber-400" />
-                <span>{proposedChanges.length} Change{proposedChanges.length > 1 ? "s" : ""} Staged</span>
+                <span>
+                  {proposedChanges.length} Change{proposedChanges.length > 1 ? "s" : ""} Staged
+                </span>
               </div>
             )}
 
@@ -242,7 +503,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
               onClick={onAutoOrder}
               type="button"
               title="Auto-order position depth by overall rating"
-              className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-mono font-semibold text-gray-200 hover:text-white transition-all flex items-center gap-2"
+              className="px-3.5 py-2 rounded-[2px] bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-mono font-semibold text-gray-200 hover:text-white transition-all flex items-center gap-2 shadow-hard-xs"
             >
               <SlidersHorizontal className="w-4 h-4 text-cyan-400" />
               <span>Auto OVR</span>
@@ -253,7 +514,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                 onClick={onReset}
                 type="button"
                 title="Revert all staged changes to saved depth"
-                className="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-mono font-semibold text-amber-300 hover:text-white transition-all flex items-center gap-2"
+                className="px-3.5 py-2 rounded-[2px] bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-mono font-semibold text-amber-300 hover:text-white transition-all flex items-center gap-2 shadow-hard-xs"
               >
                 <RotateCcw className="w-4 h-4 text-amber-400" />
                 <span>Revert</span>
@@ -264,7 +525,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
               onClick={onSave}
               disabled={isSaving}
               type="button"
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white text-xs font-heading font-black tracking-wider uppercase disabled:opacity-50 transition-all shadow-lg shadow-emerald-950/60 flex items-center gap-2 active:scale-95"
+              className="px-5 py-2 rounded-[2px] bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white text-xs font-heading font-black tracking-wider uppercase disabled:opacity-50 transition-all shadow-hard-emerald flex items-center gap-2 active:scale-95"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? "Saving..." : "Commit Depth"}</span>
@@ -279,7 +540,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mb-6 p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 flex items-center gap-3 backdrop-blur-md shadow-md"
+              className="mb-6 p-3.5 rounded-[2px] bg-emerald-950/80 border border-emerald-500 text-emerald-200 flex items-center gap-3 backdrop-blur-md shadow-hard-emerald"
             >
               <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
               <div className="text-xs sm:text-sm font-semibold">
@@ -293,7 +554,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         <div className="space-y-4">
           {/* We ensure .Reorder_Group selector exists for automated tests */}
           {players.length === 0 ? (
-            <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-2xl text-gray-400 font-mono">
+            <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-[2px] text-gray-400 font-mono shadow-hard-sm">
               No active athletes assigned to {positionCode}.
             </div>
           ) : (
@@ -306,33 +567,32 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
             >
               {players.map((player, index) => {
                 const isStarter = index === 0;
-                const slotConfig =
-                  STRINGS_CONFIG[index] || {
-                    rank: index + 1,
-                    label: `${index + 1}TH STRING`,
-                    accent: "slate",
-                    border: "border-slate-700/50",
-                    bg: "bg-slate-900/20",
-                  };
+                const slotConfig = STRINGS_CONFIG[index] || {
+                  rank: index + 1,
+                  label: `${index + 1}TH STRING`,
+                  accent: "slate",
+                  border: "border-slate-700/50",
+                  bg: "bg-slate-900/20",
+                };
 
                 const isProposed = proposedChanges.some(
                   (c) => c.playerId === player.id && c.proposedRank === index + 1
                 );
                 const isKeyboardActive = activeKeyboardIndex === index;
-                const isDraggingThis = draggingIdRef.current === player.id;
+                const isDraggingThis = draggingId === player.id;
 
                 const triggerTargetSwap = (targetId: number) => {
                   if (!isPointerDownRef.current) return;
-                  const draggingId = draggingIdRef.current;
-                  if (!draggingId || draggingId === targetId) return;
+                  const currentDraggingId = draggingIdRef.current;
+                  if (!currentDraggingId || currentDraggingId === targetId) return;
                   if (lastSwappedTargetRef.current === targetId) return;
 
                   lastSwappedTargetRef.current = targetId;
 
                   if (onReorderSwap) {
-                    onReorderSwap(draggingId, targetId);
+                    onReorderSwap(currentDraggingId, targetId);
                   } else {
-                    const fromIndex = players.findIndex((p) => p.id === draggingId);
+                    const fromIndex = players.findIndex((p) => p.id === currentDraggingId);
                     const toIndex = players.findIndex((p) => p.id === targetId);
                     if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
                       const next = [...players];
@@ -341,7 +601,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                       onReorder(next);
                     }
                   }
-                  soundEffects.playSnap();
+                  soundEffects.playMagnetSnap();
                 };
 
                 return (
@@ -360,175 +620,42 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
                       isPointerDownRef.current = true;
                       draggingIdRef.current = player.id;
                       lastSwappedTargetRef.current = player.id;
+                      setDraggingId(player.id);
                       try {
                         (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
-                      } catch {}
+                      } catch {
+                        // Safe fallback if releasePointerCapture is unsupported
+                      }
                     }}
                     onMouseDown={() => {
                       isPointerDownRef.current = true;
                       draggingIdRef.current = player.id;
                       lastSwappedTargetRef.current = player.id;
+                      setDraggingId(player.id);
                     }}
                     onPointerEnter={() => triggerTargetSwap(player.id)}
                     onPointerOver={() => triggerTargetSwap(player.id)}
                     onMouseEnter={() => triggerTargetSwap(player.id)}
                     onMouseOver={() => triggerTargetSwap(player.id)}
-                    className={`group relative rounded-xl border transition-all duration-200 cursor-grab active:cursor-grabbing outline-none ${
-                      isKeyboardActive
-                        ? "ring-2 ring-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.6)] scale-[1.01] z-20"
-                        : ""
-                    } ${
+                    className={`group relative rounded-[2px] transition-opacity duration-150 cursor-grab active:cursor-grabbing outline-none ${
                       isDraggingThis ? "opacity-40" : "opacity-100"
-                    } ${
-                      isStarter
-                        ? "border-emerald-500/40 bg-gradient-to-r from-emerald-950/30 via-slate-900/80 to-slate-950/90 shadow-lg shadow-emerald-950/20"
-                        : "border-slate-700/40 bg-gradient-to-r from-[#0a1628]/90 via-slate-900/80 to-slate-950/90 hover:border-slate-500/60"
                     }`}
                   >
-                    {/* Magnetic Bevel Plate Container */}
-                    <div className="p-3 sm:p-4 flex items-center justify-between gap-3 sm:gap-4">
-                      {/* Left: String Slot & Player Identity */}
-                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                        {/* Slot Badge */}
-                        <div className="flex flex-col items-center justify-center min-w-[3.5rem] sm:min-w-[4rem] py-1 px-2 rounded-lg bg-black/50 border border-white/10 flex-shrink-0 shadow-inner">
-                          <span className="text-xl sm:text-2xl font-heading font-black text-white leading-none">
-                            #{index + 1}
-                          </span>
-                          <span
-                            className={`text-[8px] sm:text-[9px] font-mono font-bold tracking-tight px-1 rounded uppercase mt-0.5 ${
-                              isStarter
-                                ? "text-emerald-400 bg-emerald-950/60"
-                                : "text-cyan-400 bg-cyan-950/60"
-                            }`}
-                          >
-                            {isStarter ? "STARTER" : slotConfig.label}
-                          </span>
-                        </div>
-
-                        {/* Player Headshot Avatar */}
-                        <PlayerAvatar
-                          playerId={player.id}
-                          teamAbbr={teamAbbreviation}
-                          pose="headshot"
-                          size="md"
-                          position={player.position}
-                          jerseyNumber={player.jersey_number}
-                          playerName={`${player.first_name} ${player.last_name}`}
-                          className="flex-shrink-0 border-2 border-slate-400/30 rounded-full hidden sm:block"
-                        />
-
-                        {/* Metallic OVR Shield Badge */}
-                        <div
-                          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex flex-col items-center justify-center border-2 bg-gradient-to-br font-heading font-black flex-shrink-0 shadow-md ${getOvrTierClass(
-                            player.overall_rating || 50
-                          )}`}
-                        >
-                          <span className="text-base sm:text-lg leading-none">
-                            {player.overall_rating || 50}
-                          </span>
-                          <span className="text-[8px] font-mono tracking-tighter uppercase opacity-90">
-                            OVR
-                          </span>
-                        </div>
-
-                        {/* Player Bio & Tactile Nameplate */}
-                        <div className="min-w-0 flex-1 pl-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-heading font-black text-base sm:text-lg text-white uppercase tracking-wide group-hover:text-cyan-300 transition-colors whitespace-nowrap">
-                              {player.first_name} {player.last_name}
-                            </span>
-                            <span className="text-xs font-mono text-cyan-400 font-bold flex-shrink-0">
-                              #{player.jersey_number}
-                            </span>
-
-                            {isProposed && (
-                              <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse flex-shrink-0">
-                                <Sparkles className="w-2.5 h-2.5" />
-                                PROPOSED
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="text-[11px] sm:text-xs text-slate-300 flex items-center gap-2 mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                            <span>Age {player.age}</span>
-                            <span className="text-slate-500">•</span>
-                            <span>
-                              {player.height
-                                ? `${Math.floor(player.height / 12)}'${player.height % 12}"`
-                                : "6'1\""}
-                            </span>
-                            <span>{player.weight ? `${player.weight} lbs` : "215 lbs"}</span>
-                            <span className="text-slate-500">•</span>
-                            <span className="truncate max-w-[120px]">{player.college || "NFL Veteran"}</span>
-                            <span className="text-slate-500 hidden sm:inline">•</span>
-                            <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
-                              SPD {player.speed || 80}
-                            </span>
-                            <span className="hidden sm:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
-                              ACC {player.acceleration || 80}
-                            </span>
-                            <span className="hidden md:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
-                              STR {player.strength || 75}
-                            </span>
-                            <span className="hidden md:inline-flex items-center gap-1 font-mono text-[10px] text-cyan-400">
-                              AWR {player.awareness || 78}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: Tactile Controls, Dossier, and Grip */}
-                      <div className="flex items-center justify-end gap-2 flex-shrink-0 pl-2 border-l border-white/10">
-                        {/* Promoted / Demote Accessible Buttons */}
-                        <div className="flex items-center bg-black/50 rounded-lg p-0.5 border border-white/10">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onPromote(index);
-                            }}
-                            disabled={index === 0}
-                            className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded disabled:opacity-20 transition-colors"
-                            title="Promote player up one rank"
-                          >
-                            <ArrowUp className="w-4 h-4 text-emerald-400" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDemote(index);
-                            }}
-                            disabled={index === players.length - 1}
-                            className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded disabled:opacity-20 transition-colors"
-                            title="Demote player down one rank"
-                          >
-                            <ArrowDown className="w-4 h-4 text-amber-400" />
-                          </button>
-                        </div>
-
-                        {/* Dossier Modal Trigger */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectPlayer(player.id);
-                          }}
-                          className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-cyan-950/80 border border-cyan-600/50 text-cyan-300 hover:text-white hover:bg-cyan-800 text-xs font-mono font-semibold transition-all shadow-sm flex-shrink-0"
-                          title="Open Detailed Athlete Dossier"
-                        >
-                          Dossier
-                        </button>
-
-                        {/* Visual Grip Handle */}
-                        <div
-                          className="p-1 text-slate-500 group-hover:text-cyan-400 transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing"
-                          title="Drag to reposition magnetic plate"
-                        >
-                          <GripVertical className="w-5 h-5" />
-                        </div>
-                      </div>
-                    </div>
+                    <TactileWarToken
+                      player={player}
+                      index={index}
+                      isStarter={isStarter}
+                      isProposed={isProposed}
+                      isKeyboardActive={isKeyboardActive}
+                      isDraggingThis={isDraggingThis}
+                      slotLabel={slotConfig.label}
+                      teamAbbreviation={teamAbbreviation}
+                      getOvrTierClass={getOvrTierClass}
+                      onPromote={onPromote}
+                      onDemote={onDemote}
+                      onSelectPlayer={onSelectPlayer}
+                      playersLength={players.length}
+                    />
                   </Reorder.Item>
                 );
               })}
@@ -540,7 +667,9 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
         <div className="mt-6 pt-4 border-t border-slate-400/20 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-gray-400 gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-            <span>Tactical whiteboard active • Use mouse drag or keyboard (Space + Arrow keys)</span>
+            <span>
+              Tactical whiteboard active • Use mouse drag or keyboard (Space + Arrow keys)
+            </span>
           </div>
           <div>{players.length} Athletes Roster Matrix</div>
         </div>

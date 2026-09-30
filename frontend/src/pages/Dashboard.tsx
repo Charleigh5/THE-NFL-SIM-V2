@@ -2,22 +2,16 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { Compass, Activity, ChevronRight, Play, CloudSun, DollarSign } from "lucide-react";
 import {
-  Users,
-  ClipboardList,
-  ArrowLeftRight,
-  Shield,
-  Compass,
-  Dumbbell,
-  BookOpen,
-  Trophy,
-  Flame,
-  Activity,
-  ChevronRight,
-  Play,
-  CloudSun,
-  DollarSign,
-} from "lucide-react";
+  HelmetIcon,
+  ChalkboardRouteIcon,
+  DownMarkerIcon,
+  GoalpostsIcon,
+  ChainGangIcon,
+  RefereeWhistleIcon,
+  BlitzBoltIcon,
+} from "../components/icons";
 import { api } from "../services/api";
 import { seasonApi } from "../services/season";
 import { useTheme } from "../context/useTheme";
@@ -26,6 +20,7 @@ import { StorylineTracker } from "../components/news/StorylineTracker";
 import { NewsFeedWidget } from "../components/news/NewsFeedWidget";
 import { SpatialSceneViewport } from "../components/spatial/SpatialSceneViewport";
 import { SpatialAtmosphereLayer } from "../components/spatial/SpatialAtmosphereLayer";
+import { EquipmentHeroStage } from "../components/equipment";
 import type { ParallaxBounds } from "../types/spatial";
 import type { Season } from "../types/season";
 
@@ -97,7 +92,7 @@ export const Dashboard = () => {
     try {
       setSimulating(true);
       if (!currentSeason) {
-        await seasonApi.initSeason(2025);
+        await seasonApi.initSeason(2026);
         const season = await seasonApi.getCurrentSeason();
         setCurrentSeason(season);
         window.location.reload();
@@ -195,7 +190,9 @@ export const Dashboard = () => {
         {/* System & Season Metrics */}
         <div className="flex items-center gap-4 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg">
           <div className="flex flex-col items-start md:items-end">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">Network HUD</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">
+              Network HUD
+            </span>
             <div className="system-status flex items-center gap-1.5 mt-0.5">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="badge font-header text-base text-emerald-400">
@@ -218,7 +215,9 @@ export const Dashboard = () => {
           <div className="h-8 w-[1px] bg-white/15" />
 
           <div className="flex flex-col items-start md:items-end">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">Current</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-mono">
+              Current
+            </span>
             <span className="season-week font-header text-[clamp(1.5rem,3vw,2rem)] text-cyan-400 leading-none mt-0.5">
               WEEK {currentSeason?.current_week ?? 1}
             </span>
@@ -229,19 +228,14 @@ export const Dashboard = () => {
   );
 
   const dashboardContent = (
-    <motion.div
-      className="space-y-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
+    <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="show">
       {/* ========================================================================= */}
       {/* 1. MATCHUP OF THE WEEK CLASH CARD */}
       {/* ========================================================================= */}
       <motion.div variants={itemVariants}>
         <div className="relative rounded-2xl overflow-hidden broadcast-glass border border-white/15 p-6 md:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           {/* Background stadium lighting mesh */}
-          <div className="absolute inset-0 bg-gradient-to-r from-broadcast-metal/90 via-black/80 to-broadcast-metal/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-black/20 to-black/35 pointer-events-none" />
           <div
             className="absolute -top-24 left-1/4 w-96 h-96 rounded-full opacity-25 blur-3xl pointer-events-none"
             style={{ backgroundColor: "var(--theme-primary, #203731)" }}
@@ -329,11 +323,18 @@ export const Dashboard = () => {
                 className="start-season-btn ml-2 md:ml-4 px-6 py-4 rounded-xl font-header text-xl uppercase tracking-wider text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:from-red-700 active:to-red-800 shadow-xl shadow-red-600/30 hover:shadow-red-500/40 border border-red-500/30 flex items-center gap-2 transform active:scale-95 transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
               >
                 <Play size={20} className="fill-current" />
-                {simulating ? "Simulating..." : currentSeason ? "Sim Week" : "Kickoff 2025"}
+                {simulating ? "Simulating..." : currentSeason ? "Sim Week" : "Kickoff 2026-27"}
               </button>
             </div>
           </div>
         </div>
+      </motion.div>
+
+      {/* ========================================================================= */}
+      {/* 3D INTERACTIVE EQUIPMENT HERO STAGE */}
+      {/* ========================================================================= */}
+      <motion.div variants={itemVariants} className="w-full">
+        <EquipmentHeroStage />
       </motion.div>
 
       {/* ========================================================================= */}
@@ -344,11 +345,11 @@ export const Dashboard = () => {
         <Link
           to="/empire/front-office"
           onClick={() => soundEffects.playSnap()}
-          className="group rounded-2xl bg-broadcast-dark border border-white/10 hover:border-white/30 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
+          className="group rounded-2xl bg-slate-950/35 backdrop-blur-md border border-white/10 hover:border-white/25 hover:bg-slate-900/45 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Users size={18} className="text-yellow-400" />
+              <HelmetIcon size={18} className="text-yellow-400" />
               <h3 className="font-header text-lg uppercase tracking-wider text-gray-200">
                 Roster Health
               </h3>
@@ -359,7 +360,9 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-white leading-none">53 / 53</span>
+            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-white leading-none">
+              53 / 53
+            </span>
             <span className="text-xs text-gray-400">Active NFL Roster</span>
           </div>
 
@@ -378,7 +381,7 @@ export const Dashboard = () => {
         <Link
           to="/empire/trade-center"
           onClick={() => soundEffects.playSnap()}
-          className="group rounded-2xl bg-broadcast-dark border border-white/10 hover:border-white/30 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
+          className="group rounded-2xl bg-slate-950/35 backdrop-blur-md border border-white/10 hover:border-white/25 hover:bg-slate-900/45 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -393,7 +396,9 @@ export const Dashboard = () => {
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-emerald-400 leading-none">$18.4M</span>
+            <span className="font-header text-[clamp(2.25rem,4vw,3.25rem)] text-emerald-400 leading-none">
+              $18.4M
+            </span>
             <span className="text-xs text-gray-400">Available Cap Space</span>
           </div>
 
@@ -412,11 +417,11 @@ export const Dashboard = () => {
         <Link
           to="/playbook"
           onClick={() => soundEffects.playSnap()}
-          className="group rounded-2xl bg-broadcast-dark border border-white/10 hover:border-white/30 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
+          className="group rounded-2xl bg-slate-950/35 backdrop-blur-md border border-white/10 hover:border-white/25 hover:bg-slate-900/45 p-5 transition-all duration-200 hover:-translate-y-1 shadow-xl relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.99]"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <BookOpen size={18} className="text-cyan-400" />
+              <ChalkboardRouteIcon size={18} className="text-cyan-400" />
               <h3 className="font-header text-lg uppercase tracking-wider text-gray-200">
                 Scheme & Strategy
               </h3>
@@ -454,7 +459,7 @@ export const Dashboard = () => {
       <div className="quick-actions-section">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-header text-2xl uppercase tracking-wider text-gray-200 flex items-center gap-2">
-            <Flame size={22} className="text-yellow-400" />
+            <BlitzBoltIcon size={22} className="text-yellow-400" />
             Quick Actions
           </h2>
           <span className="text-xs font-mono text-gray-400 uppercase">Select Subsystem</span>
@@ -465,35 +470,45 @@ export const Dashboard = () => {
             {
               label: "Roster",
               path: "/empire/front-office",
-              icon: Users,
+              icon: HelmetIcon,
               color: "text-blue-400",
             },
             {
               label: "Depth Chart",
               path: "/empire/depth-chart",
-              icon: ClipboardList,
+              icon: DownMarkerIcon,
               color: "text-yellow-400",
             },
-            { label: "Game Day Sim", path: "/live-sim", icon: Trophy, color: "text-red-400" },
+            {
+              label: "Game Day Sim",
+              path: "/live-sim",
+              icon: GoalpostsIcon,
+              color: "text-red-400",
+            },
             {
               label: "Draft Room",
               path: "/offseason/draft",
-              icon: Shield,
+              icon: HelmetIcon,
               color: "text-purple-400",
             },
             {
               label: "Trade Center",
               path: "/empire/trade-center",
-              icon: ArrowLeftRight,
+              icon: ChainGangIcon,
               color: "text-emerald-400",
             },
-            { label: "Training", path: "/training", icon: Dumbbell, color: "text-orange-400" },
+            {
+              label: "Training",
+              path: "/training",
+              icon: RefereeWhistleIcon,
+              color: "text-orange-400",
+            },
           ].map((tile) => (
             <Link
               key={tile.path}
               to={tile.path}
               onClick={() => soundEffects.playSnap()}
-              className="quick-action-card group relative rounded-xl bg-broadcast-metal/80 border border-white/10 hover:border-cyan-400/40 p-4 flex flex-col items-center justify-center text-center transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.98] cursor-pointer"
+              className="quick-action-card group relative rounded-xl bg-slate-950/35 backdrop-blur-md border border-white/10 hover:border-white/25 hover:bg-slate-900/45 p-4 flex flex-col items-center justify-center text-center transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black active:scale-[0.98] cursor-pointer"
             >
               <div className="p-3 rounded-xl bg-black/50 border border-white/10 mb-2 group-hover:scale-110 group-hover:border-white/20 transition-transform duration-200">
                 <tile.icon size={26} className={tile.color} />
@@ -510,7 +525,7 @@ export const Dashboard = () => {
       {/* 4. ESPN / MEDIA WIRE HEADLINES & LIVING WORLD STORYLINES */}
       {/* ========================================================================= */}
       <div className="space-y-6">
-        <div className="rounded-2xl bg-broadcast-dark border border-white/10 p-6 shadow-2xl">
+        <div className="rounded-2xl bg-slate-950/35 backdrop-blur-md border border-white/10 p-6 shadow-2xl">
           <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
             <div className="flex items-center gap-2">
               <Activity size={20} className="text-red-500" />
@@ -558,14 +573,14 @@ export const Dashboard = () => {
 
         {/* Living World Dynasty News Feed & Active Storylines */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-7 bg-broadcast-dark/90 rounded-2xl border border-white/10 p-6 shadow-2xl">
+          <div className="lg:col-span-7 bg-slate-950/35 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl">
             <NewsFeedWidget
               seasonId={currentSeason?.id || 1}
               week={currentSeason?.current_week || 1}
               maxItems={8}
             />
           </div>
-          <div className="lg:col-span-5 bg-broadcast-dark/90 rounded-2xl border border-white/10 p-6 shadow-2xl">
+          <div className="lg:col-span-5 bg-slate-950/35 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl">
             <StorylineTracker teamId={Number(activeTeam?.id) || 1} />
           </div>
         </div>
@@ -574,7 +589,7 @@ export const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen text-white font-body overflow-x-hidden bg-black">
+    <div className="min-h-screen text-white font-body overflow-x-hidden bg-transparent">
       {viewMode === "spatial" ? (
         /* SPATIAL COMMAND CENTER: 2.5D Multiplane Viewport with Frosted Glass Container */
         <SpatialSceneViewport
@@ -585,7 +600,7 @@ export const Dashboard = () => {
           className="w-full min-h-screen py-6 sm:py-8"
         >
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="bg-slate-950/75 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+            <div className="bg-slate-950/35 backdrop-blur-md border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
               {headerContent}
               {dashboardContent}
             </div>
@@ -593,9 +608,9 @@ export const Dashboard = () => {
         </SpatialSceneViewport>
       ) : (
         /* TACTICAL MISSION CONTROL: Direct 2D Dashboard without 2.5D Viewport */
-        <div className="w-full min-h-screen py-6 sm:py-8 bg-slate-950">
+        <div className="w-full min-h-screen py-6 sm:py-8 bg-transparent">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="bg-slate-900/85 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+            <div className="bg-slate-950/35 backdrop-blur-md border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
               {headerContent}
               {dashboardContent}
             </div>

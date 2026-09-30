@@ -7,6 +7,7 @@ and routes. Used by the app factory to build the FastAPI application.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 from pydantic import ValidationError
@@ -40,6 +41,9 @@ def configure_prometheus(app: FastAPI) -> None:
 
 def configure_middleware(app: FastAPI) -> None:
     """Configure all application middleware."""
+    # GZip response compression (75-85% bandwidth reduction on large JSON)
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+
     # Custom logging middleware
     app.add_middleware(LoggingMiddleware)
 
@@ -108,6 +112,8 @@ def configure_routes(app: FastAPI) -> None:
     # Settings and configuration
     app.include_router(settings_endpoint.router)
     app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
+    app.include_router(feedback.errors_router)
+
 
     # RPG and traits
     app.include_router(traits.router, prefix="/api/traits", tags=["traits"])

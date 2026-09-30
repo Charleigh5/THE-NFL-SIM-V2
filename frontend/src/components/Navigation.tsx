@@ -2,25 +2,20 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
+import { Settings as SettingsIcon, Volume2, VolumeX, CloudRain } from "lucide-react";
 import {
-  LayoutDashboard,
-  Trophy,
-  Users,
-  ClipboardList,
-  ArrowLeftRight,
-  Dumbbell,
-  Settings as SettingsIcon,
-  Star,
-  CalendarDays,
-  Sparkles,
-  BookOpen,
-  Volume2,
-  VolumeX,
-  Activity,
-  Briefcase,
-  Award,
-  CloudRain,
-} from "lucide-react";
+  HelmetIcon,
+  YardHashesIcon,
+  FootballLacesIcon,
+  DownMarkerIcon,
+  ChalkboardRouteIcon,
+  GoalpostsIcon,
+  PenaltyFlagIcon,
+  ChainGangIcon,
+  RefereeWhistleIcon,
+  LombardiTrophyIcon,
+  BlitzBoltIcon,
+} from "./icons";
 import { useTheme } from "../context/useTheme";
 import { soundEffects } from "../services/soundEffects";
 
@@ -38,25 +33,25 @@ export const Navigation: React.FC = () => {
   };
 
   const navItems = [
-    { path: "/", label: "WAR ROOM", icon: LayoutDashboard, tag: "HQ" },
-    { path: "/season", label: "SEASON", icon: CalendarDays, tag: "LIVE" },
-    { path: "/empire/front-office", label: "ROSTER", icon: Users, tag: "53-MAN" },
-    { path: "/empire/depth-chart", label: "DEPTH CHART", icon: ClipboardList, tag: "UNIT" },
-    { path: "/playbook", label: "PLAYBOOK", icon: BookOpen, tag: "SCHEME" },
-    { path: "/live-sim", label: "GAME DAY", icon: Trophy, tag: "SIM" },
-    { path: "/medical-center", label: "MEDICAL", icon: Activity, tag: "REHAB" },
+    { path: "/", label: "WAR ROOM", icon: HelmetIcon, tag: "HQ" },
+    { path: "/season", label: "SEASON", icon: YardHashesIcon, tag: "LIVE" },
+    { path: "/empire/front-office", label: "ROSTER", icon: FootballLacesIcon, tag: "53-MAN" },
+    { path: "/empire/depth-chart", label: "DEPTH CHART", icon: DownMarkerIcon, tag: "UNIT" },
+    { path: "/playbook", label: "PLAYBOOK", icon: ChalkboardRouteIcon, tag: "SCHEME" },
+    { path: "/live-sim", label: "GAME DAY", icon: GoalpostsIcon, tag: "SIM" },
+    { path: "/medical-center", label: "MEDICAL", icon: PenaltyFlagIcon, tag: "REHAB" },
     { path: "/weather-lab", label: "WEATHER LAB", icon: CloudRain, tag: "AAAA" },
-    { path: "/empire/trade-center", label: "TRADE DESK", icon: ArrowLeftRight, tag: "DEALS" },
-    { path: "/offseason", label: "OFFSEASON", icon: Briefcase, tag: "PHASES" },
-    { path: "/offseason/draft", label: "DRAFT ROOM", icon: Sparkles, tag: "WAR ROOM" },
-    { path: "/empire/trophy-room", label: "TROPHY ROOM", icon: Award, tag: "LEGACY" },
-    { path: "/training", label: "TRAINING", icon: Dumbbell, tag: "CAMP" },
-    { path: "/team-selection", label: "MY FRANCHISE", icon: Star, tag: "TEAM" },
+    { path: "/empire/trade-center", label: "TRADE DESK", icon: ChainGangIcon, tag: "DEALS" },
+    { path: "/offseason", label: "OFFSEASON", icon: RefereeWhistleIcon, tag: "PHASES" },
+    { path: "/offseason/draft", label: "DRAFT ROOM", icon: HelmetIcon, tag: "WAR ROOM" },
+    { path: "/empire/trophy-room", label: "TROPHY ROOM", icon: LombardiTrophyIcon, tag: "LEGACY" },
+    { path: "/training", label: "TRAINING", icon: BlitzBoltIcon, tag: "CAMP" },
+    { path: "/team-selection", label: "MY FRANCHISE", icon: FootballLacesIcon, tag: "TEAM" },
     { path: "/settings", label: "SETTINGS", icon: SettingsIcon, tag: "SYS" },
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-20 md:w-64 bg-broadcast-dark/95 border-r border-white/10 z-50 flex flex-col justify-between backdrop-blur-xl shadow-2xl overflow-hidden">
+    <nav className="fixed left-0 top-0 h-full w-20 md:w-64 bg-slate-950/75 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col justify-between shadow-2xl overflow-hidden">
       {/* Franchise Top Header */}
       <div>
         <Link
@@ -75,8 +70,8 @@ export const Navigation: React.FC = () => {
             {/* Team Logo or Helmet Icon */}
             <div className="w-12 h-12 rounded-lg bg-black/60 border border-white/15 flex items-center justify-center p-1 shadow-inner shrink-0 group-hover:scale-105 transition-transform">
               <img
-                src={`/logos/${activeTeam?.abbreviation || "GB"}.png`}
-                alt={activeTeam?.name || "NFL"}
+                src={`/logos/${activeTeam?.abbreviation || "DET"}.png`}
+                alt={activeTeam?.name || "Detroit Lions"}
                 className="w-full h-full object-contain filter drop-shadow"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";
@@ -90,7 +85,7 @@ export const Navigation: React.FC = () => {
                 {activeTeam?.conference || "NFC"} {activeTeam?.division || "North"}
               </span>
               <h2 className="font-header text-xl tracking-tight text-white uppercase truncate leading-none mt-0.5">
-                {activeTeam?.name || "Packers"}
+                {activeTeam?.name || "Lions"}
               </h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />

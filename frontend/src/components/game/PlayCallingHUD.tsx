@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../services/api";
 import { soundEffects } from "../../services/soundEffects";
-import {
-  Play,
-  Shield,
-  Zap,
-  Target,
-  ChevronUp,
-  ChevronDown,
-  TrendingUp,
-  Layers,
-  Flame,
-  CheckCircle,
-} from "lucide-react";
+import { Play, ChevronUp, ChevronDown, TrendingUp, Layers, CheckCircle } from "lucide-react";
+import { FootballLacesIcon, ChalkboardRouteIcon, BlitzBoltIcon, GoalpostsIcon } from "../icons";
 
 export type PlayCategory = "RUN" | "PASS" | "DEFENSE" | "SPECIAL_TEAMS";
 
@@ -377,7 +367,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                         : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
-                    <Flame className="w-3.5 h-3.5" /> Run Concepts
+                    <FootballLacesIcon className="w-3.5 h-3.5" size={14} /> Run Concepts
                     <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded bg-black/30 border border-black/20 text-white">
                       [A]
                     </span>
@@ -390,7 +380,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                         : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
-                    <Zap className="w-3.5 h-3.5" /> Pass Concepts
+                    <ChalkboardRouteIcon className="w-3.5 h-3.5" size={14} /> Pass Concepts
                     <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded bg-black/30 border border-black/20 text-white">
                       [A]
                     </span>
@@ -405,7 +395,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                       : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                   }`}
                 >
-                  <Shield className="w-3.5 h-3.5" /> Defensive Shells
+                  <BlitzBoltIcon className="w-3.5 h-3.5" size={14} /> Defensive Shells
                 </button>
               )}
               <button
@@ -416,7 +406,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                     : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
-                <Target className="w-3.5 h-3.5" /> Special Teams
+                <GoalpostsIcon className="w-3.5 h-3.5" size={14} /> Special Teams
               </button>
             </div>
 

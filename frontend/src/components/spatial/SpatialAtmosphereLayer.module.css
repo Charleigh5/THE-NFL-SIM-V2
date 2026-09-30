@@ -1,0 +1,121 @@
+@keyframes warroomFlicker {
+  0%, 100% { opacity: 0.98; }
+  42% { opacity: 0.96; }
+  43% { opacity: 1.0; }
+  78% { opacity: 0.97; }
+  80% { opacity: 0.99; }
+}
+
+@keyframes warroomFlarePulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: translate3d(0, 0, 0) scaleX(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: translate3d(0, 0, 0) scaleX(1.15);
+  }
+}
+
+@keyframes lockerMistDrift {
+  0% {
+    transform: translate3d(-3%, 0, 0) scaleY(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(3%, -8px, 0) scaleY(1.05);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(-3%, 0, 0) scaleY(1);
+    opacity: 0.35;
+  }
+}
+
+@keyframes atmosphericMoteFloat {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(12px, -24px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes chalkDrift {
+  0% {
+    transform: translate3d(-10px, 15px, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.45;
+  }
+  75% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(25px, -45px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes rainStreakFall {
+  0% {
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    transform: translate3d(-20px, 100%, 0);
+  }
+}
+
+@keyframes projectorShimmer {
+  0%, 100% { opacity: 0.22; }
+  50% { opacity: 0.38; }
+}
+
+.warroomFlicker {
+  animation: warroomFlicker 8s ease-in-out infinite;
+}
+
+.warroomFlare {
+  animation: warroomFlarePulse 6s ease-in-out infinite;
+}
+
+.lockerMist {
+  animation: lockerMistDrift 14s ease-in-out infinite alternate;
+}
+
+.rainStreak {
+  animation: rainStreakFall 1.2s linear infinite;
+}
+
+.projectorBeam {
+  animation: projectorShimmer 4s ease-in-out infinite;
+}
+
+.moteFloat {
+  animation-name: atmosphericMoteFloat;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.chalkMote {
+  animation-name: chalkDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warroomFlicker,
+  .warroomFlare,
+  .lockerMist,
+  .rainStreak,
+  .projectorBeam,
+  .moteFloat,
+  .chalkMote {
+    animation: none !important;
+    transform: none !important;
+  }
+}

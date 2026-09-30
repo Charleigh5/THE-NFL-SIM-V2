@@ -48,7 +48,8 @@ interface ApiTeamLedgerStatementDTO {
   transactions?: ApiLedgerTransactionDTO[];
 }
 
-const API_BASE = "http://localhost:8000/api/cap-ledger";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const API_BASE = `${API_BASE_URL}/api/cap-ledger`;
 
 const BASE_SALARY_CAP = 255_400_000;
 const BASE_LEAGUE_YEAR = 2026;

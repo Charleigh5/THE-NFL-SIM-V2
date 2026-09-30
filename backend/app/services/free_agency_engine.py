@@ -14,6 +14,10 @@ from sqlalchemy import select, func
 from app.models.player import Player, Position
 from app.models.team import Team
 from app.models.player_contract import PlayerContract
+from app.core.roster_cache import (
+    invalidate_team_roster_cache,
+    invalidate_all_team_roster_caches,
+)
 from app.schemas.offseason import (
     FreeAgentSigning,
     FreeAgentMarketPlayer,
@@ -321,6 +325,7 @@ class FreeAgencyEngine:
         self._balance_rosters_to_minimum(teams, team_roster_counts, team_roster_totals, team_cap_trackers, signings)
 
         self.db.commit()
+        invalidate_all_team_roster_caches()
         return signings
 
     def _balance_rosters_to_minimum(
@@ -572,6 +577,7 @@ class FreeAgencyEngine:
 
             winning_team.salary_cap_space = max(0.0, float(winning_team.salary_cap_space or 0.0) - ai_aav)
             self.db.commit()
+            invalidate_team_roster_cache(winning_team.id)
 
             return FreeAgentBidResponse(
                 status="OUTBID",
@@ -603,6 +609,7 @@ class FreeAgencyEngine:
         new_cap = max(0.0, current_cap - year_1_cap_hit)
         team.salary_cap_space = new_cap
         self.db.commit()
+        invalidate_team_roster_cache(team.id)
 
         return FreeAgentBidResponse(
             status="ACCEPTED",

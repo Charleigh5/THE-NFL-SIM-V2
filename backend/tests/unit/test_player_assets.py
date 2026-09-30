@@ -5,6 +5,7 @@ Unit tests for PlayerAssetService and Parametric Prompt Synthesis.
 import pytest
 import subprocess
 import os
+import sys
 from pathlib import Path
 
 from app.services.visuals.player_asset_service import (
@@ -146,7 +147,7 @@ def test_cli_arguments(tmp_path):
     # This runs the CLI with --help to ensure arguments are accepted without error
     script_path = Path(__file__).resolve().parent.parent.parent / "scripts" / "generate_player_assets.py"
     result = subprocess.run(
-        ["python", str(script_path), "--help"],
+        [sys.executable, str(script_path), "--help"],
         capture_output=True,
         text=True,
     )
@@ -162,10 +163,11 @@ def test_cli_dry_run():
     # Test a dry run for a non-existent team to check execution flow
     script_path = Path(__file__).resolve().parent.parent.parent / "scripts" / "generate_player_assets.py"
     result = subprocess.run(
-        ["python", str(script_path), "--team", "NON_EXISTENT", "--dry-run"],
+        [sys.executable, str(script_path), "--team", "NON_EXISTENT", "--dry-run"],
         capture_output=True,
         text=True,
     )
     # The script should exit gracefully saying no teams found
     assert result.returncode == 0
     assert "No teams found matching criteria." in result.stdout
+

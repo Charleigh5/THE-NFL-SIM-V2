@@ -292,20 +292,18 @@ class RunningBackPhysics:
         else:
             return 0.5        # Chase-down from behind
 
-    def _simulate_stiff_arm_battle(self, defender_tackle: int, rng: Optional[Any] = None) -> bool:
-        """Simulate stiff arm success based on ratings with deterministic RNG."""
-        from app.core.random_utils import DeterministicRNG
-        actual_rng = rng or DeterministicRNG(f"stiff_arm_{self.stiff_arm}_{defender_tackle}")
+    def _simulate_stiff_arm_battle(self, defender_tackle: int) -> bool:
+        """Simulate stiff arm success based on ratings."""
+        import random
         stiff_arm_chance = self.stiff_arm / (self.stiff_arm + defender_tackle)
-        return actual_rng.random() < stiff_arm_chance
+        return random.random() < stiff_arm_chance
 
-    def _check_fumble(self, force_ratio: float, rng: Optional[Any] = None) -> bool:
-        """Check if big hit causes fumble with deterministic RNG."""
-        from app.core.random_utils import DeterministicRNG
-        actual_rng = rng or DeterministicRNG(f"fumble_check_{force_ratio}")
+    def _check_fumble(self, force_ratio: float) -> bool:
+        """Check if big hit causes fumble."""
+        import random
         # Base 2% fumble chance, increases with force ratio
         fumble_chance = 0.02 * force_ratio
-        return actual_rng.random() < fumble_chance
+        return random.random() < fumble_chance
 
     def calculate_cut_injury_risk(
         self,
@@ -453,22 +451,19 @@ class WideReceiverPhysics:
         ball_distance: float,
         defender_distance: float,
         is_contested: bool,
-        rng: Optional[Any] = None,
     ) -> Tuple[bool, str]:
         """
-        Determine catch success with deterministic RNG.
+        Determine catch success.
 
         Args:
             ball_distance: Distance from WR to catch point
             defender_distance: Distance from nearest defender
             is_contested: Whether defender is jumping for ball
-            rng: Optional DeterministicRNG instance
 
         Returns:
             (success, reason)
         """
-        from app.core.random_utils import DeterministicRNG
-        actual_rng = rng or DeterministicRNG(f"catch_{ball_distance}_{defender_distance}_{is_contested}")
+        import random
 
         # Can't catch if out of reach
         if ball_distance > self.catch_radius:
@@ -493,7 +488,7 @@ class WideReceiverPhysics:
         # Final probability
         catch_prob = base_catch * contested_modifier * (1 - traffic_penalty)
 
-        if actual_rng.random() < catch_prob:
+        if random.random() < catch_prob:
             return (True, "caught")
         else:
             reason = "tight_coverage" if traffic_penalty > 0.3 else "dropped"
@@ -584,22 +579,19 @@ class CornerbackPhysics:
         ball_distance: float,
         wr_distance_to_ball: float,
         ball_flight_time: float,
-        rng: Optional[Any] = None,
     ) -> Tuple[bool, str]:
         """
-        Attempt to intercept pass with deterministic RNG.
+        Attempt to intercept pass.
 
         Args:
             ball_distance: CB distance to catch point
             wr_distance_to_ball: WR distance to catch point
             ball_flight_time: Time until ball arrives
-            rng: Optional DeterministicRNG instance
 
         Returns:
             (success, outcome)
         """
-        from app.core.random_utils import DeterministicRNG
-        actual_rng = rng or DeterministicRNG(f"cb_int_{ball_distance}_{wr_distance_to_ball}_{ball_flight_time}")
+        import random
 
         # Read time based on play recognition
         read_delay = (100 - self.play_recognition) / 100 * 0.3
@@ -630,7 +622,7 @@ class CornerbackPhysics:
             # CB alone at catch point
             int_probability = self.ball_skills / 100 * 0.9
 
-        if actual_rng.random() < int_probability:
+        if random.random() < int_probability:
             return (True, "interception")
         else:
             return (False, "dropped_int" if wr_distance_to_ball > 1.0 else "contested")

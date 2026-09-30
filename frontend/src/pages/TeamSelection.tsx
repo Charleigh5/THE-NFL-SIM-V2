@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSettingsStore } from "../store/useSettingsStore";
-import { useNavigate } from "react-router-dom";
-import { useTeamSelectionData } from "../hooks/useLoaderData";
+import { useNavigate, useLoaderData } from "react-router-dom";
 import { useTheme } from "../context/useTheme";
 import { motion } from "framer-motion";
 import { ParallaxScene } from "../components/immersive/ParallaxScene";
@@ -9,12 +8,23 @@ import { TiltCard } from "../components/immersive/TiltCard";
 import { RibbonTicker } from "../components/immersive/RibbonTicker";
 import { soundEffects } from "../services/soundEffects";
 import { Filter, CheckCircle2 } from "lucide-react";
+import { api } from "../services/api";
+import type { Team } from "../services/api";
+import type { TeamSelectionLoaderData } from "../hooks/useLoaderData";
 import "./TeamSelection.css";
 
 type ConfFilter = "ALL" | "AFC" | "NFC";
 
 const TeamSelection: React.FC = () => {
-  const { teams } = useTeamSelectionData();
+  const loaderData = useLoaderData() as TeamSelectionLoaderData | undefined;
+
+  const [teams, setTeams] = useState<Team[]>(() => {
+    if (loaderData && Array.isArray(loaderData.teams) && loaderData.teams.length > 0) {
+      return loaderData.teams;
+    }
+    return [];
+  });
+
   const { setUserTeam, userTeamId, fetchSettings } = useSettingsStore();
   const { setActiveTeamId } = useTheme();
   const navigate = useNavigate();
@@ -24,6 +34,26 @@ const TeamSelection: React.FC = () => {
     fetchSettings();
   }, [fetchSettings]);
 
+  useEffect(() => {
+    if (loaderData && Array.isArray(loaderData.teams) && loaderData.teams.length > 0) {
+      return;
+    }
+    let isMounted = true;
+    api
+      .getTeams()
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setTeams(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load teams in TeamSelection:", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [loaderData]);
+
   const filteredTeams = teams
     .filter((t) => (confFilter === "ALL" ? true : t.conference === confFilter))
     .sort((a, b) => a.city.localeCompare(b.city));
@@ -32,6 +62,11 @@ const TeamSelection: React.FC = () => {
     soundEffects.playWhistle();
     soundEffects.playCrowdRoar();
     localStorage.setItem("selectedTeamId", teamId.toString());
+    localStorage.setItem("selectedTeamAbbr", abbreviation);
+    localStorage.setItem("hasSelectedFranchise", "true");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("franchise-selected"));
+    }
     setActiveTeamId(abbreviation);
     await setUserTeam(teamId);
 
@@ -74,6 +109,43 @@ const TeamSelection: React.FC = () => {
             franchise through the regular season, trade deadlines, and Super Bowl glory.
           </p>
 
+          {/* Detroit Lions Quick-Start Callout */}
+          <div className="max-w-2xl mx-auto mt-6 p-4 rounded-2xl bg-gradient-to-r from-blue-900/60 via-blue-950/80 to-slate-900/80 border border-blue-500/30 backdrop-blur-md shadow-[0_0_30px_rgba(0,118,182,0.25)] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 flex items-center justify-center p-2 rounded-xl bg-blue-950/60 border border-blue-400/30 shadow-inner">
+                <img
+                  src="/logos/DET.png"
+                  alt="Detroit Lions"
+                  className="w-12 h-12 object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </div>
+              <div className="text-left">
+                <div className="text-[11px] font-mono tracking-wider text-blue-300 font-bold uppercase">
+                  Quick-Start Recommendation
+                </div>
+                <div className="font-header text-lg sm:text-xl text-white tracking-wide">
+                  DETROIT LIONS (DEFAULT FAVORITE) • NFC NORTH
+                </div>
+                <div className="text-xs text-blue-200/70 font-mono">
+                  Dynasty Roster • Dan Campbell Gridiron Identity
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                soundEffects.playWhistle();
+                soundEffects.playCrowdRoar();
+                handleSelectTeam(11, "DET");
+              }}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black font-header text-sm font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(250,204,21,0.5)] hover:shadow-[0_0_30px_rgba(250,204,21,0.8)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex-shrink-0"
+            >
+              CONFIRM & ENTER WAR ROOM
+            </button>
+          </div>
+
           {/* Conference Filter Bar */}
           <div className="flex items-center justify-center gap-2 mt-6">
             <span className="text-xs font-mono text-gray-400 mr-2 flex items-center gap-1">
@@ -101,7 +173,7 @@ const TeamSelection: React.FC = () => {
         {/* 32-Team Grid */}
         <div className="teams-grid">
           {filteredTeams.map((team, idx) => {
-            const isSelected = userTeamId === team.id;
+            const isSelected = (userTeamId ?? 11) === team.id;
             return (
               <motion.div
                 key={team.id}
@@ -116,7 +188,7 @@ const TeamSelection: React.FC = () => {
                 <TiltCard
                   className={`team-card broadcast-glass group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
                     isSelected
-                      ? "border-yellow-400 ring-2 ring-yellow-400/50 shadow-[0_0_25px_rgba(250,204,21,0.4)]"
+                      ? "selected border-yellow-400 ring-2 ring-yellow-400/50 shadow-[0_0_25px_rgba(250,204,21,0.4)]"
                       : "border-white/10 hover:border-white/30"
                   }`}
                   onClick={() => handleSelectTeam(team.id, team.abbreviation)}

@@ -130,3 +130,6 @@ frontend/test-results/
 # Playwright reports
 frontend/playwright-report/
 
+# Agent transcripts & scratch files
+.agents/
+

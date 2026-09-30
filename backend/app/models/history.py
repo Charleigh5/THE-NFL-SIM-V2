@@ -37,6 +37,7 @@ class PlayerSeasonStats(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     player_id = Column(Integer, ForeignKey("player.id"), index=True)
+    season_id = Column(Integer, ForeignKey("season.id"), index=True, nullable=True)
     team_id = Column(Integer, ForeignKey("team.id"), index=True)
     year = Column(Integer, index=True)
     
@@ -55,16 +56,37 @@ class PlayerSeasonStats(Base):
     rush_yards = Column(Integer, default=0)
     rush_tds = Column(Integer, default=0)
     rush_attempts = Column(Integer, default=0)
+    yards_after_contact = Column(Integer, default=0)
+    broken_tackles = Column(Integer, default=0)
     
     # Receiving
     rec_yards = Column(Integer, default=0)
     rec_tds = Column(Integer, default=0)
     receptions = Column(Integer, default=0)
+    drops = Column(Integer, default=0)
+    yards_after_catch = Column(Integer, default=0)
     
     # Defense
     tackles = Column(Integer, default=0)
+    tackles_solo = Column(Integer, default=0)
+    tackles_assist = Column(Integer, default=0)
     sacks = Column(Float, default=0.0)
     interceptions = Column(Integer, default=0)
+    pass_deflections = Column(Integer, default=0)
+    forced_fumbles = Column(Integer, default=0)
+    tackles_for_loss = Column(Integer, default=0)
+    qb_pressures = Column(Integer, default=0)
+    
+    # Kicking / Punting
+    fg_made = Column(Integer, default=0)
+    fg_att = Column(Integer, default=0)
+    punt_yards = Column(Integer, default=0)
+    punt_att = Column(Integer, default=0)
+    
+    # Offensive Line
+    pancakes = Column(Integer, default=0)
+    sacks_allowed = Column(Integer, default=0)
+    pressures_allowed = Column(Integer, default=0)
     
     # Awards/Honors for this season
     is_pro_bowl = Column(Boolean, default=False)

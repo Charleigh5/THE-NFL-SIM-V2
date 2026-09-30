@@ -162,10 +162,18 @@ const StadiumScene: React.FC = () => {
       </mesh>
 
       {/* Yard Line Inlays */}
-      {[-40, -20, 0, 20, 40].map((x, i) => (
-        <mesh key={`yard-${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[x, -2.48, 0]}>
+      {[-40, -20, 20, 40].map((x, i) => (
+        <mesh key={`yard-${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[x, -2.46, 0]}>
           <planeGeometry args={[0.5, 75]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={isSnow ? 0.35 : 0.65} />
+          <meshBasicMaterial
+            color="#ffffff"
+            transparent
+            opacity={isSnow ? 0.35 : 0.65}
+            polygonOffset={true}
+            polygonOffsetFactor={-2}
+            polygonOffsetUnits={-2}
+            depthWrite={false}
+          />
         </mesh>
       ))}
 
@@ -221,7 +229,10 @@ export const ThreeStadiumBackdrop: React.FC = () => {
   if (!show3DBackdrop) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-85 transition-opacity duration-700">
+    <div
+      data-testid="three-stadium-backdrop"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-95 transition-opacity duration-700"
+    >
       <Canvas
         shadows
         camera={{ position: [0, 6, 22], fov: 42 }}

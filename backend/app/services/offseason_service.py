@@ -14,6 +14,10 @@ from app.models.hall_of_fame import HallOfFame
 from app.models.stats import PlayerGameStats
 from sqlalchemy import func, select
 from app.core.random_utils import DeterministicRNG
+from app.core.roster_cache import (
+    invalidate_team_roster_cache,
+    invalidate_all_team_roster_caches,
+)
 
 class OffseasonService:
     def __init__(self, db: Session, seed: int = None):
@@ -29,31 +33,199 @@ class OffseasonService:
             raise ValueError("Season not found")
 
         season.status = SeasonStatus.OFF_SEASON
-        # We might want a more granular status enum for phases, but for now we use OFF_SEASON
-        # and maybe track phase in a separate field or just assume flow.
 
         try:
+            # 0. Archive completed season stats for all players and teams
+            archived_players = self.archive_season_stats(season_id)
+
+            # 0b. Process season-end milestone trait acquisitions
+            try:
+                from app.services.trait_acquisition_service import TraitAcquisitionService
+                TraitAcquisitionService.process_season_end_progression(self.db, season_id)
+            except Exception as e:
+                print(f"Warning: error during trait progression: {e}")
+
             # 1. Process Retirements
             self.process_retirements(season_id)
 
             # 2. Process Contracts
             self.process_contract_expirations()
 
-            # 2. Generate Draft Order
+            # 3. Generate Draft Order
             stmt = select(DraftPick).where(DraftPick.season_id == season_id)
             existing_picks = self.db.execute(stmt).first()
             if not existing_picks:
                 self.generate_draft_order(season_id)
 
-            # 3. Generate Rookie Class
+            # 4. Generate Rookie Class
             await self.rookie_generator.generate_draft_class(season_id)
 
             self.db.commit()
-            return {"message": "Offseason started. Contracts processed, Draft order set, Rookies generated."}
+            return {
+                "message": f"Offseason started. Archived stats for {archived_players} players. Contracts processed, Draft order set, Rookies generated."
+            }
         except Exception as e:
             print(f"Error starting offseason: {e}")
             self.db.rollback()
             raise e
+
+    def archive_season_stats(self, season_id: int) -> int:
+        """
+        Aggregate and archive all player, team, and league stats for a completed season
+        into PlayerSeasonStats, TeamSeasonStats, and SeasonHistory.
+        """
+        season = self.db.get(Season, season_id)
+        if not season:
+            return 0
+
+        from app.models.history import PlayerSeasonStats, SeasonHistory, TeamSeasonStats
+
+        # Group and sum PlayerGameStats by player_id
+        stmt = select(
+            PlayerGameStats.player_id,
+            PlayerGameStats.team_id,
+            func.count(PlayerGameStats.id).label("games_played"),
+            func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
+            func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
+            func.sum(PlayerGameStats.pass_ints).label("pass_ints"),
+            func.sum(PlayerGameStats.pass_attempts).label("pass_attempts"),
+            func.sum(PlayerGameStats.pass_completions).label("pass_completions"),
+            func.sum(PlayerGameStats.rush_yards).label("rush_yards"),
+            func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
+            func.sum(PlayerGameStats.rush_attempts).label("rush_attempts"),
+            func.sum(PlayerGameStats.yards_after_contact).label("yards_after_contact"),
+            func.sum(PlayerGameStats.broken_tackles).label("broken_tackles"),
+            func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
+            func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
+            func.sum(PlayerGameStats.receptions).label("receptions"),
+            func.sum(PlayerGameStats.drops).label("drops"),
+            func.sum(PlayerGameStats.yards_after_catch).label("yards_after_catch"),
+            func.sum(PlayerGameStats.tackles_solo).label("tackles_solo"),
+            func.sum(PlayerGameStats.tackles_assist).label("tackles_assist"),
+            func.sum(PlayerGameStats.sacks).label("sacks"),
+            func.sum(PlayerGameStats.interceptions).label("interceptions"),
+            func.sum(PlayerGameStats.pass_deflections).label("pass_deflections"),
+            func.sum(PlayerGameStats.forced_fumbles).label("forced_fumbles"),
+            func.sum(PlayerGameStats.tackles_for_loss).label("tackles_for_loss"),
+            func.sum(PlayerGameStats.qb_pressures).label("qb_pressures"),
+            func.sum(PlayerGameStats.fg_made).label("fg_made"),
+            func.sum(PlayerGameStats.fg_att).label("fg_att"),
+            func.sum(PlayerGameStats.punt_yards).label("punt_yards"),
+            func.sum(PlayerGameStats.punt_att).label("punt_att"),
+            func.sum(PlayerGameStats.pancakes).label("pancakes"),
+            func.sum(PlayerGameStats.sacks_allowed).label("sacks_allowed"),
+            func.sum(PlayerGameStats.pressures_allowed).label("pressures_allowed")
+        ).where(
+            PlayerGameStats.season_id == season_id
+        ).group_by(PlayerGameStats.player_id, PlayerGameStats.team_id)
+
+        results = self.db.execute(stmt).all()
+        archived_count = 0
+
+        for r in results:
+            existing = self.db.query(PlayerSeasonStats).filter(
+                PlayerSeasonStats.player_id == r.player_id,
+                PlayerSeasonStats.season_id == season_id
+            ).first()
+
+            total_tackles = int((r.tackles_solo or 0) + (r.tackles_assist or 0))
+
+            if not existing:
+                pss = PlayerSeasonStats(
+                    player_id=r.player_id,
+                    season_id=season_id,
+                    team_id=r.team_id,
+                    year=season.year,
+                    games_played=r.games_played or 0,
+                    games_started=r.games_played or 0,
+                    pass_yards=int(r.pass_yards or 0),
+                    pass_tds=int(r.pass_tds or 0),
+                    pass_ints=int(r.pass_ints or 0),
+                    pass_attempts=int(r.pass_attempts or 0),
+                    pass_completions=int(r.pass_completions or 0),
+                    rush_yards=int(r.rush_yards or 0),
+                    rush_tds=int(r.rush_tds or 0),
+                    rush_attempts=int(r.rush_attempts or 0),
+                    yards_after_contact=int(r.yards_after_contact or 0),
+                    broken_tackles=int(r.broken_tackles or 0),
+                    rec_yards=int(r.rec_yards or 0),
+                    rec_tds=int(r.rec_tds or 0),
+                    receptions=int(r.receptions or 0),
+                    drops=int(r.drops or 0),
+                    yards_after_catch=int(r.yards_after_catch or 0),
+                    tackles=total_tackles,
+                    tackles_solo=int(r.tackles_solo or 0),
+                    tackles_assist=int(r.tackles_assist or 0),
+                    sacks=float(r.sacks or 0.0),
+                    interceptions=int(r.interceptions or 0),
+                    pass_deflections=int(r.pass_deflections or 0),
+                    forced_fumbles=int(r.forced_fumbles or 0),
+                    tackles_for_loss=int(r.tackles_for_loss or 0),
+                    qb_pressures=int(r.qb_pressures or 0),
+                    fg_made=int(r.fg_made or 0),
+                    fg_att=int(r.fg_att or 0),
+                    punt_yards=int(r.punt_yards or 0),
+                    punt_att=int(r.punt_att or 0),
+                    pancakes=int(r.pancakes or 0),
+                    sacks_allowed=int(r.sacks_allowed or 0),
+                    pressures_allowed=int(r.pressures_allowed or 0)
+                )
+                self.db.add(pss)
+            else:
+                existing.games_played = r.games_played or 0
+                existing.pass_yards = int(r.pass_yards or 0)
+                existing.pass_tds = int(r.pass_tds or 0)
+                existing.pass_ints = int(r.pass_ints or 0)
+                existing.pass_attempts = int(r.pass_attempts or 0)
+                existing.pass_completions = int(r.pass_completions or 0)
+                existing.rush_yards = int(r.rush_yards or 0)
+                existing.rush_tds = int(r.rush_tds or 0)
+                existing.rush_attempts = int(r.rush_attempts or 0)
+                existing.rec_yards = int(r.rec_yards or 0)
+                existing.rec_tds = int(r.rec_tds or 0)
+                existing.receptions = int(r.receptions or 0)
+                existing.tackles = total_tackles
+                existing.tackles_solo = int(r.tackles_solo or 0)
+                existing.tackles_assist = int(r.tackles_assist or 0)
+                existing.sacks = float(r.sacks or 0.0)
+                existing.interceptions = int(r.interceptions or 0)
+                existing.pass_deflections = int(r.pass_deflections or 0)
+                existing.forced_fumbles = int(r.forced_fumbles or 0)
+                existing.tackles_for_loss = int(r.tackles_for_loss or 0)
+                existing.fg_made = int(r.fg_made or 0)
+                existing.fg_att = int(r.fg_att or 0)
+                existing.punt_yards = int(r.punt_yards or 0)
+                existing.pancakes = int(r.pancakes or 0)
+                existing.sacks_allowed = int(r.sacks_allowed or 0)
+            archived_count += 1
+
+        # 2. Archive TeamSeasonStats
+        try:
+            standings = self.standings_calculator.calculate_standings(season_id)
+            for s in standings:
+                team_stat = self.db.query(TeamSeasonStats).filter(
+                    TeamSeasonStats.team_id == s.team_id,
+                    TeamSeasonStats.year == season.year
+                ).first()
+                if not team_stat:
+                    team_stat = TeamSeasonStats(
+                        team_id=s.team_id,
+                        year=season.year,
+                        wins=s.wins,
+                        losses=s.losses,
+                        ties=s.ties,
+                        points_for=s.points_for,
+                        points_against=s.points_against,
+                        division_rank=s.division_rank,
+                        made_playoffs=(s.playoff_seed is not None)
+                    )
+                    self.db.add(team_stat)
+        except Exception as e:
+            print(f"Warning: could not calculate standings for team stats archive: {e}")
+
+        self.db.flush()
+        return archived_count
+
 
     def simulate_player_progression(self, season_id: int) -> List[PlayerProgressionResult]:
         """Simulate player progression and regression based on age and experience."""
@@ -173,6 +345,7 @@ class OffseasonService:
             if player.contract_years <= 0:
                 player.team_id = None # Released to Free Agency
                 player.contract_years = 0
+        invalidate_all_team_roster_caches()
 
     def generate_draft_order(self, season_id: int) -> None:
         """Generate 7 rounds of draft picks based on reverse standings."""
@@ -314,6 +487,7 @@ class OffseasonService:
         player.is_rookie = False
 
         self.db.commit()
+        invalidate_team_roster_cache(pick.team_id)
         return pick
 
     def trade_current_pick(self, season_id: int, target_team_id: int) -> DraftPick:
@@ -380,6 +554,7 @@ class OffseasonService:
         player.is_rookie = False
 
         self.db.commit()
+        invalidate_team_roster_cache(pick.team_id)
 
         return DraftPickSummary(
             round=pick.round,
@@ -399,6 +574,7 @@ class OffseasonService:
                 break
             summary.append(result)
 
+        invalidate_all_team_roster_caches()
         return summary
 
     def simulate_free_agency(self, season_id: int) -> dict:
@@ -428,6 +604,7 @@ class OffseasonService:
                     player.contract_years = 1
 
         self.db.commit()
+        invalidate_all_team_roster_caches()
         return {"message": "Free Agency simulated."}
 
     def process_retirements(self, season_id: int) -> List[str]:
@@ -470,6 +647,7 @@ class OffseasonService:
                 self._check_hall_of_fame(player, season.year)
 
         self.db.commit()
+        invalidate_all_team_roster_caches()
         return retired_names
 
     def _check_hall_of_fame(self, player: Player, year: int):
@@ -491,7 +669,7 @@ class OffseasonService:
             self.db.add(hof_entry)
 
     def _calculate_career_stats(self, player_id: int) -> dict:
-        """Aggregate career stats for a player."""
+        """Aggregate full multi-position career stats for a player."""
         stmt = select(
             func.sum(PlayerGameStats.pass_yards).label("pass_yards"),
             func.sum(PlayerGameStats.pass_tds).label("pass_tds"),
@@ -499,17 +677,45 @@ class OffseasonService:
             func.sum(PlayerGameStats.rush_tds).label("rush_tds"),
             func.sum(PlayerGameStats.rec_yards).label("rec_yards"),
             func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
+            func.sum(PlayerGameStats.tackles_solo).label("tackles_solo"),
+            func.sum(PlayerGameStats.tackles_assist).label("tackles_assist"),
+            func.sum(PlayerGameStats.sacks).label("sacks"),
+            func.sum(PlayerGameStats.interceptions).label("interceptions"),
+            func.sum(PlayerGameStats.pass_deflections).label("pass_deflections"),
+            func.sum(PlayerGameStats.forced_fumbles).label("forced_fumbles"),
+            func.sum(PlayerGameStats.tackles_for_loss).label("tackles_for_loss"),
+            func.sum(PlayerGameStats.qb_pressures).label("qb_pressures"),
+            func.sum(PlayerGameStats.fg_made).label("fg_made"),
+            func.sum(PlayerGameStats.fg_att).label("fg_att"),
+            func.sum(PlayerGameStats.punt_yards).label("punt_yards"),
+            func.sum(PlayerGameStats.pancakes).label("pancakes"),
+            func.sum(PlayerGameStats.sacks_allowed).label("sacks_allowed"),
             func.count(PlayerGameStats.id).label("games_played")
         ).where(PlayerGameStats.player_id == player_id)
 
         stats = self.db.execute(stmt).first()
+        total_tackles = int((stats.tackles_solo or 0) + (stats.tackles_assist or 0)) if stats else 0
 
         return {
-            "games_played": stats.games_played or 0,
-            "pass_yards": stats.pass_yards or 0,
-            "pass_tds": stats.pass_tds or 0,
-            "rush_yards": stats.rush_yards or 0,
-            "rush_tds": stats.rush_tds or 0,
-            "rec_yards": stats.rec_yards or 0,
-            "rec_tds": stats.rec_tds or 0
+            "games_played": stats.games_played or 0 if stats else 0,
+            "pass_yards": int(stats.pass_yards or 0) if stats else 0,
+            "pass_tds": int(stats.pass_tds or 0) if stats else 0,
+            "rush_yards": int(stats.rush_yards or 0) if stats else 0,
+            "rush_tds": int(stats.rush_tds or 0) if stats else 0,
+            "rec_yards": int(stats.rec_yards or 0) if stats else 0,
+            "rec_tds": int(stats.rec_tds or 0) if stats else 0,
+            "tackles": total_tackles,
+            "tackles_solo": int(stats.tackles_solo or 0) if stats else 0,
+            "tackles_assist": int(stats.tackles_assist or 0) if stats else 0,
+            "sacks": float(stats.sacks or 0.0) if stats else 0.0,
+            "interceptions": int(stats.interceptions or 0) if stats else 0,
+            "pass_deflections": int(stats.pass_deflections or 0) if stats else 0,
+            "forced_fumbles": int(stats.forced_fumbles or 0) if stats else 0,
+            "tackles_for_loss": int(stats.tackles_for_loss or 0) if stats else 0,
+            "qb_pressures": int(stats.qb_pressures or 0) if stats else 0,
+            "fg_made": int(stats.fg_made or 0) if stats else 0,
+            "fg_att": int(stats.fg_att or 0) if stats else 0,
+            "punt_yards": int(stats.punt_yards or 0) if stats else 0,
+            "pancakes": int(stats.pancakes or 0) if stats else 0,
+            "sacks_allowed": int(stats.sacks_allowed or 0) if stats else 0,
         }

@@ -17,6 +17,7 @@ import type { LeagueLeaders as LeagueLeadersType } from "../types/stats";
 import { ParallaxScene } from "../components/immersive/ParallaxScene";
 import { RibbonTicker } from "../components/immersive/RibbonTicker";
 import { BroadcastPanel } from "../components/immersive/BroadcastPanel";
+import { BlitzBoltIcon, LombardiTrophyIcon } from "../components/icons";
 import stylesModule from "./SeasonDashboard.module.css";
 // import "./SeasonDashboard.css"; // Disabling old CSS to prefer module
 
@@ -126,7 +127,7 @@ const SeasonDashboard: React.FC = () => {
   const handleInitializeSeason = async () => {
     try {
       setLoading(true);
-      const newSeason = await seasonApi.initSeason(new Date().getFullYear());
+      const newSeason = await seasonApi.initSeason(2026);
       setSeason(newSeason);
 
       // Refresh data
@@ -335,7 +336,7 @@ const SeasonDashboard: React.FC = () => {
     {
       id: "simulate",
       label: simulating ? "Simulating..." : "Simulate Week",
-      icon: "⚡",
+      icon: <BlitzBoltIcon size={16} className="inline-block text-amber-400" />,
       onClick: handleSimulateWeek,
       disabled: simulating || season.status === "OFF_SEASON",
       tooltip: "Simulate all games for the current week",
@@ -352,7 +353,7 @@ const SeasonDashboard: React.FC = () => {
     {
       id: "playoffs",
       label: "Bracket",
-      icon: "🏆",
+      icon: <LombardiTrophyIcon size={16} className="inline-block text-yellow-400" />,
       onClick: () => setActiveTab("playoffs"),
       disabled: season.status !== "POST_SEASON" && season.status !== "OFF_SEASON",
       tooltip: "View playoff bracket",

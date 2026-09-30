@@ -1,47 +1,37 @@
 import logging
 import time
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
 import uuid
 
 logger = logging.getLogger("api.access")
 
-class LoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+class LoggingMiddleware:
+    """Pure ASGI logging middleware providing sub-millisecond dispatch and header injection."""
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
         request_id = str(uuid.uuid4())
-        request.state.request_id = request_id
-        
+        if "state" not in scope:
+            scope["state"] = {}
+        scope["state"]["request_id"] = request_id
+
         start_time = time.time()
-        
-        # Log Request
-        logger.info(
-            f"Request started",
-            extra={
-                "request_id": request_id,
-                "method": request.method,
-                "url": str(request.url),
-                "client": request.client.host if request.client else None,
-            }
-        )
-        
+
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                headers.append((b"x-request-id", request_id.encode("latin1")))
+                process_time = (time.time() - start_time) * 1000
+                headers.append((b"x-process-time-ms", str(round(process_time, 2)).encode("latin1")))
+                message["headers"] = headers
+            await send(message)
+
         try:
-            response = await call_next(request)
-            process_time = (time.time() - start_time) * 1000
-            
-            # Log Response
-            logger.info(
-                f"Request completed",
-                extra={
-                    "request_id": request_id,
-                    "status_code": response.status_code,
-                    "process_time_ms": round(process_time, 2),
-                }
-            )
-            
-            response.headers["X-Request-ID"] = request_id
-            return response
-            
+            await self.app(scope, receive, send_wrapper)
         except Exception as e:
             process_time = (time.time() - start_time) * 1000
             logger.error(

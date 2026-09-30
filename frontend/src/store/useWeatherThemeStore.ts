@@ -125,8 +125,8 @@ interface WeatherThemeState {
 }
 
 export const useWeatherThemeStore = create<WeatherThemeState>((set, get) => ({
-  condition: "ARROWHEAD_DOWNPOUR",
-  preset: WEATHER_PRESETS.ARROWHEAD_DOWNPOUR,
+  condition: "CLEAR_NIGHT",
+  preset: WEATHER_PRESETS.CLEAR_NIGHT,
   lightningActive: false,
   lightningIntensity: 0,
   show3DBackdrop: true,

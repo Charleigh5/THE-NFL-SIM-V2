@@ -19,9 +19,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await api.get("/api/settings");
+      const localTeamIdRaw = typeof window !== "undefined" ? localStorage.getItem("selectedTeamId") : null;
+      const localTeamId = localTeamIdRaw ? Number(localTeamIdRaw) : null;
+      const effectiveTeamId = response?.data?.user_team_id || (Number.isFinite(localTeamId) && localTeamId ? localTeamId : 11);
       set({
-        userTeamId: response.data.user_team_id,
-        difficultyLevel: response.data.difficulty_level,
+        userTeamId: effectiveTeamId,
+        difficultyLevel: response.data.difficulty_level || "All-Pro",
         isLoading: false,
       });
     } catch (error) {
@@ -32,7 +35,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       const localTeamId = localTeamIdRaw ? Number(localTeamIdRaw) : null;
 
       set({
-        userTeamId: Number.isFinite(localTeamId) && localTeamId ? localTeamId : 1,
+        userTeamId: Number.isFinite(localTeamId) && localTeamId ? localTeamId : 11,
         isLoading: false,
       });
     }
