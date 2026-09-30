@@ -43,6 +43,7 @@ export interface Player {
   age: number;
   experience: number;
   team_id: number;
+  team_abbreviation?: string;
   height?: number;
   weight?: number;
   college?: string;
@@ -64,6 +65,20 @@ export interface PlayerStats {
   rushing_tds: number;
   receiving_yards: number;
   receiving_tds: number;
+  tackles?: number;
+  tackles_solo?: number;
+  tackles_assist?: number;
+  sacks?: number;
+  interceptions?: number;
+  pass_deflections?: number;
+  forced_fumbles?: number;
+  tackles_for_loss?: number;
+  qb_pressures?: number;
+  fg_made?: number;
+  fg_att?: number;
+  punt_yards?: number;
+  pancakes?: number;
+  sacks_allowed?: number;
 }
 
 export interface ChemistryMetadata {
@@ -152,6 +167,21 @@ export const api = {
     return response.data;
   },
 
+  getTrainingProfile: async (
+    playerId: number
+  ): Promise<{
+    player_id: number;
+    first_name: string;
+    last_name: string;
+    position: string;
+    overall_rating: number;
+    attributes: Record<string, number>;
+    weaknesses: string[];
+  }> => {
+    const response = await apiClient.get(`/api/players/${playerId}/training-profile`);
+    return response.data;
+  },
+
   // News Feed (Task 8.3.1)
   getLeagueNews: async (limit: number = 10, category?: string): Promise<NewsResponse> => {
     const params = new URLSearchParams({ limit: limit.toString() });
@@ -221,6 +251,7 @@ export interface EnhancedPlayerProfile {
   personality: PersonalityInfo;
   traits: TraitInfo[];
   career_stats: Record<string, number>;
+  season_history?: Array<Record<string, unknown>>;
   contract_years: number;
   contract_salary: number;
   is_rookie: boolean;

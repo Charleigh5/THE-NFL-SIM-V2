@@ -12,9 +12,9 @@ interface LeagueLeadersProps {
 }
 
 export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, teams }) => {
-  const [activeCategory, setActiveCategory] = useState<"passing" | "rushing" | "receiving">(
-    "passing"
-  );
+  const [activeCategory, setActiveCategory] = useState<
+    "passing" | "rushing" | "receiving" | "defense" | "kicking"
+  >("passing");
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
 
   if (loading) {
@@ -35,17 +35,30 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
     return team?.primary_color || "#2a2a2a";
   };
 
-  const renderLeader = (category: "passing" | "rushing" | "receiving") => {
+  const renderLeader = (
+    category: "passing" | "rushing" | "receiving" | "defense" | "kicking"
+  ) => {
     const list =
       category === "passing"
-        ? leaders.passing_yards
+        ? leaders.passing_yards || []
         : category === "rushing"
-          ? leaders.rushing_yards
-          : leaders.receiving_yards;
+          ? leaders.rushing_yards || []
+          : category === "receiving"
+            ? leaders.receiving_yards || []
+            : category === "defense"
+              ? (leaders.sacks && leaders.sacks.length > 0 ? leaders.sacks : leaders.total_tackles) || []
+              : leaders.field_goal_percentage || [];
+
+    const statLabel =
+      category === "passing" || category === "rushing" || category === "receiving"
+        ? "YDS"
+        : category === "defense"
+          ? "SCK"
+          : "FGM";
 
     const topLeader = list[0];
 
-    if (!topLeader) return <div className="no-leaders">No leaders found</div>;
+    if (!topLeader) return <div className="no-leaders text-gray-400 p-4 text-center">No leaders found for {category}</div>;
 
     const topLeaderColor = getTeamColor(topLeader.team);
     const topLeaderLogo = getTeamLogo(topLeader.team);
@@ -66,18 +79,18 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
             <div className="leader-info">
               <h4
                 onClick={() => setSelectedPlayerId(topLeader.player_id)}
-                className="cursor-pointer hover:text-cyan-400 transition-colors"
+                className="cursor-pointer hover:text-cyan-400 transition-colors font-bold"
               >
                 {topLeader.name}
               </h4>
               <p>
-                {topLeader.team} • {topLeader.position}
+                {topLeader.team} &bull; {topLeader.position}
               </p>
             </div>
           </div>
           <div className="leader-stat">
             <span className="stat-value">{topLeader.value}</span>
-            <span className="stat-label">YDS</span>
+            <span className="stat-label">{statLabel}</span>
           </div>
         </div>
         <div className="leader-list" data-testid="leader-list">
@@ -103,7 +116,7 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
     <div className="league-leaders-container" data-testid="league-leaders-container">
       <div className="leaders-header">
         <h3>League Leaders</h3>
-        <div className="leaders-tabs" data-testid="leaders-tabs">
+        <div className="leaders-tabs flex flex-wrap gap-1" data-testid="leaders-tabs">
           <button
             className={`tab-btn ${activeCategory === "passing" ? "active" : ""}`}
             onClick={() => setActiveCategory("passing")}
@@ -125,6 +138,20 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
           >
             Rec
           </button>
+          <button
+            className={`tab-btn ${activeCategory === "defense" ? "active" : ""}`}
+            onClick={() => setActiveCategory("defense")}
+            data-testid="tab-defense"
+          >
+            Def
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "kicking" ? "active" : ""}`}
+            onClick={() => setActiveCategory("kicking")}
+            data-testid="tab-kicking"
+          >
+            Kick
+          </button>
         </div>
       </div>
       <div className="leaders-content">{renderLeader(activeCategory)}</div>
@@ -134,3 +161,5 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
     </div>
   );
 };
+
+export default LeagueLeaders;

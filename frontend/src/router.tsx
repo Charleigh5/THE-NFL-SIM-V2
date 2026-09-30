@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
+import { useState, useEffect, Suspense, lazy } from "react";
+import type { ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import { api } from "./services/api";
@@ -6,29 +9,57 @@ import { seasonApi } from "./services/season";
 import type { PlayoffMatchup } from "./types/playoff";
 import type { Season } from "./types/season";
 import type { DraftPickDetail } from "./types/offseason";
+import { LoadingSpinner } from "./components/ui/LoadingSpinner";
 
-// Import pages
+// Eager Core Pages
 import Dashboard from "./pages/Dashboard";
-import SeasonDashboard from "./pages/SeasonDashboard";
-import OffseasonDashboard from "./pages/OffseasonDashboard";
-import { FrontOffice } from "./pages/FrontOffice";
-import { DepthChart } from "./pages/DepthChart";
-import { DraftRoom } from "./pages/DraftRoom";
-import { TrainingCenter } from "./pages/TrainingCenter";
-import TradeCenterPage from "./pages/TradeCenterPage";
-import TrophyRoom from "./pages/TrophyRoom";
-import { LiveSim } from "./pages/LiveSim";
-import { MedicalCenter } from "./pages/MedicalCenter";
-import { Playbook } from "./pages/Playbook";
 import TeamSelection from "./pages/TeamSelection";
-import Settings from "./pages/Settings";
-import { SkillsPage } from "./pages/SkillsPage";
-import FreeAgency from "./pages/FreeAgency";
-import LockerRoom from "./pages/LockerRoom";
-import { EnvironmentalWeatherLab } from "./pages/EnvironmentalWeatherLab";
 import NotFound from "./components/NotFound.tsx";
 import RootErrorBoundary from "./components/RootErrorBoundary.tsx";
 import RouteErrorBoundary from "./components/RouteErrorBoundary.tsx";
+
+// Code-split Secondary & Heavy Pages
+const SeasonDashboard = lazy(() => import("./pages/SeasonDashboard"));
+const OffseasonDashboard = lazy(() => import("./pages/OffseasonDashboard"));
+const FrontOffice = lazy(() =>
+  import("./pages/FrontOffice").then((m) => ({ default: m.FrontOffice }))
+);
+const DepthChart = lazy(() =>
+  import("./pages/DepthChart").then((m) => ({ default: m.DepthChart }))
+);
+const DraftRoom = lazy(() => import("./pages/DraftRoom").then((m) => ({ default: m.DraftRoom })));
+const TrainingCenter = lazy(() =>
+  import("./pages/TrainingCenter").then((m) => ({ default: m.TrainingCenter }))
+);
+const TradeCenterPage = lazy(() => import("./pages/TradeCenterPage"));
+const TrophyRoom = lazy(() => import("./pages/TrophyRoom"));
+const LiveSim = lazy(() => import("./pages/LiveSim").then((m) => ({ default: m.LiveSim })));
+const MedicalCenter = lazy(() =>
+  import("./pages/MedicalCenter").then((m) => ({ default: m.MedicalCenter }))
+);
+const Playbook = lazy(() => import("./pages/Playbook"));
+const Settings = lazy(() => import("./pages/Settings"));
+const SkillsPage = lazy(() =>
+  import("./pages/SkillsPage").then((m) => ({ default: m.SkillsPage }))
+);
+const FreeAgency = lazy(() => import("./pages/FreeAgency"));
+const LockerRoom = lazy(() => import("./pages/LockerRoom"));
+const EnvironmentalWeatherLab = lazy(() =>
+  import("./pages/EnvironmentalWeatherLab").then((m) => ({ default: m.EnvironmentalWeatherLab }))
+);
+
+/**
+ * Route Loading Fallback & Suspense Wrapper
+ */
+const RouteLoadingFallback = () => (
+  <div className="flex flex-col items-center justify-center min-h-[60vh] w-full py-16">
+    <LoadingSpinner size="large" color="#3b82f6" text="Loading Digital Gridiron..." />
+  </div>
+);
+
+const SuspendedRoute = ({ children }: { children: ReactNode }) => (
+  <Suspense fallback={<RouteLoadingFallback />}>{children}</Suspense>
+);
 
 /**
  * Route Loaders - Fetch data before rendering route components
@@ -180,7 +211,7 @@ export async function draftRoomLoader() {
       teams,
       season: season || {
         id: 1,
-        year: 2024,
+        year: 2026,
         current_week: 1,
         status: "OFF_SEASON",
         total_weeks: 18,
@@ -306,6 +337,44 @@ export async function skillsLoader({ params }: { params: { playerId?: string } }
 }
 
 /**
+ * Launch Gateway Component
+ * Dynamically directs to TeamSelection if no franchise has been chosen yet,
+ * or directly to the Dashboard once a franchise is selected.
+ */
+function LaunchGateway() {
+  const [hasSelected, setHasSelected] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return (
+      localStorage.getItem("hasSelectedFranchise") === "true" ||
+      !!localStorage.getItem("selectedTeamId")
+    );
+  });
+
+  useEffect(() => {
+    const handleCheck = () => {
+      const selected =
+        typeof window !== "undefined" &&
+        (localStorage.getItem("hasSelectedFranchise") === "true" ||
+          !!localStorage.getItem("selectedTeamId"));
+      setHasSelected(selected);
+    };
+
+    window.addEventListener("storage", handleCheck);
+    window.addEventListener("franchise-selected", handleCheck);
+    return () => {
+      window.removeEventListener("storage", handleCheck);
+      window.removeEventListener("franchise-selected", handleCheck);
+    };
+  }, []);
+
+  if (!hasSelected) {
+    return <TeamSelection />;
+  }
+
+  return <Dashboard />;
+}
+
+/**
  * Router Configuration
  * Using React Router v7's createBrowserRouter for data-driven routing
  */
@@ -317,7 +386,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: <LaunchGateway />,
       },
       {
         // Back-compat alias (Playwright + older deep links)
@@ -326,175 +395,295 @@ export const router = createBrowserRouter([
       },
       {
         path: "season",
-        element: <SeasonDashboard />,
+        element: (
+          <SuspendedRoute>
+            <SeasonDashboard />
+          </SuspendedRoute>
+        ),
         loader: seasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias (season-dashboard-flow E2E tests)
         path: "season-dashboard",
-        element: <SeasonDashboard />,
+        element: (
+          <SuspendedRoute>
+            <SeasonDashboard />
+          </SuspendedRoute>
+        ),
         loader: seasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
 
       {
         path: "offseason",
-        element: <OffseasonDashboard />,
+        element: (
+          <SuspendedRoute>
+            <OffseasonDashboard />
+          </SuspendedRoute>
+        ),
         loader: offseasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias (older E2E + deep links)
         path: "offseason-dashboard",
-        element: <OffseasonDashboard />,
+        element: (
+          <SuspendedRoute>
+            <OffseasonDashboard />
+          </SuspendedRoute>
+        ),
         loader: offseasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias (offseason-flow E2E: "navigate to free agency")
         path: "offseason/free-agency",
-        element: <OffseasonDashboard />,
+        element: (
+          <SuspendedRoute>
+            <OffseasonDashboard />
+          </SuspendedRoute>
+        ),
         loader: offseasonDashboardLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "free-agency",
-        element: <FreeAgency />,
+        element: (
+          <SuspendedRoute>
+            <FreeAgency />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "empire/free-agency",
-        element: <FreeAgency />,
+        element: (
+          <SuspendedRoute>
+            <FreeAgency />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "offseason/draft",
-        element: <DraftRoom />,
+        element: (
+          <SuspendedRoute>
+            <DraftRoom />
+          </SuspendedRoute>
+        ),
         loader: draftRoomLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias (scouting-flow, draft-room, offseason-flow E2E tests)
         path: "draft",
-        element: <DraftRoom />,
+        element: (
+          <SuspendedRoute>
+            <DraftRoom />
+          </SuspendedRoute>
+        ),
         loader: draftRoomLoader,
         errorElement: <RouteErrorBoundary />,
       },
 
       {
         path: "empire/front-office",
-        element: <FrontOffice />,
+        element: (
+          <SuspendedRoute>
+            <FrontOffice />
+          </SuspendedRoute>
+        ),
         loader: frontOfficeLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Route alias
         path: "roster",
-        element: <FrontOffice />,
+        element: (
+          <SuspendedRoute>
+            <FrontOffice />
+          </SuspendedRoute>
+        ),
         loader: frontOfficeLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "empire/depth-chart",
-        element: <DepthChart />,
+        element: (
+          <SuspendedRoute>
+            <DepthChart />
+          </SuspendedRoute>
+        ),
         loader: depthChartLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias
         path: "depth-chart",
-        element: <DepthChart />,
+        element: (
+          <SuspendedRoute>
+            <DepthChart />
+          </SuspendedRoute>
+        ),
         loader: depthChartLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "empire/trade-center",
-        element: <TradeCenterPage />,
+        element: (
+          <SuspendedRoute>
+            <TradeCenterPage />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Route alias
         path: "trades",
-        element: <TradeCenterPage />,
+        element: (
+          <SuspendedRoute>
+            <TradeCenterPage />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Route alias
         path: "trade-center",
-        element: <TradeCenterPage />,
+        element: (
+          <SuspendedRoute>
+            <TradeCenterPage />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "empire/trophy-room",
-        element: <TrophyRoom />,
+        element: (
+          <SuspendedRoute>
+            <TrophyRoom />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Back-compat alias
         path: "trophy-room",
-        element: <TrophyRoom />,
+        element: (
+          <SuspendedRoute>
+            <TrophyRoom />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "live-sim",
-        element: <LiveSim />,
+        element: (
+          <SuspendedRoute>
+            <LiveSim />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "medical-center",
-        element: <MedicalCenter />,
+        element: (
+          <SuspendedRoute>
+            <MedicalCenter />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         // Route alias
         path: "medical",
-        element: <MedicalCenter />,
+        element: (
+          <SuspendedRoute>
+            <MedicalCenter />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "locker-room",
-        element: <LockerRoom />,
+        element: (
+          <SuspendedRoute>
+            <LockerRoom />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "society/locker-room",
-        element: <LockerRoom />,
+        element: (
+          <SuspendedRoute>
+            <LockerRoom />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "playbook",
-        element: <Playbook />,
+        element: (
+          <SuspendedRoute>
+            <Playbook />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "training",
-        element: <TrainingCenter />,
+        element: (
+          <SuspendedRoute>
+            <TrainingCenter />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "training/:playerId",
-        element: <TrainingCenter />,
+        element: (
+          <SuspendedRoute>
+            <TrainingCenter />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "players/:playerId/skills",
-        element: <SkillsPage />,
+        element: (
+          <SuspendedRoute>
+            <SkillsPage />
+          </SuspendedRoute>
+        ),
         loader: skillsLoader,
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "skills",
-        element: <SkillsPage />,
+        element: (
+          <SuspendedRoute>
+            <SkillsPage />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {
         path: "settings",
-        element: <Settings />,
+        element: (
+          <SuspendedRoute>
+            <Settings />
+          </SuspendedRoute>
+        ),
       },
       {
         path: "weather-lab",
-        element: <EnvironmentalWeatherLab />,
+        element: (
+          <SuspendedRoute>
+            <EnvironmentalWeatherLab />
+          </SuspendedRoute>
+        ),
         errorElement: <RouteErrorBoundary />,
       },
       {

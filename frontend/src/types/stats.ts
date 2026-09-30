@@ -14,4 +14,9 @@ export interface LeagueLeaders {
   rushing_tds: PlayerLeader[];
   receiving_yards: PlayerLeader[];
   receiving_tds: PlayerLeader[];
+  sacks?: PlayerLeader[];
+  interceptions?: PlayerLeader[];
+  total_tackles?: PlayerLeader[];
+  passes_defensed?: PlayerLeader[];
+  field_goal_percentage?: PlayerLeader[];
 }

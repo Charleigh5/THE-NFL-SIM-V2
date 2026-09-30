@@ -1,11 +1,20 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
+import logging
 from app.models.team import Team
 from app.models.game import Game, GameType
 from app.models.season import Season
 from sqlalchemy.orm import Session
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.core.random_utils import DeterministicRNG
+
+try:
+    import nflreadpy as nfl
+    HAS_NFLREADPY = True
+except ImportError:
+    HAS_NFLREADPY = False
+
+logger = logging.getLogger(__name__)
 
 # Thanksgiving Day game constants
 THANKSGIVING_HOSTS = ["DET", "DAL"]  # Traditional hosts (Lions early, Cowboys late)
@@ -27,25 +36,154 @@ class ScheduleGenerator:
         self.db = db
         self.rng = DeterministicRNG(seed if seed is not None else random.randint(0, 1000000))
 
+    def load_real_schedule(
+        self,
+        season_id: int,
+        year: int = 2026,
+        teams: Optional[List[Team]] = None,
+    ) -> List[Game]:
+        """
+        Load authentic NFL schedule from nflverse / nflreadpy.
+
+        Args:
+            season_id: ID of the season in the database.
+            year: NFL season year (e.g. 2026).
+            teams: Optional list of teams. If not provided or empty, queried from self.db.
+
+        Returns:
+            List of Game objects for the full season.
+        """
+        if not HAS_NFLREADPY:
+            logger.warning("nflreadpy not installed. Cannot load real schedule.")
+            return []
+
+        all_teams = teams if teams and len(teams) > 0 else self.db.query(Team).all()
+        if not all_teams:
+            try:
+                from app.core.seed import seed_teams
+                seed_teams(self.db)
+                all_teams = self.db.query(Team).all()
+            except Exception as e:
+                logger.warning(f"Could not auto-seed teams: {e}")
+
+        team_map = {t.abbreviation: t.id for t in all_teams}
+        # Account for nflverse team variations
+        team_map["LA"] = team_map.get("LAR")
+        team_map["WSH"] = team_map.get("WAS")
+
+        try:
+            df = nfl.load_schedules([year])
+            if df.is_empty():
+                logger.warning(f"No schedule returned from nflreadpy for year {year}")
+                return []
+        except Exception as e:
+            logger.error(f"Error loading schedule for {year}: {e}")
+            return []
+
+        games: List[Game] = []
+        for row in df.iter_rows(named=True):
+            if row.get("game_type") not in ("REG", "REGULAR"):
+                continue
+
+            away_abbr = row.get("away_team")
+            home_abbr = row.get("home_team")
+            away_id = team_map.get(away_abbr)
+            home_id = team_map.get(home_abbr)
+
+            if not away_id or not home_id:
+                logger.warning(f"Could not map teams for game: {away_abbr} @ {home_abbr}")
+                continue
+
+            gameday = row.get("gameday")
+            gametime = row.get("gametime")
+            game_date = datetime.now(timezone.utc)
+            if gameday:
+                try:
+                    time_part = gametime if gametime else "13:00"
+                    game_date = datetime.fromisoformat(f"{gameday}T{time_part}:00")
+                except Exception:
+                    pass
+
+            week = int(row.get("week", 1))
+            weekday = str(row.get("weekday", "")).lower()
+
+            game_type = GameType.REGULAR
+            if week == THANKSGIVING_WEEK and weekday == "thursday":
+                game_type = GameType.THANKSGIVING
+            elif gametime and any(p in str(gametime) for p in ("19:", "20:")):
+                game_type = GameType.PRIMETIME
+
+            roof = str(row.get("roof", "")).lower()
+            temp = row.get("temp")
+            wind = row.get("wind")
+            weather_condition = "Dome" if ("dome" in roof or "closed" in roof) else ("Clear" if temp is not None else "Fair")
+
+            game = Game(
+                season_id=season_id,
+                season=year,
+                week=week,
+                date=game_date,
+                away_team_id=away_id,
+                home_team_id=home_id,
+                is_playoff=False,
+                is_preseason=False,
+                game_type=game_type,
+                home_score=0,
+                away_score=0,
+                is_played=False,
+                weather_temperature=int(temp) if temp is not None else 70,
+                wind_speed=int(wind) if wind is not None else 5,
+                weather_condition=weather_condition,
+            )
+            games.append(game)
+
+        logger.info(f"Loaded {len(games)} authentic NFL games for season {year}")
+        return games
+
     def generate_schedule(
         self,
         season_id: int,
         teams: List[Team],
         start_date: datetime = None,
-        games_per_week: int = 16
+        games_per_week: int = 16,
+        year: Optional[int] = None,
+        prefer_real: bool = True,
     ) -> List[Game]:
         """
         Generate a full season schedule.
+
+        Prioritizes loading authentic NFL schedules when available (e.g. 2026),
+        falling back to procedural generation for custom or future seasons.
 
         Args:
             season_id: ID of the season
             teams: List of all teams
             start_date: When the season starts (defaults to next Sunday)
             games_per_week: Number of games per week (default 16, leaving room for byes)
+            year: Season year (e.g. 2026). If None, inferred from DB or defaults to 2026.
+            prefer_real: Whether to prefer loading real NFL schedule data when available.
 
         Returns:
             List of Game objects
         """
+        # Determine season year
+        target_year = year
+        if target_year is None:
+            try:
+                season_record = self.db.query(Season).filter(Season.id == season_id).first()
+                if season_record and season_record.year:
+                    target_year = season_record.year
+                else:
+                    target_year = 2026
+            except Exception:
+                target_year = 2026
+
+        if prefer_real:
+            real_games = self.load_real_schedule(season_id, year=target_year, teams=teams)
+            if len(real_games) >= 200:
+                logger.info(f"Using authentic NFL schedule for season {target_year} ({len(real_games)} games)")
+                return real_games
+
         if start_date is None:
             start_date = self._get_next_sunday()
 

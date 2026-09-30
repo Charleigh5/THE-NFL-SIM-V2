@@ -30,13 +30,14 @@ class PlayerDetailSchema(BaseModel):
     height: int | None = None
     weight: int | None = None
     team_id: int | None = None
+    team_abbreviation: str | None = None
 
     # Attributes
-    speed: int
-    acceleration: int
-    strength: int
-    agility: int
-    awareness: int
+    speed: int = 50
+    acceleration: int = 50
+    strength: int = 50
+    agility: int = 50
+    awareness: int = 50
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -47,22 +48,89 @@ async def read_player(player_id: int, db: AsyncSession = Depends(get_async_db)):
     Retrieve a specific player by ID.
     """
     logger.info(f"Fetching player {player_id}")
-    return await get_object_or_404_async(db, Player, player_id)
+    stmt = (
+        select(Player)
+        .options(selectinload(Player.attributes), joinedload(Player.team))
+        .where(Player.id == player_id)
+    )
+    result = await db.execute(stmt)
+    player = result.scalar_one_or_none()
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return player
+
+
+class PlayerTrainingProfileSchema(BaseModel):
+    player_id: int
+    first_name: str
+    last_name: str
+    position: str
+    overall_rating: int
+    attributes: Dict[str, int]
+    weaknesses: List[str]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+@router.get("/{player_id}/training-profile", response_model=PlayerTrainingProfileSchema)
+def get_player_training_profile(player_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieve training profile and calculated weaknesses for a player.
+    """
+    player = db.query(Player).filter(Player.id == player_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
+
+    attrs = {
+        "speed": int(player.speed or 50),
+        "acceleration": int(player.acceleration or 50),
+        "strength": int(player.strength or 50),
+        "agility": int(player.agility or 50),
+        "awareness": int(player.awareness or 50),
+    }
+    sorted_attrs = sorted(attrs.items(), key=lambda x: x[1])
+    weaknesses = [k for k, _ in sorted_attrs[:2]]
+
+    return PlayerTrainingProfileSchema(
+        player_id=player.id,
+        first_name=player.first_name,
+        last_name=player.last_name,
+        position=player.position.value if hasattr(player.position, "value") else str(player.position),
+        overall_rating=player.overall_rating,
+        attributes=attrs,
+        weaknesses=weaknesses,
+    )
+
+
 
 class PlayerStatsSchema(BaseModel):
-    games_played: int
-    passing_yards: int
-    passing_tds: int
-    rushing_yards: int
-    rushing_tds: int
-    receiving_yards: int
-    receiving_tds: int
+    games_played: int = 0
+    passing_yards: int = 0
+    passing_tds: int = 0
+    rushing_yards: int = 0
+    rushing_tds: int = 0
+    receiving_yards: int = 0
+    receiving_tds: int = 0
+    tackles: int = 0
+    tackles_solo: int = 0
+    tackles_assist: int = 0
+    sacks: float = 0.0
+    interceptions: int = 0
+    pass_deflections: int = 0
+    forced_fumbles: int = 0
+    tackles_for_loss: int = 0
+    qb_pressures: int = 0
+    fg_made: int = 0
+    fg_att: int = 0
+    punt_yards: int = 0
+    pancakes: int = 0
+    sacks_allowed: int = 0
 
 @router.get("/{player_id}/stats", response_model=PlayerStatsSchema)
 @handle_errors
 async def read_player_stats(player_id: int, db: AsyncSession = Depends(get_async_db)):
     """
-    Retrieve career stats for a player.
+    Retrieve career stats for a player across all recorded games.
     """
     stmt = select(
         func.count(PlayerGameStats.id).label("games_played"),
@@ -71,21 +139,51 @@ async def read_player_stats(player_id: int, db: AsyncSession = Depends(get_async
         func.sum(PlayerGameStats.rush_yards).label("rushing_yards"),
         func.sum(PlayerGameStats.rush_tds).label("rushing_tds"),
         func.sum(PlayerGameStats.rec_yards).label("receiving_yards"),
-        func.sum(PlayerGameStats.rec_tds).label("receiving_tds")
+        func.sum(PlayerGameStats.rec_tds).label("receiving_tds"),
+        func.sum(PlayerGameStats.tackles_solo).label("tackles_solo"),
+        func.sum(PlayerGameStats.tackles_assist).label("tackles_assist"),
+        func.sum(PlayerGameStats.sacks).label("sacks"),
+        func.sum(PlayerGameStats.interceptions).label("interceptions"),
+        func.sum(PlayerGameStats.pass_deflections).label("pass_deflections"),
+        func.sum(PlayerGameStats.forced_fumbles).label("forced_fumbles"),
+        func.sum(PlayerGameStats.tackles_for_loss).label("tackles_for_loss"),
+        func.sum(PlayerGameStats.qb_pressures).label("qb_pressures"),
+        func.sum(PlayerGameStats.fg_made).label("fg_made"),
+        func.sum(PlayerGameStats.fg_att).label("fg_att"),
+        func.sum(PlayerGameStats.punt_yards).label("punt_yards"),
+        func.sum(PlayerGameStats.pancakes).label("pancakes"),
+        func.sum(PlayerGameStats.sacks_allowed).label("sacks_allowed"),
     ).where(PlayerGameStats.player_id == player_id)
 
     result = await db.execute(stmt)
     stats = result.first()
 
+    total_tackles = int((stats.tackles_solo or 0) + (stats.tackles_assist or 0)) if stats else 0
+
     return {
-        "games_played": stats.games_played or 0,
-        "passing_yards": stats.passing_yards or 0,
-        "passing_tds": stats.passing_tds or 0,
-        "rushing_yards": stats.rushing_yards or 0,
-        "rushing_tds": stats.rushing_tds or 0,
-        "receiving_yards": stats.receiving_yards or 0,
-        "receiving_tds": stats.receiving_tds or 0,
+        "games_played": stats.games_played or 0 if stats else 0,
+        "passing_yards": int(stats.passing_yards or 0) if stats else 0,
+        "passing_tds": int(stats.passing_tds or 0) if stats else 0,
+        "rushing_yards": int(stats.rushing_yards or 0) if stats else 0,
+        "rushing_tds": int(stats.rushing_tds or 0) if stats else 0,
+        "receiving_yards": int(stats.receiving_yards or 0) if stats else 0,
+        "receiving_tds": int(stats.receiving_tds or 0) if stats else 0,
+        "tackles": total_tackles,
+        "tackles_solo": int(stats.tackles_solo or 0) if stats else 0,
+        "tackles_assist": int(stats.tackles_assist or 0) if stats else 0,
+        "sacks": float(stats.sacks or 0.0) if stats else 0.0,
+        "interceptions": int(stats.interceptions or 0) if stats else 0,
+        "pass_deflections": int(stats.pass_deflections or 0) if stats else 0,
+        "forced_fumbles": int(stats.forced_fumbles or 0) if stats else 0,
+        "tackles_for_loss": int(stats.tackles_for_loss or 0) if stats else 0,
+        "qb_pressures": int(stats.qb_pressures or 0) if stats else 0,
+        "fg_made": int(stats.fg_made or 0) if stats else 0,
+        "fg_att": int(stats.fg_att or 0) if stats else 0,
+        "punt_yards": int(stats.punt_yards or 0) if stats else 0,
+        "pancakes": int(stats.pancakes or 0) if stats else 0,
+        "sacks_allowed": int(stats.sacks_allowed or 0) if stats else 0,
     }
+
 
 
 # ============================================================================
@@ -124,6 +222,7 @@ class EnhancedPlayerProfile(BaseModel):
     height: Optional[int] = None
     weight: Optional[int] = None
     team_id: Optional[int] = None
+    team_abbreviation: Optional[str] = None
 
     # Core Attributes
     speed: int
@@ -144,7 +243,10 @@ class EnhancedPlayerProfile(BaseModel):
     traits: List[TraitInfoBrief]
 
     # Career Stats (aggregated)
-    career_stats: Dict[str, int]
+    career_stats: Dict[str, Any]
+
+    # Historical Season-by-Season Stats
+    season_history: List[Dict[str, Any]] = []
 
     # Contract Info
     contract_years: int
@@ -269,27 +371,47 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
     """
     logger.info(f"Fetching enhanced profile for player {player_id}")
 
-    # Get player with traits
-    stmt = select(Player).options(selectinload(Player.player_traits).joinedload(PlayerTrait.trait)).where(Player.id == player_id)
+    # Get player with traits, attributes, and team
+    stmt = (
+        select(Player)
+        .options(
+            selectinload(Player.attributes),
+            joinedload(Player.team),
+            selectinload(Player.player_traits).joinedload(PlayerTrait.trait),
+        )
+        .where(Player.id == player_id)
+    )
     result = await db.execute(stmt)
     player = result.scalar_one_or_none()
 
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    # Get trait definitions
-    trait_service = TraitService(db)
-    traits_data = await trait_service.get_player_traits(player_id)
-    traits_brief = [
-        TraitInfoBrief(
-            name=t.name,
-            description=t.description,
-            tier=t.tier
-        )
-        for t in traits_data
-    ]
+    # Read trait definitions directly from eagerly loaded relationships (zero duplicate queries)
+    traits_brief: List[TraitInfoBrief] = []
+    if player.player_traits:
+        for pt in player.player_traits:
+            if pt.trait:
+                catalog_def = TraitService.get_trait_by_name(pt.trait.name)
+                tier_str = (
+                    catalog_def.tier
+                    if catalog_def
+                    else (pt.trait.tier.value if hasattr(pt.trait.tier, "value") else str(pt.trait.tier or "COMMON"))
+                )
+                desc_str = (
+                    catalog_def.description
+                    if catalog_def
+                    else (pt.trait.description or "")
+                )
+                traits_brief.append(
+                    TraitInfoBrief(
+                        name=pt.trait.name,
+                        description=desc_str,
+                        tier=tier_str,
+                    )
+                )
 
-    # Get career stats
+    # Get career stats across all games
     stats_stmt = select(
         func.count(PlayerGameStats.id).label("games_played"),
         func.sum(PlayerGameStats.pass_yards).label("passing_yards"),
@@ -297,21 +419,76 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         func.sum(PlayerGameStats.rush_yards).label("rushing_yards"),
         func.sum(PlayerGameStats.rush_tds).label("rushing_tds"),
         func.sum(PlayerGameStats.rec_yards).label("receiving_yards"),
-        func.sum(PlayerGameStats.rec_tds).label("receiving_tds")
+        func.sum(PlayerGameStats.rec_tds).label("receiving_tds"),
+        func.sum(PlayerGameStats.tackles_solo).label("tackles_solo"),
+        func.sum(PlayerGameStats.tackles_assist).label("tackles_assist"),
+        func.sum(PlayerGameStats.sacks).label("sacks"),
+        func.sum(PlayerGameStats.interceptions).label("interceptions"),
+        func.sum(PlayerGameStats.pass_deflections).label("pass_deflections"),
+        func.sum(PlayerGameStats.forced_fumbles).label("forced_fumbles"),
+        func.sum(PlayerGameStats.tackles_for_loss).label("tackles_for_loss"),
+        func.sum(PlayerGameStats.qb_pressures).label("qb_pressures"),
+        func.sum(PlayerGameStats.fg_made).label("fg_made"),
+        func.sum(PlayerGameStats.fg_att).label("fg_att"),
+        func.sum(PlayerGameStats.punt_yards).label("punt_yards"),
+        func.sum(PlayerGameStats.pancakes).label("pancakes"),
+        func.sum(PlayerGameStats.sacks_allowed).label("sacks_allowed"),
     ).where(PlayerGameStats.player_id == player_id)
 
     stats_result = await db.execute(stats_stmt)
     stats = stats_result.first()
 
+    total_tackles = int((stats.tackles_solo or 0) + (stats.tackles_assist or 0)) if stats else 0
+
     career_stats = {
         "games_played": stats.games_played or 0 if stats else 0,
-        "passing_yards": stats.passing_yards or 0 if stats else 0,
-        "passing_tds": stats.passing_tds or 0 if stats else 0,
-        "rushing_yards": stats.rushing_yards or 0 if stats else 0,
-        "rushing_tds": stats.rushing_tds or 0 if stats else 0,
-        "receiving_yards": stats.receiving_yards or 0 if stats else 0,
-        "receiving_tds": stats.receiving_tds or 0 if stats else 0,
+        "passing_yards": int(stats.passing_yards or 0) if stats else 0,
+        "passing_tds": int(stats.passing_tds or 0) if stats else 0,
+        "rushing_yards": int(stats.rushing_yards or 0) if stats else 0,
+        "rushing_tds": int(stats.rush_tds or 0) if stats else 0,
+        "receiving_yards": int(stats.receiving_yards or 0) if stats else 0,
+        "receiving_tds": int(stats.receiving_tds or 0) if stats else 0,
+        "tackles": total_tackles,
+        "tackles_solo": int(stats.tackles_solo or 0) if stats else 0,
+        "tackles_assist": int(stats.tackles_assist or 0) if stats else 0,
+        "sacks": float(stats.sacks or 0.0) if stats else 0.0,
+        "interceptions": int(stats.interceptions or 0) if stats else 0,
+        "pass_deflections": int(stats.pass_deflections or 0) if stats else 0,
+        "forced_fumbles": int(stats.forced_fumbles or 0) if stats else 0,
+        "tackles_for_loss": int(stats.tackles_for_loss or 0) if stats else 0,
+        "qb_pressures": int(stats.qb_pressures or 0) if stats else 0,
+        "fg_made": int(stats.fg_made or 0) if stats else 0,
+        "fg_att": int(stats.fg_att or 0) if stats else 0,
+        "punt_yards": int(stats.punt_yards or 0) if stats else 0,
+        "pancakes": int(stats.pancakes or 0) if stats else 0,
+        "sacks_allowed": int(stats.sacks_allowed or 0) if stats else 0,
     }
+
+    # Query historical season-by-season log from PlayerSeasonStats
+    from app.models.history import PlayerSeasonStats
+    pss_stmt = select(PlayerSeasonStats).where(PlayerSeasonStats.player_id == player_id).order_by(PlayerSeasonStats.year.desc())
+    pss_result = await db.execute(pss_stmt)
+    pss_rows = pss_result.scalars().all()
+    season_history = [
+        {
+            "year": row.year,
+            "team_id": row.team_id,
+            "games_played": row.games_played,
+            "pass_yards": row.pass_yards,
+            "pass_tds": row.pass_tds,
+            "rush_yards": row.rush_yards,
+            "rush_tds": row.rush_tds,
+            "rec_yards": row.rec_yards,
+            "rec_tds": row.rec_tds,
+            "tackles": row.tackles,
+            "sacks": row.sacks,
+            "interceptions": row.interceptions,
+            "pass_deflections": getattr(row, "pass_deflections", 0),
+            "fg_made": getattr(row, "fg_made", 0),
+            "pancakes": getattr(row, "pancakes", 0)
+        }
+        for row in pss_rows
+    ]
 
     return EnhancedPlayerProfile(
         id=player.id,
@@ -326,6 +503,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         height=player.height,
         weight=player.weight,
         team_id=player.team_id,
+        team_abbreviation=player.team.abbreviation if player.team else None,
         speed=player.speed,
         acceleration=player.acceleration,
         strength=player.strength,
@@ -341,6 +519,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         ),
         traits=traits_brief,
         career_stats=career_stats,
+        season_history=season_history,
         contract_years=player.contract_years,
         contract_salary=player.contract_salary,
         is_rookie=player.is_rookie,

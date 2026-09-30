@@ -80,10 +80,15 @@ class Player(Base):
     trust_in_coach: Mapped[int] = mapped_column(Integer, default=80)
     trust_in_qb: Mapped[int] = mapped_column(Integer, default=80)
 
+    @property
+    def team_abbreviation(self) -> Optional[str]:
+        return self.team.abbreviation if self.team else None
+
     # --- RPG Attributes (Proxied to PlayerAttributes) ---
     @hybrid_property
     def speed(self) -> int:
-        return self.attributes.speed if self.attributes else 50
+        val = self.attributes.speed if self.attributes else None
+        return val if val is not None else 50
     @speed.setter
     def speed(self, value):
         if self.attributes: self.attributes.speed = value
@@ -94,7 +99,8 @@ class Player(Base):
 
     @hybrid_property
     def acceleration(self) -> int:
-        return self.attributes.acceleration if self.attributes else 50
+        val = self.attributes.acceleration if self.attributes else None
+        return val if val is not None else 50
     @acceleration.setter
     def acceleration(self, value):
         if self.attributes: self.attributes.acceleration = value
@@ -105,7 +111,8 @@ class Player(Base):
 
     @hybrid_property
     def strength(self) -> int:
-        return self.attributes.strength if self.attributes else 50
+        val = self.attributes.strength if self.attributes else None
+        return val if val is not None else 50
     @strength.setter
     def strength(self, value):
         if self.attributes: self.attributes.strength = value
@@ -116,7 +123,8 @@ class Player(Base):
 
     @hybrid_property
     def agility(self) -> int:
-        return self.attributes.agility if self.attributes else 50
+        val = self.attributes.agility if self.attributes else None
+        return val if val is not None else 50
     @agility.setter
     def agility(self, value):
         if self.attributes: self.attributes.agility = value
@@ -127,7 +135,8 @@ class Player(Base):
 
     @hybrid_property
     def awareness(self) -> int:
-        return self.attributes.awareness if self.attributes else 50
+        val = self.attributes.awareness if self.attributes else None
+        return val if val is not None else 50
     @awareness.setter
     def awareness(self, value):
         if self.attributes: self.attributes.awareness = value
@@ -138,7 +147,8 @@ class Player(Base):
 
     @hybrid_property
     def stamina(self) -> int:
-        return self.attributes.stamina if self.attributes else 80
+        val = self.attributes.stamina if self.attributes else None
+        return val if val is not None else 80
     @stamina.setter
     def stamina(self, value):
         if self.attributes: self.attributes.stamina = value

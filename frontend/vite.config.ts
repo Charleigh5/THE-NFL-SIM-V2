@@ -17,4 +17,44 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const normalizedId = id.replace(/\\/g, "/");
+
+          if (
+            normalizedId.includes("node_modules/three") ||
+            normalizedId.includes("@react-three")
+          ) {
+            return "vendor-three";
+          }
+          if (normalizedId.includes("node_modules/pixi.js") || normalizedId.includes("@pixi")) {
+            return "vendor-pixi";
+          }
+          if (normalizedId.includes("@dnd-kit")) {
+            return "vendor-dnd";
+          }
+          if (normalizedId.includes("framer-motion")) {
+            return "vendor-motion";
+          }
+          if (normalizedId.includes("lucide-react")) {
+            return "vendor-icons";
+          }
+          if (normalizedId.includes("html2canvas")) {
+            return "vendor-html2canvas";
+          }
+          if (
+            normalizedId.includes("node_modules/react/") ||
+            normalizedId.includes("node_modules/react-dom/") ||
+            normalizedId.includes("node_modules/react-router") ||
+            normalizedId.includes("@tanstack/react-query")
+          ) {
+            return "vendor-react";
+          }
+        },
+      },
+    },
+  },
 });

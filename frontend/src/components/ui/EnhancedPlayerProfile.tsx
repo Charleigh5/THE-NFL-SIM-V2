@@ -6,6 +6,7 @@
  */
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { api } from "../../services/api";
 import {
   X,
@@ -23,6 +24,7 @@ import {
   Target,
 } from "lucide-react";
 import { PlayerAvatar } from "./PlayerAvatar";
+import { getTeamAbbr } from "../../utils/teamUtils";
 import "./EnhancedPlayerProfile.css";
 
 // ============================================================================
@@ -55,6 +57,7 @@ interface EnhancedPlayerProfileData {
   height?: number;
   weight?: number;
   team_id?: number;
+  team_abbreviation?: string;
   speed: number;
   acceleration: number;
   strength: number;
@@ -66,6 +69,7 @@ interface EnhancedPlayerProfileData {
   personality: PersonalityInfo;
   traits: TraitInfo[];
   career_stats: Record<string, number>;
+  season_history?: Array<Record<string, any>>;
   contract_years: number;
   contract_salary: number;
   is_rookie: boolean;
@@ -158,7 +162,7 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
   const [profile, setProfile] = useState<EnhancedPlayerProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"stats" | "attributes" | "traits">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "history" | "attributes">("stats");
 
   useEffect(() => {
     let isCancelled = false;
@@ -192,14 +196,29 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
     };
   }, [playerId]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   if (!playerId) return null;
 
-  return (
+  return createPortal(
     <div className="epp-overlay" onClick={onClose}>
-      <div className="epp-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="epp-modal" data-testid="player-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="epp-header">
-          <button className="epp-close" onClick={onClose} aria-label="Close player profile">
+          <button
+            className="epp-close"
+            onClick={onClose}
+            data-testid="close-modal-button"
+            aria-label="Close player profile"
+          >
             <X size={20} />
           </button>
 
@@ -211,13 +230,14 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
             profile && (
               <div className="epp-header-content">
                 <PlayerAvatar
+                  teamAbbr={profile.team_abbreviation || getTeamAbbr(profile.team_id)}
                   playerId={profile.id}
                   pose="hero_pose"
                   size="hero"
                   playerName={`${profile.first_name} ${profile.last_name}`}
                   position={profile.position}
                   jerseyNumber={profile.jersey_number}
-                  className="w-32 h-40 mr-4 shrink-0 shadow-xl"
+                  className="w-24 h-28 mr-4 shrink-0 shadow-xl rounded-xl border border-white/20"
                 />
                 <div className="epp-player-identity">
                   <div className="epp-jersey">#{profile.jersey_number}</div>
@@ -355,6 +375,12 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                   Career Stats
                 </button>
                 <button
+                  className={`tab-btn ${activeTab === "history" ? "active" : ""}`}
+                  onClick={() => setActiveTab("history")}
+                >
+                  Season History
+                </button>
+                <button
                   className={`tab-btn ${activeTab === "attributes" ? "active" : ""}`}
                   onClick={() => setActiveTab("attributes")}
                 >
@@ -368,53 +394,151 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                   <div className="stats-grid">
                     <div className="stat-item">
                       <span className="stat-label">Games Played</span>
-                      <span className="stat-value">{profile.career_stats.games_played}</span>
+                      <span className="stat-value">{profile.career_stats.games_played || 0}</span>
                     </div>
-                    {profile.career_stats.passing_yards > 0 && (
+                    {(profile.career_stats.passing_yards > 0 || profile.position === "QB") && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Pass Yards</span>
                           <span className="stat-value">
-                            {profile.career_stats.passing_yards.toLocaleString()}
+                            {(profile.career_stats.passing_yards || 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Pass TDs</span>
-                          <span className="stat-value">{profile.career_stats.passing_tds}</span>
+                          <span className="stat-value">{profile.career_stats.passing_tds || 0}</span>
                         </div>
                       </>
                     )}
-                    {profile.career_stats.rushing_yards > 0 && (
+                    {(profile.career_stats.rushing_yards > 0 || ["RB", "FB", "QB"].includes(profile.position)) && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Rush Yards</span>
                           <span className="stat-value">
-                            {profile.career_stats.rushing_yards.toLocaleString()}
+                            {(profile.career_stats.rushing_yards || 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Rush TDs</span>
-                          <span className="stat-value">{profile.career_stats.rushing_tds}</span>
+                          <span className="stat-value">{profile.career_stats.rushing_tds || 0}</span>
                         </div>
                       </>
                     )}
-                    {profile.career_stats.receiving_yards > 0 && (
+                    {(profile.career_stats.receiving_yards > 0 || ["WR", "TE", "RB"].includes(profile.position)) && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Rec Yards</span>
                           <span className="stat-value">
-                            {profile.career_stats.receiving_yards.toLocaleString()}
+                            {(profile.career_stats.receiving_yards || 0).toLocaleString()}
                           </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Rec TDs</span>
-                          <span className="stat-value">{profile.career_stats.receiving_tds}</span>
+                          <span className="stat-value">{profile.career_stats.receiving_tds || 0}</span>
                         </div>
                       </>
                     )}
-                    {profile.career_stats.games_played === 0 && (
-                      <div className="no-stats">
-                        <span>No career stats recorded yet</span>
+                    {((profile.career_stats.tackles || 0) > 0 ||
+                      (profile.career_stats.sacks || 0) > 0 ||
+                      ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(profile.position)) && (
+                      <>
+                        <div className="stat-item">
+                          <span className="stat-label">Total Tackles</span>
+                          <span className="stat-value">
+                            {profile.career_stats.tackles ||
+                              (profile.career_stats.tackles_solo || 0) + (profile.career_stats.tackles_assist || 0)}
+                          </span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Sacks</span>
+                          <span className="stat-value">{Number(profile.career_stats.sacks || 0).toFixed(1)}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Interceptions</span>
+                          <span className="stat-value">{profile.career_stats.interceptions || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Pass Deflections</span>
+                          <span className="stat-value">{profile.career_stats.pass_deflections || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">TFL</span>
+                          <span className="stat-value">{profile.career_stats.tackles_for_loss || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">QB Pressures</span>
+                          <span className="stat-value">{profile.career_stats.qb_pressures || 0}</span>
+                        </div>
+                      </>
+                    )}
+                    {(["K", "P", "LS"].includes(profile.position) ||
+                      (profile.career_stats.fg_made || 0) > 0 ||
+                      (profile.career_stats.punt_yards || 0) > 0) && (
+                      <>
+                        <div className="stat-item">
+                          <span className="stat-label">FG Made / Att</span>
+                          <span className="stat-value">
+                            {profile.career_stats.fg_made || 0} / {profile.career_stats.fg_att || 0}
+                          </span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Punt Yards</span>
+                          <span className="stat-value">
+                            {(profile.career_stats.punt_yards || 0).toLocaleString()}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                    {(["OL", "OT", "OG", "C", "LT", "RT", "LG", "RG"].includes(profile.position) ||
+                      (profile.career_stats.pancakes || 0) > 0) && (
+                      <>
+                        <div className="stat-item">
+                          <span className="stat-label">Pancakes</span>
+                          <span className="stat-value">{profile.career_stats.pancakes || 0}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Sacks Allowed</span>
+                          <span className="stat-value">{profile.career_stats.sacks_allowed || 0}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "history" && (
+                  <div className="p-4">
+                    {profile.season_history && profile.season_history.length > 0 ? (
+                      <div className="overflow-x-auto rounded border border-white/10 bg-slate-900/60">
+                        <table className="w-full text-xs text-left text-gray-200">
+                          <thead className="bg-slate-950 text-cyan-400 font-mono uppercase text-[10px] border-b border-white/10">
+                            <tr>
+                              <th className="p-2.5">Season</th>
+                              <th className="p-2.5">GP</th>
+                              <th className="p-2.5">Pass Y/TD</th>
+                              <th className="p-2.5">Rush Y/TD</th>
+                              <th className="p-2.5">Rec Y/TD</th>
+                              <th className="p-2.5">Tackles/Sack/INT</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5 font-mono">
+                            {profile.season_history.map((hist, idx) => (
+                              <tr key={idx} className="hover:bg-white/5">
+                                <td className="p-2.5 font-bold text-white">Season {hist.season_id ?? hist.year ?? idx + 1}</td>
+                                <td className="p-2.5">{hist.games_played ?? "-"}</td>
+                                <td className="p-2.5">{(hist.pass_yards ?? 0).toLocaleString()} / {hist.pass_tds ?? 0}</td>
+                                <td className="p-2.5">{(hist.rush_yards ?? 0).toLocaleString()} / {hist.rush_tds ?? 0}</td>
+                                <td className="p-2.5">{(hist.rec_yards ?? 0).toLocaleString()} / {hist.rec_tds ?? 0}</td>
+                                <td className="p-2.5">
+                                  {(hist.tackles_solo ?? 0) + (hist.tackles_assist ?? 0)} / {hist.sacks ?? 0} / {hist.interceptions ?? 0}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-400 font-mono text-xs">
+                        No archived prior seasons on file. Career archives are persisted upon season completion.
                       </div>
                     )}
                   </div>
@@ -425,7 +549,7 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                     <div className="attr-group">
                       <h5>Core</h5>
                       <div className="attr-grid">
-                        <div className="attr-item">
+                        <div className="attr-item" data-testid="player-speed">
                           <span className="attr-label">Speed</span>
                           <div className="attr-bar-container">
                             <div
@@ -449,7 +573,7 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                             {profile.acceleration}
                           </span>
                         </div>
-                        <div className="attr-item">
+                        <div className="attr-item" data-testid="player-strength">
                           <span className="attr-label">Strength</span>
                           <div className="attr-bar-container">
                             <div
@@ -538,7 +662,8 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
           )
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

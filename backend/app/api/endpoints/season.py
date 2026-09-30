@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 # Pydantic Schemas
 class SeasonCreate(BaseModel):
     """Schema for creating a new season."""
-    year: int
+    year: int = 2026
     start_date: Optional[str] = None  # ISO format date string
     total_weeks: int = 18
     playoff_weeks: int = 4
@@ -331,7 +331,7 @@ async def initialize_season(
     new_season = Season(
         year=season_data.year,
         is_active=True,
-        status=SeasonStatus.PRE_SEASON,  # Start in preseason
+        status=SeasonStatus.REGULAR_SEASON if season_data.year >= 2026 else SeasonStatus.PRE_SEASON,
         total_weeks=season_data.total_weeks,
         playoff_weeks=season_data.playoff_weeks,
         current_week=1
@@ -353,31 +353,20 @@ async def initialize_season(
 
     # Generate schedule
     # Use sync session for ScheduleGenerator
-    def generate_schedule_sync(season_id, teams_list, start_date_val, preseason_weeks_count):
+    def generate_schedule_sync(season_id, teams_list, start_date_val, preseason_weeks_count, year_val):
         with SessionLocal() as sync_db:
             generator = ScheduleGenerator(sync_db)
             teams_sync = sync_db.query(Team).all()
 
             all_games = []
 
-            # 1. Generate Preseason Schedule
-            preseason_games = generator.generate_preseason_schedule(
-                season_id=season_id,
-                teams=teams_sync,
-                start_date=start_date_val,
-                weeks=preseason_weeks_count
-            )
-            all_games.extend(preseason_games)
-
-            # 2. Calculate Regular Season Start Date
-            # Add weeks * 7 days
-            regular_start_date = start_date_val + timedelta(weeks=preseason_weeks_count)
-
-            # 3. Generate Regular Season Schedule
+            # 1. Generate Regular Season Schedule (prioritizing authentic real NFL schedule)
             regular_games = generator.generate_schedule(
                 season_id=season_id,
                 teams=teams_sync,
-                start_date=regular_start_date
+                start_date=start_date_val,
+                year=year_val,
+                prefer_real=True
             )
 
             # Ensure regular games are not marked as preseason
@@ -385,6 +374,16 @@ async def initialize_season(
                 game.is_preseason = False
 
             all_games.extend(regular_games)
+
+            # 2. If in preseason status, also generate preseason games
+            if season_data.year < 2026:
+                preseason_games = generator.generate_preseason_schedule(
+                    season_id=season_id,
+                    teams=teams_sync,
+                    start_date=start_date_val,
+                    weeks=preseason_weeks_count
+                )
+                all_games.extend(preseason_games)
 
             return all_games
 
@@ -407,7 +406,7 @@ async def initialize_season(
     # Get preseason weeks config
     preseason_weeks_val = getattr(new_season, 'preseason_weeks', 3)
 
-    games = await run_in_threadpool(generate_schedule_sync, new_season_id, [], start_date, preseason_weeks_val)
+    games = await run_in_threadpool(generate_schedule_sync, new_season_id, [], start_date, preseason_weeks_val, season_data.year)
 
     # Add games to database (async session)
     # games are detached objects from sync session.
@@ -1063,7 +1062,12 @@ def get_league_leaders(
         rushing_yards=get_top_stats(PlayerGameStats.rush_yards, "rushing_yards"),
         rushing_tds=get_top_stats(PlayerGameStats.rush_tds, "rushing_tds"),
         receiving_yards=get_top_stats(PlayerGameStats.rec_yards, "receiving_yards"),
-        receiving_tds=get_top_stats(PlayerGameStats.rec_tds, "receiving_tds")
+        receiving_tds=get_top_stats(PlayerGameStats.rec_tds, "receiving_tds"),
+        sacks=get_top_stats(PlayerGameStats.sacks, "sacks"),
+        interceptions=get_top_stats(PlayerGameStats.interceptions, "interceptions"),
+        total_tackles=get_top_stats(func.coalesce(PlayerGameStats.tackles_solo, 0) + func.coalesce(PlayerGameStats.tackles_assist, 0), "total_tackles"),
+        passes_defensed=get_top_stats(PlayerGameStats.pass_deflections, "passes_defensed"),
+        field_goal_percentage=get_top_stats(PlayerGameStats.fg_made, "field_goals_made"),
     )
 
 
@@ -1092,7 +1096,7 @@ def get_projected_awards(season_id: int, db: Session = Depends(get_db)):
                 func.sum(PlayerGameStats.rec_tds).label("rec_tds"),
                 func.sum(PlayerGameStats.sacks).label("sacks"),
                 func.sum(PlayerGameStats.interceptions).label("interceptions"),
-                func.sum(PlayerGameStats.tackles_solo).label("tackles")
+                func.sum(func.coalesce(PlayerGameStats.tackles_solo, 0) + func.coalesce(PlayerGameStats.tackles_assist, 0)).label("tackles")
             )
             .join(PlayerGameStats, Player.id == PlayerGameStats.player_id)
             .join(Game, PlayerGameStats.game_id == Game.id)

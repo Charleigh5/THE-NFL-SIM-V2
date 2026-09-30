@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import List
+from sqlalchemy.orm import selectinload
+from typing import List, Optional
+import json
 import logging
 
-from app.core.database import get_async_db
+from app.core.database import get_async_db, AsyncSessionLocal
 from app.core.db_helpers import get_object_or_404_async, get_all_paginated_async
 from app.core.error_decorators import handle_errors
+from app.core.roster_cache import roster_cache, invalidate_team_roster_cache
 from app.models.team import Team
 from app.models.player import Player
 from app.schemas.pagination import PaginatedResponse
@@ -79,20 +82,63 @@ async def read_team(team_id: int, db: AsyncSession = Depends(get_async_db)):
     logger.info(f"Fetching team {team_id}")
     return await get_object_or_404_async(db, Team, team_id)
 
+async def get_roster_async_db(team_id: int):
+    """Fast-path DB dependency: skip DB session creation entirely on cache hit."""
+    if roster_cache.get_roster(team_id) is not None:
+        yield None
+        return
+    async with AsyncSessionLocal() as session:
+        yield session
+
 @router.get("/{team_id}/roster", response_model=List[PlayerSchema])
 @handle_errors
-async def read_team_roster(team_id: int, db: AsyncSession = Depends(get_async_db)):
+async def read_team_roster(
+    team_id: int, db: Optional[AsyncSession] = Depends(get_roster_async_db)
+):
     """
     Retrieve the roster (players) for a specific team.
+    Cached for 60 seconds via High-Throughput Cache-Aside Layer.
     """
-    logger.info(f"Fetching roster for team {team_id}")
-    stmt = select(Player).where(Player.team_id == team_id)
-    result = await db.execute(stmt)
-    players = list(result.scalars().all())
+    cached_payload = roster_cache.get_roster(team_id)
+    if cached_payload is not None:
+        logger.debug(f"Roster cache HIT for team {team_id}")
+        return Response(
+            content=cached_payload,
+            media_type="application/json",
+            headers={"Content-Encoding": "identity"},
+        )
 
-    # Sort by depth chart rank then overall
-    players.sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
-    return players
+    logger.info(f"Fetching roster for team {team_id} (cache miss)")
+    session_cm = AsyncSessionLocal() if db is None else None
+    session = session_cm if db is None else db
+    try:
+        if session_cm:
+            await session_cm.__aenter__()
+        stmt = (
+            select(Player)
+            .options(selectinload(Player.attributes))
+            .where(Player.team_id == team_id)
+        )
+        result = await session.execute(stmt)
+        players = list(result.scalars().all())
+
+        # Sort by depth chart rank then overall
+        players.sort(key=lambda x: (x.depth_chart_rank, -x.overall_rating))
+
+        serialized = [
+            PlayerSchema.model_validate(p).model_dump(mode="json") for p in players
+        ]
+        json_str = json.dumps(serialized)
+        roster_cache.set_roster(team_id, json_str)
+
+        return Response(
+            content=json_str,
+            media_type="application/json",
+            headers={"Content-Encoding": "identity"},
+        )
+    finally:
+        if session_cm:
+            await session_cm.__aexit__(None, None, None)
 
 class DepthChartUpdate(BaseModel):
     position: str
@@ -129,6 +175,7 @@ async def update_depth_chart(
         player.depth_chart_rank = rank + 1 # 1-based rank
 
     await db.commit()
+    invalidate_team_roster_cache(team_id)
     return {"message": "Depth chart updated successfully"}
 
 @router.get("/{team_id}/chemistry")
