@@ -89,6 +89,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
   const [srAnnouncement, setSrAnnouncement] = useState<string>("");
 
   // Manual reorder fallback for Playwright E2E and pointer drag
+  const [draggingStateId, setDraggingStateId] = useState<number | null>(null);
   const draggingIdRef = useRef<number | null>(null);
   const isPointerDownRef = useRef(false);
   const lastSwappedTargetRef = useRef<number | null>(null);
