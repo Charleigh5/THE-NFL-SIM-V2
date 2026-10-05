@@ -364,7 +364,7 @@ test.describe("Gridiron V2 Master Subsystems E2E Verification Suite", () => {
 
     // Verify Baldwin decision pill or modal mounts
     await expect(
-      page.locator("text=GO FOR IT").or(page.locator("text=4TH DOWN DECISION"))
+      page.locator("text=GO FOR IT").first().or(page.locator("text=4TH DOWN DECISION"))
     ).toBeVisible({ timeout: 5000 });
   });
 
