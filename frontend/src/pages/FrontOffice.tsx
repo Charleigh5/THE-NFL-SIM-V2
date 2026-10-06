@@ -1136,9 +1136,9 @@ export const FrontOffice: React.FC = () => {
 
             {/* Traits Section if available */}
             {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
-              .traits &&
+              ?.traits &&
               (selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
-                .traits.length > 0 && (
+                ?.traits!.length > 0 && (
                 <div
                   className="mt-4 pt-3 border-t border-white/10 traits-section"
                   data-testid="player-traits"
@@ -1152,7 +1152,7 @@ export const FrontOffice: React.FC = () => {
                         traits?: string[];
                         contract?: { salary?: string };
                       }
-                    ).traits.map((trait: string, idx: number) => (
+                    )?.traits!.map((trait: string, idx: number) => (
                       <span
                         key={idx}
                         className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
@@ -1166,7 +1166,7 @@ export const FrontOffice: React.FC = () => {
 
             {/* Contract Section if available */}
             {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
-              .contract && (
+              ?.contract && (
               <div
                 className="mt-3 pt-3 border-t border-white/10 contract-info"
                 data-testid="player-contract"
@@ -1177,7 +1177,7 @@ export const FrontOffice: React.FC = () => {
                 <p className="text-xs font-mono text-emerald-400 font-bold">
                   {(
                     selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } }
-                  ).contract.salary || "$45M / 3 Yrs"}
+                  )?.contract!.salary || "$45M / 3 Yrs"}
                 </p>
               </div>
             )}
