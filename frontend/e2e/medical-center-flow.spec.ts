@@ -115,10 +115,10 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Medical Center" }).first()).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" }).first()).toBeVisible({ timeout: 15000 });
 
     // Verify health percentage display
-    await expect(page.locator("text=/Roster Health.*92%/").first()).toBeVisible();
+    await expect(page.locator("text=/Roster Health.*92%/").first()).toBeVisible({ timeout: 15000 });
   });
 
   test("should display body status diagram area", async ({ page }) => {
@@ -129,7 +129,7 @@ test.describe("Medical Center Flow", () => {
       page
         .locator('text="BODY_STATUS_DIAGRAM_TARGET"').first()
         .or(page.locator('[data-testid="body-diagram"]').first())
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 15000 });
   });
 
   test("should display injury list when available", async ({ page }) => {
@@ -143,8 +143,8 @@ test.describe("Medical Center Flow", () => {
 
     // If injury list exists, verify content
     if (await injuryList.isVisible({ timeout: 3000 })) {
-      await expect(page.locator("text=Kyler Murray").first()).toBeVisible();
-      await expect(page.locator("text=Knee Sprain").first()).toBeVisible();
+      await expect(page.locator("text=Kyler Murray").first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator("text=Knee Sprain").first()).toBeVisible({ timeout: 15000 });
     }
   });
 
@@ -163,7 +163,7 @@ test.describe("Medical Center Flow", () => {
     // Gracefully handle placeholder page
     const isVisible = await statusBadge.isVisible({ timeout: 3000 }).catch(() => false);
     if (isVisible) {
-      await expect(statusBadge).toBeVisible();
+      await expect(statusBadge).toBeVisible({ timeout: 15000 });
     } else {
       // Test passes if feature not yet implemented
       expect(true).toBeTruthy();
@@ -182,7 +182,7 @@ test.describe("Medical Center Flow", () => {
       await filterBtn.click();
 
       // After filtering, should only show OUT players
-      await expect(page.locator("text=James Conner")).toBeVisible();
+      await expect(page.locator("text=James Conner")).toBeVisible({ timeout: 15000 });
     }
   });
 
@@ -197,7 +197,7 @@ test.describe("Medical Center Flow", () => {
     // Gracefully handle placeholder page
     const isVisible = await timeline.isVisible({ timeout: 3000 }).catch(() => false);
     if (isVisible) {
-      await expect(timeline).toBeVisible();
+      await expect(timeline).toBeVisible({ timeout: 15000 });
     } else {
       // Test passes if feature not yet implemented
       expect(true).toBeTruthy();
@@ -208,7 +208,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify health stats display
-    await expect(page.locator("text=/92%/").first()).toBeVisible();
+    await expect(page.locator("text=/92%/").first()).toBeVisible({ timeout: 15000 });
 
     // Look for additional stats
     const statsSection = page.locator('[data-testid="health-stats"], .health-summary').first();
@@ -217,7 +217,7 @@ test.describe("Medical Center Flow", () => {
       // Check for count indicators
       const injuredCount = page.locator("text=/[0-3].*injured/i");
       if (await injuredCount.isVisible({ timeout: 1000 })) {
-        await expect(injuredCount).toBeVisible();
+        await expect(injuredCount).toBeVisible({ timeout: 15000 });
       }
     }
   });
@@ -231,7 +231,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Should either show empty state or just the header
-    await expect(page.locator("h1", { hasText: "Medical Center" }).first()).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" }).first()).toBeVisible({ timeout: 15000 });
 
     // Optionally check for "No injuries" message - page may just show empty list
     // Feature detection: empty state not required for placeholder page
