@@ -70,7 +70,7 @@ test.describe("Live Simulation Flow", () => {
 
     // Verify loading state, then Pause/FastForward buttons
     await expect(page.locator("button", { hasText: "Starting..." })).toBeVisible();
-    await expect(page.locator("button", { hasText: "Pause" })).toBeVisible({ timeout: 5000 });
+    await expect(page.locator("button", { hasText: "Pause" }).first()).toBeVisible({ timeout: 5000 });
     await expect(page.locator("button", { hasText: "FastForward" })).toBeVisible();
 
     // Verify UI updates based on mock WebSocket messages

@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     ASYNC_DATABASE_URL: str | None = None
 
     @property
+    def sync_database_url(self) -> str:
+        if "postgresql://" in self.DATABASE_URL:
+            return self.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://")
+        return self.DATABASE_URL
+
+    @property
     def async_database_url(self) -> str:
         if self.ASYNC_DATABASE_URL:
             return self.ASYNC_DATABASE_URL
