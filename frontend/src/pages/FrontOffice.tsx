@@ -1135,35 +1135,32 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             {/* Traits Section if available */}
-            {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
-              ?.traits &&
-              (selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
-                ?.traits &&
-              (selectedPlayer as Player & { traits?: string[] }).traits!.length > 0 && (
-                <div
-                  className="mt-4 pt-3 border-t border-white/10 traits-section"
-                  data-testid="player-traits"
-                >
-                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
-                    Player Traits
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(
-                      selectedPlayer as Player & {
-                        traits?: string[];
-                        contract?: { salary?: string };
-                      }
-                    )?.traits?.map((trait: string, idx: number) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
-                      >
-                        {trait}
-                      </span>
-                    ))}
-                  </div>
+            {((selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
+              ?.traits?.length ?? 0) > 0 && (
+              <div
+                className="mt-4 pt-3 border-t border-white/10 traits-section"
+                data-testid="player-traits"
+              >
+                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
+                  Player Traits
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {(
+                    selectedPlayer as Player & {
+                      traits?: string[];
+                      contract?: { salary?: string };
+                    }
+                  )?.traits?.map((trait: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
+                    >
+                      {trait}
+                    </span>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
             {/* Contract Section if available */}
             {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
