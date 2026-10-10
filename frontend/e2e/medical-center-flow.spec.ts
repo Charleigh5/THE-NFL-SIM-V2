@@ -115,7 +115,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1:has-text('Medical Center')")).toBeVisible();
 
     // Verify health percentage display
     await expect(page.locator("text=/Roster Health.*92%/")).toBeVisible();
@@ -125,11 +125,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify the diagram target/placeholder exists
-    await expect(
-      page
-        .locator('text="BODY_STATUS_DIAGRAM_TARGET"')
-        .or(page.locator('[data-testid="body-diagram"]'))
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="body-diagram"]')).toBeVisible();
   });
 
   test("should display injury list when available", async ({ page }) => {
@@ -231,7 +227,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Should either show empty state or just the header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1:has-text('Medical Center')")).toBeVisible();
 
     // Optionally check for "No injuries" message - page may just show empty list
     // Feature detection: empty state not required for placeholder page
