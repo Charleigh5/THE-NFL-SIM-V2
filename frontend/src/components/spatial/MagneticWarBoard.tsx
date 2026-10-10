@@ -84,6 +84,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
   isSaving,
   saveSuccess,
 }) => {
+  const [draggingStateId, setDraggingStateId] = useState<number | null>(null);
   // Drag and Keyboard focus state
   const [activeKeyboardIndex, setActiveKeyboardIndex] = useState<number | null>(null);
   const [srAnnouncement, setSrAnnouncement] = useState<string>("");

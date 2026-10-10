@@ -12,10 +12,10 @@ Key Mechanics:
 - Diminishing returns at higher attribute levels
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
-from enum import Enum
 import logging
+from dataclasses import dataclass
+from enum import StrEnum
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # CONSTANTS & CONFIGURATION
 # =============================================================================
 
-class ActionType(str, Enum):
+class ActionType(StrEnum):
     """Types of in-game actions that award attribute XP."""
     # Passing Actions
     PASS_COMPLETION_SHORT = "PASS_COMPLETION_SHORT"
@@ -67,7 +67,7 @@ class ActionType(str, Enum):
 
 
 # XP awards per action type -> {attribute_name: base_xp}
-ACTION_XP_AWARDS: Dict[str, Dict[str, int]] = {
+ACTION_XP_AWARDS: dict[str, dict[str, int]] = {
     # Passing
     ActionType.PASS_COMPLETION_SHORT: {
         "throw_accuracy_short": 3,
@@ -209,7 +209,7 @@ DEV_TRAIT_MULTIPLIERS = {
 }
 
 # Age-based learning rate multipliers
-def get_age_multiplier(age: Optional[int]) -> float:
+def get_age_multiplier(age: int | None) -> float:
     """Young players learn faster, veterans slower."""
     if not isinstance(age, (int, float)):
         age = 25
@@ -267,7 +267,7 @@ class AttributeXPGain:
     attribute_name: str
     base_xp: int
     final_xp: int
-    multipliers_applied: Dict[str, float]
+    multipliers_applied: dict[str, float]
 
 
 @dataclass
@@ -298,8 +298,8 @@ class UseBasedProgression:
     def award_action_xp(
         player: Any,
         action_type: str,
-        context: Optional[Dict[str, Any]] = None
-    ) -> List[AttributeXPGain]:
+        context: dict[str, Any] | None = None
+    ) -> list[AttributeXPGain]:
         """
         Award XP to player attributes based on a successful action.
 
@@ -374,7 +374,7 @@ class UseBasedProgression:
         return gains
 
     @classmethod
-    def check_and_apply_levelups(cls, player: Any) -> List[ProgressionEvent]:
+    def check_and_apply_levelups(cls, player: Any) -> list[ProgressionEvent]:
         """
         Check if accumulated XP exceeds thresholds and apply attribute gains.
 
@@ -432,7 +432,7 @@ class UseBasedProgression:
         return levelups
 
     @classmethod
-    def get_progression_summary(cls, player: Any) -> Dict[str, Any]:
+    def get_progression_summary(cls, player: Any) -> dict[str, Any]:
         """Get summary of player's progression towards next levels."""
         attribute_xp = getattr(player, "attribute_xp", None) or {}
         summary = {}
