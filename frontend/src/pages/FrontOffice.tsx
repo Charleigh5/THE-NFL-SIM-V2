@@ -1135,8 +1135,11 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             {/* Traits Section if available */}
-            {(selectedPlayer as any).traits &&
-              (selectedPlayer as any).traits?.length > 0 && (
+            {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
+              ?.traits &&
+              (selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
+                ?.traits &&
+              (selectedPlayer as Player & { traits?: string[] }).traits!.length > 0 && (
                 <div
                   className="mt-4 pt-3 border-t border-white/10 traits-section"
                   data-testid="player-traits"
@@ -1163,7 +1166,8 @@ export const FrontOffice: React.FC = () => {
               )}
 
             {/* Contract Section if available */}
-            {(selectedPlayer as any).contract && (
+            {(selectedPlayer as Player & { traits?: string[]; contract?: { salary?: string } })
+              .contract && (
               <div
                 className="mt-3 pt-3 border-t border-white/10 contract-info"
                 data-testid="player-contract"
