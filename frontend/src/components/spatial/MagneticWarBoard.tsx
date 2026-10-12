@@ -87,6 +87,7 @@ export const MagneticWarBoard: React.FC<MagneticWarBoardProps> = ({
   // Drag and Keyboard focus state
   const [activeKeyboardIndex, setActiveKeyboardIndex] = useState<number | null>(null);
   const [srAnnouncement, setSrAnnouncement] = useState<string>("");
+  const [draggingStateId, setDraggingStateId] = useState<number | null>(null);
 
   // Manual reorder fallback for Playwright E2E and pointer drag
   const draggingIdRef = useRef<number | null>(null);
