@@ -21,11 +21,11 @@ export const DrillCard = ({ drill, isSelected = false, onSelect }: DrillCardProp
     <div
       onClick={() => onSelect?.(drill)}
       className={`
-        relative p-4 rounded-xl border transition-all cursor-pointer group
+        relative p-4 rounded-[2px] border transition-all cursor-pointer group
         ${
           isSelected
-            ? "bg-cyan-900/20 border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-            : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
+            ? "bg-cyan-900/20 border-cyan-400 shadow-hard-primary"
+            : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 shadow-hard-xs"
         }
       `}
     >
@@ -33,7 +33,7 @@ export const DrillCard = ({ drill, isSelected = false, onSelect }: DrillCardProp
         <h3 className="font-bold text-white group-hover:text-cyan-300 transition-colors">
           {drill.name}
         </h3>
-        <span className="text-[10px] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-gray-300">
+        <span className="text-[10px] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-[2px] text-gray-300">
           {drill.category}
         </span>
       </div>

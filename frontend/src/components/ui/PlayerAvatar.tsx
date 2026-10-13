@@ -32,9 +32,7 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
 
   // Lookup team data from registry
   const normalizedAbbr = (teamAbbr || "DET").toUpperCase();
-  const teamMeta = teamsData.find(
-    (t) => t.abbreviation.toUpperCase() === normalizedAbbr
-  );
+  const teamMeta = teamsData.find((t) => t.abbreviation.toUpperCase() === normalizedAbbr);
 
   const teamPrimary = primaryColor || teamMeta?.colors.primary || "#0076B6";
   const teamSecondary = teamMeta?.colors.secondary || "#B0B7BC";
@@ -79,9 +77,9 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center rounded-xl overflow-hidden font-heading font-black select-none border border-white/15 bg-slate-950 ${sizeClasses} ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-[2px] overflow-hidden font-heading font-black select-none border border-white/15 bg-slate-950 shadow-hard-xs ${sizeClasses} ${className}`}
       style={{
-        boxShadow: `0 0 16px ${teamPrimary}30`,
+        boxShadow: `2px 2px 0px #000000`,
       }}
     >
       {/* Background Stadium Glow */}
@@ -120,7 +118,12 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
           >
-            <pattern id={`grid-${playerId}-${seed}`} width="10" height="10" patternUnits="userSpaceOnUse">
+            <pattern
+              id={`grid-${playerId}-${seed}`}
+              width="10"
+              height="10"
+              patternUnits="userSpaceOnUse"
+            >
               <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#fff" strokeWidth="0.5" />
             </pattern>
             <rect width="100" height="100" fill={`url(#grid-${playerId}-${seed})`} />
@@ -135,7 +138,14 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
           >
             <defs>
               {/* Helmet Shell Lighting Gradient */}
-              <linearGradient id={`helmetGrad-${playerId}-${seed}`} x1="30" y1="20" x2="170" y2="150" gradientUnits="userSpaceOnUse">
+              <linearGradient
+                id={`helmetGrad-${playerId}-${seed}`}
+                x1="30"
+                y1="20"
+                x2="170"
+                y2="150"
+                gradientUnits="userSpaceOnUse"
+              >
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
                 <stop offset="25%" stopColor={teamPrimary} />
                 <stop offset="85%" stopColor={teamAccent || "#091E3A"} />
@@ -143,21 +153,42 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
               </linearGradient>
 
               {/* Visor Iridescent Reflection Gradient */}
-              <linearGradient id={`visorGrad-${playerId}-${seed}`} x1="50" y1="70" x2="150" y2="120" gradientUnits="userSpaceOnUse">
+              <linearGradient
+                id={`visorGrad-${playerId}-${seed}`}
+                x1="50"
+                y1="70"
+                x2="150"
+                y2="120"
+                gradientUnits="userSpaceOnUse"
+              >
                 <stop offset="0%" stopColor={visor.stop1} stopOpacity={visor.opacity} />
                 <stop offset="60%" stopColor={visor.stop2} stopOpacity={visor.opacity * 0.9} />
                 <stop offset="100%" stopColor="#0F172A" stopOpacity="0.95" />
               </linearGradient>
 
               {/* Visor Glare Specular Highlight */}
-              <linearGradient id={`glareGrad-${playerId}-${seed}`} x1="60" y1="75" x2="110" y2="105" gradientUnits="userSpaceOnUse">
+              <linearGradient
+                id={`glareGrad-${playerId}-${seed}`}
+                x1="60"
+                y1="75"
+                x2="110"
+                y2="105"
+                gradientUnits="userSpaceOnUse"
+              >
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.75" />
                 <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.1" />
                 <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
               </linearGradient>
 
               {/* Jersey Fabric Gradient */}
-              <linearGradient id={`jerseyGrad-${playerId}-${seed}`} x1="20" y1="160" x2="180" y2="240" gradientUnits="userSpaceOnUse">
+              <linearGradient
+                id={`jerseyGrad-${playerId}-${seed}`}
+                x1="20"
+                y1="160"
+                x2="180"
+                y2="240"
+                gradientUnits="userSpaceOnUse"
+              >
                 <stop offset="0%" stopColor={teamPrimary} />
                 <stop offset="100%" stopColor="#030712" />
               </linearGradient>
@@ -178,12 +209,7 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
               strokeWidth="4"
               strokeLinecap="round"
             />
-            <path
-              d="M 75 195 L 100 206 L 125 195"
-              stroke="#FFFFFF"
-              strokeWidth="2"
-              opacity="0.8"
-            />
+            <path d="M 75 195 L 100 206 L 125 195" stroke="#FFFFFF" strokeWidth="2" opacity="0.8" />
 
             {/* Jersey Number Stamp */}
             <text
@@ -242,7 +268,12 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
             {/* FACEMASK BARS (Dark Titanium Grid) */}
             <g stroke="#1E293B" strokeWidth="3" strokeLinecap="round">
               {/* Outer Boundary Mask Bar */}
-              <path d="M 58 84 C 54 110 60 136 78 142 L 122 142 C 140 136 146 110 142 84" fill="none" stroke="#334155" strokeWidth="3.5" />
+              <path
+                d="M 58 84 C 54 110 60 136 78 142 L 122 142 C 140 136 146 110 142 84"
+                fill="none"
+                stroke="#334155"
+                strokeWidth="3.5"
+              />
               {/* Horizontal Mouth Bars */}
               <line x1="68" y1="120" x2="132" y2="120" stroke="#475569" strokeWidth="3" />
               <line x1="72" y1="130" x2="128" y2="130" stroke="#475569" strokeWidth="3" />
@@ -250,8 +281,26 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
               <line x1="93" y1="110" x2="93" y2="142" stroke="#334155" strokeWidth="2.5" />
               <line x1="107" y1="110" x2="107" y2="142" stroke="#334155" strokeWidth="2.5" />
               {/* Visor Clips */}
-              <rect x="62" y="77" width="6" height="8" rx="2" fill="#020617" stroke="#64748B" strokeWidth="1" />
-              <rect x="132" y="77" width="6" height="8" rx="2" fill="#020617" stroke="#64748B" strokeWidth="1" />
+              <rect
+                x="62"
+                y="77"
+                width="6"
+                height="8"
+                rx="2"
+                fill="#020617"
+                stroke="#64748B"
+                strokeWidth="1"
+              />
+              <rect
+                x="132"
+                y="77"
+                width="6"
+                height="8"
+                rx="2"
+                fill="#020617"
+                stroke="#64748B"
+                strokeWidth="1"
+              />
             </g>
 
             {/* Chin Strap */}

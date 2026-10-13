@@ -78,13 +78,13 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
 
   return (
     <div
-      className="broadcast-glass rounded-2xl border border-white/10 shadow-2xl p-5"
+      className="broadcast-glass rounded-[2px] border border-white/10 shadow-hard-md p-5"
       data-testid="media-leaks-feed"
     >
       {/* Feed Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-[2px] bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0 shadow-hard-xs">
             <Radio size={20} className="text-red-400 animate-pulse" />
           </div>
           <div>
@@ -101,10 +101,10 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 text-xs font-mono">
+        <div className="flex items-center gap-1 bg-black/40 p-1 rounded-[2px] border border-white/10 text-xs font-mono shadow-hard-xs">
           <button
             onClick={() => setFilter("ALL")}
-            className={`px-3 py-1 rounded-lg transition-all ${
+            className={`px-3 py-1 rounded-[2px] transition-all ${
               filter === "ALL"
                 ? "bg-white/20 text-white font-bold"
                 : "text-gray-400 hover:text-white"
@@ -114,7 +114,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
           </button>
           <button
             onClick={() => setFilter("SCANDAL")}
-            className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-[2px] transition-all flex items-center gap-1.5 ${
               filter === "SCANDAL"
                 ? "bg-red-500/30 text-red-200 border border-red-500/50 font-bold"
                 : "text-gray-400 hover:text-white"
@@ -125,7 +125,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
           </button>
           <button
             onClick={() => setFilter("NEGATIVE")}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
+            className={`px-2.5 py-1 rounded-[2px] transition-all ${
               filter === "NEGATIVE"
                 ? "bg-orange-500/30 text-orange-200 border border-orange-500/50 font-bold"
                 : "text-gray-400 hover:text-white"
@@ -135,7 +135,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
           </button>
           <button
             onClick={() => setFilter("POSITIVE")}
-            className={`px-2.5 py-1 rounded-lg transition-all ${
+            className={`px-2.5 py-1 rounded-[2px] transition-all ${
               filter === "POSITIVE"
                 ? "bg-emerald-500/30 text-emerald-200 border border-emerald-500/50 font-bold"
                 : "text-gray-400 hover:text-white"
@@ -149,7 +149,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
       {/* Posts Stream */}
       <div className="mt-4 space-y-4 max-h-[580px] overflow-y-auto pr-1">
         {filteredLeaks.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 font-mono text-xs border border-dashed border-white/10 rounded-xl">
+          <div className="p-8 text-center text-gray-400 font-mono text-xs border border-dashed border-white/10 rounded-[2px]">
             No media leaks found under the active filter category.
           </div>
         ) : (
@@ -160,7 +160,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
             return (
               <article
                 key={post.id}
-                className="p-4 bg-slate-950/60 hover:bg-slate-900/80 border border-white/10 hover:border-white/20 rounded-xl transition-all shadow-md group relative"
+                className="p-4 bg-slate-950/60 hover:bg-slate-900/80 border border-white/10 hover:border-white/20 rounded-[2px] transition-all shadow-hard-xs group relative"
               >
                 {/* Author Info & Outlet Header */}
                 <div className="flex items-start justify-between gap-3">
@@ -168,7 +168,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
                     <img
                       src={post.author_avatar}
                       alt={post.author_name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white/20 shadow-md"
+                      className="w-10 h-10 rounded-[2px] object-cover border-2 border-white/20 shadow-hard-xs"
                     />
                     <div>
                       <div className="flex items-center gap-1.5">
@@ -187,12 +187,12 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
 
                       <div className="flex items-center gap-2 mt-0.5">
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${outletBadge.bg}`}
+                          className={`px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider ${outletBadge.bg}`}
                         >
                           {outletBadge.label}
                         </span>
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider border flex items-center gap-1 ${sentimentInfo.badge}`}
+                          className={`px-2 py-0.5 rounded-[2px] text-[10px] font-mono uppercase tracking-wider border flex items-center gap-1 ${sentimentInfo.badge}`}
                         >
                           {sentimentInfo.icon}
                           <span>{sentimentInfo.label}</span>
@@ -205,7 +205,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
                   </div>
 
                   <button
-                    className="text-gray-500 hover:text-white p-1 rounded transition-colors"
+                    className="text-gray-500 hover:text-white p-1 rounded-[2px] transition-colors"
                     title="Share Dispatch"
                   >
                     <Share2 size={14} />
@@ -231,7 +231,7 @@ export const MediaLeaksFeed: React.FC<MediaLeaksFeedProps> = ({ leaks, onPlayerC
                         <button
                           key={pid}
                           onClick={() => onPlayerClick && onPlayerClick(pid)}
-                          className="px-2 py-0.5 bg-black/40 hover:bg-cyan-500/20 hover:text-cyan-300 border border-white/10 rounded text-[11px] font-mono transition-colors"
+                          className="px-2 py-0.5 bg-black/40 hover:bg-cyan-500/20 hover:text-cyan-300 border border-white/10 rounded-[2px] text-[11px] font-mono transition-colors shadow-hard-xs"
                         >
                           #{pid}
                         </button>

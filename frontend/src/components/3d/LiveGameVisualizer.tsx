@@ -220,9 +220,9 @@ export const LiveGameVisualizer: React.FC<LiveGameVisualizerProps> = ({
   const playerPositions = getPlayerPositions();
 
   return (
-    <div className="w-full h-[600px] bg-gradient-to-b from-sky-900 to-slate-950 rounded-lg overflow-hidden relative border border-white/10 shadow-2xl">
+    <div className="w-full h-[600px] bg-gradient-to-b from-sky-900 to-slate-950 rounded-[2px] overflow-hidden relative border border-white/10 shadow-hard-md">
       {/* HUD Overlay */}
-      <div className="absolute top-4 left-4 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-lg border border-white/10">
+      <div className="absolute top-4 left-4 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-[2px] border border-white/10 shadow-hard-xs">
         <div className="flex items-center gap-4">
           {rosterData && (
             <>
@@ -230,14 +230,14 @@ export const LiveGameVisualizer: React.FC<LiveGameVisualizerProps> = ({
                 {rosterData.home_team.abbreviation} vs {rosterData.away_team.abbreviation}
               </div>
               <div
-                className={`px-2 py-0.5 rounded text-xs font-bold ${
+                className={`px-2 py-0.5 rounded-[2px] text-xs font-bold ${
                   wsConnected ? "bg-emerald-600 text-white" : "bg-zinc-700 text-zinc-300"
                 }`}
               >
                 {wsConnected ? "LIVE 3D" : "READY"}
               </div>
               {activeClip && (
-                <div className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-600/80 text-white">
+                <div className="px-2 py-0.5 rounded-[2px] text-xs font-semibold bg-amber-600/80 text-white">
                   CLIP: {activeClip.clipType}
                 </div>
               )}
@@ -252,19 +252,19 @@ export const LiveGameVisualizer: React.FC<LiveGameVisualizerProps> = ({
           <button
             onClick={handlePrevPlay}
             disabled={currentPlay <= 1}
-            className="px-4 py-2 bg-black/70 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow border border-white/10 hover:bg-black/90 disabled:opacity-40"
+            className="px-4 py-2 bg-black/70 backdrop-blur-md text-white text-xs font-bold rounded-[2px] shadow-hard-xs border border-white/10 hover:bg-black/90 disabled:opacity-40"
           >
             &larr; Previous Play
           </button>
           <button
             onClick={handleNextPlay}
-            className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg shadow hover:bg-blue-500"
+            className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-[2px] shadow-hard-primary hover:bg-blue-500"
           >
             Next Play &rarr;
           </button>
           <button
             onClick={() => fetchFormationData(currentPlay)}
-            className="px-4 py-2 bg-black/70 backdrop-blur-md text-white text-xs font-bold rounded-lg shadow border border-white/10 hover:bg-black/90"
+            className="px-4 py-2 bg-black/70 backdrop-blur-md text-white text-xs font-bold rounded-[2px] shadow-hard-xs border border-white/10 hover:bg-black/90"
           >
             &#8635; Reset
           </button>
@@ -273,7 +273,7 @@ export const LiveGameVisualizer: React.FC<LiveGameVisualizerProps> = ({
 
       {/* Play Info */}
       {formationData && (
-        <div className="absolute top-4 right-4 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-lg border border-white/10">
+        <div className="absolute top-4 right-4 z-10 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-[2px] border border-white/10 shadow-hard-xs">
           <div className="text-xs">
             <div className="font-bold text-amber-400">Play #{currentPlay}</div>
             <div className="text-zinc-300">OFF: {formationData.formation.offense.name}</div>

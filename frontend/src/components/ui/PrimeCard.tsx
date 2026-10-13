@@ -31,7 +31,7 @@ export const PrimeCard = ({
       animate={{ opacity: 1, y: 0, skewX: -6 }}
       transition={{ duration: 0.4, delay: delay, ease: "easeOut" }}
       className={clsx(
-        "relative group overflow-hidden shadow-2xl skew-x-[-6deg]",
+        "relative group overflow-hidden shadow-hard-md rounded-[2px] skew-x-[-6deg]",
         variants[variant],
         className
       )}

@@ -145,17 +145,17 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
         initial={{ scale: 0.94, opacity: 0, y: 15 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.94, opacity: 0, y: 15 }}
-        className="bg-slate-900/95 border border-emerald-500/30 p-6 md:p-8 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden"
+        className="bg-slate-900/95 border border-emerald-500/30 p-6 md:p-8 rounded-[2px] w-full max-w-2xl shadow-hard-md overflow-hidden"
       >
         {/* Header Bar */}
         <div className="flex justify-between items-start pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400">
+            <div className="p-2.5 rounded-[2px] bg-emerald-950/80 border border-emerald-500/40 text-emerald-400">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-mono uppercase font-bold">
+                <span className="px-2 py-0.5 rounded-[2px] bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-mono uppercase font-bold">
                   Ben Baldwin Analytics
                 </span>
                 <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
@@ -171,7 +171,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-[2px] text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -189,13 +189,13 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
           <div className="mt-5 space-y-5">
             {/* Top Recommendation Hero Banner */}
             <div
-              className={`p-4 rounded-2xl border shadow-lg flex items-center justify-between gap-4 ${getBadgeColor(
+              className={`p-4 rounded-[2px] border shadow-hard-xs flex items-center justify-between gap-4 ${getBadgeColor(
                 data.recommendation
               )}`}
             >
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-black/40">
+                  <span className="text-[10px] font-mono uppercase font-bold tracking-wider px-2 py-0.5 rounded-[2px] bg-black/40">
                     {data.recommendation_strength}
                   </span>
                   <span className="text-xs font-mono font-semibold">Optimal Expected Decision</span>
@@ -234,9 +234,9 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               {/* Choice 1: GO FOR IT */}
               <div
                 onClick={() => setSelectedAction("GO")}
-                className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                className={`p-3.5 rounded-[2px] border cursor-pointer transition-all ${
                   selectedAction === "GO"
-                    ? "bg-emerald-950/60 border-emerald-400 shadow-md shadow-emerald-500/20"
+                    ? "bg-emerald-950/60 border-emerald-400 shadow-hard-xs"
                     : "bg-slate-950/60 border-slate-800 hover:bg-slate-900/60"
                 }`}
               >
@@ -269,9 +269,9 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               {/* Choice 2: FIELD GOAL */}
               <div
                 onClick={() => setSelectedAction("FIELD_GOAL")}
-                className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                className={`p-3.5 rounded-[2px] border cursor-pointer transition-all ${
                   selectedAction === "FIELD_GOAL"
-                    ? "bg-blue-950/60 border-blue-400 shadow-md shadow-blue-500/20"
+                    ? "bg-blue-950/60 border-blue-400 shadow-hard-xs"
                     : "bg-slate-950/60 border-slate-800 hover:bg-slate-900/60"
                 }`}
               >
@@ -306,9 +306,9 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
               {/* Choice 3: PUNT */}
               <div
                 onClick={() => setSelectedAction("PUNT")}
-                className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                className={`p-3.5 rounded-[2px] border cursor-pointer transition-all ${
                   selectedAction === "PUNT"
-                    ? "bg-amber-950/60 border-amber-400 shadow-md shadow-amber-500/20"
+                    ? "bg-amber-950/60 border-amber-400 shadow-hard-xs"
                     : "bg-slate-950/60 border-slate-800 hover:bg-slate-900/60"
                 }`}
               >
@@ -343,7 +343,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
         <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold rounded-xl transition-colors uppercase tracking-wider"
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold rounded-[2px] transition-colors uppercase tracking-wider"
           >
             Cancel / Sideline AI
           </button>
@@ -351,7 +351,7 @@ export const FourthDownModal: React.FC<FourthDownModalProps> = ({
           <button
             onClick={handleConfirm}
             disabled={loading || !data}
-            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-mono font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all uppercase tracking-wider active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-mono font-bold rounded-[2px] shadow-hard-xs transition-all uppercase tracking-wider active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             <span>Execute Decision ({selectedAction.replace("_", " ")})</span>
             <ArrowRight className="w-4 h-4" />

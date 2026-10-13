@@ -2,7 +2,8 @@ import { test, expect } from "@playwright/test";
 import path from "path";
 
 test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
-  const screenshotsDir = "C:\\Users\\cweir\\.gemini\\antigravity\\brain\\0321f72c-c721-42d9-a145-a825adcb57f4\\adversarial";
+  const screenshotsDir =
+    "C:\\Users\\cweir\\.gemini\\antigravity\\brain\\0321f72c-c721-42d9-a145-a825adcb57f4\\adversarial";
 
   const mockDetroitLions = {
     id: 11,
@@ -220,8 +221,16 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
             archetype: "Heart & Soul",
           },
           traits: [
-            { name: "Motor That Never Stops", description: "Never fatigues on 4th quarter pass rushes", tier: "ELITE" },
-            { name: "Bulls-Eye Rusher", description: "Devastating bull rush against single pass blockers", tier: "GOLD" },
+            {
+              name: "Motor That Never Stops",
+              description: "Never fatigues on 4th quarter pass rushes",
+              tier: "ELITE",
+            },
+            {
+              name: "Bulls-Eye Rusher",
+              description: "Devastating bull rush against single pass blockers",
+              tier: "GOLD",
+            },
           ],
           career_stats: {
             games_played: 34,
@@ -275,37 +284,114 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
       await route.fulfill({
         json: {
           passing_yards: [
-            { player_id: 289, name: "Jared Goff", team: "Lions", position: "QB", value: 4575, stat_type: "passing_yards" },
+            {
+              player_id: 289,
+              name: "Jared Goff",
+              team: "Lions",
+              position: "QB",
+              value: 4575,
+              stat_type: "passing_yards",
+            },
           ],
           passing_tds: [
-            { player_id: 289, name: "Jared Goff", team: "Lions", position: "QB", value: 34, stat_type: "passing_tds" },
+            {
+              player_id: 289,
+              name: "Jared Goff",
+              team: "Lions",
+              position: "QB",
+              value: 34,
+              stat_type: "passing_tds",
+            },
           ],
           rushing_yards: [
-            { player_id: 2333, name: "Jahmyr Gibbs", team: "Lions", position: "RB", value: 1240, stat_type: "rushing_yards" },
+            {
+              player_id: 2333,
+              name: "Jahmyr Gibbs",
+              team: "Lions",
+              position: "RB",
+              value: 1240,
+              stat_type: "rushing_yards",
+            },
           ],
           rushing_tds: [
-            { player_id: 2333, name: "Jahmyr Gibbs", team: "Lions", position: "RB", value: 14, stat_type: "rushing_tds" },
+            {
+              player_id: 2333,
+              name: "Jahmyr Gibbs",
+              team: "Lions",
+              position: "RB",
+              value: 14,
+              stat_type: "rushing_tds",
+            },
           ],
           receiving_yards: [
-            { player_id: 1417, name: "Amon-Ra St. Brown", team: "Lions", position: "WR", value: 1515, stat_type: "receiving_yards" },
+            {
+              player_id: 1417,
+              name: "Amon-Ra St. Brown",
+              team: "Lions",
+              position: "WR",
+              value: 1515,
+              stat_type: "receiving_yards",
+            },
           ],
           receiving_tds: [
-            { player_id: 1417, name: "Amon-Ra St. Brown", team: "Lions", position: "WR", value: 12, stat_type: "receiving_tds" },
+            {
+              player_id: 1417,
+              name: "Amon-Ra St. Brown",
+              team: "Lions",
+              position: "WR",
+              value: 12,
+              stat_type: "receiving_tds",
+            },
           ],
           sacks: [
-            { player_id: 1543, name: "Aidan Hutchinson", team: "Lions", position: "DL", value: 14.5, stat_type: "sacks" },
+            {
+              player_id: 1543,
+              name: "Aidan Hutchinson",
+              team: "Lions",
+              position: "DL",
+              value: 14.5,
+              stat_type: "sacks",
+            },
           ],
           interceptions: [
-            { player_id: 1543, name: "Aidan Hutchinson", team: "Lions", position: "DL", value: 2, stat_type: "interceptions" },
+            {
+              player_id: 1543,
+              name: "Aidan Hutchinson",
+              team: "Lions",
+              position: "DL",
+              value: 2,
+              stat_type: "interceptions",
+            },
           ],
           total_tackles: [
-            { player_id: 1543, name: "Aidan Hutchinson", team: "Lions", position: "DL", value: 58, stat_type: "total_tackles" },
+            {
+              player_id: 1543,
+              name: "Aidan Hutchinson",
+              team: "Lions",
+              position: "DL",
+              value: 58,
+              stat_type: "total_tackles",
+            },
           ],
           passes_defensed: [
-            { player_id: 1543, name: "Aidan Hutchinson", team: "Lions", position: "DL", value: 7, stat_type: "passes_defensed" },
+            {
+              player_id: 1543,
+              name: "Aidan Hutchinson",
+              team: "Lions",
+              position: "DL",
+              value: 7,
+              stat_type: "passes_defensed",
+            },
           ],
           field_goal_percentage: [
-            { player_id: 999, name: "Jake Bates", team: "Lions", position: "K", value: 28, stat_type: "field_goals_made" },
+            {
+              player_id: 999,
+              name: "Jake Bates",
+              team: "Lions",
+              position: "K",
+              value: 28,
+              stat_type: "field_goals_made",
+            },
           ],
         },
       });
@@ -455,7 +541,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
 
     // 2. Click Aidan Hutchinson player card
     const hutchCard = page.locator('[data-testid="player-card-1543"]');
-    if (await hutchCard.count() > 0) {
+    if ((await hutchCard.count()) > 0) {
       await hutchCard.first().click();
       await page.waitForSelector('[data-testid="player-modal"]', { timeout: 5000 });
       await page.waitForTimeout(600);

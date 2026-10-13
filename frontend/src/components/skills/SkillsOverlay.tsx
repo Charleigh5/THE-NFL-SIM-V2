@@ -21,7 +21,7 @@ export const SkillsOverlay: React.FC<SkillsOverlayProps> = ({
     <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-6">
       {/* HEADER: Resource Bar */}
       <div className="pointer-events-auto flex justify-between items-start">
-        <div className="bg-black/60 backdrop-blur-md p-4 rounded-xl border border-white/10 text-white">
+        <div className="bg-black/60 backdrop-blur-md p-4 rounded-[2px] border border-white/10 text-white shadow-hard-md">
           <h2 className="text-2xl font-bold font-mono tracking-wider">SKILL MATRIX</h2>
           <div className="flex gap-6 mt-2">
             <div className="flex flex-col">
@@ -49,11 +49,11 @@ export const SkillsOverlay: React.FC<SkillsOverlayProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 20 }}
-            className="absolute top-0 right-0 h-full w-96 bg-black/80 backdrop-blur-xl border-l border-white/10 p-6 pointer-events-auto shadow-2xl flex flex-col z-50"
+            className="absolute top-0 right-0 h-full w-96 bg-black/80 backdrop-blur-xl border-l border-white/10 p-6 pointer-events-auto shadow-hard-md flex flex-col z-50"
           >
             <button
               onClick={onCloseDetail}
-              className="self-end p-2 hover:bg-white/10 rounded-full text-white transition-colors"
+              className="self-end p-2 hover:bg-white/10 rounded-[2px] text-white transition-colors"
               title="Close Details"
               aria-label="Close Details"
             >
@@ -77,7 +77,7 @@ export const SkillsOverlay: React.FC<SkillsOverlayProps> = ({
 
               {/* Effect Stats Block if available */}
               <div className="grid grid-cols-1 gap-4 mb-8">
-                <div className="bg-white/5 p-4 rounded border border-white/5">
+                <div className="bg-white/5 p-4 rounded-[2px] border border-white/5 shadow-hard-xs">
                   <div className="text-xs text-gray-400 uppercase mb-1">Activation</div>
                   <div className="text-sm font-mono text-green-400">
                     {/* Mock data for now, would come from real trait */}
@@ -90,7 +90,7 @@ export const SkillsOverlay: React.FC<SkillsOverlayProps> = ({
               <div className="mt-auto pt-4 border-t border-white/10">
                 <button
                   onClick={() => onEquip(selectedTraitId)}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-[0_0_20px_rgba(37,99,235,0.5)]"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-[2px] flex items-center justify-center gap-2 transition-all shadow-hard-primary active:shadow-hard-pressed"
                 >
                   <Check size={20} />
                   EQUIP TRAIT

@@ -15,12 +15,12 @@
 .player-modal-content {
   background: rgba(20, 20, 30, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 2px;
   width: 90%;
   max-width: 800px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 3px 3px 0px #000000;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -74,7 +74,7 @@
   margin-bottom: 30px;
   background: rgba(255, 255, 255, 0.05);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 2px;
 }
 
 .attribute-item {

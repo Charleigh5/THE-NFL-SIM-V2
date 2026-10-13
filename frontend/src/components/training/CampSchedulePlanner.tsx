@@ -194,17 +194,17 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-950/90 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl font-sans">
+    <div className="w-full bg-slate-950/90 border border-slate-800 rounded-[2px] p-6 shadow-hard-md backdrop-blur-xl font-sans">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+          <div className="p-2.5 rounded-[2px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-hard-xs">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-base font-bold text-white tracking-wide uppercase flex items-center gap-2">
               Tactical 7-Day Camp Planner
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-cyan-950 text-cyan-300 border border-cyan-800">
                 PRO SCHEDULE
               </span>
             </h3>
@@ -215,7 +215,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
         </div>
 
         {/* Weekly Metrics Banner */}
-        <div className="flex items-center gap-4 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-mono">
+        <div className="flex items-center gap-4 bg-slate-900 border border-slate-800 px-4 py-2 rounded-[2px] shadow-hard-xs text-xs font-mono">
           <div>
             <span className="text-slate-400 block text-[10px]">Projected XP</span>
             <span className="text-emerald-400 font-bold text-sm">+{totals.projectedXp} XP</span>
@@ -245,9 +245,9 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
           <button
             key={day.dayNumber}
             onClick={() => setSelectedDayIdx(idx)}
-            className={`p-3 rounded-xl border text-center transition-all ${
+            className={`p-3 rounded-[2px] border text-center transition-all shadow-hard-xs ${
               selectedDayIdx === idx
-                ? "bg-cyan-950 border-cyan-500 text-white shadow-lg shadow-cyan-950/60"
+                ? "bg-cyan-950 border-cyan-500 text-white"
                 : day.isRestDay
                   ? "bg-slate-900/40 border-slate-800 text-emerald-400"
                   : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white"
@@ -256,7 +256,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             <div className="text-[10px] font-mono uppercase text-slate-400">{day.dayName}</div>
             <div className="text-sm font-bold my-0.5">Day {day.dayNumber}</div>
             <div
-              className={`text-[9px] font-mono px-1 py-0.5 rounded truncate ${
+              className={`text-[9px] font-mono px-1 py-0.5 rounded-[2px] truncate ${
                 day.isRestDay
                   ? "bg-emerald-950 text-emerald-300"
                   : day.intensity === "FULL_PADS"
@@ -271,7 +271,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
       </div>
 
       {/* Active Day Detail Matrix */}
-      <div className="bg-slate-900/60 border border-slate-800 p-5 rounded-xl space-y-4">
+      <div className="bg-slate-900/60 border border-slate-800 p-5 rounded-[2px] shadow-hard-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-slate-800/80">
           <div>
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -286,9 +286,9 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             {/* Rest Day Toggle */}
             <button
               onClick={() => updateActiveDay({ isRestDay: !activeDay.isRestDay })}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] text-xs font-bold uppercase transition-all shadow-hard-xs ${
                 activeDay.isRestDay
-                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-950"
+                  ? "bg-emerald-600 text-white"
                   : "bg-slate-800 text-slate-400 hover:text-white"
               }`}
             >
@@ -298,14 +298,14 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
 
             {/* Intensity Selector */}
             {!activeDay.isRestDay && (
-              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-[2px] border border-slate-800 text-xs font-mono">
                 {(["WALKTHROUGH", "STANDARD", "FULL_PADS"] as IntensityLevel[]).map((lvl) => (
                   <button
                     key={lvl}
                     onClick={() => updateActiveDay({ intensity: lvl })}
-                    className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase transition-all ${
+                    className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold uppercase transition-all ${
                       activeDay.intensity === lvl
-                        ? "bg-cyan-600 text-white"
+                        ? "bg-cyan-600 text-white shadow-hard-xs"
                         : "text-slate-400 hover:text-white"
                     }`}
                   >
@@ -321,7 +321,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
         {!activeDay.isRestDay ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Morning Slot */}
-            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-xl">
+            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-[2px] shadow-hard-xs">
               <div className="flex items-center justify-between mb-3 text-xs">
                 <span className="font-bold text-slate-200 flex items-center gap-1.5 font-mono">
                   <Sun className="w-4 h-4 text-amber-400" /> Morning Block
@@ -333,7 +333,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
               <select
                 value={activeDay.morningDrill}
                 onChange={(e) => updateActiveDay({ morningDrill: e.target.value as CampDrillType })}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white font-medium focus:border-cyan-500 focus:outline-none"
+                className="w-full bg-slate-900 border border-slate-700 rounded-[2px] p-2.5 text-xs text-white font-medium focus:border-cyan-500 focus:outline-none"
               >
                 {Object.entries(drillSpecs).map(([key, spec]) => (
                   <option key={key} value={key}>
@@ -344,7 +344,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             </div>
 
             {/* Afternoon Slot */}
-            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-xl">
+            <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-[2px] shadow-hard-xs">
               <div className="flex items-center justify-between mb-3 text-xs">
                 <span className="font-bold text-slate-200 flex items-center gap-1.5 font-mono">
                   <Moon className="w-4 h-4 text-indigo-400" /> Afternoon Block
@@ -358,7 +358,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
                 onChange={(e) =>
                   updateActiveDay({ afternoonDrill: e.target.value as CampDrillType })
                 }
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white font-medium focus:border-cyan-500 focus:outline-none"
+                className="w-full bg-slate-900 border border-slate-700 rounded-[2px] p-2.5 text-xs text-white font-medium focus:border-cyan-500 focus:outline-none"
               >
                 {Object.entries(drillSpecs).map(([key, spec]) => (
                   <option key={key} value={key}>
@@ -369,7 +369,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
             </div>
           </div>
         ) : (
-          <div className="p-8 text-center bg-slate-950/40 rounded-xl border border-dashed border-slate-800">
+          <div className="p-8 text-center bg-slate-950/40 rounded-[2px] border border-dashed border-slate-800">
             <Battery className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
             <h5 className="text-sm font-bold text-white mb-1">Scheduled Rest & Hydration Day</h5>
             <p className="text-xs text-slate-400 max-w-md mx-auto">
@@ -384,7 +384,7 @@ export const CampSchedulePlanner: React.FC<CampSchedulePlannerProps> = ({
       <div className="mt-5 pt-4 border-t border-slate-800 flex justify-end">
         <button
           onClick={onSimulateCampWeek}
-          className="px-6 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg transition-all"
+          className="px-6 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all"
         >
           Commit Weekly Camp Schedule
         </button>

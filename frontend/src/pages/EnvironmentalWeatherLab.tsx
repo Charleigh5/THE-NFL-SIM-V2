@@ -9,10 +9,10 @@ import {
   Flame,
   Activity,
   Layers,
-  Sparkles,
   Award,
   Crosshair,
 } from "lucide-react";
+import { GridironIcon } from "../components/icons";
 import {
   useWeatherThemeStore,
   WEATHER_PRESETS,
@@ -68,7 +68,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16 font-sans">
       {/* Broadcast Header HUD */}
-      <div className="relative overflow-hidden rounded-xl border border-cyan-500/40 bg-neutral-950/85 backdrop-blur-2xl p-6 shadow-2xl shadow-cyan-950/40">
+      <div className="relative overflow-hidden rounded-[2px] border border-cyan-500/40 bg-neutral-950/85 backdrop-blur-2xl p-6 shadow-hard-md">
         <div className="absolute top-0 right-0 p-4 opacity-10 font-mono text-8xl font-black select-none pointer-events-none text-cyan-400">
           AAAA-FX
         </div>
@@ -76,7 +76,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded bg-pink-950/80 border border-pink-500/50 text-pink-300 font-mono text-[10px] font-bold tracking-widest uppercase">
+              <span className="px-2.5 py-0.5 rounded-[2px] bg-pink-950/80 border border-pink-500/50 text-pink-300 font-mono text-[10px] font-bold tracking-widest uppercase">
                 MADDEN 25 × GTA 6 ENGINE
               </span>
               <span className="text-neutral-400 font-mono text-xs">
@@ -106,9 +106,9 @@ export const EnvironmentalWeatherLab: React.FC = () => {
                     recordAction(`Shifted Stadium Season: ${p.name}`);
                   }}
                   data-weather-surface="true"
-                  className={`px-3 py-2 rounded-lg font-mono text-xs font-bold transition-all flex items-center gap-2 border ${
+                  className={`px-3 py-2 rounded-[2px] font-mono text-xs font-bold transition-all flex items-center gap-2 border ${
                     isSelected
-                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_15px_rgba(0,240,255,0.3)] scale-105"
+                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-hard-xs scale-105"
                       : "bg-neutral-900/60 border-neutral-800 text-neutral-400 hover:text-neutral-200"
                   }`}
                 >
@@ -120,7 +120,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
                   )}
                   {key === "VICE_HEATWAVE" && <Sun className="w-3.5 h-3.5 text-pink-500" />}
                   {key === "FOXBOROUGH_AUTUMN" && <Wind className="w-3.5 h-3.5 text-amber-400" />}
-                  {key === "CLEAR_NIGHT" && <Sparkles className="w-3.5 h-3.5 text-cyan-400" />}
+                  {key === "CLEAR_NIGHT" && <GridironIcon className="w-3.5 h-3.5 text-cyan-400" />}
                   <span>{p.name.split(" ")[0]}</span>
                 </button>
               );
@@ -191,7 +191,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
             </div>
 
             {/* Live Telemetry & Event Log */}
-            <div className="rounded-md bg-neutral-950/90 border border-neutral-800 p-3 font-mono text-xs space-y-1">
+            <div className="rounded-[2px] bg-neutral-950/90 border border-neutral-800 p-3 font-mono text-xs space-y-1">
               <div className="flex justify-between text-neutral-400 border-b border-neutral-800 pb-1 mb-1 text-[11px]">
                 <span>LIVE TELEMETRY STREAM</span>
                 <span className="text-cyan-400 font-bold">
@@ -210,7 +210,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
         {/* Module 2: Atmospheric Environmental Sensors */}
         <WeatherCard title="Stadium Meteorological Telemetry" badge="NEXT-GEN SENSORS" glow="pink">
           <div className="space-y-3 font-mono text-xs">
-            <div className="p-3 bg-neutral-900/60 rounded border border-neutral-800 space-y-2">
+            <div className="p-3 bg-neutral-900/60 rounded-[2px] border border-neutral-800 space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-neutral-400">SURFACE TURF FRICTION:</span>
                 <span className="text-cyan-400 font-bold">
@@ -239,7 +239,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
               <button
                 onClick={() => triggerLightning(1.2)}
                 data-weather-surface="true"
-                className="w-full py-2 bg-gradient-to-r from-pink-900/80 to-purple-900/80 hover:from-pink-800 hover:to-purple-800 border border-pink-500/50 rounded font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-98"
+                className="w-full py-2 bg-gradient-to-r from-pink-900/80 to-purple-900/80 hover:from-pink-800 hover:to-purple-800 border border-pink-500/50 rounded-[2px] font-bold text-white uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-98"
               >
                 <Zap className="w-4 h-4 text-pink-400 animate-pulse" />
                 Trigger Thunder Strike
@@ -248,7 +248,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
               <button
                 onClick={toggle3DBackdrop}
                 data-weather-surface="true"
-                className="w-full py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded font-bold text-neutral-300 uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-[2px] font-bold text-neutral-300 uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
               >
                 <Layers className="w-4 h-4 text-purple-400" />
                 3D Stadium Viewport: {show3DBackdrop ? "Active" : "Disabled"}
@@ -257,7 +257,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
               <button
                 onClick={toggleAudio}
                 data-weather-surface="true"
-                className="w-full py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded font-bold text-neutral-300 uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-[2px] font-bold text-neutral-300 uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
               >
                 <Activity className="w-4 h-4 text-cyan-400" />
                 Procedural Soundscape: {audioEnabled ? "Enabled" : "Muted"}
@@ -269,7 +269,7 @@ export const EnvironmentalWeatherLab: React.FC = () => {
 
       {/* Lightning indicator banner when strike is live */}
       {lightningActive && (
-        <div className="p-3 bg-cyan-950/80 border border-cyan-400 rounded-lg text-center font-mono text-cyan-200 text-xs tracking-widest uppercase animate-pulse">
+        <div className="p-3 bg-cyan-950/80 border border-cyan-400 rounded-[2px] text-center font-mono text-cyan-200 text-xs tracking-widest uppercase animate-pulse">
           ⚡ VOLUMETRIC LIGHTNING SURGE DETECTED // STADIUM FLOODLIGHTS COMPENSATING
         </div>
       )}

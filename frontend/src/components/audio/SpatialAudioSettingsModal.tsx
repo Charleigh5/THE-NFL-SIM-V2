@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { soundEffects } from "../../services/soundEffects";
 import type { SpatialAudioConfig } from "../../services/soundEffects";
-import {
-  Volume2,
-  VolumeX,
-  Radio,
-  Users,
-  Sparkles,
-  X,
-  Play,
-  CheckCircle,
-  Sliders,
-} from "lucide-react";
+import { Volume2, VolumeX, Radio, Users, X, Play, CheckCircle, Sliders } from "lucide-react";
+import { RefereeWhistleIcon } from "../icons";
 
 interface SpatialAudioSettingsModalProps {
   isOpen: boolean;
@@ -91,13 +82,13 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
       <div
-        className="relative w-full max-w-xl bg-gray-950/95 border border-white/15 rounded-2xl shadow-2xl overflow-hidden font-body text-white"
+        className="relative w-full max-w-xl bg-gray-950/95 border border-white/15 rounded-[2px] shadow-hard-lg overflow-hidden font-body text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <div className="p-2 rounded-[2px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               <Radio className="w-5 h-5" />
             </div>
             <div>
@@ -111,7 +102,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-[2px] text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Close Settings"
           >
             <X className="w-5 h-5" />
@@ -121,7 +112,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
         {/* Modal Body */}
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
           {/* Master Volume Section */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+          <div className="bg-white/5 border border-white/10 rounded-[2px] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-emerald-400" />
@@ -133,7 +124,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                 </span>
                 <button
                   onClick={handleToggleMute}
-                  className={`p-1.5 rounded-lg text-xs font-mono transition-colors ${
+                  className={`p-1.5 rounded-[2px] text-xs font-mono transition-colors ${
                     config.isMuted
                       ? "bg-red-500/20 text-red-400 border border-red-500/40"
                       : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
@@ -157,13 +148,13 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               value={config.volume}
               onChange={handleVolumeChange}
               disabled={config.isMuted}
-              className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-emerald-500 disabled:opacity-40"
+              className="w-full h-2 bg-gray-800 rounded-[2px] appearance-none cursor-pointer accent-emerald-500 disabled:opacity-40"
               aria-label="Master volume slider"
             />
           </div>
 
           {/* Spatial 2D Stereo Panning Section */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+          <div className="bg-white/5 border border-white/10 rounded-[2px] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Radio className="w-4 h-4 text-cyan-400" />
@@ -178,14 +169,14 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               </div>
               <button
                 onClick={handleToggleSpatial}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-[2px] transition-colors ${
                   config.spatialAudioEnabled ? "bg-cyan-600" : "bg-gray-800"
                 }`}
                 role="switch"
                 aria-checked={config.spatialAudioEnabled}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-[2px] bg-white transition-transform ${
                     config.spatialAudioEnabled ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
@@ -204,7 +195,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                       soundEffects.playSpatialHit(10, 26.65, 1400)
                     )
                   }
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded-[2px] text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Left (Pan -0.7)
@@ -213,7 +204,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                   onClick={() =>
                     runAudition("Midfield Hit", () => soundEffects.playSpatialHit(60, 26.65, 1400))
                   }
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded-[2px] text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Center (Pan 0.0)
@@ -224,7 +215,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                       soundEffects.playSpatialHit(110, 26.65, 1400)
                     )
                   }
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded-[2px] text-xs font-mono bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 transition-colors flex items-center justify-center gap-1.5 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Right (Pan +0.7)
@@ -234,7 +225,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
           </div>
 
           {/* Procedural Crowd Ambience Section */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+          <div className="bg-white/5 border border-white/10 rounded-[2px] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-amber-400" />
@@ -249,14 +240,14 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               </div>
               <button
                 onClick={handleToggleCrowd}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-[2px] transition-colors ${
                   config.crowdEnabled ? "bg-amber-600" : "bg-gray-800"
                 }`}
                 role="switch"
                 aria-checked={config.crowdEnabled}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-[2px] bg-white transition-transform ${
                     config.crowdEnabled ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
@@ -275,7 +266,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                       soundEffects.updateCrowdIntensity(3.5, 0.8)
                     )
                   }
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded-[2px] text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Roar (+3.5 EPA)
@@ -286,7 +277,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                       soundEffects.updateCrowdIntensity(-2.5, 0.2)
                     )
                   }
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5"
+                  className="px-2.5 py-1.5 rounded-[2px] text-xs font-mono bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 text-amber-200 transition-colors flex items-center justify-center gap-1.5 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Groan (-2.5 EPA)
@@ -296,10 +287,10 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
           </div>
 
           {/* Sound Effects & Cadence Section */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+          <div className="bg-white/5 border border-white/10 rounded-[2px] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-400" />
+                <RefereeWhistleIcon className="w-4 h-4 text-purple-400" />
                 <div>
                   <span className="text-sm font-semibold uppercase tracking-wide">
                     Sound Effects & Cadence
@@ -311,14 +302,14 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
               </div>
               <button
                 onClick={handleToggleSfx}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-[2px] transition-colors ${
                   config.sfxEnabled ? "bg-purple-600" : "bg-gray-800"
                 }`}
                 role="switch"
                 aria-checked={config.sfxEnabled}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-[2px] bg-white transition-transform ${
                     config.sfxEnabled ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
@@ -335,7 +326,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                   onClick={() =>
                     runAudition("Cadence 'Hut'", () => soundEffects.playCadence("hut"))
                   }
-                  className="px-2 py-1.5 rounded-lg text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1"
+                  className="px-2 py-1.5 rounded-[2px] text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Cadence "Hut"
@@ -344,14 +335,14 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
                   onClick={() =>
                     runAudition("Ref Whistle", () => soundEffects.playSpatialWhistle(60))
                   }
-                  className="px-2 py-1.5 rounded-lg text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1"
+                  className="px-2 py-1.5 rounded-[2px] text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Ref Whistle
                 </button>
                 <button
                   onClick={() => runAudition("Stadium Horn", () => soundEffects.playStadiumHorn())}
-                  className="px-2 py-1.5 rounded-lg text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1"
+                  className="px-2 py-1.5 rounded-[2px] text-xs font-mono bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-purple-200 transition-colors flex items-center justify-center gap-1 shadow-hard-xs"
                 >
                   <Play className="w-3 h-3" />
                   Stadium Horn
@@ -362,7 +353,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
 
           {/* Last Audition Feedback Pill */}
           {lastAuditioned && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono animate-fadeIn">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-[2px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono animate-fadeIn">
               <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>Auditioning: {lastAuditioned} (DSP Triggered)</span>
             </div>
@@ -376,7 +367,7 @@ export const SpatialAudioSettingsModal: React.FC<SpatialAudioSettingsModalProps>
           </span>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-black transition-colors"
+            className="px-5 py-2 rounded-[2px] text-xs font-mono font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-black shadow-hard-xs transition-colors"
           >
             Done
           </button>

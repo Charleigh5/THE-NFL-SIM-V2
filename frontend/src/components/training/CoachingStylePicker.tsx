@@ -49,10 +49,10 @@ export const CoachingStylePicker = ({ currentStyle, onStyleSelect }: CoachingSty
             key={style.type}
             onClick={() => onStyleSelect(style.type)}
             className={`
-              relative p-4 rounded-xl border cursor-pointer transition-all
+              relative p-4 rounded-[2px] border cursor-pointer transition-all shadow-hard-xs
               ${
                 isSelected
-                  ? "bg-white/10 border-white/40 ring-1 ring-white/20"
+                  ? "bg-white/10 border-white/40 ring-1 ring-white/20 shadow-hard-primary"
                   : "bg-black/20 border-white/5 hover:bg-white/5"
               }
             `}

@@ -9,8 +9,8 @@ import {
   CheckCircle2,
   SlidersHorizontal,
   Layers,
-  Sparkles,
 } from "lucide-react";
+import { GridironIcon } from "../components/icons";
 import { api } from "../services/api";
 import type { Player, Team, ChemistryMetadata } from "../services/api";
 import { useTheme } from "../context/useTheme";
@@ -557,9 +557,12 @@ export const DepthChart: React.FC = () => {
 
   // Helper for OVR Badge color tiers
   const getOvrTierClass = (ovr: number) => {
-    if (ovr >= 99) return "bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-lg shadow-amber-500/50";
-    if (ovr >= 90) return "bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-lg shadow-cyan-500/40";
-    if (ovr >= 80) return "bg-gradient-to-br from-emerald-400 to-green-600 text-white border-emerald-300 shadow-md shadow-emerald-500/30";
+    if (ovr >= 99)
+      return "bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-600 text-black border-amber-300 shadow-lg shadow-amber-500/50";
+    if (ovr >= 90)
+      return "bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 text-white border-cyan-300 shadow-lg shadow-cyan-500/40";
+    if (ovr >= 80)
+      return "bg-gradient-to-br from-emerald-400 to-green-600 text-white border-emerald-300 shadow-md shadow-emerald-500/30";
     if (ovr >= 70) return "bg-gradient-to-br from-blue-600 to-slate-700 text-white border-blue-400";
     return "bg-slate-800 text-gray-300 border-slate-700";
   };
@@ -605,7 +608,7 @@ export const DepthChart: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold tracking-widest bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
+              <span className="px-2.5 py-0.5 rounded-[2px] text-xs font-mono font-bold tracking-widest bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
                 DETROIT FORD FIELD • WAR ROOM
               </span>
               <span className="text-gray-400 text-xs font-mono">
@@ -621,20 +624,20 @@ export const DepthChart: React.FC = () => {
           {/* Right Toolbar: View Mode Switcher, Franchise Select, & Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
             {/* View Mode Toggle: Spatial vs Tactical */}
-            <div className="bg-white/5 border border-white/10 p-1 rounded-xl flex items-center gap-1">
+            <div className="bg-white/5 border border-white/10 p-1 rounded-[2px] flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => {
                   soundEffects.playSnap();
                   setViewMode("SPATIAL");
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
                   viewMode === "SPATIAL"
-                    ? "bg-[#0076B6] text-white shadow-md shadow-blue-900/40"
+                    ? "bg-[#0076B6] text-white shadow-hard-xs"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                <GridironIcon className="w-3.5 h-3.5 text-cyan-300" />
                 <span>War Room 3D</span>
               </button>
               <button
@@ -643,9 +646,9 @@ export const DepthChart: React.FC = () => {
                   soundEffects.playSnap();
                   setViewMode("TACTICAL");
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
                   viewMode === "TACTICAL"
-                    ? "bg-[#0076B6] text-white shadow-md shadow-blue-900/40"
+                    ? "bg-[#0076B6] text-white shadow-hard-xs"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -655,7 +658,7 @@ export const DepthChart: React.FC = () => {
             </div>
 
             {/* Franchise Selector */}
-            <div className="bg-white/5 border border-white/10 p-1.5 px-3 rounded-xl flex items-center gap-2.5">
+            <div className="bg-white/5 border border-white/10 p-1.5 px-3 rounded-[2px] flex items-center gap-2.5">
               <img
                 src={`/logos/${currentTeam.abbreviation}.png`}
                 alt={currentTeam.name}
@@ -716,7 +719,7 @@ export const DepthChart: React.FC = () => {
 
         {/* 4-Unit Master Navigation Bar */}
         <div className="max-w-7xl mx-auto mt-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-black/40 p-1.5 rounded-xl border border-white/10 backdrop-blur-md">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-black/40 p-1.5 rounded-[2px] border border-white/10 backdrop-blur-md">
             {UNIT_TABS.map((tab) => {
               const isActive = activeUnit === tab.id;
               return (
@@ -726,9 +729,9 @@ export const DepthChart: React.FC = () => {
                     soundEffects.playSnap();
                     setActiveUnit(tab.id);
                   }}
-                  className={`py-2 px-3 rounded-lg flex items-center justify-center gap-2 font-heading font-black tracking-wide text-xs uppercase transition-all duration-200 ${
+                  className={`py-2 px-3 rounded-[2px] flex items-center justify-center gap-2 font-heading font-black tracking-wide text-xs uppercase transition-all duration-200 ${
                     isActive
-                      ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-900/40 border border-cyan-400/40"
+                      ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-hard-xs border border-cyan-400/40"
                       : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
@@ -758,15 +761,15 @@ export const DepthChart: React.FC = () => {
                     soundEffects.playSnap();
                     setSelectedPosition(pos.code);
                   }}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-3.5 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase transition-all duration-200 flex items-center gap-2 ${
                     isSelected
-                      ? "bg-cyan-500 text-black font-black shadow-md shadow-cyan-500/30 scale-105"
+                      ? "bg-cyan-500 text-black font-black shadow-hard-xs scale-105"
                       : "bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/5"
                   }`}
                 >
                   <span>{pos.code}</span>
                   <span
-                    className={`text-[9px] px-1 py-0.2 rounded font-mono ${
+                    className={`text-[9px] px-1 py-0.2 rounded-[2px] font-mono ${
                       isSelected ? "bg-black/30 text-white" : "bg-white/10 text-gray-400"
                     }`}
                   >
@@ -787,7 +790,7 @@ export const DepthChart: React.FC = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 flex items-center gap-3 backdrop-blur-md shadow-lg"
+              className="p-3.5 rounded-[2px] bg-emerald-950/80 border border-emerald-500 text-emerald-200 flex items-center gap-3 backdrop-blur-md shadow-hard-emerald"
             >
               <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
               <div className="text-sm font-semibold">
@@ -810,7 +813,7 @@ export const DepthChart: React.FC = () => {
           <div className="w-full max-w-[1550px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Position Room Dossier Side Card (4/3 cols) */}
             <div className="lg:col-span-4 xl:col-span-3 space-y-4">
-              <div className="bg-slate-950/65 border border-slate-700/50 rounded-2xl p-5 backdrop-blur-xl shadow-2xl">
+              <div className="bg-slate-950/65 border border-slate-700/50 rounded-[2px] p-5 backdrop-blur-xl shadow-hard-md">
                 <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black font-heading text-cyan-400">
@@ -818,7 +821,7 @@ export const DepthChart: React.FC = () => {
                     </span>
                     <span className="text-gray-300 font-bold text-sm">{currentPosConfig.name}</span>
                   </div>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-cyan-300 border border-white/10">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-[2px] bg-white/10 text-cyan-300 border border-white/10">
                     {currentPosConfig.unit}
                   </span>
                 </div>
@@ -829,13 +832,15 @@ export const DepthChart: React.FC = () => {
 
                 {/* Room Metrics */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                    <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
+                  <div className="bg-white/5 border border-white/5 rounded-[2px] p-3">
+                    <div className="text-[10px] font-mono text-gray-400 uppercase">
+                      ROOM AVERAGE
+                    </div>
                     <div className="text-2xl font-black font-heading text-white mt-0.5">
                       {averageGroupOvr} <span className="text-xs text-cyan-400 font-mono">OVR</span>
                     </div>
                   </div>
-                  <div className="bg-white/5 border border-white/5 rounded-xl p-3">
+                  <div className="bg-white/5 border border-white/5 rounded-[2px] p-3">
                     <div className="text-[10px] font-mono text-gray-400 uppercase">
                       ACTIVE ON DEPTH
                     </div>
@@ -850,7 +855,7 @@ export const DepthChart: React.FC = () => {
 
                 {/* Starter Spotlight Card */}
                 {starterPlayer && (
-                  <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900/60 border border-emerald-500/40 rounded-xl p-3.5 mb-4">
+                  <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900/60 border border-emerald-500/40 rounded-[2px] p-3.5 mb-4">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[9px] font-mono text-emerald-400 font-bold tracking-widest uppercase">
                         ★ CURRENT STARTER (RANK 1)
@@ -863,7 +868,9 @@ export const DepthChart: React.FC = () => {
                       {starterPlayer.first_name} {starterPlayer.last_name}
                     </div>
                     <div className="text-xs text-gray-300 mt-0.5 flex items-center gap-2">
-                      <span className="text-emerald-300 font-bold">OVR {starterPlayer.overall_rating}</span>
+                      <span className="text-emerald-300 font-bold">
+                        OVR {starterPlayer.overall_rating}
+                      </span>
                       <span>•</span>
                       <span>{starterPlayer.college || "NFL Veteran"}</span>
                       <span>•</span>
@@ -873,27 +880,28 @@ export const DepthChart: React.FC = () => {
                 )}
 
                 {/* Unit Chemistry Integration */}
-                {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) && chemistry && (
-                  <div className="p-3 rounded-xl bg-cyan-950/30 border border-cyan-500/30">
-                    <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <span>⚗️ Trench Chemistry Synergy</span>
+                {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) &&
+                  chemistry && (
+                    <div className="p-3 rounded-[2px] bg-cyan-950/30 border border-cyan-500/30">
+                      <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span>⚗️ Trench Chemistry Synergy</span>
+                      </div>
+                      <ChemistryBadge
+                        level={chemistry.chemistry_level}
+                        consecutiveGames={chemistry.consecutive_games}
+                        status={chemistry.status}
+                        bonuses={chemistry.bonuses}
+                      />
                     </div>
-                    <ChemistryBadge
-                      level={chemistry.chemistry_level}
-                      consecutiveGames={chemistry.consecutive_games}
-                      status={chemistry.status}
-                      bonuses={chemistry.bonuses}
-                    />
-                  </div>
-                )}
+                  )}
               </div>
             </div>
 
             {/* Interactive Magnetic War Board (8/9 cols) */}
             <div className="lg:col-span-8 xl:col-span-9">
               {loading ? (
-                <div className="py-24 text-center text-gray-400 font-mono flex flex-col items-center justify-center gap-3 bg-slate-950/80 rounded-2xl border border-white/10 backdrop-blur-xl">
-                  <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                <div className="py-24 text-center text-gray-400 font-mono flex flex-col items-center justify-center gap-3 bg-slate-950/80 rounded-[2px] border border-white/10 backdrop-blur-xl">
+                  <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-[2px] animate-spin" />
                   <span>Loading Roster & Tactical Warboard...</span>
                 </div>
               ) : (
@@ -925,7 +933,7 @@ export const DepthChart: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Position Room Summary (4 cols) */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
+              <div className="bg-black/40 border border-white/10 rounded-[2px] p-6 backdrop-blur-xl shadow-hard-md">
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-black font-heading text-cyan-400">
@@ -933,7 +941,7 @@ export const DepthChart: React.FC = () => {
                     </span>
                     <span className="text-gray-300 font-bold text-sm">{currentPosConfig.name}</span>
                   </div>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/10 text-cyan-300 border border-white/10">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-[2px] bg-white/10 text-cyan-300 border border-white/10">
                     {currentPosConfig.unit}
                   </span>
                 </div>
@@ -943,13 +951,15 @@ export const DepthChart: React.FC = () => {
                 </p>
 
                 <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                    <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
+                  <div className="bg-white/5 border border-white/5 rounded-[2px] p-3">
+                    <div className="text-[10px] font-mono text-gray-400 uppercase">
+                      ROOM AVERAGE
+                    </div>
                     <div className="text-2xl font-black font-heading text-white mt-1">
                       {averageGroupOvr} <span className="text-xs text-cyan-400 font-mono">OVR</span>
                     </div>
                   </div>
-                  <div className="bg-white/5 border border-white/5 rounded-xl p-3">
+                  <div className="bg-white/5 border border-white/5 rounded-[2px] p-3">
                     <div className="text-[10px] font-mono text-gray-400 uppercase">
                       ACTIVE AT POSITION
                     </div>
@@ -963,7 +973,7 @@ export const DepthChart: React.FC = () => {
                 </div>
 
                 {starterPlayer && (
-                  <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/15 rounded-xl p-4 mb-6">
+                  <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/15 rounded-[2px] p-4 mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[10px] font-mono text-emerald-400 font-bold tracking-widest uppercase">
                         ★ CURRENT STARTER (RANK 1)
@@ -989,7 +999,7 @@ export const DepthChart: React.FC = () => {
 
             {/* Right Column: Reorderable List (8 cols) */}
             <div className="lg:col-span-8">
-              <div className="bg-black/40 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl">
+              <div className="bg-black/40 border border-white/10 rounded-[2px] p-6 backdrop-blur-xl shadow-hard-md">
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                   <div>
                     <h2 className="text-xl font-heading font-black text-white tracking-wide uppercase">
@@ -1007,11 +1017,11 @@ export const DepthChart: React.FC = () => {
 
                 {loading ? (
                   <div className="py-16 text-center text-gray-400 font-mono flex flex-col items-center justify-center gap-3">
-                    <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-[2px] animate-spin" />
                     <span>Loading Roster...</span>
                   </div>
                 ) : positionPlayers.length === 0 ? (
-                  <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-xl text-gray-500 font-mono">
+                  <div className="py-16 text-center border-2 border-dashed border-white/10 rounded-[2px] text-gray-500 font-mono">
                     No players currently assigned to {selectedPosition}.
                   </div>
                 ) : (
@@ -1055,8 +1065,10 @@ export const DepthChart: React.FC = () => {
                               return next;
                             });
                           }}
-                          className={`bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-grab active:cursor-grabbing hover:bg-white/10 border transition-all duration-200 group ${
-                            index === 0 ? "border-emerald-500/30 bg-emerald-950/10" : "border-white/5"
+                          className={`bg-white/5 p-4 rounded-[2px] flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-grab active:cursor-grabbing hover:bg-white/10 border transition-all duration-200 group ${
+                            index === 0
+                              ? "border-emerald-500/30 bg-emerald-950/10"
+                              : "border-white/5"
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -1065,7 +1077,7 @@ export const DepthChart: React.FC = () => {
                                 #{index + 1}
                               </div>
                               <span
-                                className={`text-[9px] px-1.5 py-0.2 rounded mt-0.5 ${rankBadge.className}`}
+                                className={`text-[9px] px-1.5 py-0.2 rounded-[2px] mt-0.5 ${rankBadge.className}`}
                               >
                                 {index === 0 ? "STARTER" : `STR ${index + 1}`}
                               </span>
@@ -1083,7 +1095,7 @@ export const DepthChart: React.FC = () => {
                             />
 
                             <div
-                              className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center border font-heading font-black flex-shrink-0 ${ovrClass}`}
+                              className={`w-12 h-12 rounded-[2px] flex flex-col items-center justify-center border font-heading font-black flex-shrink-0 ${ovrClass}`}
                             >
                               <span className="text-lg leading-none">
                                 {player.overall_rating || 50}
@@ -1118,11 +1130,14 @@ export const DepthChart: React.FC = () => {
 
                               <div className="flex items-center gap-2 mt-2">
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
-                                  SPD: <strong className="text-cyan-400">{player.speed || 80}</strong>
+                                  SPD:{" "}
+                                  <strong className="text-cyan-400">{player.speed || 80}</strong>
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   ACC:{" "}
-                                  <strong className="text-cyan-400">{player.acceleration || 80}</strong>
+                                  <strong className="text-cyan-400">
+                                    {player.acceleration || 80}
+                                  </strong>
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   STR:{" "}
@@ -1130,7 +1145,9 @@ export const DepthChart: React.FC = () => {
                                 </span>
                                 <span className="text-[10px] font-mono bg-white/5 px-2 py-0.5 rounded border border-white/5 text-gray-300">
                                   AWR:{" "}
-                                  <strong className="text-cyan-400">{player.awareness || 78}</strong>
+                                  <strong className="text-cyan-400">
+                                    {player.awareness || 78}
+                                  </strong>
                                 </span>
                               </div>
                             </div>

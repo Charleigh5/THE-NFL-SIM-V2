@@ -51,7 +51,7 @@ export const Navigation: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-20 md:w-64 bg-slate-950/75 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col justify-between shadow-2xl overflow-hidden">
+    <nav className="fixed left-0 top-0 h-full w-20 md:w-64 bg-slate-950/75 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col justify-between shadow-hard-md overflow-hidden">
       {/* Franchise Top Header */}
       <div>
         <Link
@@ -68,7 +68,7 @@ export const Navigation: React.FC = () => {
 
           <div className="relative z-10 flex items-center gap-3">
             {/* Team Logo or Helmet Icon */}
-            <div className="w-12 h-12 rounded-lg bg-black/60 border border-white/15 flex items-center justify-center p-1 shadow-inner shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-[2px] bg-black/60 border border-white/15 flex items-center justify-center p-1 shadow-hard-xs shrink-0 group-hover:scale-105 transition-transform">
               <img
                 src={`/logos/${activeTeam?.abbreviation || "DET"}.png`}
                 alt={activeTeam?.name || "Detroit Lions"}
@@ -111,9 +111,9 @@ export const Navigation: React.FC = () => {
                 to={item.path}
                 onClick={() => soundEffects.playSnap()}
                 className={clsx(
-                  "group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200",
+                  "group relative flex items-center justify-between px-3 py-2.5 rounded-[2px] transition-all duration-200",
                   isActive
-                    ? "bg-white/10 text-white font-bold shadow-lg"
+                    ? "bg-white/10 text-white font-bold shadow-hard-xs"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
                 )}
               >
@@ -121,7 +121,7 @@ export const Navigation: React.FC = () => {
                 {isActive && (
                   <motion.div
                     layoutId="activeNavStrip"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-r bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-r-[1px] bg-red-500 shadow-hard-xs"
                     style={{ backgroundColor: "var(--theme-secondary, #facc15)" }}
                   />
                 )}
@@ -141,7 +141,7 @@ export const Navigation: React.FC = () => {
                 </div>
 
                 {/* Tactical Tag */}
-                <span className="hidden md:inline text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-gray-400 border border-white/5 uppercase">
+                <span className="hidden md:inline text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-black/40 text-gray-400 border border-white/5 uppercase">
                   {item.tag}
                 </span>
               </Link>
@@ -161,7 +161,7 @@ export const Navigation: React.FC = () => {
 
         <button
           onClick={toggleAudio}
-          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex items-center justify-center"
+          className="p-2 rounded-[2px] bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex items-center justify-center shadow-hard-xs"
           title={isMuted ? "Unmute Stadium Sound" : "Mute Stadium Sound"}
           aria-label={isMuted ? "Unmute Sound" : "Mute Sound"}
         >

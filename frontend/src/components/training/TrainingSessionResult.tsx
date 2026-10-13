@@ -20,7 +20,7 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
     >
-      <div className="w-full max-w-lg bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden relative">
+      <div className="w-full max-w-lg bg-gray-900 border border-gray-700 rounded-[2px] shadow-hard-md overflow-hidden relative">
         {/* Background Effect */}
         <div
           className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${isInjury ? "from-red-500 to-orange-500" : "from-green-400 to-blue-500"}`}
@@ -29,7 +29,9 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
         <div className="p-8">
           {/* Header Icon */}
           <div className="flex justify-center mb-6">
-            <div className={`p-4 rounded-full ${isInjury ? "bg-red-500/20" : "bg-green-500/20"}`}>
+            <div
+              className={`p-4 rounded-[2px] shadow-hard-xs ${isInjury ? "bg-red-500/20" : "bg-green-500/20"}`}
+            >
               {isInjury ? (
                 <AlertTriangle className="w-12 h-12 text-red-500" />
               ) : (
@@ -50,7 +52,7 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
 
           {/* XP Gains Section */}
           {!isInjury && (
-            <div className="bg-gray-800/50 rounded-xl p-6 mb-6 border border-gray-700/50">
+            <div className="bg-gray-800/50 rounded-[2px] p-6 mb-6 border border-gray-700/50 shadow-hard-xs">
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-green-400" />
                 <h3 className="text-lg font-semibold text-white">XP Gains</h3>
@@ -86,7 +88,7 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
 
           {/* Fatigue & Risk Stats */}
           <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-700/30">
+            <div className="bg-gray-800/30 p-4 rounded-[2px] border border-gray-700/30 shadow-hard-xs">
               <div className="flex items-center gap-2 mb-2 text-gray-400">
                 <Activity className="w-4 h-4" />
                 <span className="text-xs uppercase tracking-wider">Fatigue</span>
@@ -96,7 +98,7 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
                 <span className="text-sm font-normal text-gray-500">%</span>
               </div>
             </div>
-            <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-700/30">
+            <div className="bg-gray-800/30 p-4 rounded-[2px] border border-gray-700/30 shadow-hard-xs">
               <div className="flex items-center gap-2 mb-2 text-gray-400">
                 <BarChart2 className="w-4 h-4" />
                 <span className="text-xs uppercase tracking-wider">Weekly Load</span>
@@ -108,10 +110,10 @@ export const TrainingSessionResult: React.FC<TrainingSessionResultProps> = ({
           {/* Action Button */}
           <button
             onClick={onClose}
-            className={`w-full py-3 rounded-xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] ${
+            className={`w-full py-3 rounded-[2px] font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-hard-xs ${
               isInjury
-                ? "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/20"
-                : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20"
+                ? "bg-red-600 hover:bg-red-500 text-white"
+                : "bg-blue-600 hover:bg-blue-500 text-white"
             }`}
           >
             {isInjury ? "Acknowledge" : "Continue"}

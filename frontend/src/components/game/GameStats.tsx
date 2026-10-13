@@ -94,7 +94,7 @@ export const GameStats = () => {
   }, [playLog]);
 
   return (
-    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-6 h-full overflow-y-auto">
+    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-[2px] shadow-hard-md p-6 h-full overflow-y-auto">
       <h2 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-2">
         Game Statistics
       </h2>
@@ -104,18 +104,18 @@ export const GameStats = () => {
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-cyan-400 uppercase tracking-wider">Offense</h3>
 
-          <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+          <div className="flex justify-between items-center p-3 bg-white/5 rounded-[2px] shadow-hard-xs">
             <span className="text-gray-300">Total Yards</span>
             <span className="text-2xl font-bold text-white">{stats.totalYards}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-white/5 rounded-lg">
+            <div className="p-3 bg-white/5 rounded-[2px] shadow-hard-xs">
               <div className="text-xs text-gray-400 mb-1">Passing</div>
               <div className="text-xl font-bold text-white">{stats.passYards}</div>
               <div className="text-xs text-gray-500">{stats.passPlays} plays</div>
             </div>
-            <div className="p-3 bg-white/5 rounded-lg">
+            <div className="p-3 bg-white/5 rounded-[2px] shadow-hard-xs">
               <div className="text-xs text-gray-400 mb-1">Rushing</div>
               <div className="text-xl font-bold text-white">{stats.rushYards}</div>
               <div className="text-xs text-gray-500">{stats.rushPlays} plays</div>

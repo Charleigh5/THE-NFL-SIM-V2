@@ -1,48 +1,143 @@
+/* ==========================================================================
+   DIGITAL GRIDIRON TELEMETRY LOADER & 25-SECOND PLAY-CLOCK RADAR SWEEP
+   Anti-Template Firewall: Strict 0-4px corner radius, zero-blur hard shadows,
+   360° phosphor radar sweep beam, concentric 10/20/40 yard depth rings,
+   tactical reticle crosshairs, and live countdown telemetry.
+   Zero horizontal overflow guarantee (max-w-full overflow-hidden).
+   ========================================================================== */
+
+:root {
+  --loader-accent: #00f0ff;
+  --loader-bg: #030712;
+}
+
 .loading-spinner-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.loading-spinner {
-  display: inline-block;
+/* Size Variants */
+.loading-spinner-container.small {
+  padding: 0.25rem;
+}
+
+.loading-spinner-container.medium {
+  padding: 0.875rem;
+}
+
+.loading-spinner-container.large {
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Radar Scope Housing */
+.gridiron-radar-scope {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Circular phosphor radar sweeping cone */
+.radar-sweep-beam {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  border-style: solid;
-  animation: spin 1.2s linear infinite;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 260deg,
+    rgba(0, 240, 255, 0.04) 285deg,
+    rgba(0, 240, 255, 0.22) 340deg,
+    var(--loader-accent, #00f0ff) 360deg
+  );
+  animation: radarSweep 1.8s linear infinite;
+  pointer-events: none;
+  z-index: 10;
 }
 
-.loading-spinner-container.small .loading-spinner {
-  width: 20px;
-  height: 20px;
-  border-width: 2px;
-}
-
-.loading-spinner-container.medium .loading-spinner {
-  width: 40px;
-  height: 40px;
-  border-width: 4px;
-}
-
-.loading-spinner-container.large .loading-spinner {
-  width: 60px;
-  height: 60px;
-  border-width: 6px;
-}
-
-.loading-text {
-  margin-top: 1rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-@keyframes spin {
+/* Radial sweep animation */
+@keyframes radarSweep {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Blip pulsing animation */
+@keyframes radarBlipPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 4px var(--loader-accent, #00f0ff));
+  }
+}
+
+.animate-blip-1 {
+  animation: radarBlipPulse 1.8s ease-in-out infinite;
+}
+
+.animate-blip-2 {
+  animation: radarBlipPulse 1.8s ease-in-out infinite 0.6s;
+}
+
+.animate-blip-3 {
+  animation: radarBlipPulse 1.8s ease-in-out infinite 1.2s;
+}
+
+/* Beacon dot pulse */
+@keyframes beaconPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 6px var(--loader-accent, #00f0ff);
+  }
+}
+
+.animate-beacon {
+  animation: beaconPulse 1.4s ease-in-out infinite;
+}
+
+/* Legacy backward-compatible spinner class (enhanced to fit tactical gridiron) */
+.loading-spinner {
+  display: inline-block;
+  border-radius: 2px;
+}
+
+/* Text styles */
+.loading-text {
+  margin-top: 0.875rem;
+  color: #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

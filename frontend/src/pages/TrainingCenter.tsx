@@ -12,7 +12,8 @@ import { PlayerProgressChart } from "../components/training/PlayerProgressChart"
 import { trainingApi } from "../services/trainingApi";
 import type { Drill, CoachingStyle, TrainingResult } from "../types/training";
 import { CoachingStyleType } from "../types/training";
-import { ChevronLeft, User, AlertTriangle, Sparkles, Layers } from "lucide-react";
+import { ChevronLeft, User, AlertTriangle, Layers } from "lucide-react";
+import { GridironIcon } from "../components/icons";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../services/api";
 
@@ -158,14 +159,14 @@ export const TrainingCenter: React.FC = () => {
       <div className="flex items-center gap-4">
         <Link
           to="/season"
-          className="p-2 rounded-full hover:bg-white/10 transition-colors"
+          className="p-2 rounded-[2px] hover:bg-white/10 transition-colors"
           aria-label="Back to Season"
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold tracking-widest bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
+            <span className="px-2.5 py-0.5 rounded-[2px] text-xs font-mono font-bold tracking-widest bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
               Detroit Lions Strength & Conditioning Pavilion
             </span>
             <span className="text-gray-400 text-xs font-mono">
@@ -183,25 +184,25 @@ export const TrainingCenter: React.FC = () => {
 
       <div className="flex flex-wrap items-center gap-4">
         {/* Dual-Mode Ergonomics Toggle */}
-        <div className="bg-white/5 border border-white/10 p-1 rounded-xl flex items-center gap-1">
+        <div className="bg-white/5 border border-white/10 p-1 rounded-[2px] flex items-center gap-1">
           <button
             type="button"
             onClick={() => handleViewModeChange("spatial")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
               viewMode === "spatial"
-                ? "bg-[#0076B6] text-white shadow-md shadow-blue-900/40 font-black"
+                ? "bg-[#0076B6] text-white shadow-hard-xs font-black"
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+            <GridironIcon className="w-3.5 h-3.5 text-cyan-300" />
             <span>SPATIAL FACILITY</span>
           </button>
           <button
             type="button"
             onClick={() => handleViewModeChange("tactical")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase transition-all flex items-center gap-1.5 ${
               viewMode === "tactical"
-                ? "bg-[#0076B6] text-white shadow-md shadow-blue-900/40 font-black"
+                ? "bg-[#0076B6] text-white shadow-hard-xs font-black"
                 : "text-gray-400 hover:text-white"
             }`}
           >
@@ -213,7 +214,7 @@ export const TrainingCenter: React.FC = () => {
         {/* Player Info & Stats */}
         <div className="flex gap-6 sm:gap-8 items-center">
           {playerData && (
-            <div className="flex items-center gap-3 bg-gray-800/50 px-4 py-2 rounded-xl border border-gray-700/50">
+            <div className="flex items-center gap-3 bg-gray-800/50 px-4 py-2 rounded-[2px] border border-gray-700/50">
               <User className="w-5 h-5 text-blue-400" />
               <div>
                 <div className="text-sm font-bold text-white">{playerData.player_name}</div>
@@ -306,7 +307,7 @@ export const TrainingCenter: React.FC = () => {
       </main>
 
       {/* Player Attribute Progression Trajectory */}
-      <div className="mt-8 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+      <div className="mt-8 bg-slate-900/60 border border-slate-800 rounded-[2px] p-6 shadow-hard-md">
         <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
           Player Attribute Progression Trajectory
         </h3>
@@ -337,7 +338,7 @@ export const TrainingCenter: React.FC = () => {
           className="w-full min-h-screen py-8"
         >
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="bg-slate-950/70 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+            <div className="bg-slate-950/70 backdrop-blur-xl border border-white/15 rounded-[2px] p-6 sm:p-8 shadow-hard-md space-y-8">
               {headerContent}
               {dashboardContent}
             </div>
@@ -347,7 +348,7 @@ export const TrainingCenter: React.FC = () => {
         /* TACTICAL MATRIX: Direct 2D Dashboard without 2.5D Viewport */
         <div className="w-full min-h-screen py-8 bg-slate-950">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+            <div className="bg-slate-900/80 border border-slate-800 rounded-[2px] p-6 sm:p-8 shadow-hard-md space-y-8">
               {headerContent}
               {dashboardContent}
             </div>
@@ -362,7 +363,7 @@ export const TrainingCenter: React.FC = () => {
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            className="fixed bottom-0 left-0 w-full bg-gray-900 border-t border-blue-500/50 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]"
+            className="fixed bottom-0 left-0 w-full bg-gray-900 border-t border-blue-500/50 z-50 shadow-hard-md"
           >
             <div className="container mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-6">
               <div className="max-w-2xl">
@@ -390,17 +391,17 @@ export const TrainingCenter: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setSelectedDrill(null)}
-                  className="px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold tracking-widest uppercase rounded transition-all"
+                  className="px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold tracking-widest uppercase rounded-[2px] transition-all shadow-hard-xs"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleTrain}
                   disabled={isTraining}
-                  className={`px-12 py-4 font-bold tracking-widest uppercase rounded shadow-lg transition-all transform hover:scale-105 ${
+                  className={`px-12 py-4 font-bold tracking-widest uppercase rounded-[2px] shadow-hard-xs transition-all transform hover:scale-105 ${
                     isTraining
                       ? "bg-gray-600 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-500 text-white hover:shadow-blue-500/25"
+                      : "bg-blue-600 hover:bg-blue-500 text-white shadow-hard-primary"
                   }`}
                 >
                   {isTraining ? "Training..." : "Initiate Sequence"}

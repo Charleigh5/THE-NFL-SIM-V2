@@ -12,7 +12,7 @@ export const ScoreBoard: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto font-body select-none">
       {/* Main Broadcast Scorebug Banner (Fox / ESPN / EA Sports CFB 25 Style) */}
-      <div className="relative rounded-2xl overflow-hidden broadcast-glass p-2 border border-white/20 shadow-[0_15px_35px_rgba(0,0,0,0.8)]">
+      <div className="relative rounded-[2px] overflow-hidden broadcast-glass p-2 border border-white/20 shadow-hard-md">
         {/* Subtle Top Metallic Highlight Strip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
@@ -20,7 +20,7 @@ export const ScoreBoard: React.FC = () => {
           {/* ========================================================================= */}
           {/* HOME TEAM BLOCK (5 Cols) */}
           {/* ========================================================================= */}
-          <div className="col-span-5 flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-broadcast-metal to-black/70 border border-white/10 relative overflow-hidden">
+          <div className="col-span-5 flex items-center justify-between p-3 rounded-[2px] bg-gradient-to-r from-broadcast-metal to-black/70 border border-white/10 relative overflow-hidden shadow-hard-xs">
             {/* Team Primary Color Accent Strip */}
             <div
               className="absolute left-0 top-0 bottom-0 w-2"
@@ -29,7 +29,7 @@ export const ScoreBoard: React.FC = () => {
 
             <div className="flex items-center gap-3 pl-2 min-w-0">
               {/* Team Logo */}
-              <div className="w-10 h-10 rounded-lg bg-black/80 border border-white/15 flex items-center justify-center p-1 shrink-0">
+              <div className="w-10 h-10 rounded-[2px] bg-black/80 border border-white/15 flex items-center justify-center p-1 shrink-0 shadow-hard-xs">
                 <img
                   src={`/logos/${activeTeam?.abbreviation || "GB"}.png`}
                   alt={activeTeam?.name || "Home"}
@@ -47,7 +47,7 @@ export const ScoreBoard: React.FC = () => {
                   </h3>
                   {/* Possession Football Pill */}
                   {gameState.possession === "home" && (
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-[0_0_8px_rgba(250,204,21,1)] shrink-0" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-hard-xs shrink-0" />
                   )}
                 </div>
 
@@ -61,9 +61,9 @@ export const ScoreBoard: React.FC = () => {
                     {[...Array(3)].map((_, i) => (
                       <div
                         key={i}
-                        className={`w-3 h-1.5 rounded-full transition-all ${
+                        className={`w-3 h-1.5 rounded-[1px] transition-all ${
                           i < gameState.homeTimeouts
-                            ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+                            ? "bg-yellow-400 shadow-hard-xs"
                             : "bg-white/15"
                         }`}
                       />
@@ -94,7 +94,7 @@ export const ScoreBoard: React.FC = () => {
             </div>
 
             {/* Down & Distance Laser Pill */}
-            <div className="mt-1 px-3 py-1 rounded-full bg-black/80 border border-white/20 shadow-inner">
+            <div className="mt-1 px-3 py-1 rounded-[2px] bg-black/80 border border-white/20 shadow-hard-xs">
               <span className="font-mono font-bold text-xs text-white tracking-widest leading-none">
                 {gameState.down === 1
                   ? "1ST"
@@ -109,7 +109,7 @@ export const ScoreBoard: React.FC = () => {
 
             {/* Red Zone Pulsing Alert Indicator */}
             {isRedZone && (
-              <div className="mt-1 flex items-center gap-1 text-[10px] font-mono font-bold text-red-400 uppercase tracking-widest bg-red-950/60 px-2 py-0.5 rounded border border-red-500/40 animate-pulse">
+              <div className="mt-1 flex items-center gap-1 text-[10px] font-mono font-bold text-red-400 uppercase tracking-widest bg-red-950/60 px-2 py-0.5 rounded-[2px] border border-red-500/40 animate-pulse shadow-hard-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                 RED ZONE
               </div>
@@ -124,7 +124,7 @@ export const ScoreBoard: React.FC = () => {
           {/* ========================================================================= */}
           {/* AWAY TEAM BLOCK (5 Cols) */}
           {/* ========================================================================= */}
-          <div className="col-span-5 flex items-center justify-between p-3 rounded-xl bg-gradient-to-l from-broadcast-metal to-black/70 border border-white/10 relative overflow-hidden">
+          <div className="col-span-5 flex items-center justify-between p-3 rounded-[2px] bg-gradient-to-l from-broadcast-metal to-black/70 border border-white/10 relative overflow-hidden shadow-hard-xs">
             {/* Score */}
             <div
               className="font-header text-5xl text-white px-2 tracking-tighter"
@@ -135,7 +135,7 @@ export const ScoreBoard: React.FC = () => {
 
             <div className="flex items-center gap-3 pr-2 min-w-0 flex-row-reverse text-right">
               {/* Opponent Logo */}
-              <div className="w-10 h-10 rounded-lg bg-black/80 border border-white/15 flex items-center justify-center p-1 shrink-0">
+              <div className="w-10 h-10 rounded-[2px] bg-black/80 border border-white/15 flex items-center justify-center p-1 shrink-0 shadow-hard-xs">
                 <img
                   src="/logos/KC.png"
                   alt="Away"
@@ -149,7 +149,7 @@ export const ScoreBoard: React.FC = () => {
               <div className="min-w-0">
                 <div className="flex items-center justify-end gap-1.5">
                   {gameState.possession === "away" && (
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-[0_0_8px_rgba(250,204,21,1)] shrink-0" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-hard-xs shrink-0" />
                   )}
                   <h3 className="font-header text-2xl text-white uppercase tracking-tight leading-none truncate">
                     Genesis
@@ -165,9 +165,9 @@ export const ScoreBoard: React.FC = () => {
                     {[...Array(3)].map((_, i) => (
                       <div
                         key={i}
-                        className={`w-3 h-1.5 rounded-full transition-all ${
+                        className={`w-3 h-1.5 rounded-[1px] transition-all ${
                           i < gameState.awayTimeouts
-                            ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+                            ? "bg-yellow-400 shadow-hard-xs"
                             : "bg-white/15"
                         }`}
                       />

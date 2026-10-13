@@ -8,10 +8,10 @@ import {
   Volume2,
   VolumeX,
   Layers,
-  Sparkles,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { GridironIcon } from "../icons";
 import {
   useWeatherThemeStore,
   WEATHER_PRESETS,
@@ -54,7 +54,7 @@ export const WeatherControlHUD: React.FC = () => {
         return <Wind className="w-4 h-4 text-amber-400" />;
       case "CLEAR_NIGHT":
       default:
-        return <Sparkles className="w-4 h-4 text-cyan-400" />;
+        return <GridironIcon className="w-4 h-4 text-cyan-400" />;
     }
   };
 
@@ -65,7 +65,7 @@ export const WeatherControlHUD: React.FC = () => {
     >
       {/* Expanded Controls Panel */}
       {isExpanded && (
-        <div className="mb-2 w-80 bg-neutral-950/90 backdrop-blur-xl border border-cyan-500/40 rounded-lg p-3 shadow-2xl shadow-cyan-950/50 text-white font-mono text-xs">
+        <div className="mb-2 w-80 bg-neutral-950/90 backdrop-blur-xl border border-cyan-500/40 rounded-[2px] p-3 shadow-hard-md text-white font-mono text-xs">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-cyan-500/20 pb-2 mb-3">
             <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export const WeatherControlHUD: React.FC = () => {
           </div>
 
           {/* Location & Conditions */}
-          <div className="bg-neutral-900/80 rounded p-2 mb-3 border border-neutral-800">
+          <div className="bg-neutral-900/80 rounded-[2px] p-2 mb-3 border border-neutral-800">
             <div className="flex justify-between items-center mb-1">
               <span className="text-neutral-400 text-[11px]">{preset.location}</span>
               <span className="text-amber-400 font-bold">{preset.temperature}°F</span>
@@ -104,9 +104,9 @@ export const WeatherControlHUD: React.FC = () => {
                     key={key}
                     onClick={() => setCondition(key)}
                     data-weather-surface="true"
-                    className={`flex items-center justify-between px-2.5 py-1.5 rounded transition-all text-left ${
+                    className={`flex items-center justify-between px-2.5 py-1.5 rounded-[2px] transition-all text-left ${
                       isActive
-                        ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+                        ? "bg-cyan-500/20 border border-cyan-400 text-cyan-300 shadow-hard-xs"
                         : "bg-neutral-900/50 hover:bg-neutral-800 border border-neutral-800 text-neutral-300"
                     }`}
                   >
@@ -126,7 +126,7 @@ export const WeatherControlHUD: React.FC = () => {
             <button
               onClick={handleLightning}
               data-weather-surface="true"
-              className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-pink-950/60 hover:bg-pink-900/80 border border-pink-500/50 rounded text-pink-300 font-bold text-[10px] uppercase tracking-wider transition-all"
+              className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-pink-950/60 hover:bg-pink-900/80 border border-pink-500/50 rounded-[2px] text-pink-300 font-bold text-[10px] uppercase tracking-wider transition-all shadow-hard-xs"
             >
               <Zap className="w-3 h-3 text-pink-400 animate-bounce" />
               Lightning Bolt
@@ -135,7 +135,7 @@ export const WeatherControlHUD: React.FC = () => {
             <button
               onClick={toggleAudio}
               data-weather-surface="true"
-              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded font-bold text-[10px] uppercase tracking-wider transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded-[2px] font-bold text-[10px] uppercase tracking-wider transition-all shadow-hard-xs ${
                 audioEnabled
                   ? "bg-cyan-950/60 border-cyan-400 text-cyan-300"
                   : "bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-400"
@@ -157,7 +157,7 @@ export const WeatherControlHUD: React.FC = () => {
             <button
               onClick={toggle3DBackdrop}
               data-weather-surface="true"
-              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded font-bold text-[10px] uppercase tracking-wider transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded-[2px] font-bold text-[10px] uppercase tracking-wider transition-all shadow-hard-xs ${
                 show3DBackdrop
                   ? "bg-purple-950/60 border-purple-400 text-purple-300"
                   : "bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-400"
@@ -170,7 +170,7 @@ export const WeatherControlHUD: React.FC = () => {
             <button
               onClick={toggleSnowAccumulation}
               data-weather-surface="true"
-              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded font-bold text-[10px] uppercase tracking-wider transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-2 border rounded-[2px] font-bold text-[10px] uppercase tracking-wider transition-all shadow-hard-xs ${
                 snowAccumulationActive
                   ? "bg-blue-950/60 border-blue-400 text-blue-300"
                   : "bg-neutral-900 hover:bg-neutral-800 border-neutral-800 text-neutral-400"
@@ -187,7 +187,7 @@ export const WeatherControlHUD: React.FC = () => {
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         data-weather-surface="true"
-        className="flex items-center gap-2 px-3 py-2 bg-neutral-950/90 hover:bg-neutral-900 border border-cyan-500/50 rounded-full shadow-lg shadow-cyan-950/80 text-white transition-all transform hover:scale-105"
+        className="flex items-center gap-2 px-3 py-2 bg-neutral-950/90 hover:bg-neutral-900 border border-cyan-500/50 rounded-[2px] shadow-hard-xs text-white transition-all transform hover:scale-105"
       >
         <div className="flex items-center gap-1.5">
           {getConditionIcon(condition)}

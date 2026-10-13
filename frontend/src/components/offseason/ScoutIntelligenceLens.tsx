@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Brain, Gauge, Sparkles, ShieldAlert, FileText, Zap, Compass } from "lucide-react";
+import { Brain, Gauge, ShieldAlert, FileText, Zap, Compass } from "lucide-react";
+import { BlitzBoltIcon } from "../icons";
 import type { ScoutBiasLens, ProspectIntelligence } from "../../types/deepDive";
 
 interface ScoutIntelligenceLensProps {
@@ -47,11 +48,11 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
   const activeMeta = LENS_METADATA[currentLens];
 
   return (
-    <div className="w-full bg-slate-950/80 border border-slate-800/90 rounded-2xl p-4 shadow-2xl backdrop-blur-xl mb-4 font-sans">
+    <div className="w-full bg-slate-950/80 border border-slate-800/90 rounded-[2px] p-4 shadow-hard-md backdrop-blur-xl mb-4 font-sans">
       {/* Header & Lens Buttons */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">
+          <div className="p-1.5 rounded-[2px] bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">
             <Brain className="w-4 h-4" />
           </div>
           <div>
@@ -62,7 +63,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-xl">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-900/90 border border-slate-800 rounded-[2px]">
           {(Object.keys(LENS_METADATA) as ScoutBiasLens[]).map((lens) => {
             const meta = LENS_METADATA[lens];
             const Icon = meta.icon;
@@ -71,9 +72,9 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
               <button
                 key={lens}
                 onClick={() => onLensChange(lens)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-[2px] text-xs font-mono font-semibold transition-all ${
                   isActive
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-hard-xs"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
                 }`}
               >
@@ -93,7 +94,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
           className="mt-3 grid grid-cols-2 md:grid-cols-5 gap-3 pt-2"
         >
           {/* Perceived OVR */}
-          <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col">
+          <div className="p-2.5 rounded-[2px] bg-slate-900/60 border border-slate-800 flex flex-col">
             <span className="text-[10px] font-mono text-slate-400 uppercase">Lens Grade</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-lg font-extrabold text-cyan-400 font-mono">
@@ -104,7 +105,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
           </div>
 
           {/* S2 Cognition */}
-          <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col">
+          <div className="p-2.5 rounded-[2px] bg-slate-900/60 border border-slate-800 flex flex-col">
             <span className="text-[10px] font-mono text-slate-400 uppercase">S2 Cognition</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-lg font-extrabold text-emerald-400 font-mono">
@@ -115,7 +116,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
           </div>
 
           {/* Peak GPS Speed */}
-          <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col">
+          <div className="p-2.5 rounded-[2px] bg-slate-900/60 border border-slate-800 flex flex-col">
             <span className="text-[10px] font-mono text-slate-400 uppercase">GPS Top Speed</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-lg font-extrabold text-amber-400 font-mono">
@@ -126,7 +127,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
           </div>
 
           {/* Boom / Bust Factor */}
-          <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col">
+          <div className="p-2.5 rounded-[2px] bg-slate-900/60 border border-slate-800 flex flex-col">
             <span className="text-[10px] font-mono text-slate-400 uppercase">Boom / Bust Risk</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span
@@ -140,12 +141,12 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
               >
                 {Math.round(selectedProspect.boom_bust_factor * 100)}%
               </span>
-              <Sparkles className="w-3 h-3 text-slate-500 ml-1" />
+              <BlitzBoltIcon className="w-3 h-3 text-slate-500 ml-1" />
             </div>
           </div>
 
           {/* Medical Grade */}
-          <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col">
+          <div className="p-2.5 rounded-[2px] bg-slate-900/60 border border-slate-800 flex flex-col">
             <span className="text-[10px] font-mono text-slate-400 uppercase">Medical Flag</span>
             <div className="flex items-center gap-1.5 mt-1">
               <ShieldAlert
@@ -158,7 +159,7 @@ export const ScoutIntelligenceLens: React.FC<ScoutIntelligenceLensProps> = ({
                 }`}
               />
               <span
-                className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${
+                className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded-[2px] ${
                   selectedProspect.medical_grade === "PASS"
                     ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
                     : selectedProspect.medical_grade === "CONCERN"

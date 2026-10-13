@@ -122,20 +122,24 @@ test.describe("Launch Gateway & Franchise Onboarding", () => {
     await quickStartBtn.click();
 
     // Verify localStorage persistence
-    await expect.poll(async () => {
-      return await page.evaluate(() => ({
-        hasSelected: localStorage.getItem("hasSelectedFranchise"),
-        teamId: localStorage.getItem("selectedTeamId"),
-        teamAbbr: localStorage.getItem("selectedTeamAbbr"),
-      }));
-    }).toEqual({
-      hasSelected: "true",
-      teamId: "11",
-      teamAbbr: "DET",
-    });
+    await expect
+      .poll(async () => {
+        return await page.evaluate(() => ({
+          hasSelected: localStorage.getItem("hasSelectedFranchise"),
+          teamId: localStorage.getItem("selectedTeamId"),
+          teamAbbr: localStorage.getItem("selectedTeamAbbr"),
+        }));
+      })
+      .toEqual({
+        hasSelected: "true",
+        teamId: "11",
+        teamAbbr: "DET",
+      });
 
     // Verify War Room / Dashboard is rendered
-    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible({ timeout: 10000 });
+    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("should load Dashboard directly on root / when franchise is already stored in memory", async ({
@@ -190,7 +194,9 @@ test.describe("Launch Gateway & Franchise Onboarding", () => {
     await expect(mainLayout).toBeVisible();
     const isBgTransparent = await mainLayout.evaluate((el) => {
       const style = window.getComputedStyle(el);
-      return style.backgroundColor === "rgba(0, 0, 0, 0)" || style.backgroundColor === "transparent";
+      return (
+        style.backgroundColor === "rgba(0, 0, 0, 0)" || style.backgroundColor === "transparent"
+      );
     });
     expect(isBgTransparent).toBe(true);
   });

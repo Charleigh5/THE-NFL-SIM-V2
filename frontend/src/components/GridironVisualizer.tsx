@@ -425,7 +425,7 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
   return (
     <div
       data-testid="gridiron-visualizer"
-      className="flex flex-col bg-slate-900 border border-slate-800 rounded-lg overflow-hidden p-4 shadow-xl text-slate-100"
+      className="flex flex-col bg-slate-900 border border-slate-800 rounded-[2px] overflow-hidden p-4 shadow-hard-md text-slate-100"
     >
       {/* Visualizer Control Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-slate-800">
@@ -442,9 +442,9 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
         <div className="flex items-center gap-2 text-xs font-mono">
           <button
             onClick={() => setShowHeatmap((prev) => !prev)}
-            className={`px-3 py-1 rounded border transition-colors ${
+            className={`px-3 py-1 rounded-[2px] border transition-colors shadow-hard-xs ${
               showHeatmap
-                ? "bg-amber-950/60 border-amber-600 text-amber-300"
+                ? "bg-amber-950/60 border-amber-600 text-amber-300 shadow-hard-primary"
                 : "bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700"
             }`}
           >
@@ -452,9 +452,9 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
           </button>
           <button
             onClick={() => setShowVisionCones((prev) => !prev)}
-            className={`px-3 py-1 rounded border transition-colors ${
+            className={`px-3 py-1 rounded-[2px] border transition-colors shadow-hard-xs ${
               showVisionCones
-                ? "bg-sky-950/60 border-sky-600 text-sky-300"
+                ? "bg-sky-950/60 border-sky-600 text-sky-300 shadow-hard-primary"
                 : "bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700"
             }`}
           >
@@ -462,9 +462,9 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
           </button>
           <button
             onClick={() => setShowCognitiveBadges((prev) => !prev)}
-            className={`px-3 py-1 rounded border transition-colors ${
+            className={`px-3 py-1 rounded-[2px] border transition-colors shadow-hard-xs ${
               showCognitiveBadges
-                ? "bg-emerald-950/60 border-emerald-600 text-emerald-300"
+                ? "bg-emerald-950/60 border-emerald-600 text-emerald-300 shadow-hard-primary"
                 : "bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700"
             }`}
           >
@@ -474,7 +474,7 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
       </div>
 
       {/* Main Canvas Viewport */}
-      <div className="relative overflow-x-auto py-3 flex justify-center bg-slate-950 rounded">
+      <div className="relative overflow-x-auto py-3 flex justify-center bg-slate-950 rounded-[2px] shadow-hard-xs">
         <canvas
           ref={canvasRef}
           width={width}
@@ -485,14 +485,14 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
             if (onCellHover) onCellHover(null);
           }}
           onClick={handleCanvasClick}
-          className="cursor-crosshair border border-slate-800 rounded shadow-inner"
+          className="cursor-crosshair border border-slate-800 rounded-[2px] shadow-hard-xs"
         />
       </div>
 
       {/* Real-time Telemetry Telemetry Footer */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-slate-800 text-xs font-mono">
         {/* Field Coordinates & Friction */}
-        <div className="bg-slate-950/70 p-2.5 rounded border border-slate-800">
+        <div className="bg-slate-950/70 p-2.5 rounded-[2px] border border-slate-800 shadow-hard-xs">
           <span className="text-slate-500 uppercase block mb-1">Turf Coordinates & Friction</span>
           {hoveredMetric ? (
             <div className="flex justify-between">
@@ -514,7 +514,7 @@ export const GridironVisualizer: React.FC<GridironVisualizerProps> = ({
         </div>
 
         {/* Selected Player Telemetry */}
-        <div className="bg-slate-950/70 p-2.5 rounded border border-slate-800 md:col-span-2">
+        <div className="bg-slate-950/70 p-2.5 rounded-[2px] border border-slate-800 shadow-hard-xs md:col-span-2">
           <span className="text-slate-500 uppercase block mb-1">
             Selected Athlete S2 Cognition Profile
           </span>

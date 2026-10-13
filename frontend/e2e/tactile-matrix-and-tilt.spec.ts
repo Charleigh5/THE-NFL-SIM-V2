@@ -62,7 +62,9 @@ test.describe("12-State Interactive Tactile Matrix & 3D Pointer Tilt Subsystem",
     // Verify Web Audio haptics execute safely without throwing exceptions in browser
     const audioResult = await page.evaluate(() => {
       try {
-        const win = window as any;
+        const win = window as unknown as {
+          soundEffects?: Record<string, (() => void) | undefined>;
+        };
         if (win.soundEffects) {
           win.soundEffects.unlockAudio?.();
           win.soundEffects.playTiltDetent?.();
@@ -70,8 +72,8 @@ test.describe("12-State Interactive Tactile Matrix & 3D Pointer Tilt Subsystem",
           win.soundEffects.playCardRelease?.();
         }
         return { success: true };
-      } catch (err: any) {
-        return { success: false, error: err?.message };
+      } catch (err: unknown) {
+        return { success: false, error: (err as Error)?.message };
       }
     });
     expect(audioResult.success).toBe(true);

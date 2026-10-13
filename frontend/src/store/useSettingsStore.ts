@@ -19,9 +19,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await api.get("/api/settings");
-      const localTeamIdRaw = typeof window !== "undefined" ? localStorage.getItem("selectedTeamId") : null;
+      const localTeamIdRaw =
+        typeof window !== "undefined" ? localStorage.getItem("selectedTeamId") : null;
       const localTeamId = localTeamIdRaw ? Number(localTeamIdRaw) : null;
-      const effectiveTeamId = response?.data?.user_team_id || (Number.isFinite(localTeamId) && localTeamId ? localTeamId : 11);
+      const effectiveTeamId =
+        response?.data?.user_team_id ||
+        (Number.isFinite(localTeamId) && localTeamId ? localTeamId : 11);
       set({
         userTeamId: effectiveTeamId,
         difficultyLevel: response.data.difficulty_level || "All-Pro",

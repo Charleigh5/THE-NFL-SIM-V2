@@ -78,11 +78,11 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
       aria-modal="true"
       data-testid="cap-ledger-audit-modal"
     >
-      <div className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 border border-emerald-500/30 rounded-[2px] shadow-hard-md flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-slate-950/60">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+            <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-[2px]">
               <Scale className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
@@ -91,12 +91,12 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                   Capology Double-Entry Ledger
                 </h2>
                 {statement?.isBalanced ? (
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
                     <ShieldCheck className="w-3 h-3" />
                     Zero-Sum Balanced (Δ $0)
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/40">
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/40">
                     <AlertTriangle className="w-3 h-3" />
                     Invariant Violation
                   </span>
@@ -111,7 +111,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+            className="p-2 text-slate-400 hover:text-white rounded-[2px] hover:bg-white/10 transition-colors"
             aria-label="Close Ledger Audit Modal"
           >
             <X className="w-5 h-5" />
@@ -154,7 +154,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
             <>
               {/* Account Balance Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div className="p-3.5 bg-slate-950/60 border border-white/10 rounded-xl">
+                <div className="p-3.5 bg-slate-950/60 border border-white/10 rounded-[2px]">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
                     Total Hard Cap
                   </div>
@@ -164,7 +164,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                   <div className="text-[10px] text-slate-500 font-mono">League Baseline</div>
                 </div>
 
-                <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-[2px]">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400">
                     Cap Room (Free)
                   </div>
@@ -174,7 +174,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                   <div className="text-[10px] text-emerald-500/80 font-mono">Available Space</div>
                 </div>
 
-                <div className="p-3.5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
+                <div className="p-3.5 bg-cyan-500/10 border border-cyan-500/30 rounded-[2px]">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
                     Active Liabilities
                   </div>
@@ -184,7 +184,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                   <div className="text-[10px] text-cyan-500/80 font-mono">53-Man Base Payroll</div>
                 </div>
 
-                <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl">
+                <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-[2px]">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-rose-400">
                     Dead Money
                   </div>
@@ -194,7 +194,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                   <div className="text-[10px] text-rose-500/80 font-mono">Accelerated Charges</div>
                 </div>
 
-                <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl col-span-2 md:col-span-1">
+                <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-[2px] col-span-2 md:col-span-1">
                   <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
                     Bonus Pool
                   </div>
@@ -208,7 +208,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
               </div>
 
               {/* Mathematical Proof-of-Balance Equation Banner */}
-              <div className="p-4 bg-slate-950/80 border border-white/10 rounded-xl flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-xs">
+              <div className="p-4 bg-slate-950/80 border border-white/10 rounded-[2px] flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-xs">
                 <div className="flex items-center gap-2 text-slate-300">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>
@@ -220,7 +220,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                     {((statement?.deadMoneyLiability || 0) / 1_000_000).toFixed(2)}M)
                   </span>
                 </div>
-                <div className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-lg text-[11px] font-bold shrink-0">
+                <div className="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-[2px] text-[11px] font-bold shrink-0">
                   Δ = ${statement?.proofOfBalanceDelta || 0} (EXACT)
                 </div>
               </div>
@@ -241,12 +241,12 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                       {statement?.transactions.map((tx) => (
                         <div
                           key={tx.id}
-                          className="p-4 bg-slate-950/40 border border-white/10 hover:border-white/20 rounded-xl transition-all space-y-2"
+                          className="p-4 bg-slate-950/40 border border-white/10 hover:border-white/20 rounded-[2px] transition-all space-y-2"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
+                                <span className="px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
                                   {tx.transactionType.replace(/_/g, " ")}
                                 </span>
                                 <span className="text-xs text-slate-400 font-mono">
@@ -286,7 +286,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                               {tx.entries.map((entry, idx) => (
                                 <div
                                   key={idx}
-                                  className="flex items-center justify-between px-2.5 py-1 rounded bg-slate-900/60 border border-white/5 text-[11px] font-mono"
+                                  className="flex items-center justify-between px-2.5 py-1 rounded-[2px] bg-slate-900/60 border border-white/5 text-[11px] font-mono"
                                 >
                                   <span className="text-slate-400 truncate mr-2">
                                     {entry.accountType.replace(/_/g, " ")}
@@ -318,7 +318,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                     5-Year Double-Entry Cap Balance Trajectory (2026–2030)
                   </div>
 
-                  <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/40">
+                  <div className="overflow-x-auto rounded-[2px] border border-white/10 bg-slate-950/40">
                     <table className="w-full text-left text-xs font-mono">
                       <thead className="bg-slate-950/80 text-slate-400 border-b border-white/10">
                         <tr>
@@ -351,7 +351,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
                               ${(yr.availableCapRoom / 1_000_000).toFixed(2)}M
                             </td>
                             <td className="p-3 text-right">
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                 <CheckCircle2 className="w-3 h-3" />
                                 Validated (Δ $0)
                               </span>
@@ -374,7 +374,7 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold rounded-xl transition-colors uppercase tracking-wider"
+            className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-bold rounded-[2px] transition-colors uppercase tracking-wider"
           >
             Close Audit Statement
           </button>

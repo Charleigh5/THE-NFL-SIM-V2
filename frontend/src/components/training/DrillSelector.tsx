@@ -212,7 +212,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search drills by name or stat..."
-                className="w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-[2px] shadow-hard-xs text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
               />
             </div>
 
@@ -226,9 +226,9 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleCategoryClick(key as DrillCategory)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-[2px] text-sm font-medium transition-all shadow-hard-xs ${
                       isActive
-                        ? `bg-gradient-to-r ${config.color} text-white shadow-lg`
+                        ? `bg-gradient-to-r ${config.color} text-white shadow-hard-primary`
                         : "bg-gray-800/60 text-gray-300 hover:bg-gray-700/60"
                     }`}
                   >
@@ -253,7 +253,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
 
       {/* Error State */}
       {error && (
-        <div className="p-4 mb-4 bg-red-900/30 border border-red-500/30 rounded-xl text-red-300 text-center">
+        <div className="p-4 mb-4 bg-red-900/30 border border-red-500/30 rounded-[2px] shadow-hard-md text-red-300 text-center">
           {error}
         </div>
       )}
@@ -302,7 +302,7 @@ export const DrillSelector: React.FC<DrillSelectorProps> = ({
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="w-64 h-80 rounded-xl bg-gray-800/40 animate-pulse" />
+            <div key={i} className="w-64 h-80 rounded-[2px] bg-gray-800/40 animate-pulse" />
           ))}
         </div>
       )}

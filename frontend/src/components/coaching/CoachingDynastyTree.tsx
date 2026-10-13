@@ -190,17 +190,17 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
   ];
 
   return (
-    <div className="w-full bg-slate-950/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-2xl font-sans">
+    <div className="w-full bg-slate-950/90 border border-slate-800 rounded-[2px] p-6 shadow-hard-md backdrop-blur-2xl font-sans">
       {/* Header Banner: Coach Details & Available SP */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-extrabold text-2xl font-mono shadow-lg shadow-cyan-500/10">
+          <div className="w-14 h-14 rounded-[2px] bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-extrabold text-2xl font-mono shadow-hard-xs">
             {profile.name.charAt(0)}
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-xl font-bold text-white tracking-wide">{profile.name}</h3>
-              <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px] font-mono uppercase font-bold">
+              <span className="px-2 py-0.5 rounded-[2px] bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px] font-mono uppercase font-bold">
                 LVL {profile.level}
               </span>
             </div>
@@ -212,7 +212,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
 
         {/* Staff Synergy Meter & SP Counter */}
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-center gap-3">
+          <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-[2px] flex items-center gap-3 shadow-hard-xs">
             <Award className="w-5 h-5 text-amber-400" />
             <div>
               <div className="text-[10px] font-mono text-slate-400 uppercase">Staff Synergy</div>
@@ -222,7 +222,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
             </div>
           </div>
 
-          <div className="p-3 bg-cyan-950/60 border border-cyan-500/40 rounded-2xl flex items-center gap-3 shadow-lg shadow-cyan-500/10">
+          <div className="p-3 bg-cyan-950/60 border border-cyan-500/40 rounded-[2px] flex items-center gap-3 shadow-hard-xs">
             <Zap className="w-5 h-5 text-cyan-400 animate-pulse" />
             <div>
               <div className="text-[10px] font-mono text-cyan-300 uppercase">Available Points</div>
@@ -238,7 +238,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
       <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2">
         <button
           onClick={() => setActiveBranch("ALL")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+          className={`px-3.5 py-1.5 rounded-[2px] text-xs font-mono font-bold transition-all shadow-hard-xs ${
             activeBranch === "ALL"
               ? "bg-slate-800 text-white border border-slate-600"
               : "text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800"
@@ -253,9 +253,9 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
             <button
               key={b.key}
               onClick={() => setActiveBranch(b.key)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-[2px] text-xs font-mono font-bold transition-all ${
                 isActive
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
+                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/60 shadow-hard-xs"
                   : "text-slate-400 hover:text-slate-200 bg-slate-900/60 border border-slate-800"
               }`}
             >
@@ -280,7 +280,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
           return (
             <div
               key={branch.key}
-              className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 flex flex-col gap-4 relative overflow-hidden"
+              className="p-5 rounded-[2px] bg-slate-900/40 border border-slate-800/80 flex flex-col gap-4 relative overflow-hidden shadow-hard-xs"
             >
               <div className="flex items-center gap-2 pb-3 border-b border-slate-800/60">
                 <BranchIcon className="w-4 h-4 text-cyan-400" />
@@ -303,9 +303,9 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
                       key={node.id}
                       onClick={() => setSelectedNode(node)}
                       whileHover={{ scale: 1.02 }}
-                      className={`p-3.5 rounded-xl border cursor-pointer transition-all flex items-start justify-between gap-3 ${
+                      className={`p-3.5 rounded-[2px] border cursor-pointer transition-all flex items-start justify-between gap-3 ${
                         node.unlocked
-                          ? "bg-emerald-950/40 border-emerald-500/50 text-slate-100 shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                          ? "bg-emerald-950/40 border-emerald-500/50 text-slate-100 shadow-hard-xs"
                           : canUnlock
                             ? "bg-cyan-950/40 border-cyan-500/40 text-slate-200 hover:border-cyan-400"
                             : "bg-slate-950/60 border-slate-800 text-slate-500 opacity-60"
@@ -313,7 +313,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-bold">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-[1px] bg-slate-800 text-slate-400 font-bold">
                             T{node.tier}
                           </span>
                           <span className="text-xs font-bold font-mono text-white">
@@ -335,7 +335,7 @@ export const CoachingDynastyTree: React.FC<CoachingDynastyTreeProps> = ({
                               e.stopPropagation();
                               handleUnlock(node);
                             }}
-                            className="px-2 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-[10px] font-mono font-bold uppercase transition-transform active:scale-95"
+                            className="px-2 py-1 rounded-[2px] bg-cyan-500 hover:bg-cyan-400 text-black text-[10px] font-mono font-bold uppercase transition-transform active:scale-95 shadow-hard-xs"
                           >
                             {node.sp_cost} SP
                           </button>

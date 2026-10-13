@@ -83,7 +83,7 @@ export const PhysicsDebugOverlay: React.FC<PhysicsDebugOverlayProps> = ({ play, 
   return (
     <div
       data-testid="physics-debug-overlay"
-      className="absolute top-20 left-4 bg-black/90 text-emerald-400 p-3.5 rounded-xl font-mono text-xs z-50 border border-emerald-500/40 shadow-2xl backdrop-blur-md max-w-xs transition-all pointer-events-auto"
+      className="absolute top-20 left-4 bg-black/90 text-emerald-400 p-3.5 rounded-[2px] font-mono text-xs z-50 border border-emerald-500/40 shadow-hard-md backdrop-blur-md max-w-xs transition-all pointer-events-auto"
     >
       {/* Header with SIMD badge and toggle */}
       <div className="flex items-center justify-between pb-2 border-b border-emerald-500/20 mb-2.5">
@@ -94,7 +94,7 @@ export const PhysicsDebugOverlay: React.FC<PhysicsDebugOverlayProps> = ({ play, 
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          <span className="px-1.5 py-0.5 rounded-[1px] text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-hard-xs">
             AVX2 SoA
           </span>
           <button

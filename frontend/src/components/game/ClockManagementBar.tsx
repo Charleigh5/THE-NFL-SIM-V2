@@ -76,7 +76,7 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-900/90 border border-white/10 rounded-xl px-4 py-2.5 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 font-sans text-xs">
+    <div className="w-full bg-slate-900/90 border border-white/10 rounded-[2px] shadow-hard-md px-4 py-2.5 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 font-sans text-xs">
       {/* Timeouts Indicator & Call Button */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
@@ -87,9 +87,9 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
             {[1, 2, 3].map((pillIndex) => (
               <div
                 key={pillIndex}
-                className={`w-3.5 h-3.5 rounded-full transition-all border ${
+                className={`w-3.5 h-3.5 rounded-[2px] transition-all border ${
                   pillIndex <= activeTimeouts
-                    ? "bg-amber-400 border-amber-300 shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+                    ? "bg-amber-400 border-amber-300 shadow-hard-xs"
                     : "bg-slate-800 border-slate-700 opacity-40"
                 }`}
                 title={`Timeout ${pillIndex}`}
@@ -101,9 +101,9 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
         <button
           onClick={handleCallTimeout}
           disabled={disabled || activeTimeouts <= 0}
-          className={`px-3 py-1.5 rounded-lg font-mono font-bold tracking-wider uppercase flex items-center gap-1.5 transition-all ${
+          className={`px-3 py-1.5 rounded-[2px] font-mono font-bold tracking-wider uppercase flex items-center gap-1.5 transition-all shadow-hard-xs ${
             activeTimeouts > 0 && !disabled
-              ? "bg-amber-500 hover:bg-amber-400 text-black shadow-md shadow-amber-500/20 active:scale-95 cursor-pointer"
+              ? "bg-amber-500 hover:bg-amber-400 text-black active:scale-95 cursor-pointer"
               : "bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed"
           }`}
         >
@@ -113,15 +113,15 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
       </div>
 
       {/* Clock Tempo Switcher */}
-      <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-lg border border-white/10">
+      <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-[2px] border border-white/10 shadow-hard-xs">
         <span className="text-[10px] font-mono text-slate-400 px-2 uppercase font-bold">
           Tempo:
         </span>
         <button
           onClick={() => handleTempoSelect("NORMAL")}
-          className={`px-2.5 py-1 rounded font-mono font-semibold transition-all ${
+          className={`px-2.5 py-1 rounded-[2px] font-mono font-semibold transition-all ${
             tempo === "NORMAL"
-              ? "bg-cyan-500 text-black shadow-sm font-bold"
+              ? "bg-cyan-500 text-black font-bold shadow-hard-xs"
               : "text-slate-400 hover:text-white"
           }`}
         >
@@ -129,9 +129,9 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
         </button>
         <button
           onClick={() => handleTempoSelect("HURRY_UP")}
-          className={`px-2.5 py-1 rounded font-mono font-semibold transition-all flex items-center gap-1 ${
+          className={`px-2.5 py-1 rounded-[2px] font-mono font-semibold transition-all flex items-center gap-1 ${
             tempo === "HURRY_UP"
-              ? "bg-amber-500 text-black shadow-sm font-bold"
+              ? "bg-amber-500 text-black font-bold shadow-hard-xs"
               : "text-slate-400 hover:text-white"
           }`}
         >
@@ -140,9 +140,9 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
         </button>
         <button
           onClick={() => handleTempoSelect("CHEW_CLOCK")}
-          className={`px-2.5 py-1 rounded font-mono font-semibold transition-all flex items-center gap-1 ${
+          className={`px-2.5 py-1 rounded-[2px] font-mono font-semibold transition-all flex items-center gap-1 ${
             tempo === "CHEW_CLOCK"
-              ? "bg-red-500 text-white shadow-sm font-bold"
+              ? "bg-red-500 text-white font-bold shadow-hard-xs"
               : "text-slate-400 hover:text-white"
           }`}
         >
@@ -156,7 +156,7 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
         <button
           onClick={handleSpike}
           disabled={disabled}
-          className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50"
+          className="px-3 py-1.5 rounded-[2px] bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50 shadow-hard-xs"
           title="Spike the ball to stop clock on next down"
         >
           <Flame className="w-3.5 h-3.5 text-amber-400" />
@@ -165,7 +165,7 @@ export const ClockManagementBar: React.FC<ClockManagementBarProps> = ({
         <button
           onClick={handleKneel}
           disabled={disabled}
-          className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50"
+          className="px-3 py-1.5 rounded-[2px] bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50 shadow-hard-xs"
           title="Victory formation kneel to bleed clock"
         >
           <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" />

@@ -39,7 +39,7 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-4 text-slate-100">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-[2px] p-4 space-y-4 text-slate-100 shadow-hard-md">
       <div className="flex items-center justify-between border-b border-slate-800 pb-2">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-cyan-400" />
@@ -68,7 +68,7 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
             step={1}
             value={realYears}
             onChange={(e) => handleRealYearsChange(Number(e.target.value))}
-            className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+            className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-slate-800 rounded-[2px]"
           />
           <div className="flex justify-between text-[10px] text-slate-500">
             <span>1 yr</span>
@@ -100,7 +100,7 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
             value={voidYears}
             onChange={(e) => handleVoidYearsChange(Number(e.target.value))}
             disabled={maxVoidAllowed === 0}
-            className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg disabled:opacity-40"
+            className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-[2px] disabled:opacity-40"
           />
           <div className="flex justify-between text-[10px] text-slate-500">
             <span>0</span>
@@ -113,7 +113,7 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
       </div>
 
       {/* Proration & Acceleration Stat Pill */}
-      <div className="bg-slate-950/70 border border-slate-800/80 rounded-lg p-3 grid grid-cols-3 gap-2 text-center text-xs">
+      <div className="bg-slate-950/70 border border-slate-800/80 rounded-[2px] p-3 grid grid-cols-3 gap-2 text-center text-xs shadow-hard-xs">
         <div>
           <span className="text-[10px] text-slate-400 block uppercase">Proration Window</span>
           <span className="font-bold text-cyan-300">{prorationYears} Years</span>
@@ -136,7 +136,7 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
 
       {/* Post-June 1st Split Toggle */}
       {voidYears > 0 && (
-        <div className="flex items-center justify-between bg-slate-800/40 rounded-lg px-3 py-2 border border-slate-700/50">
+        <div className="flex items-center justify-between bg-slate-800/40 rounded-[2px] px-3 py-2 border border-slate-700/50 shadow-hard-xs">
           <div className="flex items-center gap-2">
             <Split className="w-4 h-4 text-purple-400" />
             <div>
@@ -151,12 +151,12 @@ export const VoidYearsSlider: React.FC<VoidYearsSliderProps> = ({
           <button
             type="button"
             onClick={() => setPostJune1(!postJune1)}
-            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${
-              postJune1 ? "bg-cyan-500" : "bg-slate-700"
+            className={`relative inline-flex h-5 w-9 items-center rounded-[2px] transition-colors focus:outline-none ${
+              postJune1 ? "bg-cyan-500 shadow-hard-xs" : "bg-slate-700"
             }`}
           >
             <span
-              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+              className={`inline-block h-3.5 w-3.5 transform rounded-[1px] bg-white transition-transform ${
                 postJune1 ? "translate-x-4.5" : "translate-x-1"
               }`}
             />

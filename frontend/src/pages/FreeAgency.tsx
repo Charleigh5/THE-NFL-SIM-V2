@@ -15,9 +15,9 @@ export const FreeAgency: React.FC = () => {
   return (
     <div className="space-y-6" data-testid="free-agency-page">
       {/* Institutional Double-Entry Capology Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-900/80 border border-emerald-500/20 rounded-2xl shadow-xl backdrop-blur-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-900/80 border border-emerald-500/20 rounded-[2px] shadow-hard-md backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+          <div className="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-[2px] shadow-hard-xs">
             <Scale className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -25,7 +25,7 @@ export const FreeAgency: React.FC = () => {
               <h2 className="text-lg font-header uppercase tracking-wider text-white">
                 Double-Entry Capology Ledger
               </h2>
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 <ShieldCheck className="w-3 h-3" />
                 Zero-Sum Active
               </span>
@@ -38,7 +38,7 @@ export const FreeAgency: React.FC = () => {
 
         <button
           onClick={() => setIsLedgerOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs active:shadow-hard-pressed transition-all active:scale-95 cursor-pointer"
           data-testid="open-cap-ledger-audit-btn"
         >
           <Scale className="w-4 h-4" />

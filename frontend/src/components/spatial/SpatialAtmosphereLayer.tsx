@@ -71,12 +71,15 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
   className = "",
   intensity = "subtle",
 }) => {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
@@ -89,8 +92,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
   const officeDustMotes = useMemo(() => createDeterministicParticles(12, 137), []);
   const stadiumVaporMotes = useMemo(() => createDeterministicParticles(16, 211), []);
 
-  const intensityMultiplier =
-    intensity === "cinematic" ? 1.4 : intensity === "medium" ? 1.0 : 0.75;
+  const intensityMultiplier = intensity === "cinematic" ? 1.4 : intensity === "medium" ? 1.0 : 0.75;
 
   return (
     <div
@@ -103,11 +105,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
       {/* 1. WAR ROOM (Scene 07): CRT Scanlines, Ambient Monitor Glow, Screen Flicker & Optical Flare */}
       {/* ========================================================================= */}
       {facilityType === "war_room" && (
-        <div
-          className={`w-full h-full relative ${
-            reducedMotion ? "" : styles.warroomFlicker
-          }`}
-        >
+        <div className={`w-full h-full relative ${reducedMotion ? "" : styles.warroomFlicker}`}>
           {/* Subtle CRT / Multi-Monitor Scanline Grid */}
           <div
             className="absolute inset-0 opacity-[0.14]"
@@ -132,12 +130,9 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
             style={{
               background: `radial-gradient(circle, rgba(37, 99, 235, ${
                 0.14 * intensityMultiplier
-              }) 0%, rgba(16, 185, 129, ${
-                0.05 * intensityMultiplier
-              }) 50%, transparent 75%)`,
+              }) 0%, rgba(16, 185, 129, ${0.05 * intensityMultiplier}) 50%, transparent 75%)`,
             }}
           />
-
 
           {/* Soft Optical Flare Core Starburst */}
           <div
@@ -225,9 +220,7 @@ export const SpatialAtmosphereLayer: React.FC<SpatialAtmosphereLayerProps> = ({
           {weather === "rain" && (
             <div className="absolute inset-0 pointer-events-none opacity-30 overflow-hidden">
               <div
-                className={`w-full h-[200%] ${
-                  reducedMotion ? "" : styles.rainStreak
-                }`}
+                className={`w-full h-[200%] ${reducedMotion ? "" : styles.rainStreak}`}
                 style={{
                   backgroundImage:
                     "repeating-linear-gradient(110deg, transparent 0px, transparent 38px, rgba(255, 255, 255, 0.35) 39px, transparent 41px)",

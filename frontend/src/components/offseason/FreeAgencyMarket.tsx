@@ -11,7 +11,6 @@ import {
   ShieldAlert,
   X,
   Send,
-  Sparkles,
 } from "lucide-react";
 import { VirtualizedTable, type VirtualizedTableColumn } from "../common/VirtualizedTable";
 import type {
@@ -246,7 +245,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
 
           return (
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border ${badgeColor}`}
+              className={`px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider border ${badgeColor}`}
             >
               {tier}
             </span>
@@ -278,7 +277,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
         sortable: true,
         sortKey: (p) => p.position,
         cell: (p) => (
-          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white font-mono text-xs font-bold">
+          <span className="px-2 py-0.5 rounded-[2px] bg-white/5 border border-white/10 text-white font-mono text-xs font-bold">
             {p.position}
           </span>
         ),
@@ -350,7 +349,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
               {teams.slice(0, 3).map((teamAbbr) => (
                 <span
                   key={teamAbbr}
-                  className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-gray-300"
+                  className="px-1.5 py-0.5 rounded-[2px] bg-white/5 border border-white/10 text-[10px] font-mono text-gray-300"
                 >
                   {teamAbbr}
                 </span>
@@ -373,7 +372,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
               e.stopPropagation();
               handleOpenBidModal(p);
             }}
-            className="px-3 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-header text-xs uppercase tracking-wider rounded-lg shadow-md transition-all active:scale-95"
+            className="px-3 py-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all active:scale-95"
           >
             Submit Bid
           </button>
@@ -386,15 +385,15 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
   return (
     <div className="space-y-6 font-body" data-testid="free-agency-market">
       {/* Vitally Important Cap & Market Header Banner */}
-      <div className="relative rounded-2xl overflow-hidden broadcast-glass p-6 border border-white/15 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="relative rounded-[2px] overflow-hidden broadcast-glass p-6 border border-white/15 shadow-hard-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-black/60 border-2 border-white/15 p-2 shadow-xl flex items-center justify-center shrink-0">
+          <div className="w-16 h-16 rounded-[2px] bg-black/60 border-2 border-white/15 p-2 shadow-hard-xs flex items-center justify-center shrink-0">
             <DollarSign className="text-emerald-400" size={32} />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-[2px] bg-emerald-400 animate-pulse" />
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
                 NFL CBA Top-51 Offseason Market {team ? `• ${team.city} ${team.name}` : ""}
               </span>
@@ -409,7 +408,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
         </div>
 
         {/* Salary Cap Status Box */}
-        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md px-5 py-3.5 rounded-xl border border-white/10">
+        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md px-5 py-3.5 rounded-[2px] border border-white/10">
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1">
               <DollarSign size={12} className="text-emerald-400" /> Available Cap Space
@@ -443,7 +442,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-broadcast-dark/80 backdrop-blur-md p-3.5 rounded-xl border border-white/10 shadow-lg">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-broadcast-dark/80 backdrop-blur-md p-3.5 rounded-[2px] border border-white/10 shadow-hard-xs">
         {/* Unit & Position Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <span className="text-xs font-mono text-gray-400 mr-1 flex items-center gap-1">
@@ -468,9 +467,9 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
             <button
               key={pos}
               onClick={() => setPositionFilter(pos)}
-              className={`px-3 py-1 rounded-md text-xs font-header uppercase tracking-wider transition-all ${
+              className={`px-3 py-1 rounded-[2px] text-xs font-header uppercase tracking-wider transition-all ${
                 positionFilter === pos
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-600/30"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-hard-xs"
                   : "bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white"
               }`}
             >
@@ -490,7 +489,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
               <button
                 key={t}
                 onClick={() => setTierFilter(t)}
-                className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                className={`px-2 py-0.5 rounded-[2px] text-[11px] font-mono transition-colors ${
                   tierFilter === t
                     ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -512,7 +511,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search athlete..."
-              className="w-full pl-8 pr-3 py-1 bg-black/40 border border-white/10 rounded-lg text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full pl-8 pr-3 py-1 bg-black/40 border border-white/10 rounded-[2px] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
             />
           </div>
         </div>
@@ -520,14 +519,14 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
 
       {/* Error state */}
       {error && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-mono flex items-center gap-2">
+        <div className="p-4 rounded-[2px] bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-mono flex items-center gap-2">
           <ShieldAlert size={16} className="text-red-400 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Virtualized Free Agency Table */}
-      <div className="broadcast-glass p-4 rounded-2xl border border-white/15 shadow-2xl">
+      <div className="broadcast-glass p-4 rounded-[2px] border border-white/15 shadow-hard-md">
         <VirtualizedTable
           data={filteredPlayers}
           columns={columns}
@@ -550,14 +549,14 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
           onClick={() => setSelectedPlayer(null)}
         >
           <div
-            className="broadcast-glass rounded-2xl border border-white/20 p-6 max-w-xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+            className="broadcast-glass rounded-[2px] border border-white/20 p-6 max-w-xl w-full relative shadow-hard-md max-h-[90vh] overflow-y-auto custom-scrollbar"
             data-testid="bidding-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               onClick={() => setSelectedPlayer(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-[2px] bg-white/5 hover:bg-white/10 transition-colors"
               aria-label="Close bidding modal"
             >
               <X size={18} />
@@ -565,14 +564,14 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
 
             {/* Modal Header */}
             <div className="flex items-center gap-4 mb-5 pb-4 border-b border-white/10">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-600/30 to-teal-600/30 border border-emerald-500/40 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 rounded-[2px] bg-gradient-to-br from-emerald-600/30 to-teal-600/30 border border-emerald-500/40 flex items-center justify-center shadow-hard-xs">
                 <span className="font-header text-2xl text-emerald-400">
                   {selectedPlayer.overall_rating}
                 </span>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-white/10 text-[10px] font-mono font-bold text-gray-300">
+                  <span className="px-2 py-0.5 rounded-[2px] bg-white/10 text-[10px] font-mono font-bold text-gray-300">
                     {selectedPlayer.position}
                   </span>
                   <span className="text-xs font-mono text-gray-400">
@@ -592,7 +591,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
             {/* Bidding Response Alert */}
             {bidResponse && (
               <div
-                className={`mb-5 p-4 rounded-xl border flex items-start gap-3 ${
+                className={`mb-5 p-4 rounded-[2px] border flex items-start gap-3 ${
                   bidResponse.accepted
                     ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-200"
                     : "bg-red-500/15 border-red-500/40 text-red-200"
@@ -653,7 +652,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                       if (bidSigningBonus > val) setBidSigningBonus(Math.round(val * 0.4));
                       if (bidGuaranteed > val) setBidGuaranteed(Math.round(val * 0.6));
                     }}
-                    className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                    className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-white/10 rounded-[2px]"
                   />
                 </div>
 
@@ -661,7 +660,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                 <div>
                   <div className="flex justify-between items-center text-xs font-mono mb-1.5">
                     <span className="text-gray-300 flex items-center gap-1.5">
-                      <Sparkles size={12} className="text-cyan-400" /> Signing Bonus (Prorated):
+                      <DollarSign size={12} className="text-cyan-400" /> Signing Bonus (Prorated):
                     </span>
                     <span className="text-cyan-400 font-bold">
                       ${(bidSigningBonus / 1000000).toFixed(2)}M
@@ -678,7 +677,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                       setBidSigningBonus(val);
                       if (bidGuaranteed < val) setBidGuaranteed(val);
                     }}
-                    className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                    className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-white/10 rounded-[2px]"
                   />
                 </div>
 
@@ -700,12 +699,12 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                     step={500000}
                     value={bidGuaranteed}
                     onChange={(e) => setBidGuaranteed(parseInt(e.target.value))}
-                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-white/10 rounded-[2px]"
                   />
                 </div>
 
                 {/* Live Capology Proration Preview Panel */}
-                <div className="p-4 rounded-xl bg-slate-900/90 border border-white/10 space-y-2 mt-4">
+                <div className="p-4 rounded-[2px] bg-slate-900/90 border border-white/10 space-y-2 mt-4">
                   <div className="flex items-center justify-between pb-2 border-b border-white/10">
                     <span className="text-xs font-header uppercase tracking-wider text-gray-300 flex items-center gap-1">
                       <TrendingUp size={13} className="text-emerald-400" /> Capology Proration
@@ -717,21 +716,21 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                    <div className="bg-black/40 p-2 rounded-lg">
+                    <div className="bg-black/40 p-2 rounded-[2px]">
                       <span className="text-[10px] text-gray-400 block">Annual Base Salary</span>
                       <span className="text-white font-bold">
                         ${(capologyPreview.annualBaseSalary / 1000000).toFixed(2)}M
                       </span>
                     </div>
 
-                    <div className="bg-black/40 p-2 rounded-lg">
+                    <div className="bg-black/40 p-2 rounded-[2px]">
                       <span className="text-[10px] text-gray-400 block">Bonus Proration / Yr</span>
                       <span className="text-cyan-300 font-bold">
                         ${(capologyPreview.annualSigningBonusProration / 1000000).toFixed(2)}M
                       </span>
                     </div>
 
-                    <div className="bg-black/40 p-2 rounded-lg border border-emerald-500/20">
+                    <div className="bg-black/40 p-2 rounded-[2px] border border-emerald-500/20">
                       <span className="text-[10px] text-emerald-400 block">Year 1 Cap Hit</span>
                       <span className="text-emerald-400 font-bold text-sm">
                         ${(capologyPreview.year1CapHit / 1000000).toFixed(2)}M
@@ -739,7 +738,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                     </div>
 
                     <div
-                      className={`p-2 rounded-lg border ${
+                      className={`p-2 rounded-[2px] border ${
                         capologyPreview.isCapCompliant
                           ? "bg-black/40 border-white/5"
                           : "bg-red-500/20 border-red-500/40"
@@ -757,7 +756,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                   </div>
 
                   {!capologyPreview.isCapCompliant && (
-                    <div className="p-2 bg-red-500/20 rounded-lg text-[11px] font-mono text-red-300 flex items-center gap-1.5">
+                    <div className="p-2 bg-red-500/20 rounded-[2px] text-[11px] font-mono text-red-300 flex items-center gap-1.5">
                       <ShieldAlert size={13} className="shrink-0" />
                       <span>Year 1 cap hit exceeds team available cap room!</span>
                     </div>
@@ -777,7 +776,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setSelectedPlayer(null)}
-                    className="flex-1 py-2.5 bg-white/10 hover:bg-white/15 text-gray-300 font-header text-xs uppercase tracking-wider rounded-xl transition-all"
+                    className="flex-1 py-2.5 bg-white/10 hover:bg-white/15 text-gray-300 font-header text-xs uppercase tracking-wider rounded-[2px] transition-all"
                   >
                     Cancel
                   </button>
@@ -785,7 +784,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
                   <button
                     onClick={handleSubmitBid}
                     disabled={submittingBid || !capologyPreview.isCapCompliant}
-                    className={`flex-1 py-2.5 font-header text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 ${
+                    className={`flex-1 py-2.5 font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all flex items-center justify-center gap-2 ${
                       submittingBid || !capologyPreview.isCapCompliant
                         ? "bg-gray-600/50 text-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white active:scale-95"
@@ -808,7 +807,7 @@ export const FreeAgencyMarket: React.FC<FreeAgencyMarketProps> = ({ seasonId = 1
               <div className="pt-3 flex justify-end">
                 <button
                   onClick={() => setSelectedPlayer(null)}
-                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-header text-xs uppercase tracking-wider rounded-xl shadow-lg"
+                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs"
                 >
                   Close & Return to Market
                 </button>

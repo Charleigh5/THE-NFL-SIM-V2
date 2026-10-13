@@ -227,7 +227,7 @@ export function VirtualizedTable<T>({
 
   return (
     <div
-      className={`relative flex flex-col rounded-xl border border-white/10 bg-slate-950/70 backdrop-blur-md overflow-hidden shadow-xl ${className}`}
+      className={`relative flex flex-col rounded-[2px] border border-white/10 bg-slate-950/70 backdrop-blur-md overflow-hidden shadow-hard-md ${className}`}
       data-testid={testId}
     >
       {/* Sticky Table Header */}

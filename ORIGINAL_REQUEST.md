@@ -334,8 +334,92 @@ Integrity mode: development
 
 ### System Integrity
 - [ ] All 1,605+ backend test suites and existing frontend user flows continue to pass with zero regressions.
-- [ ] TypeScript strict compilation completes with zero type errors.
+</USER_REQUEST>
+
+## 2026-10-02T04:02:51Z
+
+<USER_REQUEST>
+Full-scale UI/UX and tactical gridiron overhaul across THE-NFL-SIM-V2 frontend adhering strictly to the adly-frontier-ui-architect and TASK-041 architectural blueprints.
+
+Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2\frontend
+Integrity mode: demo
+
+## Requirements
+
+### R1. Anti-Template Firewall Token Enforcement & Radius Ceiling (Rule R2 & R5)
+Enforce a strict 0-4px corner radius ceiling across the entire frontend application, purging all 132 instances of `rounded-xl`, `rounded-2xl`, `rounded-3xl`, and `rounded-full` from cards, modals, tables, and overlays in favor of `--radius-tactile-sm: 2px` (`rounded-[2px]`) or `--radius-tactile-md: 4px` (`rounded-sm`). Replace all blurry glows and soft box-shadows with directional zero-blur hard shadows (`--shadow-hard-md: 3px 3px 0px #000000`, `--shadow-hard-primary`, `--shadow-hard-pressed: 1px 1px 0px #000000`).
+
+### R2. Optical Vector Symbol Grammar Migration (Rule R1)
+Eradicate 100% of generic 4-point AI sparkles (`Sparkles` from `lucide-react`) across `LiveSim.tsx`, `Playbook.tsx`, `DepthChart.tsx`, `SkillsPage.tsx`, `TrainingCenter.tsx`, and `EnvironmentalWeatherLab.tsx`. Replace with domain-authentic football vector icons (`BlitzBoltIcon`, `GridironIcon`, `YardHashesIcon`, `ChalkboardRouteIcon`) from `frontend/src/components/icons`.
+
+### R3. Connected SVG Playoff Tournament Bracket
+Re-architect `PlayoffBracket.tsx` and retire legacy unstyled `PlayoffBracket.css`. Implement an interactive tournament drafting deck with responsive SVG bezier connector lines tracing round progression from Wild Card through the Super Bowl, equipped with team seeds, helmet icons, and tactile matchup cards.
+
+### R4. Interactive SVG Playbook Route Tree Diagrammer
+Replace the placeholder compass in `Playbook.tsx` with an interactive SVG route physics diagrammer rendering exact offensive passing stems, route breaks, cuts, and defensive coverage drops with animated dashes and player tokens for all playbook concepts.
+
+### R5. Gridiron Telemetry Loader & 12-State Interactive Matrix (Rule R7)
+Upgrade `LoadingSpinner.tsx` from a generic circular spinner to a digital gridiron 25-second play-clock radar sweep with sweep telemetry. Ensure complete 12-state interactive matrix coverage (`idle`, `hover`, `pressed`, `focused`, `dragging`, `drop-target`, `selected`, `disabled`, `loading`, `success`, `warning`, `error`) across interactive components.
+
+## Acceptance Criteria
+
+### Visual & Firewall Compliance
+- [ ] Zero instances of `rounded-xl`, `rounded-2xl`, or `rounded-3xl` in core layout viewports, modals, and HUD cards
+- [ ] Zero imports or usages of `Sparkles` from `lucide-react` across `frontend/src`
+- [ ] `PlayoffBracket` renders connected SVG bracket lines across all rounds with zero layout shifting
+- [ ] `Playbook` chalkboard renders animated vector route paths for installed plays (Go, Slant, Mesh, Dig, Zone)
+- [ ] `LoadingSpinner` renders domain-authentic radar sweep telemetry without horizontal overflow
+
+### Build & Type Verification
+- [ ] TypeScript compilation succeeds with zero errors (`npm run build` or `npx tsc -b`)
+- [ ] ESLint passes without errors (`npm run lint`)
+- [ ] No regression in application routing or existing test flows
 </USER_REQUEST>
 
 
 
+
+
+## 2026-10-13T00:17:48Z
+
+<USER_REQUEST>
+Full multi-agent team (parallelize branch/PR harvesting, conflict resolution, and test verification)
+
+Execute the complete 5-step repository consolidation and release workflow for `THE-NFL-SIM-V2`: preserve and commit all `TASK-041` working tree changes and local branch work, merge `origin/main` while preserving the clean frontend build, harvest valid Alembic migration, Ruff lint, and Dependabot fixes from open PR branches, pass all build/migration/unit/E2E verification gates, push the unified state to `origin/main`, and clean up superseded/audit remote branches and PRs.
+
+Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2
+Integrity mode: development
+
+## Requirements
+
+### R1. Preserve & Unify Local Work (`TASK-041` & Local Commits)
+Commit and preserve all modified and untracked `TASK-041` Adly Frontier UI/UX and test files currently in the working tree, unifying them with the local commits on `perf/frontend-splitting-and-roster-cache` and `main` without losing any work.
+
+### R2. Reconcile `origin/main` & Harvest PR Fixes
+Merge `origin/main` into the unified branch while retaining our clean, working frontend build where conflicts arise. Harvest and apply the valid Alembic migration fixes, Ruff lint fixes, and Dependabot security/dependency updates from the remote PR branches.
+
+### R3. Full Verification Gate (Frontend, Alembic, Backend, E2E)
+Verify that the unified codebase compiles cleanly in TypeScript/Vite, upgrades cleanly to a single Alembic migration head, passes Ruff linting and Backend Pytest suites, and passes the Playwright E2E test suite before any push to `origin/main`.
+
+### R4. Push Unified `main` & Prune Superseded/Audit Branches (Step 5)
+Push the verified unified `main` branch to `origin/main` (and keep `perf/frontend-splitting-and-roster-cache` synchronized if needed). Bulk-close/delete superseded code-review/audit report remote branches and PRs that have been integrated or obsoleted so the remote branch/PR state is clean.
+
+### R5. Controlled Git & Non-Interactive Execution
+All git and GitHub operations must run non-interactively within `c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2` without hanging on interactive credential prompts (if `gh` CLI lacks auth, use authenticated git remote operations such as `git push origin --delete` or non-interactive equivalents).
+
+## Acceptance Criteria
+
+### Git & Repository Consolidation
+- [ ] `git status --porcelain` returns empty (all `TASK-041` tracked and untracked files are committed or intentionally cleaned).
+- [ ] `git rev-parse main` equals `git rev-parse origin/main`, and the history includes the `TASK-041` changes, `perf/frontend-splitting-and-roster-cache` commits, `origin/main` merge, and harvested Alembic/Ruff/Dependabot fixes.
+- [ ] Superseded audit/review-report remote branches (`origin/*audit-report*`, `origin/*code-review*`, `origin/*review-report*`, etc.) and obsolete Dependabot/Jules branches are pruned from `origin` (or closed if PR tooling is authenticated).
+
+### Build, Migration & Lint Verification
+- [ ] `npm run build` in `frontend/` exits with code 0 with zero TypeScript or bundler errors.
+- [ ] `alembic heads` in `backend/` reports a single head revision, and `alembic upgrade head` exits with code 0.
+- [ ] `ruff check` in `backend/` exits with code 0.
+
+### Automated Test Suites
+- [ ] Backend `pytest` suite exits with code 0.
+- [ ] Frontend Playwright E2E suite (`npx playwright test` in `frontend/`) exits with code 0.
+</USER_REQUEST>

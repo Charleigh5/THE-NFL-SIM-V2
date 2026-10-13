@@ -6,13 +6,13 @@ import {
   User,
   CheckCircle2,
   Send,
-  Sparkles,
   Flame,
   Scale,
   Users2,
   ArrowRightLeft,
   ChevronRight,
 } from "lucide-react";
+import { FootballLacesIcon } from "../icons";
 import type {
   LockerRoomEventResponse,
   LockerRoomResolutionRequest,
@@ -132,7 +132,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
   const getActionIcon = (actionId: string) => {
     switch (actionId) {
       case "promise_usage":
-        return <Sparkles size={16} className="text-emerald-400" />;
+        return <FootballLacesIcon size={16} className="text-emerald-400" />;
       case "demand_accountability":
         return <Scale size={16} className="text-amber-400" />;
       case "players_meeting":
@@ -151,14 +151,14 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="broadcast-glass rounded-2xl border border-red-500/30 p-6 max-w-2xl w-full relative shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+        className="broadcast-glass rounded-[2px] border border-red-500/30 p-6 max-w-2xl w-full relative shadow-hard-md max-h-[90vh] overflow-y-auto custom-scrollbar"
         data-testid="council-modal-content"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-[2px] bg-white/5 hover:bg-white/10 transition-colors"
           aria-label="Close council modal"
         >
           <X size={18} />
@@ -166,12 +166,12 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
 
         {/* Cinematic Header */}
         <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
-          <div className="w-14 h-14 rounded-xl bg-red-600/30 border border-red-500/50 flex items-center justify-center shadow-lg shrink-0">
+          <div className="w-14 h-14 rounded-[2px] bg-red-600/30 border border-red-500/50 flex items-center justify-center shadow-hard-xs shrink-0">
             <AlertOctagon size={30} className="text-red-400" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-[2px] bg-red-400 animate-pulse" />
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-red-400">
                 Tier 3 Agentic Confrontation Council (Week {event.week})
               </span>
@@ -188,7 +188,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
         {/* Resolution Feedback Alert */}
         {resolutionResult && (
           <div
-            className={`mb-6 p-4 rounded-xl border flex items-start gap-3 ${
+            className={`mb-6 p-4 rounded-[2px] border flex items-start gap-3 ${
               resolutionResult.success
                 ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-200"
                 : "bg-red-500/15 border-red-500/40 text-red-200"
@@ -223,7 +223,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
               return (
                 <div
                   key={idx}
-                  className={`p-3.5 rounded-xl border transition-all ${
+                  className={`p-3.5 rounded-[2px] border transition-all ${
                     isStar
                       ? "bg-red-950/40 border-red-500/20 mr-4"
                       : isCoach
@@ -237,7 +237,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
                         {turn.speaker_name}
                       </span>
                       <span
-                        className={`px-2 py-0.2 rounded text-[9px] font-mono uppercase tracking-wider border flex items-center gap-1 ${roleInfo.color}`}
+                        className={`px-2 py-0.2 rounded-[2px] text-[9px] font-mono uppercase tracking-wider border flex items-center gap-1 ${roleInfo.color}`}
                       >
                         {roleInfo.icon}
                         {roleInfo.label}
@@ -272,9 +272,9 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
                   <div
                     key={action.id}
                     onClick={() => setSelectedActionId(action.id)}
-                    className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                    className={`p-3.5 rounded-[2px] border cursor-pointer transition-all flex flex-col justify-between ${
                       isSelected
-                        ? "bg-red-600/25 border-red-500/60 shadow-lg shadow-red-900/30 ring-1 ring-red-500/40"
+                        ? "bg-red-600/25 border-red-500/60 shadow-hard-xs ring-1 ring-red-500/40"
                         : "bg-black/40 border-white/10 hover:border-white/20 hover:bg-white/5"
                     }`}
                   >
@@ -302,7 +302,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
             <div className="flex gap-3 pt-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-2.5 bg-white/10 hover:bg-white/15 text-gray-300 font-header text-xs uppercase tracking-wider rounded-xl transition-all"
+                className="flex-1 py-2.5 bg-white/10 hover:bg-white/15 text-gray-300 font-header text-xs uppercase tracking-wider rounded-[2px] transition-all"
               >
                 Table Discussion
               </button>
@@ -310,7 +310,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
               <button
                 onClick={handleApplyResolution}
                 disabled={isResolving}
-                className="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isResolving ? (
                   <span className="animate-pulse">Executing Directive...</span>
@@ -330,7 +330,7 @@ export const ClosedDoorCouncilModal: React.FC<ClosedDoorCouncilModalProps> = ({
           <div className="pt-4 flex justify-end">
             <button
               onClick={onClose}
-              className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 text-white font-header text-xs uppercase tracking-wider rounded-xl shadow-lg"
+              className="px-6 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs"
             >
               Close Council Chamber
             </button>

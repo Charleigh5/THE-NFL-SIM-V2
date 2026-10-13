@@ -149,9 +149,9 @@ export const BodyMap: React.FC<BodyMapProps> = ({
       </div>
 
       {/* SVG 7-Zone Anatomical Matrix */}
-      <div className="relative w-full aspect-[1/2] p-2 bg-slate-950/60 rounded-2xl border border-slate-800/80 shadow-2xl backdrop-blur-md">
+      <div className="relative w-full aspect-[1/2] p-2 bg-slate-950/60 rounded-[2px] border border-slate-800/80 shadow-hard-md backdrop-blur-md">
         {/* Subtle holographic grid lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none rounded-2xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none rounded-[2px]" />
 
         <svg viewBox="0 0 200 400" className="w-full h-full relative z-10">
           <defs>

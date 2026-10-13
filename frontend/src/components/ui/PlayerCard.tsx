@@ -79,7 +79,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         onClick={handleClick}
         data-testid={testId || "player-card"}
         className={clsx(
-          "ea-player-card group relative w-64 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 select-none shadow-2xl",
+          "ea-player-card group relative w-64 rounded-[2px] overflow-hidden cursor-pointer transition-all duration-300 select-none shadow-hard-md hover:shadow-hard-primary",
           className
         )}
       >
@@ -94,7 +94,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         <div className="relative z-10 p-3 pb-0 flex items-start justify-between">
           {/* Position & Archetype Pill */}
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/15">
+            <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-[2px] border border-white/15">
               <span className="font-header text-sm tracking-wider text-white leading-none">
                 {position}
               </span>
@@ -131,7 +131,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             soundEffects.playSnap();
             setShowBackstory(true);
           }}
-          className="absolute top-12 left-3 z-20 p-1.5 bg-black/70 hover:bg-blue-600 text-white/70 hover:text-white rounded-md backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 border border-white/10"
+          className="absolute top-12 left-3 z-20 p-1.5 bg-black/70 hover:bg-blue-600 text-white/70 hover:text-white rounded-[2px] backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 border border-white/10 shadow-hard-xs"
           title="View Bio & Attributes"
         >
           <BookOpen size={13} />
@@ -147,7 +147,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           )}
 
           {/* Player Silhouette Icon */}
-          <div className="w-18 h-18 rounded-full border border-white/15 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform overflow-hidden">
+          <div className="w-18 h-18 rounded-[2px] border border-white/15 flex items-center justify-center shadow-hard-xs group-hover:scale-105 transition-transform overflow-hidden">
             <PlayerAvatar
               playerId={playerId}
               teamAbbr={team}
@@ -173,7 +173,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           </div>
 
           <div
-            className="p-1 rounded bg-white/5 border border-white/10"
+            className="p-1 rounded-[2px] bg-white/5 border border-white/10 shadow-hard-xs"
             title={`Dev Trait: ${devTrait}`}
           >
             {getDevTraitIcon()}
@@ -182,15 +182,15 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
         {/* Athletic Stat Bar Breakdown */}
         <div className="relative z-10 p-3 pt-2 grid grid-cols-3 gap-2 text-center font-mono">
-          <div className="bg-black/30 p-1.5 rounded border border-white/5">
+          <div className="bg-black/30 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">SPD</span>
             <span className="font-bold text-xs text-emerald-400 leading-none">{speed}</span>
           </div>
-          <div className="bg-black/30 p-1.5 rounded border border-white/5">
+          <div className="bg-black/30 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">STR</span>
             <span className="font-bold text-xs text-yellow-400 leading-none">{strength}</span>
           </div>
-          <div className="bg-black/30 p-1.5 rounded border border-white/5">
+          <div className="bg-black/30 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
             <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">AGI</span>
             <span className="font-bold text-xs text-cyan-400 leading-none">{agility}</span>
           </div>

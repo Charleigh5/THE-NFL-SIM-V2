@@ -35,9 +35,7 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
     return team?.primary_color || "#2a2a2a";
   };
 
-  const renderLeader = (
-    category: "passing" | "rushing" | "receiving" | "defense" | "kicking"
-  ) => {
+  const renderLeader = (category: "passing" | "rushing" | "receiving" | "defense" | "kicking") => {
     const list =
       category === "passing"
         ? leaders.passing_yards || []
@@ -46,7 +44,9 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
           : category === "receiving"
             ? leaders.receiving_yards || []
             : category === "defense"
-              ? (leaders.sacks && leaders.sacks.length > 0 ? leaders.sacks : leaders.total_tackles) || []
+              ? (leaders.sacks && leaders.sacks.length > 0
+                  ? leaders.sacks
+                  : leaders.total_tackles) || []
               : leaders.field_goal_percentage || [];
 
     const statLabel =
@@ -58,7 +58,12 @@ export const LeagueLeaders: React.FC<LeagueLeadersProps> = ({ leaders, loading, 
 
     const topLeader = list[0];
 
-    if (!topLeader) return <div className="no-leaders text-gray-400 p-4 text-center">No leaders found for {category}</div>;
+    if (!topLeader)
+      return (
+        <div className="no-leaders text-gray-400 p-4 text-center">
+          No leaders found for {category}
+        </div>
+      );
 
     const topLeaderColor = getTeamColor(topLeader.team);
     const topLeaderLogo = getTeamLogo(topLeader.team);

@@ -195,7 +195,7 @@ export const PlayerProgressChart: React.FC<PlayerProgressChartProps> = ({
       {weeklyXP.length > 0 && (
         <div className="weekly-xp-section">
           <h4 className="text-sm font-medium text-gray-400 mb-3">Weekly XP Earned</h4>
-          <div className="relative bg-gray-800/40 rounded-xl p-4">
+          <div className="relative bg-gray-800/40 rounded-[2px] p-4 shadow-hard-xs">
             <svg
               width="100%"
               height={chartHeight}

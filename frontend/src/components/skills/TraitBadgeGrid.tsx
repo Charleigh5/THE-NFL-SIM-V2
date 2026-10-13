@@ -293,17 +293,17 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, 
   };
 
   return (
-    <div className="w-full bg-slate-950/90 border border-slate-800/90 rounded-2xl p-6 shadow-2xl backdrop-blur-xl font-sans">
+    <div className="w-full bg-slate-950/90 border border-slate-800/90 rounded-[2px] p-6 shadow-hard-md backdrop-blur-xl font-sans">
       {/* Header & Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+          <div className="p-2.5 rounded-[2px] bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-hard-xs">
             <Award className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-white tracking-wide uppercase flex items-center gap-2">
               Trait Showcase & Badges
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-amber-950 text-amber-300 border border-amber-800">
                 25+ TRAIT CATALOG
               </span>
             </h2>
@@ -319,9 +319,9 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, 
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap ${
+              className={`px-3 py-1 rounded-[2px] text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap ${
                 selectedCategory === cat
-                  ? "bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-950"
+                  ? "bg-amber-500 text-slate-950 font-bold shadow-hard-xs"
                   : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
               }`}
             >
@@ -344,7 +344,7 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, 
               onMouseLeave={() => setHoveredTrait(null)}
               onClick={() => onTraitClick && onTraitClick(item.name)}
               whileHover={{ scale: 1.02 }}
-              className={`relative p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`relative p-3.5 rounded-[2px] border transition-all cursor-pointer flex flex-col justify-between shadow-hard-xs ${
                 isUnlocked
                   ? getTierBadgeStyle(item.tier)
                   : "bg-slate-900/40 border-slate-800/80 opacity-60 hover:opacity-100 hover:border-slate-700"
@@ -353,7 +353,7 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span
-                    className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                    className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-[2px] uppercase tracking-wider ${
                       item.tier === "LEGENDARY"
                         ? "bg-amber-900/80 text-amber-200 border border-amber-600"
                         : item.tier === "GOLD"
@@ -395,18 +395,18 @@ export const TraitBadgeGrid: React.FC<TraitBadgeGridProps> = ({ unlockedTraits, 
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 p-4 rounded-xl bg-slate-900/90 border border-slate-700 text-xs font-sans flex flex-wrap items-center justify-between gap-4"
+          className="mt-4 p-4 rounded-[2px] bg-slate-900/90 border border-slate-700 text-xs font-sans flex flex-wrap items-center justify-between gap-4 shadow-hard-xs"
         >
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white text-sm">{hoveredTrait.name}</span>
-              <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 font-mono text-[10px] border border-amber-800">
+              <span className="px-2 py-0.5 rounded-[2px] bg-amber-950 text-amber-300 font-mono text-[10px] border border-amber-800">
                 {hoveredTrait.tier} TIER
               </span>
             </div>
             <p className="text-slate-300 mt-0.5">{hoveredTrait.description}</p>
           </div>
-          <div className="bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 text-amber-300 font-mono text-[11px]">
+          <div className="bg-slate-950 px-3 py-2 rounded-[2px] border border-slate-800 text-amber-300 font-mono text-[11px] shadow-hard-xs">
             <strong>Simulation Impact:</strong> {hoveredTrait.effects}
           </div>
         </motion.div>

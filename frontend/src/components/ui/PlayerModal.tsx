@@ -57,13 +57,13 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
 
   if (!playerId) return null;
 
-  const isDefense = [
-    "DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"
-  ].includes(player?.position?.toUpperCase() || "");
+  const isDefense = ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(
+    player?.position?.toUpperCase() || ""
+  );
 
-  const isOL = [
-    "OL", "OT", "OG", "C", "LT", "RT", "LG", "RG"
-  ].includes(player?.position?.toUpperCase() || "");
+  const isOL = ["OL", "OT", "OG", "C", "LT", "RT", "LG", "RG"].includes(
+    player?.position?.toUpperCase() || ""
+  );
 
   const isSpecial = ["K", "P", "LS"].includes(player?.position?.toUpperCase() || "");
 
@@ -83,7 +83,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
               position={player?.position || "ATH"}
               jerseyNumber={player?.jersey_number || 0}
               size="lg"
-              className="w-16 h-16 rounded-xl border border-white/20"
+              className="w-16 h-16 rounded-[2px] border border-white/20"
             />
             <div className="player-info">
               {loading ? (
@@ -114,7 +114,9 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
 
         <div className="player-modal-body">
           {loading ? (
-            <div className="p-10 text-center text-gray-400 font-mono">Loading player dossier...</div>
+            <div className="p-10 text-center text-gray-400 font-mono">
+              Loading player dossier...
+            </div>
           ) : (
             <>
               <div className="attributes-grid">
@@ -197,7 +199,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
                           <td>{stats.games_played}</td>
                           {isDefense ? (
                             <>
-                              <td>{stats.tackles ?? ((stats.tackles_solo || 0) + (stats.tackles_assist || 0))}</td>
+                              <td>
+                                {stats.tackles ??
+                                  (stats.tackles_solo || 0) + (stats.tackles_assist || 0)}
+                              </td>
                               <td>{Number(stats.sacks || 0).toFixed(1)}</td>
                               <td>{stats.interceptions || 0}</td>
                               <td>{stats.pass_deflections || 0}</td>

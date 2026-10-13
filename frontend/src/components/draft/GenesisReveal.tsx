@@ -45,7 +45,7 @@ export const GenesisReveal = ({
       data-testid="genesis-modal"
     >
       <div
-        className="bg-zinc-900 border border-white/20 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative"
+        className="bg-zinc-900 border border-white/20 rounded-[2px] w-full max-w-lg overflow-hidden shadow-hard-md relative"
         style={{ zIndex: 100000 }}
       >
         {/* Header */}
@@ -59,7 +59,7 @@ export const GenesisReveal = ({
                 size="md"
                 position={position}
                 playerName={prospectName}
-                className="w-14 h-14 rounded-xl border border-cyan-400/40 shadow-lg"
+                className="w-14 h-14 rounded-[2px] border border-cyan-400/40 shadow-hard-xs"
                 primaryColor="#22d3ee"
               />
             </div>
@@ -81,12 +81,12 @@ export const GenesisReveal = ({
         <div className="p-8 flex flex-col items-center min-h-[400px] justify-center text-center gap-6">
           {!isRevealed && !decrypting && (
             <>
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+              <div className="w-20 h-20 bg-white/5 rounded-[2px] flex items-center justify-center mb-2 shadow-hard-xs">
                 <Lock className="w-10 h-10 text-cyan-400" />
               </div>
               <div className="space-y-4">
                 <p className="text-white font-medium text-lg">Encrypted Biometric Data</p>
-                <div className="text-gray-400 text-xs text-left bg-black/30 p-4 rounded-lg font-mono leading-relaxed max-w-[300px] mx-auto border border-white/5">
+                <div className="text-gray-400 text-xs text-left bg-black/30 p-4 rounded-[2px] font-mono leading-relaxed max-w-[300px] mx-auto border border-white/5 shadow-hard-xs">
                   <p>• S2 Cognition & Processing Speed</p>
                   <p>• True Physical Measurements</p>
                   <p>• Muscle Fiber Composition</p>
@@ -95,7 +95,7 @@ export const GenesisReveal = ({
               </div>
               <button
                 onClick={handleReveal}
-                className="mt-4 px-10 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.4)] flex items-center gap-2"
+                className="mt-4 px-10 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-[2px] hover:scale-105 transition-all shadow-hard-md active:shadow-hard-pressed flex items-center gap-2"
               >
                 <Activity className="w-4 h-4" /> DECRYPT DATA
               </button>
@@ -122,7 +122,7 @@ export const GenesisReveal = ({
               {/* Primary Stats Grid */}
               <div className="grid grid-cols-3 gap-3 w-full">
                 {/* S2 Score */}
-                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-xl border border-white/10 flex flex-col items-center relative overflow-hidden">
+                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-[2px] border border-white/10 flex flex-col items-center relative overflow-hidden shadow-hard-xs">
                   <div className="absolute top-0 right-0 w-8 h-8 bg-purple-500/20 blur-xl" />
                   <span className="text-[10px] font-bold tracking-wider text-purple-300 mb-1">
                     S2 SCORE
@@ -133,7 +133,7 @@ export const GenesisReveal = ({
                 </div>
 
                 {/* Agility Score */}
-                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-xl border border-white/10 flex flex-col items-center relative overflow-hidden">
+                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-[2px] border border-white/10 flex flex-col items-center relative overflow-hidden shadow-hard-xs">
                   <div className="absolute top-0 right-0 w-8 h-8 bg-cyan-500/20 blur-xl" />
                   <span className="text-[10px] font-bold tracking-wider text-cyan-300 mb-1">
                     AGILITY
@@ -144,7 +144,7 @@ export const GenesisReveal = ({
                 </div>
 
                 {/* GPS Max */}
-                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-xl border border-white/10 flex flex-col items-center relative overflow-hidden">
+                <div className="bg-gradient-to-b from-white/10 to-white/5 p-3 rounded-[2px] border border-white/10 flex flex-col items-center relative overflow-hidden shadow-hard-xs">
                   <div className="absolute top-0 right-0 w-8 h-8 bg-orange-500/20 blur-xl" />
                   <span className="text-[10px] font-bold tracking-wider text-orange-300 mb-1">
                     GPS MAX
@@ -158,15 +158,9 @@ export const GenesisReveal = ({
                 </div>
               </div>
 
-              {/* Physical Traits (if available in props, assuming we add them to types later or pass them in details,
-                  for now we render placeholders if missing or just what we have)
-                  NOTE: data is CombineResult which we just updated.
-                  However, standard CombineResult might not have arm_length/wingspan/hand_size unless we add them to interface.
-                  We only added power_clean, gps, agility, s2, medical to CombineResult.
-                  Ideally these should be in CombineResult too. I'll add them to interface implicitly here or use any.
-                  */}
+              {/* Physical Traits */}
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-black/20 rounded-lg p-3 border border-white/5">
+                <div className="bg-black/20 rounded-[2px] p-3 border border-white/5 shadow-hard-xs">
                   <h4 className="text-gray-400 mb-2 font-bold uppercase">Biometrics</h4>
                   <div className="space-y-1">
                     <div className="flex justify-between">
@@ -183,7 +177,7 @@ export const GenesisReveal = ({
                     </div>
                   </div>
                 </div>
-                <div className="bg-black/20 rounded-lg p-3 border border-white/5">
+                <div className="bg-black/20 rounded-[2px] p-3 border border-white/5 shadow-hard-xs">
                   <h4 className="text-gray-400 mb-2 font-bold uppercase">Measurements</h4>
                   <div className="space-y-1">
                     <div className="flex justify-between">
@@ -204,7 +198,7 @@ export const GenesisReveal = ({
 
               {/* Medicals */}
               <div
-                className={`w-full border rounded-xl p-4 text-left transition-colors ${
+                className={`w-full border rounded-[2px] p-4 text-left transition-colors shadow-hard-xs ${
                   data.medical_flags && data.medical_flags.length > 0
                     ? "bg-red-500/10 border-red-500/30"
                     : "bg-emerald-500/10 border-emerald-500/30"
@@ -242,7 +236,7 @@ export const GenesisReveal = ({
                 type="button"
                 onClick={onClose}
                 data-testid="close-modal-bottom"
-                className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold tracking-wider uppercase transition-colors"
+                className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-[2px] font-bold tracking-wider uppercase transition-colors shadow-hard-xs active:shadow-hard-pressed"
               >
                 Close Insights
               </button>

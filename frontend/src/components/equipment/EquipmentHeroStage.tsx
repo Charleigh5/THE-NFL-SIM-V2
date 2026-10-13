@@ -16,7 +16,6 @@ import {
   RotateCcw,
   ZoomIn,
   ZoomOut,
-  Sparkles,
   Shield,
   Award,
   Sun,
@@ -25,6 +24,7 @@ import {
   Pause,
   Maximize2,
 } from "lucide-react";
+import { HelmetIcon } from "../icons";
 
 export type { EquipmentModelType, HelmetFinishType, LightingPresetType, TeamColorway };
 
@@ -382,7 +382,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
 
   return (
     <div
-      className={`relative rounded-2xl broadcast-glass border border-white/15 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-all duration-300 ${
+      className={`relative rounded-[2px] broadcast-glass border border-white/15 overflow-hidden shadow-hard-lg backdrop-blur-xl transition-all duration-300 ${
         compact ? "p-3" : "p-5 md:p-6"
       } ${className}`}
       data-testid="equipment-hero-stage"
@@ -404,16 +404,16 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
         <div
           className={`relative w-full ${
             compact ? "h-[260px]" : "lg:col-span-8 h-[380px] md:h-[440px]"
-          } rounded-xl bg-slate-950/70 border border-white/10 overflow-hidden select-none touch-none`}
+          } rounded-[2px] bg-slate-950/70 border border-white/10 overflow-hidden select-none touch-none`}
         >
           {/* Top Status & Telemetry HUD Overlay */}
           <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none">
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 border border-white/15 text-[10px] font-mono text-emerald-400 font-bold backdrop-blur-md">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-black/60 border border-white/15 text-[10px] font-mono text-emerald-400 font-bold backdrop-blur-md">
+                <span className="w-1.5 h-1.5 rounded-[1px] bg-emerald-400 animate-pulse" />
                 {fps} FPS • 60Hz WEBGL
               </span>
-              <span className="hidden sm:inline-flex px-2 py-1 rounded bg-black/50 border border-white/10 text-[10px] font-mono text-gray-300 backdrop-blur-md">
+              <span className="hidden sm:inline-flex px-2 py-1 rounded-[2px] bg-black/50 border border-white/10 text-[10px] font-mono text-gray-300 backdrop-blur-md">
                 {activeModel === "duke" && "THE DUKE • HORWEEN"}
                 {activeModel === "helmet" &&
                   `${activeTeam?.name?.toUpperCase() || "FRANCHISE"} SHELL`}
@@ -426,7 +426,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
               <button
                 onClick={() => setAutoRotate((r) => !r)}
                 title={autoRotate ? "Pause Orbit" : "Resume Orbit"}
-                className={`p-1.5 rounded-lg border backdrop-blur-md transition-colors ${
+                className={`p-1.5 rounded-[2px] border backdrop-blur-md transition-colors shadow-hard-xs ${
                   autoRotate
                     ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300"
                     : "bg-black/60 border-white/15 text-gray-400 hover:text-white"
@@ -437,21 +437,21 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
               <button
                 onClick={handleZoomIn}
                 title="Zoom In"
-                className="p-1.5 rounded-lg bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors"
+                className="p-1.5 rounded-[2px] bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors shadow-hard-xs"
               >
                 <ZoomIn size={14} />
               </button>
               <button
                 onClick={handleZoomOut}
                 title="Zoom Out"
-                className="p-1.5 rounded-lg bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors"
+                className="p-1.5 rounded-[2px] bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors shadow-hard-xs"
               >
                 <ZoomOut size={14} />
               </button>
               <button
                 onClick={handleReset}
                 title="Reset Camera & Rotation"
-                className="p-1.5 rounded-lg bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors"
+                className="p-1.5 rounded-[2px] bg-black/60 border border-white/15 text-gray-300 hover:text-white hover:bg-black/80 backdrop-blur-md transition-colors shadow-hard-xs"
               >
                 <RotateCcw size={14} />
               </button>
@@ -460,7 +460,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
 
           {/* Drag Instruction Cue Overlay */}
           <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
-            <span className="text-[10px] font-mono text-gray-400/80 bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/5 flex items-center gap-1">
+            <span className="text-[10px] font-mono text-gray-400/80 bg-black/40 px-2 py-1 rounded-[2px] backdrop-blur-sm border border-white/5 flex items-center gap-1">
               <Maximize2 size={10} /> Drag to inspect • Cursor tracks lighting
             </span>
           </div>
@@ -498,10 +498,10 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
             <div className="border-b border-white/10 pb-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-1.5">
-                  <Sparkles size={12} />
+                  <HelmetIcon size={12} className="text-cyan-400" />
                   3D Holographic Locker
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white font-bold border border-white/15">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-white/10 text-white font-bold border border-white/15">
                   100% OFFLINE
                 </span>
               </div>
@@ -523,9 +523,9 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                   type="button"
                   data-testid="equipment-switcher-duke"
                   onClick={() => handleSelectModel("duke")}
-                  className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-[2px] border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer shadow-hard-xs ${
                     activeModel === "duke"
-                      ? "bg-amber-500/20 border-amber-400/60 text-amber-300 shadow-lg shadow-amber-500/10 font-bold"
+                      ? "bg-amber-500/20 border-amber-400/60 text-amber-300 font-bold"
                       : "bg-slate-900/50 border-white/10 text-gray-400 hover:text-white hover:bg-slate-800/60"
                   }`}
                 >
@@ -538,9 +538,9 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                   type="button"
                   data-testid="equipment-switcher-helmet"
                   onClick={() => handleSelectModel("helmet")}
-                  className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-[2px] border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer shadow-hard-xs ${
                     activeModel === "helmet"
-                      ? "bg-cyan-500/20 border-cyan-400/60 text-cyan-300 shadow-lg shadow-cyan-500/10 font-bold"
+                      ? "bg-cyan-500/20 border-cyan-400/60 text-cyan-300 font-bold"
                       : "bg-slate-900/50 border-white/10 text-gray-400 hover:text-white hover:bg-slate-800/60"
                   }`}
                 >
@@ -553,9 +553,9 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                   type="button"
                   data-testid="equipment-switcher-lombardi"
                   onClick={() => handleSelectModel("lombardi")}
-                  className={`p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer ${
+                  className={`p-2.5 rounded-[2px] border flex flex-col items-center justify-center gap-1 text-center transition-all cursor-pointer shadow-hard-xs ${
                     activeModel === "lombardi"
-                      ? "bg-yellow-500/20 border-yellow-400/60 text-yellow-300 shadow-lg shadow-yellow-500/10 font-bold"
+                      ? "bg-yellow-500/20 border-yellow-400/60 text-yellow-300 font-bold"
                       : "bg-slate-900/50 border-white/10 text-gray-400 hover:text-white hover:bg-slate-800/60"
                   }`}
                 >
@@ -571,7 +571,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
 
             {/* Helmet PBR Finish Selector (Visible when helmet is active) */}
             {activeModel === "helmet" && (
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-white/10 space-y-2">
+              <div className="p-3 rounded-[2px] bg-slate-900/60 border border-white/10 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-mono uppercase text-gray-300 font-bold flex items-center gap-1.5">
                     <Palette size={12} className="text-cyan-400" />
@@ -587,7 +587,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                       key={f}
                       type="button"
                       onClick={() => setFinish(f)}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-header uppercase tracking-wider border transition-all cursor-pointer ${
+                      className={`py-1.5 px-2 rounded-[2px] text-xs font-header uppercase tracking-wider border transition-all cursor-pointer ${
                         finish === f
                           ? "bg-white/20 border-cyan-400 text-white font-bold"
                           : "bg-black/40 border-white/10 text-gray-400 hover:text-gray-200"
@@ -601,7 +601,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
             )}
 
             {/* Stage Lighting Preset Selector */}
-            <div className="p-3 rounded-xl bg-slate-900/60 border border-white/10 space-y-2">
+            <div className="p-3 rounded-[2px] bg-slate-900/60 border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-mono uppercase text-gray-300 font-bold flex items-center gap-1.5">
                   <Sun size={12} className="text-yellow-400" />
@@ -612,7 +612,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLightingPreset("stadium_floodlights")}
-                  className={`py-1 px-1.5 rounded border text-center truncate transition-colors ${
+                  className={`py-1 px-1.5 rounded-[2px] border text-center truncate transition-colors ${
                     lightingPreset === "stadium_floodlights"
                       ? "bg-cyan-500/25 border-cyan-400 text-cyan-300 font-bold"
                       : "bg-black/40 border-white/10 text-gray-400 hover:text-gray-200"
@@ -623,7 +623,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLightingPreset("war_room_studio")}
-                  className={`py-1 px-1.5 rounded border text-center truncate transition-colors ${
+                  className={`py-1 px-1.5 rounded-[2px] border text-center truncate transition-colors ${
                     lightingPreset === "war_room_studio"
                       ? "bg-amber-500/25 border-amber-400 text-amber-300 font-bold"
                       : "bg-black/40 border-white/10 text-gray-400 hover:text-gray-200"
@@ -634,7 +634,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
                 <button
                   type="button"
                   onClick={() => setLightingPreset("primetime_neon")}
-                  className={`py-1 px-1.5 rounded border text-center truncate transition-colors ${
+                  className={`py-1 px-1.5 rounded-[2px] border text-center truncate transition-colors ${
                     lightingPreset === "primetime_neon"
                       ? "bg-purple-500/25 border-purple-400 text-purple-300 font-bold"
                       : "bg-black/40 border-white/10 text-gray-400 hover:text-gray-200"
@@ -646,7 +646,7 @@ export const EquipmentHeroStage: React.FC<EquipmentHeroStageProps> = ({
             </div>
 
             {/* Franchise Colorway Swatches */}
-            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs font-mono">
+            <div className="flex items-center justify-between px-3 py-2 rounded-[2px] bg-black/40 border border-white/10 text-xs font-mono">
               <span className="text-gray-400">Franchise Palette:</span>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">

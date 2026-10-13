@@ -97,17 +97,17 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
 
   return (
     <div
-      className={`p-5 rounded-3xl bg-slate-950/90 border border-cyan-500/30 shadow-2xl backdrop-blur-md ${className}`}
+      className={`p-5 rounded-[2px] bg-slate-950/90 border border-cyan-500/30 shadow-hard-md backdrop-blur-md ${className}`}
     >
       {/* Header with Title and Protocol Legend Toggles */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-cyan-950/80 border border-cyan-500/40 text-cyan-400">
+          <div className="p-2.5 rounded-[2px] bg-cyan-950/80 border border-cyan-500/40 text-cyan-400 shadow-hard-xs">
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 text-[10px] font-mono uppercase font-bold">
+              <span className="px-2 py-0.5 rounded-[2px] bg-cyan-950 text-cyan-400 border border-cyan-800 text-[10px] font-mono uppercase font-bold">
                 Gompertz Non-Linear Model
               </span>
               <span className="text-[10px] font-mono text-slate-400">12-Week Projection</span>
@@ -132,9 +132,9 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
                   toggleProtocol(traj.protocol);
                   if (onSelectProtocol) onSelectProtocol(traj.protocol);
                 }}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[11px] font-mono font-bold border transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[11px] font-mono font-bold border transition-all shadow-hard-xs ${
                   isVisible
-                    ? `${cfg.badgeBg} shadow-sm`
+                    ? `${cfg.badgeBg}`
                     : "bg-slate-900/60 text-slate-500 border-slate-800 opacity-60"
                 } ${isSelected ? "ring-1 ring-cyan-400" : ""}`}
               >
@@ -150,11 +150,11 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
       </div>
 
       {/* Scrubbed Week Milestone Status HUD */}
-      <div className="mt-3 p-3 rounded-2xl bg-slate-900/70 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+      <div className="mt-3 p-3 rounded-[2px] bg-slate-900/70 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs font-mono shadow-hard-xs">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-cyan-400" />
           <span className="text-slate-400">Timeline Milestone:</span>
-          <span className="text-white font-bold px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800">
+          <span className="text-white font-bold px-2 py-0.5 rounded-[2px] bg-cyan-950 border border-cyan-800">
             {scrubWeek === 0
               ? "Week 0 (Immediate Post-Trauma)"
               : `Week ${scrubWeek} Post-Treatment`}
@@ -361,7 +361,7 @@ export const RTPTrajectoryGraph: React.FC<RTPTrajectoryGraphProps> = ({
                 onClick={() => {
                   if (onSelectProtocol) onSelectProtocol(traj.protocol);
                 }}
-                className={`p-2.5 rounded-xl border cursor-pointer transition-all ${
+                className={`p-2.5 rounded-[2px] border cursor-pointer transition-all shadow-hard-xs ${
                   isSelected
                     ? "bg-cyan-950/50 border-cyan-400"
                     : "bg-slate-900/40 border-slate-800 hover:bg-slate-900/70"

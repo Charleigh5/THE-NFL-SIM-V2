@@ -231,12 +231,12 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
   return (
     <div
       data-testid="dan-campbell-whiteboard"
-      className="relative rounded-xl overflow-hidden border-2 border-zinc-700 bg-gradient-to-b from-[#0e1724] via-[#09101a] to-[#05090f] p-5 shadow-2xl shadow-black/80"
+      className="relative rounded-[2px] overflow-hidden border-2 border-zinc-700 bg-gradient-to-b from-[#0e1724] via-[#09101a] to-[#05090f] p-5 shadow-hard-md"
     >
       {/* Aluminum Board Frame Header with Rivets */}
       <div className="flex flex-wrap items-center justify-between pb-3 mb-4 border-b border-white/15 gap-2">
         <div className="flex items-center gap-2.5">
-          <span className="w-3 h-3 rounded-full bg-red-500 shadow-md shadow-red-500/50 animate-pulse" />
+          <span className="w-3 h-3 rounded-full bg-red-500 shadow-hard-xs animate-pulse" />
           <div>
             <span className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 font-bold block">
               Allen Park Command Tactical Whiteboard &bull; Dan Campbell Game Plan
@@ -247,7 +247,7 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded bg-black/60 border border-[#0076B6]/40 font-mono text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
+          <span className="px-2.5 py-1 rounded-[2px] bg-black/60 border border-[#0076B6]/40 font-mono text-[10px] text-cyan-300 font-bold uppercase tracking-wider">
             ALL GRIT &bull; 100%
           </span>
         </div>
@@ -256,12 +256,12 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
       {/* Chalkboard / Whiteboard Tactical Directives */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
         {/* Key 1 */}
-        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-red-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+        <div className="p-3.5 rounded-[2px] bg-black/55 border-l-4 border-red-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-hard-xs">
           <div className="flex items-center justify-between">
             <span className="text-red-400 font-bold font-header text-sm tracking-wide">
               1. ATTACK A-GAP MUG FRONTS
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-bold uppercase">
+            <span className="text-[9px] px-1.5 py-0.5 rounded-[1px] bg-red-500/20 text-red-300 font-bold uppercase">
               DEF FRONT
             </span>
           </div>
@@ -276,12 +276,12 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
         </div>
 
         {/* Key 2 */}
-        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-amber-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+        <div className="p-3.5 rounded-[2px] bg-black/55 border-l-4 border-amber-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-hard-xs">
           <div className="flex items-center justify-between">
             <span className="text-amber-400 font-bold font-header text-sm tracking-wide">
               2. 4TH & 2 OR LESS = 100% GO
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold uppercase">
+            <span className="text-[9px] px-1.5 py-0.5 rounded-[1px] bg-amber-500/20 text-amber-300 font-bold uppercase">
               ATTACK
             </span>
           </div>
@@ -296,12 +296,12 @@ const DanCampbellWhiteboard: React.FC<DanCampbellWhiteboardProps> = ({
         </div>
 
         {/* Key 3 */}
-        <div className="p-3.5 rounded-lg bg-black/55 border-l-4 border-cyan-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-lg">
+        <div className="p-3.5 rounded-[2px] bg-black/55 border-l-4 border-cyan-500 border-t border-r border-b border-white/10 space-y-1.5 shadow-hard-xs">
           <div className="flex items-center justify-between">
             <span className="text-cyan-400 font-bold font-header text-sm tracking-wide">
               3. ESTABLISH 12-PERSONNEL POWER RUN
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold uppercase">
+            <span className="text-[9px] px-1.5 py-0.5 rounded-[1px] bg-cyan-500/20 text-cyan-300 font-bold uppercase">
               GROUND
             </span>
           </div>
@@ -609,11 +609,11 @@ export const FrontOffice: React.FC = () => {
     <div className="space-y-6 font-body" data-testid="front-office-page">
       {/* Header Banner */}
       <header
-        className="relative rounded-lg overflow-hidden bg-slate-950/80 backdrop-blur-xl p-6 border border-white/10 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4"
+        className="relative rounded-[2px] overflow-hidden bg-slate-950/80 backdrop-blur-xl p-6 border border-white/10 shadow-hard-md flex flex-col md:flex-row md:items-center justify-between gap-4"
         data-testid="front-office-header"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-md bg-black/60 border border-white/15 p-2 shadow-xl flex items-center justify-center shrink-0">
+          <div className="w-16 h-16 rounded-[2px] bg-black/60 border border-white/15 p-2 shadow-hard-xs flex items-center justify-center shrink-0">
             <img
               src={`/logos/${activeTeam?.abbreviation || team?.abbreviation || "GB"}.png`}
               alt={team?.name || "Team"}
@@ -641,7 +641,7 @@ export const FrontOffice: React.FC = () => {
         </div>
 
         {/* Cap Space & Health Vitals */}
-        <div className="flex items-center gap-4 bg-black/50 backdrop-blur-md px-4 py-3 rounded-md border border-white/10">
+        <div className="flex items-center gap-4 bg-black/50 backdrop-blur-md px-4 py-3 rounded-[2px] border border-white/10 shadow-hard-xs">
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-400 uppercase tracking-widest flex items-center gap-1 font-mono">
               <DollarSign size={12} className="text-emerald-400" /> Cap Room
@@ -670,7 +670,7 @@ export const FrontOffice: React.FC = () => {
       </div>
 
       {/* Position Filter, Sort & Tri-Mode Spatial Controller Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 backdrop-blur-md p-3 rounded-lg border border-white/10 shadow-lg">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 backdrop-blur-md p-3 rounded-[2px] border border-white/10 shadow-hard-md">
         {/* Position Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <span className="text-xs font-mono text-gray-400 mr-1 flex items-center gap-1">
@@ -784,14 +784,14 @@ export const FrontOffice: React.FC = () => {
           atmosphereType="locker"
           overscan={1.06}
           parallaxBounds={LOCKER_PARALLAX}
-          className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
+          className="min-h-[calc(100vh-220px)] rounded-[2px] overflow-hidden border border-white/10 p-4 sm:p-6 shadow-hard-md"
         >
           {/* Subtle Locker Atmosphere Mist Overlay */}
           <SpatialAtmosphereLayer facilityType="locker" intensity="subtle" />
           {/* Locker Room Ambient Header */}
-          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-[2px] shadow-hard-md flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-md bg-black/60 border border-[#0076B6]/40 flex items-center justify-center p-2 text-[#0076B6] shadow-[0_0_16px_rgba(0,118,182,0.3)]">
+              <div className="w-12 h-12 rounded-[2px] bg-black/60 border border-[#0076B6]/40 flex items-center justify-center p-2 text-[#0076B6] shadow-hard-primary">
                 <Shield size={24} />
               </div>
               <div>
@@ -811,7 +811,7 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono px-3 py-1.5 rounded-md bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase tracking-wider">
+              <span className="text-xs font-mono px-3 py-1.5 rounded-[2px] bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase tracking-wider shadow-hard-xs">
                 Active Roster: {filteredAndSortedRoster.length} / 53
               </span>
             </div>
@@ -860,14 +860,14 @@ export const FrontOffice: React.FC = () => {
           atmosphereType="office"
           overscan={1.06}
           parallaxBounds={OFFICE_PARALLAX}
-          className="min-h-[calc(100vh-220px)] rounded-lg overflow-hidden border border-white/10 p-4 sm:p-6"
+          className="min-h-[calc(100vh-220px)] rounded-[2px] overflow-hidden border border-white/10 p-4 sm:p-6 shadow-hard-md"
         >
           {/* Subtle Office Daylight and Ambient Overlay */}
           <SpatialAtmosphereLayer facilityType="office" intensity="subtle" />
           {/* Dan Campbell Executive Office Header Banner */}
-          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-lg shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="mb-6 bg-slate-950/80 backdrop-blur-xl border border-white/10 p-5 rounded-[2px] shadow-hard-md flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-md bg-black/60 border border-white/10 flex items-center justify-center p-2 text-cyan-400">
+              <div className="w-12 h-12 rounded-[2px] bg-black/60 border border-white/10 flex items-center justify-center p-2 text-cyan-400 shadow-hard-xs">
                 <ClipboardList size={24} />
               </div>
               <div>
@@ -887,10 +887,10 @@ export const FrontOffice: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1.5 rounded-md bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-mono text-xs font-bold uppercase tracking-wider">
+              <div className="px-3 py-1.5 rounded-[2px] bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-mono text-xs font-bold uppercase tracking-wider shadow-hard-xs">
                 Culture: 100% Grit
               </div>
-              <div className="px-3 py-1.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider">
+              <div className="px-3 py-1.5 rounded-[2px] bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold uppercase tracking-wider shadow-hard-xs">
                 4th Down Rate: 88%
               </div>
             </div>
@@ -910,7 +910,7 @@ export const FrontOffice: React.FC = () => {
 
               {/* Tactical Tendency Briefing Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-4 shadow-hard-xs">
                   <div className="flex items-center gap-2 text-amber-400 font-header text-sm uppercase mb-2">
                     <Shield size={16} /> 4th-Down Aggression
                   </div>
@@ -923,7 +923,7 @@ export const FrontOffice: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-4 shadow-hard-xs">
                   <div className="flex items-center gap-2 text-cyan-400 font-header text-sm uppercase mb-2">
                     <ClipboardList size={16} /> Power Run & Play-Action
                   </div>
@@ -936,7 +936,7 @@ export const FrontOffice: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-4 shadow-xl">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-4 shadow-hard-xs">
                   <div className="flex items-center gap-2 text-purple-400 font-header text-sm uppercase mb-2">
                     <Award size={16} /> Defensive Front Havoc
                   </div>
@@ -952,7 +952,7 @@ export const FrontOffice: React.FC = () => {
 
               {/* Embedded CoachSettings Component */}
               {team && (
-                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-6 shadow-2xl">
+                <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-6 shadow-hard-md">
                   <div className="border-b border-white/10 pb-3 mb-4">
                     <h3 className="font-header text-xl uppercase tracking-wider text-white">
                       Tactical Playcalling & Gameplan Sliders
@@ -969,7 +969,7 @@ export const FrontOffice: React.FC = () => {
               )}
 
               {/* Tactical Office Equipment Bay & Lombardi Trophy Showcase */}
-              <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-5 shadow-2xl">
+              <div className="bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-5 shadow-hard-md">
                 <div className="border-b border-white/10 pb-3 mb-4 flex items-center justify-between">
                   <div>
                     <h3 className="font-header text-xl uppercase tracking-wider text-white flex items-center gap-2">
@@ -980,7 +980,7 @@ export const FrontOffice: React.FC = () => {
                       3D Gameday Equipment Loadout &amp; Lombardi Trophy Inspection
                     </p>
                   </div>
-                  <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase">
+                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-[2px] bg-[#0076B6]/20 border border-[#0076B6]/40 text-cyan-300 font-bold uppercase shadow-hard-xs">
                     Interactive 3D WebGL
                   </span>
                 </div>
@@ -990,7 +990,7 @@ export const FrontOffice: React.FC = () => {
 
             {/* Right 4 Cols: Tactical Roster Depth Sheet with Critical Selectors */}
             <div
-              className="lg:col-span-4 bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-lg p-5 shadow-2xl flex flex-col"
+              className="lg:col-span-4 bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-[2px] p-5 shadow-hard-md flex flex-col"
               data-testid="roster-section"
             >
               <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
@@ -1057,7 +1057,7 @@ export const FrontOffice: React.FC = () => {
       {mode === "table" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div
-            className="lg:col-span-2 bg-slate-950/90 border border-white/10 rounded-lg p-6 shadow-2xl flex flex-col min-h-[560px]"
+            className="lg:col-span-2 bg-slate-950/90 border border-white/10 rounded-[2px] p-6 shadow-hard-md flex flex-col min-h-[560px]"
             data-testid="roster-section"
           >
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
@@ -1070,7 +1070,7 @@ export const FrontOffice: React.FC = () => {
                   High-Density Tactical Personnel Ledger • Virtualized 60 FPS
                 </p>
               </div>
-              <span className="text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300">
+              <span className="text-xs font-mono px-2.5 py-1 rounded-[2px] bg-white/5 border border-white/10 text-gray-300 shadow-hard-xs">
                 Click row to inspect dossier
               </span>
             </div>
@@ -1095,7 +1095,7 @@ export const FrontOffice: React.FC = () => {
 
           {/* Coach Settings Sidebar */}
           {team && (
-            <div className="lg:col-span-1 bg-slate-950/90 border border-white/10 rounded-lg p-6 shadow-2xl">
+            <div className="lg:col-span-1 bg-slate-950/90 border border-white/10 rounded-[2px] p-6 shadow-hard-md">
               <CoachSettings teamId={team.id} />
             </div>
           )}
@@ -1106,259 +1106,263 @@ export const FrontOffice: React.FC = () => {
       {selectedPlayer &&
         typeof document !== "undefined" &&
         createPortal(
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
-          data-testid="player-modal"
-          onClick={() => setSelectedPlayer(null)}
-        >
           <div
-            className="bg-slate-950/95 border border-white/20 rounded-lg p-6 max-w-lg w-full relative shadow-2xl backdrop-blur-xl"
-            data-testid="player-modal-content"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
+            data-testid="player-modal"
+            onClick={() => setSelectedPlayer(null)}
           >
-            <button
-              onClick={() => setSelectedPlayer(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-md bg-white/5 hover:bg-white/10 transition-colors focus:outline-none focus:ring-1 focus:ring-white/20"
-              aria-label="Close player details"
-              data-testid="close-modal-button"
+            <div
+              className="bg-slate-950/95 border border-white/20 rounded-[2px] p-6 max-w-lg w-full relative shadow-hard-md backdrop-blur-xl"
+              data-testid="player-modal-content"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X size={18} />
-            </button>
+              <button
+                onClick={() => setSelectedPlayer(null)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-[2px] bg-white/5 hover:bg-white/10 shadow-hard-xs transition-colors focus:outline-none focus:ring-1 focus:ring-white/20"
+                aria-label="Close player details"
+                data-testid="close-modal-button"
+              >
+                <X size={18} />
+              </button>
 
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
-              <PlayerAvatar
-                playerId={selectedPlayer.id}
-                playerName={`${selectedPlayer.first_name} ${selectedPlayer.last_name}`}
-                position={selectedPlayer.position}
-                jerseyNumber={selectedPlayer.jersey_number ?? 0}
-                teamAbbr={team?.abbreviation || "DET"}
-                primaryColor={team?.primary_color || activeTeam?.colors?.primary}
-                size="lg"
-                className="w-16 h-16 rounded-md border border-white/20 shrink-0 shadow-lg"
-              />
-              <div>
-                <h2 className="font-header text-3xl text-white uppercase leading-tight">
-                  {selectedPlayer.first_name} {selectedPlayer.last_name}
-                </h2>
-                <p className="text-sm font-mono text-gray-300">
-                  {selectedPlayer.position} • {team?.name}
-                </p>
-              </div>
-            </div>
-
-            {/* Attribute Grid */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="bg-black/40 p-3 rounded-md border border-white/5">
-                <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
-                  Overall Rating
-                </p>
-                <p className="text-3xl font-header text-yellow-400">
-                  {selectedPlayer.overall_rating}
-                </p>
-              </div>
-
-              <div className="bg-black/40 p-3 rounded-md border border-white/5">
-                <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
-                  Age
-                </p>
-                <p className="text-3xl font-header text-white">{selectedPlayer.age}</p>
-              </div>
-
-              <div className="bg-black/40 p-3 rounded-md border border-white/5">
-                <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
-                  Speed
-                </p>
-                <p className="text-2xl font-header text-emerald-400" data-testid="player-speed">
-                  {selectedPlayer.speed ?? 85}
-                </p>
-              </div>
-
-              <div className="bg-black/40 p-3 rounded-md border border-white/5">
-                <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
-                  Strength
-                </p>
-                <p className="text-2xl font-header text-cyan-400" data-testid="player-strength">
-                  {selectedPlayer.strength ?? 80}
-                </p>
-              </div>
-            </div>
-
-            {/* Full Attributes Breakdown Bar */}
-            <div className="space-y-2 pt-2 border-t border-white/10 text-xs font-mono">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Agility:</span>
-                <span className="text-white font-bold">{selectedPlayer.agility ?? 84}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Experience:</span>
-                <span className="text-white font-bold">{selectedPlayer.experience ?? 3} yrs</span>
-              </div>
-            </div>
-
-            {/* Traits Section if available */}
-            {(selectedPlayer as ExtendedPlayer).traits &&
-              ((selectedPlayer as ExtendedPlayer).traits?.length ?? 0) > 0 && (
-                <div
-                  className="mt-4 pt-3 border-t border-white/10 traits-section"
-                  data-testid="player-traits"
-                >
-                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
-                    Player Traits
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-6 pb-4 border-b border-white/10">
+                <PlayerAvatar
+                  playerId={selectedPlayer.id}
+                  playerName={`${selectedPlayer.first_name} ${selectedPlayer.last_name}`}
+                  position={selectedPlayer.position}
+                  jerseyNumber={selectedPlayer.jersey_number ?? 0}
+                  teamAbbr={team?.abbreviation || "DET"}
+                  primaryColor={team?.primary_color || activeTeam?.colors?.primary}
+                  size="lg"
+                  className="w-16 h-16 rounded-[2px] border border-white/20 shrink-0 shadow-hard-xs"
+                />
+                <div>
+                  <h2 className="font-header text-3xl text-white uppercase leading-tight">
+                    {selectedPlayer.first_name} {selectedPlayer.last_name}
+                  </h2>
+                  <p className="text-sm font-mono text-gray-300">
+                    {selectedPlayer.position} • {team?.name}
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(selectedPlayer as ExtendedPlayer).traits?.map(
-                      (trait: string, idx: number) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
-                        >
-                          {trait}
-                        </span>
-                      )
-                    )}
+                </div>
+              </div>
+
+              {/* Attribute Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-black/40 p-3 rounded-[2px] border border-white/5 shadow-hard-xs">
+                  <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
+                    Overall Rating
+                  </p>
+                  <p className="text-3xl font-header text-yellow-400">
+                    {selectedPlayer.overall_rating}
+                  </p>
+                </div>
+
+                <div className="bg-black/40 p-3 rounded-[2px] border border-white/5 shadow-hard-xs">
+                  <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
+                    Age
+                  </p>
+                  <p className="text-3xl font-header text-white">{selectedPlayer.age}</p>
+                </div>
+
+                <div className="bg-black/40 p-3 rounded-[2px] border border-white/5 shadow-hard-xs">
+                  <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
+                    Speed
+                  </p>
+                  <p className="text-2xl font-header text-emerald-400" data-testid="player-speed">
+                    {selectedPlayer.speed ?? 85}
+                  </p>
+                </div>
+
+                <div className="bg-black/40 p-3 rounded-[2px] border border-white/5 shadow-hard-xs">
+                  <p className="text-gray-400 text-[10px] uppercase font-mono tracking-wider mb-0.5">
+                    Strength
+                  </p>
+                  <p className="text-2xl font-header text-cyan-400" data-testid="player-strength">
+                    {selectedPlayer.strength ?? 80}
+                  </p>
+                </div>
+              </div>
+
+              {/* Full Attributes Breakdown Bar */}
+              <div className="space-y-2 pt-2 border-t border-white/10 text-xs font-mono">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Agility:</span>
+                  <span className="text-white font-bold">{selectedPlayer.agility ?? 84}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Experience:</span>
+                  <span className="text-white font-bold">{selectedPlayer.experience ?? 3} yrs</span>
+                </div>
+              </div>
+
+              {/* Traits Section if available */}
+              {(selectedPlayer as ExtendedPlayer).traits &&
+                ((selectedPlayer as ExtendedPlayer).traits?.length ?? 0) > 0 && (
+                  <div
+                    className="mt-4 pt-3 border-t border-white/10 traits-section"
+                    data-testid="player-traits"
+                  >
+                    <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1.5">
+                      Player Traits
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(selectedPlayer as ExtendedPlayer).traits?.map(
+                        (trait: string, idx: number) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-xs font-mono text-cyan-300"
+                          >
+                            {trait}
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
+                )}
+
+              {/* Contract Section if available */}
+              {(selectedPlayer as ExtendedPlayer).contract && (
+                <div
+                  className="mt-3 pt-3 border-t border-white/10 contract-info"
+                  data-testid="player-contract"
+                >
+                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1">
+                    Contract Terms
+                  </p>
+                  <p className="text-xs font-mono text-emerald-400 font-bold">
+                    {(selectedPlayer as ExtendedPlayer).contract?.salary || "$45M / 3 Yrs"}
+                  </p>
                 </div>
               )}
 
-            {/* Contract Section if available */}
-            {(selectedPlayer as ExtendedPlayer).contract && (
+              {/* Authentic Equipment Loadout Panel */}
               <div
-                className="mt-3 pt-3 border-t border-white/10 contract-info"
-                data-testid="player-contract"
+                className="mt-4 pt-3 border-t border-white/10"
+                data-testid="player-equipment-loadout"
               >
-                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 mb-1">
-                  Contract Terms
-                </p>
-                <p className="text-xs font-mono text-emerald-400 font-bold">
-                  {(selectedPlayer as ExtendedPlayer).contract?.salary || "$45M / 3 Yrs"}
-                </p>
-              </div>
-            )}
-
-            {/* Authentic Equipment Loadout Panel */}
-            <div
-              className="mt-4 pt-3 border-t border-white/10"
-              data-testid="player-equipment-loadout"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 flex items-center gap-1.5 font-bold">
-                  <Shield size={12} className="text-[#0076B6]" />
-                  Gameday Equipment Loadout
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase font-bold">
-                    3D Inspector
-                  </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase font-bold">
-                    NFL Certified
-                  </span>
-                </div>
-              </div>
-
-              {/* 3D Equipment Mini Stage */}
-              <div className="mb-3">
-                <EquipmentHeroStage
-                  compact
-                  activeModel="helmet"
-                  showControls={false}
-                  className="!p-2 bg-black/40"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
-                {/* 1. Helmet & Visor */}
-                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">
-                      Helmet &amp; Visor
-                    </span>
-                    <span
-                      className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{
-                        backgroundColor:
-                          activeTeam?.colors?.primary || team?.primary_color || "#0076B6",
-                      }}
-                      title="Team Shell Color"
-                    />
-                  </div>
-                  <p className="text-white font-semibold text-[11px] truncate">
-                    Riddell SpeedFlex Precision
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] uppercase font-mono tracking-wider text-gray-400 flex items-center gap-1.5 font-bold">
+                    <Shield size={12} className="text-[#0076B6]" />
+                    Gameday Equipment Loadout
                   </p>
-                  <p className="text-cyan-400 text-[10px] mt-0.5">
-                    Visor:{" "}
-                    {["QB", "K", "P"].includes(selectedPlayer.position)
-                      ? "Clear High-Def Shield"
-                      : "Smoke Iridium 20% Tint"}
-                  </p>
-                </div>
-
-                {/* 2. Gloves */}
-                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">
-                      Grip Gloves
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 uppercase font-bold">
+                      3D Inspector
                     </span>
-                    <span
-                      className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
-                      style={{
-                        backgroundColor:
-                          activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC",
-                      }}
-                      title="Team Accent Color"
-                    />
-                  </div>
-                  <p className="text-white font-semibold text-[11px] truncate">
-                    Nike Vapor Jet 7.0
-                  </p>
-                  <p className="text-amber-400 text-[10px] mt-0.5">Magnigrip+ Tack &bull; Strap</p>
-                </div>
-
-                {/* 3. Jersey Loadout */}
-                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">
-                      Jersey Loadout
-                    </span>
-                    <span className="text-[11px] font-header text-yellow-400 font-bold leading-none">
-                      #{selectedPlayer.jersey_number ?? 0}
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase font-bold">
+                      NFL Certified
                     </span>
                   </div>
-                  <p className="text-white font-semibold text-[11px] truncate">
-                    Nike Vapor F.U.S.E. Mesh
-                  </p>
-                  <p className="text-gray-300 text-[10px] mt-0.5">Douglas CP 25 Pro Kevlar</p>
                 </div>
 
-                {/* 4. Cleats & Spatting */}
-                <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-gray-400 uppercase font-bold">
-                      Cleats &amp; Spatting
-                    </span>
-                    <span className="text-[9px] text-emerald-400 font-bold">Molded</span>
+                {/* 3D Equipment Mini Stage */}
+                <div className="mb-3">
+                  <EquipmentHeroStage
+                    compact
+                    activeModel="helmet"
+                    showControls={false}
+                    className="!p-2 bg-black/40"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
+                  {/* 1. Helmet & Visor */}
+                  <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">
+                        Helmet &amp; Visor
+                      </span>
+                      <span
+                        className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
+                        style={{
+                          backgroundColor:
+                            activeTeam?.colors?.primary || team?.primary_color || "#0076B6",
+                        }}
+                        title="Team Shell Color"
+                      />
+                    </div>
+                    <p className="text-white font-semibold text-[11px] truncate">
+                      Riddell SpeedFlex Precision
+                    </p>
+                    <p className="text-cyan-400 text-[10px] mt-0.5">
+                      Visor:{" "}
+                      {["QB", "K", "P"].includes(selectedPlayer.position)
+                        ? "Clear High-Def Shield"
+                        : "Smoke Iridium 20% Tint"}
+                    </p>
                   </div>
-                  <p className="text-white font-semibold text-[11px] truncate">
-                    Nike Vapor Edge Pro 360
-                  </p>
-                  <p className="text-cyan-300 text-[10px] mt-0.5">Carbon Plate &bull; Turf Tape</p>
+
+                  {/* 2. Gloves */}
+                  <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">
+                        Grip Gloves
+                      </span>
+                      <span
+                        className="w-2.5 h-2.5 rounded-full border border-white/20 shadow-sm shrink-0"
+                        style={{
+                          backgroundColor:
+                            activeTeam?.colors?.secondary || team?.secondary_color || "#B0B7BC",
+                        }}
+                        title="Team Accent Color"
+                      />
+                    </div>
+                    <p className="text-white font-semibold text-[11px] truncate">
+                      Nike Vapor Jet 7.0
+                    </p>
+                    <p className="text-amber-400 text-[10px] mt-0.5">
+                      Magnigrip+ Tack &bull; Strap
+                    </p>
+                  </div>
+
+                  {/* 3. Jersey Loadout */}
+                  <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">
+                        Jersey Loadout
+                      </span>
+                      <span className="text-[11px] font-header text-yellow-400 font-bold leading-none">
+                        #{selectedPlayer.jersey_number ?? 0}
+                      </span>
+                    </div>
+                    <p className="text-white font-semibold text-[11px] truncate">
+                      Nike Vapor F.U.S.E. Mesh
+                    </p>
+                    <p className="text-gray-300 text-[10px] mt-0.5">Douglas CP 25 Pro Kevlar</p>
+                  </div>
+
+                  {/* 4. Cleats & Spatting */}
+                  <div className="p-2.5 rounded bg-black/50 border border-white/10 flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[9px] text-gray-400 uppercase font-bold">
+                        Cleats &amp; Spatting
+                      </span>
+                      <span className="text-[9px] text-emerald-400 font-bold">Molded</span>
+                    </div>
+                    <p className="text-white font-semibold text-[11px] truncate">
+                      Nike Vapor Edge Pro 360
+                    </p>
+                    <p className="text-cyan-300 text-[10px] mt-0.5">
+                      Carbon Plate &bull; Turf Tape
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              <button
+                onClick={() => {
+                  setEnhancedPlayerId(selectedPlayer.id);
+                  setSelectedPlayer(null);
+                }}
+                className="w-full mt-5 py-2.5 bg-gradient-to-r from-[#0076B6] to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white font-header text-sm uppercase tracking-wider rounded-md shadow-lg transition-all focus:outline-none focus:ring-1 focus:ring-cyan-400"
+              >
+                Open In-Depth Biometrics & Traits Dossier
+              </button>
             </div>
-
-            <button
-              onClick={() => {
-                setEnhancedPlayerId(selectedPlayer.id);
-                setSelectedPlayer(null);
-              }}
-              className="w-full mt-5 py-2.5 bg-gradient-to-r from-[#0076B6] to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white font-header text-sm uppercase tracking-wider rounded-md shadow-lg transition-all focus:outline-none focus:ring-1 focus:ring-cyan-400"
-            >
-              Open In-Depth Biometrics & Traits Dossier
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* In-Depth Enhanced Player Profile Modal */}
       {enhancedPlayerId && (

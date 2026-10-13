@@ -133,7 +133,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
 
   return (
     <div
-      className="broadcast-glass rounded-2xl border border-white/10 shadow-2xl p-5 relative overflow-hidden"
+      className="broadcast-glass rounded-[2px] border border-white/10 shadow-hard-md p-5 relative overflow-hidden"
       data-testid="locker-room-graph-canvas"
     >
       {/* Top Header & Toolbar */}
@@ -160,7 +160,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
               placeholder="Search player or pos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-7 pr-3 py-1.5 bg-black/40 border border-white/15 rounded-xl text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 w-44"
+              className="pl-7 pr-3 py-1.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 w-44 shadow-hard-xs"
             />
             {searchQuery && (
               <button
@@ -173,10 +173,10 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
           </div>
 
           {/* Clique Filters */}
-          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10">
+          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-[2px] border border-white/10 shadow-hard-xs">
             <button
               onClick={() => setSelectedClique("ALL")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all ${
+              className={`px-2.5 py-1 rounded-[2px] text-xs font-mono transition-all ${
                 selectedClique === "ALL"
                   ? "bg-white/20 text-white font-bold"
                   : "text-gray-400 hover:text-white"
@@ -192,7 +192,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                 <button
                   key={cId}
                   onClick={() => setSelectedClique(cId)}
-                  className={`px-2 py-1 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
+                  className={`px-2 py-1 rounded-[2px] text-xs font-mono transition-all flex items-center gap-1.5 ${
                     isSelected
                       ? `${style.bg} font-bold text-white border`
                       : "text-gray-400 hover:text-white"
@@ -211,24 +211,24 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
           </div>
 
           {/* Zoom / Reset Buttons */}
-          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10">
+          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-[2px] border border-white/10 shadow-hard-xs">
             <button
               onClick={handleZoomIn}
-              className="p-1.5 text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              className="p-1.5 text-gray-300 hover:text-white rounded-[2px] hover:bg-white/10 transition-colors"
               title="Zoom in"
             >
               <ZoomIn size={14} />
             </button>
             <button
               onClick={handleZoomOut}
-              className="p-1.5 text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              className="p-1.5 text-gray-300 hover:text-white rounded-[2px] hover:bg-white/10 transition-colors"
               title="Zoom out"
             >
               <ZoomOut size={14} />
             </button>
             <button
               onClick={handleReset}
-              className="p-1.5 text-gray-300 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              className="p-1.5 text-gray-300 hover:text-white rounded-[2px] hover:bg-white/10 transition-colors"
               title="Reset view"
             >
               <RotateCcw size={14} />
@@ -238,7 +238,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
       </div>
 
       {/* SVG Canvas Container */}
-      <div className="relative mt-4 bg-slate-950/80 rounded-xl border border-white/10 overflow-hidden h-[540px] select-none">
+      <div className="relative mt-4 bg-slate-950/80 rounded-[2px] border border-white/10 overflow-hidden h-[540px] select-none">
         {/* Subtle Grid Background */}
         <div
           className="absolute inset-0 opacity-15 pointer-events-none"
@@ -473,7 +473,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
         {/* Floating Player Inspection Card (Sidebar/Overlay) */}
         {activeFocusNode && (
           <div
-            className="absolute top-3 right-3 w-80 bg-slate-900/95 border-2 border-cyan-500/50 rounded-2xl p-4 shadow-2xl backdrop-blur-md z-30 transition-all"
+            className="absolute top-3 right-3 w-80 bg-slate-900/95 border-2 border-cyan-500/50 rounded-[2px] p-4 shadow-hard-md backdrop-blur-md z-30 transition-all"
             data-testid="player-inspector-card"
           >
             <div className="flex items-start justify-between gap-2 pb-2 border-b border-white/10">
@@ -483,7 +483,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                     {cliques[activeFocusNode.clique_id] || activeFocusNode.clique_id}
                   </span>
                   {activeFocusNode.is_holding_out && (
-                    <span className="px-1.5 py-0.2 rounded bg-red-500/30 text-red-300 font-mono text-[10px] font-bold">
+                    <span className="px-1.5 py-0.2 rounded-[2px] bg-red-500/30 text-red-300 font-mono text-[10px] font-bold">
                       HOLDOUT
                     </span>
                   )}
@@ -508,7 +508,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
               {inspectedNode && (
                 <button
                   onClick={() => setInspectedNode(null)}
-                  className="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10"
+                  className="text-gray-400 hover:text-white p-1 rounded-[2px] hover:bg-white/10"
                 >
                   <X size={16} />
                 </button>
@@ -532,9 +532,9 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                     {activeFocusNode.tension_score.toFixed(1)} / 100
                   </span>
                 </div>
-                <div className="w-full h-1.5 bg-black/60 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-black/60 rounded-[2px] overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${
+                    className={`h-full rounded-[2px] ${
                       activeFocusNode.tension_score >= 75
                         ? "bg-red-500"
                         : activeFocusNode.tension_score >= 40
@@ -551,9 +551,9 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                   <span className="text-gray-400">Trust in Coach:</span>
                   <span className="text-cyan-400 font-bold">{activeFocusNode.trust_in_coach}%</span>
                 </div>
-                <div className="w-full h-1.5 bg-black/60 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-black/60 rounded-[2px] overflow-hidden">
                   <div
-                    className="h-full bg-cyan-500 rounded-full"
+                    className="h-full bg-cyan-500 rounded-[2px]"
                     style={{ width: `${activeFocusNode.trust_in_coach}%` }}
                   />
                 </div>
@@ -562,7 +562,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
 
             {/* Backstory Snippet */}
             {activeFocusNode.backstory_summary && (
-              <div className="mt-3 p-2 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono text-gray-300">
+              <div className="mt-3 p-2 bg-black/40 rounded-[2px] border border-white/5 text-[11px] font-mono text-gray-300">
                 <span className="text-gray-500 block text-[10px] uppercase tracking-wider mb-0.5">
                   Dossier:
                 </span>
@@ -580,13 +580,13 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
                   {focusedNodeRelations.map((rel, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between text-xs font-mono p-1.5 rounded-lg bg-black/30 border border-white/5"
+                      className="flex items-center justify-between text-xs font-mono p-1.5 rounded-[2px] bg-black/30 border border-white/5"
                     >
                       <span className="text-white truncate max-w-[130px]">
                         {rel.otherPlayer?.name} ({rel.otherPlayer?.position})
                       </span>
                       <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                        className={`text-[10px] px-1.5 py-0.5 rounded-[2px] font-bold uppercase ${
                           rel.type === "FRICTION"
                             ? "bg-red-500/20 text-red-300"
                             : rel.type === "MENTORSHIP"
@@ -607,7 +607,7 @@ export const LockerRoomGraphCanvas: React.FC<LockerRoomGraphCanvasProps> = ({
         )}
 
         {/* Bottom Legend */}
-        <div className="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-md rounded-xl p-2 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-gray-400">
+        <div className="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-md rounded-[2px] p-2 border border-white/10 shadow-hard-xs flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-gray-400">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />

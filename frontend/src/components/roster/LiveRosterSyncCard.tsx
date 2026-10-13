@@ -39,8 +39,9 @@ export const LiveRosterSyncCard: React.FC = () => {
       ]);
       setStatus(statusRes);
       setProvidersInfo(providersRes);
-    } catch (err: any) {
-      setError(err?.response?.data?.detail || "Failed to query roster sync status.");
+    } catch (err: unknown) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      setError(apiErr?.response?.data?.detail || "Failed to query roster sync status.");
     } finally {
       setLoading(false);
     }
@@ -65,19 +66,20 @@ export const LiveRosterSyncCard: React.FC = () => {
         selectedProvider === "auto" ? undefined : selectedProvider
       );
       setStatus(updatedStatus);
-    } catch (err: any) {
-      setError(err?.response?.data?.detail || "Roster synchronization failed.");
+    } catch (err: unknown) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      setError(apiErr?.response?.data?.detail || "Roster synchronization failed.");
     } finally {
       setSyncing(false);
     }
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-2xl backdrop-blur-md text-slate-100">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-[2px] p-5 shadow-hard-md backdrop-blur-md text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+          <div className="p-2.5 rounded-[2px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-hard-xs">
             <Zap className="w-5 h-5" />
           </div>
           <div>
@@ -85,7 +87,7 @@ export const LiveRosterSyncCard: React.FC = () => {
               <h3 className="text-lg font-bold tracking-wide text-white">
                 Live Roster Intelligence Sync
               </h3>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[2px] text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 <ShieldCheck className="w-3 h-3" />
                 Differential Engine
               </span>
@@ -104,7 +106,7 @@ export const LiveRosterSyncCard: React.FC = () => {
               setSelectedProvider(e.target.value);
               loadProviderStatus(e.target.value);
             }}
-            className="bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-[2px] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-hard-xs"
             disabled={loading || syncing}
           >
             <option value="auto">Auto-Select Provider</option>
@@ -118,7 +120,7 @@ export const LiveRosterSyncCard: React.FC = () => {
           <button
             onClick={() => loadProviderStatus(selectedProvider)}
             disabled={loading || syncing}
-            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700"
+            className="p-2 rounded-[2px] bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 shadow-hard-xs"
             title="Refresh Provider Telemetry"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-emerald-400" : ""}`} />
@@ -128,7 +130,7 @@ export const LiveRosterSyncCard: React.FC = () => {
 
       {/* Provider Details Bar */}
       {status && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-4 bg-slate-950/60 p-3.5 rounded-lg border border-slate-800/80">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-4 bg-slate-950/60 p-3.5 rounded-[2px] border border-slate-800/80 shadow-hard-xs">
           <div>
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
               Active Provider
@@ -170,7 +172,7 @@ export const LiveRosterSyncCard: React.FC = () => {
           {status.available_features.map((feat, i) => (
             <span
               key={i}
-              className="text-[11px] px-2 py-0.5 rounded bg-slate-800/80 text-slate-400 border border-slate-700/60"
+              className="text-[11px] px-2 py-0.5 rounded-[2px] bg-slate-800/80 text-slate-400 border border-slate-700/60"
             >
               • {feat}
             </span>
@@ -180,7 +182,7 @@ export const LiveRosterSyncCard: React.FC = () => {
 
       {/* Error Banner */}
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+        <div className="mb-4 p-3 rounded-[2px] bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 shadow-hard-xs">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -196,7 +198,7 @@ export const LiveRosterSyncCard: React.FC = () => {
           <button
             onClick={() => handleSync(true)}
             disabled={syncing || loading}
-            className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 disabled:opacity-50"
+            className="px-3.5 py-2 rounded-[2px] bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 disabled:opacity-50 shadow-hard-xs"
           >
             <Layers className="w-3.5 h-3.5 text-sky-400" />
             Preview Diffs (Dry Run)
@@ -205,7 +207,7 @@ export const LiveRosterSyncCard: React.FC = () => {
           <button
             onClick={() => handleSync(false)}
             disabled={syncing || loading}
-            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-900/30 transition flex items-center gap-1.5 disabled:opacity-50"
+            className="px-4 py-2 rounded-[2px] bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-hard-xs transition flex items-center gap-1.5 disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? "Syncing Gridiron Data..." : "Execute Live Sync"}
@@ -230,12 +232,12 @@ export const LiveRosterSyncCard: React.FC = () => {
           </button>
 
           {expanded && (
-            <div className="mt-3 bg-slate-950/70 rounded-lg p-3 border border-slate-800">
+            <div className="mt-3 bg-slate-950/70 rounded-[2px] p-3 border border-slate-800 shadow-hard-xs">
               {/* Tabs */}
               <div className="flex gap-2 border-b border-slate-800 pb-2 mb-3">
                 <button
                   onClick={() => setActiveTab("transfers")}
-                  className={`text-xs px-2.5 py-1 rounded font-medium transition ${
+                  className={`text-xs px-2.5 py-1 rounded-[2px] font-medium transition ${
                     activeTab === "transfers"
                       ? "bg-slate-800 text-emerald-400 font-semibold"
                       : "text-slate-400 hover:text-slate-200"
@@ -246,7 +248,7 @@ export const LiveRosterSyncCard: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab("depth")}
-                  className={`text-xs px-2.5 py-1 rounded font-medium transition ${
+                  className={`text-xs px-2.5 py-1 rounded-[2px] font-medium transition ${
                     activeTab === "depth"
                       ? "bg-slate-800 text-sky-400 font-semibold"
                       : "text-slate-400 hover:text-slate-200"
@@ -257,7 +259,7 @@ export const LiveRosterSyncCard: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab("injuries")}
-                  className={`text-xs px-2.5 py-1 rounded font-medium transition ${
+                  className={`text-xs px-2.5 py-1 rounded-[2px] font-medium transition ${
                     activeTab === "injuries"
                       ? "bg-slate-800 text-rose-400 font-semibold"
                       : "text-slate-400 hover:text-slate-200"
@@ -279,11 +281,11 @@ export const LiveRosterSyncCard: React.FC = () => {
                     lastResult.transfers.map((t, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800"
+                        className="flex items-center justify-between p-2 rounded-[2px] bg-slate-900/60 border border-slate-800 shadow-hard-xs"
                       >
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-slate-200">{t.player_name}</span>
-                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300">
+                          <span className="px-1.5 py-0.5 rounded-[2px] text-[10px] bg-slate-800 text-slate-300">
                             {t.position}
                           </span>
                         </div>
@@ -308,7 +310,7 @@ export const LiveRosterSyncCard: React.FC = () => {
                     lastResult.depth_updates.map((d, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800"
+                        className="flex items-center justify-between p-2 rounded-[2px] bg-slate-900/60 border border-slate-800 shadow-hard-xs"
                       >
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-slate-200">{d.player_name}</span>
@@ -336,12 +338,12 @@ export const LiveRosterSyncCard: React.FC = () => {
                     lastResult.injuries.map((inj, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800"
+                        className="flex items-center justify-between p-2 rounded-[2px] bg-slate-900/60 border border-slate-800 shadow-hard-xs"
                       >
                         <span className="font-semibold text-slate-200">{inj.player_name}</span>
                         <div className="flex items-center gap-2">
                           <span className="text-slate-400">{inj.injury_type || "Injury"}</span>
-                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
+                          <span className="px-1.5 py-0.5 rounded-[2px] text-[10px] bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
                             {inj.status}
                           </span>
                         </div>

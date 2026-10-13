@@ -5,7 +5,7 @@ import teamsData from "../data/nfl-teams.json";
 import { ThemeContext } from "./ThemeContext";
 import type { ThemeContextType, BasicTeamInfo } from "./ThemeContext";
 
-export function getInitialTeam(): string {
+function getInitialTeam(): string {
   if (typeof window !== "undefined") {
     const savedAbbr = localStorage.getItem("selectedTeamAbbr");
     if (savedAbbr) return savedAbbr;

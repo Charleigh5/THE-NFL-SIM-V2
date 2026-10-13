@@ -36,9 +36,9 @@ export const ArchetypeBadge: React.FC<ArchetypeBadgeProps> = ({
     <div className="relative inline-block">
       <motion.div
         className={`
-          flex items-center justify-center rounded-full
+          flex items-center justify-center rounded-[2px]
           bg-gradient-to-br from-indigo-900 to-purple-900
-          border border-indigo-500/30 shadow-lg shadow-indigo-900/40
+          border border-indigo-500/30 shadow-hard-xs
           cursor-help relative z-10
           ${containerClasses[size]}
         `}
@@ -52,7 +52,7 @@ export const ArchetypeBadge: React.FC<ArchetypeBadgeProps> = ({
         </span>
 
         {/* Shine effect */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 rounded-[2px] bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
       </motion.div>
 
       {/* Tooltip */}
@@ -65,7 +65,7 @@ export const ArchetypeBadge: React.FC<ArchetypeBadgeProps> = ({
             transition={{ duration: 0.2 }}
             className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 z-50 pointer-events-none"
           >
-            <div className="bg-gray-900/95 backdrop-blur-md border border-indigo-500/30 rounded-xl shadow-2xl overflow-hidden">
+            <div className="bg-gray-900/95 backdrop-blur-md border border-indigo-500/30 rounded-[2px] shadow-hard-md overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-indigo-900/80 to-purple-900/80 px-4 py-3 flex items-center gap-2 border-b border-white/10">
                 <span className="text-xl">{config.icon}</span>

@@ -13,7 +13,7 @@ export const WeeklyScheduleTimeline: React.FC<WeeklyScheduleTimelineProps> = ({
   onSelectDay,
 }) => {
   return (
-    <div className="w-full bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
+    <div className="w-full bg-white/5 backdrop-blur-sm rounded-[2px] border border-white/10 p-6 shadow-hard-md">
       <h3 className="text-sm font-bold text-blue-400 tracking-widest mb-6 uppercase">
         Weekly Training Sequence
       </h3>
@@ -44,7 +44,7 @@ export const WeeklyScheduleTimeline: React.FC<WeeklyScheduleTimelineProps> = ({
                   scale: isSelected ? 1.1 : 1,
                 }}
                 className={`
-                  relative z-10 h-24 rounded-lg border cursor-pointer
+                  relative z-10 h-24 rounded-[2px] border cursor-pointer shadow-hard-xs
                   flex flex-col items-center justify-center gap-2
                   transition-colors duration-300
                   hover:border-blue-400/50 hover:bg-white/10
@@ -61,17 +61,17 @@ export const WeeklyScheduleTimeline: React.FC<WeeklyScheduleTimelineProps> = ({
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className={`w-1 h-1 rounded-full ${i === 1 || isSelected ? "bg-green-400" : "bg-gray-700"}`}
+                      className={`w-1.5 h-1.5 rounded-[1px] ${i === 1 || isSelected ? "bg-green-400" : "bg-gray-700"}`}
                     />
                   ))}
                 </div>
               </motion.div>
 
-              {/* Selection Glow */}
+              {/* Selection Accent */}
               {isSelected && (
                 <motion.div
                   layoutId="glow"
-                  className="absolute inset-0 rounded-lg bg-blue-500/20 blur-xl -z-10"
+                  className="absolute inset-0 rounded-[2px] bg-blue-500/20 shadow-hard-primary -z-10"
                 />
               )}
             </motion.div>

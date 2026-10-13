@@ -13,7 +13,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
 }) => {
   if (!schedule || schedule.length === 0) {
     return (
-      <div className="h-48 flex items-center justify-center bg-slate-900/60 border border-slate-800 rounded-xl text-slate-500 text-xs">
+      <div className="h-48 flex items-center justify-center bg-slate-900/60 border border-slate-800 rounded-[2px] text-slate-500 text-xs shadow-hard-xs">
         No projection schedule available.
       </div>
     );
@@ -23,7 +23,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
   const maxCap = Math.max(...schedule.map((s) => s.projected_cap), 320_000_000);
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-4 text-slate-100">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-[2px] p-4 space-y-4 text-slate-100 shadow-hard-md">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
         <div className="flex items-center gap-2">
@@ -33,9 +33,9 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
+          <span className="inline-block w-2 h-2 rounded-[1px] bg-emerald-400" />
           <span>Compliant</span>
-          <span className="inline-block w-2 h-2 rounded-full bg-rose-500 ml-2" />
+          <span className="inline-block w-2 h-2 rounded-[1px] bg-rose-500 ml-2" />
           <span>Deficit</span>
         </div>
       </div>
@@ -55,7 +55,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
           return (
             <div
               key={item.year}
-              className="flex flex-col items-center bg-slate-950/60 rounded-lg p-2 border border-slate-800/80 hover:border-slate-700 transition-colors"
+              className="flex flex-col items-center bg-slate-950/60 rounded-[2px] p-2 border border-slate-800/80 hover:border-slate-700 transition-colors shadow-hard-xs"
             >
               {/* Year & Projected Cap */}
               <div className="text-center mb-2">
@@ -66,12 +66,12 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
               </div>
 
               {/* Stacked Vertical Bar */}
-              <div className="w-full h-36 bg-slate-900 rounded-md relative flex flex-col-reverse p-1 overflow-hidden border border-slate-800">
+              <div className="w-full h-36 bg-slate-900 rounded-[2px] relative flex flex-col-reverse p-1 overflow-hidden border border-slate-800 shadow-hard-xs">
                 {/* 1. Committed Salaries (Navy) */}
                 {item.committed_salaries > 0 && (
                   <div
                     style={{ height: `${committedPct}%` }}
-                    className="w-full bg-slate-700 rounded-sm hover:brightness-125 transition-all"
+                    className="w-full bg-slate-700 rounded-[1px] hover:brightness-125 transition-all"
                     title={`Committed: $${(item.committed_salaries / 1_000_000).toFixed(1)}M`}
                   />
                 )}
@@ -80,7 +80,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
                 {item.proposed_contract_cap_hit > 0 && (
                   <div
                     style={{ height: `${proposedPct}%` }}
-                    className="w-full bg-amber-500 rounded-sm hover:brightness-125 transition-all mt-0.5 shadow-sm shadow-amber-500/50"
+                    className="w-full bg-amber-500 rounded-[1px] hover:brightness-125 transition-all mt-0.5 shadow-hard-xs"
                     title={`Proposed Cap Hit: $${(item.proposed_contract_cap_hit / 1_000_000).toFixed(1)}M`}
                   />
                 )}
@@ -89,7 +89,7 @@ export const MultiYearCapHeatmap: React.FC<MultiYearCapHeatmapProps> = ({
                 {item.dead_money > 0 && (
                   <div
                     style={{ height: `${deadPct}%` }}
-                    className="w-full bg-rose-500 rounded-sm hover:brightness-125 transition-all mt-0.5 relative flex items-center justify-center animate-pulse"
+                    className="w-full bg-rose-500 rounded-[1px] hover:brightness-125 transition-all mt-0.5 relative flex items-center justify-center animate-pulse"
                     title={`Dead Money: $${(item.dead_money / 1_000_000).toFixed(1)}M`}
                   >
                     <Skull className="w-3 h-3 text-white/90" />

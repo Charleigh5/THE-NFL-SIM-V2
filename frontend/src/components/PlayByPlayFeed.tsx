@@ -15,7 +15,7 @@ export const PlayByPlayFeed = () => {
 
   return (
     <div
-      className="flex flex-col h-full bg-black/20 backdrop-blur-sm border border-white/5 rounded-xl overflow-hidden"
+      className="flex flex-col h-full bg-black/20 backdrop-blur-sm border border-white/5 rounded-[2px] overflow-hidden shadow-hard-xs"
       data-testid="play-by-play-feed"
     >
       <div className="p-3 border-b border-white/5 bg-white/5">
@@ -53,7 +53,7 @@ const PlayItem = ({ play }: { play: PlayResult }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className={`flex flex-col gap-1 text-sm ${hasInteractions ? "cursor-pointer hover:bg-white/5 rounded p-1 -m-1" : ""}`}
+      className={`flex flex-col gap-1 text-sm ${hasInteractions ? "cursor-pointer hover:bg-white/5 rounded-[2px] p-1 -m-1" : ""}`}
       onClick={() => hasInteractions && setExpanded(!expanded)}
     >
       <div className="flex gap-3">

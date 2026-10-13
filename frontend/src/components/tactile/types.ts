@@ -71,3 +71,30 @@ export interface TactileStateConfig {
     "aria-live"?: "off" | "assertive" | "polite";
   };
 }
+
+export type TactileButtonVariant =
+  | "primary"
+  | "secondary"
+  | "tactical"
+  | "danger"
+  | "warning"
+  | "success"
+  | "ghost";
+
+export type TactileButtonSize = "xs" | "sm" | "md" | "lg";
+
+export interface TactileButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: TactileButtonVariant;
+  size?: TactileButtonSize;
+  state?: TactileState;
+  disabled?: boolean;
+  selected?: boolean;
+  loading?: boolean;
+  icon?: React.ReactNode;
+  iconRight?: React.ReactNode;
+  badge?: string | number;
+  testId?: string;
+  enableHaptics?: boolean;
+  fullWidth?: boolean;
+  children?: React.ReactNode;
+}

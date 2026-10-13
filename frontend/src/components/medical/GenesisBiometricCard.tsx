@@ -30,7 +30,7 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
   const medicalFlags = biometrics?.medical_flags ?? ["Prior ACL Reconstruction (College, 2022)"];
 
   return (
-    <div className="relative w-full rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-950 to-indigo-950/40 border border-slate-800/80 p-5 shadow-2xl backdrop-blur-xl overflow-hidden font-sans">
+    <div className="relative w-full rounded-[2px] bg-gradient-to-br from-slate-900/90 via-slate-950 to-indigo-950/40 border border-slate-800/80 p-5 shadow-hard-md backdrop-blur-xl overflow-hidden font-sans">
       {/* Background Accent Gradients */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -38,13 +38,13 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+          <div className="p-2 rounded-[2px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-hard-xs">
             <Dna className="w-5 h-5" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-white tracking-wide uppercase flex items-center gap-2">
               GENESIS Biometric Dossier
-              <span className="px-1.5 py-0.2 text-[10px] font-mono rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+              <span className="px-1.5 py-0.2 text-[10px] font-mono rounded-[2px] bg-cyan-950 text-cyan-300 border border-cyan-800">
                 PROPRIETARY
               </span>
             </h3>
@@ -57,7 +57,7 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
         {!isRevealed && (
           <button
             onClick={() => setIsRevealed(true)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold tracking-wider transition-all shadow-lg shadow-cyan-950"
+            className="flex items-center gap-1.5 px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-[2px] text-xs font-semibold tracking-wider transition-all shadow-hard-xs"
           >
             <Eye className="w-3.5 h-3.5" /> Reveal Full Bio-Scan
           </button>
@@ -72,9 +72,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md rounded-xl p-6 text-center border border-slate-800"
+              className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md rounded-[2px] p-6 text-center border border-slate-800"
             >
-              <div className="p-3 bg-slate-900 rounded-full border border-slate-700 text-cyan-400 mb-2">
+              <div className="p-3 bg-slate-900 rounded-[2px] border border-slate-700 text-cyan-400 mb-2 shadow-hard-xs">
                 <Lock className="w-6 h-6" />
               </div>
               <h4 className="text-sm font-bold text-white mb-1">
@@ -86,7 +86,7 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               </p>
               <button
                 onClick={() => setIsRevealed(true)}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs"
               >
                 Authorize Decryption
               </button>
@@ -99,12 +99,12 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
           className={`grid grid-cols-1 md:grid-cols-3 gap-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}
         >
           {/* 1. S2 Cognition Dial */}
-          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-[2px] shadow-hard-xs flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <span className="text-[11px] font-mono text-slate-400 uppercase flex items-center gap-1.5">
                 <Gauge className="w-3.5 h-3.5 text-cyan-400" /> S2 Cognition
               </span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-700/40">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] bg-cyan-950/80 text-cyan-300 border border-cyan-700/40">
                 {s2Score >= 80 ? "ELITE READ" : "STANDARD"}
               </span>
             </div>
@@ -112,9 +112,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               <span className="text-3xl font-black text-white font-mono">{s2Score}</span>
               <span className="text-xs text-slate-400">th Percentile</span>
             </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+            <div className="w-full bg-slate-800 h-1.5 rounded-[2px] overflow-hidden mt-2">
               <div
-                className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
+                className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-[2px]"
                 style={{ width: `${s2Score}%` }}
               />
             </div>
@@ -124,12 +124,12 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
           </div>
 
           {/* 2. GPS Speed Max */}
-          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-[2px] shadow-hard-xs flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <span className="text-[11px] font-mono text-slate-400 uppercase flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-amber-400" /> Max In-Game GPS
               </span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/40">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] bg-amber-950/80 text-amber-300 border border-amber-700/40">
                 TOP BURST
               </span>
             </div>
@@ -139,9 +139,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               </span>
               <span className="text-xs text-slate-400">MPH</span>
             </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+            <div className="w-full bg-slate-800 h-1.5 rounded-[2px] overflow-hidden mt-2">
               <div
-                className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-[2px]"
                 style={{ width: `${Math.min(100, (gpsSpeed / 24) * 100)}%` }}
               />
             </div>
@@ -151,12 +151,12 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
           </div>
 
           {/* 3. Power Clean Max */}
-          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col justify-between">
+          <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-[2px] shadow-hard-xs flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
               <span className="text-[11px] font-mono text-slate-400 uppercase flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-emerald-400" /> Power Clean Max
               </span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-700/40">
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-[2px] bg-emerald-950/80 text-emerald-300 border border-emerald-700/40">
                 FORCE LOAD
               </span>
             </div>
@@ -164,9 +164,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
               <span className="text-3xl font-black text-white font-mono">{powerClean}</span>
               <span className="text-xs text-slate-400">LBS</span>
             </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+            <div className="w-full bg-slate-800 h-1.5 rounded-[2px] overflow-hidden mt-2">
               <div
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-[2px]"
                 style={{ width: `${Math.min(100, (powerClean / 420) * 100)}%` }}
               />
             </div>
@@ -181,9 +181,9 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
           className={`grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 ${!isRevealed ? "filter blur-sm select-none pointer-events-none" : ""}`}
         >
           {/* Anatomical Dimensions */}
-          <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between">
+          <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-[2px] shadow-hard-xs flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-slate-800 text-slate-300">
+              <div className="p-2 rounded-[2px] bg-slate-800 text-slate-300">
                 <Ruler className="w-4 h-4" />
               </div>
               <div>
@@ -196,15 +196,15 @@ export const GenesisBiometricCard: React.FC<GenesisBiometricCardProps> = ({
                 </div>
               </div>
             </div>
-            <div className="text-right text-[10px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/30 px-2 py-0.5 rounded">
+            <div className="text-right text-[10px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/30 px-2 py-0.5 rounded-[2px]">
               +4.2% Reach Advantage
             </div>
           </div>
 
           {/* Medical Flags */}
-          <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center justify-between">
+          <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-[2px] shadow-hard-xs flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-950/80 text-amber-400 border border-amber-800/40">
+              <div className="p-2 rounded-[2px] bg-amber-950/80 text-amber-400 border border-amber-800/40">
                 <ShieldAlert className="w-4 h-4" />
               </div>
               <div>

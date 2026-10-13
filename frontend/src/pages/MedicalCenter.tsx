@@ -303,7 +303,7 @@ export const MedicalCenter: React.FC = () => {
         <header className="flex flex-wrap justify-between items-end gap-4 pb-6 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+              <div className="p-2.5 rounded-[2px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shadow-hard-xs">
                 <Stethoscope className="w-6 h-6" />
               </div>
               <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
@@ -318,7 +318,7 @@ export const MedicalCenter: React.FC = () => {
           <div className="flex items-center gap-4">
             <div
               data-testid="health-stats"
-              className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl text-right"
+              className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-[2px] text-right shadow-hard-xs"
             >
               <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-mono">
                 Roster Health
@@ -331,7 +331,7 @@ export const MedicalCenter: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl text-right">
+            <div className="bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-[2px] text-right shadow-hard-xs">
               <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-mono">
                 Team Physician
               </span>
@@ -353,7 +353,7 @@ export const MedicalCenter: React.FC = () => {
           </span>
 
           {injuredRoster.length === 0 ? (
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs font-mono">
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-[2px] bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs font-mono shadow-hard-xs">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               All 53 Athletes Healthy & Cleared for Competition
             </div>
@@ -362,14 +362,14 @@ export const MedicalCenter: React.FC = () => {
               <button
                 key={player.player_id}
                 onClick={() => setActivePlayerIndex(idx)}
-                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all border whitespace-nowrap ${
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-[2px] text-xs font-semibold tracking-wide transition-all border whitespace-nowrap ${
                   activePlayerIndex === idx
-                    ? "bg-cyan-950/80 border-cyan-500 text-white shadow-lg shadow-cyan-950/50"
+                    ? "bg-cyan-950/80 border-cyan-500 text-white shadow-hard-md"
                     : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800/80"
                 }`}
               >
                 <div
-                  className={`w-6 h-6 rounded-md flex items-center justify-center font-mono font-bold text-[10px] ${
+                  className={`w-6 h-6 rounded-[2px] flex items-center justify-center font-mono font-bold text-[10px] ${
                     player.injury_status === "OUT"
                       ? "bg-red-950 text-red-400 border border-red-800"
                       : "bg-amber-950 text-amber-400 border border-amber-800"
@@ -399,7 +399,7 @@ export const MedicalCenter: React.FC = () => {
           {/* Left Column: 7-Zone Body Map */}
           <div
             data-testid="body-diagram"
-            className="lg:col-span-5 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800/80 p-6 rounded-2xl backdrop-blur-md shadow-2xl"
+            className="lg:col-span-5 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800/80 p-6 rounded-[2px] backdrop-blur-md shadow-hard-md"
           >
             <div className="w-full flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
               <span className="text-xs font-mono uppercase text-slate-400 flex items-center gap-2">
@@ -443,12 +443,12 @@ export const MedicalCenter: React.FC = () => {
               )}
 
             {/* Current Diagnosis Card */}
-            <div className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl">
+            <div className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-[2px] shadow-hard-md">
               <h3 className="text-sm font-bold text-white tracking-wide uppercase flex items-center gap-2 mb-3">
                 <AlertCircle className="w-4 h-4 text-amber-400" /> Active Medical Chart
               </h3>
               {activePlayer ? (
-                <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800">
+                <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-[2px] bg-slate-950/80 border border-slate-800 shadow-hard-xs">
                   <div>
                     <div className="text-xs text-slate-400 font-mono">Acute Condition</div>
                     <div className="text-base font-bold text-slate-100 mt-0.5">
@@ -477,7 +477,7 @@ export const MedicalCenter: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setShowSpecialistModal(true)}
-                        className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg flex items-center gap-1.5"
+                        className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs flex items-center gap-1.5"
                       >
                         <Building2 className="w-3.5 h-3.5" />
                         <span>2nd Opinion</span>
@@ -487,7 +487,7 @@ export const MedicalCenter: React.FC = () => {
                           setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
                           setShowModal(true);
                         }}
-                        className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs"
                       >
                         Adjust Protocol
                       </button>
@@ -496,7 +496,7 @@ export const MedicalCenter: React.FC = () => {
                           setSelectedPart((activePlayer.body_part as BodyZoneKey) || "rightArm");
                           setShowTreatmentModal(true);
                         }}
-                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+                        className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs"
                       >
                         Treatment Plan
                       </button>
@@ -504,7 +504,7 @@ export const MedicalCenter: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-300 text-xs font-mono">
+                <div className="flex items-center justify-between p-4 rounded-[2px] bg-slate-950/80 border border-slate-800 text-slate-300 text-xs font-mono shadow-hard-xs">
                   <span className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle2 className="w-4 h-4" /> No active player chart required.
                   </span>

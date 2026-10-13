@@ -27,7 +27,7 @@ export interface IconBaseProps extends React.SVGProps<SVGSVGElement> {
 }
 
 export interface GridironIconProps extends IconBaseProps {
-  name: GridironIconName;
+  name?: GridironIconName;
 }
 
 /**

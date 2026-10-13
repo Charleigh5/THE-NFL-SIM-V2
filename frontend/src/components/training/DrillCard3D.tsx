@@ -82,15 +82,15 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelect(drill)}
       className={`
-        drill-card relative w-64 h-80 rounded-xl cursor-pointer
+        drill-card relative w-64 h-80 rounded-[2px] cursor-pointer
         bg-opacity-10 backdrop-blur-md border border-white/10
-        shadow-2xl transition-colors duration-300
+        shadow-hard-md transition-colors duration-300
         ${isSelected ? "bg-blue-900/30 border-blue-500/50 border-cyan-400" : "bg-gray-900/40"}
         ${isRecommended && !isSelected ? "bg-yellow-900/10 border-yellow-500/30" : ""}
       `}
     >
       {/* Glossy Reflection Gradient */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-white/5 to-transparent pointer-events-none drill-card-3d-reflection" />
+      <div className="absolute inset-0 rounded-[2px] bg-gradient-to-tr from-white/5 to-transparent pointer-events-none drill-card-3d-reflection" />
 
       {/* Recommended Badge */}
       {isRecommended && (
@@ -98,7 +98,7 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"
+            className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-[2px] shadow-hard-xs flex items-center gap-1"
           >
             <Star className="w-3 h-3 fill-black" />
             RECOMMENDED
@@ -109,7 +109,7 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({
       <div className="p-6 flex flex-col h-full items-center text-center space-y-4 drill-card-3d-content">
         {/* Floating Icon */}
         <div
-          className={`p-4 rounded-full shadow-inner backdrop-blur-sm ${isHighRisk ? "bg-red-500/10" : "bg-white/5"}`}
+          className={`p-4 rounded-[2px] shadow-hard-xs backdrop-blur-sm ${isHighRisk ? "bg-red-500/10" : "bg-white/5"}`}
         >
           {getIcon()}
         </div>
@@ -119,18 +119,18 @@ export const DrillCard3D: React.FC<DrillCard3DProps> = ({
 
         {/* Stats */}
         <div className="flex-1 w-full space-y-2 text-sm text-gray-300">
-          <div className="flex justify-between items-center bg-gray-800/30 px-3 py-1.5 rounded-lg">
+          <div className="flex justify-between items-center bg-gray-800/30 px-3 py-1.5 rounded-[2px] shadow-hard-xs">
             <span>Target</span>
             <span className="text-blue-300 font-mono">{drill.target_stat}</span>
           </div>
-          <div className="flex justify-between items-center bg-gray-800/30 px-3 py-1.5 rounded-lg">
+          <div className="flex justify-between items-center bg-gray-800/30 px-3 py-1.5 rounded-[2px] shadow-hard-xs">
             <span>XP Mult</span>
             <span className="text-green-400 font-mono">x{drill.xp_multiplier}</span>
           </div>
 
           {/* Enhanced Risk Indicator */}
           <div
-            className={`flex justify-between items-center px-3 py-1.5 rounded-lg border ${isHighRisk ? "bg-red-900/20 border-red-500/30" : "bg-gray-800/30 border-transparent"}`}
+            className={`flex justify-between items-center px-3 py-1.5 rounded-[2px] border shadow-hard-xs ${isHighRisk ? "bg-red-900/20 border-red-500/30" : "bg-gray-800/30 border-transparent"}`}
           >
             <span className="flex items-center gap-1">
               Risk

@@ -10,7 +10,7 @@ export const FrontOffice_Baseline = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 glass-panel p-6 rounded-xl border border-white/5 min-h-[500px]">
+        <div className="lg:col-span-2 glass-panel p-6 rounded-[2px] border border-white/5 min-h-[500px]">
           <h2 className="text-xl font-bold text-white mb-4">Active Roster</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             <DraggableCard name="C. Weir" position="QB" rating={99} team="EMP" />
@@ -20,7 +20,7 @@ export const FrontOffice_Baseline = () => {
             <DraggableCard name="T. Wilson" position="TE" rating={89} team="GEN" />
           </div>
         </div>
-        <div className="glass-panel p-6 rounded-xl border border-white/5 min-h-[500px] flex items-center justify-center">
+        <div className="glass-panel p-6 rounded-[2px] border border-white/5 min-h-[500px] flex items-center justify-center">
           <span className="text-white/20 font-mono">TRANSACTION_LOG</span>
         </div>
       </div>

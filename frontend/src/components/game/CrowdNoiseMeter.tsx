@@ -66,7 +66,7 @@ export const CrowdNoiseMeter: React.FC<CrowdNoiseMeterProps> = ({
   const fillPercentage = Math.min(100, Math.max(0, ((decibels - 60) / 60) * 100));
 
   return (
-    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-4 w-full max-w-xs transition-all duration-500">
+    <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-[2px] shadow-hard-md p-4 w-full max-w-xs transition-all duration-500">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Icon
@@ -82,7 +82,7 @@ export const CrowdNoiseMeter: React.FC<CrowdNoiseMeterProps> = ({
       </div>
 
       {/* Meter Bar */}
-      <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-3 shadow-inner">
+      <div className="h-2 w-full bg-white/10 rounded-[2px] overflow-hidden mb-3 shadow-inner">
         <StyledMeterFill
           fill={fillPercentage}
           className={`meter-fill-bar h-full ${currentConfig.barColor} ${

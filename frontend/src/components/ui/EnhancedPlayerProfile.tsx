@@ -44,6 +44,23 @@ interface PersonalityInfo {
   archetype?: string;
 }
 
+export interface SeasonHistoryRecord {
+  season_id?: number | string;
+  year?: number | string;
+  games_played?: number | string;
+  pass_yards?: number;
+  pass_tds?: number;
+  rush_yards?: number;
+  rush_tds?: number;
+  rec_yards?: number;
+  rec_tds?: number;
+  tackles_solo?: number;
+  tackles_assist?: number;
+  sacks?: number;
+  interceptions?: number;
+  [key: string]: unknown;
+}
+
 interface EnhancedPlayerProfileData {
   id: number;
   first_name: string;
@@ -69,7 +86,7 @@ interface EnhancedPlayerProfileData {
   personality: PersonalityInfo;
   traits: TraitInfo[];
   career_stats: Record<string, number>;
-  season_history?: Array<Record<string, any>>;
+  season_history?: SeasonHistoryRecord[];
   contract_years: number;
   contract_salary: number;
   is_rookie: boolean;
@@ -237,7 +254,7 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                   playerName={`${profile.first_name} ${profile.last_name}`}
                   position={profile.position}
                   jerseyNumber={profile.jersey_number}
-                  className="w-24 h-28 mr-4 shrink-0 shadow-xl rounded-xl border border-white/20"
+                  className="w-24 h-28 mr-4 shrink-0 shadow-hard-xs rounded-[2px] border border-white/20"
                 />
                 <div className="epp-player-identity">
                   <div className="epp-jersey">#{profile.jersey_number}</div>
@@ -406,11 +423,14 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Pass TDs</span>
-                          <span className="stat-value">{profile.career_stats.passing_tds || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.passing_tds || 0}
+                          </span>
                         </div>
                       </>
                     )}
-                    {(profile.career_stats.rushing_yards > 0 || ["RB", "FB", "QB"].includes(profile.position)) && (
+                    {(profile.career_stats.rushing_yards > 0 ||
+                      ["RB", "FB", "QB"].includes(profile.position)) && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Rush Yards</span>
@@ -420,11 +440,14 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Rush TDs</span>
-                          <span className="stat-value">{profile.career_stats.rushing_tds || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.rushing_tds || 0}
+                          </span>
                         </div>
                       </>
                     )}
-                    {(profile.career_stats.receiving_yards > 0 || ["WR", "TE", "RB"].includes(profile.position)) && (
+                    {(profile.career_stats.receiving_yards > 0 ||
+                      ["WR", "TE", "RB"].includes(profile.position)) && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Rec Yards</span>
@@ -434,40 +457,55 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Rec TDs</span>
-                          <span className="stat-value">{profile.career_stats.receiving_tds || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.receiving_tds || 0}
+                          </span>
                         </div>
                       </>
                     )}
                     {((profile.career_stats.tackles || 0) > 0 ||
                       (profile.career_stats.sacks || 0) > 0 ||
-                      ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(profile.position)) && (
+                      ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(
+                        profile.position
+                      )) && (
                       <>
                         <div className="stat-item">
                           <span className="stat-label">Total Tackles</span>
                           <span className="stat-value">
                             {profile.career_stats.tackles ||
-                              (profile.career_stats.tackles_solo || 0) + (profile.career_stats.tackles_assist || 0)}
+                              (profile.career_stats.tackles_solo || 0) +
+                                (profile.career_stats.tackles_assist || 0)}
                           </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Sacks</span>
-                          <span className="stat-value">{Number(profile.career_stats.sacks || 0).toFixed(1)}</span>
+                          <span className="stat-value">
+                            {Number(profile.career_stats.sacks || 0).toFixed(1)}
+                          </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Interceptions</span>
-                          <span className="stat-value">{profile.career_stats.interceptions || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.interceptions || 0}
+                          </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Pass Deflections</span>
-                          <span className="stat-value">{profile.career_stats.pass_deflections || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.pass_deflections || 0}
+                          </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">TFL</span>
-                          <span className="stat-value">{profile.career_stats.tackles_for_loss || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.tackles_for_loss || 0}
+                          </span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">QB Pressures</span>
-                          <span className="stat-value">{profile.career_stats.qb_pressures || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.qb_pressures || 0}
+                          </span>
                         </div>
                       </>
                     )}
@@ -498,7 +536,9 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Sacks Allowed</span>
-                          <span className="stat-value">{profile.career_stats.sacks_allowed || 0}</span>
+                          <span className="stat-value">
+                            {profile.career_stats.sacks_allowed || 0}
+                          </span>
                         </div>
                       </>
                     )}
@@ -523,13 +563,22 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                           <tbody className="divide-y divide-white/5 font-mono">
                             {profile.season_history.map((hist, idx) => (
                               <tr key={idx} className="hover:bg-white/5">
-                                <td className="p-2.5 font-bold text-white">Season {hist.season_id ?? hist.year ?? idx + 1}</td>
+                                <td className="p-2.5 font-bold text-white">
+                                  Season {hist.season_id ?? hist.year ?? idx + 1}
+                                </td>
                                 <td className="p-2.5">{hist.games_played ?? "-"}</td>
-                                <td className="p-2.5">{(hist.pass_yards ?? 0).toLocaleString()} / {hist.pass_tds ?? 0}</td>
-                                <td className="p-2.5">{(hist.rush_yards ?? 0).toLocaleString()} / {hist.rush_tds ?? 0}</td>
-                                <td className="p-2.5">{(hist.rec_yards ?? 0).toLocaleString()} / {hist.rec_tds ?? 0}</td>
                                 <td className="p-2.5">
-                                  {(hist.tackles_solo ?? 0) + (hist.tackles_assist ?? 0)} / {hist.sacks ?? 0} / {hist.interceptions ?? 0}
+                                  {(hist.pass_yards ?? 0).toLocaleString()} / {hist.pass_tds ?? 0}
+                                </td>
+                                <td className="p-2.5">
+                                  {(hist.rush_yards ?? 0).toLocaleString()} / {hist.rush_tds ?? 0}
+                                </td>
+                                <td className="p-2.5">
+                                  {(hist.rec_yards ?? 0).toLocaleString()} / {hist.rec_tds ?? 0}
+                                </td>
+                                <td className="p-2.5">
+                                  {(hist.tackles_solo ?? 0) + (hist.tackles_assist ?? 0)} /{" "}
+                                  {hist.sacks ?? 0} / {hist.interceptions ?? 0}
                                 </td>
                               </tr>
                             ))}
@@ -538,7 +587,8 @@ export const EnhancedPlayerProfile: React.FC<EnhancedPlayerProfileProps> = ({
                       </div>
                     ) : (
                       <div className="text-center py-8 text-gray-400 font-mono text-xs">
-                        No archived prior seasons on file. Career archives are persisted upon season completion.
+                        No archived prior seasons on file. Career archives are persisted upon season
+                        completion.
                       </div>
                     )}
                   </div>

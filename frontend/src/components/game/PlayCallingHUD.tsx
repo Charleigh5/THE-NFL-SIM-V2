@@ -275,11 +275,11 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-950/95 border border-white/15 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden font-sans text-slate-100">
+    <div className="w-full bg-slate-950/95 border border-white/15 rounded-[2px] shadow-hard-md backdrop-blur-xl overflow-hidden font-sans text-slate-100">
       {/* Top Controller Header */}
       <div className="flex flex-wrap items-center justify-between px-5 py-3 border-b border-white/10 bg-slate-900/60">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+          <div className="p-2 rounded-[2px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-hard-xs">
             <Layers className="w-4 h-4" />
           </div>
           <div>
@@ -288,7 +288,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                 Interactive Play-Calling HUD
               </span>
               <span
-                className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold ${
+                className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-[2px] font-bold ${
                   isCoachMode
                     ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
                     : "bg-slate-800 text-slate-400"
@@ -325,7 +325,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
           {down === 4 && onOpenFourthDownModal && (
             <button
               onClick={onOpenFourthDownModal}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold uppercase rounded-lg shadow-md shadow-emerald-500/20 transition-all animate-pulse"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold uppercase rounded-[2px] shadow-hard-xs transition-all animate-pulse"
             >
               <TrendingUp className="w-3.5 h-3.5" />
               Baldwin 4th-Down Model
@@ -336,7 +336,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
           {onToggleCoachMode && (
             <button
               onClick={() => onToggleCoachMode(!isCoachMode)}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs font-semibold border border-slate-700 transition-colors"
+              className="px-3 py-1.5 rounded-[2px] bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs font-semibold border border-slate-700 transition-colors shadow-hard-xs"
             >
               {isCoachMode ? "Hand to AI" : "Take Command"}
             </button>
@@ -345,7 +345,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
           {/* Expand/Collapse Toggle */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-[2px] text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </button>
@@ -361,27 +361,27 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                 <>
                   <button
                     onClick={() => setSelectedCategory("RUN")}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
+                    className={`px-4 py-2 rounded-[2px] text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                       selectedCategory === "RUN"
-                        ? "bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-extrabold"
+                        ? "bg-amber-500 text-black shadow-hard-xs font-extrabold"
                         : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
                     <FootballLacesIcon className="w-3.5 h-3.5" size={14} /> Run Concepts
-                    <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded bg-black/30 border border-black/20 text-white">
+                    <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded-[2px] bg-black/30 border border-black/20 text-white">
                       [A]
                     </span>
                   </button>
                   <button
                     onClick={() => setSelectedCategory("PASS")}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
+                    className={`px-4 py-2 rounded-[2px] text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                       selectedCategory === "PASS"
-                        ? "bg-cyan-500 text-black shadow-lg shadow-cyan-500/20 font-extrabold"
+                        ? "bg-cyan-500 text-black shadow-hard-xs font-extrabold"
                         : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
                     <ChalkboardRouteIcon className="w-3.5 h-3.5" size={14} /> Pass Concepts
-                    <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded bg-black/30 border border-black/20 text-white">
+                    <span className="text-[9px] font-mono ml-1 px-1.5 py-0.5 rounded-[2px] bg-black/30 border border-black/20 text-white">
                       [A]
                     </span>
                   </button>
@@ -389,9 +389,9 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
               ) : (
                 <button
                   onClick={() => setSelectedCategory("DEFENSE")}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2 rounded-[2px] text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                     selectedCategory === "DEFENSE"
-                      ? "bg-red-600 text-white shadow-lg shadow-red-600/30 font-extrabold"
+                      ? "bg-red-600 text-white shadow-hard-xs font-extrabold"
                       : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                   }`}
                 >
@@ -400,9 +400,9 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
               )}
               <button
                 onClick={() => setSelectedCategory("SPECIAL_TEAMS")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
+                className={`px-4 py-2 rounded-[2px] text-xs font-bold font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 ${
                   selectedCategory === "SPECIAL_TEAMS"
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 font-extrabold"
+                    ? "bg-indigo-600 text-white shadow-hard-xs font-extrabold"
                     : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                 }`}
               >
@@ -427,16 +427,16 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                 <div
                   key={concept.id}
                   onClick={() => handleSelectConcept(concept)}
-                  className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between gap-2 ${
+                  className={`p-3.5 rounded-[2px] border cursor-pointer transition-all flex flex-col justify-between gap-2 shadow-hard-xs ${
                     isSelected
-                      ? "bg-cyan-950/80 border-cyan-400 shadow-md shadow-cyan-500/20 scale-[1.02]"
+                      ? "bg-cyan-950/80 border-cyan-400 scale-[1.02]"
                       : "bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/60 hover:border-slate-700"
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-[9px] text-cyan-300 font-bold">
+                        <span className="px-1.5 py-0.5 rounded-[2px] bg-slate-800 border border-slate-700 font-mono text-[9px] text-cyan-300 font-bold">
                           [{idx + 1}]
                         </span>
                         <span className="font-bold text-xs text-white tracking-wide">
@@ -444,7 +444,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                         </span>
                       </div>
                       <span
-                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded border uppercase font-bold ${getRiskBadge(
+                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] border uppercase font-bold ${getRiskBadge(
                           concept.riskReward
                         )}`}
                       >
@@ -461,7 +461,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
                     {concept.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800/80 text-slate-300 font-semibold"
+                        className="text-[9px] font-mono px-1.5 py-0.5 rounded-[2px] bg-slate-800/80 text-slate-300 font-semibold"
                       >
                         {tag}
                       </span>
@@ -488,7 +488,7 @@ export const PlayCallingHUD: React.FC<PlayCallingHUDProps> = ({
             <button
               onClick={handleSubmitPlay}
               disabled={!selectedConcept || isSubmitting}
-              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/25 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black text-xs font-mono font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-black" />
               {isSubmitting ? "Transmitting..." : "[SPACE] Snap Ball & Execute Call"}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Brain, Lock, CheckCircle2, Zap, Sparkles, Shield, Compass, Target } from "lucide-react";
+import { Brain, Lock, CheckCircle2, Zap, Shield, Compass, Target } from "lucide-react";
+import { BlitzBoltIcon, ChalkboardRouteIcon } from "../icons";
 import type { PlayerAbilityStatus, PreSnapInsightResponse } from "../../types/ability";
 import { abilitiesApi } from "../../services/abilitiesApi";
 
@@ -83,7 +84,7 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
       positions: ["WR", "TE"],
       levelReq: 10,
       xpCost: 4500,
-      icon: <Sparkles className="w-5 h-5" />,
+      icon: <ChalkboardRouteIcon className="w-5 h-5" />,
       mechanic: "+10 Route Running, unlocks real-time option-route choice based on coverage.",
     },
     film_junkie: {
@@ -143,16 +144,16 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
   };
 
   return (
-    <div className="w-full bg-slate-950/90 border border-slate-800/90 rounded-2xl p-6 shadow-2xl backdrop-blur-xl font-sans">
+    <div className="w-full bg-slate-950/90 border border-slate-800/90 rounded-[2px] p-6 shadow-hard-md backdrop-blur-xl font-sans">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
-            <Sparkles className="w-6 h-6" />
+          <div className="p-2.5 rounded-[2px] bg-purple-500/10 border border-purple-500/30 text-purple-400">
+            <BlitzBoltIcon className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-lg font-bold text-white tracking-wide uppercase flex items-center gap-2">
               RPG Ability Tree
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-purple-950 text-purple-300 border border-purple-800">
                 ACTIVE MECHANICS
               </span>
             </h2>
@@ -182,9 +183,9 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
             <div
               key={item.key}
               onClick={() => setSelectedAbility(item.key)}
-              className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`p-4 rounded-[2px] border transition-all cursor-pointer flex flex-col justify-between ${
                 isSelected
-                  ? "bg-slate-900 border-purple-500 shadow-lg shadow-purple-950/40"
+                  ? "bg-slate-900 border-purple-500 shadow-hard-xs"
                   : isUnlocked
                     ? "bg-purple-950/20 border-purple-500/40 hover:border-purple-400"
                     : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
@@ -193,7 +194,7 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div
-                    className={`p-2 rounded-lg ${
+                    className={`p-2 rounded-[2px] ${
                       isUnlocked
                         ? "bg-purple-900/60 text-purple-300 border border-purple-500/50"
                         : "bg-slate-800 text-slate-400"
@@ -203,15 +204,15 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
                   </div>
                   <div className="flex items-center gap-1">
                     {isUnlocked ? (
-                      <span className="flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800">
+                      <span className="flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-[2px] bg-emerald-950/80 text-emerald-400 border border-emerald-800">
                         <CheckCircle2 className="w-3 h-3" /> UNLOCKED
                       </span>
                     ) : meetsLevel ? (
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-cyan-950 text-cyan-400 border border-cyan-800">
                         LVL {item.levelReq} READY
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                      <span className="flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-slate-800 text-slate-400">
                         <Lock className="w-3 h-3" /> LVL {item.levelReq}
                       </span>
                     )}
@@ -233,9 +234,9 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
                       e.stopPropagation();
                       handleUnlock(item.key);
                     }}
-                    className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider transition-all ${
+                    className={`px-3 py-1 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all ${
                       canUnlock
-                        ? "bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-950"
+                        ? "bg-purple-600 hover:bg-purple-500 text-white shadow-hard-xs"
                         : "bg-slate-800 text-slate-500 cursor-not-allowed"
                     }`}
                   >
@@ -253,7 +254,7 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-xl bg-gradient-to-r from-purple-950/30 via-slate-900 to-indigo-950/30 border border-purple-500/30"
+          className="p-5 rounded-[2px] bg-gradient-to-r from-purple-950/30 via-slate-900 to-indigo-950/30 border border-purple-500/30"
         >
           <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
             <div>
@@ -268,14 +269,14 @@ export const AbilityUnlockTree: React.FC<AbilityUnlockTreeProps> = ({
             <button
               onClick={handleRunPreSnapSimulation}
               disabled={insightLoading}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg"
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-hard-xs"
             >
               {insightLoading ? "Scanning Shell..." : "Run Pre-Snap Read"}
             </button>
           </div>
 
           {preSnapInsight && (
-            <div className="p-3.5 rounded-lg bg-slate-950/80 border border-purple-500/20 text-xs font-mono space-y-2">
+            <div className="p-3.5 rounded-[2px] bg-slate-950/80 border border-purple-500/20 text-xs font-mono space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-slate-400">Predicted Coverage Shell:</span>
                 <span className="text-cyan-400 font-bold text-sm">

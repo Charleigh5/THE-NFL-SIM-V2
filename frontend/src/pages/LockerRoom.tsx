@@ -269,15 +269,15 @@ export const LockerRoom: React.FC = () => {
   return (
     <div className="space-y-6 font-body" data-testid="locker-room-page">
       {/* Top Header Banner */}
-      <header className="relative rounded-2xl overflow-hidden broadcast-glass p-6 border border-white/15 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <header className="relative rounded-[2px] overflow-hidden broadcast-glass p-6 border border-white/15 shadow-hard-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-black/60 border-2 border-white/15 p-2 shadow-xl flex items-center justify-center shrink-0">
+          <div className="w-16 h-16 rounded-[2px] bg-black/60 border-2 border-white/15 p-2 shadow-hard-xs flex items-center justify-center shrink-0">
             <Flame className="text-red-400" size={32} />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-[2px] bg-red-400 animate-pulse" />
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-red-400">
                 Society Engine • Tier 1 Differential &amp; Tier 3 Council
               </span>
@@ -296,7 +296,7 @@ export const LockerRoom: React.FC = () => {
           <button
             onClick={handleRunEvaluation}
             disabled={isEvaluating}
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-gray-200 hover:text-white font-header text-xs uppercase tracking-wider rounded-xl border border-white/10 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-gray-200 hover:text-white font-header text-xs uppercase tracking-wider rounded-[2px] border border-white/10 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
           >
             <RefreshCw size={14} className={isEvaluating ? "animate-spin" : ""} />
             <span>Evaluate Atmosphere</span>
@@ -305,7 +305,7 @@ export const LockerRoom: React.FC = () => {
           {activeEvent && (
             <button
               onClick={() => setIsCouncilModalOpen(true)}
-              className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center gap-2 active:scale-95 animate-pulse"
+              className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all flex items-center gap-2 active:scale-95 animate-pulse"
             >
               <MessageSquare size={14} />
               <span>Convene Council</span>
@@ -324,7 +324,7 @@ export const LockerRoom: React.FC = () => {
 
       {/* Evaluation Feedback Message Banner */}
       {evaluationFeedback && (
-        <div className="p-3.5 rounded-xl bg-slate-900/90 border border-white/10 text-xs font-mono text-gray-300 flex items-center gap-2">
+        <div className="p-3.5 rounded-[2px] bg-slate-900/90 border border-white/10 text-xs font-mono text-gray-300 flex items-center gap-2">
           <AlertTriangle size={15} className="text-yellow-400 shrink-0" />
           <span>{evaluationFeedback}</span>
         </div>
@@ -334,16 +334,16 @@ export const LockerRoom: React.FC = () => {
       <div className="flex items-center gap-2 border-b border-white/10 pb-2">
         <button
           onClick={() => setActiveTab("graph")}
-          className={`px-4 py-2 rounded-xl text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-[2px] text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
             activeTab === "graph"
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-lg"
+              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-hard-xs"
               : "text-gray-400 hover:text-white hover:bg-white/5"
           }`}
         >
           <Network size={15} />
           <span>Social Network Topology</span>
           {socialGraph && (
-            <span className="px-1.5 py-0.5 rounded-full bg-black/40 text-[10px] font-mono text-cyan-400">
+            <span className="px-1.5 py-0.5 rounded-[2px] bg-black/40 text-[10px] font-mono text-cyan-400">
               {socialGraph.nodes.length}
             </span>
           )}
@@ -351,9 +351,9 @@ export const LockerRoom: React.FC = () => {
 
         <button
           onClick={() => setActiveTab("wire")}
-          className={`px-4 py-2 rounded-xl text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-[2px] text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
             activeTab === "wire"
-              ? "bg-red-500/20 text-red-300 border border-red-500/40 shadow-lg"
+              ? "bg-red-500/20 text-red-300 border border-red-500/40 shadow-hard-xs"
               : "text-gray-400 hover:text-white hover:bg-white/5"
           }`}
         >
@@ -363,7 +363,7 @@ export const LockerRoom: React.FC = () => {
           />
           <span>Media Leaks Wire</span>
           {socialGraph && socialGraph.active_leaks.length > 0 && (
-            <span className="px-1.5 py-0.5 rounded-full bg-red-500 text-[10px] font-mono text-white font-bold">
+            <span className="px-1.5 py-0.5 rounded-[2px] bg-red-500 text-[10px] font-mono text-white font-bold">
               {socialGraph.active_leaks.length}
             </span>
           )}
@@ -371,9 +371,9 @@ export const LockerRoom: React.FC = () => {
 
         <button
           onClick={() => setActiveTab("telemetry")}
-          className={`px-4 py-2 rounded-xl text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-[2px] text-xs font-header uppercase tracking-wider transition-all flex items-center gap-2 ${
             activeTab === "telemetry"
-              ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-lg"
+              ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-hard-xs"
               : "text-gray-400 hover:text-white hover:bg-white/5"
           }`}
         >

@@ -52,10 +52,10 @@ export const ReplayScrubber: React.FC<ReplayScrubberProps> = ({ canvasRef, durat
   };
 
   return (
-    <div className="flex items-center gap-4 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-xl">
+    <div className="flex items-center gap-4 bg-black/60 backdrop-blur-md p-2 rounded-[2px] border border-white/10 shadow-hard-md">
       <button
         onClick={togglePlay}
-        className="p-2 rounded-full hover:bg-white/10 text-white transition-colors"
+        className="p-2 rounded-[2px] hover:bg-white/10 text-white transition-colors shadow-hard-xs"
       >
         {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
       </button>
@@ -69,7 +69,7 @@ export const ReplayScrubber: React.FC<ReplayScrubberProps> = ({ canvasRef, durat
           value={progress}
           onChange={handleSeek}
           aria-label="Replay progress"
-          className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+          className="w-full h-1 bg-gray-600 rounded-[1px] appearance-none cursor-pointer accent-cyan-500"
         />
       </div>
 

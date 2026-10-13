@@ -60,7 +60,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
       style={{ zIndex: 99999 }}
     >
       <div
-        className="relative w-full max-w-4xl bg-slate-900/95 border border-cyan-900/50 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-200 flex flex-col md:flex-row h-[85vh] md:h-auto"
+        className="relative w-full max-w-4xl bg-slate-900/95 border border-cyan-900/50 rounded-[2px] shadow-hard-md overflow-hidden animate-in slide-in-from-bottom-4 duration-200 flex flex-col md:flex-row h-[85vh] md:h-auto"
         style={{ zIndex: 100000 }}
       >
         {/* Left Sidebar - Summary & Comparison */}
@@ -74,17 +74,17 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
               size="lg"
               position={position}
               playerName={playerName}
-              className="w-24 h-24 rounded-2xl shadow-xl border border-cyan-500/30"
+              className="w-24 h-24 rounded-[2px] shadow-hard-xs border border-cyan-500/30"
               primaryColor="#06b6d4"
             />
             {/* Pose Switcher Pills */}
-            <div className="flex gap-1 mt-2 bg-black/50 p-1 rounded-lg border border-white/10">
+            <div className="flex gap-1 mt-2 bg-black/50 p-1 rounded-[2px] border border-white/10">
               {(["headshot", "hero_pose", "action_pose", "celebration"] as PlayerPoseType[]).map(
                 (p) => (
                   <button
                     key={p}
                     onClick={() => setSelectedPose(p)}
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider transition-colors ${
+                    className={`text-[9px] px-1.5 py-0.5 rounded-[2px] font-mono uppercase tracking-wider transition-colors ${
                       selectedPose === p
                         ? "bg-cyan-500 text-black font-bold"
                         : "text-gray-400 hover:text-white"
@@ -107,7 +107,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
           <div className="mb-4">
             <h2 className="text-xl font-bold text-white mb-1">{playerName}</h2>
             <div className="flex items-center justify-center gap-2">
-              <span className="inline-block px-2 py-0.5 bg-cyan-900/50 text-cyan-300 text-xs font-bold rounded border border-cyan-700/50">
+              <span className="inline-block px-2 py-0.5 bg-cyan-900/50 text-cyan-300 text-xs font-bold rounded-[2px] border border-cyan-700/50">
                 {position}
               </span>
               <span className="text-xs font-mono text-gray-400">CLASS OF 2026</span>
@@ -116,12 +116,12 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
 
           {loading ? (
             <div className="space-y-4 animate-pulse w-full flex-1">
-              <div className="h-24 bg-white/5 rounded"></div>
-              <div className="h-10 bg-white/5 rounded"></div>
+              <div className="h-24 bg-white/5 rounded-[2px]"></div>
+              <div className="h-10 bg-white/5 rounded-[2px]"></div>
             </div>
           ) : report ? (
             <div className="space-y-4 w-full text-left">
-              <div className="bg-cyan-950/30 border border-cyan-800/30 p-3.5 rounded-lg">
+              <div className="bg-cyan-950/30 border border-cyan-800/30 p-3.5 rounded-[2px]">
                 <h4 className="text-cyan-400 text-xs font-bold uppercase mb-1.5 flex items-center gap-2">
                   <Target className="w-3 h-3" /> NFL Comparison
                 </h4>
@@ -138,7 +138,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                       "Pro Bowl"}
                   </span>
                 </div>
-                <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-white/5 h-1.5 rounded-[2px] overflow-hidden">
                   <div className="bg-green-500 h-full w-3/4"></div>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                     {report.floor || report.floor_projection || report.floor_grade || "Starter"}
                   </span>
                 </div>
-                <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-white/5 h-1.5 rounded-[2px] overflow-hidden">
                   <div className="bg-amber-500 h-full w-1/2"></div>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
         <div className="flex-1 p-6 md:p-8 overflow-y-auto relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-white/50 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors z-10"
+            className="absolute top-4 right-4 p-2 text-white/50 hover:text-white bg-black/20 hover:bg-black/40 rounded-[2px] transition-colors z-10"
             title="Close Report"
           >
             <X size={20} />
@@ -175,9 +175,9 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
 
           {loading ? (
             <div className="space-y-4 animate-pulse">
-              <div className="h-4 bg-white/5 rounded w-full"></div>
-              <div className="h-4 bg-white/5 rounded w-5/6"></div>
-              <div className="h-4 bg-white/5 rounded w-4/6"></div>
+              <div className="h-4 bg-white/5 rounded-[2px] w-full"></div>
+              <div className="h-4 bg-white/5 rounded-[2px] w-5/6"></div>
+              <div className="h-4 bg-white/5 rounded-[2px] w-4/6"></div>
             </div>
           ) : report ? (
             <div className="space-y-8">
@@ -193,7 +193,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-green-950/10 border border-green-900/20 p-4 rounded-lg">
+                <div className="bg-green-950/10 border border-green-900/20 p-4 rounded-[2px]">
                   <h4 className="text-green-400 font-bold mb-3 flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" /> Strengths
                   </h4>
@@ -207,7 +207,7 @@ export const ScoutingReportModal: React.FC<ScoutingReportModalProps> = ({
                   </ul>
                 </div>
 
-                <div className="bg-red-950/10 border border-red-900/20 p-4 rounded-lg">
+                <div className="bg-red-950/10 border border-red-900/20 p-4 rounded-[2px]">
                   <h4 className="text-red-400 font-bold mb-3 flex items-center gap-2">
                     <TrendingDown className="w-4 h-4" /> Areas for Improvement
                   </h4>

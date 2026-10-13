@@ -110,9 +110,9 @@ const TeamSelection: React.FC = () => {
           </p>
 
           {/* Detroit Lions Quick-Start Callout */}
-          <div className="max-w-2xl mx-auto mt-6 p-4 rounded-2xl bg-gradient-to-r from-blue-900/60 via-blue-950/80 to-slate-900/80 border border-blue-500/30 backdrop-blur-md shadow-[0_0_30px_rgba(0,118,182,0.25)] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="max-w-2xl mx-auto mt-6 p-4 rounded-[2px] bg-gradient-to-r from-blue-900/60 via-blue-950/80 to-slate-900/80 border border-blue-500/30 backdrop-blur-md shadow-hard-md flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="relative w-16 h-16 flex items-center justify-center p-2 rounded-xl bg-blue-950/60 border border-blue-400/30 shadow-inner">
+              <div className="relative w-16 h-16 flex items-center justify-center p-2 rounded-[2px] bg-blue-950/60 border border-blue-400/30 shadow-hard-xs">
                 <img
                   src="/logos/DET.png"
                   alt="Detroit Lions"
@@ -140,7 +140,7 @@ const TeamSelection: React.FC = () => {
                 soundEffects.playCrowdRoar();
                 handleSelectTeam(11, "DET");
               }}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black font-header text-sm font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(250,204,21,0.5)] hover:shadow-[0_0_30px_rgba(250,204,21,0.8)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer flex-shrink-0"
+              className="w-full sm:w-auto px-6 py-3 rounded-[2px] bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-black font-header text-sm font-bold uppercase tracking-wider shadow-hard-md hover:scale-105 active:scale-95 active:shadow-hard-pressed transition-all duration-200 cursor-pointer flex-shrink-0"
             >
               CONFIRM & ENTER WAR ROOM
             </button>
@@ -158,9 +158,9 @@ const TeamSelection: React.FC = () => {
                   soundEffects.playSnap();
                   setConfFilter(conf);
                 }}
-                className={`px-5 py-1.5 rounded-lg text-xs font-header uppercase tracking-wider transition-all ${
+                className={`px-5 py-1.5 rounded-[2px] text-xs font-header uppercase tracking-wider transition-all ${
                   confFilter === conf
-                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-lg shadow-red-600/30"
+                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white font-bold shadow-hard-xs"
                     : "bg-black/50 text-gray-400 hover:text-white border border-white/10 hover:border-white/20"
                 }`}
               >
@@ -186,9 +186,9 @@ const TeamSelection: React.FC = () => {
                 }}
               >
                 <TiltCard
-                  className={`team-card broadcast-glass group relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+                  className={`team-card broadcast-glass group relative overflow-hidden rounded-[2px] border transition-all duration-300 ${
                     isSelected
-                      ? "selected border-yellow-400 ring-2 ring-yellow-400/50 shadow-[0_0_25px_rgba(250,204,21,0.4)]"
+                      ? "selected border-yellow-400 ring-2 ring-yellow-400/50 shadow-hard-primary"
                       : "border-white/10 hover:border-white/30"
                   }`}
                   onClick={() => handleSelectTeam(team.id, team.abbreviation)}
@@ -202,7 +202,7 @@ const TeamSelection: React.FC = () => {
 
                   {/* Selected Checkmark Badge */}
                   {isSelected && (
-                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-[10px] font-mono font-bold bg-yellow-400 text-black px-2 py-0.5 rounded-full shadow">
+                    <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-[10px] font-mono font-bold bg-yellow-400 text-black px-2 py-0.5 rounded-[2px] shadow-hard-xs">
                       <CheckCircle2 size={12} /> ACTIVE
                     </div>
                   )}

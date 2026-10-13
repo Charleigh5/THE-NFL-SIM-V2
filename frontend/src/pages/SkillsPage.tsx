@@ -12,7 +12,8 @@ import type { PlayerAbilityStatus } from "../types/ability";
 import { traitsApi } from "../services/traits";
 import { abilitiesApi } from "../services/abilitiesApi";
 import type { Player } from "../services/api";
-import { Sparkles, ChevronLeft, User, Flame } from "lucide-react";
+import { ChevronLeft, User, Flame } from "lucide-react";
+import { ChalkboardRouteIcon } from "../components/icons";
 
 interface LoaderData {
   player?: Player;
@@ -142,14 +143,14 @@ export const SkillsPage: React.FC = () => {
           <div className="flex items-center gap-4">
             <Link
               to="/season"
-              className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 transition-colors"
+              className="p-2.5 rounded-[2px] bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </Link>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400">
-                  <Sparkles className="w-5 h-5" />
+                <div className="p-2 rounded-[2px] bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                  <ChalkboardRouteIcon className="w-5 h-5" />
                 </div>
                 <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
                   RPG Skill Tree & Ability Hub
@@ -163,7 +164,7 @@ export const SkillsPage: React.FC = () => {
 
           {/* Player Info & Archetype */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-3 bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl">
+            <div className="flex items-center gap-3 bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-[2px]">
               <User className="w-5 h-5 text-purple-400" />
               <div>
                 <div className="text-sm font-bold text-white">
@@ -175,7 +176,7 @@ export const SkillsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl text-right">
+            <div className="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-[2px] text-right">
               <div className="text-xs text-slate-400 font-mono uppercase">XP Balance</div>
               <div className="text-lg font-bold font-mono text-purple-300">
                 {playerXp.toLocaleString()} XP
@@ -186,17 +187,17 @@ export const SkillsPage: React.FC = () => {
 
         {/* Archetype Showcase Strip */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-1 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col justify-center items-center">
+          <div className="md:col-span-1 bg-slate-900/60 border border-slate-800 p-4 rounded-[2px] flex flex-col justify-center items-center">
             <ArchetypeBadge archetype="FIELD_GENERAL" size="lg" showTooltip={true} />
           </div>
 
-          <div className="md:col-span-2 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-indigo-950/40 border border-purple-500/20 p-5 rounded-2xl flex flex-col justify-between">
+          <div className="md:col-span-2 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-indigo-950/40 border border-purple-500/20 p-5 rounded-[2px] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-mono uppercase tracking-wider text-purple-300 flex items-center gap-1.5 font-bold">
                   <Flame className="w-4 h-4 text-purple-400" /> Archetype Combat Impact
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-purple-950 text-purple-300 border border-purple-800">
                   TIER: PRIMARY
                 </span>
               </div>
@@ -219,9 +220,9 @@ export const SkillsPage: React.FC = () => {
         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
           <button
             onClick={() => setActiveTab("ABILITIES")}
-            className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`px-5 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "ABILITIES"
-                ? "bg-purple-600 text-white shadow-lg shadow-purple-950/50"
+                ? "bg-purple-600 text-white shadow-hard-xs"
                 : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
             }`}
           >
@@ -229,9 +230,9 @@ export const SkillsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab("TRAITS")}
-            className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`px-5 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "TRAITS"
-                ? "bg-amber-500 text-slate-950 shadow-lg shadow-amber-950/50"
+                ? "bg-amber-500 text-slate-950 shadow-hard-xs"
                 : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
             }`}
           >
@@ -239,9 +240,9 @@ export const SkillsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab("3D_TREE")}
-            className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`px-5 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all ${
               activeTab === "3D_TREE"
-                ? "bg-cyan-600 text-white shadow-lg shadow-cyan-950/50"
+                ? "bg-cyan-600 text-white shadow-hard-xs"
                 : "bg-slate-900 text-slate-400 hover:text-white border border-slate-800"
             }`}
           >
@@ -274,7 +275,7 @@ export const SkillsPage: React.FC = () => {
         )}
 
         {activeTab === "3D_TREE" && (
-          <div className="w-full h-[650px] relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl">
+          <div className="w-full h-[650px] relative rounded-[2px] overflow-hidden border border-slate-800 bg-slate-950 shadow-hard-md">
             <SkillTreeCanvas
               layout={layout}
               unlockedTraits={unlockedTraits}

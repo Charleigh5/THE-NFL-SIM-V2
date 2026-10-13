@@ -87,18 +87,18 @@ export const MomentumFlowRibbon: React.FC<MomentumFlowRibbonProps> = ({
 
   return (
     <div
-      className={`rounded-2xl backdrop-blur-md bg-slate-950/80 border border-white/10 p-3 transition-all shadow-xl ${className}`}
+      className={`rounded-[2px] backdrop-blur-md bg-slate-950/80 border border-white/10 p-3 transition-all shadow-hard-md ${className}`}
     >
       {/* Header Bar */}
       <div className="flex items-center justify-between pb-2 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="p-1 rounded-md bg-emerald-500/20 text-emerald-400">
+          <div className="p-1 rounded-[2px] bg-emerald-500/20 text-emerald-400 shadow-hard-xs">
             <TrendingUp className="w-3.5 h-3.5" />
           </div>
           <span className="font-header text-xs tracking-wider uppercase font-bold text-white">
             Win Probability & EPA Momentum Ribbon
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-[2px] bg-slate-800 text-slate-300 font-semibold shadow-hard-xs">
             {homeAbbr} {(data.currentHomeWp * 100).toFixed(1)}% vs {awayAbbr}{" "}
             {(data.currentAwayWp * 100).toFixed(1)}%
           </span>
@@ -106,7 +106,7 @@ export const MomentumFlowRibbon: React.FC<MomentumFlowRibbonProps> = ({
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="p-1 rounded-[2px] text-slate-400 hover:text-white hover:bg-slate-800 shadow-hard-xs transition-colors"
           title={isExpanded ? "Collapse Ribbon" : "Expand Ribbon"}
         >
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -240,7 +240,7 @@ export const MomentumFlowRibbon: React.FC<MomentumFlowRibbonProps> = ({
 
           {/* Interactive Play Tooltip */}
           {hoveredNode && (
-            <div className="mt-2 p-2.5 rounded-xl bg-slate-900 border border-cyan-500/40 text-xs font-mono shadow-2xl flex flex-wrap items-center justify-between gap-3 animate-fadeIn">
+            <div className="mt-2 p-2.5 rounded-[2px] bg-slate-900 border border-cyan-500/40 text-xs font-mono shadow-hard-xs flex flex-wrap items-center justify-between gap-3 animate-fadeIn">
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-500/30">
                   Q{hoveredNode.quarter} {hoveredNode.gameClock}

@@ -69,14 +69,14 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
       {/* Top Metrics Row: Tension Radial + Chemistry Equation Deltas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Metric 1: Team Tension Score */}
-        <div className="broadcast-glass p-5 rounded-2xl border border-white/15 shadow-xl flex flex-col justify-between">
+        <div className="broadcast-glass p-5 rounded-[2px] border border-white/15 shadow-hard-md flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <span className="text-xs font-mono uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
               <Flame size={14} className={isCritical ? "text-red-400" : "text-amber-400"} />
               Team Tension Index
             </span>
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border ${tensionBadgeColor}`}
+              className={`px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider border ${tensionBadgeColor}`}
             >
               {tensionStatusText}
             </span>
@@ -144,7 +144,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
         </div>
 
         {/* Metric 2: Squad Chemistry Differential Deltas */}
-        <div className="broadcast-glass p-5 rounded-2xl border border-white/15 shadow-xl flex flex-col justify-between">
+        <div className="broadcast-glass p-5 rounded-[2px] border border-white/15 shadow-hard-md flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <span className="text-xs font-mono uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
               <Activity size={14} className="text-cyan-400" />
@@ -155,7 +155,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
 
           <div className="my-2 space-y-2.5 text-xs font-mono">
             {/* Squad Chemistry Delta */}
-            <div className="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+            <div className="flex justify-between items-center bg-black/40 p-2 rounded-[2px]">
               <span className="text-gray-300">Net Squad Chemistry:</span>
               <span
                 className={`font-bold flex items-center gap-1 ${
@@ -175,7 +175,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
             </div>
 
             {/* Coach Trust Shift */}
-            <div className="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+            <div className="flex justify-between items-center bg-black/40 p-2 rounded-[2px]">
               <span className="text-gray-300">Head Coach Authority:</span>
               <span className="font-bold text-amber-300">
                 {activeEvent
@@ -186,7 +186,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
             </div>
 
             {/* QB Trust Shift */}
-            <div className="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+            <div className="flex justify-between items-center bg-black/40 p-2 rounded-[2px]">
               <span className="text-gray-300">Quarterback Chemistry:</span>
               <span className="font-bold text-cyan-300">
                 {activeEvent
@@ -212,14 +212,14 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
         </div>
 
         {/* Metric 3: Grievance Incident & Council Trigger */}
-        <div className="broadcast-glass p-5 rounded-2xl border border-white/15 shadow-xl flex flex-col justify-between">
+        <div className="broadcast-glass p-5 rounded-[2px] border border-white/15 shadow-hard-md flex flex-col justify-between">
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <span className="text-xs font-mono uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
               <AlertTriangle size={14} className={activeEvent ? "text-red-400" : "text-gray-400"} />
               Closed-Door Council Gate
             </span>
             <span
-              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider border ${
+              className={`px-2 py-0.5 rounded-[2px] text-[10px] font-mono font-bold uppercase tracking-wider border ${
                 activeEvent
                   ? "bg-red-500/20 text-red-300 border-red-500/40"
                   : "bg-white/5 text-gray-400 border-white/10"
@@ -251,7 +251,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
             <button
               onClick={onRunEvaluation}
               disabled={isEvaluating}
-              className="flex-1 py-2 bg-white/10 hover:bg-white/15 text-gray-200 font-header text-xs uppercase tracking-wider rounded-xl transition-all"
+              className="flex-1 py-2 bg-white/10 hover:bg-white/15 text-gray-200 font-header text-xs uppercase tracking-wider rounded-[2px] transition-all shadow-hard-xs"
             >
               {isEvaluating ? "Scanning..." : "Scan Roster"}
             </button>
@@ -259,7 +259,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
             {activeEvent && (
               <button
                 onClick={onOpenCouncil}
-                className="flex-1 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                className="flex-1 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-header text-xs uppercase tracking-wider rounded-[2px] shadow-hard-xs transition-all flex items-center justify-center gap-1.5 active:scale-95"
               >
                 <MessageSquare size={13} />
                 <span>Enter Council</span>
@@ -270,7 +270,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
       </div>
 
       {/* Grievance Flags & Disgruntled Athlete Spotlight */}
-      <div className="broadcast-glass p-6 rounded-2xl border border-white/15 shadow-2xl space-y-4">
+      <div className="broadcast-glass p-6 rounded-[2px] border border-white/15 shadow-hard-md space-y-4">
         <div className="flex justify-between items-center pb-3 border-b border-white/10">
           <div>
             <h3 className="font-header text-xl uppercase tracking-wider text-white flex items-center gap-2">
@@ -287,7 +287,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
         </div>
 
         {aggrievedPlayers.length === 0 ? (
-          <div className="p-8 text-center text-gray-400 font-mono text-xs border border-dashed border-white/10 rounded-xl">
+          <div className="p-8 text-center text-gray-400 font-mono text-xs border border-dashed border-white/10 rounded-[2px]">
             <Heart size={24} className="mx-auto mb-2 text-emerald-400 opacity-60" />
             <p>Zero active player grievances currently logged on the franchise roster.</p>
             <p className="text-gray-500 text-[10px] mt-1">
@@ -306,12 +306,12 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
               return (
                 <div
                   key={player.id}
-                  className="bg-black/50 border border-white/10 rounded-xl p-4 space-y-3"
+                  className="bg-black/50 border border-white/10 rounded-[2px] p-4 space-y-3 shadow-hard-xs"
                 >
                   {/* Athlete Header */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center font-header text-lg text-red-300">
+                      <div className="w-10 h-10 rounded-[2px] bg-red-500/20 border border-red-500/40 flex items-center justify-center font-header text-lg text-red-300">
                         #{player.jersey_number ?? 0}
                       </div>
                       <div>
@@ -335,7 +335,7 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
                   </div>
 
                   {/* Grievance Driver Pill */}
-                  <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/25 flex items-center justify-between text-xs font-mono text-red-300">
+                  <div className="p-2 rounded-[2px] bg-red-500/10 border border-red-500/25 flex items-center justify-between text-xs font-mono text-red-300">
                     <span className="flex items-center gap-1.5">
                       <AlertTriangle size={13} className="text-red-400" />
                       Grievance: Target Share &amp; Role Underutilization
@@ -353,27 +353,27 @@ export const LockerRoomTelemetry: React.FC<LockerRoomTelemetryProps> = ({
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Ego</span>
                         <span className="text-yellow-400 font-bold">{pDNA.ego}</span>
                       </div>
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Greed</span>
                         <span className="text-amber-400 font-bold">{pDNA.greed}</span>
                       </div>
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Loyalty</span>
                         <span className="text-cyan-400 font-bold">{pDNA.loyalty}</span>
                       </div>
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Resilience</span>
                         <span className="text-emerald-400 font-bold">{pDNA.resilience}</span>
                       </div>
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Paranoia</span>
                         <span className="text-red-400 font-bold">{pDNA.paranoia}</span>
                       </div>
-                      <div className="bg-white/5 p-1.5 rounded">
+                      <div className="bg-white/5 p-1.5 rounded-[2px]">
                         <span className="text-gray-400 block">Leadership</span>
                         <span className="text-blue-400 font-bold">{pDNA.professionalism}</span>
                       </div>

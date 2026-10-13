@@ -33,7 +33,10 @@ const ICON_MAP: Record<GridironIconName, React.FC<IconBaseProps>> = {
  * Unified NFL domain iconography renderer.
  * Dynamically resolves and renders any of the 12 authentic gridiron icons.
  */
-export const GridironIcon: React.FC<GridironIconProps> = ({ name, ...props }) => {
+export const GridironIcon: React.FC<GridironIconProps> = ({
+  name = "football_laces",
+  ...props
+}) => {
   const IconComponent = ICON_MAP[name];
 
   if (!IconComponent) {

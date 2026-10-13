@@ -18,17 +18,8 @@ import { LiveGameVisualizer } from "../components/3d/LiveGameVisualizer";
 import { ReplayScrubber } from "../components/game/ReplayScrubber";
 import { PlayAnimator } from "../components/3d/PlayAnimator";
 import { soundEffects } from "../services/soundEffects";
-import {
-  Play,
-  Pause,
-  FastForward,
-  Activity,
-  BarChart2,
-  Layers,
-  Tv,
-  Sparkles,
-  Radio,
-} from "lucide-react";
+import { Play, Pause, FastForward, Activity, BarChart2, Layers, Tv, Radio } from "lucide-react";
+import { BlitzBoltIcon } from "../components/icons";
 import { PlayCallingHUD } from "../components/game/PlayCallingHUD";
 import type { PlayCategory } from "../components/game/PlayCallingHUD";
 import { FourthDownModal } from "../components/game/FourthDownModal";
@@ -406,15 +397,15 @@ export const LiveSim = () => {
                   .getState()
                   .updateGameState({ down: 4, distance: 1, yardLine: 58 });
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-hard-xs transition-all"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <BlitzBoltIcon className="w-3.5 h-3.5 text-amber-400" />
               Simulate 4th & 1
             </button>
           </div>
 
           {/* Viewport Canvas Container */}
-          <div className="flex-1 broadcast-glass rounded-2xl border border-white/15 relative overflow-hidden p-1 shadow-2xl min-h-[420px]">
+          <div className="flex-1 broadcast-glass rounded-[2px] border border-white/15 relative overflow-hidden p-1 shadow-hard-md min-h-[420px]">
             {viewMode === "3d" ? (
               <div className="p-2">
                 <LiveGameVisualizer gameId={1} enableBroadcast={true} />
@@ -478,7 +469,7 @@ export const LiveSim = () => {
                     <button
                       onClick={handleStartSimulation}
                       disabled={isLoading}
-                      className="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black font-header text-xl uppercase tracking-widest rounded-full transition-all shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:scale-105"
+                      className="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black font-header text-xl uppercase tracking-widest rounded-[2px] transition-all shadow-hard-emerald hover:scale-105"
                     >
                       <Play className="w-5 h-5 fill-black" />
                       {isLoading ? "Starting..." : "KICKOFF"}
@@ -487,7 +478,7 @@ export const LiveSim = () => {
                     <>
                       <button
                         onClick={handleStopSimulation}
-                        className="p-3.5 bg-red-600 hover:bg-red-500 text-white rounded-full backdrop-blur-md transition-all shadow-xl hover:scale-105"
+                        className="p-3.5 bg-red-600 hover:bg-red-500 text-white rounded-[2px] backdrop-blur-md transition-all shadow-hard-rose hover:scale-105"
                         aria-label="Pause Simulation"
                         title="Pause Simulation"
                       >
@@ -496,7 +487,7 @@ export const LiveSim = () => {
                       </button>
                       <button
                         onClick={() => soundEffects.playSnap()}
-                        className="p-3.5 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-all"
+                        className="p-3.5 bg-white/10 hover:bg-white/20 text-white rounded-[2px] backdrop-blur-md transition-all shadow-hard-xs"
                         aria-label="Fast Forward"
                         title="Fast Forward"
                       >
@@ -550,7 +541,7 @@ export const LiveSim = () => {
         </div>
 
         {/* Play-by-Play Commentary Feed */}
-        <div className="lg:col-span-1 h-full min-h-0 broadcast-glass rounded-2xl border border-white/15 p-2 shadow-2xl">
+        <div className="lg:col-span-1 h-full min-h-0 broadcast-glass rounded-[2px] border border-white/15 p-2 shadow-hard-md">
           <PlayByPlayFeed />
         </div>
       </div>
