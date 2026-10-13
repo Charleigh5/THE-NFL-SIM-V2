@@ -1,18 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.coach import Coach, CoachTier
 from app.models.team import Team
-from app.services.coaching.coaching_dynasty_service import coaching_dynasty_service
 from app.schemas.deep_dive import (
     CoachDynastyProfile,
     StaffSynergyBreakdown,
-    CoachingSkillNode,
-    CoachingBranch,
 )
+from app.services.coaching.coaching_dynasty_service import coaching_dynasty_service
 
 router = APIRouter(prefix="/api/coaches", tags=["coaches"])
 
@@ -21,42 +18,49 @@ router = APIRouter(prefix="/api/coaches", tags=["coaches"])
 # SCHEMAS
 # =============================================================================
 
+
 class CoachResponse(BaseModel):
     id: int
     first_name: str
     last_name: str
     role: str
     tier: str
-    team_id: Optional[int]
-    team_name: Optional[str]
+    team_id: int | None
+    team_name: str | None
     offense_rating: int
     defense_rating: int
     development_rating: int
-    playbook_offense: Optional[str]
-    playbook_defense: Optional[str]
+    playbook_offense: str | None
+    playbook_defense: str | None
+
 
 class CoachListResponse(BaseModel):
-    coaches: List[CoachResponse]
+    coaches: list[CoachResponse]
+
 
 class HireCoachRequest(BaseModel):
     coach_id: int
     team_id: int
     role: str  # "Head Coach", "Offensive Coordinator", "Defensive Coordinator"
 
+
 class FireCoachRequest(BaseModel):
     coach_id: int
+
 
 class UnlockNodeRequest(BaseModel):
     node_id: str
 
+
 class CoachCarouselResponse(BaseModel):
-    available_coaches: List[CoachResponse]
-    hot_seat: List[CoachResponse]
+    available_coaches: list[CoachResponse]
+    hot_seat: list[CoachResponse]
 
 
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
+
 
 def _coach_to_response(coach: Coach, db: Session) -> CoachResponse:
     team_name = None
@@ -69,14 +73,14 @@ def _coach_to_response(coach: Coach, db: Session) -> CoachResponse:
         first_name=coach.first_name,
         last_name=coach.last_name,
         role=coach.role,
-        tier=coach.tier.value if hasattr(coach.tier, 'value') else str(coach.tier),
+        tier=coach.tier.value if hasattr(coach.tier, "value") else str(coach.tier),
         team_id=coach.team_id,
         team_name=team_name,
         offense_rating=coach.offense_rating,
         defense_rating=coach.defense_rating,
         development_rating=coach.development_rating,
         playbook_offense=coach.playbook_offense,
-        playbook_defense=coach.playbook_defense
+        playbook_defense=coach.playbook_defense,
     )
 
 
@@ -84,22 +88,19 @@ def _coach_to_response(coach: Coach, db: Session) -> CoachResponse:
 # ENDPOINTS
 # =============================================================================
 
+
 @router.get("/team/{team_id}", response_model=CoachListResponse)
 async def get_team_coaches(team_id: int, db: Session = Depends(get_db)):
     """Get all coaches for a specific team."""
     coaches = db.query(Coach).filter(Coach.team_id == team_id).all()
-    return CoachListResponse(
-        coaches=[_coach_to_response(c, db) for c in coaches]
-    )
+    return CoachListResponse(coaches=[_coach_to_response(c, db) for c in coaches])
 
 
 @router.get("/available", response_model=CoachListResponse)
 async def get_available_coaches(db: Session = Depends(get_db)):
     """Get all coaches not currently employed by a team."""
-    coaches = db.query(Coach).filter(Coach.team_id == None).all()
-    return CoachListResponse(
-        coaches=[_coach_to_response(c, db) for c in coaches]
-    )
+    coaches = db.query(Coach).filter(Coach.team_id is None).all()
+    return CoachListResponse(coaches=[_coach_to_response(c, db) for c in coaches])
 
 
 @router.get("/carousel", response_model=CoachCarouselResponse)
@@ -109,17 +110,16 @@ async def get_coaching_carousel(db: Session = Depends(get_db)):
     - Available coaches (unemployed)
     - Hot seat coaches (poor performance, candidates for firing)
     """
-    available = db.query(Coach).filter(Coach.team_id == None).all()
+    available = db.query(Coach).filter(Coach.team_id is None).all()
 
     # Hot seat: ROOKIE tier coaches or low combined rating
-    hot_seat = db.query(Coach).filter(
-        Coach.team_id != None,
-        Coach.tier == CoachTier.ROOKIE
-    ).all()
+    hot_seat = (
+        db.query(Coach).filter(Coach.team_id is not None, Coach.tier == CoachTier.ROOKIE).all()
+    )
 
     return CoachCarouselResponse(
         available_coaches=[_coach_to_response(c, db) for c in available],
-        hot_seat=[_coach_to_response(c, db) for c in hot_seat]
+        hot_seat=[_coach_to_response(c, db) for c in hot_seat],
     )
 
 
@@ -141,10 +141,9 @@ async def hire_coach(request: HireCoachRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Team not found")
 
     # Fire existing coach in this role
-    existing = db.query(Coach).filter(
-        Coach.team_id == request.team_id,
-        Coach.role == request.role
-    ).first()
+    existing = (
+        db.query(Coach).filter(Coach.team_id == request.team_id, Coach.role == request.role).first()
+    )
 
     if existing:
         existing.team_id = None  # Fire them
@@ -157,7 +156,7 @@ async def hire_coach(request: HireCoachRequest, db: Session = Depends(get_db)):
     return {
         "status": "success",
         "message": f"{coach.first_name} {coach.last_name} hired as {request.role}",
-        "fired_coach": f"{existing.first_name} {existing.last_name}" if existing else None
+        "fired_coach": f"{existing.first_name} {existing.last_name}" if existing else None,
     }
 
 
@@ -171,14 +170,10 @@ async def fire_coach(request: FireCoachRequest, db: Session = Depends(get_db)):
     if coach.team_id is None:
         raise HTTPException(status_code=400, detail="Coach is not employed")
 
-    team_id = coach.team_id
     coach.team_id = None
     db.commit()
 
-    return {
-        "status": "success",
-        "message": f"{coach.first_name} {coach.last_name} has been fired"
-    }
+    return {"status": "success", "message": f"{coach.first_name} {coach.last_name} has been fired"}
 
 
 @router.get("/{coach_id}", response_model=CoachResponse)
@@ -191,11 +186,7 @@ async def get_coach(coach_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/promote/{coach_id}")
-async def promote_coach(
-    coach_id: int,
-    new_role: str,
-    db: Session = Depends(get_db)
-):
+async def promote_coach(coach_id: int, new_role: str, db: Session = Depends(get_db)):
     """
     Promote a coordinator to Head Coach within their team.
     The old Head Coach is automatically demoted/fired.
@@ -209,10 +200,11 @@ async def promote_coach(
 
     if new_role == "Head Coach":
         # Fire current HC
-        current_hc = db.query(Coach).filter(
-            Coach.team_id == coach.team_id,
-            Coach.role == "Head Coach"
-        ).first()
+        current_hc = (
+            db.query(Coach)
+            .filter(Coach.team_id == coach.team_id, Coach.role == "Head Coach")
+            .first()
+        )
 
         if current_hc and current_hc.id != coach_id:
             current_hc.team_id = None  # Fire
@@ -223,7 +215,7 @@ async def promote_coach(
         return {
             "status": "success",
             "message": f"{coach.first_name} {coach.last_name} promoted to Head Coach",
-            "demoted": f"{current_hc.first_name} {current_hc.last_name}" if current_hc else None
+            "demoted": f"{current_hc.first_name} {current_hc.last_name}" if current_hc else None,
         }
 
     raise HTTPException(status_code=400, detail="Invalid promotion role")
@@ -232,6 +224,7 @@ async def promote_coach(
 # =============================================================================
 # DYNASTY SKILL TREE & STAFF SYNERGY ENDPOINTS
 # =============================================================================
+
 
 @router.get("/{coach_id}/tree", response_model=CoachDynastyProfile)
 @router.get("/{coach_id}/dynasty", response_model=CoachDynastyProfile)
@@ -246,8 +239,12 @@ async def get_coach_tree(coach_id: int, db: Session = Depends(get_db)):
 
     coach_name = f"{coach.first_name} {coach.last_name}"
     role = coach.role or "Head Coach"
-    level = coach.level if coach.level and coach.level > 0 else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
-    current_sp = coach.xp // 100 if hasattr(coach, 'xp') and coach.xp else 4
+    level = (
+        coach.level
+        if coach.level and coach.level > 0
+        else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
+    )
+    current_sp = coach.xp // 100 if hasattr(coach, "xp") and coach.xp else 4
 
     unlocked_nodes = None
     if coach.skills and isinstance(coach.skills, dict) and "unlocked_nodes" in coach.skills:
@@ -266,9 +263,7 @@ async def get_coach_tree(coach_id: int, db: Session = Depends(get_db)):
 @router.post("/{coach_id}/unlock-node", response_model=CoachDynastyProfile)
 @router.post("/{coach_id}/dynasty/unlock", response_model=CoachDynastyProfile)
 async def unlock_coach_skill_node(
-    coach_id: int,
-    request: UnlockNodeRequest,
-    db: Session = Depends(get_db)
+    coach_id: int, request: UnlockNodeRequest, db: Session = Depends(get_db)
 ):
     """
     Unlock a skill tree node for a coach using skill points (SP).
@@ -280,8 +275,12 @@ async def unlock_coach_skill_node(
 
     coach_name = f"{coach.first_name} {coach.last_name}"
     role = coach.role or "Head Coach"
-    level = coach.level if coach.level and coach.level > 0 else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
-    current_sp = coach.xp // 100 if hasattr(coach, 'xp') and coach.xp else 4
+    level = (
+        coach.level
+        if coach.level and coach.level > 0
+        else max(1, (coach.offense_rating + coach.defense_rating + coach.development_rating) // 20)
+    )
+    current_sp = coach.xp // 100 if hasattr(coach, "xp") and coach.xp else 4
 
     unlocked_nodes = None
     if coach.skills and isinstance(coach.skills, dict) and "unlocked_nodes" in coach.skills:
@@ -300,7 +299,7 @@ async def unlock_coach_skill_node(
     if not success:
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot unlock node '{request.node_id}'. Ensure prerequisites are met and sufficient SP available."
+            detail=f"Cannot unlock node '{request.node_id}'. Ensure prerequisites are met and sufficient SP available.",
         )
 
     # Persist unlocked state to DB
@@ -346,4 +345,3 @@ async def get_staff_synergy(team_id: int, db: Session = Depends(get_db)):
         oc_id=oc_id,
         dc_id=dc_id,
     )
-

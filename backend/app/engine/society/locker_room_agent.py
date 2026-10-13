@@ -11,18 +11,17 @@ Orchestrates closed-door multi-agent locker room confrontations (HBO Hard Knocks
 
 import logging
 import re
-from typing import List, Optional, Dict, Any, Tuple
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from app.schemas.society import (
-    PsychologicalDNA,
-    LockerRoomDialogueTurn,
-    LockerRoomConsequences,
     LockerRoomActionOption,
+    LockerRoomConsequences,
+    LockerRoomDialogueTurn,
     LockerRoomEventResponse,
     LockerRoomResolutionResponse,
 )
-from app.services.ai.ai_provider import get_ai_registry, AIProviderType
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +34,11 @@ def sanitize_input(text: str) -> str:
     if not text:
         return ""
     # Strip potential instruction overrides
-    cleaned = re.sub(r"(?i)(system\s*prompt|ignore\s*previous\s*instructions|override\s*rules|<\|.*?\|>)", "[REDACTED]", str(text))
+    cleaned = re.sub(
+        r"(?i)(system\s*prompt|ignore\s*previous\s*instructions|override\s*rules|<\|.*?\|>)",
+        "[REDACTED]",
+        str(text),
+    )
     # Keep safe ASCII/Unicode text
     cleaned = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "", cleaned)
     return cleaned.strip()[:200]
@@ -54,11 +57,11 @@ class LockerRoomAgentService:
     def evaluate_team_locker_room(
         cls,
         team_id: int,
-        db_session: Optional[Session] = None,
-        players: Optional[List[Any]] = None,
+        db_session: Session | None = None,
+        players: list[Any] | None = None,
         week: int = 1,
-        team_record: Optional[Dict[str, Any]] = None,
-    ) -> Optional[LockerRoomEventResponse]:
+        team_record: dict[str, Any] | None = None,
+    ) -> LockerRoomEventResponse | None:
         """
         Main entry point:
         1. Queries or accepts team roster.
@@ -70,6 +73,7 @@ class LockerRoomAgentService:
         roster = players
         if roster is None and db_session is not None:
             from app.models.player import Player
+
             roster = db_session.query(Player).filter(Player.team_id == team_id).all()
 
         if not roster:
@@ -79,7 +83,8 @@ class LockerRoomAgentService:
         # TIER 2: EVENT-DRIVEN ACTIVATION GATE
         # =====================================================================
         aggrieved_players = [
-            p for p in roster
+            p
+            for p in roster
             if float(getattr(p, "tension_score", 0.0) or 0.0) >= cls.ACTIVATION_THRESHOLD
         ]
 
@@ -89,8 +94,7 @@ class LockerRoomAgentService:
 
         # Sort aggrieved players by tension descending, select top 1 to 3
         aggrieved_players.sort(
-            key=lambda p: float(getattr(p, "tension_score", 0.0) or 0.0),
-            reverse=True
+            key=lambda p: float(getattr(p, "tension_score", 0.0) or 0.0), reverse=True
         )
         active_actors = aggrieved_players[:3]
         active_actor_ids = [getattr(p, "id", 0) for p in active_actors]
@@ -104,6 +108,7 @@ class LockerRoomAgentService:
         if db_session is not None:
             try:
                 from app.models.coach import Coach
+
                 coach_obj = db_session.query(Coach).filter(Coach.team_id == team_id).first()
                 if coach_obj:
                     coach_name = f"Coach {getattr(coach_obj, 'last_name', 'Coach')}"
@@ -138,7 +143,7 @@ class LockerRoomAgentService:
         )
 
     @classmethod
-    def _elect_team_captain(cls, roster: List[Any], exclude_ids: set) -> Optional[Any]:
+    def _elect_team_captain(cls, roster: list[Any], exclude_ids: set) -> Any | None:
         """
         Finds the highest-ranking veteran leader on the roster to serve as Captain.
         """
@@ -162,17 +167,21 @@ class LockerRoomAgentService:
         cls,
         team_id: int,
         week: int,
-        active_actors: List[Any],
-        captain: Optional[Any],
+        active_actors: list[Any],
+        captain: Any | None,
         coach_name: str,
-        team_record: Dict[str, Any],
-    ) -> Tuple[List[LockerRoomDialogueTurn], LockerRoomConsequences, List[LockerRoomActionOption], str, str]:
+        team_record: dict[str, Any],
+    ) -> tuple[
+        list[LockerRoomDialogueTurn], LockerRoomConsequences, list[LockerRoomActionOption], str, str
+    ]:
         """
         Synthesizes the multi-agent closed-door confrontation.
         Uses AI provider if online, otherwise generates high-fidelity deterministic template dialogue.
         """
         primary_actor = active_actors[0]
-        actor_name = sanitize_input(f"{getattr(primary_actor, 'first_name', 'Player')} {getattr(primary_actor, 'last_name', 'Star')}")
+        actor_name = sanitize_input(
+            f"{getattr(primary_actor, 'first_name', 'Player')} {getattr(primary_actor, 'last_name', 'Star')}"
+        )
         actor_pos = getattr(primary_actor, "position", "WR")
         actor_tension = float(getattr(primary_actor, "tension_score", 80.0) or 80.0)
         actor_dna = getattr(primary_actor, "psychological_dna", {}) or {}
@@ -182,77 +191,93 @@ class LockerRoomAgentService:
         ego = int(actor_dna.get("ego", 50))
         greed = int(actor_dna.get("greed", 50))
         loyalty = int(actor_dna.get("loyalty", 50))
-        resilience = int(actor_dna.get("resilience", 50))
-        paranoia = int(actor_dna.get("paranoia", 50))
+        int(actor_dna.get("resilience", 50))
+        int(actor_dna.get("paranoia", 50))
 
-        captain_name = sanitize_input(f"{getattr(captain, 'first_name', 'Veteran')} {getattr(captain, 'last_name', 'Leader')}") if captain else "Team Captain"
-        captain_pos = getattr(captain, "position", "MLB") if captain else "LB"
+        captain_name = (
+            sanitize_input(
+                f"{getattr(captain, 'first_name', 'Veteran')} {getattr(captain, 'last_name', 'Leader')}"
+            )
+            if captain
+            else "Team Captain"
+        )
+        getattr(captain, "position", "MLB") if captain else "LB"
 
         # Construct Deterministic High-Fidelity Multi-Agent Dialogue
-        dialogue: List[LockerRoomDialogueTurn] = []
+        dialogue: list[LockerRoomDialogueTurn] = []
 
         # Identify core narrative theme
         if actor_pos in ("WR", "TE") and ego >= 65:
             theme = "target_volume"
             headline = f"Locker Room Friction: {actor_name} Confronts Staff Over Target Volume"
-            p_line = f"Coach, I didn't work all offseason to run decoy clear-outs. I need the ball in my hands to win games, and two targets in the second half isn't going to cut it."
-            c_line = f"We called the plays that gave us the best look against their Cover-3. When you start freelancing routes, it breaks the entire progression for the quarterback."
+            p_line = "Coach, I didn't work all offseason to run decoy clear-outs. I need the ball in my hands to win games, and two targets in the second half isn't going to cut it."
+            c_line = "We called the plays that gave us the best look against their Cover-3. When you start freelancing routes, it breaks the entire progression for the quarterback."
             capt_line = f"Look, {actor_name.split()[-1]}, we all want the rock, but film doesn't lie. When we execute the concept as installed, the offense moves. Let's keep the focus between these four walls."
             p_reply = f"I respect you, {captain_name.split()[-1]}, but my playmaking speaks for itself. If we want to make the postseason, the ball has to come through me."
             summary = f"{actor_name} expressed serious frustration regarding offensive target distribution following recent games."
         elif greed >= 70 and int(getattr(primary_actor, "contract_years", 1) or 1) <= 1:
             theme = "contract_leverage"
             headline = f"Contract Tension: {actor_name} Voice Frustration Over Future & Usage"
-            p_line = f"I'm putting my body on the line every Sunday with zero security beyond this season. If this organization values what I bring, we need clarity."
-            c_line = f"Front office handles contracts, but my job is to put 11 players on the field who are 100% dialed in on game day. Distractions hurt everyone."
-            capt_line = f"Handle business in the film room and on the field, and the money will take care of itself. We can't let contract talk divide the locker room."
-            p_reply = f"Easy to say when you have guaranteed years left. I need to know where I stand."
+            p_line = "I'm putting my body on the line every Sunday with zero security beyond this season. If this organization values what I bring, we need clarity."
+            c_line = "Front office handles contracts, but my job is to put 11 players on the field who are 100% dialed in on game day. Distractions hurt everyone."
+            capt_line = "Handle business in the film room and on the field, and the money will take care of itself. We can't let contract talk divide the locker room."
+            p_reply = (
+                "Easy to say when you have guaranteed years left. I need to know where I stand."
+            )
             summary = f"{actor_name} raised concerns over contract stability and usage risk heading into the upcoming games."
         elif int(getattr(primary_actor, "depth_chart_rank", 1) or 1) > 1:
             theme = "benching_depth"
             headline = f"Depth Chart Unrest: {actor_name} Questions Rotation & Snaps"
-            p_line = f"I've earned the right to start on this field. Standing on the sideline watching reps go to guys who can't match my production is unacceptable."
-            c_line = f"Playing time is earned in practice every Wednesday and Thursday. We play the personnel that executes the game plan."
-            capt_line = f"Compete on every rep in practice and make it impossible for coach to keep you off the field. Complaining won't get you snaps."
-            p_reply = f"I've competed every day. I expect the depth chart to reflect performance."
+            p_line = "I've earned the right to start on this field. Standing on the sideline watching reps go to guys who can't match my production is unacceptable."
+            c_line = "Playing time is earned in practice every Wednesday and Thursday. We play the personnel that executes the game plan."
+            capt_line = "Compete on every rep in practice and make it impossible for coach to keep you off the field. Complaining won't get you snaps."
+            p_reply = "I've competed every day. I expect the depth chart to reflect performance."
             summary = f"{actor_name} voiced dissatisfaction with recent snap reductions and depth chart positioning."
         else:
             theme = "general_frustration"
             headline = f"Closed-Door Meeting: {actor_name} Voices Discontent to Coaching Staff"
-            p_line = f"We have too much talent in this locker room to be dropping winnable games. Something in the preparation and scheme has to change."
-            c_line = f"Everyone in this building shares accountability for the execution on Sunday. It starts with discipline."
-            capt_line = f"We stay together through the storm. Pointing fingers outside this room is how seasons get derailed."
-            p_reply = f"I'm here to win rings. We need adjustments, starting this week."
+            p_line = "We have too much talent in this locker room to be dropping winnable games. Something in the preparation and scheme has to change."
+            c_line = "Everyone in this building shares accountability for the execution on Sunday. It starts with discipline."
+            capt_line = "We stay together through the storm. Pointing fingers outside this room is how seasons get derailed."
+            p_reply = "I'm here to win rings. We need adjustments, starting this week."
             summary = f"{actor_name} addressed team performance and strategic direction with {coach_name} and {captain_name}."
 
-        dialogue.append(LockerRoomDialogueTurn(
-            speaker_name=actor_name,
-            speaker_role="disgruntled_star",
-            speaker_id=getattr(primary_actor, "id", None),
-            text=p_line,
-        ))
-        dialogue.append(LockerRoomDialogueTurn(
-            speaker_name=coach_name,
-            speaker_role="head_coach",
-            speaker_id=None,
-            text=c_line,
-        ))
+        dialogue.append(
+            LockerRoomDialogueTurn(
+                speaker_name=actor_name,
+                speaker_role="disgruntled_star",
+                speaker_id=getattr(primary_actor, "id", None),
+                text=p_line,
+            )
+        )
+        dialogue.append(
+            LockerRoomDialogueTurn(
+                speaker_name=coach_name,
+                speaker_role="head_coach",
+                speaker_id=None,
+                text=c_line,
+            )
+        )
         if captain:
-            dialogue.append(LockerRoomDialogueTurn(
-                speaker_name=captain_name,
-                speaker_role="team_captain",
-                speaker_id=getattr(captain, "id", None),
-                text=capt_line,
-            ))
-        dialogue.append(LockerRoomDialogueTurn(
-            speaker_name=actor_name,
-            speaker_role="disgruntled_star",
-            speaker_id=getattr(primary_actor, "id", None),
-            text=p_reply,
-        ))
+            dialogue.append(
+                LockerRoomDialogueTurn(
+                    speaker_name=captain_name,
+                    speaker_role="team_captain",
+                    speaker_id=getattr(captain, "id", None),
+                    text=capt_line,
+                )
+            )
+        dialogue.append(
+            LockerRoomDialogueTurn(
+                speaker_name=actor_name,
+                speaker_role="disgruntled_star",
+                speaker_id=getattr(primary_actor, "id", None),
+                text=p_reply,
+            )
+        )
 
         # Determine Consequences
-        trade_demanded = (actor_tension >= 90.0 and ego >= 80 and loyalty <= 35)
+        trade_demanded = actor_tension >= 90.0 and ego >= 80 and loyalty <= 35
         actor_id_str = str(getattr(primary_actor, "id", 0))
 
         morale_deltas = {actor_id_str: -8}
@@ -303,7 +328,9 @@ class LockerRoomAgentService:
         return dialogue, consequences, action_options, headline, summary
 
     @classmethod
-    def _apply_consequences(cls, roster: List[Any], consequences: LockerRoomConsequences, db_session: Optional[Session]):
+    def _apply_consequences(
+        cls, roster: list[Any], consequences: LockerRoomConsequences, db_session: Session | None
+    ):
         """
         Mutates player models in memory and database based on consequence deltas.
         """
@@ -312,20 +339,32 @@ class LockerRoomAgentService:
         for p_id_str, m_delta in consequences.morale_deltas.items():
             if p_id_str in roster_map:
                 player = roster_map[p_id_str]
-                curr_morale = int(getattr(player, "morale", 50) if getattr(player, "morale", None) is not None else 50)
-                setattr(player, "morale", max(0, min(100, curr_morale + m_delta)))
+                curr_morale = int(
+                    getattr(player, "morale", 50)
+                    if getattr(player, "morale", None) is not None
+                    else 50
+                )
+                player.morale = max(0, min(100, curr_morale + m_delta))
 
         for p_id_str, c_delta in consequences.trust_coach_deltas.items():
             if p_id_str in roster_map:
                 player = roster_map[p_id_str]
-                curr_trust = int(getattr(player, "trust_in_coach", 80) if getattr(player, "trust_in_coach", None) is not None else 80)
-                setattr(player, "trust_in_coach", max(0, min(100, curr_trust + c_delta)))
+                curr_trust = int(
+                    getattr(player, "trust_in_coach", 80)
+                    if getattr(player, "trust_in_coach", None) is not None
+                    else 80
+                )
+                player.trust_in_coach = max(0, min(100, curr_trust + c_delta))
 
         for p_id_str, q_delta in consequences.trust_qb_deltas.items():
             if p_id_str in roster_map:
                 player = roster_map[p_id_str]
-                curr_trust = int(getattr(player, "trust_in_qb", 80) if getattr(player, "trust_in_qb", None) is not None else 80)
-                setattr(player, "trust_in_qb", max(0, min(100, curr_trust + q_delta)))
+                curr_trust = int(
+                    getattr(player, "trust_in_qb", 80)
+                    if getattr(player, "trust_in_qb", None) is not None
+                    else 80
+                )
+                player.trust_in_qb = max(0, min(100, curr_trust + q_delta))
 
         if db_session is not None:
             try:
@@ -338,9 +377,9 @@ class LockerRoomAgentService:
         cls,
         team_id: int,
         action_id: str,
-        active_actor_ids: List[int],
-        db_session: Optional[Session] = None,
-        players: Optional[List[Any]] = None,
+        active_actor_ids: list[int],
+        db_session: Session | None = None,
+        players: list[Any] | None = None,
         week: int = 1,
     ) -> LockerRoomResolutionResponse:
         """
@@ -349,6 +388,7 @@ class LockerRoomAgentService:
         roster = players
         if roster is None and db_session is not None:
             from app.models.player import Player
+
             roster = db_session.query(Player).filter(Player.team_id == team_id).all()
 
         roster_map = {getattr(p, "id", 0): p for p in (roster or [])}

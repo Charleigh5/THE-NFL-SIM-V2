@@ -1,21 +1,23 @@
-from app.kernels.core.ecs_manager import Component
-from typing import List, Dict, Tuple
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
 
 
 class TurfGrid(Component):
     # Directive 1: Turf Degradation Grid (10x10)
     # 100 zones, each with a wear level (0.0 - 1.0)
-    grid_resolution: Tuple[int, int] = (10, 10)
-    degradation_map: List[List[float]] = Field(default_factory=lambda: [[0.0 for _ in range(10)] for _ in range(10)])
+    grid_resolution: tuple[int, int] = (10, 10)
+    degradation_map: list[list[float]] = Field(
+        default_factory=lambda: [[0.0 for _ in range(10)] for _ in range(10)]
+    )
 
     # Directive 17: Geophysical Data
-    surface_type: str = "Grass" # Grass or Turf
-    moisture_level: float = 0.0 # 0.0 - 1.0
+    surface_type: str = "Grass"  # Grass or Turf
+    moisture_level: float = 0.0  # 0.0 - 1.0
 
     # Directive 19: Facility Upgrades
     has_heated_field: bool = False
-    drainage_quality: float = 0.5 # 0.0 - 1.0
+    drainage_quality: float = 0.5  # 0.0 - 1.0
 
     def degrade_zone(self, x: int, y: int, intensity: float):
         """
@@ -33,7 +35,7 @@ class TurfGrid(Component):
         Directive 19: Upgrades reduce Moisture/Friction loss.
         """
         if self.has_heated_field:
-            self.moisture_level = max(0.0, self.moisture_level - 0.3) # Melts snow/dries rain
+            self.moisture_level = max(0.0, self.moisture_level - 0.3)  # Melts snow/dries rain
 
         self.moisture_level = max(0.0, self.moisture_level - (self.drainage_quality * 0.2))
 
@@ -58,7 +60,7 @@ class TurfGrid(Component):
         Directive 2: Slip Logic.
         """
         friction = self.get_friction_coefficient(x, y)
-        force_vector = speed * (cut_angle / 90.0) # Simplified physics
+        force_vector = speed * (cut_angle / 90.0)  # Simplified physics
 
         # Threshold: If Force > Friction * Normal (simplified to constant)
         slip_threshold = friction * 15.0

@@ -5,9 +5,8 @@ Models 7-zone anatomical micro-wear, Cox proportional hazard curves,
 and interactive orthopedic triage protocols (PRP, Surgery, Rest, Cortisone).
 """
 
-import math
 import random
-from typing import Dict, List, Optional
+
 from app.schemas.deep_dive import (
     MedicalProtocolType,
     OrthopedicProtocolOption,
@@ -18,7 +17,7 @@ from app.schemas.deep_dive import (
 class OrthopedicTriageService:
     """Service evaluating orthopedic treatments and calculating re-injury risk curves."""
 
-    def __init__(self, seed: Optional[int] = 42):
+    def __init__(self, seed: int | None = 42):
         if seed is not None:
             random.seed(seed)
 
@@ -29,7 +28,7 @@ class OrthopedicTriageService:
         baseline_weeks: int,
         player_age: int = 26,
         is_x_factor: bool = False,
-    ) -> List[OrthopedicProtocolOption]:
+    ) -> list[OrthopedicProtocolOption]:
         """
         Generate available clinical treatment pathways for an injured anatomical zone.
         """

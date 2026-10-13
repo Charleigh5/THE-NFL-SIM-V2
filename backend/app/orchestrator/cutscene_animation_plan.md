@@ -47,29 +47,24 @@ PRE_PLAY → SNAP → PLAY_EXECUTION → PLAY_RESULT → POST_PLAY → TRANSITIO
 class FormationShowcase:
     cameras = [
         {
-            'name': 'Broadcast Standard',
-            'position': (0, 25, 40),
-            'target': 'ball',
-            'fov': 50,
-            'duration': 2.0,
-            'movement': 'slow_pan'
+            "name": "Broadcast Standard",
+            "position": (0, 25, 40),
+            "target": "ball",
+            "fov": 50,
+            "duration": 2.0,
+            "movement": "slow_pan",
         },
         {
-            'name': 'Tactical Overhead',
-            'position': (0, 60, 5),
-            'target': 'field_center',
-            'fov': 70,
-            'duration': 1.5,
-            'movement': 'zoom_in'
-        }
+            "name": "Tactical Overhead",
+            "position": (0, 60, 5),
+            "target": "field_center",
+            "fov": 70,
+            "duration": 1.5,
+            "movement": "zoom_in",
+        },
     ]
-    
-    overlays = [
-        'formation_name',
-        'personnel_package',
-        'down_distance_indicator',
-        'play_clock'
-    ]
+
+    overlays = ["formation_name", "personnel_package", "down_distance_indicator", "play_clock"]
 ```
 
 #### 1.2 Key Matchup Highlight
@@ -79,18 +74,18 @@ class FormationShowcase:
 ```python
 class MatchupHighlight:
     triggers = [
-        'speed_mismatch',      # Fast WR vs slow CB
-        'size_mismatch',       # Tall TE vs short LB
-        'pass_rush_battle',    # Elite pass rusher vs weak OT
-        'qb_vs_blitzer'        # QB under pressure
+        "speed_mismatch",  # Fast WR vs slow CB
+        "size_mismatch",  # Tall TE vs short LB
+        "pass_rush_battle",  # Elite pass rusher vs weak OT
+        "qb_vs_blitzer",  # QB under pressure
     ]
-    
+
     presentation = {
-        'split_screen': True,
-        'player_stats_overlay': True,
-        'camera': 'sideline_close_up',
-        'duration': 3.0,
-        'commentary_focus': 'matchup_analysis'
+        "split_screen": True,
+        "player_stats_overlay": True,
+        "camera": "sideline_close_up",
+        "duration": 3.0,
+        "commentary_focus": "matchup_analysis",
     }
 ```
 
@@ -101,24 +96,24 @@ class MatchupHighlight:
 ```python
 class SituationContext:
     scenarios = {
-        'third_down': {
-            'graphic': '3rd Down Conversion Rate',
-            'stats': ['offense_conversion_pct', 'defense_stop_pct'],
-            'camera': 'coordinator_sideline',
-            'audio': 'tension_build'
+        "third_down": {
+            "graphic": "3rd Down Conversion Rate",
+            "stats": ["offense_conversion_pct", "defense_stop_pct"],
+            "camera": "coordinator_sideline",
+            "audio": "tension_build",
         },
-        'red_zone': {
-            'graphic': 'Red Zone Efficiency',
-            'stats': ['td_rate', 'goal_line_stands'],
-            'camera': 'endzone_perspective',
-            'audio': 'dramatic_sting'
+        "red_zone": {
+            "graphic": "Red Zone Efficiency",
+            "stats": ["td_rate", "goal_line_stands"],
+            "camera": "endzone_perspective",
+            "audio": "dramatic_sting",
         },
-        'two_minute_drill': {
-            'graphic': 'Clock Management',
-            'stats': ['timeouts_remaining', 'yards_needed', 'time_left'],
-            'camera': 'broadcast_booth_view',
-            'audio': 'urgent_tempo'
-        }
+        "two_minute_drill": {
+            "graphic": "Clock Management",
+            "stats": ["timeouts_remaining", "yards_needed", "time_left"],
+            "camera": "broadcast_booth_view",
+            "audio": "urgent_tempo",
+        },
     }
 ```
 
@@ -365,20 +360,20 @@ class CommentaryEngine:
     def generate_commentary(self, context: GameContext):
         # Select appropriate lines based on:
         factors = {
-            'game_situation': context.down_distance_score(),
-            'momentum': context.momentum_shift(),
-            'storyline': context.narrative_arc(),
-            'player_context': context.star_player_involved(),
-            'historical': context.historical_significance()
+            "game_situation": context.down_distance_score(),
+            "momentum": context.momentum_shift(),
+            "storyline": context.narrative_arc(),
+            "player_context": context.star_player_involved(),
+            "historical": context.historical_significance(),
         }
-        
+
         # Layer commentary types
         layers = [
             self.play_by_play(context.action),
             self.color_analysis(context.tactical_reason),
-            self.emotional_reaction(context.impact)
+            self.emotional_reaction(context.impact),
         ]
-        
+
         return self.mix_audio_layers(layers)
 ```
 

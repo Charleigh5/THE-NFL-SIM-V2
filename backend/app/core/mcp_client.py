@@ -1,15 +1,15 @@
-import asyncio
-import time
 import logging
-from typing import Any, Dict, List, Optional, Union
+import time
 from contextlib import AsyncExitStack
+from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
 from mcp.client.sse import sse_client
+from mcp.client.stdio import stdio_client
 from mcp.types import Tool
 
 logger = logging.getLogger(__name__)
+
 
 class MCPHostClient:
     """
@@ -17,12 +17,12 @@ class MCPHostClient:
     Supports both Stdio and SSE (HTTP) transports.
     """
 
-    def __init__(self, name: str, config: Dict[str, Any]):
+    def __init__(self, name: str, config: dict[str, Any]):
         self.name = name
         self.config = config
-        self.session: Optional[ClientSession] = None
+        self.session: ClientSession | None = None
         self.exit_stack = AsyncExitStack()
-        self._tools: List[Tool] = []
+        self._tools: list[Tool] = []
 
     async def connect(self):
         """Establish connection to the MCP server."""
@@ -51,6 +51,7 @@ class MCPHostClient:
 
     async def _connect_stdio(self):
         import os
+
         command = self.config.get("command")
         args = self.config.get("args", [])
         env = self.config.get("env", None)
@@ -60,26 +61,28 @@ class MCPHostClient:
 
         resolved_args = []
         for arg in args:
-            if isinstance(arg, str) and not os.path.exists(arg) and os.path.exists(os.path.join("backend", arg)):
+            if (
+                isinstance(arg, str)
+                and not os.path.exists(arg)
+                and os.path.exists(os.path.join("backend", arg))
+            ):
                 resolved_args.append(os.path.join("backend", arg))
             else:
                 resolved_args.append(arg)
 
         resolved_env = dict(env) if env else {}
-        backend_dir = os.path.abspath("backend") if os.path.exists("backend") else os.path.abspath(".")
-        current_pp = resolved_env.get("PYTHONPATH", "")
-        resolved_env["PYTHONPATH"] = f"{backend_dir}{os.pathsep}{current_pp}" if current_pp else backend_dir
-
-        server_params = StdioServerParameters(
-            command=command,
-            args=resolved_args,
-            env=resolved_env
+        backend_dir = (
+            os.path.abspath("backend") if os.path.exists("backend") else os.path.abspath(".")
         )
+        current_pp = resolved_env.get("PYTHONPATH", "")
+        resolved_env["PYTHONPATH"] = (
+            f"{backend_dir}{os.pathsep}{current_pp}" if current_pp else backend_dir
+        )
+
+        server_params = StdioServerParameters(command=command, args=resolved_args, env=resolved_env)
 
         read, write = await self.exit_stack.enter_async_context(stdio_client(server_params))
-        self.session = await self.exit_stack.enter_async_context(
-            ClientSession(read, write)
-        )
+        self.session = await self.exit_stack.enter_async_context(ClientSession(read, write))
 
     async def _connect_sse(self):
         url = self.config.get("url")
@@ -91,9 +94,7 @@ class MCPHostClient:
         read, write = await self.exit_stack.enter_async_context(
             sse_client(url=url, headers=headers)
         )
-        self.session = await self.exit_stack.enter_async_context(
-            ClientSession(read, write)
-        )
+        self.session = await self.exit_stack.enter_async_context(ClientSession(read, write))
 
     async def disconnect(self):
         """Close the connection."""
@@ -101,7 +102,7 @@ class MCPHostClient:
         self.session = None
         logger.info(f"Disconnected from MCP server: {self.name}")
 
-    async def list_tools(self) -> List[Tool]:
+    async def list_tools(self) -> list[Tool]:
         """Return list of available tools."""
         if not self.session:
             raise RuntimeError("Client is not connected")
@@ -110,12 +111,17 @@ class MCPHostClient:
     def _sanitize(self, data: Any) -> Any:
         """Sanitize sensitive information from logs."""
         if isinstance(data, dict):
-            return {k: self._sanitize(v) if k.lower() not in ["api_key", "password", "token", "secret"] else "***REDACTED***" for k, v in data.items()}
+            return {
+                k: self._sanitize(v)
+                if k.lower() not in ["api_key", "password", "token", "secret"]
+                else "***REDACTED***"
+                for k, v in data.items()
+            }
         elif isinstance(data, list):
             return [self._sanitize(item) for item in data]
         return data
 
-    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
+    async def call_tool(self, tool_name: str, arguments: dict[str, Any]) -> Any:
         """Call a specific tool on the server."""
         if not self.session:
             raise RuntimeError("Client is not connected")
@@ -124,20 +130,28 @@ class MCPHostClient:
 
         # Audit Log: Request
         sanitized_args = self._sanitize(arguments)
-        logger.info(f"MCP Tool Call Request - Server: {self.name}, Tool: {tool_name}, Args: {sanitized_args}")
+        logger.info(
+            f"MCP Tool Call Request - Server: {self.name}, Tool: {tool_name}, Args: {sanitized_args}"
+        )
 
         try:
             result = await self.session.call_tool(tool_name, arguments)
             duration = time.time() - start_time
 
             # Audit Log: Response
-            sanitized_result = self._sanitize(result) if isinstance(result, (dict, list)) else str(result)
-            logger.info(f"MCP Tool Call Response - Server: {self.name}, Tool: {tool_name}, Duration: {duration:.4f}s, Result: {sanitized_result}")
+            sanitized_result = (
+                self._sanitize(result) if isinstance(result, (dict, list)) else str(result)
+            )
+            logger.info(
+                f"MCP Tool Call Response - Server: {self.name}, Tool: {tool_name}, Duration: {duration:.4f}s, Result: {sanitized_result}"
+            )
 
             return result
         except Exception as e:
             duration = time.time() - start_time
-            logger.error(f"Error calling tool {tool_name} on server {self.name} after {duration:.4f}s: {e}")
+            logger.error(
+                f"Error calling tool {tool_name} on server {self.name} after {duration:.4f}s: {e}"
+            )
             raise
 
     async def ping(self) -> bool:

@@ -8,16 +8,19 @@
 class MultiLayeredEngagementModel:
     def __init__(self):
         self.engagement_layers = {
-            'Immediate': {'duration': 'seconds-minutes', 'focus': 'play-by-play excitement'},
-            'Short-term': {'duration': 'minutes-hours', 'focus': 'game outcomes and narratives'},
-            'Medium-term': {'duration': 'hours-days', 'focus': 'season arcs and player development'},
-            'Long-term': {'duration': 'days-months', 'focus': 'franchise legacy and community'}
+            "Immediate": {"duration": "seconds-minutes", "focus": "play-by-play excitement"},
+            "Short-term": {"duration": "minutes-hours", "focus": "game outcomes and narratives"},
+            "Medium-term": {
+                "duration": "hours-days",
+                "focus": "season arcs and player development",
+            },
+            "Long-term": {"duration": "days-months", "focus": "franchise legacy and community"},
         }
         self.engagement_loops = {
-            'CoreGameplay': {'frequency': 'per_play', 'reward': 'immediate_feedback'},
-            'GameNarrative': {'frequency': 'per_game', 'reward': 'story_progression'},
-            'SeasonJourney': {'frequency': 'per_week', 'reward': 'achievement_unlocks'},
-            'FranchiseLegacy': {'frequency': 'per_season', 'reward': 'legacy_recognition'}
+            "CoreGameplay": {"frequency": "per_play", "reward": "immediate_feedback"},
+            "GameNarrative": {"frequency": "per_game", "reward": "story_progression"},
+            "SeasonJourney": {"frequency": "per_week", "reward": "achievement_unlocks"},
+            "FranchiseLegacy": {"frequency": "per_season", "reward": "legacy_recognition"},
         }
 
     def design_engagement_strategy(self, user_profile: UserProfile):
@@ -34,10 +37,10 @@ class MultiLayeredEngagementModel:
         progression_pathways = self._generate_progression_pathways(engagement_preferences)
 
         return {
-            'layered_engagement_plan': layered_plan,
-            'engagement_loops': engagement_loops,
-            'progression_pathways': progression_pathways,
-            'personalized_goals': self._generate_personalized_goals(user_profile)
+            "layered_engagement_plan": layered_plan,
+            "engagement_loops": engagement_loops,
+            "progression_pathways": progression_pathways,
+            "personalized_goals": self._generate_personalized_goals(user_profile),
         }
 ```
 
@@ -49,15 +52,31 @@ class MultiLayeredEngagementModel:
 class SeasonalEngagementSystem:
     def __init__(self):
         self.nfl_season_phases = {
-            'Preseason': {'duration': '4_weeks', 'focus': 'roster_evaluation', 'engagement_hooks': ['rookie_debuts', 'position_battles']},
-            'RegularSeason': {'duration': '17_weeks', 'focus': 'playoff_race', 'engagement_hooks': ['rivalry_games', 'primetime_matchups']},
-            'Playoffs': {'duration': '4_weeks', 'focus': 'championship_drama', 'engagement_hooks': ['elimination_games', 'underdog_stories']},
-            'Offseason': {'duration': '6_months', 'focus': 'roster_building', 'engagement_hooks': ['free_agency_frenzy', 'draft_intrigue']}
+            "Preseason": {
+                "duration": "4_weeks",
+                "focus": "roster_evaluation",
+                "engagement_hooks": ["rookie_debuts", "position_battles"],
+            },
+            "RegularSeason": {
+                "duration": "17_weeks",
+                "focus": "playoff_race",
+                "engagement_hooks": ["rivalry_games", "primetime_matchups"],
+            },
+            "Playoffs": {
+                "duration": "4_weeks",
+                "focus": "championship_drama",
+                "engagement_hooks": ["elimination_games", "underdog_stories"],
+            },
+            "Offseason": {
+                "duration": "6_months",
+                "focus": "roster_building",
+                "engagement_hooks": ["free_agency_frenzy", "draft_intrigue"],
+            },
         }
         self.seasonal_narratives = {
-            'RebuildingYear': StoryArcTemplate(),
-            'ChampionshipRun': StoryArcTemplate(),
-            'DynastyDefense': StoryArcTemplate()
+            "RebuildingYear": StoryArcTemplate(),
+            "ChampionshipRun": StoryArcTemplate(),
+            "DynastyDefense": StoryArcTemplate(),
         }
 
     def create_seasonal_engagement_plan(self, franchise_id: int, current_phase: str):
@@ -74,10 +93,10 @@ class SeasonalEngagementSystem:
         seasonal_challenges = self._setup_seasonal_challenges(current_phase)
 
         return {
-            'phase_engagement_hooks': phase_hooks,
-            'narrative_arcs': narrative_arcs,
-            'seasonal_challenges': seasonal_challenges,
-            'phase_transition_plan': self._create_phase_transition_plan(current_phase)
+            "phase_engagement_hooks": phase_hooks,
+            "narrative_arcs": narrative_arcs,
+            "seasonal_challenges": seasonal_challenges,
+            "phase_transition_plan": self._create_phase_transition_plan(current_phase),
         }
 ```
 
@@ -87,14 +106,32 @@ class SeasonalEngagementSystem:
 class DynamicSeasonStorytelling:
     def __init__(self):
         self.story_beats = {
-            'Weekly': {'frequency': 'weekly', 'content': ['game_previews', 'injury_updates', 'depth_chart_changes']},
-            'Monthly': {'frequency': 'monthly', 'content': ['division_race_updates', 'coaching_hot_seat', 'breakout_players']},
-            'Seasonal': {'frequency': 'seasonal', 'content': ['award_races', 'historical_comparisons', 'legacy_moments']}
+            "Weekly": {
+                "frequency": "weekly",
+                "content": ["game_previews", "injury_updates", "depth_chart_changes"],
+            },
+            "Monthly": {
+                "frequency": "monthly",
+                "content": ["division_race_updates", "coaching_hot_seat", "breakout_players"],
+            },
+            "Seasonal": {
+                "frequency": "seasonal",
+                "content": ["award_races", "historical_comparisons", "legacy_moments"],
+            },
         }
         self.emergent_narratives = {
-            'CinderellaStory': {'triggers': ['underdog_wins', 'rookie_breakouts'], 'arc': 'rise_to_prominence'},
-            'FallenGiant': {'triggers': ['dynasty_decline', 'star_injuries'], 'arc': 'struggle_to_rebuild'},
-            'RivalryRenewed': {'triggers': ['close_games', 'controversial_plays'], 'arc': 'intensifying_competition'}
+            "CinderellaStory": {
+                "triggers": ["underdog_wins", "rookie_breakouts"],
+                "arc": "rise_to_prominence",
+            },
+            "FallenGiant": {
+                "triggers": ["dynasty_decline", "star_injuries"],
+                "arc": "struggle_to_rebuild",
+            },
+            "RivalryRenewed": {
+                "triggers": ["close_games", "controversial_plays"],
+                "arc": "intensifying_competition",
+            },
         }
 
     def generate_dynamic_narratives(self, season_data: SeasonData, current_week: int):
@@ -111,11 +148,13 @@ class DynamicSeasonStorytelling:
         narrative_triggers = self._setup_narrative_triggers(emergent_storylines)
 
         return {
-            'emergent_storylines': emergent_storylines,
-            'scheduled_story_beats': scheduled_beats,
-            'personalized_narratives': personalized_narratives,
-            'narrative_triggers': narrative_triggers,
-            'story_progression_map': self._generate_story_progression_map(emergent_storylines, scheduled_beats)
+            "emergent_storylines": emergent_storylines,
+            "scheduled_story_beats": scheduled_beats,
+            "personalized_narratives": personalized_narratives,
+            "narrative_triggers": narrative_triggers,
+            "story_progression_map": self._generate_story_progression_map(
+                emergent_storylines, scheduled_beats
+            ),
         }
 ```
 
@@ -127,15 +166,21 @@ class DynamicSeasonStorytelling:
 class AdaptiveChallengeSystem:
     def __init__(self):
         self.challenge_tiers = {
-            'Rookie': {'difficulty': 0.7, 'rewards': {'xp': 1.0, 'prestige': 0.1}},
-            'Veteran': {'difficulty': 0.85, 'rewards': {'xp': 1.2, 'prestige': 0.2}},
-            'Legend': {'difficulty': 0.95, 'rewards': {'xp': 1.5, 'prestige': 0.3}},
-            'HallOfFame': {'difficulty': 0.99, 'rewards': {'xp': 2.0, 'prestige': 0.5}}
+            "Rookie": {"difficulty": 0.7, "rewards": {"xp": 1.0, "prestige": 0.1}},
+            "Veteran": {"difficulty": 0.85, "rewards": {"xp": 1.2, "prestige": 0.2}},
+            "Legend": {"difficulty": 0.95, "rewards": {"xp": 1.5, "prestige": 0.3}},
+            "HallOfFame": {"difficulty": 0.99, "rewards": {"xp": 2.0, "prestige": 0.5}},
         }
         self.challenge_categories = {
-            'SkillBased': {'examples': ['perfect_game', 'no_turnovers'], 'frequency': 'per_game'},
-            'Strategic': {'examples': ['salary_cap_optimization', 'draft_class_success'], 'frequency': 'per_season'},
-            'Narrative': {'examples': ['underdog_playoff_run', 'rebuild_to_championship'], 'frequency': 'multi_season'}
+            "SkillBased": {"examples": ["perfect_game", "no_turnovers"], "frequency": "per_game"},
+            "Strategic": {
+                "examples": ["salary_cap_optimization", "draft_class_success"],
+                "frequency": "per_season",
+            },
+            "Narrative": {
+                "examples": ["underdog_playoff_run", "rebuild_to_championship"],
+                "frequency": "multi_season",
+            },
         }
 
     def generate_challenge_sequence(self, user_id: int, current_skill_level: str):
@@ -143,7 +188,9 @@ class AdaptiveChallengeSystem:
         capability_assessment = self._assess_capabilities(user_id)
 
         # Generate tiered challenges
-        tiered_challenges = self._generate_tiered_challenges(capability_assessment, current_skill_level)
+        tiered_challenges = self._generate_tiered_challenges(
+            capability_assessment, current_skill_level
+        )
 
         # Create challenge progression path
         progression_path = self._create_progression_path(tiered_challenges)
@@ -152,10 +199,10 @@ class AdaptiveChallengeSystem:
         adaptive_difficulty = self._setup_adaptive_difficulty(user_id, tiered_challenges)
 
         return {
-            'tiered_challenges': tiered_challenges,
-            'progression_path': progression_path,
-            'adaptive_difficulty_settings': adaptive_difficulty,
-            'reward_structure': self._generate_reward_structure(tiered_challenges)
+            "tiered_challenges": tiered_challenges,
+            "progression_path": progression_path,
+            "adaptive_difficulty_settings": adaptive_difficulty,
+            "reward_structure": self._generate_reward_structure(tiered_challenges),
         }
 ```
 
@@ -165,17 +212,25 @@ class AdaptiveChallengeSystem:
 class DynamicRewardSystem:
     def __init__(self):
         self.reward_categories = {
-            'Immediate': {'examples': ['xp_boosts', 'temporary_bonuses'], 'impact': 'short_term'},
-            'Progressive': {'examples': ['player_development_accelerators', 'scouting_advantages'], 'impact': 'medium_term'},
-            'Legacy': {'examples': ['hall_of_fame_induction', 'franchise_immortality'], 'impact': 'long_term'}
+            "Immediate": {"examples": ["xp_boosts", "temporary_bonuses"], "impact": "short_term"},
+            "Progressive": {
+                "examples": ["player_development_accelerators", "scouting_advantages"],
+                "impact": "medium_term",
+            },
+            "Legacy": {
+                "examples": ["hall_of_fame_induction", "franchise_immortality"],
+                "impact": "long_term",
+            },
         }
         self.reward_scaling = {
-            'Linear': {'description': 'consistent_rewards_for_consistent_effort'},
-            'Exponential': {'description': 'increasing_rewards_for_increasing_achievement'},
-            'Logarithmic': {'description': 'diminishing_returns_for_repeated_achievements'}
+            "Linear": {"description": "consistent_rewards_for_consistent_effort"},
+            "Exponential": {"description": "increasing_rewards_for_increasing_achievement"},
+            "Logarithmic": {"description": "diminishing_returns_for_repeated_achievements"},
         }
 
-    def calculate_dynamic_rewards(self, achievement_data: AchievementData, user_context: UserContext):
+    def calculate_dynamic_rewards(
+        self, achievement_data: AchievementData, user_context: UserContext
+    ):
         # Calculate base rewards
         base_rewards = self._calculate_base_rewards(achievement_data)
 
@@ -189,11 +244,13 @@ class DynamicRewardSystem:
         reward_presentation = self._generate_reward_presentation(contextual_rewards)
 
         return {
-            'base_rewards': base_rewards,
-            'contextual_rewards': contextual_rewards,
-            'reward_pacing': reward_pacing,
-            'presentation_plan': reward_presentation,
-            'motivational_impact': self._calculate_motivational_impact(contextual_rewards, user_context)
+            "base_rewards": base_rewards,
+            "contextual_rewards": contextual_rewards,
+            "reward_pacing": reward_pacing,
+            "presentation_plan": reward_presentation,
+            "motivational_impact": self._calculate_motivational_impact(
+                contextual_rewards, user_context
+            ),
         }
 ```
 
@@ -205,14 +262,34 @@ class DynamicRewardSystem:
 class LeagueCompetitionSystem:
     def __init__(self):
         self.league_formats = {
-            'HeadToHead': {'structure': 'weekly_matchups', 'scoring': 'win_loss', 'season_length': '17_weeks'},
-            'FantasyIntegration': {'structure': 'roster_management', 'scoring': 'statistical', 'season_length': '17_weeks'},
-            'Survival': {'structure': 'elimination', 'scoring': 'win_or_go_home', 'season_length': 'variable'}
+            "HeadToHead": {
+                "structure": "weekly_matchups",
+                "scoring": "win_loss",
+                "season_length": "17_weeks",
+            },
+            "FantasyIntegration": {
+                "structure": "roster_management",
+                "scoring": "statistical",
+                "season_length": "17_weeks",
+            },
+            "Survival": {
+                "structure": "elimination",
+                "scoring": "win_or_go_home",
+                "season_length": "variable",
+            },
         }
         self.competition_tiers = {
-            'Casual': {'commitment': 'low', 'rewards': 'participation_based', 'social_pressure': 'minimal'},
-            'Competitive': {'commitment': 'medium', 'rewards': 'performance_based', 'social_pressure': 'moderate'},
-            'Elite': {'commitment': 'high', 'rewards': 'high_stakes', 'social_pressure': 'intense'}
+            "Casual": {
+                "commitment": "low",
+                "rewards": "participation_based",
+                "social_pressure": "minimal",
+            },
+            "Competitive": {
+                "commitment": "medium",
+                "rewards": "performance_based",
+                "social_pressure": "moderate",
+            },
+            "Elite": {"commitment": "high", "rewards": "high_stakes", "social_pressure": "intense"},
         }
 
     def manage_league_competition(self, league_id: int, competition_type: str):
@@ -229,11 +306,11 @@ class LeagueCompetitionSystem:
         social_interaction = self._facilitate_social_interaction(league_id)
 
         return {
-            'league_validation': league_validation,
-            'weekly_matchups': weekly_matchups,
-            'standings': league_standings,
-            'social_interaction': social_interaction,
-            'league_health_report': self._generate_league_health_report(league_id)
+            "league_validation": league_validation,
+            "weekly_matchups": weekly_matchups,
+            "standings": league_standings,
+            "social_interaction": social_interaction,
+            "league_health_report": self._generate_league_health_report(league_id),
         }
 ```
 
@@ -243,15 +320,21 @@ class LeagueCompetitionSystem:
 class SocialRecognitionSystem:
     def __init__(self):
         self.recognition_levels = {
-            'Participation': {'visibility': 'league', 'rewards': ['badges', 'mentions']},
-            'Achievement': {'visibility': 'community', 'rewards': ['trophies', 'leaderboard_placement']},
-            'Leadership': {'visibility': 'global', 'rewards': ['hall_of_fame', 'feature_spotlights']}
+            "Participation": {"visibility": "league", "rewards": ["badges", "mentions"]},
+            "Achievement": {
+                "visibility": "community",
+                "rewards": ["trophies", "leaderboard_placement"],
+            },
+            "Leadership": {
+                "visibility": "global",
+                "rewards": ["hall_of_fame", "feature_spotlights"],
+            },
         }
         self.recognition_channels = {
-            'InGame': {'format': 'notifications', 'frequency': 'real_time'},
-            'League': {'format': 'weekly_digest', 'frequency': 'weekly'},
-            'Community': {'format': 'monthly_highlights', 'frequency': 'monthly'},
-            'Global': {'format': 'annual_awards', 'frequency': 'annual'}
+            "InGame": {"format": "notifications", "frequency": "real_time"},
+            "League": {"format": "weekly_digest", "frequency": "weekly"},
+            "Community": {"format": "monthly_highlights", "frequency": "monthly"},
+            "Global": {"format": "annual_awards", "frequency": "annual"},
         }
 
     def manage_social_recognition(self, user_id: int, achievement_data: AchievementData):
@@ -268,11 +351,11 @@ class SocialRecognitionSystem:
         delivery_schedule = self._schedule_delivery(recognition_content, recognition_channels)
 
         return {
-            'recognition_level': recognition_level,
-            'recognition_channels': recognition_channels,
-            'recognition_content': recognition_content,
-            'delivery_schedule': delivery_schedule,
-            'social_impact': self._calculate_social_impact(recognition_level, user_id)
+            "recognition_level": recognition_level,
+            "recognition_channels": recognition_channels,
+            "recognition_content": recognition_content,
+            "delivery_schedule": delivery_schedule,
+            "social_impact": self._calculate_social_impact(recognition_level, user_id),
         }
 ```
 
@@ -284,15 +367,33 @@ class SocialRecognitionSystem:
 class DynamicUserProfiling:
     def __init__(self):
         self.user_archetypes = {
-            'TheStrategist': {'focus': 'tactical_decision_making', 'engagement_drivers': ['complexity', 'challenge']},
-            'TheStoryteller': {'focus': 'narrative_experience', 'engagement_drivers': ['drama', 'character_development']},
-            'TheStatistician': {'focus': 'analytical_depth', 'engagement_drivers': ['data', 'optimization']},
-            'TheSocialite': {'focus': 'community_interaction', 'engagement_drivers': ['recognition', 'collaboration']}
+            "TheStrategist": {
+                "focus": "tactical_decision_making",
+                "engagement_drivers": ["complexity", "challenge"],
+            },
+            "TheStoryteller": {
+                "focus": "narrative_experience",
+                "engagement_drivers": ["drama", "character_development"],
+            },
+            "TheStatistician": {
+                "focus": "analytical_depth",
+                "engagement_drivers": ["data", "optimization"],
+            },
+            "TheSocialite": {
+                "focus": "community_interaction",
+                "engagement_drivers": ["recognition", "collaboration"],
+            },
         }
         self.behavioral_patterns = {
-            'Completionist': {'behavior': 'seeks_100_percent_completion', 'motivation': 'achievement_unlocks'},
-            'Casual': {'behavior': 'short_frequent_sessions', 'motivation': 'immediate_rewards'},
-            'Competitive': {'behavior': 'focuses_on_leaderboards', 'motivation': 'social_recognition'}
+            "Completionist": {
+                "behavior": "seeks_100_percent_completion",
+                "motivation": "achievement_unlocks",
+            },
+            "Casual": {"behavior": "short_frequent_sessions", "motivation": "immediate_rewards"},
+            "Competitive": {
+                "behavior": "focuses_on_leaderboards",
+                "motivation": "social_recognition",
+            },
         }
 
     def create_user_investment_profile(self, user_id: int, behavioral_data: BehavioralData):
@@ -309,11 +410,11 @@ class DynamicUserProfiling:
         engagement_plan = self._generate_long_term_plan(user_id, investment_strategy)
 
         return {
-            'user_archetype': user_archetype,
-            'engagement_drivers': engagement_drivers,
-            'investment_strategy': investment_strategy,
-            'long_term_plan': engagement_plan,
-            'personalization_metrics': self._generate_personalization_metrics(investment_strategy)
+            "user_archetype": user_archetype,
+            "engagement_drivers": engagement_drivers,
+            "investment_strategy": investment_strategy,
+            "long_term_plan": engagement_plan,
+            "personalization_metrics": self._generate_personalization_metrics(investment_strategy),
         }
 ```
 
@@ -323,15 +424,31 @@ class DynamicUserProfiling:
 class ProgressiveInvestmentSystem:
     def __init__(self):
         self.investment_phases = {
-            'Discovery': {'duration': '0-1_month', 'focus': 'feature_exploration', 'rewards': 'immediate_gratification'},
-            'Commitment': {'duration': '1-6_months', 'focus': 'skill_development', 'rewards': 'progressive_achievements'},
-            'Mastery': {'duration': '6-12_months', 'focus': 'strategic_depth', 'rewards': 'social_recognition'},
-            'Legacy': {'duration': '12+_months', 'focus': 'community_leadership', 'rewards': 'lasting_impact'}
+            "Discovery": {
+                "duration": "0-1_month",
+                "focus": "feature_exploration",
+                "rewards": "immediate_gratification",
+            },
+            "Commitment": {
+                "duration": "1-6_months",
+                "focus": "skill_development",
+                "rewards": "progressive_achievements",
+            },
+            "Mastery": {
+                "duration": "6-12_months",
+                "focus": "strategic_depth",
+                "rewards": "social_recognition",
+            },
+            "Legacy": {
+                "duration": "12+_months",
+                "focus": "community_leadership",
+                "rewards": "lasting_impact",
+            },
         }
         self.investment_markers = {
-            'Time': {'thresholds': [10, 50, 100, 200], 'units': 'hours'},
-            'Achievement': {'thresholds': [5, 25, 50, 100], 'units': 'major_achievements'},
-            'Social': {'thresholds': [5, 20, 50, 100], 'units': 'meaningful_interactions'}
+            "Time": {"thresholds": [10, 50, 100, 200], "units": "hours"},
+            "Achievement": {"thresholds": [5, 25, 50, 100], "units": "major_achievements"},
+            "Social": {"thresholds": [5, 20, 50, 100], "units": "meaningful_interactions"},
         }
 
     def track_progressive_investment(self, user_id: int, engagement_data: EngagementData):
@@ -348,11 +465,11 @@ class ProgressiveInvestmentSystem:
         investment_recognition = self._create_investment_recognition(user_id, current_phase)
 
         return {
-            'current_phase': current_phase,
-            'investment_metrics': investment_metrics,
-            'transition_plan': transition_plan,
-            'investment_recognition': investment_recognition,
-            'long_term_value': self._calculate_long_term_value(investment_metrics)
+            "current_phase": current_phase,
+            "investment_metrics": investment_metrics,
+            "transition_plan": transition_plan,
+            "investment_recognition": investment_recognition,
+            "long_term_value": self._calculate_long_term_value(investment_metrics),
         }
 ```
 
@@ -364,18 +481,35 @@ class ProgressiveInvestmentSystem:
 class EmotionalStorytellingEngine:
     def __init__(self):
         self.emotional_arcs = {
-            'Triumph': {'structure': 'struggle_to_victory', 'emotions': ['hope', 'determination', 'joy']},
-            'Tragedy': {'structure': 'promise_to_disappointment', 'emotions': ['optimism', 'frustration', 'resolve']},
-            'Redemption': {'structure': 'failure_to_comeback', 'emotions': ['regret', 'perseverance', 'pride']},
-            'Underdog': {'structure': 'obscurity_to_recognition', 'emotions': ['doubt', 'growth', 'validation']}
+            "Triumph": {
+                "structure": "struggle_to_victory",
+                "emotions": ["hope", "determination", "joy"],
+            },
+            "Tragedy": {
+                "structure": "promise_to_disappointment",
+                "emotions": ["optimism", "frustration", "resolve"],
+            },
+            "Redemption": {
+                "structure": "failure_to_comeback",
+                "emotions": ["regret", "perseverance", "pride"],
+            },
+            "Underdog": {
+                "structure": "obscurity_to_recognition",
+                "emotions": ["doubt", "growth", "validation"],
+            },
         }
         self.character_archetypes = {
-            'TheVeteran': {'arc': 'experience_vs_youth', 'conflicts': ['aging', 'mentorship']},
-            'TheRookie': {'arc': 'potential_to_stardom', 'conflicts': ['pressure', 'adaptation']},
-            'TheJourneyman': {'arc': 'persistence_to_opportunity', 'conflicts': ['doubt', 'work_ethic']}
+            "TheVeteran": {"arc": "experience_vs_youth", "conflicts": ["aging", "mentorship"]},
+            "TheRookie": {"arc": "potential_to_stardom", "conflicts": ["pressure", "adaptation"]},
+            "TheJourneyman": {
+                "arc": "persistence_to_opportunity",
+                "conflicts": ["doubt", "work_ethic"],
+            },
         }
 
-    def create_emotional_narratives(self, season_data: SeasonData, user_preferences: UserPreferences):
+    def create_emotional_narratives(
+        self, season_data: SeasonData, user_preferences: UserPreferences
+    ):
         # Identify emotional story opportunities
         story_opportunities = self._identify_story_opportunities(season_data)
 
@@ -389,11 +523,11 @@ class EmotionalStorytellingEngine:
         emotional_pacing = self._create_emotional_pacing(emotional_arcs)
 
         return {
-            'story_opportunities': story_opportunities,
-            'emotional_arcs': emotional_arcs,
-            'character_narratives': character_narratives,
-            'emotional_pacing': emotional_pacing,
-            'narrative_impact': self._calculate_narrative_impact(emotional_arcs, user_preferences)
+            "story_opportunities": story_opportunities,
+            "emotional_arcs": emotional_arcs,
+            "character_narratives": character_narratives,
+            "emotional_pacing": emotional_pacing,
+            "narrative_impact": self._calculate_narrative_impact(emotional_arcs, user_preferences),
         }
 ```
 
@@ -403,35 +537,52 @@ class EmotionalStorytellingEngine:
 class LegacyStorytellingSystem:
     def __init__(self):
         self.legacy_themes = {
-            'DynastyBuilder': {'narrative': 'sustained_excellence', 'emotions': ['pride', 'pressure', 'legacy']},
-            'FranchiseSavior': {'narrative': 'turnaround_artist', 'emotions': ['challenge', 'innovation', 'validation']},
-            'PlayerDeveloper': {'narrative': 'talent_cultivator', 'emotions': ['potential', 'growth', 'mentorship']}
+            "DynastyBuilder": {
+                "narrative": "sustained_excellence",
+                "emotions": ["pride", "pressure", "legacy"],
+            },
+            "FranchiseSavior": {
+                "narrative": "turnaround_artist",
+                "emotions": ["challenge", "innovation", "validation"],
+            },
+            "PlayerDeveloper": {
+                "narrative": "talent_cultivator",
+                "emotions": ["potential", "growth", "mentorship"],
+            },
         }
         self.historical_contexts = {
-            'Comparative': {'approach': 'compare_to_nfl_legends', 'depth': 'statistical'},
-            'Narrative': {'approach': 'story_parallels', 'depth': 'thematic'},
-            'Cultural': {'approach': 'era_analysis', 'depth': 'contextual'}
+            "Comparative": {"approach": "compare_to_nfl_legends", "depth": "statistical"},
+            "Narrative": {"approach": "story_parallels", "depth": "thematic"},
+            "Cultural": {"approach": "era_analysis", "depth": "contextual"},
         }
 
-    def create_legacy_narratives(self, franchise_data: FranchiseData, historical_context: HistoricalContext):
+    def create_legacy_narratives(
+        self, franchise_data: FranchiseData, historical_context: HistoricalContext
+    ):
         # Analyze franchise legacy themes
         legacy_themes = self._analyze_legacy_themes(franchise_data)
 
         # Create historical comparisons
-        historical_comparisons = self._create_historical_comparisons(franchise_data, historical_context)
+        historical_comparisons = self._create_historical_comparisons(
+            franchise_data, historical_context
+        )
 
         # Develop legacy storytelling
-        legacy_storytelling = self._develop_legacy_storytelling(legacy_themes, historical_comparisons)
+        legacy_storytelling = self._develop_legacy_storytelling(
+            legacy_themes, historical_comparisons
+        )
 
         # Generate legacy recognition
         legacy_recognition = self._generate_legacy_recognition(franchise_data)
 
         return {
-            'legacy_themes': legacy_themes,
-            'historical_comparisons': historical_comparisons,
-            'legacy_storytelling': legacy_storytelling,
-            'legacy_recognition': legacy_recognition,
-            'cultural_impact': self._calculate_cultural_impact(legacy_themes, historical_comparisons)
+            "legacy_themes": legacy_themes,
+            "historical_comparisons": historical_comparisons,
+            "legacy_storytelling": legacy_storytelling,
+            "legacy_recognition": legacy_recognition,
+            "cultural_impact": self._calculate_cultural_impact(
+                legacy_themes, historical_comparisons
+            ),
         }
 ```
 

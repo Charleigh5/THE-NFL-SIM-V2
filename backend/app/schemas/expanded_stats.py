@@ -5,22 +5,22 @@ DEPRECATED: Re-exports unified stats schemas from app.schemas.stats.
 """
 
 from app.schemas.stats import (
-    PositionType,
+    DefensiveBackStat,
+    DefensiveLineStat,
+    KickerStat,
+    LeagueLeaders,
+    LinebackerStat,
+    OffensiveLineStat,
+    PlayerLeader,
     PlayerStat,
+    PositionType,
+    PunterStat,
     QuarterbackStat,
     RunningBackStat,
-    WideReceiverStat,
-    TightEndStat,
-    OffensiveLineStat,
-    DefensiveLineStat,
-    LinebackerStat,
-    DefensiveBackStat,
-    KickerStat,
-    PunterStat,
     SpecialTeamsStat,
-    LeagueLeaders,
     TeamStats,
-    PlayerLeader,
+    TightEndStat,
+    WideReceiverStat,
 )
 
 __all__ = [

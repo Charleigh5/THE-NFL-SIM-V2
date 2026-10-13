@@ -5,14 +5,15 @@ Pydantic V2 schemas for player stats, position-specific breakdowns,
 league leaders (standard and expanded), and team stats.
 """
 
-from enum import Enum
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from enum import StrEnum
+from typing import Any
 
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 # ============================================================================
 # BASIC LEADER SCHEMAS
 # ============================================================================
+
 
 class PlayerLeader(BaseModel):
     player_id: int
@@ -29,8 +30,10 @@ class PlayerLeader(BaseModel):
 # POSITION TYPES & BASE STAT MODELS
 # ============================================================================
 
-class PositionType(str, Enum):
+
+class PositionType(StrEnum):
     """NFL Position Types"""
+
     QB = "Quarterback"
     RB = "Running Back"
     WR = "Wide Receiver"
@@ -46,19 +49,21 @@ class PositionType(str, Enum):
 
 class PlayerStat(BaseModel):
     """Base player statistics with common fields"""
+
     player_id: int
     name: str
     team: str
     position: PositionType
     games_played: int
-    games_started: Optional[int] = None
-    approximate_value: Optional[float] = None
+    games_started: int | None = None
+    approximate_value: float | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class QuarterbackStat(PlayerStat):
     """Comprehensive quarterback statistics"""
+
     passing_attempts: int = 0
     completions: int = 0
     passing_yards: int = 0
@@ -71,17 +76,17 @@ class QuarterbackStat(PlayerStat):
     rushing_yards: int = 0
     rushing_touchdowns: int = 0
 
-    completion_percentage: Optional[float] = None
-    yards_per_attempt: Optional[float] = None
-    adjusted_yards_per_attempt: Optional[float] = None
-    net_yards_per_attempt: Optional[float] = None
-    adjusted_net_yards_per_attempt: Optional[float] = None
-    touchdown_percentage: Optional[float] = None
-    interception_percentage: Optional[float] = None
-    sack_percentage: Optional[float] = None
-    passer_rating: Optional[float] = None
+    completion_percentage: float | None = None
+    yards_per_attempt: float | None = None
+    adjusted_yards_per_attempt: float | None = None
+    net_yards_per_attempt: float | None = None
+    adjusted_net_yards_per_attempt: float | None = None
+    touchdown_percentage: float | None = None
+    interception_percentage: float | None = None
+    sack_percentage: float | None = None
+    passer_rating: float | None = None
 
-    fantasy_points: Optional[float] = None
+    fantasy_points: float | None = None
     two_point_conversions: int = 0
     fumbles: int = 0
     fumbles_lost: int = 0
@@ -95,27 +100,28 @@ class QuarterbackStat(PlayerStat):
 
 class RunningBackStat(PlayerStat):
     """Comprehensive running back statistics"""
+
     rushing_attempts: int = 0
     rushing_yards: int = 0
     rushing_touchdowns: int = 0
-    longest_rush: Optional[int] = None
+    longest_rush: int | None = None
 
     receptions: int = 0
     receiving_yards: int = 0
     receiving_touchdowns: int = 0
-    longest_reception: Optional[int] = None
-    targets: Optional[int] = None
+    longest_reception: int | None = None
+    targets: int | None = None
 
-    yards_from_scrimmage: Optional[int] = None
-    total_touchdowns: Optional[int] = None
-    yards_per_rush: Optional[float] = None
-    yards_per_reception: Optional[float] = None
-    receptions_per_game: Optional[float] = None
+    yards_from_scrimmage: int | None = None
+    total_touchdowns: int | None = None
+    yards_per_rush: float | None = None
+    yards_per_reception: float | None = None
+    receptions_per_game: float | None = None
 
     fumbles: int = 0
     fumbles_lost: int = 0
 
-    fantasy_points: Optional[float] = None
+    fantasy_points: float | None = None
     two_point_conversions: int = 0
 
     @model_validator(mode="after")
@@ -127,22 +133,23 @@ class RunningBackStat(PlayerStat):
 
 class WideReceiverStat(PlayerStat):
     """Comprehensive wide receiver statistics"""
+
     receptions: int = 0
     receiving_yards: int = 0
     receiving_touchdowns: int = 0
-    longest_reception: Optional[int] = None
-    targets: Optional[int] = None
+    longest_reception: int | None = None
+    targets: int | None = None
 
-    yards_per_reception: Optional[float] = None
-    receptions_per_game: Optional[float] = None
-    catch_percentage: Optional[float] = None
-    yards_per_target: Optional[float] = None
-    air_yards: Optional[int] = None
-    yards_after_catch: Optional[int] = None
+    yards_per_reception: float | None = None
+    receptions_per_game: float | None = None
+    catch_percentage: float | None = None
+    yards_per_target: float | None = None
+    air_yards: int | None = None
+    yards_after_catch: int | None = None
 
-    pass_blocking_snaps: Optional[int] = None
-    run_blocking_snaps: Optional[int] = None
-    pressures_allowed: Optional[int] = None
+    pass_blocking_snaps: int | None = None
+    run_blocking_snaps: int | None = None
+    pressures_allowed: int | None = None
     penalties: int = 0
 
     rushing_attempts: int = 0
@@ -152,31 +159,33 @@ class WideReceiverStat(PlayerStat):
     fumbles: int = 0
     fumbles_lost: int = 0
 
-    fantasy_points: Optional[float] = None
+    fantasy_points: float | None = None
     two_point_conversions: int = 0
 
 
 class TightEndStat(PlayerStat):
     """Comprehensive tight end statistics"""
+
     receptions: int = 0
     receiving_yards: int = 0
     receiving_touchdowns: int = 0
-    longest_reception: Optional[int] = None
-    targets: Optional[int] = None
+    longest_reception: int | None = None
+    targets: int | None = None
 
-    pancake_blocks: Optional[int] = None
-    blocking_efficiency: Optional[float] = None
+    pancake_blocks: int | None = None
+    blocking_efficiency: float | None = None
 
-    yards_per_reception: Optional[float] = None
-    receptions_per_game: Optional[float] = None
-    catch_percentage: Optional[float] = None
+    yards_per_reception: float | None = None
+    receptions_per_game: float | None = None
+    catch_percentage: float | None = None
 
-    fantasy_points: Optional[float] = None
+    fantasy_points: float | None = None
     two_point_conversions: int = 0
 
 
 class OffensiveLineStat(PlayerStat):
     """Comprehensive offensive line statistics"""
+
     snaps_played: int = 0
     pass_blocking_snaps: int = 0
     run_blocking_snaps: int = 0
@@ -185,9 +194,9 @@ class OffensiveLineStat(PlayerStat):
     hits_allowed: int = 0
     hurries_allowed: int = 0
     pressures_allowed: int = 0
-    pass_blocking_efficiency: Optional[float] = None
+    pass_blocking_efficiency: float | None = None
 
-    run_blocking_grade: Optional[float] = None
+    run_blocking_grade: float | None = None
     blown_blocks: int = 0
 
     penalties: int = 0
@@ -197,6 +206,7 @@ class OffensiveLineStat(PlayerStat):
 
 class DefensiveLineStat(PlayerStat):
     """Comprehensive defensive line statistics"""
+
     tackles_total: int = 0
     tackles_solo: int = 0
     tackles_assist: int = 0
@@ -206,8 +216,8 @@ class DefensiveLineStat(PlayerStat):
     quarterback_hits: int = 0
     hurries: int = 0
     pressures: int = 0
-    pressure_rate: Optional[float] = None
-    pass_rush_win_rate: Optional[float] = None
+    pressure_rate: float | None = None
+    pass_rush_win_rate: float | None = None
 
     forced_fumbles: int = 0
     fumbles_recovered: int = 0
@@ -219,6 +229,7 @@ class DefensiveLineStat(PlayerStat):
 
 class LinebackerStat(PlayerStat):
     """Comprehensive linebacker statistics"""
+
     tackles_total: int = 0
     tackles_solo: int = 0
     tackles_assist: int = 0
@@ -228,12 +239,12 @@ class LinebackerStat(PlayerStat):
     quarterback_hits: int = 0
     pressures: int = 0
 
-    targets_in_coverage: Optional[int] = None
-    receptions_allowed: Optional[int] = None
-    yards_allowed: Optional[int] = None
+    targets_in_coverage: int | None = None
+    receptions_allowed: int | None = None
+    yards_allowed: int | None = None
     interceptions: int = 0
     passes_defensed: int = 0
-    passer_rating_allowed: Optional[float] = None
+    passer_rating_allowed: float | None = None
 
     forced_fumbles: int = 0
     fumbles_recovered: int = 0
@@ -242,13 +253,14 @@ class LinebackerStat(PlayerStat):
 
 class DefensiveBackStat(PlayerStat):
     """Comprehensive defensive back statistics"""
+
     targets: int = 0
     receptions_allowed: int = 0
     yards_allowed: int = 0
     touchdowns_allowed: int = 0
-    completion_percentage_allowed: Optional[float] = None
-    yards_per_coverage_snap: Optional[float] = None
-    passer_rating_allowed: Optional[float] = None
+    completion_percentage_allowed: float | None = None
+    yards_per_coverage_snap: float | None = None
+    passer_rating_allowed: float | None = None
 
     interceptions: int = 0
     passes_defensed: int = 0
@@ -259,7 +271,7 @@ class DefensiveBackStat(PlayerStat):
     tackles_solo: int = 0
     tackles_assist: int = 0
     missed_tackles: int = 0
-    missed_tackle_percentage: Optional[float] = None
+    missed_tackle_percentage: float | None = None
 
     forced_fumbles: int = 0
     fumbles_recovered: int = 0
@@ -268,10 +280,11 @@ class DefensiveBackStat(PlayerStat):
 
 class KickerStat(PlayerStat):
     """Comprehensive kicker statistics"""
+
     field_goals_attempted: int = 0
     field_goals_made: int = 0
-    field_goal_percentage: Optional[float] = None
-    longest_field_goal: Optional[int] = None
+    field_goal_percentage: float | None = None
+    longest_field_goal: int | None = None
 
     fg_1_19_made: int = 0
     fg_1_19_att: int = 0
@@ -286,20 +299,21 @@ class KickerStat(PlayerStat):
 
     extra_points_attempted: int = 0
     extra_points_made: int = 0
-    extra_point_percentage: Optional[float] = None
+    extra_point_percentage: float | None = None
 
     points: int = 0
     kickoffs: int = 0
     touchbacks: int = 0
-    touchback_percentage: Optional[float] = None
+    touchback_percentage: float | None = None
 
 
 class PunterStat(PlayerStat):
     """Comprehensive punter statistics"""
+
     punts: int = 0
     punting_yards: int = 0
-    yards_per_punt: Optional[float] = None
-    longest_punt: Optional[int] = None
+    yards_per_punt: float | None = None
+    longest_punt: int | None = None
     punts_inside_20: int = 0
     touchbacks: int = 0
     punts_blocked: int = 0
@@ -307,6 +321,7 @@ class PunterStat(PlayerStat):
 
 class SpecialTeamsStat(PlayerStat):
     """Comprehensive special teams statistics"""
+
     kickoff_returns: int = 0
     kickoff_return_yards: int = 0
     kickoff_return_touchdowns: int = 0
@@ -317,8 +332,8 @@ class SpecialTeamsStat(PlayerStat):
     special_teams_tackles: int = 0
     blocked_kicks: int = 0
 
-    yards_per_kickoff_return: Optional[float] = None
-    yards_per_punt_return: Optional[float] = None
+    yards_per_kickoff_return: float | None = None
+    yards_per_punt_return: float | None = None
     fair_catches: int = 0
 
 
@@ -326,44 +341,47 @@ class SpecialTeamsStat(PlayerStat):
 # LEAGUE LEADERS & TEAM STATS
 # ============================================================================
 
+
 class LeagueLeaders(BaseModel):
     """Unified league leaders supporting both basic categories and expanded metrics."""
-    passing_yards: List[Any] = Field(default_factory=list)
-    passing_tds: Optional[List[Any]] = Field(default_factory=list)
-    rushing_yards: List[Any] = Field(default_factory=list)
-    rushing_tds: Optional[List[Any]] = Field(default_factory=list)
-    receiving_yards: List[Any] = Field(default_factory=list)
-    receiving_tds: Optional[List[Any]] = Field(default_factory=list)
+
+    passing_yards: list[Any] = Field(default_factory=list)
+    passing_tds: list[Any] | None = Field(default_factory=list)
+    rushing_yards: list[Any] = Field(default_factory=list)
+    rushing_tds: list[Any] | None = Field(default_factory=list)
+    receiving_yards: list[Any] = Field(default_factory=list)
+    receiving_tds: list[Any] | None = Field(default_factory=list)
 
     # Expanded / alternative metric fields
-    passing_touchdowns: Optional[List[Any]] = None
-    passer_rating: Optional[List[Any]] = None
-    completion_percentage: Optional[List[Any]] = None
-    adjusted_net_yards_per_attempt: Optional[List[Any]] = None
-    rushing_touchdowns: Optional[List[Any]] = None
-    yards_per_carry: Optional[List[Any]] = None
-    receiving_touchdowns: Optional[List[Any]] = None
-    receptions: Optional[List[Any]] = None
-    yards_per_reception: Optional[List[Any]] = None
-    sacks: Optional[List[Any]] = None
-    interceptions: Optional[List[Any]] = None
-    total_tackles: Optional[List[Any]] = None
-    passes_defensed: Optional[List[Any]] = None
-    forced_fumbles: Optional[List[Any]] = None
-    field_goal_percentage: Optional[List[Any]] = None
-    punting_average: Optional[List[Any]] = None
-    kickoff_return_yards: Optional[List[Any]] = None
-    punt_return_yards: Optional[List[Any]] = None
-    passer_rating_against: Optional[List[Any]] = None
-    pressure_rate: Optional[List[Any]] = None
-    tackle_efficiency: Optional[List[Any]] = None
-    fantasy_points: Optional[List[Any]] = None
+    passing_touchdowns: list[Any] | None = None
+    passer_rating: list[Any] | None = None
+    completion_percentage: list[Any] | None = None
+    adjusted_net_yards_per_attempt: list[Any] | None = None
+    rushing_touchdowns: list[Any] | None = None
+    yards_per_carry: list[Any] | None = None
+    receiving_touchdowns: list[Any] | None = None
+    receptions: list[Any] | None = None
+    yards_per_reception: list[Any] | None = None
+    sacks: list[Any] | None = None
+    interceptions: list[Any] | None = None
+    total_tackles: list[Any] | None = None
+    passes_defensed: list[Any] | None = None
+    forced_fumbles: list[Any] | None = None
+    field_goal_percentage: list[Any] | None = None
+    punting_average: list[Any] | None = None
+    kickoff_return_yards: list[Any] | None = None
+    punt_return_yards: list[Any] | None = None
+    passer_rating_against: list[Any] | None = None
+    pressure_rate: list[Any] | None = None
+    tackle_efficiency: list[Any] | None = None
+    fantasy_points: list[Any] | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class TeamStats(BaseModel):
     """Team-level statistics."""
+
     team_id: int
     team_name: str
     season: int
@@ -376,8 +394,8 @@ class TeamStats(BaseModel):
     passing_yards: int = 0
     rushing_yards: int = 0
     turnovers: int = 0
-    third_down_conversion_rate: Optional[float] = None
-    red_zone_efficiency: Optional[float] = None
+    third_down_conversion_rate: float | None = None
+    red_zone_efficiency: float | None = None
 
     points_allowed: int = 0
     total_yards_allowed: int = 0
@@ -387,13 +405,13 @@ class TeamStats(BaseModel):
     sacks: int = 0
     interceptions: int = 0
 
-    field_goal_percentage: Optional[float] = None
-    punt_return_average: Optional[float] = None
-    kickoff_return_average: Optional[float] = None
+    field_goal_percentage: float | None = None
+    punt_return_average: float | None = None
+    kickoff_return_average: float | None = None
 
-    strength_of_schedule: Optional[float] = None
-    simple_rating_system: Optional[float] = None
-    expected_wins: Optional[float] = None
-    turnover_margin: Optional[int] = None
+    strength_of_schedule: float | None = None
+    simple_rating_system: float | None = None
+    expected_wins: float | None = None
+    turnover_margin: int | None = None
 
     model_config = ConfigDict(from_attributes=True)

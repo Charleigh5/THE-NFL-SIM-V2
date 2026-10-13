@@ -1,10 +1,10 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+
 
 class StadiumBase(BaseModel):
     name: str
     city: str
-    state: Optional[str] = None
+    state: str | None = None
     country: str = "USA"
     capacity: int
     type: str
@@ -12,10 +12,12 @@ class StadiumBase(BaseModel):
     year_built: int
     altitude: int = 0
     dome: bool = False
-    image_url: Optional[str] = None
+    image_url: str | None = None
+
 
 class StadiumCreate(StadiumBase):
     pass
+
 
 class Stadium(StadiumBase):
     id: int

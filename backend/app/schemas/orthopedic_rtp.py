@@ -7,30 +7,40 @@ Pydantic V2 schemas for:
 3. Live physics 60Hz cortisone hazard calculations
 """
 
-from typing import List, Optional, Literal, Dict, Any
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RTPCurvePoint(BaseModel):
     """Weekly milestone on the non-linear tissue recovery curve."""
+
     week: int = Field(..., ge=0, le=12, description="Week index (0-12)")
-    health_percentage: float = Field(..., ge=0.0, le=100.0, description="Estimated tissue integrity percentage")
-    re_injury_risk_pct: float = Field(..., ge=0.0, le=100.0, description="Re-injury probability percentage")
-    on_field_effectiveness_pct: float = Field(..., ge=0.0, le=100.0, description="On-field athletic performance index")
+    health_percentage: float = Field(
+        ..., ge=0.0, le=100.0, description="Estimated tissue integrity percentage"
+    )
+    re_injury_risk_pct: float = Field(
+        ..., ge=0.0, le=100.0, description="Re-injury probability percentage"
+    )
+    on_field_effectiveness_pct: float = Field(
+        ..., ge=0.0, le=100.0, description="On-field athletic performance index"
+    )
 
 
 class TreatmentTrajectory(BaseModel):
     """Comparative trajectory curve for a specific medical protocol."""
+
     protocol: Literal["CONSERVATIVE", "BIOLOGIC_PRP", "ARTHROSCOPIC", "OPEN_SURGERY", "CORTISONE"]
     label: str
     est_recovery_weeks: int = Field(..., ge=0, le=52)
     complication_risk_pct: float = Field(..., ge=0.0, le=100.0)
     total_medical_cost: int = Field(..., ge=0)
-    curve: List[RTPCurvePoint]
+    curve: list[RTPCurvePoint]
 
 
 class SecondOpinionCenter(BaseModel):
     """Elite outside orthopedic surgical & consultation center."""
+
     center_id: str
     name: str
     specialty_region: str
@@ -42,12 +52,14 @@ class SecondOpinionCenter(BaseModel):
 
 class SecondOpinionRequest(BaseModel):
     """Request payload for dispatching athlete to an outside specialist."""
+
     player_id: int
     center_id: str
 
 
 class SecondOpinionConsultResult(BaseModel):
     """Clinical findings report from outside specialist consultation."""
+
     player_id: int
     center_id: str
     center_name: str
@@ -63,6 +75,7 @@ class SecondOpinionConsultResult(BaseModel):
 
 class CortisoneHazardCheckRequest(BaseModel):
     """Telemetry payload for in-game cortisone strain hazard check."""
+
     runner_has_cortisone: bool
     is_sharp_cut: bool = False
     g_force: float = 0.0
@@ -71,6 +84,7 @@ class CortisoneHazardCheckRequest(BaseModel):
 
 class CortisoneHazardCheckResponse(BaseModel):
     """Evaluation result for in-game tissue strain under cortisone masking."""
+
     catastrophic_rupture: bool
     hazard_multiplier: float
     effective_risk_pct: float
@@ -79,16 +93,17 @@ class CortisoneHazardCheckResponse(BaseModel):
 
 class OrthopedicEvaluationResponse(BaseModel):
     """Comprehensive orthopedic evaluation containing all trajectories and specialist options."""
+
     player_id: int
-    player_name: Optional[str] = None
+    player_name: str | None = None
     injury_type: str
     body_part: str
     severity_grade: int
     baseline_health: float
     is_cortisone_active: bool = False
     has_specialist_clearance: bool = False
-    specialist_center_name: Optional[str] = None
-    trajectories: List[TreatmentTrajectory]
-    specialist_centers: List[SecondOpinionCenter]
+    specialist_center_name: str | None = None
+    trajectories: list[TreatmentTrajectory]
+    specialist_centers: list[SecondOpinionCenter]
     cortisone_in_game_hazard_multiplier: float = 2.5
     model_config = ConfigDict(from_attributes=True)

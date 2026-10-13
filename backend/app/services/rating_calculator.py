@@ -9,9 +9,8 @@ Based on industry research:
 - Key attributes for each position carry higher weights
 - Speed/Awareness are important across positions but vary in weight
 """
-from typing import Dict, Optional
-from app.models.player import Player
 
+from app.models.player import Player
 
 # =============================================================================
 # POSITION WEIGHT DEFINITIONS (Madden-inspired)
@@ -19,7 +18,7 @@ from app.models.player import Player
 # Weights are normalized to sum to 1.0 for each position
 # Based on research: https://dexalytics.com/madden-nfl-player-ratings-explained
 
-POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
+POSITION_WEIGHTS: dict[str, dict[str, float]] = {
     # -------------------------------------------------------------------------
     # QUARTERBACK
     # -------------------------------------------------------------------------
@@ -40,7 +39,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.03,
         "injury_resistance": 0.02,
     },
-
     # -------------------------------------------------------------------------
     # RUNNING BACK
     # -------------------------------------------------------------------------
@@ -59,7 +57,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.04,
         "injury_resistance": 0.02,
     },
-
     # -------------------------------------------------------------------------
     # WIDE RECEIVER
     # -------------------------------------------------------------------------
@@ -77,7 +74,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "height": 0.04,  # Special: taller WRs have advantage
         "injury_resistance": 0.02,
     },
-
     # -------------------------------------------------------------------------
     # TIGHT END
     # -------------------------------------------------------------------------
@@ -96,7 +92,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.04,
         "injury_resistance": 0.03,
     },
-
     # -------------------------------------------------------------------------
     # OFFENSIVE LINE (OT, OG, C)
     # -------------------------------------------------------------------------
@@ -142,7 +137,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "speed": 0.03,
         "injury_resistance": 0.03,
     },
-
     # -------------------------------------------------------------------------
     # DEFENSIVE LINE
     # -------------------------------------------------------------------------
@@ -176,7 +170,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.04,
         "injury_resistance": 0.04,
     },
-
     # -------------------------------------------------------------------------
     # LINEBACKER
     # -------------------------------------------------------------------------
@@ -197,7 +190,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.03,
         "coverage_disguise": 0.02,
     },
-
     # -------------------------------------------------------------------------
     # DEFENSIVE BACKS
     # -------------------------------------------------------------------------
@@ -233,7 +225,6 @@ POSITION_WEIGHTS: Dict[str, Dict[str, float]] = {
         "stamina": 0.04,
         "injury_resistance": 0.03,
     },
-
     # -------------------------------------------------------------------------
     # SPECIALISTS
     # -------------------------------------------------------------------------
@@ -318,15 +309,20 @@ class RatingCalculator:
         Uses core athletic attributes that apply to all positions.
         """
         core_attrs = [
-            "speed", "acceleration", "strength", "agility",
-            "awareness", "stamina", "injury_resistance"
+            "speed",
+            "acceleration",
+            "strength",
+            "agility",
+            "awareness",
+            "stamina",
+            "injury_resistance",
         ]
 
         total = sum(getattr(player, attr, 50) for attr in core_attrs)
         return int(max(40, min(99, total / len(core_attrs))))
 
     @staticmethod
-    def get_position_weights(position: str) -> Optional[Dict[str, float]]:
+    def get_position_weights(position: str) -> dict[str, float] | None:
         """
         Get the weight configuration for a position.
 

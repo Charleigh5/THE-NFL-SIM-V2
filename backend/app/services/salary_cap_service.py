@@ -1,21 +1,22 @@
+from typing import Any
 
-
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, select
-from typing import List, Dict, Any, Optional
-from app.models.player import Player, Position
-from app.models.team import Team
+
+from app.models.player import Player
 from app.models.season import Season
+from app.models.team import Team
 
 
 class SalaryCapService:
     """
     Service for calculating and analyzing team salary cap situations.
     """
+
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def calculate_top51_cap(self, team_id: int, season_id: Optional[int] = None) -> int:
+    def calculate_top51_cap(self, team_id: int, season_id: int | None = None) -> int:
         """
         NFL CBA Top-51 Rule Calculation.
         During the offseason, only the top 51 largest contract_salary amounts
@@ -26,7 +27,7 @@ class SalaryCapService:
         sorted_salaries = sorted([int(p.contract_salary or 0) for p in players], reverse=True)
         return sum(sorted_salaries[:51])
 
-    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> Dict[str, Any]:
+    def get_team_cap_breakdown(self, team_id: int, season_id: int) -> dict[str, Any]:
         """
         Get a detailed breakdown of a team's salary cap situation.
         Applies the NFL CBA Top-51 rule when season is not in REGULAR_SEASON.
@@ -46,7 +47,9 @@ class SalaryCapService:
 
         is_offseason = False
         if season:
-            status_val = season.status.value if hasattr(season.status, "value") else str(season.status)
+            status_val = (
+                season.status.value if hasattr(season.status, "value") else str(season.status)
+            )
             is_offseason = status_val != "REGULAR_SEASON"
 
         # Calculate total cap usage (Top-51 rule applies in offseason)
@@ -64,7 +67,7 @@ class SalaryCapService:
                 "name": f"{p.first_name} {p.last_name}",
                 "position": p.position,
                 "salary": p.contract_salary,
-                "years_left": p.contract_years
+                "years_left": p.contract_years,
             }
             for p in top_contracts
         ]
@@ -78,7 +81,7 @@ class SalaryCapService:
             "DL": ["DE", "DT"],
             "LB": ["LB"],
             "DB": ["CB", "S"],
-            "ST": ["K", "P"]
+            "ST": ["K", "P"],
         }
 
         pos_breakdown = []
@@ -89,11 +92,13 @@ class SalaryCapService:
             else:
                 percentage = 0
 
-            pos_breakdown.append({
-                "group": group_name,
-                "total_salary": group_salary,
-                "percentage": round(percentage, 1)
-            })
+            pos_breakdown.append(
+                {
+                    "group": group_name,
+                    "total_salary": group_salary,
+                    "percentage": round(percentage, 1),
+                }
+            )
 
         # Sort breakdown by salary
         pos_breakdown.sort(key=lambda x: x["total_salary"], reverse=True)
@@ -106,7 +111,7 @@ class SalaryCapService:
 
         # Calculate projected rookie pool (simplified estimation based on draft picks)
         # In a real scenario, we'd look at specific draft picks owned
-        projected_rookie_impact = 10000000 # Placeholder $10M rookie pool
+        projected_rookie_impact = 10000000  # Placeholder $10M rookie pool
 
         total_cap = getattr(team, "salary_cap_total", None) or 255000000.0
         available_cap = getattr(team, "salary_cap_space", None)

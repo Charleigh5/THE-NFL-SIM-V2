@@ -1,13 +1,12 @@
-from typing import List, Dict, Optional
+import structlog
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.models.player import Player
 from app.models.stats import PlayerSeasonStats
 from app.services.trait_service import TraitService
-from app.services.gm_agent import GMAgent
-import structlog
 
 logger = structlog.get_logger()
+
 
 class TraitAcquisitionService:
     """
@@ -31,10 +30,14 @@ class TraitAcquisitionService:
             # 1. Check Stat Thresholds
             # We need stats for the season.
             # Assuming PlayerSeasonStats exists and is keyed by player_id, season_id
-            stats = db.query(PlayerSeasonStats).filter(
-                PlayerSeasonStats.player_id == player.id,
-                PlayerSeasonStats.season_id == season_id
-            ).first()
+            stats = (
+                db.query(PlayerSeasonStats)
+                .filter(
+                    PlayerSeasonStats.player_id == player.id,
+                    PlayerSeasonStats.season_id == season_id,
+                )
+                .first()
+            )
 
             if stats:
                 new_traits = TraitAcquisitionService.check_stat_thresholds(player, stats)
@@ -44,7 +47,7 @@ class TraitAcquisitionService:
                         db,
                         player.id,
                         trait_name,
-                        source="MILESTONE" # or DEVELOPMENT
+                        source="MILESTONE",  # or DEVELOPMENT
                     )
                     if result:
                         granted_count += 1
@@ -64,7 +67,7 @@ class TraitAcquisitionService:
         return granted_count
 
     @staticmethod
-    def check_stat_thresholds(player: Player, stats: PlayerSeasonStats) -> List[str]:
+    def check_stat_thresholds(player: Player, stats: PlayerSeasonStats) -> list[str]:
         """
         Checks if player stats meet thresholds for specific traits.
         Returns list of trait names to grant.
@@ -94,7 +97,11 @@ class TraitAcquisitionService:
         # WR Traits
         elif player.position in ["WR", "TE"]:
             # Deep Threat: > 1200 yards, > 15 YPC
-            ypc = (stats.receiving_yards or 0) / (stats.receptions or 1) if (stats.receptions or 0) > 0 else 0
+            ypc = (
+                (stats.receiving_yards or 0) / (stats.receptions or 1)
+                if (stats.receptions or 0) > 0
+                else 0
+            )
             if (stats.receiving_yards or 0) > 1200 and ypc > 15.0:
                 grant_list.append("deep_threat")
 

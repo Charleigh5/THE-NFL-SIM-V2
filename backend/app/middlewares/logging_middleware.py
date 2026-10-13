@@ -4,8 +4,10 @@ import uuid
 
 logger = logging.getLogger("api.access")
 
+
 class LoggingMiddleware:
     """Pure ASGI logging middleware providing sub-millisecond dispatch and header injection."""
+
     def __init__(self, app):
         self.app = app
 
@@ -35,11 +37,11 @@ class LoggingMiddleware:
         except Exception as e:
             process_time = (time.time() - start_time) * 1000
             logger.error(
-                f"Request failed",
+                "Request failed",
                 extra={
                     "request_id": request_id,
                     "error": str(e),
                     "process_time_ms": round(process_time, 2),
-                }
+                },
             )
             raise e

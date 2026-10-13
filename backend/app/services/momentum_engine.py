@@ -8,7 +8,8 @@ High-performance analytical engine calculating:
 """
 
 import math
-from typing import List, Optional, Dict, Any
+from typing import Any
+
 from app.engine.fourth_down_calculator import FourthDownCalculator, FourthDownRecommendation
 from app.schemas.hud_telemetry import (
     FourthDownTelemetryPayload,
@@ -166,7 +167,7 @@ class MomentumEngine:
     def generate_momentum_flow(
         cls,
         game_id: int,
-        plays: Optional[List[Dict[str, Any]]] = None,
+        plays: list[dict[str, Any]] | None = None,
         home_team_abbr: str = "GB",
         away_team_abbr: str = "CHI",
         home_score: int = 24,
@@ -176,7 +177,7 @@ class MomentumEngine:
         Generates the sequential play-by-play momentum curve with EPA and Win Probability deltas.
         """
         if plays and len(plays) > 0:
-            nodes: List[GameMomentumPlayNode] = []
+            nodes: list[GameMomentumPlayNode] = []
             for idx, p in enumerate(plays):
                 home_wp = float(p.get("home_win_prob", 0.5))
                 away_wp = round(1.0 - home_wp, 4)
@@ -214,17 +215,117 @@ class MomentumEngine:
             )
 
         # Deterministic simulation trajectory for active live game
-        seed_plays: List[Dict[str, Any]] = [
-            {"quarter": 1, "game_clock": "15:00", "down": 1, "distance": 10, "yard_line": 25, "description": "Opening Kickoff returned to GB 25", "home_win_prob": 0.52, "play_epa": 0.05, "is_key_event": False},
-            {"quarter": 1, "game_clock": "13:20", "down": 2, "distance": 4, "yard_line": 31, "description": "J. Love pass short right to C. Watson for 18 yds (1st Down)", "home_win_prob": 0.58, "play_epa": 1.25, "is_key_event": False},
-            {"quarter": 1, "game_clock": "10:45", "down": 1, "distance": 10, "yard_line": 51, "description": "J. Jacobs left tackle for 24 yds to CHI 25", "home_win_prob": 0.65, "play_epa": 1.95, "is_key_event": True},
-            {"quarter": 1, "game_clock": "08:12", "down": 2, "distance": 3, "yard_line": 77, "description": "J. Love pass deep middle to J. Reed for 23 yds, TOUCHDOWN", "home_win_prob": 0.74, "play_epa": 3.40, "is_key_event": True},
-            {"quarter": 2, "game_clock": "11:30", "down": 3, "distance": 8, "yard_line": 42, "description": "C. Williams sacked by R. Gary for -8 yds", "home_win_prob": 0.79, "play_epa": -1.85, "is_key_event": True},
-            {"quarter": 2, "game_clock": "04:50", "down": 4, "distance": 2, "yard_line": 64, "description": "4th & 2: J. Jacobs rush inside zone for 4 yds (CONVERTED)", "home_win_prob": 0.83, "play_epa": 2.10, "is_key_event": True},
-            {"quarter": 3, "game_clock": "12:10", "down": 2, "distance": 10, "yard_line": 35, "description": "C. Williams deep pass to D. Moore for 45 yds", "home_win_prob": 0.69, "play_epa": 2.80, "is_key_event": True},
-            {"quarter": 3, "game_clock": "07:30", "down": 1, "distance": 10, "yard_line": 88, "description": "D. Swift rush left guard for 12 yds, TOUCHDOWN", "home_win_prob": 0.59, "play_epa": 3.10, "is_key_event": True},
-            {"quarter": 4, "game_clock": "05:15", "down": 4, "distance": 1, "yard_line": 58, "description": "4th & 1 at CHI 42: Baldwin Model recommends GO FOR IT (+4.2% WP)", "home_win_prob": 0.66, "play_epa": 1.90, "is_key_event": True},
-            {"quarter": 4, "game_clock": "02:00", "down": 3, "distance": 5, "yard_line": 70, "description": "J. Love scramble left for 8 yds (Game Clincher)", "home_win_prob": 0.94, "play_epa": 2.65, "is_key_event": True},
+        seed_plays: list[dict[str, Any]] = [
+            {
+                "quarter": 1,
+                "game_clock": "15:00",
+                "down": 1,
+                "distance": 10,
+                "yard_line": 25,
+                "description": "Opening Kickoff returned to GB 25",
+                "home_win_prob": 0.52,
+                "play_epa": 0.05,
+                "is_key_event": False,
+            },
+            {
+                "quarter": 1,
+                "game_clock": "13:20",
+                "down": 2,
+                "distance": 4,
+                "yard_line": 31,
+                "description": "J. Love pass short right to C. Watson for 18 yds (1st Down)",
+                "home_win_prob": 0.58,
+                "play_epa": 1.25,
+                "is_key_event": False,
+            },
+            {
+                "quarter": 1,
+                "game_clock": "10:45",
+                "down": 1,
+                "distance": 10,
+                "yard_line": 51,
+                "description": "J. Jacobs left tackle for 24 yds to CHI 25",
+                "home_win_prob": 0.65,
+                "play_epa": 1.95,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 1,
+                "game_clock": "08:12",
+                "down": 2,
+                "distance": 3,
+                "yard_line": 77,
+                "description": "J. Love pass deep middle to J. Reed for 23 yds, TOUCHDOWN",
+                "home_win_prob": 0.74,
+                "play_epa": 3.40,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 2,
+                "game_clock": "11:30",
+                "down": 3,
+                "distance": 8,
+                "yard_line": 42,
+                "description": "C. Williams sacked by R. Gary for -8 yds",
+                "home_win_prob": 0.79,
+                "play_epa": -1.85,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 2,
+                "game_clock": "04:50",
+                "down": 4,
+                "distance": 2,
+                "yard_line": 64,
+                "description": "4th & 2: J. Jacobs rush inside zone for 4 yds (CONVERTED)",
+                "home_win_prob": 0.83,
+                "play_epa": 2.10,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 3,
+                "game_clock": "12:10",
+                "down": 2,
+                "distance": 10,
+                "yard_line": 35,
+                "description": "C. Williams deep pass to D. Moore for 45 yds",
+                "home_win_prob": 0.69,
+                "play_epa": 2.80,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 3,
+                "game_clock": "07:30",
+                "down": 1,
+                "distance": 10,
+                "yard_line": 88,
+                "description": "D. Swift rush left guard for 12 yds, TOUCHDOWN",
+                "home_win_prob": 0.59,
+                "play_epa": 3.10,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 4,
+                "game_clock": "05:15",
+                "down": 4,
+                "distance": 1,
+                "yard_line": 58,
+                "description": "4th & 1 at CHI 42: Baldwin Model recommends GO FOR IT (+4.2% WP)",
+                "home_win_prob": 0.66,
+                "play_epa": 1.90,
+                "is_key_event": True,
+            },
+            {
+                "quarter": 4,
+                "game_clock": "02:00",
+                "down": 3,
+                "distance": 5,
+                "yard_line": 70,
+                "description": "J. Love scramble left for 8 yds (Game Clincher)",
+                "home_win_prob": 0.94,
+                "play_epa": 2.65,
+                "is_key_event": True,
+            },
         ]
 
         return cls.generate_momentum_flow(

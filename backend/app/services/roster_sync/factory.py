@@ -3,18 +3,17 @@ Factory for resolving the active NFL roster provider based on configuration.
 """
 
 import logging
-from typing import Optional
 
 from app.core.config import settings
 from app.services.roster_sync.base import BaseRosterProvider
-from app.services.roster_sync.tank01_provider import Tank01Provider
-from app.services.roster_sync.sportsdataio_provider import SportsDataIOProvider
 from app.services.roster_sync.nflverse_provider import NflverseProvider
+from app.services.roster_sync.sportsdataio_provider import SportsDataIOProvider
+from app.services.roster_sync.tank01_provider import Tank01Provider
 
 logger = logging.getLogger(__name__)
 
 
-def get_roster_provider(provider_name: Optional[str] = None) -> BaseRosterProvider:
+def get_roster_provider(provider_name: str | None = None) -> BaseRosterProvider:
     """
     Resolve and instantiate the appropriate Roster Provider.
 

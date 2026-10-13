@@ -9,25 +9,25 @@ media leaks from verified NFL insiders and beat reporters.
 Execution budget: <2ms.
 """
 
-from typing import List, Dict, Optional, Tuple
 import math
+
 from sqlalchemy.orm import Session
 
-from app.models.team import Team
 from app.models.player import Player
+from app.models.team import Team
 from app.schemas.social_graph import (
-    GraphNode,
     GraphEdge,
-    MediaLeakPost,
-    LockerRoomSocialNetworkResponse,
+    GraphNode,
     HoldoutResolutionRequest,
+    LockerRoomSocialNetworkResponse,
+    MediaLeakPost,
 )
 
 OFFENSIVE_POSITIONS = {"QB", "RB", "WR", "TE", "OT", "OG", "C", "FB", "OL"}
 DEFENSIVE_POSITIONS = {"DE", "DT", "LB", "CB", "S", "EDGE", "DL", "DB"}
 SPECIAL_POSITIONS = {"K", "P", "LS"}
 
-CLIQUE_METADATA: Dict[str, str] = {
+CLIQUE_METADATA: dict[str, str] = {
     "OFF_LEADERS": "Offensive Leaders",
     "DEF_CORE": "Defensive Core",
     "VETERANS": "Veteran Faction",
@@ -35,7 +35,7 @@ CLIQUE_METADATA: Dict[str, str] = {
 }
 
 # 2D Anchor Centers for each clique in [100, 900] x [100, 500] space
-CLIQUE_CENTERS: Dict[str, Tuple[float, float]] = {
+CLIQUE_CENTERS: dict[str, tuple[float, float]] = {
     "OFF_LEADERS": (280.0, 220.0),
     "DEF_CORE": (720.0, 220.0),
     "VETERANS": (500.0, 390.0),
@@ -71,8 +71,8 @@ class SocialGraphEngine:
             )
 
         # 1. Classify nodes, roles, holdouts, and compute coordinates
-        nodes: List[GraphNode] = []
-        clique_buckets: Dict[str, List[Player]] = {c: [] for c in CLIQUE_METADATA.keys()}
+        nodes: list[GraphNode] = []
+        clique_buckets: dict[str, list[Player]] = {c: [] for c in CLIQUE_METADATA.keys()}
 
         for p in players:
             clique_id = cls._assign_clique(p)
@@ -195,12 +195,12 @@ class SocialGraphEngine:
         return "NEUTRAL"
 
     @classmethod
-    def _generate_edges(cls, nodes: List[GraphNode], players: List[Player]) -> List[GraphEdge]:
+    def _generate_edges(cls, nodes: list[GraphNode], players: list[Player]) -> list[GraphEdge]:
         """
         Creates legible, high-impact relational edges between key players.
         Edge count is capped at 65 to prevent visual spaghetti.
         """
-        edges: List[GraphEdge] = []
+        edges: list[GraphEdge] = []
         node_map = {n.id: n for n in nodes}
         player_map = {p.id: p for p in players}
 
@@ -228,8 +228,11 @@ class SocialGraphEngine:
                 continue
             pos = m_node.position
             young_peers = [
-                n for n in nodes
-                if n.position == pos and n.id != m.id and (player_map.get(n.id).experience if player_map.get(n.id) else 0) <= 2
+                n
+                for n in nodes
+                if n.position == pos
+                and n.id != m.id
+                and (player_map.get(n.id).experience if player_map.get(n.id) else 0) <= 2
             ]
             for yp in young_peers[:2]:
                 edges.append(
@@ -258,11 +261,11 @@ class SocialGraphEngine:
                     )
 
         # 4. Position rivalries (e.g. QB1 vs QB2 or RB1 vs RB2)
-        by_pos: Dict[str, List[GraphNode]] = {}
+        by_pos: dict[str, list[GraphNode]] = {}
         for n in nodes:
             by_pos.setdefault(n.position, []).append(n)
 
-        for pos, pos_nodes in by_pos.items():
+        for _pos, pos_nodes in by_pos.items():
             if len(pos_nodes) >= 2:
                 top_two = sorted(pos_nodes, key=lambda x: x.overall_rating, reverse=True)[:2]
                 if abs(top_two[0].overall_rating - top_two[1].overall_rating) <= 5:
@@ -277,7 +280,7 @@ class SocialGraphEngine:
 
         # Deduplicate and cap edges
         seen = set()
-        deduped_edges: List[GraphEdge] = []
+        deduped_edges: list[GraphEdge] = []
         for e in edges:
             pair = tuple(sorted((e.source, e.target)))
             if pair not in seen:
@@ -291,15 +294,15 @@ class SocialGraphEngine:
         cls,
         team_id: int,
         team_name: str,
-        nodes: List[GraphNode],
+        nodes: list[GraphNode],
         avg_tension: float,
         holdout_count: int,
-    ) -> List[MediaLeakPost]:
+    ) -> list[MediaLeakPost]:
         """
         Generates realistic insider reports from Adam Schefter, Ian Rapoport,
         The Athletic, and local beat writers based on team state.
         """
-        leaks: List[MediaLeakPost] = []
+        leaks: list[MediaLeakPost] = []
 
         holdout_players = [n for n in nodes if n.is_holding_out]
         top_disruptors = [n for n in nodes if n.role == "DISRUPTOR"]
@@ -326,7 +329,11 @@ class SocialGraphEngine:
 
         # 2. Rapoport Report on Front Office / Locker Room Atmosphere
         if avg_tension >= 60.0 or top_disruptors:
-            target = top_disruptors[0] if top_disruptors else (holdout_players[0] if holdout_players else nodes[0])
+            target = (
+                top_disruptors[0]
+                if top_disruptors
+                else (holdout_players[0] if holdout_players else nodes[0])
+            )
             leaks.append(
                 MediaLeakPost(
                     id=f"leak-tension-{target.id}",
@@ -388,7 +395,7 @@ class SocialGraphEngine:
                 outlet="LOCAL_BEAT",
                 timestamp_str="3h ago",
                 headline="Practice Facility Dispatch: Energy and Observations",
-                content=f"Coaches pushed tempo during today's walkthrough. Noticeable separation between defensive leaders and frustrated veterans on sideline benches during 7-on-7 drills.",
+                content="Coaches pushed tempo during today's walkthrough. Noticeable separation between defensive leaders and frustrated veterans on sideline benches during 7-on-7 drills.",
                 sentiment="NEUTRAL",
                 referenced_player_ids=[n.id for n in nodes[:2]],
                 leak_source="COACHING_STAFF",

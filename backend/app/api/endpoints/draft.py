@@ -2,26 +2,28 @@
 Draft API Endpoints
 Provides AI-powered draft assistance, draft class generation, and visual asset synthesis.
 """
+
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_async_db
+from app.models.player import Player
+from app.schemas.draft import (
+    DraftClassGenerateRequest,
+    DraftClassGenerateResponse,
+    DraftProspect,
+    DraftSuggestionRequest,
+    DraftSuggestionResponse,
+)
 from app.services.draft_assistant import DraftAssistant
 from app.services.rookie_generator import RookieGenerator
 from app.services.visuals.player_asset_service import (
     PlayerAssetService,
     PlayerVisualAssetMetadata,
 )
-from app.schemas.draft import (
-    DraftSuggestionRequest,
-    DraftSuggestionResponse,
-    DraftProspect,
-    DraftClassGenerateRequest,
-    DraftClassGenerateResponse,
-)
-from app.models.player import Player
-from sqlalchemy import select
-from typing import List, Dict
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +64,8 @@ def _map_prospect_to_schema(player: Player) -> DraftProspect:
     )
 
 
-@router.get("/board", response_model=List[DraftProspect])
-async def get_draft_board(
-    db: AsyncSession = Depends(get_async_db)
-):
+@router.get("/board", response_model=list[DraftProspect])
+async def get_draft_board(db: AsyncSession = Depends(get_async_db)):
     """
     Get the current draft board (available prospects).
     Returns all rookie players who are not assigned to a team with visual asset paths.
@@ -73,8 +73,8 @@ async def get_draft_board(
     """
     result = await db.execute(
         select(Player)
-        .where(Player.is_rookie == True)
-        .where(Player.team_id == None)
+        .where(Player.is_rookie)
+        .where(Player.team_id is None)
         .order_by(Player.overall_rating.desc())
     )
     prospects = result.scalars().all()
@@ -91,7 +91,7 @@ async def get_draft_board(
 @router.post("/generate", response_model=DraftClassGenerateResponse)
 async def generate_draft_class(
     request: DraftClassGenerateRequest = DraftClassGenerateRequest(),
-    db: AsyncSession = Depends(get_async_db)
+    db: AsyncSession = Depends(get_async_db),
 ):
     """
     Generate a new procedural rookie draft class with authentic NFL position distributions,
@@ -100,7 +100,9 @@ async def generate_draft_class(
     try:
         generator = RookieGenerator(db, seed=request.seed)
         season_id = request.season_id or 1
-        generated_players = await generator.generate_draft_class(season_id=season_id, count=request.count)
+        generated_players = await generator.generate_draft_class(
+            season_id=season_id, count=request.count
+        )
         mapped = [_map_prospect_to_schema(p) for p in generated_players]
 
         logger.info(f"Generated {len(mapped)} prospects for draft class (season {season_id})")
@@ -114,17 +116,11 @@ async def generate_draft_class(
         )
     except Exception as e:
         logger.error(f"Draft class generation error: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to generate draft class: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Failed to generate draft class: {str(e)}")
 
 
 @router.post("/prospects/{player_id}/generate-assets")
-async def generate_prospect_assets(
-    player_id: int,
-    db: AsyncSession = Depends(get_async_db)
-):
+async def generate_prospect_assets(player_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Synthesize parametric visual prompts and resolve asset paths for all 4 standardized poses.
     """
@@ -165,8 +161,7 @@ async def generate_prospect_assets(
 
 @router.post("/suggest-pick", response_model=DraftSuggestionResponse)
 async def suggest_draft_pick(
-    request: DraftSuggestionRequest,
-    db: AsyncSession = Depends(get_async_db)
+    request: DraftSuggestionRequest, db: AsyncSession = Depends(get_async_db)
 ):
     """
     Get AI-powered draft pick suggestion for a team.
@@ -177,7 +172,7 @@ async def suggest_draft_pick(
             team_id=request.team_id,
             pick_number=request.pick_number,
             available_players=request.available_players,
-            db=db
+            db=db,
         )
 
         logger.info(
@@ -192,8 +187,4 @@ async def suggest_draft_pick(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Draft suggestion error: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to generate draft suggestion"
-        )
-
+        raise HTTPException(status_code=500, detail="Failed to generate draft suggestion")

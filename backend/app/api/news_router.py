@@ -7,19 +7,18 @@ Following FastAPI best practices:
 - Dependency injection for database sessions
 - Query parameter validation
 """
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+
 from datetime import datetime
-from enum import Enum
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.news_item import NewsItem, NewsCategory
-from app.models.weekly_recap import WeeklyRecap
+from app.models.news_item import NewsCategory
 from app.services.news_feed_service import NewsFeedService
+from app.services.storyline_service import StorylineEventService
 from app.services.weekly_recap_service import WeeklyRecapService
-from app.services.storyline_service import StorylineEventService, StorylineType
 
 router = APIRouter(prefix="/api/news", tags=["News & Recaps"])
 
@@ -28,17 +27,19 @@ router = APIRouter(prefix="/api/news", tags=["News & Recaps"])
 # Pydantic Response Models (OpenAPI Schema Generation)
 # ============================================================================
 
+
 class NewsItemResponse(BaseModel):
     """Schema for a single news item."""
+
     id: int
     season_id: int
     week: int
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     category: str
     headline: str
     content: str
-    image_url: Optional[str] = None
+    image_url: str | None = None
     importance_score: float = Field(ge=0.0, le=1.0)
     created_at: datetime
 
@@ -48,7 +49,8 @@ class NewsItemResponse(BaseModel):
 
 class NewsFeedResponse(BaseModel):
     """Paginated news feed response."""
-    items: List[NewsItemResponse]
+
+    items: list[NewsItemResponse]
     total_count: int
     page: int
     page_size: int
@@ -57,14 +59,15 @@ class NewsFeedResponse(BaseModel):
 
 class WeeklyRecapResponse(BaseModel):
     """Schema for a weekly recap."""
+
     id: int
     season_id: int
     week: int
     summary_text: str
-    mvp_player_id: Optional[int] = None
-    play_of_the_week_id: Optional[str] = None
-    surprising_result: Optional[str] = None
-    media_assets: Optional[List[str]] = None
+    mvp_player_id: int | None = None
+    play_of_the_week_id: str | None = None
+    surprising_result: str | None = None
+    media_assets: list[str] | None = None
     created_at: datetime
 
     class Config:
@@ -73,9 +76,10 @@ class WeeklyRecapResponse(BaseModel):
 
 class StorylineResponse(BaseModel):
     """Schema for an active storyline."""
+
     type: str
-    team_id: Optional[int] = None
-    player_id: Optional[int] = None
+    team_id: int | None = None
+    player_id: int | None = None
     start_week: int
     intensity: int = Field(ge=1, le=5)
     event_count: int
@@ -83,11 +87,13 @@ class StorylineResponse(BaseModel):
 
 class StorylineListResponse(BaseModel):
     """List of active storylines."""
-    storylines: List[StorylineResponse]
+
+    storylines: list[StorylineResponse]
 
 
 class ErrorResponse(BaseModel):
     """Standard error response."""
+
     detail: str
 
 
@@ -95,23 +101,24 @@ class ErrorResponse(BaseModel):
 # API Endpoints
 # ============================================================================
 
+
 @router.get(
     "/feed",
     response_model=NewsFeedResponse,
     responses={
         200: {"description": "News feed retrieved successfully"},
-        404: {"model": ErrorResponse, "description": "No news found for the specified criteria"}
+        404: {"model": ErrorResponse, "description": "No news found for the specified criteria"},
     },
     summary="Get News Feed",
-    description="Retrieve paginated news items for a specific season and optional week."
+    description="Retrieve paginated news items for a specific season and optional week.",
 )
 async def get_news_feed(
     season_id: int = Query(..., description="Season ID to filter news"),
-    week: Optional[int] = Query(None, ge=1, le=22, description="Week number (1-22)"),
-    category: Optional[str] = Query(None, description="Filter by news category"),
+    week: int | None = Query(None, ge=1, le=22, description="Week number (1-22)"),
+    category: str | None = Query(None, description="Filter by news category"),
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Get the news feed for a season.
@@ -141,7 +148,7 @@ async def get_news_feed(
     if not paginated_items and page == 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No news found for season {season_id}" + (f", week {week}" if week else "")
+            detail=f"No news found for season {season_id}" + (f", week {week}" if week else ""),
         )
 
     return NewsFeedResponse(
@@ -149,7 +156,7 @@ async def get_news_feed(
         total_count=total_count,
         page=page,
         page_size=page_size,
-        has_more=end_idx < total_count
+        has_more=end_idx < total_count,
     )
 
 
@@ -158,16 +165,12 @@ async def get_news_feed(
     response_model=WeeklyRecapResponse,
     responses={
         200: {"description": "Weekly recap retrieved successfully"},
-        404: {"model": ErrorResponse, "description": "Recap not found for specified week"}
+        404: {"model": ErrorResponse, "description": "Recap not found for specified week"},
     },
     summary="Get Weekly Recap",
-    description="Retrieve the 'SportsCenter' style weekly recap for a specific week."
+    description="Retrieve the 'SportsCenter' style weekly recap for a specific week.",
 )
-async def get_weekly_recap(
-    season_id: int,
-    week: int,
-    db: Session = Depends(get_db)
-):
+async def get_weekly_recap(season_id: int, week: int, db: Session = Depends(get_db)):
     """
     Get the weekly recap for a specific season and week.
 
@@ -179,7 +182,7 @@ async def get_weekly_recap(
     if not recap:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No recap found for season {season_id}, week {week}. It may not have been generated yet."
+            detail=f"No recap found for season {season_id}, week {week}. It may not have been generated yet.",
         )
 
     return WeeklyRecapResponse.model_validate(recap)
@@ -191,16 +194,12 @@ async def get_weekly_recap(
     status_code=status.HTTP_201_CREATED,
     responses={
         201: {"description": "Recap generated successfully"},
-        200: {"description": "Recap already exists (returned existing)"}
+        200: {"description": "Recap already exists (returned existing)"},
     },
     summary="Generate Weekly Recap",
-    description="Trigger generation of a weekly recap. Returns existing recap if already created."
+    description="Trigger generation of a weekly recap. Returns existing recap if already created.",
 )
-async def generate_weekly_recap(
-    season_id: int,
-    week: int,
-    db: Session = Depends(get_db)
-):
+async def generate_weekly_recap(season_id: int, week: int, db: Session = Depends(get_db)):
     """
     Generate or retrieve the weekly recap for a specific week.
 
@@ -216,11 +215,9 @@ async def generate_weekly_recap(
     "/storylines",
     response_model=StorylineListResponse,
     summary="Get Active Storylines",
-    description="Retrieve all active storylines, optionally filtered by team."
+    description="Retrieve all active storylines, optionally filtered by team.",
 )
-async def get_storylines(
-    team_id: Optional[int] = Query(None, description="Filter by team ID")
-):
+async def get_storylines(team_id: int | None = Query(None, description="Filter by team ID")):
     """
     Get all active narrative storylines.
 
@@ -229,16 +226,14 @@ async def get_storylines(
     service = StorylineEventService()
     storylines = service.get_active_storylines(team_id=team_id)
 
-    return StorylineListResponse(
-        storylines=[StorylineResponse(**s) for s in storylines]
-    )
+    return StorylineListResponse(storylines=[StorylineResponse(**s) for s in storylines])
 
 
 @router.get(
     "/categories",
-    response_model=List[str],
+    response_model=list[str],
     summary="Get News Categories",
-    description="Get all available news category types."
+    description="Get all available news category types.",
 )
 async def get_news_categories():
     """Return all available news category enum values."""

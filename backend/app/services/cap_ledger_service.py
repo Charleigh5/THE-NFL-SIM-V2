@@ -6,29 +6,29 @@ Enforces CBA Article 13 & Appendix V invariants, microsecond booking latency (<1
 and mathematical proof-of-balance verification across all franchise operations.
 """
 
-from typing import List, Dict, Optional, Tuple, Any
 import uuid
 from datetime import datetime
-from sqlalchemy.orm import Session
-from sqlalchemy import select
+from typing import Any
 
-from app.models.team import Team
-from app.models.player import Player
-from app.models.player_contract import PlayerContract
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from app.models.cap_ledger import (
     CapAccountType,
-    CapTransactionType,
     CapLedgerAccount,
-    CapLedgerTransaction,
     CapLedgerEntry,
+    CapLedgerTransaction,
+    CapTransactionType,
 )
+from app.models.player_contract import PlayerContract
+from app.models.team import Team
 from app.schemas.cap_ledger import (
     CapLedgerEntryDTO,
     CapLedgerTransactionDTO,
-    TeamLedgerStatementDTO,
-    MultiYearLedgerStatementResponse,
     LedgerSimulateRequest,
     LedgerSimulateResponse,
+    MultiYearLedgerStatementResponse,
+    TeamLedgerStatementDTO,
 )
 
 BASE_LEAGUE_YEAR = 2026
@@ -43,11 +43,13 @@ class CapLedgerService:
     Team Total Cap == Cap Room + Active Liabilities + Dead Money.
     """
 
-    def __init__(self, db: Optional[Session] = None):
+    def __init__(self, db: Session | None = None):
         self.db = db
         # In-memory storage cache for ultra-low latency & database fallback
-        self._memory_accounts: Dict[str, Dict[CapAccountType, int]] = {} # key: "team_id:year" -> {account_type: balance}
-        self._memory_transactions: List[Dict[str, Any]] = []
+        self._memory_accounts: dict[
+            str, dict[CapAccountType, int]
+        ] = {}  # key: "team_id:year" -> {account_type: balance}
+        self._memory_transactions: list[dict[str, Any]] = []
 
     @staticmethod
     def get_projected_cap(year_offset: int) -> int:
@@ -58,7 +60,7 @@ class CapLedgerService:
     def _get_account_key(self, team_id: int, league_year: int) -> str:
         return f"{team_id}:{league_year}"
 
-    def ensure_team_accounts(self, team_id: int, league_year: int) -> Dict[CapAccountType, int]:
+    def ensure_team_accounts(self, team_id: int, league_year: int) -> dict[CapAccountType, int]:
         """
         Ensure accounts exist for the team in the specified league year.
         If missing, initializes balanced starting accounts.
@@ -81,7 +83,7 @@ class CapLedgerService:
                     return balances
 
                 # Initialize DB accounts
-                created_accounts: Dict[CapAccountType, int] = {}
+                created_accounts: dict[CapAccountType, int] = {}
                 account_types = [
                     (CapAccountType.CAP_ROOM, projected_cap),
                     (CapAccountType.ACTIVE_SALARY_LIABILITY, 0),
@@ -122,8 +124,8 @@ class CapLedgerService:
         transaction_type: CapTransactionType,
         league_year: int,
         description: str,
-        entries: List[Tuple[CapAccountType, int]],
-        player_id: Optional[int] = None,
+        entries: list[tuple[CapAccountType, int]],
+        player_id: int | None = None,
     ) -> CapLedgerTransactionDTO:
         """
         Atomically book a balanced double-entry transaction.
@@ -142,7 +144,7 @@ class CapLedgerService:
 
         tx_id = str(uuid.uuid4())
         timestamp = datetime.utcnow()
-        entry_dtos: List[CapLedgerEntryDTO] = []
+        entry_dtos: list[CapLedgerEntryDTO] = []
         net_cap_delta = 0
 
         # 3. Apply entries to account balances
@@ -250,7 +252,7 @@ class CapLedgerService:
         real_years: int,
         void_years: int = 0,
         league_year: int = BASE_LEAGUE_YEAR,
-        player_name: Optional[str] = None,
+        player_name: str | None = None,
     ) -> CapLedgerTransactionDTO:
         """
         Book contract signing into double-entry ledger:
@@ -316,7 +318,7 @@ class CapLedgerService:
         amount_to_convert: int,
         remaining_years: int = 3,
         league_year: int = BASE_LEAGUE_YEAR,
-        player_name: Optional[str] = None,
+        player_name: str | None = None,
     ) -> CapLedgerTransactionDTO:
         """
         Book contract restructure (Kick the Can):
@@ -358,14 +360,14 @@ class CapLedgerService:
         post_june_1: bool = False,
         annual_proration: int = 0,
         league_year: int = BASE_LEAGUE_YEAR,
-        player_name: Optional[str] = None,
-    ) -> List[CapLedgerTransactionDTO]:
+        player_name: str | None = None,
+    ) -> list[CapLedgerTransactionDTO]:
         """
         Book player release:
         - Pre-June 1st: All unamortized bonus accelerates into current year DEAD_MONEY_LIABILITY.
         - Post-June 1st: Current year takes 1 year of proration; remainder hits Year t+1.
         """
-        transactions: List[CapLedgerTransactionDTO] = []
+        transactions: list[CapLedgerTransactionDTO] = []
 
         if not post_june_1 or unamortized_bonus_total <= annual_proration:
             # Pre-June 1st: Immediate acceleration
@@ -429,7 +431,9 @@ class CapLedgerService:
     # STATEMENTS & ISOLATED SIMULATION
     # =========================================================================
 
-    def get_team_statement(self, team_id: int, league_year: int = BASE_LEAGUE_YEAR) -> TeamLedgerStatementDTO:
+    def get_team_statement(
+        self, team_id: int, league_year: int = BASE_LEAGUE_YEAR
+    ) -> TeamLedgerStatementDTO:
         """
         Generate a comprehensive ledger statement with proof-of-balance check:
         Total Salary Cap == Cap Room + Active Salary Liabilities + Dead Money Liabilities.
@@ -449,7 +453,7 @@ class CapLedgerService:
         is_balanced = delta == 0
 
         # Query transactions
-        transactions: List[CapLedgerTransactionDTO] = []
+        transactions: list[CapLedgerTransactionDTO] = []
         if self.db:
             try:
                 stmt = (
@@ -466,12 +470,16 @@ class CapLedgerService:
                         CapLedgerEntryDTO(
                             id=e.id,
                             account_id=e.account_id,
-                            account_type=e.account.account_type if e.account else CapAccountType.CAP_ROOM,
+                            account_type=e.account.account_type
+                            if e.account
+                            else CapAccountType.CAP_ROOM,
                             amount=e.amount,
                         )
                         for e in tx.entries
                     ]
-                    net_delta = sum(e.amount for e in entry_dtos if e.account_type == CapAccountType.CAP_ROOM)
+                    net_delta = sum(
+                        e.amount for e in entry_dtos if e.account_type == CapAccountType.CAP_ROOM
+                    )
                     transactions.append(
                         CapLedgerTransactionDTO(
                             id=tx.id,
@@ -517,9 +525,11 @@ class CapLedgerService:
             transactions=transactions,
         )
 
-    def get_multi_year_statement(self, team_id: int, base_year: int = BASE_LEAGUE_YEAR) -> MultiYearLedgerStatementResponse:
+    def get_multi_year_statement(
+        self, team_id: int, base_year: int = BASE_LEAGUE_YEAR
+    ) -> MultiYearLedgerStatementResponse:
         """Generate full 5-year outlook from the ledger."""
-        yearly_statements: List[TeamLedgerStatementDTO] = []
+        yearly_statements: list[TeamLedgerStatementDTO] = []
         team_name = f"Team #{team_id}"
 
         for i in range(5):

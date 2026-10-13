@@ -4,12 +4,13 @@ Provides provider health telemetry, dry-run previews, and execution endpoints.
 """
 
 import logging
-from typing import Optional, List, Dict, Any
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
 from app.core.config import settings
+from app.core.database import get_db
 from app.core.roster_cache import invalidate_all_team_roster_caches
 from app.services.roster_sync.base import ProviderStatusDTO, SyncResultDTO
 from app.services.roster_sync.factory import get_roster_provider
@@ -21,7 +22,7 @@ router = APIRouter(prefix="/api/roster-sync", tags=["roster-sync"])
 
 
 @router.get("/status", response_model=ProviderStatusDTO)
-def get_sync_status(provider: Optional[str] = None) -> ProviderStatusDTO:
+def get_sync_status(provider: str | None = None) -> ProviderStatusDTO:
     """
     Get connectivity, authentication health, and capability status of the roster provider.
     """
@@ -34,7 +35,7 @@ def get_sync_status(provider: Optional[str] = None) -> ProviderStatusDTO:
 
 
 @router.get("/providers")
-def list_available_providers() -> Dict[str, Any]:
+def list_available_providers() -> dict[str, Any]:
     """
     List supported external roster providers and their configuration status.
     """
@@ -68,8 +69,12 @@ def list_available_providers() -> Dict[str, Any]:
 
 @router.post("/execute", response_model=SyncResultDTO)
 def execute_roster_sync(
-    dry_run: bool = Query(False, description="If True, returns detected diffs without applying to database"),
-    provider: Optional[str] = Query(None, description="Optional provider override ('tank01', 'sportsdataio', 'nflverse')"),
+    dry_run: bool = Query(
+        False, description="If True, returns detected diffs without applying to database"
+    ),
+    provider: str | None = Query(
+        None, description="Optional provider override ('tank01', 'sportsdataio', 'nflverse')"
+    ),
     db: Session = Depends(get_db),
 ) -> SyncResultDTO:
     """

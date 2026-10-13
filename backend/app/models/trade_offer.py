@@ -2,13 +2,16 @@
 
 from datetime import datetime, timedelta
 from enum import Enum as PyEnum
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON, Enum, Text
+
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
+
 from app.models.base import Base
 
 
 class TradeOfferStatus(PyEnum):
     """Status of a trade offer."""
+
     PENDING = "PENDING"
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
@@ -27,6 +30,7 @@ class TradeOffer(Base):
     - Accept/Reject/Counter actions
     - Offer expiration
     """
+
     __tablename__ = "trade_offer"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -43,10 +47,7 @@ class TradeOffer(Base):
 
     # Status
     status = Column(
-        Enum(TradeOfferStatus),
-        default=TradeOfferStatus.PENDING,
-        nullable=False,
-        index=True
+        Enum(TradeOfferStatus), default=TradeOfferStatus.PENDING, nullable=False, index=True
     )
 
     # Messages

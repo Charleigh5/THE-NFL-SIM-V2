@@ -1,13 +1,13 @@
 from app.kernels.core.ecs_manager import Component
-from typing import Dict
+
 
 class EquipmentBio(Component):
     # Directive 15: Equipment Biometric Modification
     # Modifies bio-metrics based on gear (e.g. Visor = +Vision, Heavy Pads = -Speed)
-    equipped_gear: Dict[str, str] = {}
-    stat_modifiers: Dict[str, float] = {}
+    equipped_gear: dict[str, str] = {}
+    stat_modifiers: dict[str, float] = {}
 
-    def equip_item(self, slot: str, item_name: str, modifiers: Dict[str, float]):
+    def equip_item(self, slot: str, item_name: str, modifiers: dict[str, float]):
         self.equipped_gear[slot] = item_name
         for stat, val in modifiers.items():
             self.stat_modifiers[stat] = self.stat_modifiers.get(stat, 0.0) + val

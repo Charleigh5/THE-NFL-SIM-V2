@@ -1,17 +1,18 @@
-from typing import List, Dict, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-from app.models.player import Player, Position
-from app.models.team import Team
-from app.core.mcp_registry import registry
-from app.core.mcp_cache import mcp_cache
-from app.schemas.draft import (
-    DraftSuggestionResponse,
-    AlternativePick,
-    HistoricalComparison,
-    RosterGapAnalysis
-)
 import logging
+
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.mcp_cache import mcp_cache
+from app.core.mcp_registry import registry
+from app.models.player import Player
+from app.models.team import Team
+from app.schemas.draft import (
+    AlternativePick,
+    DraftSuggestionResponse,
+    HistoricalComparison,
+    RosterGapAnalysis,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +41,9 @@ class DraftAssistant:
         self,
         team_id: int,
         pick_number: int,
-        available_players: List[int],
+        available_players: list[int],
         db: AsyncSession,
-        include_historical_data: bool = True
+        include_historical_data: bool = True,
     ) -> DraftSuggestionResponse:
         """
         Suggest a draft pick for a team based on needs and player value.
@@ -75,7 +76,7 @@ class DraftAssistant:
             Player.overall_rating,
             Player.speed,
             Player.strength,
-            Player.agility
+            Player.agility,
         ).where(Player.id.in_(available_players))
 
         players_result = await db.execute(players_stmt)
@@ -87,31 +88,32 @@ class DraftAssistant:
         # Convert to simple dicts
         player_data = [
             {
-                'id': row[0],
-                'first_name': row[1],
-                'last_name': row[2],
-                'position': row[3],
-                'overall_rating': row[4],
-                'speed': row[5],
-                'strength': row[6],
-                'agility': row[7]
+                "id": row[0],
+                "first_name": row[1],
+                "last_name": row[2],
+                "position": row[3],
+                "overall_rating": row[4],
+                "speed": row[5],
+                "strength": row[6],
+                "agility": row[7],
             }
             for row in player_rows
         ]
 
         # 3. Analyze team needs with detailed gap analysis
-        roster_stmt = select(
-            Player.position,
-            func.count(Player.id).label('count'),
-            func.avg(Player.overall_rating).label('avg_rating')
-        ).where(
-            Player.team_id == team_id
-        ).group_by(Player.position)
+        roster_stmt = (
+            select(
+                Player.position,
+                func.count(Player.id).label("count"),
+                func.avg(Player.overall_rating).label("avg_rating"),
+            )
+            .where(Player.team_id == team_id)
+            .group_by(Player.position)
+        )
 
         roster_result = await db.execute(roster_stmt)
         position_stats = {
-            row[0]: {'count': row[1], 'avg_rating': row[2] or 0}
-            for row in roster_result.all()
+            row[0]: {"count": row[1], "avg_rating": row[2] or 0} for row in roster_result.all()
         }
 
         team_needs, roster_gaps = self._calculate_needs_and_gaps(position_stats)
@@ -122,12 +124,14 @@ class DraftAssistant:
         # 5. Score players with enhanced metrics
         scored_players = []
         for p in player_data:
-            need_score = team_needs.get(p['position'], 0.5)
+            need_score = team_needs.get(p["position"], 0.5)
 
             # Enhanced scoring considering pick value
-            talent_score = p['overall_rating'] / 100.0
+            talent_score = p["overall_rating"] / 100.0
             value_score = talent_score * draft_value_multiplier
-            combined_score = min(1.0, (talent_score * 0.5) + (need_score * 0.3) + (value_score * 0.2))
+            combined_score = min(
+                1.0, (talent_score * 0.5) + (need_score * 0.3) + (value_score * 0.2)
+            )
 
             scored_players.append((p, combined_score))
 
@@ -140,22 +144,15 @@ class DraftAssistant:
         mcp_data_used = False
 
         if include_historical_data:
-            historical_comparison, mcp_data_used = await self._get_historical_comparison(
-                top_pick
-            )
+            historical_comparison, mcp_data_used = await self._get_historical_comparison(top_pick)
 
         reasoning = await self._build_reasoning_from_data(
-            top_pick,
-            team_needs,
-            historical_comparison,
-            pick_number
+            top_pick, team_needs, historical_comparison, pick_number
         )
 
         # 7. Calculate overall draft value score
         draft_value_score = self._calculate_draft_value_score(
-            top_pick['overall_rating'],
-            pick_number,
-            team_needs.get(top_pick['position'], 0.5)
+            top_pick["overall_rating"], pick_number, team_needs.get(top_pick["position"], 0.5)
         )
 
         # 8. Get alternatives with historical data
@@ -165,27 +162,25 @@ class DraftAssistant:
             if include_historical_data:
                 alt_historical, _ = await self._get_historical_comparison(p)
 
-            alt_reasoning = self._build_alternative_reasoning(
-                p,
-                team_needs,
-                alt_historical
+            alt_reasoning = self._build_alternative_reasoning(p, team_needs, alt_historical)
+
+            alternatives.append(
+                AlternativePick(
+                    player_id=p["id"],
+                    player_name=f"{p['first_name']} {p['last_name']}",
+                    position=p["position"],
+                    overall_rating=p["overall_rating"],
+                    reasoning=alt_reasoning,
+                    confidence_score=score,
+                    historical_comparison=alt_historical,
+                )
             )
 
-            alternatives.append(AlternativePick(
-                player_id=p['id'],
-                player_name=f"{p['first_name']} {p['last_name']}",
-                position=p['position'],
-                overall_rating=p['overall_rating'],
-                reasoning=alt_reasoning,
-                confidence_score=score,
-                historical_comparison=alt_historical
-            ))
-
         return DraftSuggestionResponse(
-            recommended_player_id=top_pick['id'],
+            recommended_player_id=top_pick["id"],
             player_name=f"{top_pick['first_name']} {top_pick['last_name']}",
-            position=top_pick['position'],
-            overall_rating=top_pick['overall_rating'],
+            position=top_pick["position"],
+            overall_rating=top_pick["overall_rating"],
             reasoning=reasoning,
             team_needs=team_needs,
             alternative_picks=alternatives,
@@ -193,26 +188,34 @@ class DraftAssistant:
             historical_comparison=historical_comparison,
             roster_gap_analysis=roster_gaps,
             draft_value_score=draft_value_score,
-            mcp_data_used=mcp_data_used
+            mcp_data_used=mcp_data_used,
         )
 
     def _calculate_needs_and_gaps(
-        self,
-        position_stats: Dict[str, Dict]
-    ) -> tuple[Dict[str, float], List[RosterGapAnalysis]]:
+        self, position_stats: dict[str, dict]
+    ) -> tuple[dict[str, float], list[RosterGapAnalysis]]:
         """Calculate team needs and detailed roster gap analysis."""
         targets = {
-            'QB': 3, 'RB': 4, 'WR': 6, 'TE': 3,
-            'OL': 8, 'DL': 6, 'LB': 6, 'CB': 5, 'S': 4, 'K': 1, 'P': 1
+            "QB": 3,
+            "RB": 4,
+            "WR": 6,
+            "TE": 3,
+            "OL": 8,
+            "DL": 6,
+            "LB": 6,
+            "CB": 5,
+            "S": 4,
+            "K": 1,
+            "P": 1,
         }
 
         needs = {}
         gaps = []
 
         for position, target in targets.items():
-            stats = position_stats.get(position, {'count': 0, 'avg_rating': 0})
-            current = stats['count']
-            avg_rating = stats['avg_rating']
+            stats = position_stats.get(position, {"count": 0, "avg_rating": 0})
+            current = stats["count"]
+            avg_rating = stats["avg_rating"]
 
             # Calculate need score
             if current < target:
@@ -236,13 +239,15 @@ class DraftAssistant:
             else:
                 priority = "LOW"
 
-            gaps.append(RosterGapAnalysis(
-                position=position,
-                current_count=current,
-                target_count=target,
-                starter_quality=avg_rating / 100.0,
-                priority_level=priority
-            ))
+            gaps.append(
+                RosterGapAnalysis(
+                    position=position,
+                    current_count=current,
+                    target_count=target,
+                    starter_quality=avg_rating / 100.0,
+                    priority_level=priority,
+                )
+            )
 
         return needs, gaps
 
@@ -263,10 +268,7 @@ class DraftAssistant:
             return 0.9  # Later rounds
 
     def _calculate_draft_value_score(
-        self,
-        overall_rating: int,
-        pick_number: int,
-        need_score: float
+        self, overall_rating: int, pick_number: int, need_score: float
     ) -> float:
         """
         Calculate draft value score (1-10) based on:
@@ -292,9 +294,8 @@ class DraftAssistant:
         return round(total_score, 1)
 
     async def _get_historical_comparison(
-        self,
-        player_data: Dict
-    ) -> tuple[Optional[HistoricalComparison], bool]:
+        self, player_data: dict
+    ) -> tuple[HistoricalComparison | None, bool]:
         """
         Fetch historical player comparison using NFL Stats MCP.
         Returns (comparison, mcp_data_used)
@@ -317,21 +318,23 @@ class DraftAssistant:
                 "get_player_career_stats",
                 arguments={
                     "player_name": f"{player_data['first_name']} {player_data['last_name']}",
-                    "position": player_data['position']
-                }
+                    "position": player_data["position"],
+                },
             )
 
             if result and isinstance(result, dict):
                 comparison = HistoricalComparison(
-                    comparable_player_name=result.get('name', 'Similar Player'),
-                    seasons_active=result.get('years_active', 'N/A'),
-                    career_highlights=result.get('highlights', 'Solid career stats'),
-                    similarity_score=0.85  # Placeholder - would be calculated by MCP
+                    comparable_player_name=result.get("name", "Similar Player"),
+                    seasons_active=result.get("years_active", "N/A"),
+                    career_highlights=result.get("highlights", "Solid career stats"),
+                    similarity_score=0.85,  # Placeholder - would be calculated by MCP
                 )
 
                 # Cache the result
                 mcp_cache.set(cache_key, comparison.model_dump(), "historical_comparisons")
-                logger.info(f"Retrieved historical comparison via MCP for {player_data['position']}")
+                logger.info(
+                    f"Retrieved historical comparison via MCP for {player_data['position']}"
+                )
                 return comparison, True
 
         except Exception as e:
@@ -341,14 +344,14 @@ class DraftAssistant:
 
     async def _build_reasoning_from_data(
         self,
-        player_data: Dict,
-        team_needs: Dict[str, float],
-        historical_comparison: Optional[HistoricalComparison],
-        pick_number: int
+        player_data: dict,
+        team_needs: dict[str, float],
+        historical_comparison: HistoricalComparison | None,
+        pick_number: int,
     ) -> str:
         """Build comprehensive reasoning with MCP enhancement."""
-        position = player_data['position']
-        overall = player_data['overall_rating']
+        position = player_data["position"]
+        overall = player_data["overall_rating"]
         need_score = team_needs.get(position, 0.5)
 
         # 1. Team Fit Analysis
@@ -384,8 +387,7 @@ class DraftAssistant:
                     stats = mcp_cache.get(cache_key, "league_averages")
                     if not stats:
                         stats = await client.call_tool(
-                            "get_league_averages",
-                            arguments={"position": position, "season": 2024}
+                            "get_league_averages", arguments={"position": position, "season": 2024}
                         )
                         if stats:
                             mcp_cache.set(cache_key, stats, "league_averages")
@@ -407,17 +409,17 @@ class DraftAssistant:
             team_fit_analysis=team_fit,
             market_value_analysis=market_value,
             historical_context=historical_context,
-            recommendation=recommendation
+            recommendation=recommendation,
         )
 
     def _build_alternative_reasoning(
         self,
-        player_data: Dict,
-        team_needs: Dict[str, float],
-        historical_comparison: Optional[HistoricalComparison]
+        player_data: dict,
+        team_needs: dict[str, float],
+        historical_comparison: HistoricalComparison | None,
     ) -> str:
         """Build concise reasoning for alternative picks."""
-        position_need = team_needs.get(player_data['position'], 0.5)
+        position_need = team_needs.get(player_data["position"], 0.5)
 
         if historical_comparison:
             return (

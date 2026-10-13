@@ -21,16 +21,16 @@ Core Responsibilities:
 import math
 import random
 import time
-from typing import List, Optional, Tuple, Dict, Any
+
 from sqlalchemy.orm import Session
 
 from app.schemas.orthopedic_rtp import (
-    RTPCurvePoint,
-    TreatmentTrajectory,
-    SecondOpinionCenter,
-    SecondOpinionConsultResult,
     CortisoneHazardCheckResponse,
     OrthopedicEvaluationResponse,
+    RTPCurvePoint,
+    SecondOpinionCenter,
+    SecondOpinionConsultResult,
+    TreatmentTrajectory,
 )
 
 
@@ -38,7 +38,7 @@ class OrthopedicEngine:
     """Engine computing Gompertz RTP trajectories and clinical orthopedic triage decisions."""
 
     # Elite Outside Orthopedic Centers of Excellence
-    SPECIALIST_CENTERS: Dict[str, SecondOpinionCenter] = {
+    SPECIALIST_CENTERS: dict[str, SecondOpinionCenter] = {
         "andrews_sports_med": SecondOpinionCenter(
             center_id="andrews_sports_med",
             name="Andrews Sports Medicine & Orthopaedic Center",
@@ -68,7 +68,7 @@ class OrthopedicEngine:
         ),
     }
 
-    def get_specialist_centers(self) -> List[SecondOpinionCenter]:
+    def get_specialist_centers(self) -> list[SecondOpinionCenter]:
         """Return list of available elite outside orthopedic consultation centers."""
         return list(self.SPECIALIST_CENTERS.values())
 
@@ -105,12 +105,12 @@ class OrthopedicEngine:
         body_part: str = "right_leg",
         severity_grade: int = 3,
         baseline_health: float = 55.0,
-        player_name: Optional[str] = None,
+        player_name: str | None = None,
         player_age: int = 26,
         durability_rating: int = 80,
         is_cortisone_active: bool = False,
         has_specialist_clearance: bool = False,
-        specialist_center_name: Optional[str] = None,
+        specialist_center_name: str | None = None,
     ) -> OrthopedicEvaluationResponse:
         """
         Compute 12-week comparative trajectory curves across 5 protocols using Gompertz non-linear dynamics.
@@ -128,7 +128,7 @@ class OrthopedicEngine:
         # Specialist clearance cuts surgical complication risk in half
         complication_factor = 0.50 if has_specialist_clearance else 1.0
 
-        trajectories: List[TreatmentTrajectory] = []
+        trajectories: list[TreatmentTrajectory] = []
 
         # -------------------------------------------------------------
         # 1. Conservative Rest & Physical Therapy
@@ -136,11 +136,13 @@ class OrthopedicEngine:
         cons_k = 0.45 * combined_rate_mod
         cons_t0 = 4.0
         cons_est_weeks = max(3, int(round(severity_grade * 1.5 * (1.0 / combined_rate_mod))))
-        cons_curve: List[RTPCurvePoint] = []
+        cons_curve: list[RTPCurvePoint] = []
         for w in range(13):
             h_w = self.compute_gompertz_point(w, clamped_h0, h_target, cons_k, cons_t0)
             re_inj = max(2.0, min(95.0, (100.0 - h_w) * 0.70))
-            eff = min(100.0, round(h_w * 1.02, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.90, 1))
+            eff = (
+                min(100.0, round(h_w * 1.02, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.90, 1))
+            )
             cons_curve.append(
                 RTPCurvePoint(
                     week=w,
@@ -167,11 +169,13 @@ class OrthopedicEngine:
         prp_k = 0.65 * combined_rate_mod
         prp_t0 = 2.5
         prp_est_weeks = max(2, int(round(cons_est_weeks * 0.70)))
-        prp_curve: List[RTPCurvePoint] = []
+        prp_curve: list[RTPCurvePoint] = []
         for w in range(13):
             h_w = self.compute_gompertz_point(w, clamped_h0, 96.0, prp_k, prp_t0)
             re_inj = max(2.5, min(95.0, (100.0 - h_w) * 0.65 * 1.10))
-            eff = min(100.0, round(h_w * 1.04, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.92, 1))
+            eff = (
+                min(100.0, round(h_w * 1.04, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.92, 1))
+            )
             prp_curve.append(
                 RTPCurvePoint(
                     week=w,
@@ -199,11 +203,13 @@ class OrthopedicEngine:
         arthro_k = 0.85 * combined_rate_mod
         arthro_t0 = 3.0
         arthro_est_weeks = max(2, int(round(cons_est_weeks * 0.50)))
-        arthro_curve: List[RTPCurvePoint] = []
+        arthro_curve: list[RTPCurvePoint] = []
         for w in range(13):
             h_w = self.compute_gompertz_point(w, arthro_h0, 94.0, arthro_k, arthro_t0)
             re_inj = max(3.0, min(95.0, (100.0 - h_w) * 0.60 * 1.25))
-            eff = min(100.0, round(h_w * 1.05, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.88, 1))
+            eff = (
+                min(100.0, round(h_w * 1.05, 1)) if h_w >= 85.0 else min(80.0, round(h_w * 0.88, 1))
+            )
             arthro_curve.append(
                 RTPCurvePoint(
                     week=w,
@@ -231,11 +237,13 @@ class OrthopedicEngine:
         recon_k = 0.70 * combined_rate_mod
         recon_t0 = 5.0
         recon_est_weeks = max(6, int(round(cons_est_weeks * 1.25)))
-        recon_curve: List[RTPCurvePoint] = []
+        recon_curve: list[RTPCurvePoint] = []
         for w in range(13):
             h_w = self.compute_gompertz_point(w, recon_h0, 99.0, recon_k, recon_t0)
             re_inj = max(1.5, min(95.0, (100.0 - h_w) * 0.50 * 0.90))
-            eff = min(100.0, round(h_w * 1.05, 1)) if h_w >= 85.0 else min(75.0, round(h_w * 0.85, 1))
+            eff = (
+                min(100.0, round(h_w * 1.05, 1)) if h_w >= 85.0 else min(75.0, round(h_w * 0.85, 1))
+            )
             recon_curve.append(
                 RTPCurvePoint(
                     week=w,
@@ -261,7 +269,7 @@ class OrthopedicEngine:
         # -------------------------------------------------------------
         cort_k = 0.18 * combined_rate_mod  # very slow structural repair
         cort_t0 = 7.0
-        cort_curve: List[RTPCurvePoint] = []
+        cort_curve: list[RTPCurvePoint] = []
         for w in range(13):
             h_w = self.compute_gompertz_point(w, clamped_h0, 85.0, cort_k, cort_t0)
             # 2.5x acute re-injury hazard multiplier
@@ -308,7 +316,7 @@ class OrthopedicEngine:
         db: Session,
         player_id: int,
         center_id: str,
-        seed: Optional[int] = None,
+        seed: int | None = None,
     ) -> SecondOpinionConsultResult:
         """
         Dispatch an injured player to an elite outside orthopedic clinic.
@@ -322,6 +330,7 @@ class OrthopedicEngine:
         center = self.SPECIALIST_CENTERS[center_id]
 
         from app.models.player import Player
+
         player = db.query(Player).filter(Player.id == player_id).first()
         if not player:
             raise ValueError(f"Player {player_id} not found")
@@ -352,6 +361,7 @@ class OrthopedicEngine:
 
         # Update player injury medical flags in database
         from app.models.player_injury import PlayerInjury
+
         injury_record = player.injury
         if not injury_record:
             injury_record = PlayerInjury(player_id=player.id)
@@ -394,7 +404,7 @@ class OrthopedicEngine:
         is_sharp_cut: bool = False,
         momentum: float = 0.0,
         g_force: float = 0.0,
-        seed: Optional[int] = None,
+        seed: int | None = None,
     ) -> CortisoneHazardCheckResponse:
         """
         Evaluate in-game 60Hz physics hazard for runners playing under cortisone stabilization.
@@ -414,10 +424,18 @@ class OrthopedicEngine:
         base_strain_risk = 0.012  # 1.2% base cut strain probability
 
         cut_multiplier = 2.2 if is_sharp_cut else 1.0
-        momentum_multiplier = 1.0 + max(0.0, (momentum - 700.0) / 300.0) if momentum > 700.0 else 1.0
+        momentum_multiplier = (
+            1.0 + max(0.0, (momentum - 700.0) / 300.0) if momentum > 700.0 else 1.0
+        )
         g_force_multiplier = 1.0 + max(0.0, (g_force - 8.0) / 10.0) if g_force > 8.0 else 1.0
 
-        effective_prob = base_strain_risk * hazard_mult * cut_multiplier * momentum_multiplier * g_force_multiplier
+        effective_prob = (
+            base_strain_risk
+            * hazard_mult
+            * cut_multiplier
+            * momentum_multiplier
+            * g_force_multiplier
+        )
         effective_prob = max(0.01, min(0.75, effective_prob))
 
         rng = random.Random(seed if seed is not None else int(time.time() * 1000000) % 1000000)
@@ -430,9 +448,7 @@ class OrthopedicEngine:
                 f"during high-shear cut (Hazard 2.5x, Momentum {round(momentum, 1)} kg*m/s, G-Force {round(g_force, 1)}G)."
             )
         else:
-            msg = (
-                f"Cortisone stabilization held. High-G cut survived (Hazard 2.5x, Risk {round(effective_prob * 100, 1)}%)."
-            )
+            msg = f"Cortisone stabilization held. High-G cut survived (Hazard 2.5x, Risk {round(effective_prob * 100, 1)}%)."
 
         return CortisoneHazardCheckResponse(
             catastrophic_rupture=rupture_occurred,

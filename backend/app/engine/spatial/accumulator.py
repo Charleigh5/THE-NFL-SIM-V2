@@ -1,12 +1,11 @@
-from typing import List
-from app.schemas.spatial import PlayerSpatialState, BoundingBox3D
+from app.schemas.spatial import BoundingBox3D, PlayerSpatialState
 
 
 class SpatialAccumulator:
     """Tier 1 Deterministic Spatial Accumulator (<2ms per 22 players)."""
 
-    def accumulate_frame(self, players: List[PlayerSpatialState]) -> List[PlayerSpatialState]:
-        resolved: List[PlayerSpatialState] = []
+    def accumulate_frame(self, players: list[PlayerSpatialState]) -> list[PlayerSpatialState]:
+        resolved: list[PlayerSpatialState] = []
         for p in players:
             # Enforce non-negative turf elevation
             clamped_z = max(0.0, p.position_z)
@@ -23,7 +22,7 @@ class SpatialAccumulator:
                     position_z=clamped_z,
                     facing_vector=p.facing_vector,
                     bounding_box=BoundingBox3D(min_point=min_pt, max_point=max_pt),
-                    morph_type=p.morph_type
+                    morph_type=p.morph_type,
                 )
             )
         return resolved

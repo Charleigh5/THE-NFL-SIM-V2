@@ -5,11 +5,12 @@ Provides endpoints for generating implementation plans from task lists
 using MCP infrastructure.
 """
 
+import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+
 from app.services.agent_generator import AgentGeneratorService
-import logging
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -20,21 +21,24 @@ agent_generator = AgentGeneratorService()
 
 class TaskItem(BaseModel):
     """Single task item from Mission Control."""
+
     id: str
     note: str
     element_type: str
-    screenshot_path: Optional[str] = None
+    screenshot_path: str | None = None
     has_research: bool = False
 
 
 class GeneratePlanRequest(BaseModel):
     """Request body for plan generation."""
-    tasks: List[TaskItem]
-    project_context: Optional[str] = None
+
+    tasks: list[TaskItem]
+    project_context: str | None = None
 
 
 class GeneratePlanResponse(BaseModel):
     """Response after plan generation."""
+
     success: bool
     artifact_path: str
     task_count: int
@@ -56,20 +60,18 @@ async def generate_implementation_plan(request: GeneratePlanRequest):
 
     try:
         result = await agent_generator.generate_plan(
-            tasks=request.tasks,
-            project_context=request.project_context
+            tasks=request.tasks, project_context=request.project_context
         )
 
         return GeneratePlanResponse(
             success=True,
             artifact_path=str(result.artifact_path),
             task_count=len(request.tasks),
-            summary=result.summary
+            summary=result.summary,
         )
 
     except Exception as e:
         logger.error(f"Plan generation failed: {e}", exc_info=True)
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to generate implementation plan: {str(e)}"
+            status_code=500, detail=f"Failed to generate implementation plan: {str(e)}"
         )

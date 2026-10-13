@@ -1,19 +1,21 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
 import logging
 
-from app.core.database import get_db
-from app.core.error_decorators import handle_errors
-from app.models.player import Player
-from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
+from fastapi import APIRouter, Depends, HTTPException
+
 # NOTE: RecruitingEngine class needs to be implemented as a service that
 # orchestrates RecruitingProfile and WorkoutEngine components for full
 # prospect generation. Currently only component classes exist in recruiting.py.
 from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy.orm import Session
+
+from app.core.database import get_db
+from app.core.error_decorators import handle_errors
+from app.kernels.genesis.bio_metrics import BiologicalProfile, FatigueRegulator
+from app.models.player import Player
 
 router = APIRouter(prefix="/api/genesis", tags=["genesis"])
 logger = logging.getLogger(__name__)
+
 
 class BioMetricsResponse(BaseModel):
     fast_twitch_ratio: float
@@ -23,12 +25,11 @@ class BioMetricsResponse(BaseModel):
     interaction_radius: float
     fumble_risk: float
 
+
 @router.get("/player/{player_id}/bio-metrics", response_model=BioMetricsResponse)
 @handle_errors
 def get_player_bio_metrics(
-    player_id: int,
-    temperature_f: float = 72.0,
-    db: Session = Depends(get_db)
+    player_id: int, temperature_f: float = 72.0, db: Session = Depends(get_db)
 ):
     """Get biological metrics for a player."""
     logger.info(f"Fetching bio-metrics for player {player_id}")
@@ -38,13 +39,13 @@ def get_player_bio_metrics(
 
     # Initialize bio-metrics (could be stored in DB in future)
     # For now, we derive them from existing player stats to ensure consistency
-    speed_rating = player.speed if hasattr(player, 'speed') else 70.0
-    height_inches = player.height if hasattr(player, 'height') else 72.0
+    speed_rating = player.speed if hasattr(player, "speed") else 70.0
+    height_inches = player.height if hasattr(player, "height") else 72.0
 
     bio = BiologicalProfile(
         fast_twitch_ratio=0.5 + (speed_rating / 200.0),  # Derive from speed
-        hand_size_inches=9.0, # Default for now
-        wingspan_inches=height_inches * 1.04  # Rough wingspan estimate (height * 1.04 is typical)
+        hand_size_inches=9.0,  # Default for now
+        wingspan_inches=height_inches * 1.04,  # Rough wingspan estimate (height * 1.04 is typical)
     )
 
     return BioMetricsResponse(
@@ -53,8 +54,9 @@ def get_player_bio_metrics(
         hand_size_inches=bio.hand_size_inches,
         wingspan_inches=bio.wingspan_inches,
         interaction_radius=bio.interaction_radius,
-        fumble_risk=bio.calculate_fumble_risk(temperature_f)
+        fumble_risk=bio.calculate_fumble_risk(temperature_f),
     )
+
 
 @router.get("/player/{player_id}/fatigue")
 @handle_errors
@@ -72,8 +74,9 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
         "hrv": regulator.hrv,
         "lactic_acid": regulator.lactic_acid,
         "max_burst_capacity": regulator.max_burst_capacity,
-        "home_climate": regulator.home_climate
+        "home_climate": regulator.home_climate,
     }
+
 
 # NOTE: Recruit generation endpoint will be re-enabled once RecruitingEngine
 # service is implemented. This service will orchestrate RecruitingProfile and
@@ -85,13 +88,14 @@ def get_player_fatigue(player_id: int, db: Session = Depends(get_db)):
 #     recruit = recruiting.generate_prospect(position)
 #     return recruit
 
+
 @router.post("/seed")
 @handle_errors
 def seed_database(db: Session = Depends(get_db)):
     """Seed the database with initial data for testing."""
     logger.info("Seeding database...")
 
-    from app.core.seed import seed_teams, seed_players
+    from app.core.seed import seed_players, seed_teams
     from app.models.season import Season
 
     # Ensure teams and players exist

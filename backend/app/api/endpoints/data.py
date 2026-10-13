@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Optional, Dict, Any
-from sqlalchemy.orm import Session
 import logging
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.error_decorators import handle_errors
 from app.models.game import Game
-from app.models.team import Team
 from app.models.player import Player
+from app.models.team import Team
 
 router = APIRouter(prefix="/api/data", tags=["data"])
 logger = logging.getLogger(__name__)
@@ -21,13 +21,13 @@ def get_game_state(game_id: int, db: Session = Depends(get_db)):
     game = db.query(Game).filter(Game.id == game_id).first()
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-    
+
     # Use game_data for transient state not in columns
     state = game.game_data or {}
-    
+
     # Determine possession string (home/away) from ID if available
     possession_id = state.get("possession_team_id")
-    possession = "home" # Default
+    possession = "home"  # Default
     if possession_id:
         if possession_id == game.away_team_id:
             possession = "away"
@@ -35,7 +35,7 @@ def get_game_state(game_id: int, db: Session = Depends(get_db)):
             possession = "home"
     elif "possession" in state:
         possession = state["possession"]
-    
+
     return {
         "game_id": game.id,
         "quarter": state.get("quarter", 1),
@@ -44,13 +44,13 @@ def get_game_state(game_id: int, db: Session = Depends(get_db)):
         "possession": possession,
         "down": state.get("down", 1),
         "distance": state.get("distance", 10),
-        "yard_line": state.get("yard_line", 25)
+        "yard_line": state.get("yard_line", 25),
     }
 
 
 @router.get("/teams")
 @handle_errors
-def get_teams(limit: Optional[int] = 32, db: Session = Depends(get_db)):
+def get_teams(limit: int | None = 32, db: Session = Depends(get_db)):
     """Fetch all teams in the simulation."""
     logger.info(f"Fetching teams with limit {limit}")
     teams = db.query(Team).limit(limit).all()
@@ -68,27 +68,33 @@ def get_teams(limit: Optional[int] = 32, db: Session = Depends(get_db)):
                 "ties": t.ties,
                 "logo_url": t.logo_url,
                 "primary_color": t.primary_color,
-                "secondary_color": t.secondary_color
-            } for t in teams
+                "secondary_color": t.secondary_color,
+            }
+            for t in teams
         ],
-        "count": len(teams)
+        "count": len(teams),
     }
 
 
 @router.get("/players")
 @handle_errors
-def get_players(team_id: Optional[int] = None, position: Optional[str] = None, limit: int = 100, db: Session = Depends(get_db)):
+def get_players(
+    team_id: int | None = None,
+    position: str | None = None,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
     """Fetch players, optionally filtered by team or position."""
     logger.info(f"Fetching players (team_id={team_id}, position={position}, limit={limit})")
     query = db.query(Player)
-    
+
     if team_id:
         query = query.filter(Player.team_id == team_id)
     if position:
         query = query.filter(Player.position == position)
-        
+
     players = query.limit(limit).all()
-    
+
     return {
         "players": [
             {
@@ -103,11 +109,12 @@ def get_players(team_id: Optional[int] = None, position: Optional[str] = None, l
                 "height": p.height,
                 "weight": p.weight,
                 "experience": p.experience,
-                "image_url": p.image_url
-            } for p in players
+                "image_url": p.image_url,
+            }
+            for p in players
         ],
         "count": len(players),
-        "filters": {"team_id": team_id, "position": position}
+        "filters": {"team_id": team_id, "position": position},
     }
 
 
@@ -119,13 +126,9 @@ def get_game_logs(game_id: int, db: Session = Depends(get_db)):
     game = db.query(Game).filter(Game.id == game_id).first()
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-        
+
     # Assuming logs are in game_data['plays'] or similar
     # If not, return empty list for now
     logs = (game.game_data or {}).get("plays", [])
-    
-    return {
-        "game_id": game.id,
-        "logs": logs,
-        "count": len(logs)
-    }
+
+    return {"game_id": game.id, "logs": logs, "count": len(logs)}

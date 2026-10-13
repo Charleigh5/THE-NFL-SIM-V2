@@ -5,19 +5,18 @@ REST endpoints exposing double-entry accounting statements,
 multi-year outlooks, dry-run simulation, and transaction journaling.
 """
 
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.services.cap_ledger_service import CapLedgerService, BASE_LEAGUE_YEAR
 from app.schemas.cap_ledger import (
-    TeamLedgerStatementDTO,
-    MultiYearLedgerStatementResponse,
+    CapLedgerTransactionDTO,
     LedgerSimulateRequest,
     LedgerSimulateResponse,
-    CapLedgerTransactionDTO,
+    MultiYearLedgerStatementResponse,
+    TeamLedgerStatementDTO,
 )
+from app.services.cap_ledger_service import BASE_LEAGUE_YEAR, CapLedgerService
 
 router = APIRouter(prefix="/api/cap-ledger", tags=["Capology Double-Entry Ledger"])
 
@@ -80,7 +79,7 @@ def book_signing(
     signing_bonus_total: int,
     real_years: int,
     void_years: int = 0,
-    player_name: Optional[str] = None,
+    player_name: str | None = None,
     league_year: int = BASE_LEAGUE_YEAR,
     db: Session = Depends(get_db),
 ):

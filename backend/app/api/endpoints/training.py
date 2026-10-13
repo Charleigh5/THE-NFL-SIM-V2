@@ -6,31 +6,28 @@ REST endpoints for the Training System, consolidating drill catalogues,
 coaching philosophy styles, session execution, and weekly schedule generation.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Depends
-from typing import List, Optional, Dict, Any
+from typing import Any
+
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app.kernels.rpg.training import TrainingEngine
+from app.services.training.coaching_philosophy import (
+    get_coaching_style,
+    get_seasonal_intensity_cap,
+)
 from app.services.training.drills import (
+    ALL_DRILLS,
     Drill,
     DrillCategory,
     SeasonPhase,
-    ALL_DRILLS,
-    POSITION_DRILL_MAP,
     get_drills_for_position,
     get_drills_for_season,
-    get_drills_by_category,
-)
-from app.services.training.coaching_philosophy import (
-    CoachingStyle,
-    COACHING_STYLES,
-    get_coaching_style,
-    get_seasonal_intensity_cap,
 )
 from app.services.training.training_programs import (
     TrainingProgramsService,
     TrainingResult,
 )
-from app.kernels.rpg.training import TrainingEngine
 
 router = APIRouter()
 training_service = TrainingProgramsService()
@@ -40,57 +37,65 @@ training_service = TrainingProgramsService()
 # SCHEMAS
 # ============================================================================
 
+
 class DrillResponse(BaseModel):
     """Response model for a single drill."""
+
     name: str
     target_stat: str
-    secondary_stats: List[str]
+    secondary_stats: list[str]
     injury_risk: float
     xp_multiplier: float
     fatigue_cost: float
     category: str
     description: str
-    season_filter: List[str]
+    season_filter: list[str]
 
 
 class DrillListResponse(BaseModel):
     """Response for drill list endpoint."""
-    drills: List[Dict[str, Any]]
+
+    drills: list[dict[str, Any]]
     total: int
-    position_filter: Optional[str] = None
-    season_filter: Optional[str] = None
-    category_filter: Optional[str] = None
+    position_filter: str | None = None
+    season_filter: str | None = None
+    category_filter: str | None = None
 
 
 class TrainingExecutionRequest(BaseModel):
     """Request to execute a training session."""
+
     player_id: int = Field(..., description="Player ID to train")
     drill_name: str = Field(..., description="Name of the drill to execute")
-    coaching_style: str = Field("smart", description="Coaching style (volume, intensity, smart, old_school)")
+    coaching_style: str = Field(
+        "smart", description="Coaching style (volume, intensity, smart, old_school)"
+    )
     season_phase: SeasonPhase = Field(SeasonPhase.REGULAR, description="Current season phase")
     player_age: int = Field(25, ge=18, le=50, description="Player's age")
 
 
 class WeeklySchedule(BaseModel):
     """Weekly training schedule recommendation."""
+
     position: str
     season_phase: str
     coaching_style: str
-    recommended_drills: List[Drill] = Field(default_factory=list)
+    recommended_drills: list[Drill] = Field(default_factory=list)
     total_sessions_per_week: int = 5
-    seasonal_intensity_cap: Optional[float] = 1.0
-    notes: List[str] = Field(default_factory=list)
+    seasonal_intensity_cap: float | None = 1.0
+    notes: list[str] = Field(default_factory=list)
 
 
 # ============================================================================
 # ENDPOINTS
 # ============================================================================
 
+
 @router.get("/drills", response_model=dict)
 def get_drills(
-    position: Optional[str] = Query(None, description="Filter by position (e.g. QB, WR)"),
-    season: Optional[SeasonPhase] = Query(None, description="Filter by season phase"),
-    category: Optional[DrillCategory] = Query(None, description="Filter by category"),
+    position: str | None = Query(None, description="Filter by position (e.g. QB, WR)"),
+    season: SeasonPhase | None = Query(None, description="Filter by season phase"),
+    category: DrillCategory | None = Query(None, description="Filter by category"),
 ):
     """Get available drills filtered by position, season phase, and category."""
     drills = ALL_DRILLS
@@ -106,10 +111,7 @@ def get_drills(
     if category:
         drills = [d for d in drills if d.category == category]
 
-    serialized_drills = [
-        d.model_dump() if hasattr(d, "model_dump") else d.__dict__
-        for d in drills
-    ]
+    serialized_drills = [d.model_dump() if hasattr(d, "model_dump") else d.__dict__ for d in drills]
     return {
         "drills": serialized_drills,
         "total": len(serialized_drills),
@@ -119,7 +121,7 @@ def get_drills(
     }
 
 
-@router.get("/styles", response_model=List[dict])
+@router.get("/styles", response_model=list[dict])
 def get_coaching_styles():
     """Get all available coaching styles."""
     return [
@@ -171,16 +173,26 @@ def execute_training(request: TrainingExecutionRequest):
         drill=drill,
         player_age=request.player_age,
         coaching_style=coaching_style,
-        season_phase=request.season_phase.value if hasattr(request.season_phase, "value") else str(request.season_phase),
+        season_phase=request.season_phase.value
+        if hasattr(request.season_phase, "value")
+        else str(request.season_phase),
     )
 
-    grade = "A" if engine_result.get("xp_gained", 0) >= 40 else "B" if engine_result.get("xp_gained", 0) >= 20 else "C"
-    injury_note = " (Injury occurred during session!)" if engine_result.get("injury_occurred") else ""
+    grade = (
+        "A"
+        if engine_result.get("xp_gained", 0) >= 40
+        else "B"
+        if engine_result.get("xp_gained", 0) >= 20
+        else "C"
+    )
+    injury_note = (
+        " (Injury occurred during session!)" if engine_result.get("injury_occurred") else ""
+    )
 
     return TrainingResult(
         xp_gains={drill.target_stat: float(engine_result.get("xp_gained", 50.0))},
         session_grade=grade,
-        notes=[f"Completed {drill.name}{injury_note}"]
+        notes=[f"Completed {drill.name}{injury_note}"],
     )
 
 
@@ -188,7 +200,7 @@ def execute_training(request: TrainingExecutionRequest):
 def get_schedule(
     position: str = "QB",
     season_phase: SeasonPhase = SeasonPhase.REGULAR,
-    coaching_style: str = "smart"
+    coaching_style: str = "smart",
 ):
     """Get the recommended weekly training schedule."""
     position_drills = get_drills_for_position(position.upper())
@@ -210,5 +222,5 @@ def get_schedule(
         recommended_drills=recommended,
         total_sessions_per_week=5,
         seasonal_intensity_cap=cap,
-        notes=[f"Recommended {len(recommended)} drills for {position} in {season_phase.value}"]
+        notes=[f"Recommended {len(recommended)} drills for {position} in {season_phase.value}"],
     )

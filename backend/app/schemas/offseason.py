@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional
+
 
 class TeamNeed(BaseModel):
     position: str
@@ -7,13 +7,15 @@ class TeamNeed(BaseModel):
     target_count: int
     need_score: float  # Higher means more needed
 
+
 class Prospect(BaseModel):
     id: int
     name: str
     position: str
     overall_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class DraftPickSummary(BaseModel):
     round: int
@@ -23,6 +25,7 @@ class DraftPickSummary(BaseModel):
     player_position: str
     player_overall: int
 
+
 class DraftPickDetail(BaseModel):
     id: int
     season_id: int
@@ -30,9 +33,10 @@ class DraftPickDetail(BaseModel):
     original_team_id: int
     round: int
     pick_number: int
-    player_id: Optional[int] = None
-    
+    player_id: int | None = None
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class PlayerProgressionResult(BaseModel):
     player_id: int
@@ -41,8 +45,9 @@ class PlayerProgressionResult(BaseModel):
     change: int
     old_rating: int
     new_rating: int
-    
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class PlayerProgressionSummary(BaseModel):
     player_id: int
@@ -50,6 +55,7 @@ class PlayerProgressionSummary(BaseModel):
     previous_rating: int
     new_rating: int
     change: int
+
 
 class FreeAgentSigning(BaseModel):
     player_id: int
@@ -65,16 +71,16 @@ class FreeAgentSigning(BaseModel):
     guaranteed_money: float = 0.0
     grade: str = "B"
     competing_offers_count: int = 1
-    
+
     # Optional alias fields
-    contract_years: Optional[int] = None
-    total_value: Optional[float] = None
-    annual_avg: Optional[float] = None
-    guaranteed: Optional[float] = None
-    signing_grade: Optional[str] = None
-    signing_round: Optional[int] = None
-    bidding_teams_count: Optional[int] = None
-    
+    contract_years: int | None = None
+    total_value: float | None = None
+    annual_avg: float | None = None
+    guaranteed: float | None = None
+    signing_grade: str | None = None
+    signing_round: int | None = None
+    bidding_teams_count: int | None = None
+
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     def __init__(self, **data):
@@ -92,6 +98,7 @@ class FreeAgentSigning(BaseModel):
             data["competing_offers_count"] = data["bidding_teams_count"]
         super().__init__(**data)
 
+
 class FreeAgentMarketPlayer(BaseModel):
     player_id: int
     player_name: str
@@ -101,12 +108,12 @@ class FreeAgentMarketPlayer(BaseModel):
     projected_aav: float
     projected_years: int
     tier: str
-    top_interested_teams: List[str]
+    top_interested_teams: list[str]
 
     # Optional alias fields for backwards compatibility
-    name: Optional[str] = None
-    experience: Optional[int] = None
-    projected_market_value: Optional[float] = None
+    name: str | None = None
+    experience: int | None = None
+    projected_market_value: float | None = None
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 

@@ -7,19 +7,18 @@ REST endpoints for:
 3. 60Hz live physics Cortisone hazard evaluations
 """
 
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.player import Player, InjuryStatus
+from app.models.player import InjuryStatus, Player
 from app.schemas.orthopedic_rtp import (
-    OrthopedicEvaluationResponse,
-    SecondOpinionCenter,
-    SecondOpinionRequest,
-    SecondOpinionConsultResult,
     CortisoneHazardCheckRequest,
     CortisoneHazardCheckResponse,
+    OrthopedicEvaluationResponse,
+    SecondOpinionCenter,
+    SecondOpinionConsultResult,
+    SecondOpinionRequest,
 )
 from app.services.orthopedic_engine import orthopedic_engine
 
@@ -40,12 +39,18 @@ def get_orthopedic_evaluation(
         raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
 
     injury = player.injury
-    injury_type = (injury.injury_type if injury and injury.injury_type else player.injury_type) or "Acute Musculoskeletal Strain"
-    severity = (injury.injury_severity if injury and injury.injury_severity else player.injury_severity) or 3
+    injury_type = (
+        injury.injury_type if injury and injury.injury_type else player.injury_type
+    ) or "Acute Musculoskeletal Strain"
+    severity = (
+        injury.injury_severity if injury and injury.injury_severity else player.injury_severity
+    ) or 3
 
     # Check active medical flags for Cortisone or Specialist clearance
     flags = dict(injury.medical_flags or {}) if injury else {}
-    is_cortisone = flags.get("cortisone_active", False) or player.injury_status == InjuryStatus.QUESTIONABLE
+    is_cortisone = (
+        flags.get("cortisone_active", False) or player.injury_status == InjuryStatus.QUESTIONABLE
+    )
     has_spec = flags.get("specialist_cleared", False)
     spec_center_name = flags.get("specialist_center_name", None)
 
@@ -53,7 +58,11 @@ def get_orthopedic_evaluation(
     body_part = "right_leg"
     baseline_health = 55.0
     if player.body_health:
-        bh = player.body_health[0] if isinstance(player.body_health, list) and len(player.body_health) > 0 else player.body_health
+        bh = (
+            player.body_health[0]
+            if isinstance(player.body_health, list) and len(player.body_health) > 0
+            else player.body_health
+        )
         baseline_health = getattr(bh, "right_leg_health", 55.0) or 55.0
 
     durability = player.injury_resistance or 80
@@ -77,7 +86,7 @@ def get_orthopedic_evaluation(
     return eval_response
 
 
-@router.get("/specialists", response_model=List[SecondOpinionCenter])
+@router.get("/specialists", response_model=list[SecondOpinionCenter])
 def list_specialist_centers():
     """
     Return available elite outside orthopedic consultation centers.

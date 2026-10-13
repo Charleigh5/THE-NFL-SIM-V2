@@ -15,22 +15,19 @@ Architecture:
 - Frame data can be exported for replay/validation
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple, Any
-from enum import Enum
-import math
 import hashlib
 import json
 import logging
+import math
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Any
 
 from app.engine.vectorized_physics import (
-    VectorizedPhysicsKernel,
-    ZeroAllocPlayBuffer,
-    CircularTelemetryRingBuffer,
+    STATE_IDLE,
     STATE_NAME_TO_INT,
     STATE_TACKLED,
-    STATE_BLOCKING,
-    STATE_IDLE,
+    VectorizedPhysicsKernel,
 )
 
 logger = logging.getLogger(__name__)
@@ -59,8 +56,9 @@ FIELD_LENGTH = 100.0
 FIELD_WIDTH = 53.33
 
 
-class PlayerState(str, Enum):
+class PlayerState(StrEnum):
     """Current state of a player in the simulation."""
+
     IDLE = "IDLE"
     RUNNING = "RUNNING"
     BLOCKING = "BLOCKING"
@@ -73,8 +71,9 @@ class PlayerState(str, Enum):
     HAS_BALL = "HAS_BALL"
 
 
-class PlayOutcome(str, Enum):
+class PlayOutcome(StrEnum):
     """Possible outcomes for a play."""
+
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETE = "COMPLETE"
     INCOMPLETE = "INCOMPLETE"
@@ -89,9 +88,11 @@ class PlayOutcome(str, Enum):
 # DATA CLASSES
 # =============================================================================
 
+
 @dataclass
 class Vector2D:
     """2D position/velocity vector."""
+
     x: float = 0.0
     y: float = 0.0
 
@@ -105,7 +106,7 @@ class Vector2D:
         return Vector2D(self.x * scalar, self.y * scalar)
 
     def magnitude(self) -> float:
-        return math.sqrt(self.x ** 2 + self.y ** 2)
+        return math.sqrt(self.x**2 + self.y**2)
 
     def normalized(self) -> "Vector2D":
         mag = self.magnitude()
@@ -123,10 +124,11 @@ class Vector2D:
 @dataclass
 class PhysicsPlayer:
     """Player state in the physics simulation."""
+
     player_id: int
     position: Vector2D
     velocity: Vector2D = field(default_factory=lambda: Vector2D(0, 0))
-    target_position: Optional[Vector2D] = None
+    target_position: Vector2D | None = None
     state: PlayerState = PlayerState.IDLE
     has_ball: bool = False
     is_offense: bool = True
@@ -145,19 +147,20 @@ class PhysicsPlayer:
             "velocity": self.velocity.to_dict(),
             "state": self.state.value,
             "has_ball": self.has_ball,
-            "is_offense": self.is_offense
+            "is_offense": self.is_offense,
         }
 
 
 @dataclass
 class PhysicsBall:
     """Ball state in the physics simulation."""
+
     position: Vector2D = field(default_factory=lambda: Vector2D(0, 0))
     velocity: Vector2D = field(default_factory=lambda: Vector2D(0, 0))
     height: float = 0.0  # Yards above ground
     is_in_air: bool = False
     is_loose: bool = False  # Fumble
-    carrier_id: Optional[int] = None
+    carrier_id: int | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -165,18 +168,19 @@ class PhysicsBall:
             "height": round(self.height, 3),
             "is_in_air": self.is_in_air,
             "is_loose": self.is_loose,
-            "carrier_id": self.carrier_id
+            "carrier_id": self.carrier_id,
         }
 
 
 @dataclass
 class PhysicsFrame:
     """Single frame of physics state."""
+
     frame_id: int
     timestamp: float  # Seconds since play start
-    players: List[PhysicsPlayer]
+    players: list[PhysicsPlayer]
     ball: PhysicsBall
-    events: List[str] = field(default_factory=list)
+    events: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -184,13 +188,14 @@ class PhysicsFrame:
             "timestamp": round(self.timestamp, 4),
             "players": [p.to_dict() for p in self.players],
             "ball": self.ball.to_dict(),
-            "events": self.events
+            "events": self.events,
         }
 
 
 @dataclass
 class Collision:
     """Record of collision between players."""
+
     frame_id: int
     player1_id: int
     player2_id: int
@@ -201,10 +206,11 @@ class Collision:
 @dataclass
 class PhysicsPlayResult:
     """Final result of physics simulation."""
+
     outcome: PlayOutcome
     yards_gained: float
-    frames: List[PhysicsFrame]
-    collisions: List[Collision]
+    frames: list[PhysicsFrame]
+    collisions: list[Collision]
     duration: float  # Actual play duration
     checksum: str  # Merkle tree hash for validation
 
@@ -215,13 +221,14 @@ class PhysicsPlayResult:
             "frame_count": len(self.frames),
             "collision_count": len(self.collisions),
             "duration": round(self.duration, 3),
-            "checksum": self.checksum
+            "checksum": self.checksum,
         }
 
 
 # =============================================================================
 # PHYSICS ENGINE
 # =============================================================================
+
 
 class FramePhysicsEngine:
     """
@@ -234,26 +241,26 @@ class FramePhysicsEngine:
     def __init__(self, rng: Any, use_vectorized: bool = True):
         self.rng = rng
         self.use_vectorized = use_vectorized
-        self.frames: List[PhysicsFrame] = []
-        self.collisions: List[Collision] = []
+        self.frames: list[PhysicsFrame] = []
+        self.collisions: list[Collision] = []
         self.current_frame = 0
         self.elapsed_time = 0.0
         self.play_outcome = PlayOutcome.IN_PROGRESS
         self.line_of_scrimmage = 0.0
 
         # Player registry
-        self.players: Dict[int, PhysicsPlayer] = {}
+        self.players: dict[int, PhysicsPlayer] = {}
         self.ball = PhysicsBall()
 
         # SIMD Vectorized Kernel & Preallocated Buffers
-        self.vector_kernel: Optional[VectorizedPhysicsKernel] = None
+        self.vector_kernel: VectorizedPhysicsKernel | None = None
 
     def initialize_play(
         self,
-        offense: List[Any],
-        defense: List[Any],
+        offense: list[Any],
+        defense: list[Any],
         line_of_scrimmage: float,
-        play_type: str = "PASS"
+        play_type: str = "PASS",
     ) -> None:
         """
         Initialize player positions for a play.
@@ -305,8 +312,7 @@ class FramePhysicsEngine:
         qb = next((p for p in self.players.values() if p.is_offense), None)
         if qb:
             self.ball = PhysicsBall(
-                position=Vector2D(qb.position.x, qb.position.y),
-                carrier_id=qb.player_id
+                position=Vector2D(qb.position.x, qb.position.y), carrier_id=qb.player_id
             )
             qb.has_ball = True
 
@@ -321,21 +327,23 @@ class FramePhysicsEngine:
         for p in self.players.values():
             accel_rating = getattr(p, "acceleration_rating", 70)
             accel_rate = ACCELERATION_RATE * (accel_rating / 100.0)
-            player_list.append({
-                "player_id": p.player_id,
-                "x": float(p.position.x),
-                "y": float(p.position.y),
-                "vx": float(p.velocity.x),
-                "vy": float(p.velocity.y),
-                "is_offense": p.is_offense,
-                "max_speed": float(p.max_speed),
-                "accel_rate": float(accel_rate),
-                "agility": float(getattr(p, "agility_rating", 70)),
-                "tackle": float(getattr(p, "tackle_rating", 50)),
-                "state": p.state.value,
-                "target_x": float(p.target_position.x) if p.target_position else None,
-                "target_y": float(p.target_position.y) if p.target_position else None,
-            })
+            player_list.append(
+                {
+                    "player_id": p.player_id,
+                    "x": float(p.position.x),
+                    "y": float(p.position.y),
+                    "vx": float(p.velocity.x),
+                    "vy": float(p.velocity.y),
+                    "is_offense": p.is_offense,
+                    "max_speed": float(p.max_speed),
+                    "accel_rate": float(accel_rate),
+                    "agility": float(getattr(p, "agility_rating", 70)),
+                    "tackle": float(getattr(p, "tackle_rating", 50)),
+                    "state": p.state.value,
+                    "target_x": float(p.target_position.x) if p.target_position else None,
+                    "target_y": float(p.target_position.y) if p.target_position else None,
+                }
+            )
         self.vector_kernel = VectorizedPhysicsKernel(max_players=max(22, len(player_list)))
         self.vector_kernel.load_players(player_list, ball_carrier_id=carrier_id)
         self.vector_kernel.ball[0] = float(self.ball.position.x)
@@ -394,12 +402,7 @@ class FramePhysicsEngine:
         self.ball.height = float(self.vector_kernel.ball[2])
         self.ball.is_in_air = bool(self.vector_kernel.ball_is_in_air)
 
-    def _get_offensive_position(
-        self,
-        index: int,
-        player: Any,
-        los: float
-    ) -> Vector2D:
+    def _get_offensive_position(self, index: int, player: Any, los: float) -> Vector2D:
         """Get starting position for offensive player."""
         position = getattr(player, "position", "").upper()
 
@@ -425,12 +428,7 @@ class FramePhysicsEngine:
         # Default fallback
         return Vector2D(los - 3, FIELD_WIDTH / 2 + (index * 2 - 5))
 
-    def _get_defensive_position(
-        self,
-        index: int,
-        player: Any,
-        los: float
-    ) -> Vector2D:
+    def _get_defensive_position(self, index: int, player: Any, los: float) -> Vector2D:
         """Get starting position for defensive player."""
         position = getattr(player, "position", "").upper()
 
@@ -567,7 +565,7 @@ class FramePhysicsEngine:
     # COLLISION DETECTION (B-064)
     # =========================================================================
 
-    def _detect_collisions(self) -> List[Collision]:
+    def _detect_collisions(self) -> list[Collision]:
         """
         Detect player-to-player collisions this frame.
 
@@ -576,7 +574,7 @@ class FramePhysicsEngine:
         if self.use_vectorized and self.vector_kernel:
             self._sync_dynamic_to_kernel()
             simd_hits = self.vector_kernel.detect_collisions_simd()
-            collisions: List[Collision] = []
+            collisions: list[Collision] = []
             for off_idx, def_idx, col_type, force in simd_hits:
                 off_pid = int(self.vector_kernel.player_ids[off_idx])
                 def_pid = int(self.vector_kernel.player_ids[def_idx])
@@ -617,13 +615,13 @@ class FramePhysicsEngine:
                         player1_id=off_player.player_id,
                         player2_id=def_player.player_id,
                         collision_type=collision_type,
-                        impact_force=impact_force
+                        impact_force=impact_force,
                     )
                     collisions.append(collision)
 
         return collisions
 
-    def _process_collisions(self, collisions: List[Collision]) -> List[str]:
+    def _process_collisions(self, collisions: list[Collision]) -> list[str]:
         """Process collisions and update player states."""
         events = []
 
@@ -669,10 +667,7 @@ class FramePhysicsEngine:
             return True
 
         # Check for touchdown
-        ball_carrier = next(
-            (p for p in self.players.values() if p.has_ball),
-            None
-        )
+        ball_carrier = next((p for p in self.players.values() if p.has_ball), None)
         if ball_carrier and ball_carrier.position.x >= FIELD_LENGTH:
             self.play_outcome = PlayOutcome.TOUCHDOWN
             return True
@@ -683,7 +678,9 @@ class FramePhysicsEngine:
             return True
 
         # Check for out of bounds
-        if ball_carrier and (ball_carrier.position.y <= 0 or ball_carrier.position.y >= FIELD_WIDTH):
+        if ball_carrier and (
+            ball_carrier.position.y <= 0 or ball_carrier.position.y >= FIELD_WIDTH
+        ):
             self.play_outcome = PlayOutcome.OUT_OF_BOUNDS
             return True
 
@@ -694,7 +691,7 @@ class FramePhysicsEngine:
 
         return False
 
-    def _record_frame(self, events: Optional[List[str]] = None) -> None:
+    def _record_frame(self, events: list[str] | None = None) -> None:
         """Record current state as a frame."""
         if self.use_vectorized and self.vector_kernel:
             self.vector_kernel.snapshot_frame(self.current_frame, events)
@@ -710,7 +707,7 @@ class FramePhysicsEngine:
                     state=p.state,
                     has_ball=p.has_ball,
                     is_offense=p.is_offense,
-                    max_speed=p.max_speed
+                    max_speed=p.max_speed,
                 )
                 for p in self.players.values()
             ],
@@ -719,13 +716,13 @@ class FramePhysicsEngine:
                 height=self.ball.height,
                 is_in_air=self.ball.is_in_air,
                 is_loose=self.ball.is_loose,
-                carrier_id=self.ball.carrier_id
+                carrier_id=self.ball.carrier_id,
             ),
-            events=events or []
+            events=events or [],
         )
         self.frames.append(frame)
 
-    def benchmark_vectorized_execution(self, frames: int = 300) -> Dict[str, Any]:
+    def benchmark_vectorized_execution(self, frames: int = 300) -> dict[str, Any]:
         """Run a benchmark of the vectorized physics kernel."""
         if not self.vector_kernel:
             self._sync_to_vector_kernel()
@@ -740,8 +737,7 @@ class FramePhysicsEngine:
         # Calculate yards gained
         yards_gained = 0.0
         ball_carrier = next(
-            (p for p in self.players.values() if p.has_ball or p.state == PlayerState.TACKLED),
-            None
+            (p for p in self.players.values() if p.has_ball or p.state == PlayerState.TACKLED), None
         )
         if ball_carrier:
             yards_gained = ball_carrier.position.x - self.line_of_scrimmage
@@ -755,7 +751,7 @@ class FramePhysicsEngine:
             frames=self.frames,
             collisions=self.collisions,
             duration=self.elapsed_time,
-            checksum=checksum
+            checksum=checksum,
         )
 
     # =========================================================================

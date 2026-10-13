@@ -6,15 +6,15 @@ clique breakdown, contract holdout management, and insider media leaks.
 """
 
 import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.models.team import Team
 from app.models.player import Player
 from app.schemas.social_graph import (
-    LockerRoomSocialNetworkResponse,
     HoldoutResolutionRequest,
+    LockerRoomSocialNetworkResponse,
 )
 from app.services.social_graph_engine import SocialGraphEngine
 
@@ -40,7 +40,9 @@ def get_team_social_graph(
         raise HTTPException(status_code=500, detail=f"Social graph computation failed: {str(e)}")
 
 
-@router.post("/{team_id}/holdouts/{player_id}/resolve", response_model=LockerRoomSocialNetworkResponse)
+@router.post(
+    "/{team_id}/holdouts/{player_id}/resolve", response_model=LockerRoomSocialNetworkResponse
+)
 def resolve_contract_holdout(
     team_id: int = Path(..., description="Team ID"),
     player_id: int = Path(..., description="Player ID"),
@@ -66,7 +68,10 @@ def resolve_contract_holdout(
         raise HTTPException(status_code=500, detail=f"Holdout resolution failed: {str(e)}")
 
 
-@router.post("/{team_id}/social-graph/seed-holdout/{player_id}", response_model=LockerRoomSocialNetworkResponse)
+@router.post(
+    "/{team_id}/social-graph/seed-holdout/{player_id}",
+    response_model=LockerRoomSocialNetworkResponse,
+)
 def seed_player_holdout(
     team_id: int = Path(..., description="Team ID"),
     player_id: int = Path(..., description="Player ID"),
@@ -78,7 +83,9 @@ def seed_player_holdout(
     """
     player = db.query(Player).filter(Player.id == player_id, Player.team_id == team_id).first()
     if not player:
-        raise HTTPException(status_code=404, detail=f"Player {player_id} not found on team {team_id}")
+        raise HTTPException(
+            status_code=404, detail=f"Player {player_id} not found on team {team_id}"
+        )
 
     player.tension_score = 95.0
     player.trust_in_coach = 35

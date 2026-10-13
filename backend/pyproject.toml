@@ -34,6 +34,7 @@ select = [
 ignore = [
     "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
+    "B904",  # within an except clause, raise exceptions with raise ... from err
     "C901",  # too complex
 ]
 

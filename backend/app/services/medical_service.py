@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Session
-from app.models.medical import BodyPart, InjuryEvent
-from app.models.player import Player, InjuryStatus
 import random
+
+from sqlalchemy.orm import Session
+
+from app.models.medical import BodyPart
+from app.models.player import Player
+
 
 class MedicalService:
     def __init__(self, db: Session):
@@ -21,7 +24,11 @@ class MedicalService:
         if not player.body_health:
             health = self.initialize_body_health(player.id)
         elif isinstance(player.body_health, list):
-            health = player.body_health[0] if len(player.body_health) > 0 else self.initialize_body_health(player.id)
+            health = (
+                player.body_health[0]
+                if len(player.body_health) > 0
+                else self.initialize_body_health(player.id)
+            )
         else:
             health = player.body_health
 
@@ -42,7 +49,7 @@ class MedicalService:
         # e.g. 10% chance per 10 snaps to take a "hit" to a specific zone
         hits = snaps_played // 10
         for _ in range(hits):
-            if random.random() < 0.3: # 30% chance of meaningful contact
+            if random.random() < 0.3:  # 30% chance of meaningful contact
                 self._apply_hit_damage(health, position)
 
         self.db.commit()
@@ -50,7 +57,7 @@ class MedicalService:
     def _apply_hit_damage(self, health: BodyPart, position: str):
         """Logic to distribute damage to body parts"""
         part = random.choice(["head", "torso", "right_arm", "left_arm", "right_leg", "left_leg"])
-        damage = random.uniform(0.5, 3.0) # Small micro-tears
+        damage = random.uniform(0.5, 3.0)  # Small micro-tears
 
         if part == "head":
             health.head_health = max(0, health.head_health - damage)
@@ -59,7 +66,9 @@ class MedicalService:
         elif part == "right_arm":
             health.right_arm_health = max(0, health.right_arm_health - damage)
         elif part == "right_leg":
-            health.right_leg_health = max(0, health.right_leg_health - damage * 1.5) # Legs take more penalty
+            health.right_leg_health = max(
+                0, health.right_leg_health - damage * 1.5
+            )  # Legs take more penalty
 
     def process_weekly_recovery(self, player_id: int):
         """
@@ -78,7 +87,7 @@ class MedicalService:
             return
 
         # Recovery rate
-        recovery_rate = 5.0 # Base
+        recovery_rate = 5.0  # Base
         # Add modifier for Team Medical Staff (if we have access to team)
 
         health.general_wear = max(0, health.general_wear - recovery_rate * 2)

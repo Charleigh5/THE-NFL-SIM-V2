@@ -4,28 +4,56 @@ Connects to Tank01's low-latency endpoints for rosters, depth orders, and injury
 """
 
 import logging
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+
 import httpx
 
+from app.services.nflverse_service import map_position, map_team_abbr
 from app.services.roster_sync.base import (
     BaseRosterProvider,
+    DepthOrderDTO,
+    InjuryDTO,
+    ProviderStatusDTO,
     RosterPlayerDTO,
     TransactionDTO,
-    InjuryDTO,
-    DepthOrderDTO,
-    ProviderStatusDTO,
 )
-from app.services.nflverse_service import map_team_abbr, map_position
 
 logger = logging.getLogger(__name__)
 
 # List of 32 official NFL team abbreviations
 NFL_TEAMS = [
-    "ARI", "ATL", "BAL", "BUF", "CAR", "CHI", "CIN", "CLE",
-    "DAL", "DEN", "DET", "GB", "HOU", "IND", "JAX", "KC",
-    "LV", "LAC", "LAR", "MIA", "MIN", "NE", "NO", "NYG",
-    "NYJ", "PHI", "PIT", "SEA", "SF", "TB", "TEN", "WAS"
+    "ARI",
+    "ATL",
+    "BAL",
+    "BUF",
+    "CAR",
+    "CHI",
+    "CIN",
+    "CLE",
+    "DAL",
+    "DEN",
+    "DET",
+    "GB",
+    "HOU",
+    "IND",
+    "JAX",
+    "KC",
+    "LV",
+    "LAC",
+    "LAR",
+    "MIA",
+    "MIN",
+    "NE",
+    "NO",
+    "NYG",
+    "NYJ",
+    "PHI",
+    "PIT",
+    "SEA",
+    "SF",
+    "TB",
+    "TEN",
+    "WAS",
 ]
 
 
@@ -36,16 +64,16 @@ class Tank01Provider(BaseRosterProvider):
 
     BASE_URL = "https://tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com"
 
-    def __init__(self, api_key: Optional[str] = None, host: Optional[str] = None):
+    def __init__(self, api_key: str | None = None, host: str | None = None):
         self.api_key = api_key
         self.host = host or "tank01-nfl-live-in-game-real-time-statistics-nfl.p.rapidapi.com"
-        self._last_sync: Optional[str] = None
+        self._last_sync: str | None = None
 
     @property
     def provider_id(self) -> str:
         return "tank01"
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         if not self.api_key:
             raise ValueError("Tank01 RapidAPI key is missing. Configure RAPIDAPI_KEY in .env.")
         return {
@@ -62,22 +90,29 @@ class Tank01Provider(BaseRosterProvider):
             masked_key=masked,
             description="Hourly updated real-time rosters, transactions, and injury reports via RapidAPI.",
             last_sync_timestamp=self._last_sync,
-            available_features=["Roster Ingestion", "Injury Wire", "Transactions Feed", "Hourly Refresh"],
+            available_features=[
+                "Roster Ingestion",
+                "Injury Wire",
+                "Transactions Feed",
+                "Hourly Refresh",
+            ],
         )
 
-    def fetch_rosters(self) -> List[RosterPlayerDTO]:
+    def fetch_rosters(self) -> list[RosterPlayerDTO]:
         """Fetch current team rosters across all 32 franchises."""
         if not self.api_key:
             logger.warning("Tank01 API key missing, returning empty roster list.")
             return []
 
         headers = self._get_headers()
-        players: List[RosterPlayerDTO] = []
+        players: list[RosterPlayerDTO] = []
 
         with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=15.0) as client:
             for team_abbr in NFL_TEAMS:
                 try:
-                    resp = client.get("/getNFLTeamRoster", params={"teamAbv": team_abbr, "getStats": "false"})
+                    resp = client.get(
+                        "/getNFLTeamRoster", params={"teamAbv": team_abbr, "getStats": "false"}
+                    )
                     if resp.status_code == 200:
                         data = resp.json()
                         body = data.get("body", {})
@@ -107,7 +142,9 @@ class Tank01Provider(BaseRosterProvider):
                                     team_abbr=mapped_team,
                                     jersey_number=jersey_num,
                                     college=item.get("college"),
-                                    status=item.get("injuryStatus", "ACTIVE") if item.get("injuryStatus") else "ACTIVE",
+                                    status=item.get("injuryStatus", "ACTIVE")
+                                    if item.get("injuryStatus")
+                                    else "ACTIVE",
                                     injury_designation=item.get("injuryDesignation"),
                                 )
                             )
@@ -122,13 +159,13 @@ class Tank01Provider(BaseRosterProvider):
         self._last_sync = datetime.utcnow().isoformat()
         return players
 
-    def fetch_transactions(self) -> List[TransactionDTO]:
+    def fetch_transactions(self) -> list[TransactionDTO]:
         """Fetch latest transaction events from Tank01 news endpoint."""
         if not self.api_key:
             return []
 
         headers = self._get_headers()
-        transactions: List[TransactionDTO] = []
+        transactions: list[TransactionDTO] = []
 
         try:
             with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=15.0) as client:
@@ -163,13 +200,13 @@ class Tank01Provider(BaseRosterProvider):
 
         return transactions
 
-    def fetch_injuries(self) -> List[InjuryDTO]:
+    def fetch_injuries(self) -> list[InjuryDTO]:
         """Fetch injury designations across all NFL teams."""
         if not self.api_key:
             return []
 
         headers = self._get_headers()
-        injuries: List[InjuryDTO] = []
+        injuries: list[InjuryDTO] = []
 
         try:
             with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=15.0) as client:
@@ -191,6 +228,6 @@ class Tank01Provider(BaseRosterProvider):
 
         return injuries
 
-    def fetch_depth_charts(self) -> List[DepthOrderDTO]:
+    def fetch_depth_charts(self) -> list[DepthOrderDTO]:
         """Fetch depth orders (inferred from active rosters or rankings)."""
         return []

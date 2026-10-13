@@ -1,10 +1,11 @@
-from app.kernels.core.ecs_manager import Component
-from typing import Dict, Optional
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class BiologicalProfile(Component):
     # Directive 1: Hard cap MaxAcceleration based on FastTwitchRatio
-    fast_twitch_ratio: float = Field(default=0.5, ge=0.0, le=1.0) # 0.0 - 1.0 (Genetic Ceiling)
+    fast_twitch_ratio: float = Field(default=0.5, ge=0.0, le=1.0)  # 0.0 - 1.0 (Genetic Ceiling)
     max_acceleration_cap: float = 0.0
 
     # Directive 2: Hand Size Geopolitics
@@ -31,19 +32,22 @@ class BiologicalProfile(Component):
         # Directive 2 Logic
         base_risk = 0.01
         if self.hand_size_inches < 9.0 and temperature_f < 32.0:
-            base_risk *= 1.40 # 40% increase
+            base_risk *= 1.40  # 40% increase
         return base_risk
+
 
 class AnatomyModel(Component):
     # Directive 6: Structural Integrity
-    current_health: float = 100.0 # Temporary health
-    chronic_wear: float = 0.0 # Permanent degradation (Directive 6)
+    current_health: float = 100.0  # Temporary health
+    chronic_wear: float = 0.0  # Permanent degradation (Directive 6)
 
-    ligaments: Dict[str, Dict[str, float]] = Field(default_factory=lambda: {
-        "ACL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 85.0}, # Directive 7
-        "MCL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 90.0},
-        "Achilles": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 80.0}
-    })
+    ligaments: dict[str, dict[str, float]] = Field(
+        default_factory=lambda: {
+            "ACL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 85.0},  # Directive 7
+            "MCL": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 90.0},
+            "Achilles": {"integrity": 100.0, "stress": 0.0, "soft_tissue_limit": 80.0},
+        }
+    )
 
     def apply_stress(self, torque_vector: float, body_part: str):
         # Directive 7: Physics-Based Injury
@@ -53,16 +57,17 @@ class AnatomyModel(Component):
 
             # Check for failure
             if lig["stress"] > lig["soft_tissue_limit"]:
-                lig["integrity"] = 0.0 # Snap
+                lig["integrity"] = 0.0  # Snap
                 self.current_health -= 50.0
 
+
 class FatigueRegulator(Component):
-    hrv: float = 100.0 # Heart Rate Variability
+    hrv: float = 100.0  # Heart Rate Variability
     lactic_acid: float = 0.0
     max_burst_capacity: float = 100.0
 
     # Directive: Climate Familiarity
-    home_climate: str = "Neutral" # "Cold", "Warm", "Dome"
+    home_climate: str = "Neutral"  # "Cold", "Warm", "Dome"
 
     def update_fatigue(self, exertion: float, current_temp_f: float):
         """
@@ -72,11 +77,11 @@ class FatigueRegulator(Component):
 
         # Heat Fatigue: Cold teams tire faster in heat (>85F)
         if current_temp_f > 85.0 and self.home_climate == "Cold":
-            fatigue_mult = 1.5 # 50% faster fatigue
+            fatigue_mult = 1.5  # 50% faster fatigue
 
         # Cold Stiffness: Warm teams struggle in cold (<32F)
         if current_temp_f < 32.0 and self.home_climate == "Warm":
-            fatigue_mult = 1.2 # 20% faster fatigue due to stiffness
+            fatigue_mult = 1.2  # 20% faster fatigue due to stiffness
 
         self.lactic_acid += exertion * 0.5 * fatigue_mult
         self.hrv -= exertion * 0.2 * fatigue_mult

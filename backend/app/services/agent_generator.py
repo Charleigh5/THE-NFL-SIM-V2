@@ -4,11 +4,10 @@ Agent Generator Service
 Generates implementation plans from task lists using MCP infrastructure.
 """
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,16 +15,18 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TaskItem:
     """Task item from Mission Control."""
+
     id: str
     note: str
     element_type: str
-    screenshot_path: Optional[str] = None
+    screenshot_path: str | None = None
     has_research: bool = False
 
 
 @dataclass
 class GenerationResult:
     """Result of plan generation."""
+
     artifact_path: Path
     summary: str
 
@@ -37,9 +38,11 @@ class AgentGeneratorService:
     Uses MCP infrastructure for AI-powered plan generation.
     """
 
-    def __init__(self, output_dir: Optional[Path] = None):
+    def __init__(self, output_dir: Path | None = None):
         if output_dir is None:
-            self.output_dir = Path.home() / ".gemini" / "antigravity" / "artifacts" / "implementation_plans"
+            self.output_dir = (
+                Path.home() / ".gemini" / "antigravity" / "artifacts" / "implementation_plans"
+            )
         else:
             self.output_dir = output_dir
 
@@ -61,7 +64,7 @@ class AgentGeneratorService:
         lines.append("")
         return "\n".join(lines)
 
-    def _generate_plan_content(self, tasks: List[TaskItem], context: Optional[str] = None) -> str:
+    def _generate_plan_content(self, tasks: list[TaskItem], context: str | None = None) -> str:
         """Generate the full implementation plan markdown."""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -126,9 +129,7 @@ Final polish, edge cases, and testing.
         return content
 
     async def generate_plan(
-        self,
-        tasks: List,
-        project_context: Optional[str] = None
+        self, tasks: list, project_context: str | None = None
     ) -> GenerationResult:
         """
         Generate an implementation plan from task items.
@@ -145,24 +146,28 @@ Final polish, edge cases, and testing.
         # Convert to internal format
         task_items = []
         for t in tasks:
-            if hasattr(t, 'id'):
+            if hasattr(t, "id"):
                 # Pydantic model
-                task_items.append(TaskItem(
-                    id=t.id,
-                    note=t.note,
-                    element_type=t.element_type,
-                    screenshot_path=getattr(t, 'screenshot_path', None),
-                    has_research=getattr(t, 'has_research', False)
-                ))
+                task_items.append(
+                    TaskItem(
+                        id=t.id,
+                        note=t.note,
+                        element_type=t.element_type,
+                        screenshot_path=getattr(t, "screenshot_path", None),
+                        has_research=getattr(t, "has_research", False),
+                    )
+                )
             else:
                 # Dict
-                task_items.append(TaskItem(
-                    id=t.get('id', ''),
-                    note=t.get('note', ''),
-                    element_type=t.get('element_type', 'Unknown'),
-                    screenshot_path=t.get('screenshot_path'),
-                    has_research=t.get('has_research', False)
-                ))
+                task_items.append(
+                    TaskItem(
+                        id=t.get("id", ""),
+                        note=t.get("note", ""),
+                        element_type=t.get("element_type", "Unknown"),
+                        screenshot_path=t.get("screenshot_path"),
+                        has_research=t.get("has_research", False),
+                    )
+                )
 
         # Generate content
         content = self._generate_plan_content(task_items, project_context)
@@ -180,10 +185,7 @@ Final polish, edge cases, and testing.
         # Generate summary
         summary = f"Created implementation plan with {len(task_items)} tasks"
 
-        return GenerationResult(
-            artifact_path=filepath,
-            summary=summary
-        )
+        return GenerationResult(artifact_path=filepath, summary=summary)
 
 
 # Global instance

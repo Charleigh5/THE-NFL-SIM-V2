@@ -1,15 +1,17 @@
-from typing import List, Dict, Tuple, Optional
 import logging
-from app.models.team import Team
+import random
+from datetime import UTC, datetime, timedelta
+
+from sqlalchemy.orm import Session
+
+from app.core.random_utils import DeterministicRNG
 from app.models.game import Game, GameType
 from app.models.season import Season
-from sqlalchemy.orm import Session
-import random
-from datetime import datetime, timedelta, timezone
-from app.core.random_utils import DeterministicRNG
+from app.models.team import Team
 
 try:
     import nflreadpy as nfl
+
     HAS_NFLREADPY = True
 except ImportError:
     HAS_NFLREADPY = False
@@ -19,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Thanksgiving Day game constants
 THANKSGIVING_HOSTS = ["DET", "DAL"]  # Traditional hosts (Lions early, Cowboys late)
 THANKSGIVING_WEEK = 12  # Typically Week 12 of NFL season
+
 
 class ScheduleGenerator:
     """
@@ -40,8 +43,8 @@ class ScheduleGenerator:
         self,
         season_id: int,
         year: int = 2026,
-        teams: Optional[List[Team]] = None,
-    ) -> List[Game]:
+        teams: list[Team] | None = None,
+    ) -> list[Game]:
         """
         Load authentic NFL schedule from nflverse / nflreadpy.
 
@@ -61,6 +64,7 @@ class ScheduleGenerator:
         if not all_teams:
             try:
                 from app.core.seed import seed_teams
+
                 seed_teams(self.db)
                 all_teams = self.db.query(Team).all()
             except Exception as e:
@@ -80,7 +84,7 @@ class ScheduleGenerator:
             logger.error(f"Error loading schedule for {year}: {e}")
             return []
 
-        games: List[Game] = []
+        games: list[Game] = []
         for row in df.iter_rows(named=True):
             if row.get("game_type") not in ("REG", "REGULAR"):
                 continue
@@ -96,7 +100,7 @@ class ScheduleGenerator:
 
             gameday = row.get("gameday")
             gametime = row.get("gametime")
-            game_date = datetime.now(timezone.utc)
+            game_date = datetime.now(UTC)
             if gameday:
                 try:
                     time_part = gametime if gametime else "13:00"
@@ -116,7 +120,11 @@ class ScheduleGenerator:
             roof = str(row.get("roof", "")).lower()
             temp = row.get("temp")
             wind = row.get("wind")
-            weather_condition = "Dome" if ("dome" in roof or "closed" in roof) else ("Clear" if temp is not None else "Fair")
+            weather_condition = (
+                "Dome"
+                if ("dome" in roof or "closed" in roof)
+                else ("Clear" if temp is not None else "Fair")
+            )
 
             game = Game(
                 season_id=season_id,
@@ -143,12 +151,12 @@ class ScheduleGenerator:
     def generate_schedule(
         self,
         season_id: int,
-        teams: List[Team],
+        teams: list[Team],
         start_date: datetime = None,
         games_per_week: int = 16,
-        year: Optional[int] = None,
+        year: int | None = None,
         prefer_real: bool = True,
-    ) -> List[Game]:
+    ) -> list[Game]:
         """
         Generate a full season schedule.
 
@@ -181,7 +189,9 @@ class ScheduleGenerator:
         if prefer_real:
             real_games = self.load_real_schedule(season_id, year=target_year, teams=teams)
             if len(real_games) >= 200:
-                logger.info(f"Using authentic NFL schedule for season {target_year} ({len(real_games)} games)")
+                logger.info(
+                    f"Using authentic NFL schedule for season {target_year} ({len(real_games)} games)"
+                )
                 return real_games
 
         if start_date is None:
@@ -207,7 +217,7 @@ class ScheduleGenerator:
 
         return games
 
-    def _organize_by_division(self, teams: List[Team]) -> Dict[str, List[Team]]:
+    def _organize_by_division(self, teams: list[Team]) -> dict[str, list[Team]]:
         """
         Organize teams into a dictionary keyed by division.
 
@@ -225,7 +235,7 @@ class ScheduleGenerator:
             divisions[div_key].append(team)
         return divisions
 
-    def _generate_division_games(self, divisions: Dict[str, List[Team]]) -> List[Tuple[Team, Team]]:
+    def _generate_division_games(self, divisions: dict[str, list[Team]]) -> list[tuple[Team, Team]]:
         """
         Generate divisional matchups (home and away for each pair).
 
@@ -241,13 +251,15 @@ class ScheduleGenerator:
         for div_teams in divisions.values():
             # Each team plays every other team in division twice
             for i, team1 in enumerate(div_teams):
-                for team2 in div_teams[i+1:]:
+                for team2 in div_teams[i + 1 :]:
                     # Home and away
                     matchups.append((team1, team2))
                     matchups.append((team2, team1))
         return matchups
 
-    def _generate_conference_games(self, divisions: Dict[str, List[Team]]) -> List[Tuple[Team, Team]]:
+    def _generate_conference_games(
+        self, divisions: dict[str, list[Team]]
+    ) -> list[tuple[Team, Team]]:
         """
         Generate inter-division conference matchups.
 
@@ -262,15 +274,15 @@ class ScheduleGenerator:
         matchups = []
 
         # Group divisions by conference
-        afc_divs = {k: v for k, v in divisions.items() if k.startswith('AFC')}
-        nfc_divs = {k: v for k, v in divisions.items() if k.startswith('NFC')}
+        afc_divs = {k: v for k, v in divisions.items() if k.startswith("AFC")}
+        nfc_divs = {k: v for k, v in divisions.items() if k.startswith("NFC")}
 
         # Simplified: match divisions within conference
         for conf_divs in [afc_divs, nfc_divs]:
             div_list = list(conf_divs.values())
             for i in range(0, len(div_list), 2):
                 if i + 1 < len(div_list):
-                    div1, div2 = div_list[i], div_list[i+1]
+                    div1, div2 = div_list[i], div_list[i + 1]
                     for team1 in div1:
                         for team2 in div2:
                             matchups.append((team1, team2))
@@ -278,10 +290,8 @@ class ScheduleGenerator:
         return matchups
 
     def _generate_remaining_games(
-        self,
-        teams: List[Team],
-        existing_matchups: List[Tuple[Team, Team]]
-    ) -> List[Tuple[Team, Team]]:
+        self, teams: list[Team], existing_matchups: list[tuple[Team, Team]]
+    ) -> list[tuple[Team, Team]]:
         """
         Fill in remaining games to ensure each team has exactly 17 games (272 total regular season games).
         """
@@ -308,8 +318,10 @@ class ScheduleGenerator:
 
             for team2 in needy_teams[1:]:
                 h2h = sum(
-                    1 for h, a in existing_matchups + matchups
-                    if (h.id == team1.id and a.id == team2.id) or (h.id == team2.id and a.id == team1.id)
+                    1
+                    for h, a in existing_matchups + matchups
+                    if (h.id == team1.id and a.id == team2.id)
+                    or (h.id == team2.id and a.id == team1.id)
                 )
                 if h2h < min_h2h:
                     min_h2h = h2h
@@ -319,7 +331,9 @@ class ScheduleGenerator:
 
             if best_partner:
                 h_count1 = sum(1 for h, a in existing_matchups + matchups if h.id == team1.id)
-                h_count2 = sum(1 for h, a in existing_matchups + matchups if h.id == best_partner.id)
+                h_count2 = sum(
+                    1 for h, a in existing_matchups + matchups if h.id == best_partner.id
+                )
                 if h_count1 <= h_count2:
                     matchups.append((team1, best_partner))
                 else:
@@ -332,11 +346,11 @@ class ScheduleGenerator:
 
     def _assign_to_weeks(
         self,
-        matchups: List[Tuple[Team, Team]],
+        matchups: list[tuple[Team, Team]],
         season_id: int,
         start_date: datetime,
-        games_per_week: int = 16
-    ) -> List[Game]:
+        games_per_week: int = 16,
+    ) -> list[Game]:
         """
         Assign matchups to specific weeks (1-18) and create Game objects.
         """
@@ -346,7 +360,7 @@ class ScheduleGenerator:
         season_year = start_date.year
         if season_id:
             season_obj = self.db.query(Season).filter(Season.id == season_id).first()
-            if season_obj and hasattr(season_obj, 'year') and season_obj.year:
+            if season_obj and hasattr(season_obj, "year") and season_obj.year:
                 season_year = season_obj.year
 
         games = []
@@ -360,7 +374,10 @@ class ScheduleGenerator:
 
             game_type = GameType.REGULAR
             if week == THANKSGIVING_WEEK:
-                if hasattr(home_team, 'abbreviation') and home_team.abbreviation in THANKSGIVING_HOSTS:
+                if (
+                    hasattr(home_team, "abbreviation")
+                    and home_team.abbreviation in THANKSGIVING_HOSTS
+                ):
                     game_type = GameType.THANKSGIVING
 
             game = Game(
@@ -371,19 +388,15 @@ class ScheduleGenerator:
                 away_team_id=away_team.id,
                 date=game_date,
                 is_played=False,
-                game_type=game_type
+                game_type=game_type,
             )
             games.append(game)
 
         return games
 
     def generate_preseason_schedule(
-        self,
-        season_id: int,
-        teams: List[Team],
-        start_date: datetime,
-        weeks: int = 3
-    ) -> List[Game]:
+        self, season_id: int, teams: list[Team], start_date: datetime, weeks: int = 3
+    ) -> list[Game]:
         """
         Generate a preseason schedule.
 
@@ -465,17 +478,19 @@ class ScheduleGenerator:
 
                 specific_date = game_date + timedelta(days=day_offset)
 
-                games.append(Game(
-                    season_id=season_id,
-                    season=start_date.year,
-                    week=week,
-                    home_team_id=home.id,
-                    away_team_id=away.id,
-                    date=specific_date,
-                    is_played=False,
-                    is_preseason=True,
-                    game_type=GameType.REGULAR
-                ))
+                games.append(
+                    Game(
+                        season_id=season_id,
+                        season=start_date.year,
+                        week=week,
+                        home_team_id=home.id,
+                        away_team_id=away.id,
+                        date=specific_date,
+                        is_played=False,
+                        is_preseason=True,
+                        game_type=GameType.REGULAR,
+                    )
+                )
 
             # Advance to next week's Thursday
             current_date += timedelta(days=7)

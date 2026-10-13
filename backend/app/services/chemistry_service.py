@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import math
-from typing import List, Optional, Dict
 
-from sqlalchemy import select, func, desc
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+from app.core.logging_config import ErrorCategory, get_logger, log_error
+from app.models.player import Player
 from app.models.player_game_starts import PlayerGameStarts
-from app.models.player import Player, Position
 
 logger = get_logger(__name__)
+
 
 class ChemistryService:
     """
@@ -44,9 +44,8 @@ class ChemistryService:
             return 1.0
 
         # Normalize to 0.0-1.0 range between threshold and max
-        normalized = (
-            (consecutive_games - ChemistryService.CHEMISTRY_THRESHOLD_GAMES) /
-            (ChemistryService.CHEMISTRY_MAX_GAMES - ChemistryService.CHEMISTRY_THRESHOLD_GAMES)
+        normalized = (consecutive_games - ChemistryService.CHEMISTRY_THRESHOLD_GAMES) / (
+            ChemistryService.CHEMISTRY_MAX_GAMES - ChemistryService.CHEMISTRY_THRESHOLD_GAMES
         )
 
         # Logarithmic curve: fast growth early, slower later
@@ -56,27 +55,29 @@ class ChemistryService:
         return min(1.0, chemistry_level)
 
     @staticmethod
-    def calculate_scaled_bonuses(chemistry_level: float) -> Dict[str, float]:
+    def calculate_scaled_bonuses(chemistry_level: float) -> dict[str, float]:
         """Calculate attribute bonuses based on chemistry level."""
         base_multiplier = ChemistryService.BASE_BONUS_MULTIPLIER
         return {
             "pass_block": chemistry_level * base_multiplier,
             "run_block": chemistry_level * base_multiplier,
-            "awareness": chemistry_level * base_multiplier
+            "awareness": chemistry_level * base_multiplier,
         }
 
     @staticmethod
-    def calculate_advanced_effects(chemistry_level: float) -> Dict[str, float]:
+    def calculate_advanced_effects(chemistry_level: float) -> dict[str, float]:
         """Calculate advanced gameplay effects based on chemistry level."""
         return {
             "stunt_pickup_bonus": chemistry_level * 0.25,
             "penalty_reduction": chemistry_level * 0.20,
             "communication_boost": chemistry_level * 10.0,
-            "blitz_pickup_improvement": chemistry_level * 0.30
+            "blitz_pickup_improvement": chemistry_level * 0.30,
         }
 
     @staticmethod
-    def calculate_ol_chemistry(db: Session, team_id: int, current_game_id: Optional[int] = None) -> int:
+    def calculate_ol_chemistry(
+        db: Session, team_id: int, current_game_id: int | None = None
+    ) -> int:
         """
         Calculate OL chemistry bonus (0-5) based on lineup stability.
         Uses the harmonized logarithmic formula shared across the simulation engine.
@@ -84,7 +85,7 @@ class ChemistryService:
         return ChemistryService.get_chemistry_bonus(db, team_id)
 
     @staticmethod
-    def get_projected_ol_hash(db: Session, team_id: int) -> Optional[str]:
+    def get_projected_ol_hash(db: Session, team_id: int) -> str | None:
         """
         Get the hash for the projected starting OL based on depth chart.
         """
@@ -96,7 +97,7 @@ class ChemistryService:
                 .where(
                     Player.team_id == team_id,
                     Player.position.in_(ol_positions),
-                    Player.depth_chart_rank == 1
+                    Player.depth_chart_rank == 1,
                 )
                 .order_by(Player.position)
             ).all()
@@ -108,7 +109,13 @@ class ChemistryService:
             return ChemistryService.generate_lineup_hash(list(starters))
 
         except Exception as e:
-            log_error(logger, ErrorCategory.CHEMISTRY_ERROR, "Failed to get projected OL hash", exc_info=e, team_id=team_id)
+            log_error(
+                logger,
+                ErrorCategory.CHEMISTRY_ERROR,
+                "Failed to get projected OL hash",
+                exc_info=e,
+                team_id=team_id,
+            )
             return None
 
     @staticmethod
@@ -122,10 +129,14 @@ class ChemistryService:
             if not lineup_hash:
                 return 0
 
-            count = db.scalar(
-                select(func.count(func.distinct(PlayerGameStarts.game_id)))
-                .where(PlayerGameStarts.teammates_hash == lineup_hash)
-            ) or 0
+            count = (
+                db.scalar(
+                    select(func.count(func.distinct(PlayerGameStarts.game_id))).where(
+                        PlayerGameStarts.teammates_hash == lineup_hash
+                    )
+                )
+                or 0
+            )
 
             logger.info("chemistry_lookup", team_id=team_id, games_together=count)
 
@@ -133,18 +144,24 @@ class ChemistryService:
             return round(chem_level * ChemistryService.BASE_BONUS_MULTIPLIER)
 
         except Exception as e:
-            log_error(logger, ErrorCategory.CHEMISTRY_ERROR, "Error getting chemistry bonus", exc_info=e, team_id=team_id)
+            log_error(
+                logger,
+                ErrorCategory.CHEMISTRY_ERROR,
+                "Error getting chemistry bonus",
+                exc_info=e,
+                team_id=team_id,
+            )
             return 0
 
     @staticmethod
-    def generate_lineup_hash(player_ids: List[int]) -> str:
+    def generate_lineup_hash(player_ids: list[int]) -> str:
         """Generate a consistent hash for a set of player IDs."""
         sorted_ids = sorted(player_ids)
         id_string = "-".join(map(str, sorted_ids))
         return hashlib.sha256(id_string.encode()).hexdigest()
 
     @staticmethod
-    def record_game_starts(db: Session, game_id: int, team_id: int, starters: List[int]) -> None:
+    def record_game_starts(db: Session, game_id: int, team_id: int, starters: list[int]) -> None:
         """
         Record the starts for a game to build history.
         Must be called after game simulation.
@@ -160,7 +177,12 @@ class ChemistryService:
             ol_players = [p for p in players if p.position in ["LT", "LG", "C", "RG", "RT"]]
 
             if len(ol_players) < 5:
-                logger.warning("recording_starts_incomplete_ol", game_id=game_id, team_id=team_id, ol_count=len(ol_players))
+                logger.warning(
+                    "recording_starts_incomplete_ol",
+                    game_id=game_id,
+                    team_id=team_id,
+                    ol_count=len(ol_players),
+                )
 
             ol_ids = [p.id for p in ol_players]
             current_hash = ChemistryService.generate_lineup_hash(ol_ids)
@@ -169,8 +191,8 @@ class ChemistryService:
                 start_record = PlayerGameStarts(
                     player_id=player.id,
                     game_id=game_id,
-                    position_started=player.position, # Assuming starting projected position
-                    teammates_hash=current_hash
+                    position_started=player.position,  # Assuming starting projected position
+                    teammates_hash=current_hash,
                 )
                 db.add(start_record)
 
@@ -179,4 +201,10 @@ class ChemistryService:
 
         except Exception as e:
             db.rollback()
-            log_error(logger, ErrorCategory.DATABASE_ERROR, "Failed to record game starts", exc_info=e, game_id=game_id)
+            log_error(
+                logger,
+                ErrorCategory.DATABASE_ERROR,
+                "Failed to record game starts",
+                exc_info=e,
+                game_id=game_id,
+            )

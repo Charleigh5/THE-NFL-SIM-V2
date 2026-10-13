@@ -1,13 +1,19 @@
 from app.orchestrator.kernels import (
-    GenesisKernel, EmpireKernel, HiveKernel, 
-    SocietyKernel, CortexKernel, RPGKernel
+    CortexKernel,
+    EmpireKernel,
+    GenesisKernel,
+    HiveKernel,
+    RPGKernel,
+    SocietyKernel,
 )
+
 
 class KernelInterface:
     """
     Central interface for accessing all simulation kernels.
     Ensures single instances of kernels are shared across the orchestrator.
     """
+
     def __init__(self):
         self.genesis = GenesisKernel()
         self.empire = EmpireKernel()

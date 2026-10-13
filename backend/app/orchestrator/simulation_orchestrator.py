@@ -1,43 +1,44 @@
-from app.orchestrator.play_resolver import PlayResolver
-from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
-from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
-from app.schemas.play import PlayResult
-from app.core.database import SessionLocal
-from app.models.game import Game
-from app.models.stats import PlayerGameStats
-from app.models.player import Player
-from app.orchestrator.match_context import MatchContext
-from app.orchestrator.kernels.cortex_kernel import GameSituation
-from app.core.random_utils import DeterministicRNG
-from app.services.society.momentum import MomentumEngine, MomentumEvent
-
-from typing import List, Optional, Callable, Awaitable, Any
 import asyncio
 import datetime
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from collections.abc import Awaitable, Callable
+from typing import Any
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.random_utils import DeterministicRNG
+from app.data.coaches import CoachingPhilosophy
+from app.models.game import Game
+from app.models.player import Player
+from app.models.stats import PlayerGameStats
+from app.orchestrator.kernels.cortex_kernel import GameSituation
+from app.orchestrator.match_context import MatchContext
+from app.orchestrator.play_caller import PlayCaller, PlayCallingContext
+from app.orchestrator.play_commands import PassPlayCommand, RunPlayCommand
+from app.orchestrator.play_resolver import PlayResolver
+from app.rpg.abilities import get_ability_definition
+from app.schemas.play import PlayResult
 from app.services.playbook.clock_management import ClockManagementAI, ClockStrategy
 from app.services.playbook.coaching_ai import CoachingAIService
-from app.data.coaches import CoachingPhilosophy
 from app.services.playbook.types import GameSituation as ClockGameSituation
-from app.services.ability_service import AbilityService
-from app.rpg.abilities import get_ability_definition
+from app.services.society.momentum import MomentumEngine, MomentumEvent
 
 logger = logging.getLogger(__name__)
+
 
 class SimulationOrchestrator:
     """
     Orchestrates the setup and execution of a simulation.
     """
+
     def __init__(self) -> None:
         # Initialize with a default seed for startup/testing
         self.rng = DeterministicRNG("initial_boot_seed")
 
         self.play_resolver = PlayResolver(self.rng)
-        self.play_caller = PlayCaller(self.rng, aggression=0.5) # Default balanced coach
-        self.history: List[PlayResult] = []
+        self.play_caller = PlayCaller(self.rng, aggression=0.5)  # Default balanced coach
+        self.history: list[PlayResult] = []
 
         # Game State
         self.is_running = False
@@ -51,15 +52,15 @@ class SimulationOrchestrator:
         self.yard_line = 25  # 0-100, where 50 is midfield
 
         # Database Session
-        self.db_session: Optional[AsyncSession] = None
+        self.db_session: AsyncSession | None = None
         self.current_game_id = None
 
         # Match Context (Data Hydration)
-        self.match_context: Optional[MatchContext] = None
+        self.match_context: MatchContext | None = None
 
         # Callbacks for WebSocket broadcasting
-        self.on_play_complete: Optional[Callable[[PlayResult], Awaitable[None]]] = None
-        self.on_game_update: Optional[Callable[[dict], Awaitable[None]]] = None
+        self.on_play_complete: Callable[[PlayResult], Awaitable[None]] | None = None
+        self.on_game_update: Callable[[dict], Awaitable[None]] | None = None
 
         # Configuration
         self.play_delay_seconds = 5.0  # Delay between plays for animation
@@ -72,7 +73,14 @@ class SimulationOrchestrator:
         # Momentum Engine (Phase 4 Integration)
         self.momentum_engine = MomentumEngine()
 
-    async def attach_to_existing_game(self, game_id: int, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
+    async def attach_to_existing_game(
+        self,
+        game_id: int,
+        home_team_id: int,
+        away_team_id: int,
+        config: dict | None = None,
+        db_session: AsyncSession | None = None,
+    ) -> None:
         """Attach to an existing Game record without inserting a duplicate row."""
         self.game_config = config or {}
         if db_session is not None:
@@ -85,13 +93,18 @@ class SimulationOrchestrator:
         self.play_caller.rng = self.rng
 
         if self.db_session:
-            weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
-            self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            weather_config = self.game_config.get(
+                "weather", {"temperature": 70, "condition": "Sunny"}
+            )
+            self.match_context = MatchContext(
+                home_team_id, away_team_id, self.db_session, weather_config=weather_config
+            )
             await self.match_context.load_rosters()
 
             # Pre-Game Services
             try:
                 from app.services.pre_game_service import PreGameService
+
                 pre_game_service = PreGameService(self.db_session)
                 await pre_game_service.apply_chemistry_boosts(self.match_context)
                 await pre_game_service.apply_trait_effects(self.match_context)
@@ -112,7 +125,13 @@ class SimulationOrchestrator:
                 },
             )
 
-    async def start_new_game_session(self, home_team_id: int, away_team_id: int, config: Optional[dict] = None, db_session: Optional[AsyncSession] = None) -> None:
+    async def start_new_game_session(
+        self,
+        home_team_id: int,
+        away_team_id: int,
+        config: dict | None = None,
+        db_session: AsyncSession | None = None,
+    ) -> None:
         """Initialize a new game session in the database."""
         self.game_config = config or {}
         if db_session is not None:
@@ -126,7 +145,7 @@ class SimulationOrchestrator:
                 season=2025,
                 week=1,
                 is_played=False,
-                game_data={"config": config} if config else {}
+                game_data={"config": config} if config else {},
             )
             self.db_session.add(new_game)
             await self.db_session.commit()
@@ -143,15 +162,20 @@ class SimulationOrchestrator:
             logger.info("Hydrating match context", extra={"game_id": new_game.id})
 
             # Initialize MatchContext with rosters and weather config
-            weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
+            weather_config = self.game_config.get(
+                "weather", {"temperature": 70, "condition": "Sunny"}
+            )
 
             # Create MatchContext instance with home/away teams
-            self.match_context = MatchContext(home_team_id, away_team_id, self.db_session, weather_config=weather_config)
+            self.match_context = MatchContext(
+                home_team_id, away_team_id, self.db_session, weather_config=weather_config
+            )
             await self.match_context.load_rosters()
 
             # --- Pre-Game Services ---
             try:
                 from app.services.pre_game_service import PreGameService
+
                 pre_game_service = PreGameService(self.db_session)
 
                 # 1. Apply Unit Chemistry Boosts
@@ -183,11 +207,13 @@ class SimulationOrchestrator:
             )
         else:
             # Fallback for no DB (testing)
-             weather_config = self.game_config.get("weather", {"temperature": 70, "condition": "Sunny"})
-             # This will fail if MatchContext needs DB, but for now assume it's okay if we mock it?
-             # Actually MatchContext needs DB to load rosters.
-             # So we assume db_session is provided.
-             pass
+            weather_config = self.game_config.get(
+                "weather", {"temperature": 70, "condition": "Sunny"}
+            )
+            # This will fail if MatchContext needs DB, but for now assume it's okay if we mock it?
+            # Actually MatchContext needs DB to load rosters.
+            # So we assume db_session is provided.
+            pass
 
     async def _save_progress(self) -> None:
         """Save current game state and history to database."""
@@ -212,7 +238,7 @@ class SimulationOrchestrator:
                 game.game_data = current_data
 
                 await self.db_session.commit()
-        except Exception as e:
+        except Exception:
             logger.exception("Error saving game progress", extra={"game_id": self.current_game_id})
             await self.db_session.rollback()
 
@@ -230,13 +256,13 @@ class SimulationOrchestrator:
                 game.is_played = True
                 # Save player stats
                 await self._save_player_stats()
-                await self._save_progress() # Ensure final state is saved
+                await self._save_progress()  # Ensure final state is saved
 
                 # Update Team Elo Ratings (BE-1.4)
                 await self._update_elo_ratings(game)
 
                 logger.info("Finalized game result", extra={"game_id": self.current_game_id})
-        except Exception as e:
+        except Exception:
             logger.exception("Error finalizing game", extra={"game_id": self.current_game_id})
         finally:
             # Cleanup Match Context
@@ -249,8 +275,8 @@ class SimulationOrchestrator:
 
     async def _update_elo_ratings(self, game: Game) -> None:
         """Update Elo ratings for both teams after a game."""
-        from app.services.elo_service import EloService
         from app.models.team import Team
+        from app.services.elo_service import EloService
 
         try:
             # Fetch both teams
@@ -279,20 +305,20 @@ class SimulationOrchestrator:
                     home_team.elo_rating or 1500.0,
                     away_team.elo_rating or 1500.0,
                     point_diff=0,
-                    is_tie=True
+                    is_tie=True,
                 )
             elif home_score > away_score:
                 new_home_elo, new_away_elo = EloService.update_ratings(
                     home_team.elo_rating or 1500.0,
                     away_team.elo_rating or 1500.0,
-                    point_diff=point_diff
+                    point_diff=point_diff,
                 )
             else:
                 # Away team won
                 new_away_elo, new_home_elo = EloService.update_ratings(
                     away_team.elo_rating or 1500.0,
                     home_team.elo_rating or 1500.0,
-                    point_diff=point_diff
+                    point_diff=point_diff,
                 )
 
             # Update team objects
@@ -309,9 +335,9 @@ class SimulationOrchestrator:
                     "home_elo": new_home_elo,
                     "away_team": away_team.abbreviation,
                     "away_elo": new_away_elo,
-                }
+                },
             )
-        except Exception as e:
+        except Exception:
             logger.exception("Error updating Elo ratings", extra={"game_id": game.id})
 
     async def _save_player_stats(self, game: Game = None) -> None:
@@ -321,20 +347,21 @@ class SimulationOrchestrator:
 
         # If game object not passed, fetch it
         if not game and self.current_game_id:
-             stmt = select(Game).where(Game.id == self.current_game_id)
-             result = await self.db_session.execute(stmt)
-             game = result.scalar_one_or_none()
+            stmt = select(Game).where(Game.id == self.current_game_id)
+            result = await self.db_session.execute(stmt)
+            game = result.scalar_one_or_none()
 
-        if not game: return
+        if not game:
+            return
 
         logger.info("Saving player stats", extra={"game_id": game.id})
 
         # 1. Map player IDs to Team IDs
         player_team_map = {}
         if self.match_context:
-            for pid, p in self.match_context.home_roster.items():
+            for pid, _p in self.match_context.home_roster.items():
                 player_team_map[pid] = game.home_team_id
-            for pid, p in self.match_context.away_roster.items():
+            for pid, _p in self.match_context.away_roster.items():
                 player_team_map[pid] = game.away_team_id
 
         # 2. Aggregate Stats
@@ -344,13 +371,32 @@ class SimulationOrchestrator:
         def get_stats(pid):
             if pid not in stats_agg:
                 stats_agg[pid] = {
-                    "pass_attempts": 0, "pass_completions": 0, "pass_yards": 0, "pass_tds": 0, "pass_ints": 0,
-                    "rush_attempts": 0, "rush_yards": 0, "rush_tds": 0,
-                    "targets": 0, "receptions": 0, "rec_yards": 0, "rec_tds": 0,
-                    "tackles_solo": 0, "tackles_assist": 0, "sacks": 0.0, "interceptions": 0,
-                    "pass_deflections": 0, "forced_fumbles": 0, "tackles_for_loss": 0, "qb_pressures": 0,
-                    "fg_made": 0, "fg_att": 0, "punt_yards": 0, "punt_att": 0,
-                    "pancakes": 0, "sacks_allowed": 0
+                    "pass_attempts": 0,
+                    "pass_completions": 0,
+                    "pass_yards": 0,
+                    "pass_tds": 0,
+                    "pass_ints": 0,
+                    "rush_attempts": 0,
+                    "rush_yards": 0,
+                    "rush_tds": 0,
+                    "targets": 0,
+                    "receptions": 0,
+                    "rec_yards": 0,
+                    "rec_tds": 0,
+                    "tackles_solo": 0,
+                    "tackles_assist": 0,
+                    "sacks": 0.0,
+                    "interceptions": 0,
+                    "pass_deflections": 0,
+                    "forced_fumbles": 0,
+                    "tackles_for_loss": 0,
+                    "qb_pressures": 0,
+                    "fg_made": 0,
+                    "fg_att": 0,
+                    "punt_yards": 0,
+                    "punt_att": 0,
+                    "pancakes": 0,
+                    "sacks_allowed": 0,
                 }
             return stats_agg[pid]
 
@@ -372,21 +418,33 @@ class SimulationOrchestrator:
         if self.match_context:
             for pid, p in self.match_context.home_roster.items():
                 pos = getattr(p, "position", "")
-                if pos in ["DE", "DT", "DL"]: home_dls.append(pid)
-                elif pos in ["LB", "MLB", "OLB"]: home_lbs.append(pid)
-                elif pos in ["CB", "S", "FS", "SS", "DB"]: home_dbs.append(pid)
-                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]: home_ols.append(pid)
-                elif pos in ["K", "PK"]: home_kickers.append(pid)
-                elif pos in ["P"]: home_punters.append(pid)
+                if pos in ["DE", "DT", "DL"]:
+                    home_dls.append(pid)
+                elif pos in ["LB", "MLB", "OLB"]:
+                    home_lbs.append(pid)
+                elif pos in ["CB", "S", "FS", "SS", "DB"]:
+                    home_dbs.append(pid)
+                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]:
+                    home_ols.append(pid)
+                elif pos in ["K", "PK"]:
+                    home_kickers.append(pid)
+                elif pos in ["P"]:
+                    home_punters.append(pid)
 
             for pid, p in self.match_context.away_roster.items():
                 pos = getattr(p, "position", "")
-                if pos in ["DE", "DT", "DL"]: away_dls.append(pid)
-                elif pos in ["LB", "MLB", "OLB"]: away_lbs.append(pid)
-                elif pos in ["CB", "S", "FS", "SS", "DB"]: away_dbs.append(pid)
-                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]: away_ols.append(pid)
-                elif pos in ["K", "PK"]: away_kickers.append(pid)
-                elif pos in ["P"]: away_punters.append(pid)
+                if pos in ["DE", "DT", "DL"]:
+                    away_dls.append(pid)
+                elif pos in ["LB", "MLB", "OLB"]:
+                    away_lbs.append(pid)
+                elif pos in ["CB", "S", "FS", "SS", "DB"]:
+                    away_dbs.append(pid)
+                elif pos in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL"]:
+                    away_ols.append(pid)
+                elif pos in ["K", "PK"]:
+                    away_kickers.append(pid)
+                elif pos in ["P"]:
+                    away_punters.append(pid)
 
         for play in self.history:
             desc_lower = (play.description or "").lower()
@@ -400,7 +458,9 @@ class SimulationOrchestrator:
             elif play.receiver_id and play.receiver_id in player_team_map:
                 off_team_id = player_team_map[play.receiver_id]
 
-            is_home_offense = (off_team_id == game.home_team_id) if off_team_id else (self.possession == "home")
+            is_home_offense = (
+                (off_team_id == game.home_team_id) if off_team_id else (self.possession == "home")
+            )
             def_dls = away_dls if is_home_offense else home_dls
             def_lbs = away_lbs if is_home_offense else home_lbs
             def_dbs = away_dbs if is_home_offense else home_dbs
@@ -463,7 +523,11 @@ class SimulationOrchestrator:
             elif def_all:
                 # Procedurally assign defensive credit
                 if getattr(play, "is_sack", False):
-                    sacker_id = self.rng.choice(def_dls) if def_dls else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    sacker_id = (
+                        self.rng.choice(def_dls)
+                        if def_dls
+                        else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    )
                     st = get_stats(sacker_id)
                     st["sacks"] += 1.0
                     st["tackles_solo"] += 1
@@ -476,13 +540,19 @@ class SimulationOrchestrator:
                         get_stats(ol_pid)["sacks_allowed"] += 1
 
                 elif getattr(play, "is_turnover", False):
-                    picker_id = self.rng.choice(def_dbs) if def_dbs else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    picker_id = (
+                        self.rng.choice(def_dbs)
+                        if def_dbs
+                        else (self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all))
+                    )
                     st = get_stats(picker_id)
                     st["interceptions"] += 1
                     st["pass_deflections"] += 1
                     st["tackles_solo"] += 1
 
-                elif not getattr(play, "is_touchdown", False) and (play.rusher_id or (play.receiver_id and play.yards_gained > 0)):
+                elif not getattr(play, "is_touchdown", False) and (
+                    play.rusher_id or (play.receiver_id and play.yards_gained > 0)
+                ):
                     # Regular tackle on ball carrier
                     tackler_id = self.rng.choice(def_lbs) if def_lbs else self.rng.choice(def_all)
                     st = get_stats(tackler_id)
@@ -525,8 +595,7 @@ class SimulationOrchestrator:
 
             # Check if exists first
             stmt = select(PlayerGameStats).where(
-                PlayerGameStats.player_id == pid,
-                PlayerGameStats.game_id == game.id
+                PlayerGameStats.player_id == pid, PlayerGameStats.game_id == game.id
             )
             result = await self.db_session.execute(stmt)
             pgs = result.scalar_one_or_none()
@@ -537,7 +606,7 @@ class SimulationOrchestrator:
                     game_id=game.id,
                     team_id=team_id,
                     season_id=game.season_id,
-                    **stats
+                    **stats,
                 )
                 self.db_session.add(pgs)
             else:
@@ -564,9 +633,7 @@ class SimulationOrchestrator:
 
         # 1. Create a play command
         pass_command = PassPlayCommand(
-            offense_players=offense_players,
-            defense_players=defense_players,
-            depth="short"
+            offense_players=offense_players, defense_players=defense_players, depth="short"
         )
 
         # 2. Resolve the play
@@ -581,8 +648,9 @@ class SimulationOrchestrator:
         # Mock time decrement (simple logic)
         try:
             minutes, seconds = map(int, self.time_left.split(":"))
-            total_seconds = minutes * 60 + seconds - 15 # 15 seconds per play
-            if total_seconds < 0: total_seconds = 0
+            total_seconds = minutes * 60 + seconds - 15  # 15 seconds per play
+            if total_seconds < 0:
+                total_seconds = 0
             self.time_left = f"{total_seconds // 60:02d}:{total_seconds % 60:02d}"
         except ValueError:
             self.time_left = "14:45"
@@ -591,7 +659,9 @@ class SimulationOrchestrator:
 
         return result
 
-    async def run_continuous_simulation(self, num_plays: int = 100, config: Optional[dict] = None) -> None:
+    async def run_continuous_simulation(
+        self, num_plays: int = 100, config: dict | None = None
+    ) -> None:
         """
         Run a continuous simulation for a specified number of plays.
         Broadcasts each play result via WebSocket.
@@ -609,10 +679,12 @@ class SimulationOrchestrator:
             # run_continuous_simulation signature doesn't take db_session.
             # We assume self.db_session is set or we can't start.
             if not self.db_session:
-                 # Try to get one? No, we are async.
-                 logger.error("No DB session available for continuous simulation")
-                 return
-            await self.start_new_game_session(home_team_id=1, away_team_id=2, config=config, db_session=self.db_session)
+                # Try to get one? No, we are async.
+                logger.error("No DB session available for continuous simulation")
+                return
+            await self.start_new_game_session(
+                home_team_id=1, away_team_id=2, config=config, db_session=self.db_session
+            )
 
         logger.info("Starting continuous simulation", extra={"num_plays": num_plays})
 
@@ -620,7 +692,14 @@ class SimulationOrchestrator:
         while self.is_running and play_count < num_plays:
             # Check if game is over (regulation or OT)
             if self._is_game_over():
-                logger.info("Game complete", extra={"quarter": self.current_quarter, "home": self.home_score, "away": self.away_score})
+                logger.info(
+                    "Game complete",
+                    extra={
+                        "quarter": self.current_quarter,
+                        "home": self.home_score,
+                        "away": self.away_score,
+                    },
+                )
                 break
 
             # Execute single play
@@ -642,7 +721,9 @@ class SimulationOrchestrator:
             # Check if quarter is over and advance quarter / OT
             if self._is_quarter_over():
                 if self._is_game_over():
-                    logger.info("Game finished at quarter end", extra={"quarter": self.current_quarter})
+                    logger.info(
+                        "Game finished at quarter end", extra={"quarter": self.current_quarter}
+                    )
                     break
                 self._handle_quarter_transition()
 
@@ -658,11 +739,21 @@ class SimulationOrchestrator:
         defense_players = []
 
         if self.match_context:
-            off_team_id = self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id
-            def_team_id = self.match_context.away_team_id if self.possession == "home" else self.match_context.home_team_id
+            off_team_id = (
+                self.match_context.home_team_id
+                if self.possession == "home"
+                else self.match_context.away_team_id
+            )
+            def_team_id = (
+                self.match_context.away_team_id
+                if self.possession == "home"
+                else self.match_context.home_team_id
+            )
 
             # Use default formations for now as PlayCaller hasn't run yet
-            offense_players = self.match_context.get_fielded_players(off_team_id, "standard", "OFFENSE")
+            offense_players = self.match_context.get_fielded_players(
+                off_team_id, "standard", "OFFENSE"
+            )
             defense_players = self.match_context.get_fielded_players(def_team_id, "4-3", "DEFENSE")
 
         # Build PlayCallingContext
@@ -670,7 +761,7 @@ class SimulationOrchestrator:
             minutes, seconds = map(int, self.time_left.split(":"))
             time_left_seconds = minutes * 60 + seconds
         except ValueError:
-            time_left_seconds = 900 # 15 mins
+            time_left_seconds = 900  # 15 mins
 
         if self.possession == "home":
             distance_to_goal = 100 - self.yard_line
@@ -682,12 +773,11 @@ class SimulationOrchestrator:
             aggression = self.game_config.get("away_aggression", 0.5)
 
         # Clock Management & Coaching AI
-        timeouts_left = 3 # Placeholder
+        timeouts_left = 3  # Placeholder
 
         # Build Philosophy from config or defaults
         coach_philosophy = CoachingPhilosophy(
-            aggressiveness=int(aggression * 100),
-            run_pass_ratio=50
+            aggressiveness=int(aggression * 100), run_pass_ratio=50
         )
         coaching_ai = CoachingAIService(coach_philosophy)
         clock_ai = ClockManagementAI(coaching_ai)
@@ -698,7 +788,7 @@ class SimulationOrchestrator:
             down=self.down,
             distance=self.distance,
             field_position=self.yard_line if self.possession == "home" else 100 - self.yard_line,
-            score_diff=score_diff
+            score_diff=score_diff,
         )
 
         clock_strategy = clock_ai.get_clock_strategy(game_situation, timeouts_left)
@@ -708,18 +798,26 @@ class SimulationOrchestrator:
         # Hande Spike/Kneel
         if clock_strategy == ClockStrategy.KNEEL:
             result = PlayResult(
-                yards_gained=-1, is_touchdown=False, is_turnover=False,
-                description="Kneel down.", headline=None, injuries=[],
-                time_elapsed=40 # Drains clock
+                yards_gained=-1,
+                is_touchdown=False,
+                is_turnover=False,
+                description="Kneel down.",
+                headline=None,
+                injuries=[],
+                time_elapsed=40,  # Drains clock
             )
             self.history.append(result)
             await self._update_game_state(result)
             return result
         elif clock_strategy == ClockStrategy.SPIKE:
             result = PlayResult(
-                yards_gained=0, is_touchdown=False, is_turnover=False,
-                description="Spike to stop the clock!", headline=None, injuries=[],
-                time_elapsed=1
+                yards_gained=0,
+                is_touchdown=False,
+                is_turnover=False,
+                description="Spike to stop the clock!",
+                headline=None,
+                injuries=[],
+                time_elapsed=1,
             )
             self.history.append(result)
             await self._update_game_state(result)
@@ -734,7 +832,7 @@ class SimulationOrchestrator:
             offense_players=offense_players,
             defense_players=defense_players,
             possession=self.possession,
-            is_hurry_up=is_hurry_up
+            is_hurry_up=is_hurry_up,
         )
 
         # Update Coach Personality
@@ -761,21 +859,27 @@ class SimulationOrchestrator:
                     # but PlayCommand is created below. We will inject it then.
 
         # Select Play
-        if self.match_context and hasattr(self.match_context, 'cortex') and callable(getattr(self.match_context.cortex, 'call_play', None)):
+        if (
+            self.match_context
+            and hasattr(self.match_context, "cortex")
+            and callable(getattr(self.match_context.cortex, "call_play", None))
+        ):
             # Use Cortex AI
             situation = GameSituation(
                 down=self.down,
                 distance=self.distance,
-                field_position=self.yard_line if self.possession == "home" else 100 - self.yard_line,
+                field_position=self.yard_line
+                if self.possession == "home"
+                else 100 - self.yard_line,
                 time_remaining=time_left_seconds,
                 score_differential=score_diff,
                 quarter=self.current_quarter,
-                timeouts_left=3 # Placeholder
+                timeouts_left=3,  # Placeholder
             )
 
             coach_philosophy = {
                 "aggressiveness": int(aggression * 100),
-                "pass_tendency": 50 # Default, could be loaded from Coach model
+                "pass_tendency": 50,  # Default, could be loaded from Coach model
             }
 
             play_decision = self.match_context.cortex.call_play(situation, coach_philosophy)
@@ -789,7 +893,7 @@ class SimulationOrchestrator:
             command = self.play_caller.select_play(context)
 
         # Inject Pre-Snap Read Modifiers into Command
-        if qb_read and hasattr(command, 'modifiers'):
+        if qb_read and hasattr(command, "modifiers"):
             command.modifiers.update(play_state_modifiers)
 
         # Apply environmental factors to command
@@ -817,7 +921,6 @@ class SimulationOrchestrator:
 
         # Audible Logic (Phase 11)
         # Randomly check if an audible is called (simulated for now)
-        is_audible = False
 
         # Resolve play
         result = self.play_resolver.resolve_play(command)
@@ -838,7 +941,7 @@ class SimulationOrchestrator:
 
         return result
 
-    async def _calculate_qb_read(self, qb: Player, dc: Optional[Any]) -> Optional[dict]:
+    async def _calculate_qb_read(self, qb: Player, dc: Any | None) -> dict | None:
         """
         Calculate pre-snap read for QB with Diagnostician ability.
 
@@ -864,9 +967,9 @@ class SimulationOrchestrator:
         # DC Score = Disguise Rating
         dc_disguise = 0
         if dc:
-             dc_disguise = getattr(dc, "defensive_disguise", getattr(dc, "defense_rating", 50))
+            dc_disguise = getattr(dc, "defensive_disguise", getattr(dc, "defense_rating", 50))
         else:
-             dc_disguise = 50
+            dc_disguise = 50
 
         read_differential = qb_score - dc_disguise
         # Accuracy floor 30%, base 50%, max 95%
@@ -874,7 +977,7 @@ class SimulationOrchestrator:
 
         # Generate "Actual" coverage (simulated)
         # In a real play call, this would come from the defensive play command
-        actual_coverage = "Cover 3" # Default placeholder
+        actual_coverage = "Cover 3"  # Default placeholder
 
         is_correct = self.rng.random() < accuracy
 
@@ -899,45 +1002,72 @@ class SimulationOrchestrator:
         """Convert Cortex decision string to PlayCommand."""
         if decision == "PUNT":
             from app.orchestrator.play_commands import PuntCommand
-            return PuntCommand(punting_team=context.offense_players, receiving_team=context.defense_players)
+
+            return PuntCommand(
+                punting_team=context.offense_players, receiving_team=context.defense_players
+            )
 
         elif decision == "FG":
             from app.orchestrator.play_commands import FieldGoalCommand
-            return FieldGoalCommand(kicking_team=context.offense_players, defense=context.defense_players, distance=context.distance_to_goal + 17)
+
+            return FieldGoalCommand(
+                kicking_team=context.offense_players,
+                defense=context.defense_players,
+                distance=context.distance_to_goal + 17,
+            )
 
         elif decision == "HAIL_MARY":
-            return PassPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, depth="deep")
+            return PassPlayCommand(
+                offense_players=context.offense_players,
+                defense_players=context.defense_players,
+                depth="deep",
+            )
 
         elif decision.startswith("PASS"):
             depth = "deep" if "DEEP" in decision else "short"
             # Randomly mix in "mid" for variety if "short" is selected
             if depth == "short" and self.rng.random() < 0.3:
                 depth = "mid"
-            return PassPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, depth=depth)
+            return PassPlayCommand(
+                offense_players=context.offense_players,
+                defense_players=context.defense_players,
+                depth=depth,
+            )
 
         elif decision == "RUN":
             # Random direction for now
             direction = self.rng.choice(["left", "middle", "right"])
-            return RunPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, run_direction=direction)
+            return RunPlayCommand(
+                offense_players=context.offense_players,
+                defense_players=context.defense_players,
+                run_direction=direction,
+            )
 
         else:
             # Fallback
-            return RunPlayCommand(offense_players=context.offense_players, defense_players=context.defense_players, run_direction="middle")
+            return RunPlayCommand(
+                offense_players=context.offense_players,
+                defense_players=context.defense_players,
+                run_direction="middle",
+            )
 
-
-
-    def _update_fatigue(self, offense: List[Player], defense: List[Player], result: PlayResult) -> None:
+    def _update_fatigue(
+        self, offense: list[Player], defense: list[Player], result: PlayResult
+    ) -> None:
         """Update fatigue for players involved in the play."""
         if not self.match_context:
             return
 
-        temp = self.match_context.weather_config.get("temperature", 70)
+        self.match_context.weather_config.get("temperature", 70)
 
         # Identify key players who exerted more energy
         key_players = set()
-        if result.passer_id: key_players.add(result.passer_id)
-        if result.rusher_id: key_players.add(result.rusher_id)
-        if result.receiver_id: key_players.add(result.receiver_id)
+        if result.passer_id:
+            key_players.add(result.passer_id)
+        if result.rusher_id:
+            key_players.add(result.rusher_id)
+        if result.receiver_id:
+            key_players.add(result.receiver_id)
 
         # Update Offense
         offense_ids = [p.id for p in offense]
@@ -945,12 +1075,12 @@ class SimulationOrchestrator:
         key_ids = [pid for pid in offense_ids if pid in key_players]
         other_ids = [pid for pid in offense_ids if pid not in key_players]
 
-        self.match_context.update_fatigue(key_ids, 0.05) # High exertion
-        self.match_context.update_fatigue(other_ids, 0.01) # Low exertion
+        self.match_context.update_fatigue(key_ids, 0.05)  # High exertion
+        self.match_context.update_fatigue(other_ids, 0.01)  # Low exertion
 
         # Update Defense
         defense_ids = [p.id for p in defense]
-        self.match_context.update_fatigue(defense_ids, 0.02) # Medium exertion
+        self.match_context.update_fatigue(defense_ids, 0.02)  # Medium exertion
 
     async def _update_game_state(self, result: PlayResult) -> None:
         """Update game state based on play result."""
@@ -968,9 +1098,9 @@ class SimulationOrchestrator:
 
         # Determine if safety occurred (F07)
         is_safety = (
-            getattr(result, "is_safety", False) or
-            (self.possession == "home" and self.yard_line <= 0) or
-            (self.possession == "away" and self.yard_line >= 100)
+            getattr(result, "is_safety", False)
+            or (self.possession == "home" and self.yard_line <= 0)
+            or (self.possession == "away" and self.yard_line >= 100)
         )
 
         if is_safety:
@@ -994,11 +1124,19 @@ class SimulationOrchestrator:
             self.distance = 10
 
         # Check for touchdown (F09, F10)
-        elif result.is_touchdown or (self.possession == "home" and self.yard_line >= 100) or (self.possession == "away" and self.yard_line <= 0):
+        elif (
+            result.is_touchdown
+            or (self.possession == "home" and self.yard_line >= 100)
+            or (self.possession == "away" and self.yard_line <= 0)
+        ):
             result.is_touchdown = True
             # Determine team ID for momentum tracking
             if self.match_context:
-                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+                offense_team_id = str(
+                    self.match_context.home_team_id
+                    if self.possession == "home"
+                    else self.match_context.away_team_id
+                )
             else:
                 offense_team_id = "home" if self.possession == "home" else "away"
 
@@ -1013,13 +1151,16 @@ class SimulationOrchestrator:
             logger.debug(f"Momentum: TOUCHDOWN for team {offense_team_id}")
 
             # Dynamic PAT / 2-Point Conversion Logic (F10)
-            score_diff = (self.home_score - self.away_score) if scoring_team == "home" else (self.away_score - self.home_score)
+            score_diff = (
+                (self.home_score - self.away_score)
+                if scoring_team == "home"
+                else (self.away_score - self.home_score)
+            )
             aggression = self.game_config.get(f"{scoring_team}_aggression", 0.5)
 
             # Decide whether to go for 2 (trailing by 2, trailing by 5, leading by 1, or high aggression)
-            go_for_two = (
-                (self.current_quarter >= 4 and score_diff in [-2, -5, 1, 4]) or
-                (aggression >= 0.75 and self.rng.random() < 0.25)
+            go_for_two = (self.current_quarter >= 4 and score_diff in [-2, -5, 1, 4]) or (
+                aggression >= 0.75 and self.rng.random() < 0.25
             )
 
             if go_for_two:
@@ -1053,7 +1194,11 @@ class SimulationOrchestrator:
         elif result.is_turnover:
             # B-004: Momentum - Turnover event (negative for offense)
             if self.match_context:
-                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+                offense_team_id = str(
+                    self.match_context.home_team_id
+                    if self.possession == "home"
+                    else self.match_context.away_team_id
+                )
             else:
                 offense_team_id = "home" if self.possession == "home" else "away"
             self.momentum_engine.process_event(offense_team_id, MomentumEvent.TURNOVER)
@@ -1073,8 +1218,16 @@ class SimulationOrchestrator:
         else:
             # B-005: Check for sack (negative yards on pass play)
             if self.match_context:
-                defense_team_id = str(self.match_context.away_team_id if self.possession == "home" else self.match_context.home_team_id)
-                offense_team_id = str(self.match_context.home_team_id if self.possession == "home" else self.match_context.away_team_id)
+                defense_team_id = str(
+                    self.match_context.away_team_id
+                    if self.possession == "home"
+                    else self.match_context.home_team_id
+                )
+                offense_team_id = str(
+                    self.match_context.home_team_id
+                    if self.possession == "home"
+                    else self.match_context.away_team_id
+                )
             else:
                 defense_team_id = "away" if self.possession == "home" else "home"
                 offense_team_id = "home" if self.possession == "home" else "away"
@@ -1097,7 +1250,9 @@ class SimulationOrchestrator:
 
                 # Third down stop for defense
                 if self.down == 4:
-                    self.momentum_engine.process_event(defense_team_id, MomentumEvent.THRD_DOWN_STOP)
+                    self.momentum_engine.process_event(
+                        defense_team_id, MomentumEvent.THRD_DOWN_STOP
+                    )
                     logger.debug(f"Momentum: THRD_DOWN_STOP for defense {defense_team_id}")
 
                 # Turnover on downs
@@ -1124,11 +1279,15 @@ class SimulationOrchestrator:
                 def_timeouts = self.home_timeouts if def_team_is_home else self.away_timeouts
 
                 # Score diff from defense perspective
-                start_score_diff = self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
+                self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
                 # Add points from this play
                 # result already processed into scores above? Yes (lines 619/621)
                 # Re-calculate current score diff
-                curr_score_diff_off = self.home_score - self.away_score if self.possession == "home" else self.away_score - self.home_score
+                curr_score_diff_off = (
+                    self.home_score - self.away_score
+                    if self.possession == "home"
+                    else self.away_score - self.home_score
+                )
                 curr_score_diff_def = -curr_score_diff_off
 
                 sit_def = ClockGameSituation(
@@ -1137,7 +1296,7 @@ class SimulationOrchestrator:
                     down=self.down,
                     distance=self.distance,
                     field_position=50,
-                    score_diff=curr_score_diff_def
+                    score_diff=curr_score_diff_def,
                 )
 
                 if clock_ai.should_defense_call_timeout(sit_def, def_timeouts):
@@ -1150,21 +1309,23 @@ class SimulationOrchestrator:
                     # Stop clock effect: Play took time, but no runoff.
                     # Simulating this by clamping elapsed time if it was large (implies runoff)
                     if result.time_elapsed > 12:
-                         result.time_elapsed = 7 # Force short duration
+                        result.time_elapsed = 7  # Force short duration
 
                 # Offensive Timeout Check (if no defensive timeout called)
                 elif not result.is_touchdown and not result.is_turnover:
-                     off_timeouts = self.home_timeouts if self.possession == "home" else self.away_timeouts
-                     sit_off = ClockGameSituation(
+                    off_timeouts = (
+                        self.home_timeouts if self.possession == "home" else self.away_timeouts
+                    )
+                    sit_off = ClockGameSituation(
                         quarter=self.current_quarter,
                         time_remaining=post_play_time,
                         down=self.down,
                         distance=self.distance,
                         field_position=50,
-                        score_diff=curr_score_diff_off
-                     )
-                     # Only if hurry up or explicit logic
-                     if clock_ai.should_use_timeout(sit_off, off_timeouts, is_offense=True):
+                        score_diff=curr_score_diff_off,
+                    )
+                    # Only if hurry up or explicit logic
+                    if clock_ai.should_use_timeout(sit_off, off_timeouts, is_offense=True):
                         if self.possession == "home":
                             self.home_timeouts -= 1
                             result.description += " (Timeout called by Home)"
@@ -1246,9 +1407,13 @@ class SimulationOrchestrator:
                 self.yard_line = 25
                 self.down = 1
                 self.distance = 10
-                logger.info(f"Regulation ended tied {self.home_score}-{self.away_score}. Entering Overtime!")
+                logger.info(
+                    f"Regulation ended tied {self.home_score}-{self.away_score}. Entering Overtime!"
+                )
             else:
-                logger.info(f"Regulation complete. Final: Home {self.home_score} - Away {self.away_score}")
+                logger.info(
+                    f"Regulation complete. Final: Home {self.home_score} - Away {self.away_score}"
+                )
 
     def reset_game_state(self) -> None:
         """Reset game state to initial values."""
@@ -1276,10 +1441,10 @@ class SimulationOrchestrator:
             "yardLine": self.yard_line,
             "clockStrategy": self.last_clock_strategy,
             "homeTimeouts": self.home_timeouts,
-            "awayTimeouts": self.away_timeouts
+            "awayTimeouts": self.away_timeouts,
         }
 
-    def get_history(self) -> List[PlayResult]:
+    def get_history(self) -> list[PlayResult]:
         """Return the history of plays in this session."""
         return self.history
 

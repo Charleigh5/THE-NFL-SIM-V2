@@ -9,15 +9,16 @@ Usage:
 
 import sys
 from pathlib import Path
+
 from sqlalchemy.orm import Session
 
 # Add backend directory to path
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 from app.core.database import SessionLocal
-from app.models.team import Team
-from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
+from app.models.coach import Coach
+from app.models.team import Team
 
 
 def seed_coaches():
@@ -42,17 +43,31 @@ def seed_coaches():
 
             # Define coaching roles to create/update
             roles = [
-                ("Head Coach", staff_data.head_coach, staff_data.playbook_offense.value, staff_data.playbook_defense.value),
-                ("Offensive Coordinator", staff_data.offensive_coordinator, staff_data.playbook_offense.value, None),
-                ("Defensive Coordinator", staff_data.defensive_coordinator, None, staff_data.playbook_defense.value),
+                (
+                    "Head Coach",
+                    staff_data.head_coach,
+                    staff_data.playbook_offense.value,
+                    staff_data.playbook_defense.value,
+                ),
+                (
+                    "Offensive Coordinator",
+                    staff_data.offensive_coordinator,
+                    staff_data.playbook_offense.value,
+                    None,
+                ),
+                (
+                    "Defensive Coordinator",
+                    staff_data.defensive_coordinator,
+                    None,
+                    staff_data.playbook_defense.value,
+                ),
             ]
 
             for role, coach_data, off_scheme, def_scheme in roles:
                 # Check if coach already exists for this team/role
-                existing = db.query(Coach).filter(
-                    Coach.team_id == team.id,
-                    Coach.role == role
-                ).first()
+                existing = (
+                    db.query(Coach).filter(Coach.team_id == team.id, Coach.role == role).first()
+                )
 
                 philosophy_dict = {
                     "run_pass_ratio": staff_data.philosophy.run_pass_ratio,
@@ -82,19 +97,25 @@ def seed_coaches():
                         playbook_offense=off_scheme if off_scheme else None,
                         playbook_defense=def_scheme if def_scheme else None,
                         philosophy=philosophy_dict if role == "Head Coach" else {},
-                        offense_rating=70 if role in ["Head Coach", "Offensive Coordinator"] else 50,
-                        defense_rating=70 if role in ["Head Coach", "Defensive Coordinator"] else 50,
+                        offense_rating=70
+                        if role in ["Head Coach", "Offensive Coordinator"]
+                        else 50,
+                        defense_rating=70
+                        if role in ["Head Coach", "Defensive Coordinator"]
+                        else 50,
                         development_rating=65,
                     )
                     db.add(new_coach)
                     coaches_created += 1
 
-            print(f"  ✓ {team_abbr}: {staff_data.head_coach.last_name} (HC), "
-                  f"{staff_data.offensive_coordinator.last_name} (OC), "
-                  f"{staff_data.defensive_coordinator.last_name} (DC)")
+            print(
+                f"  ✓ {team_abbr}: {staff_data.head_coach.last_name} (HC), "
+                f"{staff_data.offensive_coordinator.last_name} (OC), "
+                f"{staff_data.defensive_coordinator.last_name} (DC)"
+            )
 
         db.commit()
-        print(f"\n✅ Coaches seeded successfully!")
+        print("\n✅ Coaches seeded successfully!")
         print(f"   Created: {coaches_created}")
         print(f"   Updated: {coaches_updated}")
 

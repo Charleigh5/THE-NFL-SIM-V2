@@ -5,8 +5,8 @@ Core simulation engines for Psychological DNA, Mathematical Tension Accumulation
 and Agentic Locker Room Dynamics.
 """
 
-from app.engine.society.tension_engine import TensionEngine
 from app.engine.society.locker_room_agent import LockerRoomAgentService
+from app.engine.society.tension_engine import TensionEngine
 
 __all__ = [
     "TensionEngine",

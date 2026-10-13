@@ -13,6 +13,7 @@ from app.models.weather import StadiumClimate
 
 logger = get_logger(__name__)
 
+
 class WeatherService:
     """
     Service for determining weather conditions and their gameplay impact.
@@ -23,10 +24,10 @@ class WeatherService:
     MODIFIER_RAIN_PASSING = -0.15
     MODIFIER_RAIN_FUMBLE = 0.10
     MODIFIER_SNOW_PASSING = -0.25
-    MODIFIER_SNOW_RUSHING = 0.05 # easier to run in snow? or just relative to pass
-    MODIFIER_WIND_PASSING = -0.20 # > 15mph
+    MODIFIER_SNOW_RUSHING = 0.05  # easier to run in snow? or just relative to pass
+    MODIFIER_WIND_PASSING = -0.20  # > 15mph
     MODIFIER_WIND_FG = -0.10
-    MODIFIER_COLD_FUMBLE = 0.15 # < 20F
+    MODIFIER_COLD_FUMBLE = 0.15  # < 20F
 
     @staticmethod
     def get_weather_modifiers(stadium_id: int, game_datetime: str) -> dict[str, float]:
@@ -35,18 +36,11 @@ class WeatherService:
         Used if MatchContext is initialized without DB access or async capabilities.
         """
         logger.warning("Using legacy synchronous weather modifiers (Neutral weather).")
-        return {
-            "passing": 0.0,
-            "rushing": 0.0,
-            "fumble": 0.0,
-            "fg_accuracy": 0.0
-        }
+        return {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0}
 
     @staticmethod
     async def calculate_simulation_weather(
-        db: AsyncSession,
-        stadium_id: int,
-        game_date: datetime.datetime | str
+        db: AsyncSession, stadium_id: int, game_date: datetime.datetime | str
     ) -> dict[str, Any]:
         """
         Calculates weather conditions for a game based on simulation logic.
@@ -114,7 +108,9 @@ class WeatherService:
                 else:
                     precip_type = "Rain"
                     condition = "Rain"
-            elif climate.stadium.city == "London" and random.random() < 0.4: # Easter egg / logic example
+            elif (
+                climate.stadium.city == "London" and random.random() < 0.4
+            ):  # Easter egg / logic example
                 condition = "Fog"
             elif random.random() < 0.2:
                 condition = "Cloudy"
@@ -129,25 +125,22 @@ class WeatherService:
                     "wind_speed": round(wind_speed, 1),
                     "condition": condition,
                     "precipitation_type": precip_type,
-                    "is_dome": False
-                }
+                    "is_dome": False,
+                },
             }
 
             logger.info("weather_calculated", stadium=stadium.name, data=weather_data)
             return weather_data
 
         except Exception as e:
-            log_error(logger, ErrorCategory.WEATHER_ERROR, "Failed to calculate weather", exc_info=e)
+            log_error(
+                logger, ErrorCategory.WEATHER_ERROR, "Failed to calculate weather", exc_info=e
+            )
             return WeatherService._default_weather()
 
     @staticmethod
     def _calculate_modifiers(temp: float, wind_speed: float, condition: str) -> dict[str, float]:
-        modifiers = {
-            "passing": 0.0,
-            "rushing": 0.0,
-            "fumble": 0.0,
-            "fg_accuracy": 0.0
-        }
+        modifiers = {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0}
 
         if condition == "Rain":
             modifiers["passing"] += WeatherService.MODIFIER_RAIN_PASSING
@@ -160,15 +153,15 @@ class WeatherService:
             # Linear penalty: -0.01 per mph over 15?
             # Or simplified tiered
             wind_penalty = (wind_speed - 15) * 0.01
-            modifiers["passing"] -= min(0.3, wind_penalty + 0.1) # Base penalty
+            modifiers["passing"] -= min(0.3, wind_penalty + 0.1)  # Base penalty
             modifiers["fg_accuracy"] -= min(0.4, wind_penalty + 0.1)
 
         if temp < 20:
             modifiers["fumble"] += WeatherService.MODIFIER_COLD_FUMBLE
-            modifiers["fg_accuracy"] -= 0.1 # Hard ball
+            modifiers["fg_accuracy"] -= 0.1  # Hard ball
 
         if temp > 95:
-             modifiers["rushing"] -= 0.05 # Fatigue impact implied
+            modifiers["rushing"] -= 0.05  # Fatigue impact implied
 
         return modifiers
 
@@ -176,14 +169,24 @@ class WeatherService:
     def _default_weather() -> dict[str, Any]:
         return {
             "modifiers": {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0},
-            "conditions": {"temperature": 70, "wind_speed": 0, "condition": "Sunny", "is_dome": False}
+            "conditions": {
+                "temperature": 70,
+                "wind_speed": 0,
+                "condition": "Sunny",
+                "is_dome": False,
+            },
         }
 
     @staticmethod
     def _dome_weather() -> dict[str, Any]:
         return {
             "modifiers": {"passing": 0.0, "rushing": 0.0, "fumble": 0.0, "fg_accuracy": 0.0},
-            "conditions": {"temperature": 72, "wind_speed": 0, "condition": "Dome", "is_dome": True}
+            "conditions": {
+                "temperature": 72,
+                "wind_speed": 0,
+                "condition": "Dome",
+                "is_dome": True,
+            },
         }
 
     @staticmethod
@@ -197,8 +200,18 @@ class WeatherService:
 
         # Default Template (Midwest-ish)
         avg_temp = {
-            "1": 30.0, "2": 32.0, "3": 45.0, "4": 55.0, "5": 65.0, "6": 75.0,
-            "7": 80.0, "8": 78.0, "9": 70.0, "10": 58.0, "11": 45.0, "12": 35.0
+            "1": 30.0,
+            "2": 32.0,
+            "3": 45.0,
+            "4": 55.0,
+            "5": 65.0,
+            "6": 75.0,
+            "7": 80.0,
+            "8": 78.0,
+            "9": 70.0,
+            "10": 58.0,
+            "11": 45.0,
+            "12": 35.0,
         }
         precip = dict.fromkeys(avg_temp, 0.15)
         wind = dict.fromkeys(avg_temp, 12.0)
@@ -212,7 +225,7 @@ class WeatherService:
             stadium_id=stadium_id,
             avg_temp_by_month=avg_temp,
             precip_chance_by_month=precip,
-            wind_avg_by_month=wind
+            wind_avg_by_month=wind,
         )
 
         db.add(climate)

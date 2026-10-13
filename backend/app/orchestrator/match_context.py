@@ -1,16 +1,18 @@
-from typing import Dict, List, Optional, Any
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any
+
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.core.logging_config import get_logger
 from app.models.player import Player
 from app.models.trait import PlayerTrait
-from app.models.team import Team
-from app.services.depth_chart_service import DepthChartService
 from app.orchestrator.kernels.genesis_kernel import GenesisKernel
-from app.core.logging_config import get_logger
+from app.services.depth_chart_service import DepthChartService
 from app.services.weather_service import WeatherService
 
 logger = get_logger(__name__)
+
 
 class MatchContext:
     """
@@ -26,10 +28,10 @@ class MatchContext:
         self,
         home_team_id: int,
         away_team_id: int,
-        db: Optional[AsyncSession] = None,
-        weather_config: Optional[Dict] = None,
-        session: Optional[AsyncSession] = None,
-        **kwargs
+        db: AsyncSession | None = None,
+        weather_config: dict | None = None,
+        session: AsyncSession | None = None,
+        **kwargs,
     ):
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
@@ -38,27 +40,27 @@ class MatchContext:
 
         # New Context Fields
         # Weather is now initialized asynchronously in load_rosters
-        self.weather_conditions: Dict[str, float] = {
+        self.weather_conditions: dict[str, float] = {
             "passing": 0.0,
             "rushing": 0.0,
             "fumble": 0.0,
-            "fg_accuracy": 0.0
+            "fg_accuracy": 0.0,
         }
-        self.weather_data: Dict[str, Any] = {} # Stores full weather info (temp, wind, etc.)
+        self.weather_data: dict[str, Any] = {}  # Stores full weather info (temp, wind, etc.)
 
         self.home_ol_chemistry: int = 0
         self.away_ol_chemistry: int = 0
 
         # Rosters: player_id -> Player object
-        self.home_roster: Dict[int, Player] = {}
-        self.away_roster: Dict[int, Player] = {}
+        self.home_roster: dict[int, Player] = {}
+        self.away_roster: dict[int, Player] = {}
 
         # Fatigue: player_id -> fatigue_level (0.0 to 1.0, where 1.0 is exhausted)
-        self.fatigue_state: Dict[int, float] = {}
+        self.fatigue_state: dict[int, float] = {}
 
         # Systems
-        self.genesis: Optional[GenesisKernel] = None
-        self.cortex: Optional[Any] = MagicMock() if "MagicMock" in globals() else object()
+        self.genesis: GenesisKernel | None = None
+        self.cortex: Any | None = globals().get("MagicMock")() if "MagicMock" in globals() else object()
 
         # Synchronous / Mock loading support for unit tests
         if self.db and hasattr(self.db, "query"):
@@ -70,7 +72,9 @@ class MatchContext:
                 if away_q:
                     self.away_roster = {p.id: p for p in away_q}
                 if not home_q and not away_q:
-                    raise ValueError(f"No players found for teams {self.home_team_id}, {self.away_team_id}")
+                    raise ValueError(
+                        f"No players found for teams {self.home_team_id}, {self.away_team_id}"
+                    )
                 self.initialize_systems()
             except ValueError:
                 raise
@@ -86,7 +90,9 @@ class MatchContext:
         if stadium_id is not None and self.db is not None:
             game_time = self.weather_config.get("timestamp", "2025-09-07T13:00:00")
             try:
-                weather_result = await WeatherService.calculate_simulation_weather(self.db, stadium_id, game_time)
+                weather_result = await WeatherService.calculate_simulation_weather(
+                    self.db, stadium_id, game_time
+                )
                 self.weather_conditions = weather_result.get("modifiers", {})
                 self.weather_data = weather_result.get("conditions", {})
             except Exception as e:
@@ -135,12 +141,13 @@ class MatchContext:
         # Register all players
         all_players = list(self.home_roster.values()) + list(self.away_roster.values())
         for p in all_players:
-            self.genesis.register_player(p.id, {
-                "fatigue": {"home_climate": home_climate},
-                "anatomy": {}
-            })
+            self.genesis.register_player(
+                p.id, {"fatigue": {"home_climate": home_climate}, "anatomy": {}}
+            )
 
-    def get_fielded_players(self, team_id: Any, formation: str = "standard", side: Optional[str] = None) -> List[Player]:
+    def get_fielded_players(
+        self, team_id: Any, formation: str = "standard", side: str | None = None
+    ) -> list[Player]:
         """
         Returns the 11 players on the field for a given team and formation.
         Supports team_id (int) or 'home'/'away' (str).
@@ -162,7 +169,7 @@ class MatchContext:
 
         # Fallback mechanism
         if len(players) < 11:
-            needed = 11 - len(players)
+            11 - len(players)
             current_ids = {p.id for p in players}
 
             for player in roster_list:
@@ -173,7 +180,7 @@ class MatchContext:
 
         return players
 
-    def update_fatigue(self, player_ids: List[int], fatigue_delta: float):
+    def update_fatigue(self, player_ids: list[int], fatigue_delta: float):
         """Updates fatigue for a list of players."""
         for pid in player_ids:
             if self.genesis:
@@ -181,7 +188,9 @@ class MatchContext:
                 self.genesis.update_fatigue(pid, fatigue_delta * 100.0)
             else:
                 if pid in self.fatigue_state:
-                    self.fatigue_state[pid] = min(1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta))
+                    self.fatigue_state[pid] = min(
+                        1.0, max(0.0, self.fatigue_state[pid] + fatigue_delta)
+                    )
 
     def get_player_fatigue(self, player_id: int) -> float:
         if self.genesis:

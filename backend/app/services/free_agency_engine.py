@@ -5,29 +5,26 @@ Production-grade competitive bidding, player valuation, GM AI negotiation,
 and contract structuring for the NFL Sim Engine.
 """
 
-from typing import List, Dict, Optional, Tuple, Any
-import math
 import random
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
 
-from app.models.player import Player, Position
-from app.models.team import Team
-from app.models.player_contract import PlayerContract
 from app.core.roster_cache import (
-    invalidate_team_roster_cache,
     invalidate_all_team_roster_caches,
+    invalidate_team_roster_cache,
 )
+from app.models.player import Player
+from app.models.player_contract import PlayerContract
+from app.models.team import Team
 from app.schemas.offseason import (
-    FreeAgentSigning,
-    FreeAgentMarketPlayer,
-    FreeAgentBidRequest,
     FreeAgentBidResponse,
+    FreeAgentMarketPlayer,
+    FreeAgentSigning,
 )
-
 
 # Target roster counts per position for standard 53-man depth
-POSITION_TARGETS: Dict[str, int] = {
+POSITION_TARGETS: dict[str, int] = {
     "QB": 3,
     "RB": 4,
     "WR": 6,
@@ -45,7 +42,7 @@ POSITION_TARGETS: Dict[str, int] = {
 }
 
 # Position salary multiplier (relative to QB top of market ~$55M)
-POSITION_VALUE_MULTIPLIERS: Dict[str, float] = {
+POSITION_VALUE_MULTIPLIERS: dict[str, float] = {
     "QB": 1.00,
     "DE": 0.82,
     "WR": 0.78,
@@ -63,7 +60,7 @@ POSITION_VALUE_MULTIPLIERS: Dict[str, float] = {
 }
 
 TOP_MARKET_CAP = 55_000_000  # Highest annual salary in NFL
-MIN_SALARY = 950_000         # NFL veteran minimum
+MIN_SALARY = 950_000  # NFL veteran minimum
 
 
 class FreeAgencyEngine:
@@ -78,7 +75,7 @@ class FreeAgencyEngine:
     # PHASE 1: MARKET VALUATION
     # =========================================================================
 
-    def calculate_market_value(self, player: Player) -> Tuple[int, int, int]:
+    def calculate_market_value(self, player: Player) -> tuple[int, int, int]:
         """
         Calculate a player's annual average salary (AAV), contract years, and guaranteed money.
 
@@ -92,7 +89,7 @@ class FreeAgencyEngine:
 
         # Non-linear valuation curve (exponential growth for elite 88+ OVR)
         norm_rating = (ovr - 60) / 39.0  # 0.0 at 60 OVR to 1.0 at 99 OVR
-        base_salary_scale = norm_rating ** 2.3
+        base_salary_scale = norm_rating**2.3
 
         max_pos_salary = TOP_MARKET_CAP * pos_mult
         raw_aav = MIN_SALARY + int(base_salary_scale * (max_pos_salary - MIN_SALARY))
@@ -153,9 +150,9 @@ class FreeAgencyEngine:
         self,
         team: Team,
         player: Player,
-        roster_counts: Dict[str, int],
+        roster_counts: dict[str, int],
         aav: int,
-        team_cap_space: float
+        team_cap_space: float,
     ) -> float:
         """
         Calculate an AI team's interest score (0.0 - 100.0) for signing this player.
@@ -179,7 +176,7 @@ class FreeAgencyEngine:
         if team_cap_space < aav:
             return 0.0  # Cannot afford player
 
-        cap_ratio = (team_cap_space - aav) / max(1.0, team_cap_space)
+        (team_cap_space - aav) / max(1.0, team_cap_space)
         cap_score = min(35.0, 35.0 * (team_cap_space / (aav * 3.0)))
 
         # 3. Player Quality & Scheme Fit (0 - 20 pts)
@@ -195,16 +192,16 @@ class FreeAgencyEngine:
     # PHASE 3: COMPETITIVE BIDDING SIMULATION
     # =========================================================================
 
-    def simulate_free_agency(self, season_id: int) -> List[FreeAgentSigning]:
+    def simulate_free_agency(self, season_id: int) -> list[FreeAgentSigning]:
         """
         Run the complete multi-wave free agency auction and contract resolution.
         """
         # 1. Fetch available free agents (unassigned players, not rookies, not retired)
-        stmt_fa = select(Player).where(
-            Player.team_id == None,
-            Player.is_rookie == False,
-            Player.is_retired == False
-        ).order_by(Player.overall_rating.desc())
+        stmt_fa = (
+            select(Player)
+            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .order_by(Player.overall_rating.desc())
+        )
         free_agents = list(self.db.execute(stmt_fa).scalars().all())
 
         if not free_agents:
@@ -213,14 +210,16 @@ class FreeAgencyEngine:
         # 2. Fetch all teams
         stmt_teams = select(Team).order_by(Team.id)
         teams = list(self.db.execute(stmt_teams).scalars().all())
-        team_map = {t.id: t for t in teams}
+        {t.id: t for t in teams}
 
         # 3. Build team roster counts and effective cap space
-        team_roster_counts: Dict[int, Dict[str, int]] = {t.id: {} for t in teams}
-        team_roster_totals: Dict[int, int] = {t.id: 0 for t in teams}
-        team_cap_trackers: Dict[int, float] = {t.id: max(1_000_000.0, t.salary_cap_space or 40_000_000.0) for t in teams}
+        team_roster_counts: dict[int, dict[str, int]] = {t.id: {} for t in teams}
+        team_roster_totals: dict[int, int] = {t.id: 0 for t in teams}
+        team_cap_trackers: dict[int, float] = {
+            t.id: max(1_000_000.0, t.salary_cap_space or 40_000_000.0) for t in teams
+        }
 
-        stmt_rosters = select(Player).where(Player.team_id != None)
+        stmt_rosters = select(Player).where(Player.team_id is not None)
         active_players = list(self.db.execute(stmt_rosters).scalars().all())
         for p in active_players:
             if p.team_id in team_roster_counts:
@@ -228,11 +227,13 @@ class FreeAgencyEngine:
                 team_roster_counts[p.team_id][pos] = team_roster_counts[p.team_id].get(pos, 0) + 1
                 team_roster_totals[p.team_id] += 1
 
-        signings: List[FreeAgentSigning] = []
+        signings: list[FreeAgentSigning] = []
 
         # Group Free Agents into Waves
         wave_1_fa = [p for p in free_agents if p.overall_rating >= 84]  # Elite / Starters
-        wave_2_fa = [p for p in free_agents if 74 <= p.overall_rating < 84]  # Solid Starters / Rotational
+        wave_2_fa = [
+            p for p in free_agents if 74 <= p.overall_rating < 84
+        ]  # Solid Starters / Rotational
         wave_3_fa = [p for p in free_agents if p.overall_rating < 74]  # Depth
 
         waves = [(1, wave_1_fa), (2, wave_2_fa), (3, wave_3_fa)]
@@ -242,7 +243,7 @@ class FreeAgencyEngine:
                 aav, years, guaranteed = self.calculate_market_value(player)
 
                 # Collect bids from eligible teams
-                bids: List[Tuple[Team, float, int, int]] = []
+                bids: list[tuple[Team, float, int, int]] = []
 
                 for team in teams:
                     # Check if roster is already at maximum (53)
@@ -254,7 +255,7 @@ class FreeAgencyEngine:
                         player=player,
                         roster_counts=team_roster_counts[team.id],
                         aav=aav,
-                        team_cap_space=team_cap_trackers[team.id]
+                        team_cap_space=team_cap_trackers[team.id],
                     )
 
                     if interest >= (35.0 if wave_num == 1 else (25.0 if wave_num == 2 else 15.0)):
@@ -273,7 +274,9 @@ class FreeAgencyEngine:
                 final_guaranteed = int(final_aav * final_years * (guaranteed / max(1, aav * years)))
 
                 # Calculate signing grade
-                grade = self._calculate_signing_grade(player, final_aav, aav, team_roster_counts[winning_team.id])
+                grade = self._calculate_signing_grade(
+                    player, final_aav, aav, team_roster_counts[winning_team.id]
+                )
 
                 # Execute signing on player model & contract
                 player.team_id = winning_team.id
@@ -292,15 +295,19 @@ class FreeAgencyEngine:
                         contract_years=final_years,
                         contract_salary=final_aav,
                         is_rookie=False,
-                        is_retired=False
+                        is_retired=False,
                     )
                     self.db.add(contract)
 
                 # Update team tracker
                 pos = player.position if isinstance(player.position, str) else player.position.value
-                team_roster_counts[winning_team.id][pos] = team_roster_counts[winning_team.id].get(pos, 0) + 1
+                team_roster_counts[winning_team.id][pos] = (
+                    team_roster_counts[winning_team.id].get(pos, 0) + 1
+                )
                 team_roster_totals[winning_team.id] += 1
-                team_cap_trackers[winning_team.id] = max(0.0, team_cap_trackers[winning_team.id] - final_aav)
+                team_cap_trackers[winning_team.id] = max(
+                    0.0, team_cap_trackers[winning_team.id] - final_aav
+                )
                 winning_team.salary_cap_space = team_cap_trackers[winning_team.id]
 
                 signing = FreeAgentSigning(
@@ -317,12 +324,14 @@ class FreeAgencyEngine:
                     annual_avg=final_aav,
                     signing_grade=grade,
                     signing_round=wave_num,
-                    bidding_teams_count=len(bids)
+                    bidding_teams_count=len(bids),
                 )
                 signings.append(signing)
 
         # 4. Fill remaining roster gaps to 48 minimum if teams are short
-        self._balance_rosters_to_minimum(teams, team_roster_counts, team_roster_totals, team_cap_trackers, signings)
+        self._balance_rosters_to_minimum(
+            teams, team_roster_counts, team_roster_totals, team_cap_trackers, signings
+        )
 
         self.db.commit()
         invalidate_all_team_roster_caches()
@@ -330,18 +339,18 @@ class FreeAgencyEngine:
 
     def _balance_rosters_to_minimum(
         self,
-        teams: List[Team],
-        team_roster_counts: Dict[int, Dict[str, int]],
-        team_roster_totals: Dict[int, int],
-        team_cap_trackers: Dict[int, float],
-        signings: List[FreeAgentSigning]
+        teams: list[Team],
+        team_roster_counts: dict[int, dict[str, int]],
+        team_roster_totals: dict[int, int],
+        team_cap_trackers: dict[int, float],
+        signings: list[FreeAgentSigning],
     ) -> None:
         """Ensure all teams have at least 48 players by signing low-cost depth."""
-        stmt_remain = select(Player).where(
-            Player.team_id == None,
-            Player.is_rookie == False,
-            Player.is_retired == False
-        ).order_by(Player.overall_rating.desc())
+        stmt_remain = (
+            select(Player)
+            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .order_by(Player.overall_rating.desc())
+        )
         remain_fas = list(self.db.execute(stmt_remain).scalars().all())
         fa_idx = 0
 
@@ -363,24 +372,28 @@ class FreeAgencyEngine:
                 team_cap_trackers[team.id] = max(0.0, team_cap_trackers[team.id] - MIN_SALARY)
                 team.salary_cap_space = team_cap_trackers[team.id]
 
-                signings.append(FreeAgentSigning(
-                    player_id=p.id,
-                    player_name=f"{p.first_name} {p.last_name}",
-                    position=pos,
-                    overall_rating=p.overall_rating,
-                    age=p.age or 25,
-                    team_id=team.id,
-                    team_name=f"{team.city} {team.name}",
-                    contract_years=1,
-                    total_value=MIN_SALARY,
-                    guaranteed=0,
-                    annual_avg=MIN_SALARY,
-                    signing_grade="C",
-                    signing_round=3,
-                    bidding_teams_count=1
-                ))
+                signings.append(
+                    FreeAgentSigning(
+                        player_id=p.id,
+                        player_name=f"{p.first_name} {p.last_name}",
+                        position=pos,
+                        overall_rating=p.overall_rating,
+                        age=p.age or 25,
+                        team_id=team.id,
+                        team_name=f"{team.city} {team.name}",
+                        contract_years=1,
+                        total_value=MIN_SALARY,
+                        guaranteed=0,
+                        annual_avg=MIN_SALARY,
+                        signing_grade="C",
+                        signing_round=3,
+                        bidding_teams_count=1,
+                    )
+                )
 
-    def _calculate_signing_grade(self, player: Player, paid_aav: int, market_aav: int, team_needs: Dict[str, int]) -> str:
+    def _calculate_signing_grade(
+        self, player: Player, paid_aav: int, market_aav: int, team_needs: dict[str, int]
+    ) -> str:
         """Assign letter grade to free agent signing."""
         ratio = paid_aav / max(1, market_aav)
         pos = player.position if isinstance(player.position, str) else player.position.value
@@ -406,18 +419,19 @@ class FreeAgencyEngine:
     # PHASE 4: MARKET PREVIEW & SCOUTING
     # =========================================================================
 
-    def get_market_overview(self, season_id: int, limit: int = 50) -> List[FreeAgentMarketPlayer]:
+    def get_market_overview(self, season_id: int, limit: int = 50) -> list[FreeAgentMarketPlayer]:
         """
         Return the top available free agents with projected market valuations.
         """
-        stmt = select(Player).where(
-            Player.team_id == None,
-            Player.is_rookie == False,
-            Player.is_retired == False
-        ).order_by(Player.overall_rating.desc()).limit(limit)
+        stmt = (
+            select(Player)
+            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .order_by(Player.overall_rating.desc())
+            .limit(limit)
+        )
 
         players = list(self.db.execute(stmt).scalars().all())
-        market_list: List[FreeAgentMarketPlayer] = []
+        market_list: list[FreeAgentMarketPlayer] = []
 
         stmt_teams = select(Team).order_by(Team.prestige.desc()).limit(5)
         top_teams = list(self.db.execute(stmt_teams).scalars().all())
@@ -429,19 +443,23 @@ class FreeAgencyEngine:
             pos = p.position if isinstance(p.position, str) else p.position.value
 
             # Pick 2-3 plausible interested teams
-            interested = random.sample(top_team_names, min(len(top_team_names), random.randint(2, 3)))
+            interested = random.sample(
+                top_team_names, min(len(top_team_names), random.randint(2, 3))
+            )
 
-            market_list.append(FreeAgentMarketPlayer(
-                player_id=p.id,
-                player_name=f"{p.first_name} {p.last_name}",
-                position=pos,
-                overall_rating=p.overall_rating,
-                age=p.age or 26,
-                projected_aav=float(aav),
-                projected_years=years,
-                tier=tier,
-                top_interested_teams=interested
-            ))
+            market_list.append(
+                FreeAgentMarketPlayer(
+                    player_id=p.id,
+                    player_name=f"{p.first_name} {p.last_name}",
+                    position=pos,
+                    overall_rating=p.overall_rating,
+                    age=p.age or 26,
+                    projected_aav=float(aav),
+                    projected_years=years,
+                    tier=tier,
+                    top_interested_teams=interested,
+                )
+            )
 
         return market_list
 
@@ -528,10 +546,12 @@ class FreeAgencyEngine:
             user_score += 5.0
 
         # Evaluate AI GM competing offers
-        stmt_ai_teams = select(Team).where(Team.id != team_id).order_by(Team.prestige.desc()).limit(10)
+        stmt_ai_teams = (
+            select(Team).where(Team.id != team_id).order_by(Team.prestige.desc()).limit(10)
+        )
         ai_teams = list(self.db.execute(stmt_ai_teams).scalars().all())
 
-        competing_offers: List[Tuple[Team, float, int, int]] = []
+        competing_offers: list[tuple[Team, float, int, int]] = []
         pos = player.position if isinstance(player.position, str) else player.position.value
 
         for ai_team in ai_teams:
@@ -541,14 +561,24 @@ class FreeAgencyEngine:
 
             stmt_r = select(Player).where(Player.team_id == ai_team.id)
             roster = list(self.db.execute(stmt_r).scalars().all())
-            pos_count = sum(1 for rp in roster if (rp.position if isinstance(rp.position, str) else rp.position.value) == pos)
+            pos_count = sum(
+                1
+                for rp in roster
+                if (rp.position if isinstance(rp.position, str) else rp.position.value) == pos
+            )
             roster_counts = {pos: pos_count}
 
-            interest = self.calculate_team_interest(ai_team, player, roster_counts, market_aav, ai_cap)
+            interest = self.calculate_team_interest(
+                ai_team, player, roster_counts, market_aav, ai_cap
+            )
             if interest >= 40.0:
                 ai_bid_aav = int(market_aav * (1.0 + (interest - 50.0) * 0.005))
                 ai_bid_aav = max(MIN_SALARY, min(ai_bid_aav, int(ai_cap)))
-                ai_score = interest + (ai_bid_aav / max(1, market_aav)) * 30.0 + (ai_team.prestige - 50) * 0.15
+                ai_score = (
+                    interest
+                    + (ai_bid_aav / max(1, market_aav)) * 30.0
+                    + (ai_team.prestige - 50) * 0.15
+                )
                 competing_offers.append((ai_team, ai_score, ai_bid_aav, market_years))
 
         competing_offers.sort(key=lambda o: o[1], reverse=True)
@@ -575,7 +605,9 @@ class FreeAgencyEngine:
                 )
                 self.db.add(contract)
 
-            winning_team.salary_cap_space = max(0.0, float(winning_team.salary_cap_space or 0.0) - ai_aav)
+            winning_team.salary_cap_space = max(
+                0.0, float(winning_team.salary_cap_space or 0.0) - ai_aav
+            )
             self.db.commit()
             invalidate_team_roster_cache(winning_team.id)
 
@@ -617,4 +649,3 @@ class FreeAgencyEngine:
             message=f"Offer Accepted! {player.first_name} {player.last_name} has signed a {years}-year deal with the {team.city} {team.name}.",
             updated_cap_space=int(new_cap),
         )
-

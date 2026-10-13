@@ -5,12 +5,11 @@ Manages 3-branch coaching skill trees (Scheme Tactics, Player Development, Progr
 and multi-coach staff synergy calculations.
 """
 
-from typing import Dict, List, Optional
 from app.schemas.deep_dive import (
+    CoachDynastyProfile,
     CoachingBranch,
     CoachingSkillNode,
     StaffSynergyBreakdown,
-    CoachDynastyProfile,
 )
 
 
@@ -20,7 +19,7 @@ class CoachingDynastyService:
     def __init__(self):
         self._tree_catalog = self._initialize_tree_catalog()
 
-    def _initialize_tree_catalog(self) -> Dict[str, CoachingSkillNode]:
+    def _initialize_tree_catalog(self) -> dict[str, CoachingSkillNode]:
         """Define complete 3-branch coaching tree node definitions."""
         return {
             # --- Branch 1: Scheme & Tactics ---
@@ -63,7 +62,6 @@ class CoachingDynastyService:
                 prerequisites=["SCHEME_FOURTH_DOWN_ALGO"],
                 stat_multiplier=1.15,
             ),
-
             # --- Branch 2: Player Development ---
             "DEV_ROOKIE_ONBOARDING": CoachingSkillNode(
                 id="DEV_ROOKIE_ONBOARDING",
@@ -104,7 +102,6 @@ class CoachingDynastyService:
                 prerequisites=["DEV_STAR_MAKER"],
                 stat_multiplier=1.50,
             ),
-
             # --- Branch 3: Program & Culture ---
             "CULTURE_LOCKER_ROOM_UNITY": CoachingSkillNode(
                 id="CULTURE_LOCKER_ROOM_UNITY",
@@ -154,10 +151,13 @@ class CoachingDynastyService:
         role: str,
         level: int = 12,
         current_sp: int = 4,
-        unlocked_node_ids: Optional[List[str]] = None,
+        unlocked_node_ids: list[str] | None = None,
     ) -> CoachDynastyProfile:
         """Construct full dynasty profile with tree nodes."""
-        unlocked_set = set(unlocked_node_ids or ["SCHEME_DISGUISE_I", "DEV_ROOKIE_ONBOARDING", "CULTURE_LOCKER_ROOM_UNITY"])
+        unlocked_set = set(
+            unlocked_node_ids
+            or ["SCHEME_DISGUISE_I", "DEV_ROOKIE_ONBOARDING", "CULTURE_LOCKER_ROOM_UNITY"]
+        )
         nodes = {}
         for nid, template in self._tree_catalog.items():
             node = template.model_copy()
@@ -171,7 +171,9 @@ class CoachingDynastyService:
             level=level,
             current_sp=current_sp,
             total_sp_earned=level * 2,
-            archetype="Tactical Mastermind" if "SCHEME_DISGUISE_I" in unlocked_set else "Program Builder",
+            archetype="Tactical Mastermind"
+            if "SCHEME_DISGUISE_I" in unlocked_set
+            else "Program Builder",
             tree_nodes=nodes,
         )
 
@@ -207,9 +209,9 @@ class CoachingDynastyService:
 
     def calculate_staff_synergy(
         self,
-        hc_scheme: str, # e.g. "WEST_COAST"
-        oc_scheme: str, # e.g. "WEST_COAST" or "AIR_RAID"
-        dc_scheme: str, # e.g. "COVER_3_ZONE"
+        hc_scheme: str,  # e.g. "WEST_COAST"
+        oc_scheme: str,  # e.g. "WEST_COAST" or "AIR_RAID"
+        dc_scheme: str,  # e.g. "COVER_3_ZONE"
         hc_id: str = "HC-01",
         oc_id: str = "OC-01",
         dc_id: str = "DC-01",

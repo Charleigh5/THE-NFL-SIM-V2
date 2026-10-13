@@ -13,14 +13,15 @@ Best Practices Applied:
 - Connection reuse and singleton registry management
 """
 
-import os
 import asyncio
-import logging
 import json
+import logging
+import os
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import Type, TypeVar, Optional, Any, Dict
+from enum import StrEnum
 from functools import lru_cache
+from typing import Any, Optional, TypeVar
+
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -28,8 +29,9 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
 
 
-class AIProviderType(str, Enum):
+class AIProviderType(StrEnum):
     """Supported AI provider backends."""
+
     DETERMINISTIC_FALLBACK = "deterministic_fallback"
     GOOGLE_GENAI = "google_genai"
     OPENAI_COMPATIBLE = "openai_compatible"
@@ -59,11 +61,8 @@ class BaseAIProvider(ABC):
 
     @abstractmethod
     async def generate_text(
-        self,
-        prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[str]:
+        self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
+    ) -> str | None:
         """Generate unstructured text."""
         pass
 
@@ -71,27 +70,25 @@ class BaseAIProvider(ABC):
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[T]:
+        max_tokens: int = 2048,
+    ) -> T | None:
         """Generate structured JSON conforming to a Pydantic schema."""
         pass
 
     async def generate_with_retry(
         self,
         prompt: str,
-        response_schema: Optional[Type[T]] = None,
+        response_schema: type[T] | None = None,
         max_retries: int = 3,
-        temperature: float = 0.7
-    ) -> Optional[Any]:
+        temperature: float = 0.7,
+    ) -> Any | None:
         """Generate with exponential backoff retry."""
         for attempt in range(max_retries):
             try:
                 if response_schema:
-                    result = await self.generate_structured(
-                        prompt, response_schema, temperature
-                    )
+                    result = await self.generate_structured(prompt, response_schema, temperature)
                 else:
                     result = await self.generate_text(prompt, temperature)
 
@@ -99,10 +96,12 @@ class BaseAIProvider(ABC):
                     return result
 
             except Exception as e:
-                logger.warning(f"Attempt {attempt + 1}/{max_retries} failed on {self.provider_type}: {e}")
+                logger.warning(
+                    f"Attempt {attempt + 1}/{max_retries} failed on {self.provider_type}: {e}"
+                )
 
             if attempt < max_retries - 1:
-                wait_time = 2 ** attempt
+                wait_time = 2**attempt
                 await asyncio.sleep(wait_time)
 
         logger.error(f"All {max_retries} attempts failed for provider {self.provider_type}")
@@ -131,20 +130,17 @@ class DeterministicFallbackProvider(BaseAIProvider):
         return True
 
     async def generate_text(
-        self,
-        prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[str]:
+        self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
+    ) -> str | None:
         return f"[Deterministic Offline Engine] Analysis generated for: {prompt[:80]}..."
 
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[T]:
+        max_tokens: int = 2048,
+    ) -> T | None:
         """
         Synthesizes a minimal valid instance of response_schema using default values or mock fields.
         """
@@ -152,10 +148,16 @@ class DeterministicFallbackProvider(BaseAIProvider):
             return response_schema.model_validate({})
         except Exception:
             from typing import Union
+
             from pydantic_core import PydanticUndefined
-            fields_data: Dict[str, Any] = {}
+
+            fields_data: dict[str, Any] = {}
             for field_name, field_info in response_schema.model_fields.items():
-                if field_info.default is not PydanticUndefined and field_info.default != Ellipsis and field_info.default is not None:
+                if (
+                    field_info.default is not PydanticUndefined
+                    and field_info.default != Ellipsis
+                    and field_info.default is not None
+                ):
                     fields_data[field_name] = field_info.default
                 elif field_info.default_factory is not None:
                     fields_data[field_name] = field_info.default_factory()
@@ -172,13 +174,13 @@ class DeterministicFallbackProvider(BaseAIProvider):
                             fields_data[field_name] = None
                             continue
 
-                    if ann == str or getattr(ann, "__name__", "") == "str":
+                    if ann is str or getattr(ann, "__name__", "") == "str":
                         fields_data[field_name] = f"Standard {field_name.replace('_', ' ').title()}"
-                    elif ann == int:
+                    elif ann is int:
                         fields_data[field_name] = 80
-                    elif ann == float:
+                    elif ann is float:
                         fields_data[field_name] = 75.0
-                    elif ann == bool:
+                    elif ann is bool:
                         fields_data[field_name] = True
                     elif ann_origin is list or getattr(ann, "__name__", "") == "list":
                         fields_data[field_name] = []
@@ -193,7 +195,9 @@ class DeterministicFallbackProvider(BaseAIProvider):
             try:
                 return response_schema.model_validate(fields_data)
             except Exception as e:
-                logger.error(f"Deterministic fallback construction failed for schema {response_schema}: {e}")
+                logger.error(
+                    f"Deterministic fallback construction failed for schema {response_schema}: {e}"
+                )
                 return None
 
 
@@ -203,7 +207,7 @@ class GoogleGenAIProvider(BaseAIProvider):
     Supports Gemini 2.5 Flash and Gemini 2.5 Pro with native JSON schema constraints.
     """
 
-    def __init__(self, api_key: Optional[str] = None, model_name: Optional[str] = None):
+    def __init__(self, api_key: str | None = None, model_name: str | None = None):
         self._api_key = api_key or os.getenv("VERTEX_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self._model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self._client = None
@@ -231,8 +235,7 @@ class GoogleGenAIProvider(BaseAIProvider):
             from google.genai.types import HttpOptions
 
             self._client = genai.Client(
-                api_key=self._api_key,
-                http_options=HttpOptions(api_version="v1")
+                api_key=self._api_key, http_options=HttpOptions(api_version="v1")
             )
             logger.info(f"Google GenAI client initialized with model: {self._model_name}")
             return True
@@ -248,11 +251,8 @@ class GoogleGenAIProvider(BaseAIProvider):
         return self._ensure_initialized()
 
     async def generate_text(
-        self,
-        prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[str]:
+        self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
+    ) -> str | None:
         if not self._ensure_initialized():
             return None
 
@@ -262,10 +262,7 @@ class GoogleGenAIProvider(BaseAIProvider):
             response = self._client.models.generate_content(
                 model=self._model_name,
                 contents=prompt,
-                config=GenerateContentConfig(
-                    temperature=temperature,
-                    max_output_tokens=max_tokens
-                )
+                config=GenerateContentConfig(temperature=temperature, max_output_tokens=max_tokens),
             )
             return response.text
         except Exception as e:
@@ -275,10 +272,10 @@ class GoogleGenAIProvider(BaseAIProvider):
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[T]:
+        max_tokens: int = 2048,
+    ) -> T | None:
         if not self._ensure_initialized():
             return None
 
@@ -293,8 +290,8 @@ class GoogleGenAIProvider(BaseAIProvider):
                     temperature=temperature,
                     max_output_tokens=max_tokens,
                     response_mime_type="application/json",
-                    response_schema=json_schema
-                )
+                    response_schema=json_schema,
+                ),
             )
             data = json.loads(response.text)
             return response_schema.model_validate(data)
@@ -311,12 +308,16 @@ class OpenAICompatibleProvider(BaseAIProvider):
 
     def __init__(
         self,
-        base_url: Optional[str] = None,
-        api_key: Optional[str] = None,
-        model_name: Optional[str] = None,
-        provider_type: AIProviderType = AIProviderType.OPENAI_COMPATIBLE
+        base_url: str | None = None,
+        api_key: str | None = None,
+        model_name: str | None = None,
+        provider_type: AIProviderType = AIProviderType.OPENAI_COMPATIBLE,
     ):
-        self._base_url = base_url or os.getenv("OPENAI_BASE_URL") or os.getenv("OLLAMA_HOST", "http://localhost:11434/v1")
+        self._base_url = (
+            base_url
+            or os.getenv("OPENAI_BASE_URL")
+            or os.getenv("OLLAMA_HOST", "http://localhost:11434/v1")
+        )
         self._api_key = api_key or os.getenv("OPENAI_API_KEY", "ollama-local")
         self._model_name = model_name or os.getenv("LOCAL_SLM_MODEL", "qwen2.5:3b")
         self._provider_type = provider_type
@@ -334,13 +335,11 @@ class OpenAICompatibleProvider(BaseAIProvider):
         return bool(self._base_url)
 
     async def generate_text(
-        self,
-        prompt: str,
-        temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[str]:
+        self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
+    ) -> str | None:
         try:
             import httpx
+
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
                     f"{self._base_url.rstrip('/')}/chat/completions",
@@ -349,8 +348,8 @@ class OpenAICompatibleProvider(BaseAIProvider):
                         "model": self._model_name,
                         "messages": [{"role": "user", "content": prompt}],
                         "temperature": temperature,
-                        "max_tokens": max_tokens
-                    }
+                        "max_tokens": max_tokens,
+                    },
                 )
                 if response.status_code == 200:
                     data = response.json()
@@ -362,12 +361,13 @@ class OpenAICompatibleProvider(BaseAIProvider):
     async def generate_structured(
         self,
         prompt: str,
-        response_schema: Type[T],
+        response_schema: type[T],
         temperature: float = 0.7,
-        max_tokens: int = 2048
-    ) -> Optional[T]:
+        max_tokens: int = 2048,
+    ) -> T | None:
         try:
             import httpx
+
             system_msg = (
                 f"You are a strict JSON generator. You MUST respond with ONLY valid JSON matching this schema: "
                 f"{json.dumps(response_schema.model_json_schema())}"
@@ -380,12 +380,12 @@ class OpenAICompatibleProvider(BaseAIProvider):
                         "model": self._model_name,
                         "messages": [
                             {"role": "system", "content": system_msg},
-                            {"role": "user", "content": prompt}
+                            {"role": "user", "content": prompt},
                         ],
                         "temperature": temperature,
                         "max_tokens": max_tokens,
-                        "response_format": {"type": "json_object"}
-                    }
+                        "response_format": {"type": "json_object"},
+                    },
                 )
                 if response.status_code == 200:
                     data = response.json()
@@ -406,8 +406,8 @@ class AIProviderRegistry:
     _instance: Optional["AIProviderRegistry"] = None
 
     def __init__(self):
-        self._providers: Dict[AIProviderType, BaseAIProvider] = {}
-        self._active_provider: Optional[BaseAIProvider] = None
+        self._providers: dict[AIProviderType, BaseAIProvider] = {}
+        self._active_provider: BaseAIProvider | None = None
         self._initialize_defaults()
 
     @classmethod
@@ -443,14 +443,20 @@ class AIProviderRegistry:
                 return
 
         # Prioritize Google GenAI if key available
-        if AIProviderType.GOOGLE_GENAI in self._providers and self._providers[AIProviderType.GOOGLE_GENAI].is_available:
+        if (
+            AIProviderType.GOOGLE_GENAI in self._providers
+            and self._providers[AIProviderType.GOOGLE_GENAI].is_available
+        ):
             self._active_provider = self._providers[AIProviderType.GOOGLE_GENAI]
-        elif AIProviderType.OPENAI_COMPATIBLE in self._providers and self._providers[AIProviderType.OPENAI_COMPATIBLE].is_available:
+        elif (
+            AIProviderType.OPENAI_COMPATIBLE in self._providers
+            and self._providers[AIProviderType.OPENAI_COMPATIBLE].is_available
+        ):
             self._active_provider = self._providers[AIProviderType.OPENAI_COMPATIBLE]
         else:
             self._active_provider = self._providers[AIProviderType.DETERMINISTIC_FALLBACK]
 
-    def get_provider(self, provider_type: Optional[AIProviderType] = None) -> BaseAIProvider:
+    def get_provider(self, provider_type: AIProviderType | None = None) -> BaseAIProvider:
         if provider_type and provider_type in self._providers:
             return self._providers[provider_type]
         if self._active_provider is None or not self._active_provider.is_available:

@@ -1,12 +1,15 @@
 from sqlalchemy.orm import Session
-from app.models.gameplan import Gameplan, CoachingTree
-from app.models.coach import Coach
+
+from app.models.gameplan import CoachingTree, Gameplan
+
 
 class GameplanService:
     def __init__(self, db: Session):
         self.db = db
 
-    def install_weekly_gameplan(self, team_id: int, season_id: int, week: int, opponent_id: int, strategy: dict):
+    def install_weekly_gameplan(
+        self, team_id: int, season_id: int, week: int, opponent_id: int, strategy: dict
+    ):
         """
         Install the gameplan for the week.
         Strategy dict: {
@@ -23,7 +26,7 @@ class GameplanService:
             offensive_focus=strategy.get("offensive_focus"),
             offensive_tempo=strategy.get("offensive_tempo", "NORMAL"),
             defensive_focus=strategy.get("defensive_focus"),
-            key_player_focus=strategy.get("key_player_focus")
+            key_player_focus=strategy.get("key_player_focus"),
         )
         self.db.add(gameplan)
         self.db.commit()
@@ -38,13 +41,20 @@ class GameplanService:
         def_bonus = 0.0
 
         # If I focused "STOP_RUN" and they focused "RUN_INSIDE" -> Big Bonus
-        if gameplan.defensive_focus == "STOP_RUN" and "RUN" in str(opponent_gameplan.offensive_focus):
-            def_bonus += 5.0 # +5 to all defensive awareness/reaction
-        elif gameplan.defensive_focus == "STOP_PASS" and "PASS" in str(opponent_gameplan.offensive_focus):
+        if gameplan.defensive_focus == "STOP_RUN" and "RUN" in str(
+            opponent_gameplan.offensive_focus
+        ):
+            def_bonus += 5.0  # +5 to all defensive awareness/reaction
+        elif gameplan.defensive_focus == "STOP_PASS" and "PASS" in str(
+            opponent_gameplan.offensive_focus
+        ):
             def_bonus += 5.0
 
         # If I focused "RUN_INSIDE" and they focused "STOP_PASS" -> Bonus
-        if "RUN" in str(gameplan.offensive_focus) and opponent_gameplan.defensive_focus == "STOP_PASS":
+        if (
+            "RUN" in str(gameplan.offensive_focus)
+            and opponent_gameplan.defensive_focus == "STOP_PASS"
+        ):
             off_bonus += 5.0
 
         gameplan.prep_bonus_offense = off_bonus

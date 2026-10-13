@@ -16,15 +16,12 @@ Key Innovations:
    telemetry streaming to WebSocket clients.
 """
 
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import List, Dict, Tuple, Optional, Any
+import logging
+import time
+from typing import Any
+
 import numpy as np
 from numpy.typing import NDArray
-import hashlib
-import json
-import time
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +56,7 @@ STATE_TACKLED: int = 7
 STATE_CATCHING: int = 8
 STATE_HAS_BALL: int = 9
 
-STATE_NAME_TO_INT: Dict[str, int] = {
+STATE_NAME_TO_INT: dict[str, int] = {
     "IDLE": STATE_IDLE,
     "RUNNING": STATE_RUNNING,
     "BLOCKING": STATE_BLOCKING,
@@ -72,12 +69,13 @@ STATE_NAME_TO_INT: Dict[str, int] = {
     "HAS_BALL": STATE_HAS_BALL,
 }
 
-INT_TO_STATE_NAME: Dict[int, str] = {v: k for k, v in STATE_NAME_TO_INT.items()}
+INT_TO_STATE_NAME: dict[int, str] = {v: k for k, v in STATE_NAME_TO_INT.items()}
 
 
 # =============================================================================
 # ZERO-ALLOCATION PLAY BUFFER
 # =============================================================================
+
 
 class ZeroAllocPlayBuffer:
     """
@@ -99,10 +97,8 @@ class ZeroAllocPlayBuffer:
         )
         # Ball format: [x, y, height, carrier_id]
         self.ball: NDArray[np.float64] = np.zeros((max_frames, 4), dtype=np.float64)
-        self.states: NDArray[np.int32] = np.zeros(
-            (max_frames, max_players), dtype=np.int32
-        )
-        self.events: List[List[str]] = [[] for _ in range(max_frames)]
+        self.states: NDArray[np.int32] = np.zeros((max_frames, max_players), dtype=np.int32)
+        self.events: list[list[str]] = [[] for _ in range(max_frames)]
         self.recorded_frames: int = 0
 
     def reset(self) -> None:
@@ -118,7 +114,7 @@ class ZeroAllocPlayBuffer:
         velocities: NDArray[np.float64],
         ball_state: NDArray[np.float64],
         states: NDArray[np.int32],
-        events: Optional[List[str]] = None,
+        events: list[str] | None = None,
     ) -> None:
         """Record frame data in-place via zero-copy slice assignment."""
         if frame_idx >= self.max_frames:
@@ -140,6 +136,7 @@ class ZeroAllocPlayBuffer:
 # =============================================================================
 # CIRCULAR TELEMETRY RING BUFFER (FOR LIVE STREAMING)
 # =============================================================================
+
 
 class CircularTelemetryRingBuffer:
     """
@@ -180,7 +177,7 @@ class CircularTelemetryRingBuffer:
         if self.count < self.capacity:
             self.count += 1
 
-    def get_latest_frame(self) -> Optional[Dict[str, Any]]:
+    def get_latest_frame(self) -> dict[str, Any] | None:
         """Retrieve the most recent frame as a dictionary snapshot."""
         if self.count == 0:
             return None
@@ -201,6 +198,7 @@ class CircularTelemetryRingBuffer:
 # SIMD VECTORIZED PHYSICS KERNEL
 # =============================================================================
 
+
 class VectorizedPhysicsKernel:
     """
     Structure-of-Arrays (SoA) SIMD Vectorized Physics Kernel.
@@ -217,9 +215,7 @@ class VectorizedPhysicsKernel:
         # Primary Coordinate & Kinematics Arrays (Shape: [max_players, 2])
         self.pos: NDArray[np.float64] = np.zeros((max_players, 2), dtype=np.float64)
         self.vel: NDArray[np.float64] = np.zeros((max_players, 2), dtype=np.float64)
-        self.target_pos: NDArray[np.float64] = np.zeros(
-            (max_players, 2), dtype=np.float64
-        )
+        self.target_pos: NDArray[np.float64] = np.zeros((max_players, 2), dtype=np.float64)
         self.has_target: NDArray[np.bool_] = np.zeros(max_players, dtype=bool)
 
         # Player Attributes & States (Shape: [max_players])
@@ -229,12 +225,8 @@ class VectorizedPhysicsKernel:
         self.states: NDArray[np.int32] = np.zeros(max_players, dtype=np.int32)
         self.max_speeds: NDArray[np.float64] = np.zeros(max_players, dtype=np.float64)
         self.accel_rates: NDArray[np.float64] = np.zeros(max_players, dtype=np.float64)
-        self.agility_ratings: NDArray[np.float64] = np.zeros(
-            max_players, dtype=np.float64
-        )
-        self.tackle_ratings: NDArray[np.float64] = np.zeros(
-            max_players, dtype=np.float64
-        )
+        self.agility_ratings: NDArray[np.float64] = np.zeros(max_players, dtype=np.float64)
+        self.tackle_ratings: NDArray[np.float64] = np.zeros(max_players, dtype=np.float64)
 
         # Ball State: [x, y, height, vx, vy, vz]
         self.ball: NDArray[np.float64] = np.zeros(6, dtype=np.float64)
@@ -243,17 +235,13 @@ class VectorizedPhysicsKernel:
         self.carrier_idx: int = -1
 
         # Preallocated Continuous Buffer
-        self.play_buffer = ZeroAllocPlayBuffer(
-            max_frames=MAX_FRAMES, max_players=max_players
-        )
-        self.ring_buffer = CircularTelemetryRingBuffer(
-            capacity=120, num_players=max_players
-        )
+        self.play_buffer = ZeroAllocPlayBuffer(max_frames=MAX_FRAMES, max_players=max_players)
+        self.ring_buffer = CircularTelemetryRingBuffer(capacity=120, num_players=max_players)
 
     def load_players(
         self,
-        player_data: List[Dict[str, Any]],
-        ball_carrier_id: Optional[int] = None,
+        player_data: list[dict[str, Any]],
+        ball_carrier_id: int | None = None,
     ) -> None:
         """
         Load player attributes and initial coordinates into contiguous NumPy arrays.
@@ -318,9 +306,7 @@ class VectorizedPhysicsKernel:
             self.target_pos[player_idx, 1] = target_y
             self.has_target[player_idx] = True
 
-    def set_player_target_by_id(
-        self, player_id: int, target_x: float, target_y: float
-    ) -> bool:
+    def set_player_target_by_id(self, player_id: int, target_x: float, target_y: float) -> bool:
         """Set target destination for a player by their persistent player_id."""
         matches = np.where(self.player_ids[: self.num_players] == player_id)[0]
         if len(matches) > 0:
@@ -419,7 +405,7 @@ class VectorizedPhysicsKernel:
                 self.ball[2] = 0.0
                 self.ball_is_in_air = False
 
-    def detect_collisions_simd(self) -> List[Tuple[int, int, str, float]]:
+    def detect_collisions_simd(self) -> list[tuple[int, int, str, float]]:
         """
         Perform vectorized pairwise collision detection between offensive and
         defensive units using NumPy broadcasting.
@@ -460,18 +446,15 @@ class VectorizedPhysicsKernel:
         impact_forces = rel_speed * 100.0
 
         off_hits, def_hits = np.where(contact_mask)
-        collisions: List[Tuple[int, int, str, float]] = []
+        collisions: list[tuple[int, int, str, float]] = []
 
-        for o_hit, d_hit in zip(off_hits, def_hits):
+        for o_hit, d_hit in zip(off_hits, def_hits, strict=False):
             actual_off_idx = int(off_indices[o_hit])
             actual_def_idx = int(def_indices[d_hit])
             force = float(impact_forces[o_hit, d_hit])
 
             collision_type = "CONTACT"
-            if (
-                self.has_ball[actual_off_idx]
-                and self.states[actual_def_idx] != STATE_BLOCKING
-            ):
+            if self.has_ball[actual_off_idx] and self.states[actual_def_idx] != STATE_BLOCKING:
                 collision_type = "TACKLE"
             elif self.states[actual_off_idx] == STATE_BLOCKING:
                 collision_type = "BLOCK"
@@ -480,17 +463,13 @@ class VectorizedPhysicsKernel:
 
         return collisions
 
-    def snapshot_frame(self, frame_idx: int, events: Optional[List[str]] = None) -> None:
+    def snapshot_frame(self, frame_idx: int, events: list[str] | None = None) -> None:
         """
         Record current engine state into preallocated buffer and streaming ring buffer.
         Zero heap allocation.
         """
         n = self.num_players
-        carrier_id = (
-            int(self.player_ids[self.carrier_idx])
-            if (0 <= self.carrier_idx < n)
-            else -1
-        )
+        carrier_id = int(self.player_ids[self.carrier_idx]) if (0 <= self.carrier_idx < n) else -1
         ball_summary = np.array(
             [self.ball[0], self.ball[1], self.ball[2], float(carrier_id)],
             dtype=np.float32,
@@ -515,9 +494,7 @@ class VectorizedPhysicsKernel:
             ball=ball_summary,
         )
 
-    def benchmark_play_execution(
-        self, frames_to_simulate: int = 300
-    ) -> Dict[str, Any]:
+    def benchmark_play_execution(self, frames_to_simulate: int = 300) -> dict[str, Any]:
         """
         Benchmark simulation speed and calculate per-tick latency in microseconds.
         """
@@ -539,7 +516,5 @@ class VectorizedPhysicsKernel:
             "execution_time_ms": round(total_time_ms, 3),
             "per_tick_latency_us": round(per_tick_us, 2),
             "simd_active": True,
-            "frames_per_second_capacity": round(
-                frames_to_simulate / max(duration_sec, 1e-6), 1
-            ),
+            "frames_per_second_capacity": round(frames_to_simulate / max(duration_sec, 1e-6), 1),
         }

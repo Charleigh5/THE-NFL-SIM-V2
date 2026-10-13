@@ -1,14 +1,16 @@
-from typing import Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Any
+
 from app.kernels.cortex.strategy import StrategyEngine
+
 
 @dataclass
 class GameSituation:
     down: int
     distance: int
-    field_position: int # 0-100 (0 is own goal line, 100 is opponent goal line)
-    time_remaining: int # Seconds
-    score_differential: int # Positive = Leading, Negative = Trailing
+    field_position: int  # 0-100 (0 is own goal line, 100 is opponent goal line)
+    time_remaining: int  # Seconds
+    score_differential: int  # Positive = Leading, Negative = Trailing
     quarter: int
     timeouts_left: int = 3
 
@@ -64,13 +66,17 @@ class CortexKernel:
     Facade for the Cortex (AI/Strategy) Engine.
     Manages decision making and play calling based on game situation and coach philosophy.
     """
+
     def __init__(self, seed: Any = None):
         from app.core.random_utils import DeterministicRNG
+
         self.strategy = StrategyEngine()
         self.rng = DeterministicRNG(seed if seed is not None else 0)
         self.coordinator_multiplier = CoordinatorMultiplier()
 
-    def call_play(self, situation: GameSituation, coach_philosophy: Optional[Dict[str, Any]] = None) -> str:
+    def call_play(
+        self, situation: GameSituation, coach_philosophy: dict[str, Any] | None = None
+    ) -> str:
         """
         Decide on a play type based on the current game situation.
 
@@ -78,8 +84,8 @@ class CortexKernel:
             str: Play type (e.g., "RUN", "PASS_SHORT", "PASS_DEEP", "PUNT", "FG")
         """
         coach = coach_philosophy or {}
-        aggressiveness = coach.get("aggressiveness", 50) # 0-100
-        pass_tendency = coach.get("pass_tendency", 50) # 0-100
+        aggressiveness = coach.get("aggressiveness", 50)  # 0-100
+        pass_tendency = coach.get("pass_tendency", 50)  # 0-100
         coordinator_iq = coach.get("intelligence", 70)  # NFL Identity Blueprint
 
         # Calculate coordinator boost
@@ -103,7 +109,7 @@ class CortexKernel:
         if situation.distance > 10:
             # Long yardage -> Pass likely
             if situation.down == 3:
-                return "PASS_DEEP" if aggressiveness > 60 else "PASS_SHORT" # Screen/Draw
+                return "PASS_DEEP" if aggressiveness > 60 else "PASS_SHORT"  # Screen/Draw
             return "PASS_DEEP"
 
         elif situation.distance <= 3:
@@ -148,10 +154,14 @@ class CortexKernel:
         in_fg_range = situation.field_position >= 65
 
         # Desperation Mode (Trailing late)
-        desperate = (situation.quarter == 4 and situation.time_remaining < 300 and situation.score_differential < 0)
+        desperate = (
+            situation.quarter == 4
+            and situation.time_remaining < 300
+            and situation.score_differential < 0
+        )
 
         if desperate:
-            return "PASS_DEEP" # Go for it
+            return "PASS_DEEP"  # Go for it
 
         if situation.distance <= 1:
             # 4th & 1
@@ -164,4 +174,3 @@ class CortexKernel:
             return "FG"
 
         return "PUNT"
-

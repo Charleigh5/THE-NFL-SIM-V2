@@ -1,6 +1,9 @@
-from app.kernels.core.ecs_manager import Component
-from typing import List, Dict, ClassVar
+from typing import ClassVar
+
 from pydantic import Field
+
+from app.kernels.core.ecs_manager import Component
+
 
 class NemesisSys(Component):
     """
@@ -9,10 +12,11 @@ class NemesisSys(Component):
     NFL Identity Blueprint Enhancement:
     Games decided by ≤3 points auto-renew rivalries with incremental aggression boost.
     """
+
     # Directive 4: Nemesis System
-    rivalries: Dict[str, List[str]] = {} # TeamID -> List[RivalTeamIDs]
-    aggression_modifiers: Dict[str, float] = {} # MatchupKey -> Multiplier
-    rivalry_intensities: Dict[str, float] = {} # MatchupKey -> Intensity (0-100)
+    rivalries: dict[str, list[str]] = {}  # TeamID -> List[RivalTeamIDs]
+    aggression_modifiers: dict[str, float] = {}  # MatchupKey -> Multiplier
+    rivalry_intensities: dict[str, float] = {}  # MatchupKey -> Intensity (0-100)
 
     # NFL Identity Blueprint: Close game threshold (ClassVar to prevent Pydantic field detection)
     CLOSE_GAME_THRESHOLD: ClassVar[int] = 3  # Points
@@ -21,12 +25,13 @@ class NemesisSys(Component):
     DECAY_PER_SEASON: ClassVar[float] = 5.0
 
     def register_rivalry(self, team_a: str, team_b: str):
-        if team_a not in self.rivalries: self.rivalries[team_a] = []
+        if team_a not in self.rivalries:
+            self.rivalries[team_a] = []
         if team_b not in self.rivalries[team_a]:
             self.rivalries[team_a].append(team_b)
 
         key = self._get_matchup_key(team_a, team_b)
-        self.aggression_modifiers[key] = 1.5 # 50% more aggression/penalties
+        self.aggression_modifiers[key] = 1.5  # 50% more aggression/penalties
         if key not in self.rivalry_intensities:
             self.rivalry_intensities[key] = 50.0  # Base intensity
 
@@ -72,8 +77,7 @@ class NemesisSys(Component):
         # Boost intensity
         current = self.rivalry_intensities[key]
         self.rivalry_intensities[key] = min(
-            self.MAX_INTENSITY,
-            current + self.INTENSITY_BOOST_PER_THRILLER
+            self.MAX_INTENSITY, current + self.INTENSITY_BOOST_PER_THRILLER
         )
 
         # Boost aggression modifier slightly
@@ -84,8 +88,7 @@ class NemesisSys(Component):
         """Decay all rivalry intensities at end of season."""
         for key in list(self.rivalry_intensities.keys()):
             self.rivalry_intensities[key] = max(
-                0.0,
-                self.rivalry_intensities[key] - self.DECAY_PER_SEASON
+                0.0, self.rivalry_intensities[key] - self.DECAY_PER_SEASON
             )
             # Remove dead rivalries
             if self.rivalry_intensities[key] <= 0:
@@ -97,14 +100,15 @@ class NemesisSys(Component):
         """Generate consistent key for team matchup regardless of order."""
         return str(sorted([team_a, team_b]))
 
+
 class DirectorAI(Component):
     # Directive 5: LLM Narrative Synthesis
-    active_storylines: List[str] = Field(default_factory=list)
+    active_storylines: list[str] = Field(default_factory=list)
 
     # Directive 9: Contextual Decision Veto
     veto_power_active: bool = True
 
-    def generate_headline(self, event_type: str, context: Dict) -> str:
+    def generate_headline(self, event_type: str, context: dict) -> str:
         """
         Placeholder for LLM Hook.
         """
@@ -112,11 +116,11 @@ class DirectorAI(Component):
             return f"Underdogs {context['winner']} shock the world against {context['loser']}!"
         return "Breaking News"
 
-    def check_veto(self, decision: str, context: Dict) -> bool:
+    def check_veto(self, decision: str, context: dict) -> bool:
         """
         Directive 9: Vetoes decisions that break immersion or narrative logic.
         e.g. Cutting a star player after a Super Bowl win.
         """
         if decision == "CUT_PLAYER" and context.get("recent_superbowl_mvp", False):
-            return True # VETOED
+            return True  # VETOED
         return False

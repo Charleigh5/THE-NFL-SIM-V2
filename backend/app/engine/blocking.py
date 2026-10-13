@@ -1,28 +1,29 @@
 import enum
-from typing import Any, Optional
-from pydantic import BaseModel
+from typing import Any
 
-class BlockType(str, enum.Enum):
+
+class BlockType(enum.StrEnum):
     PASS_SET = "Pass Set"
     RUN_DRIVE = "Run Drive"
     ZONE_STEP = "Zone Step"
     PULL = "Pull"
 
-class BlockingResult(str, enum.Enum):
+
+class BlockingResult(enum.StrEnum):
     WIN = "Win"
     LOSS = "Loss"
     STALEMATE = "Stalemate"
     PANCAKE = "Pancake"
 
-class BlockingEngine:
 
+class BlockingEngine:
     @staticmethod
     def resolve_pass_block(
         rng_or_ol_rating: Any = None,
-        ol_rating: Optional[int] = None,
-        dl_rating: Optional[int] = None,
+        ol_rating: int | None = None,
+        dl_rating: int | None = None,
         ol_technique: str = "KickStep",
-        rng: Optional[Any] = None,
+        rng: Any | None = None,
     ) -> BlockingResult:
         """
         Resolve 1-on-1 pass block interaction with deterministic seeded RNG.
@@ -59,20 +60,22 @@ class BlockingEngine:
         elif roll > 4:
             return BlockingResult.LOSS  # Pressure/Sack
         else:
-            return BlockingResult.PANCAKE  # Rare for DL to pancake OL in pass, but possible (Bull Rush)
+            return (
+                BlockingResult.PANCAKE
+            )  # Rare for DL to pancake OL in pass, but possible (Bull Rush)
 
     @staticmethod
     def resolve_run_block(ol_strength: int, dl_anchor: int, scheme: str) -> dict:
         """
         Calculate displacement vector for run blocking.
         """
-        force = ol_strength * 1.2 # Assertive force
+        force = ol_strength * 1.2  # Assertive force
         resistance = dl_anchor
 
         net_force = force - resistance
 
         displacement = 0.0
         if net_force > 0:
-            displacement = net_force / 10.0 # Yards pushed
+            displacement = net_force / 10.0  # Yards pushed
 
         return {"displacement": round(displacement, 2), "gap_integrity": net_force > -10}

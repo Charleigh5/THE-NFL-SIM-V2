@@ -1,41 +1,50 @@
-from .play_commands import PlayCommand, PassPlayCommand, RunPlayCommand
-from app.schemas.play import PlayResult
-from app.orchestrator.kernels_interface import KernelInterface
-from app.engine.probability_engine import ProbabilityEngine, OutcomeType
+import logging
+from typing import Any
+
+from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
 from app.engine.blocking import BlockingEngine, BlockingResult
 from app.engine.event_bus import EventBus, EventType
 from app.engine.offensive_line_ai import OffensiveLineAI
-from app.engine.weather_effects import WeatherEffects
-from app.engine.attribute_interaction import AttributeInteractionEngine, apply_interaction_to_play
-from app.models.weather import GameWeather
-from app.engine.sack_calculator import SackCalculator
-from app.engine.rb_tribes import RBTribeClassifier, get_tribe_modifiers
-from app.services.chemistry_service import ChemistryService
-from app.services.weather_service import WeatherService
-from app.engine.trait_effects import TraitEffectResolver
-from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries, InjuryEvent
-from app.services.use_based_progression import UseBasedProgression, ActionType
-from app.services.playbook.familiarity import FamiliarityManager
+
 # Phase 2: Position-Specific Physics Integration
 from app.engine.position_physics import (
-    QuarterbackPhysics, QBState, QBPhysicsConfig, ThrowResult, PocketState,
-    RunningBackPhysics, RBState, RBPhysicsConfig, TackleAttempt, CutMove, CutType, ContactType,
-    WideReceiverPhysics, WRState, WRPhysicsConfig, CatchAttempt, RouteType,
-    DefensiveBackPhysics, DBState, DBPhysicsConfig, CoverageType,
-    Vector2,
+    ContactType,
+    DefensiveBackPhysics,
+    QuarterbackPhysics,
+    RBState,
+    RouteType,
+    RunningBackPhysics,
+    TackleAttempt,
+    WideReceiverPhysics,
+    WRState,
 )
-from typing import Optional, Any, List, Tuple, Dict
-import logging
+from app.engine.probability_engine import OutcomeType, ProbabilityEngine
+from app.engine.rb_tribes import get_tribe_modifiers
+from app.engine.sack_calculator import SackCalculator
+from app.engine.trait_effects import TraitEffectResolver
+from app.engine.weather_effects import WeatherEffects
+from app.models.weather import GameWeather
+from app.orchestrator.kernels_interface import KernelInterface
+from app.rpg.injury_system import PlayContext, evaluate_post_play_injuries
+from app.schemas.play import PlayResult
+from app.services.playbook.familiarity import FamiliarityManager
+from app.services.use_based_progression import ActionType, UseBasedProgression
+
+from .play_commands import PassPlayCommand, PlayCommand, RunPlayCommand
 
 logger = logging.getLogger(__name__)
+
 
 class PlayResolver:
     """
     Resolves a PlayCommand by orchestrating the various simulation kernels.
     """
-    def __init__(self, rng: Optional[Any] = None, kernels: Optional[KernelInterface] = None) -> None:
+
+    def __init__(self, rng: Any | None = None, kernels: KernelInterface | None = None) -> None:
         import random
+
         from app.core.random_utils import DeterministicRNG
+
         if rng is None:
             rng = DeterministicRNG(random.randint(0, 1000000))
         self.rng = rng
@@ -48,7 +57,7 @@ class PlayResolver:
         # B-055: Playbook Familiarity (Phase 3)
         self.familiarity_manager = FamiliarityManager()
 
-    def _resolve_special_play_modifiers(self, command: PlayCommand) -> Dict[str, Any]:
+    def _resolve_special_play_modifiers(self, command: PlayCommand) -> dict[str, Any]:
         """
         RESOLVE SPECIAL PLAYS (Tush Push, Flea Flicker, etc.)
         Returns a dictionary of modifiers:
@@ -56,10 +65,11 @@ class PlayResolver:
         - epa_bonus: float
         - risk_modifier: float
         """
-        from app.core.nfl_reference_data import SPECIAL_PLAYS, PlayReference
+        from app.core.nfl_reference_data import SPECIAL_PLAYS
 
         play_id = getattr(command, "play_id", "")
-        if play_id: play_id = play_id.upper()
+        if play_id:
+            play_id = play_id.upper()
 
         if not play_id or play_id not in SPECIAL_PLAYS:
             return {"success_prob_override": None, "epa_bonus": 0.0, "risk_modifier": 1.0}
@@ -68,7 +78,7 @@ class PlayResolver:
         modifiers = {
             "success_prob_override": None,
             "epa_bonus": special_play.epa_value,
-            "risk_modifier": 1.0
+            "risk_modifier": 1.0,
         }
 
         # Check Prerequisites Logic (Simplified)
@@ -80,16 +90,16 @@ class PlayResolver:
             if getattr(command, "distance", 10) <= 2:
                 modifiers["success_prob_override"] = special_play.success_rate_avg
             else:
-                 # Reduced effectiveness if called on 3rd & 10
-                 modifiers["success_prob_override"] = 0.60
+                # Reduced effectiveness if called on 3rd & 10
+                modifiers["success_prob_override"] = 0.60
 
         elif play_id == "HAIL_MARY":
             modifiers["success_prob_override"] = special_play.success_rate_avg
-            modifiers["risk_modifier"] = 2.0 # High interception risk
+            modifiers["risk_modifier"] = 2.0  # High interception risk
 
         elif play_id == "FLEA_FLICKER":
-             modifiers["risk_modifier"] = 2.5 # Very high sack/fumble risk
-             # If successful, big EPA bonus already in 'epa'
+            modifiers["risk_modifier"] = 2.5  # Very high sack/fumble risk
+            # If successful, big EPA bonus already in 'epa'
 
         return modifiers
 
@@ -98,10 +108,12 @@ class PlayResolver:
         self.current_match_context = match_context
 
         # Sync Genesis Kernel if MatchContext has one
-        if hasattr(match_context, 'genesis') and match_context.genesis:
+        if hasattr(match_context, "genesis") and match_context.genesis:
             self.kernels.genesis = match_context.genesis
 
-        all_players = list(match_context.home_roster.values()) + list(match_context.away_roster.values())
+        all_players = list(match_context.home_roster.values()) + list(
+            match_context.away_roster.values()
+        )
 
         for p in all_players:
             # Extract initialized state from MatchContext
@@ -114,11 +126,8 @@ class PlayResolver:
             # Register with Genesis (Biology/Fatigue)
             # Note: MatchContext already registers players, so this might be redundant if we synced the kernel
             # But we keep it for safety or if using a different kernel instance
-            if not hasattr(match_context, 'genesis') or not match_context.genesis:
-                self.kernels.genesis.register_player(p.id, {
-                    "anatomy": {},
-                    "fatigue": fatigue_data
-                })
+            if not hasattr(match_context, "genesis") or not match_context.genesis:
+                self.kernels.genesis.register_player(p.id, {"anatomy": {}, "fatigue": fatigue_data})
 
     def resolve_play(self, command: PlayCommand) -> PlayResult:
         """
@@ -146,15 +155,19 @@ class PlayResolver:
                 if new_injuries:
                     # Convert InjuryEvents to the format expected by PlayResult.injuries
                     for injury_event in new_injuries:
-                        result.injuries.append({
-                            "player_id": injury_event.player_id,
-                            "severity": injury_event.severity,
-                            "injury_type": injury_event.injury_type,
-                            "weeks_to_recovery": injury_event.weeks_to_recovery,
-                            "can_play_through": injury_event.can_play_through,
-                            "performance_penalties": injury_event.performance_penalties,
-                        })
-                        logger.info(f"Post-play injury: Player {injury_event.player_id} - {injury_event.injury_type}")
+                        result.injuries.append(
+                            {
+                                "player_id": injury_event.player_id,
+                                "severity": injury_event.severity,
+                                "injury_type": injury_event.injury_type,
+                                "weeks_to_recovery": injury_event.weeks_to_recovery,
+                                "can_play_through": injury_event.can_play_through,
+                                "performance_penalties": injury_event.performance_penalties,
+                            }
+                        )
+                        logger.info(
+                            f"Post-play injury: Player {injury_event.player_id} - {injury_event.injury_type}"
+                        )
 
             # Update fatigue in Genesis Kernel
             if hasattr(self.kernels, "genesis") and self.kernels.genesis:
@@ -165,7 +178,7 @@ class PlayResolver:
         self.offensive_line_ai.decrement_debuffs()
         return result
 
-    def _get_player_by_position(self, players: list, position_prefix: str) -> Optional[Any]:
+    def _get_player_by_position(self, players: list, position_prefix: str) -> Any | None:
         """Helper to find a player by position prefix (e.g., 'QB', 'WR')."""
         if not players:
             return None
@@ -196,7 +209,11 @@ class PlayResolver:
             if result.yards_gained and result.yards_gained < 0 and "SACK" in result_desc:
                 play_type = "SACK"
             # Check for QB knockdown (pressured throw - hit while releasing ball)
-            elif "UNDER PRESSURE" in result_desc or "WHILE BEING HIT" in result_desc or "PRESSURE" in result_desc:
+            elif (
+                "UNDER PRESSURE" in result_desc
+                or "WHILE BEING HIT" in result_desc
+                or "PRESSURE" in result_desc
+            ):
                 play_type = "QB_KNOCKDOWN"
         elif isinstance(command, RunPlayCommand):
             play_type = "RUN_PLAY"
@@ -226,7 +243,7 @@ class PlayResolver:
             week=getattr(self.current_match_context, "week", 0),
         )
 
-    def _get_weather_effects(self) -> Optional[WeatherEffects]:
+    def _get_weather_effects(self) -> WeatherEffects | None:
         if not self.current_match_context or not self.current_match_context.weather_config:
             return None
 
@@ -236,7 +253,7 @@ class PlayResolver:
             wind_speed=config.get("wind_speed", 0.0),
             precipitation_type=config.get("precipitation_type", "None"),
             field_condition=config.get("field_condition", "Dry"),
-            humidity=config.get("humidity", 0.0)
+            humidity=config.get("humidity", 0.0),
         )
         return WeatherEffects(weather)
 
@@ -257,12 +274,7 @@ class PlayResolver:
         familiarity = self.familiarity_manager.get_or_create(player.id, experience)
         return familiarity.calculate_execution_penalty(play_id)
 
-    def _apply_familiarity_learning(
-        self,
-        players: List[Any],
-        play_id: str,
-        success: bool
-    ) -> None:
+    def _apply_familiarity_learning(self, players: list[Any], play_id: str, success: bool) -> None:
         """
         B-057: Increment learning for all players after play execution.
 
@@ -281,8 +293,7 @@ class PlayResolver:
 
             if new_fam > old_fam + 0.01:  # Only log significant changes
                 logger.debug(
-                    f"Player {player.id} learned {play_id}: "
-                    f"{old_fam:.2f} -> {new_fam:.2f}"
+                    f"Player {player.id} learned {play_id}: {old_fam:.2f} -> {new_fam:.2f}"
                 )
 
     # ==========================================================================
@@ -294,8 +305,12 @@ class PlayResolver:
         # Note: Matches signature in app/engine/position_physics/quarterback.py
         return QuarterbackPhysics(
             throw_power_rating=int(getattr(qb, "throw_power", None) or 80),
-            throw_accuracy_rating=int(getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80),
-            awareness_rating=int(getattr(qb, "awareness", None) or getattr(qb, "football_iq", None) or 80),
+            throw_accuracy_rating=int(
+                getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80
+            ),
+            awareness_rating=int(
+                getattr(qb, "awareness", None) or getattr(qb, "football_iq", None) or 80
+            ),
             speed_rating=int(getattr(qb, "speed", None) or 70),
             agility_rating=int(getattr(qb, "agility", None) or 70),
             poise_rating=int(getattr(qb, "poise", None) or 75),
@@ -336,10 +351,16 @@ class PlayResolver:
             speed_rating=int(getattr(db, "speed", None) or 88),
             acceleration_rating=int(getattr(db, "acceleration", None) or 86),
             agility_rating=int(getattr(db, "agility", None) or 85),
-            man_coverage_rating=int(getattr(db, "coverage", None) or getattr(db, "man_coverage", None) or 80),
-            zone_coverage_rating=int(getattr(db, "coverage", None) or getattr(db, "zone_coverage", None) or 78),
+            man_coverage_rating=int(
+                getattr(db, "coverage", None) or getattr(db, "man_coverage", None) or 80
+            ),
+            zone_coverage_rating=int(
+                getattr(db, "coverage", None) or getattr(db, "zone_coverage", None) or 78
+            ),
             press_rating=int(getattr(db, "press", None) or 75),
-            play_recognition_rating=int(getattr(db, "play_recognition", None) or getattr(db, "football_iq", None) or 78),
+            play_recognition_rating=int(
+                getattr(db, "play_recognition", None) or getattr(db, "football_iq", None) or 78
+            ),
             pursuit_rating=int(getattr(db, "pursuit", None) or 85),
             height_inches=int(getattr(db, "height", None) or 71),
             vertical_jump_inches=int(getattr(db, "vertical_jump", None) or 38),
@@ -368,23 +389,21 @@ class PlayResolver:
             yards_into_route=yards_into_route,
             defender_speed=db_physics.speed,
             defender_coverage_rating=db_physics.man_coverage,
-            press_coverage=(db_physics.press > 70)
+            press_coverage=(db_physics.press > 70),
         )
         return separation
 
-
-    def _resolve_line_battle(self, offense: List[Any], defense: List[Any], trait_modifiers: Optional[Dict[str, float]] = None) -> Tuple[List[BlockingResult], List[Any], List[Any]]:
+    def _resolve_line_battle(
+        self,
+        offense: list[Any],
+        defense: list[Any],
+        trait_modifiers: dict[str, float] | None = None,
+    ) -> tuple[list[BlockingResult], list[Any], list[Any]]:
         """
         Simulate the battle between OL and DL.
         Returns (results, winning_defenders, beaten_linemen)
         """
-        matchups = [
-            ("LT", "RE"),
-            ("RT", "LE"),
-            ("C", "DT"),
-            ("LG", "DT"),
-            ("RG", "DT")
-        ]
+        matchups = [("LT", "RE"), ("RT", "LE"), ("C", "DT"), ("LG", "DT"), ("RG", "DT")]
 
         results = []
         winning_defenders = []
@@ -399,7 +418,9 @@ class PlayResolver:
 
             # Get attributes
             ol_rating = getattr(ol, "pass_block", None) or 70
-            dl_rating = getattr(dl, "pass_rush", None) or 70 # Assuming pass_rush attribute exists, else use power/finessef
+            dl_rating = (
+                getattr(dl, "pass_rush", None) or 70
+            )  # Assuming pass_rush attribute exists, else use power/finessef
 
             # Apply Trait Bonuses (Field General Team Awareness)
             if trait_modifiers and "team_awareness_boost" in trait_modifiers:
@@ -420,11 +441,7 @@ class PlayResolver:
         return results, winning_defenders, beaten_linemen
 
     def _apply_pass_play_interactions(
-        self,
-        qb: Any,
-        target: Any,
-        defender: Any,
-        command: Any
+        self, qb: Any, target: Any, defender: Any, command: Any
     ) -> dict:
         """
         Calculate all attribute interactions for a pass play.
@@ -454,8 +471,16 @@ class PlayResolver:
             # Add weather context
             if self.current_match_context.weather_config:
                 weather = self.current_match_context.weather_config
-                precip_type = weather.get("precipitation_type") if isinstance(weather, dict) else getattr(weather, "precipitation_type", None)
-                wind_speed = weather.get("wind_speed", 0) if isinstance(weather, dict) else getattr(weather, "wind_speed", 0)
+                precip_type = (
+                    weather.get("precipitation_type")
+                    if isinstance(weather, dict)
+                    else getattr(weather, "precipitation_type", None)
+                )
+                wind_speed = (
+                    weather.get("wind_speed", 0)
+                    if isinstance(weather, dict)
+                    else getattr(weather, "wind_speed", 0)
+                )
 
                 if precip_type == "Rain":
                     context["RAIN"] = True
@@ -487,18 +512,9 @@ class PlayResolver:
             matchups.append(("rb_chip_vs_blitz_timing", lb, rb))
 
         # Apply all interactions
-        return apply_interaction_to_play(
-            self.interaction_engine,
-            context,
-            matchups
-        )
+        return apply_interaction_to_play(self.interaction_engine, context, matchups)
 
-    def _apply_run_play_interactions(
-        self,
-        rb: Any,
-        defender: Any,
-        command: Any
-    ) -> dict:
+    def _apply_run_play_interactions(self, rb: Any, defender: Any, command: Any) -> dict:
         """
         Calculate all attribute interactions for a run play.
 
@@ -533,7 +549,11 @@ class PlayResolver:
             # Add weather context
             if self.current_match_context.weather_config:
                 weather = self.current_match_context.weather_config
-                precip_type = weather.get("precipitation_type") if isinstance(weather, dict) else getattr(weather, "precipitation_type", None)
+                precip_type = (
+                    weather.get("precipitation_type")
+                    if isinstance(weather, dict)
+                    else getattr(weather, "precipitation_type", None)
+                )
 
                 if precip_type == "Rain":
                     context["RAIN"] = True
@@ -561,11 +581,7 @@ class PlayResolver:
                 matchups.append(("ol_pull_vs_dl_gap_integrity", ol, dl))
 
         # Apply all interactions
-        return apply_interaction_to_play(
-            self.interaction_engine,
-            context,
-            matchups
-        )
+        return apply_interaction_to_play(self.interaction_engine, context, matchups)
 
     def _resolve_pass_play(self, command: PassPlayCommand) -> PlayResult:
         """
@@ -576,21 +592,25 @@ class PlayResolver:
             return self._resolve_legacy_random_pass(command)
 
         qb = self._get_player_by_position(command.offense, "QB")
-        target = self._get_player_by_position(command.offense, "WR") or \
-                 self._get_player_by_position(command.offense, "TE") or \
-                 command.offense[0]
+        target = (
+            self._get_player_by_position(command.offense, "WR")
+            or self._get_player_by_position(command.offense, "TE")
+            or command.offense[0]
+        )
 
-        defender = self._get_player_by_position(command.defense, "CB") or \
-                   self._get_player_by_position(command.defense, "S") or \
-                   command.defense[0]
+        defender = (
+            self._get_player_by_position(command.defense, "CB")
+            or self._get_player_by_position(command.defense, "S")
+            or command.defense[0]
+        )
 
         if not qb:
-             logger.warning("No QB found for pass play")
-             return PlayResult(yards_gained=0, description="Play broken (No QB)")
+            logger.warning("No QB found for pass play")
+            return PlayResult(yards_gained=0, description="Play broken (No QB)")
 
         if not target or not defender:
-             # Fallback if rosters incomplete
-             return self._resolve_legacy_random_pass(command)
+            # Fallback if rosters incomplete
+            return self._resolve_legacy_random_pass(command)
 
         # 2. Genesis Kernel: Calculate Fatigue & Injury Risk
         temp = self._get_weather_temp()
@@ -599,7 +619,9 @@ class PlayResolver:
         current_fatigue = self.kernels.genesis.get_current_fatigue(qb.id)
 
         # Injury Check
-        injury_check = self.kernels.genesis.check_injury_risk(qb.id, impact_force=600.0, body_part="ACL")
+        injury_check = self.kernels.genesis.check_injury_risk(
+            qb.id, impact_force=600.0, body_part="ACL"
+        )
         injuries = [injury_check] if injury_check["is_injured"] else []
 
         # 3. Resolve Traits (e.g. Field General)
@@ -607,17 +629,19 @@ class PlayResolver:
         # Check if QB has Field General trait
         # In a real scenario, traits would be loaded on the player object
         if hasattr(qb, "active_traits") and "Field General" in qb.active_traits:
-             trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
-             logger.debug(f"Applied Field General boost from {qb.last_name}")
+            trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
+            logger.debug(f"Applied Field General boost from {qb.last_name}")
         # Fallback check if active_traits missing but traits list exists
         elif hasattr(qb, "traits") and "Field General" in getattr(qb, "traits", []):
-             trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
-             logger.debug(f"Applied Field General boost from {qb.last_name}")
+            trait_modifiers = TraitEffectResolver.apply_field_general_boost(command.offense, qb)
+            logger.debug(f"Applied Field General boost from {qb.last_name}")
 
         # 3b. Apply Green Dot (Defensive Captain) effects
         green_dot_effects = TraitEffectResolver.apply_green_dot_effects(command.defense)
         if green_dot_effects:
-            logger.debug(f"Applied Green Dot defensive boost: +{green_dot_effects.get('team_play_recognition_boost', 0)}")
+            logger.debug(
+                f"Applied Green Dot defensive boost: +{green_dot_effects.get('team_play_recognition_boost', 0)}"
+            )
 
         # 3c. Apply Chip Block (RB Pass Protection) if RB is blocking
         rb = self._get_player_by_position(command.offense, "RB")
@@ -627,15 +651,19 @@ class PlayResolver:
                 # Temporarily boost RB's pass protection rating
                 current_ppr = getattr(rb, "pass_pro_rating", 50)
                 rb.pass_pro_rating = current_ppr + chip_effects["pass_pro_rating_boost"]
-                logger.debug(f"Applied Chip Block boost: +{chip_effects['pass_pro_rating_boost']} for {rb.last_name}")
+                logger.debug(
+                    f"Applied Chip Block boost: +{chip_effects['pass_pro_rating_boost']} for {rb.last_name}"
+                )
 
         # 4. Line Battle & Sack Check
-        block_results, sackers, beaten_ols = self._resolve_line_battle(command.offense, command.defense, trait_modifiers)
+        block_results, sackers, beaten_ols = self._resolve_line_battle(
+            command.offense, command.defense, trait_modifiers
+        )
 
         # Determine if Sack occurred via Pressure & Pocket Presence
         is_sack = False
         sacker = sackers[0] if sackers else None
-        beaten_ol = beaten_ols[0] if beaten_ols else None
+        beaten_ols[0] if beaten_ols else None
 
         # Pancake = Automatic Sack
         if BlockingResult.PANCAKE in block_results:
@@ -684,24 +712,25 @@ class PlayResolver:
 
             # Publish Event
             if sacker:
-                intimidation_factor = 1.0
                 # Check for Intimidation trait
                 if hasattr(sacker, "traits"):
                     for trait in sacker.traits:
                         if trait.name == "Intimidation":
-                            intimidation_factor = 1.5
                             break
 
                 # STRICT PAYLOAD for SackEventPayload
-                EventBus.publish(EventType.SACK_EVENT, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "sacked_player_id": qb.id,
-                    "defense_player_id": sacker.id,
-                    "yards_lost": loss_yards
-                })
+                EventBus.publish(
+                    EventType.SACK_EVENT,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "sacked_player_id": qb.id,
+                        "defense_player_id": sacker.id,
+                        "yards_lost": loss_yards,
+                    },
+                )
 
             return PlayResult(
                 yards_gained=-loss_yards,
@@ -709,11 +738,14 @@ class PlayResolver:
                 is_sack=True,
                 is_safety=is_safety,
                 time_elapsed=time_elapsed,
-                description=f"SACKED! {getattr(qb, 'last_name', 'QB')} is taken down by {getattr(sacker, 'last_name', 'the defense')} for a loss of {loss_yards} yards." + (" (SAFETY!)" if is_safety else ""),
-                headline=f"Safety! Defense scores!" if is_safety else f"Sack! {getattr(sacker, 'last_name', 'Defense')} gets home!",
+                description=f"SACKED! {getattr(qb, 'last_name', 'QB')} is taken down by {getattr(sacker, 'last_name', 'the defense')} for a loss of {loss_yards} yards."
+                + (" (SAFETY!)" if is_safety else ""),
+                headline="Safety! Defense scores!"
+                if is_safety
+                else f"Sack! {getattr(sacker, 'last_name', 'Defense')} gets home!",
                 is_highlight_worthy=True,
                 injuries=injuries,
-                passer_id=qb.id
+                passer_id=qb.id,
             )
 
         # === USE-BASED PROGRESSION: Sack XP for defender ===
@@ -728,16 +760,27 @@ class PlayResolver:
         interaction_narratives = []
 
         if interaction_results:
-            interaction_modifier = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 100.0
+            interaction_modifier = (
+                interaction_results.get("total_offense_boost", 0.0)
+                - interaction_results.get("total_defense_boost", 0.0)
+            ) / 100.0
             interaction_narratives = interaction_results.get("narratives", [])
 
         # A. Throw Accuracy vs Depth
         if command.depth == "short":
-            throw_accuracy = getattr(qb, "throw_accuracy_short", None) or getattr(qb, "pass_accuracy", None) or 82
+            throw_accuracy = (
+                getattr(qb, "throw_accuracy_short", None)
+                or getattr(qb, "pass_accuracy", None)
+                or 82
+            )
         elif command.depth == "mid":
-            throw_accuracy = getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80
+            throw_accuracy = (
+                getattr(qb, "throw_accuracy_mid", None) or getattr(qb, "pass_accuracy", None) or 80
+            )
         elif command.depth == "deep":
-            throw_accuracy = getattr(qb, "throw_accuracy_deep", None) or getattr(qb, "pass_accuracy", None) or 76
+            throw_accuracy = (
+                getattr(qb, "throw_accuracy_deep", None) or getattr(qb, "pass_accuracy", None) or 76
+            )
         else:
             throw_accuracy = getattr(qb, "pass_accuracy", None) or 80
 
@@ -784,23 +827,25 @@ class PlayResolver:
             # 3+ yards separation = very open (+0.2)
             # 0-1 yards = contested (-0.1)
             separation_factor = min(0.2, max(-0.2, (physics_separation - 1.5) / 7.5))
-            logger.debug(f"Physics separation: {physics_separation:.2f} yards -> factor: {separation_factor:.3f}")
+            logger.debug(
+                f"Physics separation: {physics_separation:.2f} yards -> factor: {separation_factor:.3f}"
+            )
         except Exception as e:
             logger.warning(f"Physics separation failed, using fallback: {e}")
             separation_factor = 0.0
 
         # Apply WR familiarity to route running effectiveness (legacy fallback blend)
-        effective_route_running = (getattr(target, "route_running", None) or 50) * wr_familiarity_modifier
+        effective_route_running = (
+            getattr(target, "route_running", None) or 50
+        ) * wr_familiarity_modifier
 
         # Legacy calculations (blended with physics)
         speed_diff = ProbabilityEngine.compare_speed(
-            getattr(target, "speed", None) or 50,
-            getattr(defender, "speed", None) or 50
+            getattr(target, "speed", None) or 50, getattr(defender, "speed", None) or 50
         )
 
         matchup_factor = ProbabilityEngine.compare_skill(
-            int(effective_route_running),
-            int(getattr(defender, "man_coverage", None) or 50)
+            int(effective_route_running), int(getattr(defender, "man_coverage", None) or 50)
         )
 
         # Blend physics and legacy (70% physics, 30% legacy)
@@ -824,10 +869,12 @@ class PlayResolver:
                 logger.debug(f"Deep pass penalty applied: prob reduced by {1.0 - dist_mod:.2f}")
 
         else:
-             # Fallback legacy logic
-             if temp < 32: weather_penalty = 0.05
-             elif temp > 90: weather_penalty = 0.02
-             base_prob = throw_accuracy / 100.0
+            # Fallback legacy logic
+            if temp < 32:
+                weather_penalty = 0.05
+            elif temp > 90:
+                weather_penalty = 0.02
+            base_prob = throw_accuracy / 100.0
 
         # D. Fatigue Impact
         fatigue_penalty = (current_fatigue / 100.0) * 0.10
@@ -846,13 +893,14 @@ class PlayResolver:
             # Blend special probability with base Probability
             # 80% Special Data, 20% Physics
             base_prob = (special_mods["success_prob_override"] * 0.8) + (base_prob * 0.2)
-            logger.debug(f"Special Play {getattr(command, 'play_id', '')} override applied. Base Prob: {base_prob:.3f}")
+            logger.debug(
+                f"Special Play {getattr(command, 'play_id', '')} override applied. Base Prob: {base_prob:.3f}"
+            )
 
         # "THE CLOSER" TRAIT - Pressure & Fatigue Immunity in Crunch Time
         # ======================================================================
-        closer_active = False
         if qb and hasattr(qb, "player_traits"):
-            from app.services.trait_service import TraitService, TRAIT_CATALOG
+            from app.services.trait_service import TRAIT_CATALOG, TraitService
 
             # Build crunch time context from match context
             crunch_context = {}
@@ -861,8 +909,8 @@ class PlayResolver:
                     "quarter": getattr(self.current_match_context, "quarter", 1),
                     "time_remaining": getattr(self.current_match_context, "time_remaining", 900),
                     "score_differential": abs(
-                        getattr(self.current_match_context, "home_score", 0) -
-                        getattr(self.current_match_context, "away_score", 0)
+                        getattr(self.current_match_context, "home_score", 0)
+                        - getattr(self.current_match_context, "away_score", 0)
                     ),
                 }
 
@@ -872,15 +920,18 @@ class PlayResolver:
                 # Check if player has this trait (via player_traits relationship or traits list)
                 qb_trait_names = []
                 if hasattr(qb, "player_traits"):
-                    qb_trait_names = [pt.trait.name if hasattr(pt, "trait") else "" for pt in qb.player_traits]
+                    qb_trait_names = [
+                        pt.trait.name if hasattr(pt, "trait") else "" for pt in qb.player_traits
+                    ]
                 elif hasattr(qb, "traits"):
                     qb_trait_names = [t.name if hasattr(t, "name") else t for t in qb.traits]
 
                 if "The Closer" in qb_trait_names:
                     # Check if crunch time is active
                     if TraitService.check_crunch_time(crunch_context):
-                        closer_active = True
-                        logger.info(f"🧊 THE CLOSER ACTIVATED: {qb.last_name} - Pressure & Fatigue immunity!")
+                        logger.info(
+                            f"🧊 THE CLOSER ACTIVATED: {qb.last_name} - Pressure & Fatigue immunity!"
+                        )
 
                         # Apply immunity effects
                         if the_closer_def.effects.get("pressure_immunity", 0) >= 1.0:
@@ -907,15 +958,17 @@ class PlayResolver:
         pr_effects = TraitEffectResolver.apply_possession_receiver_effects(target, down, distance)
         if pr_effects and "catch_in_traffic_boost" in pr_effects:
             trait_bonus = pr_effects["catch_in_traffic_boost"] / 100.0  # Convert to 0.0-1.0
-            logger.debug(f"Possession Receiver bonus: +{pr_effects['catch_in_traffic_boost']} for {getattr(target, 'last_name', 'target')}")
+            logger.debug(
+                f"Possession Receiver bonus: +{pr_effects['catch_in_traffic_boost']} for {getattr(target, 'last_name', 'target')}"
+            )
 
         # B-007: Apply momentum modifier to success chance
         momentum_modifier = 0.0
         if self.momentum_engine and self.current_match_context:
             # Determine offense team ID
-            offense_team_id = str(getattr(self.current_match_context, 'home_team_id', 'home'))
-            if hasattr(command, 'is_home_team') and not command.is_home_team:
-                offense_team_id = str(getattr(self.current_match_context, 'away_team_id', 'away'))
+            offense_team_id = str(getattr(self.current_match_context, "home_team_id", "home"))
+            if hasattr(command, "is_home_team") and not command.is_home_team:
+                offense_team_id = str(getattr(self.current_match_context, "away_team_id", "away"))
             # Get modifier (1.0 = neutral, 0.9-1.1 range)
             raw_modifier = self.momentum_engine.get_performance_modifier(offense_team_id)
             # Convert to additive: 1.1 -> +0.1, 0.9 -> -0.1
@@ -926,7 +979,7 @@ class PlayResolver:
             base_probability=base_prob,
             attribute_modifiers=attr_modifiers + trait_bonus + momentum_modifier,
             context_modifiers=-weather_penalty - pressure_penalty,
-            fatigue_penalty=fatigue_penalty
+            fatigue_penalty=fatigue_penalty,
         )
 
         # G. Resolve Outcome
@@ -940,22 +993,21 @@ class PlayResolver:
             elif command.depth == "mid":
                 base_yards = 12.0
                 variance = 5.0
-            else: # deep
+            else:  # deep
                 base_yards = 25.0
                 variance = 10.0
 
             # YAC Bonus if WR is faster
             yac_bonus = 0.0
             if speed_diff > 0:
-                yac_bonus = speed_diff * 50.0 # e.g. 0.10 diff * 50 = 5 yards
+                yac_bonus = speed_diff * 50.0  # e.g. 0.10 diff * 50 = 5 yards
 
-            yards_gained = int(ProbabilityEngine.calculate_variable_outcome(
-                self.rng,
-                base_value=base_yards,
-                variance=variance,
-                modifiers=yac_bonus
-            ))
-            yards_gained = max(1, yards_gained) # Minimum 1 yard on completion
+            yards_gained = int(
+                ProbabilityEngine.calculate_variable_outcome(
+                    self.rng, base_value=base_yards, variance=variance, modifiers=yac_bonus
+                )
+            )
+            yards_gained = max(1, yards_gained)  # Minimum 1 yard on completion
             raw_syl = getattr(command, "start_yard_line", None) or getattr(command, "yard_line", 20)
             start_yard_line = raw_syl if isinstance(raw_syl, (int, float)) else 20
             possession = getattr(command, "possession", "home")
@@ -963,7 +1015,9 @@ class PlayResolver:
                 possession = "home"
             distance_to_goal = getattr(command, "distance_to_goal", None)
             if distance_to_goal is None or not isinstance(distance_to_goal, (int, float)):
-                distance_to_goal = 100 - start_yard_line if possession == "home" else start_yard_line
+                distance_to_goal = (
+                    100 - start_yard_line if possession == "home" else start_yard_line
+                )
 
             is_touchdown = False
             if yards_gained >= distance_to_goal:
@@ -979,30 +1033,40 @@ class PlayResolver:
 
             # PUBLISH TOUCHDOWN EVENT
             if is_touchdown:
-                offense_team_id = getattr(self.current_match_context, 'home_team_id', 0) if getattr(command, 'is_home_team', False) else getattr(self.current_match_context, 'away_team_id', 0)
-                EventBus.publish(EventType.TOUCHDOWN_EVENT, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "scoring_player_id": target.id,
-                    "assisting_player_id": qb.id,
-                    "scoring_team_id": offense_team_id,
-                    "touchdown_type": "PASS",
-                    "yards": yards_gained
-                })
+                offense_team_id = (
+                    getattr(self.current_match_context, "home_team_id", 0)
+                    if getattr(command, "is_home_team", False)
+                    else getattr(self.current_match_context, "away_team_id", 0)
+                )
+                EventBus.publish(
+                    EventType.TOUCHDOWN_EVENT,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "scoring_player_id": target.id,
+                        "assisting_player_id": qb.id,
+                        "scoring_team_id": offense_team_id,
+                        "touchdown_type": "PASS",
+                        "yards": yards_gained,
+                    },
+                )
 
             # PUBLISH SPECTACULAR CATCH (Narrative)
             # If contested catch trait was active and catch was made
             if trait_bonus > 0 and is_complete:
-                 EventBus.publish(EventType.SPECTACULAR_CATCH, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "player_id": target.id,
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "description": "Contested catch in traffic"
-                })
+                EventBus.publish(
+                    EventType.SPECTACULAR_CATCH,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "player_id": target.id,
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "description": "Contested catch in traffic",
+                    },
+                )
 
             # 4. Empire Kernel: XP Awards
             xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
@@ -1052,7 +1116,7 @@ class PlayResolver:
             if BlockingResult.LOSS in block_results:
                 pressure_note = " under pressure"
 
-            base_desc = f"Pass complete{weather_note}{pressure_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance*100)}%)"
+            base_desc = f"Pass complete{weather_note}{pressure_note} to {target.last_name} for {yards_gained} yards. (Prob: {int(success_chance * 100)}%)"
 
             # Add key interaction narrative if present
             if interaction_narratives and len(interaction_narratives) > 0:
@@ -1061,9 +1125,7 @@ class PlayResolver:
 
             # B-057: Apply familiarity learning for successful play
             self._apply_familiarity_learning(
-                [p for p in [qb, target] if p is not None],
-                play_id,
-                success=True
+                [p for p in [qb, target] if p is not None], play_id, success=True
             )
 
             return PlayResult(
@@ -1071,13 +1133,15 @@ class PlayResolver:
                 is_touchdown=is_touchdown,
                 time_elapsed=time_elapsed,
                 description=base_desc,
-                headline=f"Big play! {qb.last_name} connects with {target.last_name}!" if yards_gained > 20 else None,
+                headline=f"Big play! {qb.last_name} connects with {target.last_name}!"
+                if yards_gained > 20
+                else None,
                 is_highlight_worthy=is_touchdown or yards_gained > 20,
                 injuries=injuries,
                 xp_awards=xp_result.get("xp_awards", {}),
                 passer_id=qb.id,
                 receiver_id=target.id,
-                interaction_events=interaction_results.get("all_events", [])
+                interaction_events=interaction_results.get("all_events", []),
             )
         else:
             # Incomplete Pass - Check for Interception
@@ -1085,7 +1149,9 @@ class PlayResolver:
 
             # Pick Artist trait check
             pick_artist_bonus = 0.0
-            pick_artist_effects = TraitEffectResolver.apply_pick_artist_effects(defender, ball_in_air=True)
+            pick_artist_effects = TraitEffectResolver.apply_pick_artist_effects(
+                defender, ball_in_air=True
+            )
             if pick_artist_effects:
                 pick_artist_bonus = 0.04  # Extra 4% from 50% boost factor
                 logger.debug(f"Pick Artist bonus applied for {defender.last_name}")
@@ -1103,15 +1169,18 @@ class PlayResolver:
                 time_elapsed = round(self.rng.uniform(5.0, 8.0), 1)
 
                 # PUBLISH TURNOVER EVENT
-                EventBus.publish(EventType.TURNOVER_EVENT, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "turnover_type": "INTERCEPTION",
-                    "player_id": qb.id,
-                    "forced_by_player_id": defender.id
-                })
+                EventBus.publish(
+                    EventType.TURNOVER_EVENT,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "turnover_type": "INTERCEPTION",
+                        "player_id": qb.id,
+                        "forced_by_player_id": defender.id,
+                    },
+                )
 
                 # === USE-BASED PROGRESSION: Interception ===
                 UseBasedProgression.award_action_xp(defender, ActionType.INTERCEPTION, {})
@@ -1125,7 +1194,7 @@ class PlayResolver:
                     headline=f"Turnover! {defender.last_name} with the pick!",
                     is_highlight_worthy=True,
                     injuries=injuries,
-                    passer_id=qb.id
+                    passer_id=qb.id,
                 )
 
             # Normal Incomplete - add pressure indicator if applicable
@@ -1137,31 +1206,31 @@ class PlayResolver:
             # CHECK FOR DROPPED PASS (Simulated)
             # If success chance was high (>70%) but failed, 20% chance it was a drop
             if success_chance > 0.70 and ProbabilityEngine.resolve_outcome(self.rng, 0.20):
-                 EventBus.publish(EventType.DROPPED_PASS, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "player_id": target.id
-                })
+                EventBus.publish(
+                    EventType.DROPPED_PASS,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "player_id": target.id,
+                    },
+                )
 
             # B-057: Apply familiarity learning for failed play (still learn, slower)
             self._apply_familiarity_learning(
-                [p for p in [qb, target] if p is not None],
-                play_id,
-                success=False
+                [p for p in [qb, target] if p is not None], play_id, success=False
             )
 
             return PlayResult(
                 yards_gained=0,
                 time_elapsed=time_elapsed,
-                description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance*100)}%)",
+                description=f"Incomplete pass{pressure_note} intended for {target.last_name}. (Prob: {int(success_chance * 100)}%)",
                 headline=None,
                 injuries=injuries,
                 passer_id=qb.id,
-                receiver_id=target.id
+                receiver_id=target.id,
             )
-
 
     def _resolve_run_play(self, command: RunPlayCommand) -> PlayResult:
         """
@@ -1175,12 +1244,14 @@ class PlayResolver:
 
         # Find a defender based on run direction
         defender_pos = "DT" if command.run_direction == "middle" else "DE"
-        defender = self._get_player_by_position(command.defense, defender_pos) or \
-                   self._get_player_by_position(command.defense, "LB") or \
-                   command.defense[0]
+        defender = (
+            self._get_player_by_position(command.defense, defender_pos)
+            or self._get_player_by_position(command.defense, "LB")
+            or command.defense[0]
+        )
 
         # 2. Genesis Kernel: Fatigue
-        temp = self._get_weather_temp()
+        self._get_weather_temp()
         # print(f"DEBUG: Resolving Run Play. RB ID: {rb.id}, Temp: {temp}")
         # Use get_current_fatigue (read-only)
         current_fatigue = self.kernels.genesis.get_current_fatigue(rb.id)
@@ -1189,7 +1260,9 @@ class PlayResolver:
         # 2b. Apply Green Dot (Defensive Captain) effects for run defense
         green_dot_effects = TraitEffectResolver.apply_green_dot_effects(command.defense)
         if green_dot_effects:
-            logger.debug(f"Applied Green Dot defensive boost to run D: +{green_dot_effects.get('team_play_recognition_boost', 0)}")
+            logger.debug(
+                f"Applied Green Dot defensive boost to run D: +{green_dot_effects.get('team_play_recognition_boost', 0)}"
+            )
 
         # 3. Attribute Logic via ProbabilityEngine
 
@@ -1202,18 +1275,21 @@ class PlayResolver:
             interaction_results = {
                 "total_offense_boost": 0.0,
                 "total_defense_boost": 0.0,
-                "narratives": []
+                "narratives": [],
             }
 
-        interaction_yards_bonus = (interaction_results.get("total_offense_boost", 0.0) - interaction_results.get("total_defense_boost", 0.0)) / 10.0
-        interaction_narratives = interaction_results.get("narratives", [])
+        interaction_yards_bonus = (
+            interaction_results.get("total_offense_boost", 0.0)
+            - interaction_results.get("total_defense_boost", 0.0)
+        ) / 10.0
+        interaction_results.get("narratives", [])
 
         # SPECIAL PLAYS INTEGRATION
         special_mods = self._resolve_special_play_modifiers(command)
         is_special_run = False
         if special_mods["success_prob_override"]:
-             is_special_run = True
-             logger.debug(f"Special Run Play {getattr(command, 'play_id', '')} detected.")
+            is_special_run = True
+            logger.debug(f"Special Run Play {getattr(command, 'play_id', '')} detected.")
 
         logger.debug(f"Run interaction yards bonus: {interaction_yards_bonus:.2f}")
 
@@ -1222,7 +1298,7 @@ class PlayResolver:
         rb_familiarity_modifier = self._get_familiarity_penalty(rb, play_id)
 
         # Apply familiarity to vision (affects hole recognition)
-        effective_vision = (getattr(rb, "carrying_vision", None) or 50) * rb_familiarity_modifier
+        (getattr(rb, "carrying_vision", None) or 50) * rb_familiarity_modifier
 
         logger.debug(f"Run Familiarity: RB={rb_familiarity_modifier:.2f} for play {play_id}")
 
@@ -1235,22 +1311,29 @@ class PlayResolver:
             tackle_attempt = TackleAttempt(
                 tackler_id=str(defender.id),
                 tackler_weight=int(getattr(defender, "weight", None) or 220),
-                tackler_speed=float(getattr(defender, "speed", None) or 80) / 20.0,  # Convert to yards/sec
+                tackler_speed=float(getattr(defender, "speed", None) or 80)
+                / 20.0,  # Convert to yards/sec
                 tackle_rating=int(getattr(defender, "tackle", None) or 75),
-                contact_type=ContactType.WRAP_UP if command.run_direction == "middle" else ContactType.PURSUIT,
+                contact_type=ContactType.WRAP_UP
+                if command.run_direction == "middle"
+                else ContactType.PURSUIT,
                 approach_angle=0.0 if command.run_direction == "middle" else 45.0,
             )
 
             # Resolve tackle with physics
-            physics_tackle_result = rb_physics.resolve_tackle_attempt(
+            rb_physics.resolve_tackle_attempt(
                 state=rb_state,
                 tackle=tackle_attempt,
                 rng=self.rng,
             )
 
             # Calculate physics-based yards modifier (positive = broke tackle, negative = stopped)
-            physics_yards_modifier = rb_state.yards_after_contact if rb_state.yards_after_contact else 0.0
-            logger.debug(f"Physics tackle result: YAC={physics_yards_modifier:.2f}, Balance={rb_state.balance:.1f}")
+            physics_yards_modifier = (
+                rb_state.yards_after_contact if rb_state.yards_after_contact else 0.0
+            )
+            logger.debug(
+                f"Physics tackle result: YAC={physics_yards_modifier:.2f}, Balance={rb_state.balance:.1f}"
+            )
         except Exception as e:
             logger.warning(f"Physics tackle failed, using fallback: {e}")
             physics_yards_modifier = 0.0
@@ -1260,8 +1343,7 @@ class PlayResolver:
         effective_strength = (getattr(rb, "strength", None) or 50) * rb_familiarity_modifier
 
         power_diff = ProbabilityEngine.compare_strength(
-            int(effective_strength),
-            int(getattr(defender, "tackle", None) or 50)
+            int(effective_strength), int(getattr(defender, "tackle", None) or 50)
         )
 
         # Blend physics and legacy (60% physics, 40% legacy)
@@ -1271,8 +1353,7 @@ class PlayResolver:
         speed_diff = 0.0
         if command.run_direction != "middle":
             speed_diff = ProbabilityEngine.compare_speed(
-                getattr(rb, "speed", None) or 50,
-                getattr(defender, "speed", None) or 50
+                getattr(rb, "speed", None) or 50, getattr(defender, "speed", None) or 50
             )
 
             # Weather Speed Penalty (Mud/Snow slows outside runs)
@@ -1283,7 +1364,7 @@ class PlayResolver:
                 logger.debug("Weather speed penalty applied to outside run")
 
         # Fatigue Penalty
-        fatigue_penalty = (current_fatigue / 100.0) * 2.0 # Yards penalty
+        fatigue_penalty = (current_fatigue / 100.0) * 2.0  # Yards penalty
 
         # NFL Identity Blueprint: RB "Three Tribes" variance system
         tribe_mods = get_tribe_modifiers(rb)
@@ -1292,7 +1373,9 @@ class PlayResolver:
         tribe_breakaway_mult = tribe_mods["breakaway_mult"]
         tribe_fumble_mult = tribe_mods["fumble_mult"]
 
-        logger.debug(f"RB Tribe: {tribe_mods['tribe']} - Base: {tribe_base_yards}, StdDev: {tribe_std_dev}")
+        logger.debug(
+            f"RB Tribe: {tribe_mods['tribe']} - Base: {tribe_base_yards}, StdDev: {tribe_std_dev}"
+        )
 
         # Calculate Base Yards with tribe adjustments
         # Middle run: consistent but lower ceiling
@@ -1300,33 +1383,39 @@ class PlayResolver:
         # PHASE 2: Use blended physics power_diff
 
         if is_special_run:
-             # Logic for Tush Push / Special Runs
-             # Use the overridden success probability to determine base outcome state
-             prob = special_mods["success_prob_override"]
+            # Logic for Tush Push / Special Runs
+            # Use the overridden success probability to determine base outcome state
+            prob = special_mods["success_prob_override"]
 
-             # Ensure prob is float
-             if hasattr(prob, 'success_rate_avg'): # Handle if PlayReference object was passed instead of float
-                 prob = prob.success_rate_avg
+            # Ensure prob is float
+            if hasattr(
+                prob, "success_rate_avg"
+            ):  # Handle if PlayReference object was passed instead of float
+                prob = prob.success_rate_avg
 
-             if float(self.rng.random()) < float(prob):
-                  # Success state: Guaranteed short gain
-                  base_yards = 2.0
-                  std_dev = 0.5
-             else:
-                  # Failure state: Stuffed
-                  base_yards = -0.5
-                  std_dev = 0.5
+            if float(self.rng.random()) < float(prob):
+                # Success state: Guaranteed short gain
+                base_yards = 2.0
+                std_dev = 0.5
+            else:
+                # Failure state: Stuffed
+                base_yards = -0.5
+                std_dev = 0.5
         elif command.run_direction == "middle":
-            base_yards = max(3.0, tribe_base_yards + (blended_power_diff * 4.0) + 1.2)  # Calibrated to 4.2 YPC
+            base_yards = max(
+                3.0, tribe_base_yards + (blended_power_diff * 4.0) + 1.2
+            )  # Calibrated to 4.2 YPC
             std_dev = tribe_std_dev
         else:
-            base_yards = max(2.5, (tribe_base_yards) + (speed_diff * 10.0) + 0.8)  # Calibrated to 4.2 YPC
+            base_yards = max(
+                2.5, (tribe_base_yards) + (speed_diff * 10.0) + 0.8
+            )  # Calibrated to 4.2 YPC
             std_dev = tribe_std_dev * 1.3  # Outside runs have higher variance
 
         # B-008: Apply momentum modifier to run play
         momentum_yards_bonus = 0.0
         if self.momentum_engine and self.current_match_context:
-            offense_team_id = str(getattr(self.current_match_context, 'home_team_id', 'home'))
+            offense_team_id = str(getattr(self.current_match_context, "home_team_id", "home"))
             raw_modifier = self.momentum_engine.get_performance_modifier(offense_team_id)
             # Convert to yards bonus: 1.1 -> +0.5 yards, 0.9 -> -0.5 yards
             momentum_yards_bonus = (raw_modifier - 1.0) * 5.0
@@ -1337,8 +1426,8 @@ class PlayResolver:
             self.rng,
             mean=base_yards - fatigue_penalty + momentum_yards_bonus + interaction_yards_bonus,
             std_dev=std_dev,
-            min_val=-5.0, # Can lose yards
-            max_val=99.0
+            min_val=-5.0,  # Can lose yards
+            max_val=99.0,
         )
 
         # Breakaway / Big Play Check
@@ -1347,21 +1436,23 @@ class PlayResolver:
         breakaway_chance = (0.05 + speed_diff + power_diff) * tribe_breakaway_mult
 
         # Use tiered outcome for the "Breakaway" check
-        breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(self.rng, breakaway_chance, critical_threshold=0.20)
+        breakaway_outcome = ProbabilityEngine.resolve_tiered_outcome(
+            self.rng, breakaway_chance, critical_threshold=0.20
+        )
 
         headline = None
         is_highlight_worthy = False
 
         if breakaway_outcome == OutcomeType.SUCCESS:
-             # Good run, add some yards
-             yards_gained += 5.0
-             headline = f"Nice run by {rb.last_name}."
+            # Good run, add some yards
+            yards_gained += 5.0
+            headline = f"Nice run by {rb.last_name}."
         elif breakaway_outcome == OutcomeType.CRITICAL_SUCCESS:
-             # HUGE run
-             bonus = ProbabilityEngine.calculate_normal_outcome(self.rng, 25.0, 10.0)
-             yards_gained += bonus
-             headline = f"BREAKAWAY! {rb.last_name} is loose!"
-             is_highlight_worthy = True
+            # HUGE run
+            bonus = ProbabilityEngine.calculate_normal_outcome(self.rng, 25.0, 10.0)
+            yards_gained += bonus
+            headline = f"BREAKAWAY! {rb.last_name} is loose!"
+            is_highlight_worthy = True
 
         yards_gained = int(yards_gained)
 
@@ -1369,10 +1460,13 @@ class PlayResolver:
         # Base fumble rate 1%, modified by tribe
         # Increased by fatigue and big hits (high defender strength)
         fumble_chance = 0.01 * tribe_fumble_mult
-        if current_fatigue > 70: fumble_chance += 0.02
+        if current_fatigue > 70:
+            fumble_chance += 0.02
         hit_power = getattr(defender, "hit_power", None) or 50
-        if hit_power > 85: fumble_chance += 0.01
-        if hasattr(rb, "ball_security") and rb.ball_security < 70: fumble_chance += 0.01
+        if hit_power > 85:
+            fumble_chance += 0.01
+        if hasattr(rb, "ball_security") and rb.ball_security < 70:
+            fumble_chance += 0.01
 
         # Weather Fumble Modifier
         weather_effects = self._get_weather_effects()
@@ -1380,7 +1474,7 @@ class PlayResolver:
             fumble_mod = weather_effects.get_fumble_probability_modifier()
             fumble_chance *= fumble_mod
             if fumble_mod > 1.0:
-                 logger.debug(f"Weather increased fumble chance by {(fumble_mod-1.0)*100:.0f}%")
+                logger.debug(f"Weather increased fumble chance by {(fumble_mod - 1.0) * 100:.0f}%")
 
         # Use resolve_outcome for simple binary check
         is_fumble = ProbabilityEngine.resolve_outcome(self.rng, fumble_chance)
@@ -1390,36 +1484,42 @@ class PlayResolver:
         if yards_gained > 80:
             is_touchdown = True
         elif yards_gained > 15 and yards_gained >= (100 - 20):
-             # Simplified red zone logic
-             pass
+            # Simplified red zone logic
+            pass
 
         if is_turnover:
             headline = f"FUMBLE! {rb.last_name} loses the ball!"
             is_highlight_worthy = True
-            yards_gained = 0 # Or yards until fumble? Simplified to 0.
+            yards_gained = 0  # Or yards until fumble? Simplified to 0.
 
             # PUBLISH TURNOVER EVENT (Fumble)
-            EventBus.publish(EventType.TURNOVER_EVENT, {
-                "season_id": getattr(self.current_match_context, "season", 0),
-                "week": getattr(self.current_match_context, "week", 0),
-                "game_id": getattr(self.current_match_context, "game_id", None),
-                "play_id": getattr(command, "play_id", "unknown"),
-                "turnover_type": "FUMBLE",
-                "player_id": rb.id,
-                "forced_by_player_id": defender.id
-            })
+            EventBus.publish(
+                EventType.TURNOVER_EVENT,
+                {
+                    "season_id": getattr(self.current_match_context, "season", 0),
+                    "week": getattr(self.current_match_context, "week", 0),
+                    "game_id": getattr(self.current_match_context, "game_id", None),
+                    "play_id": getattr(command, "play_id", "unknown"),
+                    "turnover_type": "FUMBLE",
+                    "player_id": rb.id,
+                    "forced_by_player_id": defender.id,
+                },
+            )
 
             # PUBLISH CRITICAL FUMBLE (Narrative)
             # If fatigue was a major factor or critical moment
             if current_fatigue > 80:
-                 EventBus.publish(EventType.CRITICAL_FUMBLE, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "player_id": rb.id,
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "description": "Fatigue-induced fumble"
-                })
+                EventBus.publish(
+                    EventType.CRITICAL_FUMBLE,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "player_id": rb.id,
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "description": "Fatigue-induced fumble",
+                    },
+                )
 
         # Check for Touchdown (F09)
         raw_syl = getattr(command, "start_yard_line", None) or getattr(command, "yard_line", 50)
@@ -1442,17 +1542,24 @@ class PlayResolver:
                 is_touchdown = True
 
             if is_touchdown:
-                offense_team_id = getattr(self.current_match_context, 'home_team_id', 0) if getattr(command, 'is_home_team', False) else getattr(self.current_match_context, 'away_team_id', 0)
-                EventBus.publish(EventType.TOUCHDOWN_EVENT, {
-                    "season_id": getattr(self.current_match_context, "season", 0),
-                    "week": getattr(self.current_match_context, "week", 0),
-                    "game_id": getattr(self.current_match_context, "game_id", None),
-                    "play_id": getattr(command, "play_id", "unknown"),
-                    "scoring_player_id": rb.id,
-                    "scoring_team_id": offense_team_id,
-                    "touchdown_type": "RUSH",
-                    "yards": yards_gained
-                })
+                offense_team_id = (
+                    getattr(self.current_match_context, "home_team_id", 0)
+                    if getattr(command, "is_home_team", False)
+                    else getattr(self.current_match_context, "away_team_id", 0)
+                )
+                EventBus.publish(
+                    EventType.TOUCHDOWN_EVENT,
+                    {
+                        "season_id": getattr(self.current_match_context, "season", 0),
+                        "week": getattr(self.current_match_context, "week", 0),
+                        "game_id": getattr(self.current_match_context, "game_id", None),
+                        "play_id": getattr(command, "play_id", "unknown"),
+                        "scoring_player_id": rb.id,
+                        "scoring_team_id": offense_team_id,
+                        "touchdown_type": "RUSH",
+                        "yards": yards_gained,
+                    },
+                )
 
         # XP
         xp_result = self.kernels.empire.process_play_result({"yards_gained": yards_gained})
@@ -1492,13 +1599,13 @@ class PlayResolver:
         # Away offense: driving 100 -> 0. Own Endzone is >= 100.
         is_safety = False
         if possession == "home":
-             if start_yard_line + yards_gained <= 0:
-                 is_safety = True
-                 yards_gained = -start_yard_line
+            if start_yard_line + yards_gained <= 0:
+                is_safety = True
+                yards_gained = -start_yard_line
         else:
-             if start_yard_line - yards_gained >= 100:
-                 is_safety = True
-                 yards_gained = -(100 - start_yard_line)
+            if start_yard_line - yards_gained >= 100:
+                is_safety = True
+                yards_gained = -(100 - start_yard_line)
 
         # Dynamic play clock runoff (F08)
         if is_turnover:
@@ -1514,7 +1621,8 @@ class PlayResolver:
             is_turnover=is_turnover,
             is_safety=is_safety,
             time_elapsed=time_elapsed,
-            description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards." + (" (SAFETY!)" if is_safety else ""),
+            description=f"Run {command.run_direction} by {rb.last_name} for {yards_gained} yards."
+            + (" (SAFETY!)" if is_safety else ""),
             headline=headline,
             is_highlight_worthy=is_highlight_worthy or is_touchdown or is_safety,
             xp_awards=xp_result.get("xp_awards", {}),
@@ -1533,10 +1641,7 @@ class PlayResolver:
                 yards_gained=yards_gained,
                 is_touchdown=is_touchdown,
                 description=f"Pass completed for {yards_gained} yards. (Legacy Mode)",
-                is_highlight_worthy=is_touchdown or yards_gained > 20
+                is_highlight_worthy=is_touchdown or yards_gained > 20,
             )
         else:
-            return PlayResult(
-                yards_gained=0,
-                description="Incomplete pass. (Legacy Mode)"
-            )
+            return PlayResult(yards_gained=0, description="Incomplete pass. (Legacy Mode)")

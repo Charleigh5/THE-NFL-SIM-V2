@@ -4,37 +4,47 @@ Invoked via:
   blender.exe -b -P render_headless_highlight.py -- --play-id <ID> --drama-index <FLOAT> --impact-force <FLOAT> --output-path <PATH>
 """
 
-import sys
-import os
-import math
 import argparse
+import math
+import os
+import sys
 
 try:
     import bpy
 except ImportError:
-    print("ERROR: This script must be run inside Blender's python environment (blender.exe -b -P ...)")
+    print(
+        "ERROR: This script must be run inside Blender's python environment (blender.exe -b -P ...)"
+    )
     sys.exit(1)
 
 
 def parse_args():
     # Only parse arguments after the '--' delimiter
     if "--" in sys.argv:
-        args_list = sys.argv[sys.argv.index("--") + 1:]
+        args_list = sys.argv[sys.argv.index("--") + 1 :]
     else:
         args_list = []
 
     parser = argparse.ArgumentParser(description="Blender Headless Gridiron Cutscene Renderer")
     parser.add_argument("--play-id", type=int, default=101, help="Simulated play ID")
     parser.add_argument("--drama-index", type=float, default=85.0, help="Drama index (0-100)")
-    parser.add_argument("--impact-force", type=float, default=90.0, help="Orthopedic impact force (0-100)")
-    parser.add_argument("--output-path", type=str, required=True, help="Output destination file path (PNG)")
+    parser.add_argument(
+        "--impact-force", type=float, default=90.0, help="Orthopedic impact force (0-100)"
+    )
+    parser.add_argument(
+        "--output-path", type=str, required=True, help="Output destination file path (PNG)"
+    )
     parser.add_argument("--samples", type=int, default=4, help="Cycles render samples")
 
     return parser.parse_args(args_list)
 
 
-def build_scene(play_id: int, drama_index: float, impact_force: float, output_path: str, samples: int = 4):
-    print(f"[BlenderService] Initializing headless render for Play #{play_id} (Drama={drama_index}, Force={impact_force})")
+def build_scene(
+    play_id: int, drama_index: float, impact_force: float, output_path: str, samples: int = 4
+):
+    print(
+        f"[BlenderService] Initializing headless render for Play #{play_id} (Drama={drama_index}, Force={impact_force})"
+    )
 
     # 1. Reset to empty scene
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -105,7 +115,7 @@ def build_scene(play_id: int, drama_index: float, impact_force: float, output_pa
 
     # 7. Studio 3-Point Broadcast Lighting Rig
     # Key Light (Warm Stadium Floodlight)
-    bpy.ops.object.light_add(type='SPOT', location=(6.0, -8.0, 7.5))
+    bpy.ops.object.light_add(type="SPOT", location=(6.0, -8.0, 7.5))
     key_light = bpy.context.active_object
     key_light.name = "KeyStadiumLight"
     key_light.data.energy = 2500.0
@@ -114,7 +124,7 @@ def build_scene(play_id: int, drama_index: float, impact_force: float, output_pa
     key_light.rotation_euler = (math.radians(50), 0, math.radians(35))
 
     # Fill Light (Cool Sky Light)
-    bpy.ops.object.light_add(type='AREA', location=(-7.0, -5.0, 5.5))
+    bpy.ops.object.light_add(type="AREA", location=(-7.0, -5.0, 5.5))
     fill_light = bpy.context.active_object
     fill_light.name = "FillSkyLight"
     fill_light.data.energy = 900.0
@@ -122,7 +132,7 @@ def build_scene(play_id: int, drama_index: float, impact_force: float, output_pa
     fill_light.rotation_euler = (math.radians(55), 0, math.radians(-50))
 
     # Rim / Edge Highlight Light
-    bpy.ops.object.light_add(type='SPOT', location=(0.0, 7.5, 6.5))
+    bpy.ops.object.light_add(type="SPOT", location=(0.0, 7.5, 6.5))
     rim_light = bpy.context.active_object
     rim_light.name = "RimEdgeLight"
     rim_light.data.energy = 2000.0
@@ -139,13 +149,13 @@ def build_scene(play_id: int, drama_index: float, impact_force: float, output_pa
 
     # 9. Render Engine & Output Target
     scene = bpy.context.scene
-    scene.render.engine = 'CYCLES'
+    scene.render.engine = "CYCLES"
     scene.cycles.samples = samples
-    scene.cycles.device = 'CPU'
+    scene.cycles.device = "CPU"
     scene.render.resolution_x = 960
     scene.render.resolution_y = 540
     scene.render.resolution_percentage = 100
-    scene.render.image_settings.file_format = 'PNG'
+    scene.render.image_settings.file_format = "PNG"
 
     abs_output = os.path.abspath(output_path)
     os.makedirs(os.path.dirname(abs_output), exist_ok=True)
@@ -163,5 +173,5 @@ if __name__ == "__main__":
         drama_index=args.drama_index,
         impact_force=args.impact_force,
         output_path=args.output_path,
-        samples=args.samples
+        samples=args.samples,
     )

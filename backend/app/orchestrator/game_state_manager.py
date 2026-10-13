@@ -5,9 +5,9 @@ Manages mutable game state: clock, score, possession, downs.
 Extracted from SimulationOrchestrator for single responsibility.
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, Any, Optional
 import logging
+from dataclasses import dataclass
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class GameStateManager:
 
     # Overtime State (GAME-011)
     ot_possessions: int = 0
-    first_possession_score_type: Optional[str] = None  # "FG", "TD", or None
+    first_possession_score_type: str | None = None  # "FG", "TD", or None
 
     @property
     def time_left_seconds(self) -> int:
@@ -143,8 +143,8 @@ class GameStateManager:
         self.possession = "away" if self.possession == "home" else "home"
 
         if self.quarter >= 5:
-             # In OT, a TD usually ends the game, but we track possession changes just in case logic flows
-             pass
+            # In OT, a TD usually ends the game, but we track possession changes just in case logic flows
+            pass
 
     def use_timeout(self, team: str) -> bool:
         """
@@ -197,10 +197,10 @@ class GameStateManager:
             # Scoring wins
             # Note: Detailed possession logic (FG on 1st vs TD on 1st) is handled in Orchestrator
             # This is a basic check for score discrepancy after "Sudden Death" active
-             # If we are in sudden death, any score difference ends it?
-             # Not exactly, needs orchestration context.
-             # We rely on Orchestrator to check specific OT win conditions and set game over flag
-             # This method returns True if it's *obviously* over by time/clock.
+            # If we are in sudden death, any score difference ends it?
+            # Not exactly, needs orchestration context.
+            # We rely on Orchestrator to check specific OT win conditions and set game over flag
+            # This method returns True if it's *obviously* over by time/clock.
             pass
 
         return False
@@ -225,7 +225,7 @@ class GameStateManager:
         self.ot_possessions = 0
         self.first_possession_score_type = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Export state as dictionary for broadcasting."""
         return {
             "quarter": self.quarter,
@@ -242,7 +242,7 @@ class GameStateManager:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "GameStateManager":
+    def from_dict(cls, data: dict[str, Any]) -> "GameStateManager":
         """Create instance from dictionary (for loading saved games)."""
         return cls(
             quarter=data.get("quarter", 1),

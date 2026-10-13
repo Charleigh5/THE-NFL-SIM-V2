@@ -7,14 +7,15 @@ the Ben Baldwin 4th-down decision modeling framework for NFL fourth-down situati
 Evaluates GO FOR IT vs. PUNT vs. FIELD GOAL under sub-millisecond (<0.05ms) execution budgets.
 """
 
-from dataclasses import dataclass
 import math
-from typing import Literal, Optional
+from dataclasses import dataclass
+from typing import Literal
 
 
 @dataclass
 class FourthDownRecommendation:
     """Outcome and probabilistic telemetry for 4th-down decision analysis."""
+
     recommendation: Literal["GO", "FIELD_GOAL", "PUNT"]
     wp_go: float
     wp_fg: float

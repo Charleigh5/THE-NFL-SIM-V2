@@ -5,12 +5,12 @@ Request/Response models for the API layer.
 """
 
 from app.schemas.scouting import (
-    ScoutingReportAI,
-    PlayerBackstory,
-    ScoutingReportRequest,
-    ScoutingReportResponse,
     BatchScoutingRequest,
     BatchScoutingResponse,
+    PlayerBackstory,
+    ScoutingReportAI,
+    ScoutingReportRequest,
+    ScoutingReportResponse,
 )
 
 __all__ = [

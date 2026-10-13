@@ -7,16 +7,16 @@ Provider-agnostic AI services with multi-tier intelligence routing:
 - Tier 2: Deep Strategic Multi-Agent Reasoning
 """
 
-from app.services.ai.gemini_client import GeminiClient, get_gemini_client
 from app.services.ai.ai_provider import (
+    AIProviderRegistry,
     AIProviderType,
     BaseAIProvider,
     DeterministicFallbackProvider,
     GoogleGenAIProvider,
     OpenAICompatibleProvider,
-    AIProviderRegistry,
     get_ai_registry,
 )
+from app.services.ai.gemini_client import GeminiClient, get_gemini_client
 from app.services.ai.scouting_ai import (
     ScoutingAIService,
     get_scouting_ai_service,

@@ -5,16 +5,14 @@ Generates dynamic media reactions, steal/reach analyses, team draft grades,
 and free agency storyline articles for the NFL Sim Living League news wire.
 """
 
-from typing import List, Optional, Dict, Any, Tuple
 import random
-from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
 from datetime import datetime
 
-from app.models.news_item import NewsItem, NewsCategory
+from sqlalchemy.orm import Session
+
+from app.models.news_item import NewsCategory, NewsItem
 from app.models.player import Player
 from app.models.team import Team
-from app.models.draft import DraftPick
 from app.schemas.offseason import FreeAgentSigning
 
 
@@ -32,13 +30,8 @@ class DraftNarrativeService:
     # =========================================================================
 
     def generate_pick_narrative(
-        self,
-        season_id: int,
-        round_num: int,
-        pick_number: int,
-        team_id: int,
-        player_id: int
-    ) -> Optional[NewsItem]:
+        self, season_id: int, round_num: int, pick_number: int, team_id: int, player_id: int
+    ) -> NewsItem | None:
         """
         Evaluate a single draft selection and generate a contextual media reaction.
         """
@@ -55,16 +48,16 @@ class DraftNarrativeService:
 
         # Projected slot based on OVR rating (90+ = top 5, 85+ = top 15, 80+ = top 32, 75+ = rd 2-3, etc.)
         projected_slot = self._estimate_consensus_edp(ovr)
-        slot_diff = pick_number - projected_slot  # Positive means fell late (Steal), Negative means reached early
+        slot_diff = (
+            pick_number - projected_slot
+        )  # Positive means fell late (Steal), Negative means reached early
 
         headline: str
         content: str
         importance: float
-        is_breaking: bool = False
 
         if pick_number <= 5:
             importance = 1.0
-            is_breaking = True
             headline = f"Cornerstone Selected: {team_name} drafts {player_name} at #{pick_number}"
             content = (
                 f"With the #{pick_number} overall pick in the NFL Draft, the {team_name} have secured "
@@ -74,7 +67,9 @@ class DraftNarrativeService:
         elif slot_diff >= 22 and ovr >= 78:
             # Massive Steal
             importance = 0.85
-            headline = f"Draft Steal Alert: {team_name} nabs falling star {player_name} at #{pick_number}"
+            headline = (
+                f"Draft Steal Alert: {team_name} nabs falling star {player_name} at #{pick_number}"
+            )
             content = (
                 f"In what analysts are already hailing as one of the best value selections of the draft, "
                 f"the {team_name} stopped {player_name}'s slide at pick #{pick_number}. "
@@ -83,7 +78,9 @@ class DraftNarrativeService:
         elif slot_diff <= -25 and round_num <= 2:
             # High-profile Reach
             importance = 0.80
-            headline = f"War Room Surprise: {team_name} reaches for {player_name} at pick #{pick_number}"
+            headline = (
+                f"War Room Surprise: {team_name} reaches for {player_name} at pick #{pick_number}"
+            )
             content = (
                 f"The {team_name} raised eyebrows across the league by drafting {player_name} ({pos}, {ovr} OVR) "
                 f"early in Round {round_num}. While draft boards rated {player_name} as a developmental project, "
@@ -99,7 +96,9 @@ class DraftNarrativeService:
             )
         else:
             importance = 0.50
-            headline = f"Draft Board: {team_name} selects {player_name} ({pos}) with pick #{pick_number}"
+            headline = (
+                f"Draft Board: {team_name} selects {player_name} ({pos}) with pick #{pick_number}"
+            )
             content = (
                 f"The {team_name} addressed their roster depth by choosing {player_name} at pick #{pick_number} (Round {round_num}). "
                 f"The {pos} brings steady fundamental grading ({ovr} OVR) to the locker room."
@@ -114,7 +113,7 @@ class DraftNarrativeService:
             headline=headline,
             content=content,
             importance_score=importance,
-            created_at=datetime.utcnow()
+            created_at=datetime.utcnow(),
         )
         self.db.add(news)
         self.db.commit()
@@ -141,17 +140,17 @@ class DraftNarrativeService:
     # =========================================================================
 
     def generate_free_agency_narratives(
-        self,
-        season_id: int,
-        signings: List[FreeAgentSigning]
-    ) -> List[NewsItem]:
+        self, season_id: int, signings: list[FreeAgentSigning]
+    ) -> list[NewsItem]:
         """
         Generate breaking news articles for standout free agency signings.
         """
-        news_items: List[NewsItem] = []
+        news_items: list[NewsItem] = []
 
         # Sort signings to highlight top deals
-        top_signings = sorted(signings, key=lambda s: (s.overall_rating, s.annual_avg), reverse=True)[:10]
+        top_signings = sorted(
+            signings, key=lambda s: (s.overall_rating, s.annual_avg), reverse=True
+        )[:10]
 
         for s in top_signings:
             millions_total = round(s.total_value / 1_000_000, 1)
@@ -168,7 +167,9 @@ class DraftNarrativeService:
                 )
                 importance = 0.95
             elif s.bidding_teams_count >= 5:
-                headline = f"Bidding War Won: {s.team_name} lands coveted free agent {s.player_name}"
+                headline = (
+                    f"Bidding War Won: {s.team_name} lands coveted free agent {s.player_name}"
+                )
                 content = (
                     f"After an intense multi-team bidding contest involving {s.bidding_teams_count} franchises, "
                     f"the {s.team_name} have officially signed {s.player_name} ({s.position}, {s.overall_rating} OVR) "
@@ -176,7 +177,9 @@ class DraftNarrativeService:
                 )
                 importance = 0.85
             elif s.signing_grade.startswith("A"):
-                headline = f"Market Steal: {s.team_name} secures high-value signing in {s.player_name}"
+                headline = (
+                    f"Market Steal: {s.team_name} secures high-value signing in {s.player_name}"
+                )
                 content = (
                     f"Front office analysts are praising the {s.team_name} for signing {s.player_name} ({s.position}, {s.overall_rating} OVR) "
                     f"to an exceptionally cap-friendly {s.contract_years}-year deal. The signing earned an instant '{s.signing_grade}' grade."
@@ -199,7 +202,7 @@ class DraftNarrativeService:
                 headline=headline,
                 content=content,
                 importance_score=importance,
-                created_at=datetime.utcnow()
+                created_at=datetime.utcnow(),
             )
             self.db.add(item)
             news_items.append(item)

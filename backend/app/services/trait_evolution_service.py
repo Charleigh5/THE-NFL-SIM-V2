@@ -10,15 +10,12 @@ Examples:
 - Loss of 3+ fumbles -> "Butterfingers" trait
 - QB throws 4+ TDs in a game -> "Gunslinger" trait boost
 """
-from typing import Dict, Any, Optional, List
+
 from sqlalchemy.orm import Session
-from datetime import datetime
 
-from app.models.player import Player
-from app.models.rpg_event import RPGEvent
-from app.models.trait import Trait, PlayerTrait, TraitTier, TraitSource
 from app.engine.event_bus import EventBus, EventType
-
+from app.models.rpg_event import RPGEvent
+from app.models.trait import PlayerTrait, Trait, TraitSource, TraitTier
 
 # Trait Trigger Definitions
 # Format: { trigger_key: { threshold, trait_name, tier, is_positive } }
@@ -28,43 +25,43 @@ TRAIT_TRIGGERS = {
         "trait_name": "Injury Prone",
         "tier": TraitTier.BRONZE,
         "is_positive": False,
-        "description": "This player has a history of injuries."
+        "description": "This player has a history of injuries.",
     },
     "sacks_in_game": {
         "threshold": 3,
         "trait_name": "Dominant Pass Rusher",
         "tier": TraitTier.SILVER,
         "is_positive": True,
-        "description": "An elite pass rusher who can take over games."
+        "description": "An elite pass rusher who can take over games.",
     },
     "fumbles_in_season": {
         "threshold": 3,
         "trait_name": "Butterfingers",
         "tier": TraitTier.BRONZE,
         "is_positive": False,
-        "description": "Has a tendency to fumble in critical moments."
+        "description": "Has a tendency to fumble in critical moments.",
     },
     "tds_in_game": {
         "threshold": 4,
         "trait_name": "Gunslinger",
         "tier": TraitTier.GOLD,
         "is_positive": True,
-        "description": "A fearless QB who can light up the scoreboard."
+        "description": "A fearless QB who can light up the scoreboard.",
     },
     "dropped_passes_in_game": {
         "threshold": 3,
         "trait_name": "Stone Hands",
         "tier": TraitTier.BRONZE,
         "is_positive": False,
-        "description": "Has trouble catching the ball under pressure."
+        "description": "Has trouble catching the ball under pressure.",
     },
     "spectacular_catches_in_season": {
         "threshold": 5,
         "trait_name": "Highlight Reel",
         "tier": TraitTier.SILVER,
         "is_positive": True,
-        "description": "Makes acrobatic catches that define games."
-    }
+        "description": "Makes acrobatic catches that define games.",
+    },
 }
 
 
@@ -82,8 +79,14 @@ class TraitEvolutionService:
         # This is handled by the orchestrator calling check_trait_triggers
         pass
 
-    def check_trait_triggers(self, db: Session, player_id: int, season_id: int,
-                              week: Optional[int] = None, game_id: Optional[str] = None) -> List[Dict]:
+    def check_trait_triggers(
+        self,
+        db: Session,
+        player_id: int,
+        season_id: int,
+        week: int | None = None,
+        game_id: str | None = None,
+    ) -> list[dict]:
         """
         Check if a player has triggered any new traits based on their RPG event history.
 
@@ -101,8 +104,7 @@ class TraitEvolutionService:
 
         # Build query for this player's events
         query = db.query(RPGEvent).filter(
-            RPGEvent.player_id == player_id,
-            RPGEvent.season_id == season_id
+            RPGEvent.player_id == player_id, RPGEvent.season_id == season_id
         )
 
         if game_id:
@@ -126,7 +128,9 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _check_game_triggers(self, db: Session, player_id: int, counts: Dict[str, int]) -> List[Dict]:
+    def _check_game_triggers(
+        self, db: Session, player_id: int, counts: dict[str, int]
+    ) -> list[dict]:
         """Check game-specific trait triggers."""
         triggered = []
 
@@ -153,7 +157,9 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _check_season_triggers(self, db: Session, player_id: int, counts: Dict[str, int]) -> List[Dict]:
+    def _check_season_triggers(
+        self, db: Session, player_id: int, counts: dict[str, int]
+    ) -> list[dict]:
         """Check season-wide trait triggers."""
         triggered = []
 
@@ -165,7 +171,9 @@ class TraitEvolutionService:
                 triggered.append(result)
 
         # Fumbles in season
-        fumble_count = counts.get(EventType.CRITICAL_FUMBLE, 0) + counts.get(EventType.TURNOVER_EVENT, 0)
+        fumble_count = counts.get(EventType.CRITICAL_FUMBLE, 0) + counts.get(
+            EventType.TURNOVER_EVENT, 0
+        )
         if fumble_count >= TRAIT_TRIGGERS["fumbles_in_season"]["threshold"]:
             result = self._award_trait(db, player_id, "fumbles_in_season")
             if result:
@@ -180,7 +188,7 @@ class TraitEvolutionService:
 
         return triggered
 
-    def _award_trait(self, db: Session, player_id: int, trigger_key: str) -> Optional[Dict]:
+    def _award_trait(self, db: Session, player_id: int, trigger_key: str) -> dict | None:
         """
         Award a trait to a player if they don't already have it.
 
@@ -197,45 +205,43 @@ class TraitEvolutionService:
                 name=trait_name,
                 description=trigger["description"],
                 tier=trigger["tier"],
-                is_badge=True
+                is_badge=True,
             )
             db.add(trait)
             db.flush()
 
         # Check if player already has this trait
-        existing = db.query(PlayerTrait).filter(
-            PlayerTrait.player_id == player_id,
-            PlayerTrait.trait_id == trait.id
-        ).first()
+        existing = (
+            db.query(PlayerTrait)
+            .filter(PlayerTrait.player_id == player_id, PlayerTrait.trait_id == trait.id)
+            .first()
+        )
 
         if existing:
             return None  # Already has trait
 
         # Award the trait
         player_trait = PlayerTrait(
-            player_id=player_id,
-            trait_id=trait.id,
-            source=TraitSource.DEVELOPMENT
+            player_id=player_id, trait_id=trait.id, source=TraitSource.DEVELOPMENT
         )
         db.add(player_trait)
 
         # Publish event
-        EventBus.publish(EventType.BADGE_EARNED, {
-            "player_id": player_id,
-            "badge_name": trait_name,
-            "tier": trigger["tier"].value,
-            "is_positive": trigger["is_positive"]
-        })
+        EventBus.publish(
+            EventType.BADGE_EARNED,
+            {
+                "player_id": player_id,
+                "badge_name": trait_name,
+                "tier": trigger["tier"].value,
+                "is_positive": trigger["is_positive"],
+            },
+        )
 
         db.commit()
 
-        return {
-            "trait_name": trait_name,
-            "action": "EARNED",
-            "tier": trigger["tier"].value
-        }
+        return {"trait_name": trait_name, "action": "EARNED", "tier": trigger["tier"].value}
 
-    def remove_trait(self, db: Session, player_id: int, trait_name: str) -> Optional[Dict]:
+    def remove_trait(self, db: Session, player_id: int, trait_name: str) -> dict | None:
         """
         Remove a trait from a player.
         Useful for traits that can be "un-earned" (e.g., player improves ball security).
@@ -244,27 +250,22 @@ class TraitEvolutionService:
         if not trait:
             return None
 
-        player_trait = db.query(PlayerTrait).filter(
-            PlayerTrait.player_id == player_id,
-            PlayerTrait.trait_id == trait.id
-        ).first()
+        player_trait = (
+            db.query(PlayerTrait)
+            .filter(PlayerTrait.player_id == player_id, PlayerTrait.trait_id == trait.id)
+            .first()
+        )
 
         if not player_trait:
             return None
 
         db.delete(player_trait)
 
-        EventBus.publish(EventType.BADGE_LOST, {
-            "player_id": player_id,
-            "badge_name": trait_name
-        })
+        EventBus.publish(EventType.BADGE_LOST, {"player_id": player_id, "badge_name": trait_name})
 
         db.commit()
 
-        return {
-            "trait_name": trait_name,
-            "action": "LOST"
-        }
+        return {"trait_name": trait_name, "action": "LOST"}
 
 
 trait_evolution_service = TraitEvolutionService()

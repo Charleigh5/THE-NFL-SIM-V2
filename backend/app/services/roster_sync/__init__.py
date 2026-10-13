@@ -6,12 +6,12 @@ a non-destructive differential sync engine.
 
 from app.services.roster_sync.base import (
     BaseRosterProvider,
-    RosterPlayerDTO,
-    TransactionDTO,
-    InjuryDTO,
     DepthOrderDTO,
+    InjuryDTO,
     ProviderStatusDTO,
+    RosterPlayerDTO,
     SyncResultDTO,
+    TransactionDTO,
 )
 from app.services.roster_sync.factory import get_roster_provider
 from app.services.roster_sync.sync_engine import RosterSyncService

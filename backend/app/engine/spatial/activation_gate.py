@@ -1,11 +1,9 @@
-from typing import Tuple
-
-
 class SpatialActivationGate:
     """Tier 2 Event-Driven Activation Gate (0ms bypass when calm)."""
+
     THRESHOLD = 75.0
 
-    def should_trigger_cutscene(self, drama_index: float, impact_force: float) -> Tuple[bool, str]:
+    def should_trigger_cutscene(self, drama_index: float, impact_force: float) -> tuple[bool, str]:
         if drama_index >= self.THRESHOLD:
             return True, "HIGH_DRAMA_INDEX"
         if impact_force >= self.THRESHOLD:

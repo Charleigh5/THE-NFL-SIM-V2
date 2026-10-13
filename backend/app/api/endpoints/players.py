@@ -1,22 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload, joinedload
-from sqlalchemy import select, func
-from typing import List, Optional, Dict, Any
 import logging
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.core.database import get_async_db, get_db
-from sqlalchemy.orm import Session
-from app.core.db_helpers import get_object_or_404_async
 from app.core.error_decorators import handle_errors
 from app.models.player import Player
-from app.models.trait import PlayerTrait
 from app.models.stats import PlayerGameStats
+from app.models.trait import PlayerTrait
 from app.services.trait_service import TraitService
-from pydantic import BaseModel, ConfigDict
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
 
 class PlayerDetailSchema(BaseModel):
     id: int
@@ -40,6 +40,7 @@ class PlayerDetailSchema(BaseModel):
     awareness: int = 50
 
     model_config = ConfigDict(from_attributes=True)
+
 
 @router.get("/{player_id}", response_model=PlayerDetailSchema)
 @handle_errors
@@ -66,8 +67,8 @@ class PlayerTrainingProfileSchema(BaseModel):
     last_name: str
     position: str
     overall_rating: int
-    attributes: Dict[str, int]
-    weaknesses: List[str]
+    attributes: dict[str, int]
+    weaknesses: list[str]
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -95,12 +96,13 @@ def get_player_training_profile(player_id: int, db: Session = Depends(get_db)):
         player_id=player.id,
         first_name=player.first_name,
         last_name=player.last_name,
-        position=player.position.value if hasattr(player.position, "value") else str(player.position),
+        position=player.position.value
+        if hasattr(player.position, "value")
+        else str(player.position),
         overall_rating=player.overall_rating,
         attributes=attrs,
         weaknesses=weaknesses,
     )
-
 
 
 class PlayerStatsSchema(BaseModel):
@@ -125,6 +127,7 @@ class PlayerStatsSchema(BaseModel):
     punt_yards: int = 0
     pancakes: int = 0
     sacks_allowed: int = 0
+
 
 @router.get("/{player_id}/stats", response_model=PlayerStatsSchema)
 @handle_errors
@@ -185,13 +188,14 @@ async def read_player_stats(player_id: int, db: AsyncSession = Depends(get_async
     }
 
 
-
 # ============================================================================
 # ENHANCED PLAYER PROFILE (Task 8.3.2)
 # ============================================================================
 
+
 class TraitInfoBrief(BaseModel):
     """Brief trait information for player profile"""
+
     name: str
     description: str
     tier: str
@@ -199,14 +203,16 @@ class TraitInfoBrief(BaseModel):
 
 class PersonalityInfo(BaseModel):
     """Player personality and morale information"""
+
     morale: int
     morale_status: str  # "Ecstatic", "Happy", "Content", "Unhappy", "Disgruntled"
     development_trait: str
-    archetype: Optional[str] = None  # Future: "Mercenary", "Hometown Hero", etc.
+    archetype: str | None = None  # Future: "Mercenary", "Hometown Hero", etc.
 
 
 class EnhancedPlayerProfile(BaseModel):
     """Complete player profile with traits, morale, and comprehensive stats"""
+
     model_config = ConfigDict(from_attributes=True)
 
     # Basic Info
@@ -218,11 +224,11 @@ class EnhancedPlayerProfile(BaseModel):
     overall_rating: int
     age: int
     experience: int
-    college: Optional[str] = None
-    height: Optional[int] = None
-    weight: Optional[int] = None
-    team_id: Optional[int] = None
-    team_abbreviation: Optional[str] = None
+    college: str | None = None
+    height: int | None = None
+    weight: int | None = None
+    team_id: int | None = None
+    team_abbreviation: str | None = None
 
     # Core Attributes
     speed: int
@@ -234,19 +240,19 @@ class EnhancedPlayerProfile(BaseModel):
     injury_resistance: int
 
     # Position-Specific Attributes (returned as dict for flexibility)
-    position_attributes: Dict[str, int]
+    position_attributes: dict[str, int]
 
     # Personality & Development
     personality: PersonalityInfo
 
     # Active Traits
-    traits: List[TraitInfoBrief]
+    traits: list[TraitInfoBrief]
 
     # Career Stats (aggregated)
-    career_stats: Dict[str, Any]
+    career_stats: dict[str, Any]
 
     # Historical Season-by-Season Stats
-    season_history: List[Dict[str, Any]] = []
+    season_history: list[dict[str, Any]] = []
 
     # Contract Info
     contract_years: int
@@ -268,7 +274,7 @@ def _get_morale_status(morale: int) -> str:
         return "Disgruntled"
 
 
-def _get_position_attributes(player: Player) -> Dict[str, int]:
+def _get_position_attributes(player: Player) -> dict[str, int]:
     """Get position-specific attributes based on player position."""
     position = player.position
 
@@ -388,7 +394,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         raise HTTPException(status_code=404, detail="Player not found")
 
     # Read trait definitions directly from eagerly loaded relationships (zero duplicate queries)
-    traits_brief: List[TraitInfoBrief] = []
+    traits_brief: list[TraitInfoBrief] = []
     if player.player_traits:
         for pt in player.player_traits:
             if pt.trait:
@@ -396,13 +402,13 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
                 tier_str = (
                     catalog_def.tier
                     if catalog_def
-                    else (pt.trait.tier.value if hasattr(pt.trait.tier, "value") else str(pt.trait.tier or "COMMON"))
+                    else (
+                        pt.trait.tier.value
+                        if hasattr(pt.trait.tier, "value")
+                        else str(pt.trait.tier or "COMMON")
+                    )
                 )
-                desc_str = (
-                    catalog_def.description
-                    if catalog_def
-                    else (pt.trait.description or "")
-                )
+                desc_str = catalog_def.description if catalog_def else (pt.trait.description or "")
                 traits_brief.append(
                     TraitInfoBrief(
                         name=pt.trait.name,
@@ -466,7 +472,12 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
 
     # Query historical season-by-season log from PlayerSeasonStats
     from app.models.history import PlayerSeasonStats
-    pss_stmt = select(PlayerSeasonStats).where(PlayerSeasonStats.player_id == player_id).order_by(PlayerSeasonStats.year.desc())
+
+    pss_stmt = (
+        select(PlayerSeasonStats)
+        .where(PlayerSeasonStats.player_id == player_id)
+        .order_by(PlayerSeasonStats.year.desc())
+    )
     pss_result = await db.execute(pss_stmt)
     pss_rows = pss_result.scalars().all()
     season_history = [
@@ -485,7 +496,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
             "interceptions": row.interceptions,
             "pass_deflections": getattr(row, "pass_deflections", 0),
             "fg_made": getattr(row, "fg_made", 0),
-            "pancakes": getattr(row, "pancakes", 0)
+            "pancakes": getattr(row, "pancakes", 0),
         }
         for row in pss_rows
     ]
@@ -530,13 +541,13 @@ class PlayerBackstoryResponse(BaseModel):
     player_id: int
     hometown: str
     background: str
-    personality_traits: List[str]
+    personality_traits: list[str]
     motivations: str
-    notable_college_moments: List[str]
-    adversity_overcome: Optional[str] = None
-    childhood: Optional[str] = None
-    high_school: Optional[str] = None
-    college_career: Optional[str] = None
+    notable_college_moments: list[str]
+    adversity_overcome: str | None = None
+    childhood: str | None = None
+    high_school: str | None = None
+    college_career: str | None = None
     generated_at: str
 
 
@@ -552,9 +563,13 @@ def get_player_backstory(player_id: int, db: Session = Depends(get_db)):
 
     college = player.college or "State University"
     full_name = f"{player.first_name} {player.last_name}"
-    pos = player.position.value if hasattr(player.position, 'value') else str(player.position)
+    pos = player.position.value if hasattr(player.position, "value") else str(player.position)
 
-    hometown = f"{player.birth_city or 'Dallas'}, {player.birth_state or 'Texas'}" if hasattr(player, 'birth_city') and player.birth_city else "Miami, Florida"
+    hometown = (
+        f"{player.birth_city or 'Dallas'}, {player.birth_state or 'Texas'}"
+        if hasattr(player, "birth_city") and player.birth_city
+        else "Miami, Florida"
+    )
     childhood = f"Growing up in {hometown}, {full_name} was immersed in football culture from an early age, learning discipline from family mentors."
     high_school = f"An all-state standout in high school, {full_name} set local records and earned a four-star recruitment status."
     college_career = f"At {college}, {full_name} excelled as a key starter at {pos}, demonstrating elite game IQ and consistent clutch execution."
@@ -567,6 +582,7 @@ def get_player_backstory(player_id: int, db: Session = Depends(get_db)):
         traits = ["Explosive Athlete", "Home-Run Threat", "Relentless Worker"]
 
     import datetime
+
     return PlayerBackstoryResponse(
         player_id=player.id,
         hometown=hometown,
@@ -583,4 +599,3 @@ def get_player_backstory(player_id: int, db: Session = Depends(get_db)):
         college_career=college_career,
         generated_at=datetime.datetime.utcnow().isoformat(),
     )
-

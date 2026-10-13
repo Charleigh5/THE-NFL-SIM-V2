@@ -13,7 +13,8 @@ Mathematical differential equations model:
 6. Resilience & Professionalism Dampening & Decay
 """
 
-from typing import Optional, Dict, Any, Union
+from typing import Any
+
 from app.schemas.society import PsychologicalDNA, TensionDelta
 
 
@@ -24,7 +25,9 @@ class TensionEngine:
     """
 
     @staticmethod
-    def parse_psychological_dna(dna_dict: Optional[Union[Dict[str, Any], PsychologicalDNA]]) -> PsychologicalDNA:
+    def parse_psychological_dna(
+        dna_dict: dict[str, Any] | PsychologicalDNA | None,
+    ) -> PsychologicalDNA:
         """
         Safely extracts or generates baseline neutral PsychologicalDNA (all 50s).
         """
@@ -41,9 +44,9 @@ class TensionEngine:
     def calculate_weekly_tension(
         cls,
         player: Any,
-        game_stats: Optional[Dict[str, Any]] = None,
-        team_record: Optional[Dict[str, Any]] = None,
-        team_context: Optional[Dict[str, Any]] = None,
+        game_stats: dict[str, Any] | None = None,
+        team_record: dict[str, Any] | None = None,
+        team_context: dict[str, Any] | None = None,
     ) -> TensionDelta:
         """
         Evaluates a single player's weekly game context and updates tension, morale,
@@ -71,9 +74,19 @@ class TensionEngine:
         depth_chart_rank = int(getattr(player, "depth_chart_rank", 1) or 1)
         contract_years = int(getattr(player, "contract_years", 2) or 2)
         prior_tension = float(getattr(player, "tension_score", 0.0) or 0.0)
-        prior_morale = int(getattr(player, "morale", 80) if getattr(player, "morale", None) is not None else 80)
-        prior_trust_coach = int(getattr(player, "trust_in_coach", 80) if getattr(player, "trust_in_coach", None) is not None else 80)
-        prior_trust_qb = int(getattr(player, "trust_in_qb", 80) if getattr(player, "trust_in_qb", None) is not None else 80)
+        prior_morale = int(
+            getattr(player, "morale", 80) if getattr(player, "morale", None) is not None else 80
+        )
+        prior_trust_coach = int(
+            getattr(player, "trust_in_coach", 80)
+            if getattr(player, "trust_in_coach", None) is not None
+            else 80
+        )
+        prior_trust_qb = int(
+            getattr(player, "trust_in_qb", 80)
+            if getattr(player, "trust_in_qb", None) is not None
+            else 80
+        )
 
         is_bye = bool(context.get("is_bye_week", False))
         won_game = record.get("won_game", None)
@@ -81,7 +94,7 @@ class TensionEngine:
         loss_streak = int(record.get("loss_streak", 0) or 0)
 
         # Track drivers and their contributions
-        drivers: Dict[str, float] = {
+        drivers: dict[str, float] = {
             "TARGET_SHARE_DEFICIT": 0.0,
             "BENCHING_FRUSTRATION": 0.0,
             "CONTRACT_YEAR_LEVERAGE": 0.0,
@@ -160,7 +173,11 @@ class TensionEngine:
         # =====================================================================
         # DRIVER 2: BENCHING / SNAP COUNT DEMOTION
         # =====================================================================
-        snap_pct = float(stats.get("snap_percentage", 100.0) if "snap_percentage" in stats else (100.0 if stats.get("snaps", 1) > 0 else 0.0))
+        snap_pct = float(
+            stats.get("snap_percentage", 100.0)
+            if "snap_percentage" in stats
+            else (100.0 if stats.get("snaps", 1) > 0 else 0.0)
+        )
         is_starter_caliber = overall_rating >= 78 or depth_chart_rank == 1
 
         if is_starter_caliber and snap_pct < 40.0:
@@ -199,7 +216,9 @@ class TensionEngine:
         # DRIVER 4: OFFENSIVE LINE & QB TRUST DYNAMICS
         # =====================================================================
         team_qb_sacks = int(context.get("qb_sacks_taken", stats.get("sacks_taken", 0)) or 0)
-        team_qb_turnovers = int(context.get("qb_turnovers", (stats.get("pass_ints", 0) + stats.get("fumbles", 0))) or 0)
+        team_qb_turnovers = int(
+            context.get("qb_turnovers", (stats.get("pass_ints", 0) + stats.get("fumbles", 0))) or 0
+        )
 
         # If QB had catastrophic game (>=4 sacks or >=2 turnovers)
         if team_qb_sacks >= 4 or team_qb_turnovers >= 2:
@@ -234,7 +253,9 @@ class TensionEngine:
             victory_relief = -(4.0 + (win_streak * 1.5)) * resilience_scale
             drivers["VICTORY_DECAY"] += victory_relief
 
-            coach_boost = int(round((3.0 + min(5.0, float(win_streak))) * (dna.professionalism / 50.0)))
+            coach_boost = int(
+                round((3.0 + min(5.0, float(win_streak))) * (dna.professionalism / 50.0))
+            )
             delta_coach += coach_boost
         elif won_game is False:
             loss_scale = max(0.5, (100.0 - dna.resilience) / 50.0)
@@ -242,7 +263,13 @@ class TensionEngine:
             loss_tension = (4.0 + (loss_streak * 2.2)) * loss_scale * paranoia_scale
             drivers["LOSING_STREAK_APATHY"] = loss_tension
 
-            coach_erosion = -int(round((3.0 + (loss_streak * 2.0)) * (dna.paranoia / 50.0) * (100.0 / max(25.0, float(dna.loyalty)))))
+            coach_erosion = -int(
+                round(
+                    (3.0 + (loss_streak * 2.0))
+                    * (dna.paranoia / 50.0)
+                    * (100.0 / max(25.0, float(dna.loyalty)))
+                )
+            )
             delta_coach += coach_erosion
 
         # =====================================================================
@@ -282,9 +309,11 @@ class TensionEngine:
             sorted_drivers = sorted(
                 [(k, v) for k, v in drivers.items() if k != "VICTORY_DECAY"],
                 key=lambda x: x[1],
-                reverse=True
+                reverse=True,
             )
-            primary_driver = sorted_drivers[0][0] if sorted_drivers and sorted_drivers[0][1] > 0.0 else "STABLE"
+            primary_driver = (
+                sorted_drivers[0][0] if sorted_drivers and sorted_drivers[0][1] > 0.0 else "STABLE"
+            )
 
         is_active_grievance = new_tension >= 75.0
 
@@ -304,9 +333,9 @@ class TensionEngine:
     def evaluate_roster_weekly(
         cls,
         players: list,
-        game_stats_map: Optional[Dict[int, Dict[str, Any]]] = None,
-        team_record: Optional[Dict[str, Any]] = None,
-        team_context: Optional[Dict[str, Any]] = None,
+        game_stats_map: dict[int, dict[str, Any]] | None = None,
+        team_record: dict[str, Any] | None = None,
+        team_context: dict[str, Any] | None = None,
     ) -> list[TensionDelta]:
         """
         Batch evaluations for a full team roster in <2ms.
@@ -325,10 +354,10 @@ class TensionEngine:
         """
         Applies calculated micro-states to the player object.
         """
-        setattr(player, "tension_score", round(tension, 2))
+        player.tension_score = round(tension, 2)
         if hasattr(player, "morale"):
-            setattr(player, "morale", morale)
+            player.morale = morale
         if hasattr(player, "trust_in_coach"):
-            setattr(player, "trust_in_coach", trust_coach)
+            player.trust_in_coach = trust_coach
         if hasattr(player, "trust_in_qb"):
-            setattr(player, "trust_in_qb", trust_qb)
+            player.trust_in_qb = trust_qb

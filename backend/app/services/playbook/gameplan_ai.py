@@ -12,18 +12,24 @@ Features:
 """
 
 import logging
-from typing import Dict, List, Optional, Any
+
 from pydantic import BaseModel, Field
-from app.services.ai.ai_provider import get_ai_registry, AIProviderType
+
+from app.services.ai.ai_provider import AIProviderType, get_ai_registry
 
 logger = logging.getLogger(__name__)
 
 
 class OpponentFilmTendency(BaseModel):
     """Statistical tendencies extracted from opponent's recent game tape."""
+
     opponent_team_name: str
-    run_pass_ratio_1st_down: float = Field(0.50, description="Percentage of run plays on 1st & 10 (0.0 - 1.0)")
-    blitz_rate_3rd_down: float = Field(0.35, description="Opponent defensive blitz frequency on 3rd down")
+    run_pass_ratio_1st_down: float = Field(
+        0.50, description="Percentage of run plays on 1st & 10 (0.0 - 1.0)"
+    )
+    blitz_rate_3rd_down: float = Field(
+        0.35, description="Opponent defensive blitz frequency on 3rd down"
+    )
     deep_pass_rate: float = Field(0.20, description="Rate of 20+ yard air throw attempts")
     redzone_run_rate: float = Field(0.55, description="Run frequency inside the 20-yard line")
     star_offensive_threat: str = "WR1"
@@ -32,15 +38,19 @@ class OpponentFilmTendency(BaseModel):
 
 class DefensiveSchemeCounter(BaseModel):
     """Defensive schematic counter-measures."""
+
     primary_coverage: str = "Cover 3 Match"
     blitz_rate_recommended: float = 0.28
     front_alignment: str = "4-3 Over"
-    bracket_target: Optional[str] = None
-    tactic_rationale: str = "Contain outside zone rush and funnel passes into loaded middle coverage."
+    bracket_target: str | None = None
+    tactic_rationale: str = (
+        "Contain outside zone rush and funnel passes into loaded middle coverage."
+    )
 
 
 class OffensiveGameplanCounter(BaseModel):
     """Offensive schematic counter-measures."""
+
     primary_concept: str = "West Coast Quick Slants & Mesh"
     run_scheme_focus: str = "Inside Zone / Duo"
     tempo: str = "Balanced No-Huddle"
@@ -49,11 +59,12 @@ class OffensiveGameplanCounter(BaseModel):
 
 class GameplanCounterProposal(BaseModel):
     """Full strategic gameplan proposal for the upcoming game."""
+
     opponent_team_name: str
     scouting_executive_summary: str
     defensive_counter: DefensiveSchemeCounter
     offensive_counter: OffensiveGameplanCounter
-    key_victory_keys: List[str] = Field(default_factory=list)
+    key_victory_keys: list[str] = Field(default_factory=list)
     confidence_rating: int = Field(85, ge=50, le=99)
 
 
@@ -66,9 +77,7 @@ class GameplanAIService:
         self.registry = get_ai_registry()
 
     async def formulate_gameplan(
-        self,
-        opponent_name: str,
-        tendencies: Optional[OpponentFilmTendency] = None
+        self, opponent_name: str, tendencies: OpponentFilmTendency | None = None
     ) -> GameplanCounterProposal:
         """
         Synthesizes a tactical gameplan tailored to exploit the opponent's schematic weaknesses.
@@ -89,7 +98,10 @@ class GameplanAIService:
             f"Formulate a complete gameplan with defensive coverage counters, offensive attack concepts, and 3 keys to victory."
         )
 
-        if provider.provider_type != AIProviderType.DETERMINISTIC_FALLBACK and provider.is_available:
+        if (
+            provider.provider_type != AIProviderType.DETERMINISTIC_FALLBACK
+            and provider.is_available
+        ):
             result = await provider.generate_structured(prompt, GameplanCounterProposal)
             if result:
                 return result
@@ -98,21 +110,21 @@ class GameplanAIService:
         return self._generate_deterministic_gameplan(opponent_name, tendencies)
 
     def _generate_deterministic_gameplan(
-        self,
-        opponent_name: str,
-        tendencies: OpponentFilmTendency
+        self, opponent_name: str, tendencies: OpponentFilmTendency
     ) -> GameplanCounterProposal:
         """Rule-based tactical coaching engine for offline execution."""
         # Determine defensive coverage based on deep pass rate and blitz tendencies
         if tendencies.deep_pass_rate > 0.25:
             coverage = "Cover 4 Quarters"
-            def_rationale = f"Opponent attacks deep at {tendencies.deep_pass_rate*100:.0f}%. Two-high safety shell prevents explosive over-the-top touchdowns."
+            def_rationale = f"Opponent attacks deep at {tendencies.deep_pass_rate * 100:.0f}%. Two-high safety shell prevents explosive over-the-top touchdowns."
         elif tendencies.run_pass_ratio_1st_down > 0.60:
             coverage = "Cover 1 Robber"
-            def_rationale = f"Opponent heavily runs on 1st down ({tendencies.run_pass_ratio_1st_down*100:.0f}%). 8-man box with robber safety stops early-down ground game."
+            def_rationale = f"Opponent heavily runs on 1st down ({tendencies.run_pass_ratio_1st_down * 100:.0f}%). 8-man box with robber safety stops early-down ground game."
         else:
             coverage = "Cover 3 Match"
-            def_rationale = "Balanced zone scheme matching deep verticals while keeping eyes on the backfield."
+            def_rationale = (
+                "Balanced zone scheme matching deep verticals while keeping eyes on the backfield."
+            )
 
         # Determine offensive concept based on opponent blitz rate
         if tendencies.blitz_rate_3rd_down > 0.30:
@@ -133,20 +145,22 @@ class GameplanAIService:
                 blitz_rate_recommended=0.25 if tendencies.deep_pass_rate > 0.25 else 0.35,
                 front_alignment="4-2-5 Nickel",
                 bracket_target=tendencies.star_offensive_threat,
-                tactic_rationale=def_rationale
+                tactic_rationale=def_rationale,
             ),
             offensive_counter=OffensiveGameplanCounter(
                 primary_concept=off_concept,
-                run_scheme_focus="Outside Zone Stretch" if "Middle" in tendencies.vulnerable_defensive_zone else "Duo / Power",
+                run_scheme_focus="Outside Zone Stretch"
+                if "Middle" in tendencies.vulnerable_defensive_zone
+                else "Duo / Power",
                 tempo="Up-Tempo Sugar Huddle",
-                target_matchup_advantage=target_matchup
+                target_matchup_advantage=target_matchup,
             ),
             key_victory_keys=[
                 f"Neutralize {tendencies.star_offensive_threat} with safety bracket leverage on 3rd down.",
                 "Win time of possession by sustaining 8+ play drives on early-down runs.",
-                f"Target {tendencies.vulnerable_defensive_zone} in 2-minute and redzone situations."
+                f"Target {tendencies.vulnerable_defensive_zone} in 2-minute and redzone situations.",
             ],
-            confidence_rating=88
+            confidence_rating=88,
         )
 
 

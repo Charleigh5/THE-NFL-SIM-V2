@@ -6,17 +6,18 @@ and cutscene clip cues for 3D game visualization.
 """
 
 import logging
-from typing import Dict, List, Optional, Any
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.database import get_async_db
+from app.models.game import Game
 from app.models.player import Player
 from app.models.team import Team
-from app.models.game import Game
-from app.core.database import get_async_db
-from app.schemas.broadcast import ClipCueListResponse, ClipCue, CameraShot, OverlayCue
+from app.schemas.broadcast import CameraShot, ClipCue, ClipCueListResponse, OverlayCue
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class ConnectionManager:
     """Connection manager for WebSocket clients viewing 3D live game simulation."""
 
     def __init__(self):
-        self.active_connections: Dict[str, List[WebSocket]] = {}
+        self.active_connections: dict[str, list[WebSocket]] = {}
 
     async def connect(self, websocket: WebSocket, game_id: str):
         await websocket.accept()
@@ -88,7 +89,7 @@ def get_position_group(position: str) -> str:
     return "unknown"
 
 
-def get_body_type_for_position(position: str, attributes: Optional[Any]) -> str:
+def get_body_type_for_position(position: str, attributes: Any | None) -> str:
     """Determine 3D body type based on position and attributes."""
     if not attributes:
         if position in ["OT", "OG", "C", "DT", "DE"]:
@@ -115,7 +116,7 @@ def get_body_type_for_position(position: str, attributes: Optional[Any]) -> str:
     return "average"
 
 
-def get_helmet_design(team: Optional[Team]) -> dict:
+def get_helmet_design(team: Team | None) -> dict:
     """Get helmet design configuration for team."""
     if not team:
         return {"base": "plain", "stripe": "none", "logo_side": False, "facemask": "gray"}
@@ -124,7 +125,7 @@ def get_helmet_design(team: Optional[Team]) -> dict:
         "base": team.primary_color or "#002244",
         "stripe": team.secondary_color or "#A5ACAF",
         "logo_side": True,
-        "facemask": "gray"
+        "facemask": "gray",
     }
 
 
@@ -176,7 +177,11 @@ async def get_game_roster(game_id: int, db: AsyncSession = Depends(get_async_db)
         raise HTTPException(status_code=404, detail="Teams for this game not found")
 
     def format_player_visual(player: Player, is_home: bool) -> dict:
-        full_name = f"{player.first_name} {player.last_name}" if player.first_name and player.last_name else (player.first_name or player.last_name or f"Player #{player.jersey_number}")
+        full_name = (
+            f"{player.first_name} {player.last_name}"
+            if player.first_name and player.last_name
+            else (player.first_name or player.last_name or f"Player #{player.jersey_number}")
+        )
         primary_col = home_team.primary_color if is_home else away_team.primary_color
         secondary_col = home_team.secondary_color if is_home else away_team.secondary_color
         team_obj = home_team if is_home else away_team
@@ -191,18 +196,30 @@ async def get_game_roster(game_id: int, db: AsyncSession = Depends(get_async_db)
             "weight": player.weight,
             "team_id": player.team_id,
             "visuals": {
-                "body_type": get_body_type_for_position(player.position, getattr(player, "attributes", None)),
+                "body_type": get_body_type_for_position(
+                    player.position, getattr(player, "attributes", None)
+                ),
                 "jersey_color_primary": primary_col or "#002244",
                 "jersey_color_secondary": secondary_col or "#A5ACAF",
                 "helmet_design": get_helmet_design(team_obj),
                 "face_mask_color": get_face_mask_color(player.position),
                 "cleat_color": get_cleat_color(player.position),
                 "accessories": get_accessories(player),
-            }
+            },
         }
 
-    home_players_stmt = select(Player).where(Player.team_id == home_team.id).options(selectinload(Player.attributes)).limit(53)
-    away_players_stmt = select(Player).where(Player.team_id == away_team.id).options(selectinload(Player.attributes)).limit(53)
+    home_players_stmt = (
+        select(Player)
+        .where(Player.team_id == home_team.id)
+        .options(selectinload(Player.attributes))
+        .limit(53)
+    )
+    away_players_stmt = (
+        select(Player)
+        .where(Player.team_id == away_team.id)
+        .options(selectinload(Player.attributes))
+        .limit(53)
+    )
 
     home_players = (await db.execute(home_players_stmt)).scalars().all()
     away_players = (await db.execute(away_players_stmt)).scalars().all()
@@ -216,7 +233,7 @@ async def get_game_roster(game_id: int, db: AsyncSession = Depends(get_async_db)
             "primary_color": home_team.primary_color,
             "secondary_color": home_team.secondary_color,
             "logo_url": f"/logos/{home_team.abbreviation}.png",
-            "players": [format_player_visual(p, is_home=True) for p in home_players]
+            "players": [format_player_visual(p, is_home=True) for p in home_players],
         },
         "away_team": {
             "id": away_team.id,
@@ -225,8 +242,8 @@ async def get_game_roster(game_id: int, db: AsyncSession = Depends(get_async_db)
             "primary_color": away_team.primary_color,
             "secondary_color": away_team.secondary_color,
             "logo_url": f"/logos/{away_team.abbreviation}.png",
-            "players": [format_player_visual(p, is_home=False) for p in away_players]
-        }
+            "players": [format_player_visual(p, is_home=False) for p in away_players],
+        },
     }
 
 
@@ -244,7 +261,7 @@ async def get_formation_data(game_id: int, play_id: int):
                     {"position": "WR", "x": 0, "y": 0, "z": -12},
                     {"position": "WR", "x": 0, "y": 0, "z": 12},
                     {"position": "TE", "x": 0, "y": 0, "z": -6},
-                ]
+                ],
             },
             "defense": {
                 "name": "Nickel 4-3",
@@ -253,9 +270,9 @@ async def get_formation_data(game_id: int, play_id: int):
                     {"position": "DT", "x": 2, "y": 0, "z": -1},
                     {"position": "DT", "x": 2, "y": 0, "z": 1},
                     {"position": "DE", "x": 2, "y": 0, "z": 4},
-                ]
-            }
-        }
+                ],
+            },
+        },
     }
 
 
@@ -273,7 +290,7 @@ async def get_broadcast_clips(game_id: int, play_id: int):
                     target={"x": 0.0, "y": 0.0, "z": 0.0},
                     fov=60.0,
                     duration=2.5,
-                    interpolation="smooth"
+                    interpolation="smooth",
                 ),
                 CameraShot(
                     id="sweep_end",
@@ -281,8 +298,8 @@ async def get_broadcast_clips(game_id: int, play_id: int):
                     target={"x": 0.0, "y": 1.0, "z": 0.0},
                     fov=50.0,
                     duration=2.0,
-                    interpolation="smooth"
-                )
+                    interpolation="smooth",
+                ),
             ],
             overlays=[
                 OverlayCue(
@@ -291,21 +308,17 @@ async def get_broadcast_clips(game_id: int, play_id: int):
                     data={"down": 1, "distance": 10, "yard_line": 25},
                     duration=4.5,
                     animation="slide",
-                    layer=10
+                    layer=10,
                 )
             ],
             duration=4.5,
             audio_cue="preplay_buildup",
-            skippable=True
+            skippable=True,
         )
     ]
 
     total_duration = sum(c.duration for c in clips)
-    return ClipCueListResponse(
-        play_id=play_id,
-        clips=clips,
-        total_duration=total_duration
-    )
+    return ClipCueListResponse(play_id=play_id, clips=clips, total_duration=total_duration)
 
 
 @router.post("/game/{game_id}/camera/{client_id}")

@@ -7,7 +7,9 @@ Standard starting rating is 1500.
 """
 
 import math
+
 from sqlalchemy.orm import Session
+
 from app.models.team import Team
 
 
@@ -167,9 +169,7 @@ class EloService:
         return new_winner_elo, new_loser_elo
 
     @staticmethod
-    def get_win_probability(
-        home_team_elo: float, away_team_elo: float
-    ) -> tuple[float, float]:
+    def get_win_probability(home_team_elo: float, away_team_elo: float) -> tuple[float, float]:
         """
         Get the win probability for a matchup, including home field advantage.
 
@@ -183,9 +183,7 @@ class EloService:
         # Apply home field advantage
         adjusted_home_elo = home_team_elo + EloService.HOME_ADVANTAGE
 
-        home_win_prob = EloService.calculate_expected_outcome(
-            adjusted_home_elo, away_team_elo
-        )
+        home_win_prob = EloService.calculate_expected_outcome(adjusted_home_elo, away_team_elo)
         away_win_prob = 1.0 - home_win_prob
 
         return round(home_win_prob, 3), round(away_win_prob, 3)

@@ -5,19 +5,19 @@ Requires no API keys or subscription fees.
 """
 
 import logging
-from typing import Optional, List, Dict, Any
-from datetime import datetime, date
+from datetime import datetime
+
 import httpx
 
+from app.services.nflverse_service import NflverseService, map_team_abbr
 from app.services.roster_sync.base import (
     BaseRosterProvider,
+    DepthOrderDTO,
+    InjuryDTO,
+    ProviderStatusDTO,
     RosterPlayerDTO,
     TransactionDTO,
-    InjuryDTO,
-    DepthOrderDTO,
-    ProviderStatusDTO,
 )
-from app.services.nflverse_service import NflverseService, map_team_abbr, map_position
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,14 @@ class NflverseProvider(BaseRosterProvider):
     Zero-key provider relying on open community datasets and public endpoints.
     """
 
-    ESPN_TRANSACTIONS_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/transactions"
+    ESPN_TRANSACTIONS_URL = (
+        "https://site.api.espn.com/apis/site/v2/sports/football/nfl/transactions"
+    )
 
     def __init__(self, season: int = 2026):
         self.season = season
         self.nflverse_service = NflverseService(season=season)
-        self._last_sync: Optional[str] = None
+        self._last_sync: str | None = None
 
     @property
     def provider_id(self) -> str:
@@ -45,13 +47,19 @@ class NflverseProvider(BaseRosterProvider):
             masked_key="None (Public)",
             description="Open-source roster tracking via nflverse Parquet feeds with live ESPN transaction monitoring.",
             last_sync_timestamp=self._last_sync,
-            available_features=["Full Roster Ingest", "OverTheCap Contracts", "NextGen Metrics", "ESPN Transaction Wire", "Zero Cost"],
+            available_features=[
+                "Full Roster Ingest",
+                "OverTheCap Contracts",
+                "NextGen Metrics",
+                "ESPN Transaction Wire",
+                "Zero Cost",
+            ],
         )
 
-    def fetch_rosters(self) -> List[RosterPlayerDTO]:
+    def fetch_rosters(self) -> list[RosterPlayerDTO]:
         """Fetch normalized rosters from nflverse."""
         players_raw = self.nflverse_service.get_all_active_players()
-        roster_dtos: List[RosterPlayerDTO] = []
+        roster_dtos: list[RosterPlayerDTO] = []
 
         for p in players_raw:
             roster_dtos.append(
@@ -72,9 +80,9 @@ class NflverseProvider(BaseRosterProvider):
         self._last_sync = datetime.utcnow().isoformat()
         return roster_dtos
 
-    def fetch_transactions(self) -> List[TransactionDTO]:
+    def fetch_transactions(self) -> list[TransactionDTO]:
         """Fetch live transactions from ESPN's public feed."""
-        transactions: List[TransactionDTO] = []
+        transactions: list[TransactionDTO] = []
         try:
             with httpx.Client(timeout=10.0) as client:
                 resp = client.get(self.ESPN_TRANSACTIONS_URL)
@@ -100,7 +108,9 @@ class NflverseProvider(BaseRosterProvider):
                             trans_type = "TRADE"
                         elif "sign" in lower_desc:
                             trans_type = "SIGNING"
-                        elif "waive" in lower_desc or "cut" in lower_desc or "release" in lower_desc:
+                        elif (
+                            "waive" in lower_desc or "cut" in lower_desc or "release" in lower_desc
+                        ):
                             trans_type = "CUT"
                         elif "injured reserve" in lower_desc or "reserve/injured" in lower_desc:
                             trans_type = "RESERVE"
@@ -119,10 +129,10 @@ class NflverseProvider(BaseRosterProvider):
 
         return transactions
 
-    def fetch_injuries(self) -> List[InjuryDTO]:
+    def fetch_injuries(self) -> list[InjuryDTO]:
         """Injury tracking via ESPN or nflverse."""
         return []
 
-    def fetch_depth_charts(self) -> List[DepthOrderDTO]:
+    def fetch_depth_charts(self) -> list[DepthOrderDTO]:
         """Depth charts derived from ratings and active rosters."""
         return []

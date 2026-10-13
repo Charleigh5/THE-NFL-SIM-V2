@@ -1,18 +1,21 @@
-from functools import wraps
-from fastapi import HTTPException, Request
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError, OperationalError
-from pydantic import ValidationError
-from datetime import datetime, timezone
-import logging
 import asyncio
+import logging
+from datetime import UTC, datetime
+from functools import wraps
+
+from fastapi import HTTPException, Request
+from pydantic import ValidationError
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 logger = logging.getLogger(__name__)
+
 
 def handle_errors(func):
     """
     Decorator to wrap endpoint functions with comprehensive error handling.
     Catches common exceptions and returns appropriate HTTP responses.
     """
+
     @wraps(func)
     async def wrapper(*args, **kwargs):
         # Extract request object for context if available
@@ -23,8 +26,8 @@ def handle_errors(func):
                 break
 
         # Try to get request_id from state, or use 'unknown'
-        request_id = 'unknown'
-        if request and hasattr(request, 'state') and hasattr(request.state, 'request_id'):
+        request_id = "unknown"
+        if request and hasattr(request, "state") and hasattr(request.state, "request_id"):
             request_id = request.state.request_id
 
         try:
@@ -45,9 +48,9 @@ def handle_errors(func):
                     "request_id": request_id,
                     "function": func.__name__,
                     "error_type": "IntegrityError",
-                    "error": str(e)
+                    "error": str(e),
                 },
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=409,
@@ -55,21 +58,22 @@ def handle_errors(func):
                     "error": "Integrity Error",
                     "message": "Operation conflicts with existing data",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
         except OperationalError as e:
             import sys
+
             print(f"DEBUG EXCEPTION: {type(e).__name__}: {e}", file=sys.stderr)
             logger.error(
                 f"Database operational error in {func.__name__}",
                 extra={
                     "request_id": request_id,
                     "function": func.__name__,
-                    "error_type": "OperationalError"
+                    "error_type": "OperationalError",
                 },
-                exc_info=True
+                exc_info=True,
             )
             raise HTTPException(
                 status_code=503,
@@ -77,18 +81,14 @@ def handle_errors(func):
                     "error": "Service Unavailable",
                     "message": "Database connection error. Please try again later.",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
         except ValidationError as e:
             logger.warning(
                 f"Validation error in {func.__name__}",
-                extra={
-                    "request_id": request_id,
-                    "function": func.__name__,
-                    "errors": e.errors()
-                }
+                extra={"request_id": request_id, "function": func.__name__, "errors": e.errors()},
             )
             raise HTTPException(
                 status_code=422,
@@ -97,18 +97,15 @@ def handle_errors(func):
                     "message": "Invalid data provided",
                     "details": e.errors(),
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
         except ValueError as e:
-             # Business logic errors often raise ValueError
+            # Business logic errors often raise ValueError
             logger.warning(
                 f"Value error in {func.__name__}: {str(e)}",
-                extra={
-                    "request_id": request_id,
-                    "function": func.__name__
-                }
+                extra={"request_id": request_id, "function": func.__name__},
             )
             raise HTTPException(
                 status_code=400,
@@ -116,15 +113,17 @@ def handle_errors(func):
                     "error": "Bad Request",
                     "message": str(e),
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
         except Exception as e:
             import sys
+
             with open("debug_error.txt", "a") as f:
                 f.write(f"DEBUG EXCEPTION: {type(e).__name__}: {e}\n")
                 import traceback
+
                 traceback.print_exc(file=f)
             print(f"DEBUG EXCEPTION: {type(e).__name__}: {e}", file=sys.stderr)
             logger.exception(
@@ -132,8 +131,8 @@ def handle_errors(func):
                 extra={
                     "request_id": request_id,
                     "function": func.__name__,
-                    "error_type": type(e).__name__
-                }
+                    "error_type": type(e).__name__,
+                },
             )
             raise HTTPException(
                 status_code=500,
@@ -141,8 +140,8 @@ def handle_errors(func):
                     "error": "Internal Server Error",
                     "message": "An unexpected error occurred",
                     "request_id": request_id,
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }
+                    "timestamp": datetime.now(UTC).isoformat(),
+                },
             )
 
     return wrapper

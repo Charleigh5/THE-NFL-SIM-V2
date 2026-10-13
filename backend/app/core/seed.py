@@ -1,21 +1,30 @@
 import logging
 import os
+import random
+
 from sqlalchemy.orm import Session
+
 from app.core.database import SessionLocal
-from app.models.team import Team
-from app.models.player import Player
-from app.models.coach import Coach
 from app.data.coaches import COACHES_DB
 from app.data.scouts import TEAM_SCOUTS
+from app.models.coach import Coach
+from app.models.game import Game
+from app.models.player import Player
 from app.models.scout import Scout
 from app.models.season import Season, SeasonStatus
-from app.models.game import Game
+from app.models.team import Team
+from app.models.trait import Trait, TraitEffectType, TraitSource
 from app.services.schedule_generator import ScheduleGenerator
-import random
+from app.services.trait_service import TRAIT_CATALOG, TraitService
+
 try:
-    from app.services.nflverse_service import NflverseService
-    from app.services.ratings_generator import generate_player_ratings, calculate_overall_rating_modifier
     from app.data.career_accomplishments import PLAYER_ACCOMPLISHMENTS
+    from app.services.nflverse_service import NflverseService
+    from app.services.ratings_generator import (
+        calculate_overall_rating_modifier,
+        generate_player_ratings,
+    )
+
     HAS_NFLVERSE = True
 except ImportError:
     HAS_NFLVERSE = False
@@ -23,47 +32,295 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 NFL_TEAMS = [
-    {"city": "Arizona", "name": "Cardinals", "abbreviation": "ARI", "conference": "NFC", "division": "West"},
-    {"city": "Atlanta", "name": "Falcons", "abbreviation": "ATL", "conference": "NFC", "division": "South"},
-    {"city": "Baltimore", "name": "Ravens", "abbreviation": "BAL", "conference": "AFC", "division": "North"},
-    {"city": "Buffalo", "name": "Bills", "abbreviation": "BUF", "conference": "AFC", "division": "East"},
-    {"city": "Carolina", "name": "Panthers", "abbreviation": "CAR", "conference": "NFC", "division": "South"},
-    {"city": "Chicago", "name": "Bears", "abbreviation": "CHI", "conference": "NFC", "division": "North"},
-    {"city": "Cincinnati", "name": "Bengals", "abbreviation": "CIN", "conference": "AFC", "division": "North"},
-    {"city": "Cleveland", "name": "Browns", "abbreviation": "CLE", "conference": "AFC", "division": "North"},
-    {"city": "Dallas", "name": "Cowboys", "abbreviation": "DAL", "conference": "NFC", "division": "East"},
-    {"city": "Denver", "name": "Broncos", "abbreviation": "DEN", "conference": "AFC", "division": "West"},
-    {"city": "Detroit", "name": "Lions", "abbreviation": "DET", "conference": "NFC", "division": "North"},
-    {"city": "Green Bay", "name": "Packers", "abbreviation": "GB", "conference": "NFC", "division": "North"},
-    {"city": "Houston", "name": "Texans", "abbreviation": "HOU", "conference": "AFC", "division": "South"},
-    {"city": "Indianapolis", "name": "Colts", "abbreviation": "IND", "conference": "AFC", "division": "South"},
-    {"city": "Jacksonville", "name": "Jaguars", "abbreviation": "JAX", "conference": "AFC", "division": "South"},
-    {"city": "Kansas City", "name": "Chiefs", "abbreviation": "KC", "conference": "AFC", "division": "West"},
-    {"city": "Las Vegas", "name": "Raiders", "abbreviation": "LV", "conference": "AFC", "division": "West"},
-    {"city": "Los Angeles", "name": "Chargers", "abbreviation": "LAC", "conference": "AFC", "division": "West"},
-    {"city": "Los Angeles", "name": "Rams", "abbreviation": "LAR", "conference": "NFC", "division": "West"},
-    {"city": "Miami", "name": "Dolphins", "abbreviation": "MIA", "conference": "AFC", "division": "East"},
-    {"city": "Minnesota", "name": "Vikings", "abbreviation": "MIN", "conference": "NFC", "division": "North"},
-    {"city": "New England", "name": "Patriots", "abbreviation": "NE", "conference": "AFC", "division": "East"},
-    {"city": "New Orleans", "name": "Saints", "abbreviation": "NO", "conference": "NFC", "division": "South"},
-    {"city": "New York", "name": "Giants", "abbreviation": "NYG", "conference": "NFC", "division": "East"},
-    {"city": "New York", "name": "Jets", "abbreviation": "NYJ", "conference": "AFC", "division": "East"},
-    {"city": "Philadelphia", "name": "Eagles", "abbreviation": "PHI", "conference": "NFC", "division": "East"},
-    {"city": "Pittsburgh", "name": "Steelers", "abbreviation": "PIT", "conference": "AFC", "division": "North"},
-    {"city": "San Francisco", "name": "49ers", "abbreviation": "SF", "conference": "NFC", "division": "West"},
-    {"city": "Seattle", "name": "Seahawks", "abbreviation": "SEA", "conference": "NFC", "division": "West"},
-    {"city": "Tampa Bay", "name": "Buccaneers", "abbreviation": "TB", "conference": "NFC", "division": "South"},
-    {"city": "Tennessee", "name": "Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South"},
-    {"city": "Washington", "name": "Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East"},
+    {
+        "city": "Arizona",
+        "name": "Cardinals",
+        "abbreviation": "ARI",
+        "conference": "NFC",
+        "division": "West",
+    },
+    {
+        "city": "Atlanta",
+        "name": "Falcons",
+        "abbreviation": "ATL",
+        "conference": "NFC",
+        "division": "South",
+    },
+    {
+        "city": "Baltimore",
+        "name": "Ravens",
+        "abbreviation": "BAL",
+        "conference": "AFC",
+        "division": "North",
+    },
+    {
+        "city": "Buffalo",
+        "name": "Bills",
+        "abbreviation": "BUF",
+        "conference": "AFC",
+        "division": "East",
+    },
+    {
+        "city": "Carolina",
+        "name": "Panthers",
+        "abbreviation": "CAR",
+        "conference": "NFC",
+        "division": "South",
+    },
+    {
+        "city": "Chicago",
+        "name": "Bears",
+        "abbreviation": "CHI",
+        "conference": "NFC",
+        "division": "North",
+    },
+    {
+        "city": "Cincinnati",
+        "name": "Bengals",
+        "abbreviation": "CIN",
+        "conference": "AFC",
+        "division": "North",
+    },
+    {
+        "city": "Cleveland",
+        "name": "Browns",
+        "abbreviation": "CLE",
+        "conference": "AFC",
+        "division": "North",
+    },
+    {
+        "city": "Dallas",
+        "name": "Cowboys",
+        "abbreviation": "DAL",
+        "conference": "NFC",
+        "division": "East",
+    },
+    {
+        "city": "Denver",
+        "name": "Broncos",
+        "abbreviation": "DEN",
+        "conference": "AFC",
+        "division": "West",
+    },
+    {
+        "city": "Detroit",
+        "name": "Lions",
+        "abbreviation": "DET",
+        "conference": "NFC",
+        "division": "North",
+    },
+    {
+        "city": "Green Bay",
+        "name": "Packers",
+        "abbreviation": "GB",
+        "conference": "NFC",
+        "division": "North",
+    },
+    {
+        "city": "Houston",
+        "name": "Texans",
+        "abbreviation": "HOU",
+        "conference": "AFC",
+        "division": "South",
+    },
+    {
+        "city": "Indianapolis",
+        "name": "Colts",
+        "abbreviation": "IND",
+        "conference": "AFC",
+        "division": "South",
+    },
+    {
+        "city": "Jacksonville",
+        "name": "Jaguars",
+        "abbreviation": "JAX",
+        "conference": "AFC",
+        "division": "South",
+    },
+    {
+        "city": "Kansas City",
+        "name": "Chiefs",
+        "abbreviation": "KC",
+        "conference": "AFC",
+        "division": "West",
+    },
+    {
+        "city": "Las Vegas",
+        "name": "Raiders",
+        "abbreviation": "LV",
+        "conference": "AFC",
+        "division": "West",
+    },
+    {
+        "city": "Los Angeles",
+        "name": "Chargers",
+        "abbreviation": "LAC",
+        "conference": "AFC",
+        "division": "West",
+    },
+    {
+        "city": "Los Angeles",
+        "name": "Rams",
+        "abbreviation": "LAR",
+        "conference": "NFC",
+        "division": "West",
+    },
+    {
+        "city": "Miami",
+        "name": "Dolphins",
+        "abbreviation": "MIA",
+        "conference": "AFC",
+        "division": "East",
+    },
+    {
+        "city": "Minnesota",
+        "name": "Vikings",
+        "abbreviation": "MIN",
+        "conference": "NFC",
+        "division": "North",
+    },
+    {
+        "city": "New England",
+        "name": "Patriots",
+        "abbreviation": "NE",
+        "conference": "AFC",
+        "division": "East",
+    },
+    {
+        "city": "New Orleans",
+        "name": "Saints",
+        "abbreviation": "NO",
+        "conference": "NFC",
+        "division": "South",
+    },
+    {
+        "city": "New York",
+        "name": "Giants",
+        "abbreviation": "NYG",
+        "conference": "NFC",
+        "division": "East",
+    },
+    {
+        "city": "New York",
+        "name": "Jets",
+        "abbreviation": "NYJ",
+        "conference": "AFC",
+        "division": "East",
+    },
+    {
+        "city": "Philadelphia",
+        "name": "Eagles",
+        "abbreviation": "PHI",
+        "conference": "NFC",
+        "division": "East",
+    },
+    {
+        "city": "Pittsburgh",
+        "name": "Steelers",
+        "abbreviation": "PIT",
+        "conference": "AFC",
+        "division": "North",
+    },
+    {
+        "city": "San Francisco",
+        "name": "49ers",
+        "abbreviation": "SF",
+        "conference": "NFC",
+        "division": "West",
+    },
+    {
+        "city": "Seattle",
+        "name": "Seahawks",
+        "abbreviation": "SEA",
+        "conference": "NFC",
+        "division": "West",
+    },
+    {
+        "city": "Tampa Bay",
+        "name": "Buccaneers",
+        "abbreviation": "TB",
+        "conference": "NFC",
+        "division": "South",
+    },
+    {
+        "city": "Tennessee",
+        "name": "Titans",
+        "abbreviation": "TEN",
+        "conference": "AFC",
+        "division": "South",
+    },
+    {
+        "city": "Washington",
+        "name": "Commanders",
+        "abbreviation": "WAS",
+        "conference": "NFC",
+        "division": "East",
+    },
 ]
 
 POSITIONS = {
-    "QB": 3, "RB": 4, "WR": 6, "TE": 3, "OL": 9,
-    "DL": 8, "LB": 7, "CB": 6, "S": 4, "K": 1, "P": 1
+    "QB": 3,
+    "RB": 4,
+    "WR": 6,
+    "TE": 3,
+    "OL": 9,
+    "DL": 8,
+    "LB": 7,
+    "CB": 6,
+    "S": 4,
+    "K": 1,
+    "P": 1,
 }
 
-FIRST_NAMES = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Chris", "Dan", "Pat", "Steve", "Jim", "Tom", "Tim", "Rob", "Mike", "Bill", "Dave", "Rich", "Joe", "Chuck"]
-LAST_NAMES = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin"]
+FIRST_NAMES = [
+    "James",
+    "John",
+    "Robert",
+    "Michael",
+    "William",
+    "David",
+    "Richard",
+    "Joseph",
+    "Thomas",
+    "Charles",
+    "Chris",
+    "Dan",
+    "Pat",
+    "Steve",
+    "Jim",
+    "Tom",
+    "Tim",
+    "Rob",
+    "Mike",
+    "Bill",
+    "Dave",
+    "Rich",
+    "Joe",
+    "Chuck",
+]
+LAST_NAMES = [
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Garcia",
+    "Miller",
+    "Davis",
+    "Rodriguez",
+    "Martinez",
+    "Hernandez",
+    "Lopez",
+    "Gonzalez",
+    "Wilson",
+    "Anderson",
+    "Thomas",
+    "Taylor",
+    "Moore",
+    "Jackson",
+    "Martin",
+]
+
 
 def seed_teams(db: Session):
     existing_teams = db.query(Team).count()
@@ -81,13 +338,14 @@ def seed_teams(db: Session):
             conference=team_data["conference"],
             division=team_data["division"],
             wins=0,
-            losses=0
+            losses=0,
         )
         teams.append(team)
 
     db.add_all(teams)
     db.commit()
     logger.info("Teams seeded successfully.")
+
 
 def generate_player(position: str, team_id: int) -> Player:
     return Player(
@@ -98,11 +356,8 @@ def generate_player(position: str, team_id: int) -> Player:
         overall_rating=random.randint(60, 99),
         team_id=team_id,
         age=random.randint(21, 35),
-        experience=random.randint(0, 15)
+        experience=random.randint(0, 15),
     )
-
-from app.services.trait_service import TraitService, TRAIT_CATALOG
-from app.models.trait import Trait, TraitSource, TraitEffectType
 
 def seed_traits(db: Session):
     """Seed traits from the catalog into the database."""
@@ -113,19 +368,24 @@ def seed_traits(db: Session):
 
     logger.info("Seeding Traits from Catalog...")
     traits_to_add = []
-    for key, definition in TRAIT_CATALOG.items():
+    for _key, definition in TRAIT_CATALOG.items():
         trait = Trait(
             name=definition.name,
             description=definition.description,
             # Map effect type if available
-            effect_type=getattr(definition, 'effect_type', TraitEffectType.PASSIVE) if hasattr(definition, 'effect_type') else TraitEffectType.PASSIVE,
-            effect_value=getattr(definition, 'effect_value', 0.0) if hasattr(definition, 'effect_value') else 0.0,
+            effect_type=getattr(definition, "effect_type", TraitEffectType.PASSIVE)
+            if hasattr(definition, "effect_type")
+            else TraitEffectType.PASSIVE,
+            effect_value=getattr(definition, "effect_value", 0.0)
+            if hasattr(definition, "effect_value")
+            else 0.0,
         )
         traits_to_add.append(trait)
 
     db.add_all(traits_to_add)
     db.commit()
     logger.info(f"Seeded {len(traits_to_add)} traits successfully.")
+
 
 def seed_players(db: Session):
     existing_players = db.query(Player).count()
@@ -165,6 +425,7 @@ def seed_players(db: Session):
             TraitService.assign_trait(db, qb.id, field_general.id, TraitSource.DEVELOPMENT)
         logger.info("Trait assignment complete.")
 
+
 def seed_scouts(db: Session):
     """Seed scouts for all 32 NFL teams from static data."""
     existing_scouts = db.query(Scout).count()
@@ -184,8 +445,10 @@ def seed_scouts(db: Session):
         scout = Scout(
             name=scout_data.name,
             team_id=team.id,
-            region=scout_data.region.value if hasattr(scout_data.region, 'value') else scout_data.region,
-            bias=scout_data.bias.value if hasattr(scout_data.bias, 'value') else scout_data.bias,
+            region=scout_data.region.value
+            if hasattr(scout_data.region, "value")
+            else scout_data.region,
+            bias=scout_data.bias.value if hasattr(scout_data.bias, "value") else scout_data.bias,
             position_specialty=scout_data.specialty,
             evaluation_ability=scout_data.evaluation_ability,
             efficiency=scout_data.efficiency,
@@ -196,6 +459,7 @@ def seed_scouts(db: Session):
 
     db.commit()
     logger.info(f"Seeded {scouts_created} scouts successfully.")
+
 
 def seed_coaches(db: Session):
     """Seed 2025 NFL coaching staff for all 32 teams."""
@@ -214,9 +478,24 @@ def seed_coaches(db: Session):
             continue
 
         roles = [
-            ("Head Coach", staff_data.head_coach, staff_data.playbook_offense.value, staff_data.playbook_defense.value),
-            ("Offensive Coordinator", staff_data.offensive_coordinator, staff_data.playbook_offense.value, None),
-            ("Defensive Coordinator", staff_data.defensive_coordinator, None, staff_data.playbook_defense.value),
+            (
+                "Head Coach",
+                staff_data.head_coach,
+                staff_data.playbook_offense.value,
+                staff_data.playbook_defense.value,
+            ),
+            (
+                "Offensive Coordinator",
+                staff_data.offensive_coordinator,
+                staff_data.playbook_offense.value,
+                None,
+            ),
+            (
+                "Defensive Coordinator",
+                staff_data.defensive_coordinator,
+                None,
+                staff_data.playbook_defense.value,
+            ),
         ]
 
         philosophy_dict = {
@@ -254,7 +533,7 @@ def assign_depth_charts(db: Session):
         by_pos = {}
         for p in players:
             by_pos.setdefault(p.position, []).append(p)
-        for pos, pos_players in by_pos.items():
+        for _pos, pos_players in by_pos.items():
             pos_players.sort(key=lambda x: x.overall_rating, reverse=True)
             for rank, p in enumerate(pos_players, start=1):
                 p.depth_chart_rank = rank
@@ -316,9 +595,13 @@ def seed_2026_season(db: Session, force: bool = False) -> Season:
         db.commit()
         logger.info(f"Seeded {len(real_games)} authentic 2026-2027 NFL schedule games.")
     else:
-        logger.warning("Could not load real schedule from nflreadpy, generating procedural schedule.")
+        logger.warning(
+            "Could not load real schedule from nflreadpy, generating procedural schedule."
+        )
         teams = db.query(Team).all()
-        proc_games = generator.generate_schedule(season_id=season.id, teams=teams, year=2026, prefer_real=False)
+        proc_games = generator.generate_schedule(
+            season_id=season.id, teams=teams, year=2026, prefer_real=False
+        )
         db.add_all(proc_games)
         db.commit()
 
@@ -347,11 +630,21 @@ def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = Fa
     if force and existing_players > 0:
         logger.info(f"Clearing {existing_players} existing players for clean {season} import...")
         from sqlalchemy import text
+
         db.execute(text("PRAGMA foreign_keys = OFF"))
         for t in [
-            "player_attributes", "player_contract", "player_injury", "player_physics",
-            "player_progression", "player_traits", "player_season_stats", "depthchart",
-            "playergamestats", "body_health", "injury_events", "player"
+            "player_attributes",
+            "player_contract",
+            "player_injury",
+            "player_physics",
+            "player_progression",
+            "player_traits",
+            "player_season_stats",
+            "depthchart",
+            "playergamestats",
+            "body_health",
+            "injury_events",
+            "player",
         ]:
             db.execute(text(f"DELETE FROM {t}"))
         db.commit()
@@ -380,9 +673,7 @@ def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = Fa
 
         # Generate ratings from real data
         ratings = generate_player_ratings(
-            p_data,
-            ngstats=p_data.get("ngs"),
-            standard_stats=p_data.get("stats")
+            p_data, ngstats=p_data.get("ngs"), standard_stats=p_data.get("stats")
         )
 
         # Calculate overall rating with modifiers
@@ -410,13 +701,10 @@ def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = Fa
             age=safe_int(p_data.get("age"), 25),
             experience=safe_int(p_data.get("experience"), 0),
             jersey_number=safe_int(p_data.get("jersey_number"), 0),
-
             # Contracts (Real Data)
             contract_years=safe_int(p_data.get("contract_years"), 1),
             contract_salary=safe_int(p_data.get("contract_salary"), 1000000),
-
             overall_rating=final_overall,
-
             # Apply generated ratings
             speed=ratings.get("speed", 50),
             acceleration=ratings.get("acceleration", 50),
@@ -465,6 +753,7 @@ def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = Fa
 # 3. After August 26, 2025: Use nflreadpy.load_rosters(2025) for full rosters
 # 4. Monitor: PFF, ESPN, NFL.com for breaking transactions
 
+
 def seed_free_agents_2025(db: Session):
     """
     Seed 2025 free agent signings with verified ratings.
@@ -488,10 +777,11 @@ def seed_free_agents_2025(db: Session):
             continue
 
         # Check if player exists
-        existing = db.query(Player).filter(
-            Player.first_name == fa.first_name,
-            Player.last_name == fa.last_name
-        ).first()
+        existing = (
+            db.query(Player)
+            .filter(Player.first_name == fa.first_name, Player.last_name == fa.last_name)
+            .first()
+        )
 
         if existing:
             # Update existing player with new team and ratings
@@ -510,11 +800,21 @@ def seed_free_agents_2025(db: Session):
             # Create new player with position-based defaults
             # Height in inches, weight in lbs (approximate by position)
             position_defaults = {
-                "QB": (75, 220), "RB": (70, 210), "WR": (72, 195), "TE": (77, 250),
-                "OT": (78, 315), "OG": (76, 310), "C": (75, 305),
-                "DE": (76, 270), "DT": (75, 310), "EDGE": (76, 255),
-                "LB": (74, 240), "CB": (71, 190), "S": (72, 205),
-                "K": (72, 200), "P": (74, 210)
+                "QB": (75, 220),
+                "RB": (70, 210),
+                "WR": (72, 195),
+                "TE": (77, 250),
+                "OT": (78, 315),
+                "OG": (76, 310),
+                "C": (75, 305),
+                "DE": (76, 270),
+                "DT": (75, 310),
+                "EDGE": (76, 255),
+                "LB": (74, 240),
+                "CB": (71, 190),
+                "S": (72, 205),
+                "K": (72, 200),
+                "P": (74, 210),
             }
             default_h, default_w = position_defaults.get(fa.position, (74, 225))
 
@@ -605,4 +905,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,5 +1,7 @@
 """Pagination schemas for API responses."""
-from typing import Generic, TypeVar, List
+
+from typing import Generic, TypeVar
+
 from pydantic import BaseModel, Field
 
 T = TypeVar("T")
@@ -15,14 +17,14 @@ class PaginationParams(BaseModel):
 class PaginatedResponse(BaseModel, Generic[T]):
     """Generic paginated response wrapper."""
 
-    items: List[T]
+    items: list[T]
     total: int
     page: int
     page_size: int
     total_pages: int
 
     @classmethod
-    def create(cls, items: List[T], total: int, page: int, page_size: int):
+    def create(cls, items: list[T], total: int, page: int, page_size: int):
         """Create a paginated response."""
         total_pages = (total + page_size - 1) // page_size if total > 0 else 0
         return cls(

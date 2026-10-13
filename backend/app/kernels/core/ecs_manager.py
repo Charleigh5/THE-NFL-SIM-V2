@@ -1,28 +1,32 @@
-from typing import Dict, List, Type, Any, Optional
 import uuid
+
 from pydantic import BaseModel
+
 
 class Component(BaseModel):
     pass
 
+
 class Entity(BaseModel):
     id: str
-    components: Dict[str, Component] = {}
+    components: dict[str, Component] = {}
 
     def add_component(self, component: Component):
         self.components[component.__class__.__name__] = component
 
-    def get_component(self, component_type: Type[Component]) -> Optional[Component]:
+    def get_component(self, component_type: type[Component]) -> Component | None:
         return self.components.get(component_type.__name__)
 
+
 class System:
-    def update(self, entities: List[Entity], dt: float):
+    def update(self, entities: list[Entity], dt: float):
         raise NotImplementedError
+
 
 class ECSManager:
     def __init__(self):
-        self.entities: Dict[str, Entity] = {}
-        self.systems: List[System] = []
+        self.entities: dict[str, Entity] = {}
+        self.systems: list[System] = []
 
     def create_entity(self) -> Entity:
         entity_id = str(uuid.uuid4())

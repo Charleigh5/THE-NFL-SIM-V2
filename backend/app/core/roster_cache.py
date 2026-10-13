@@ -7,7 +7,6 @@ Guarantees zero 500 errors and zero latency degradation when Redis is offline.
 import logging
 import threading
 import time
-from typing import Dict, Optional, Tuple
 
 from app.core.config import settings
 
@@ -21,7 +20,7 @@ class RosterCacheManager:
     - Tier 2: Redis cache with strict fast-fail circuit breaker.
     """
 
-    def __init__(self, default_ttl: Optional[int] = None) -> None:
+    def __init__(self, default_ttl: int | None = None) -> None:
         self.default_ttl = (
             default_ttl
             if default_ttl is not None
@@ -29,7 +28,7 @@ class RosterCacheManager:
         )
         self._lock = threading.Lock()
         # Memory storage: team_id -> (serialized_json_str, expire_monotonic_timestamp)
-        self._memory_cache: Dict[int, Tuple[str, float]] = {}
+        self._memory_cache: dict[int, tuple[str, float]] = {}
 
         # Redis setup with fast-fail circuit breaker
         self.redis_enabled = getattr(settings, "REDIS_ENABLED", False)
@@ -56,16 +55,14 @@ class RosterCacheManager:
             self.redis_client = client
             logger.info("Connected to Redis for L2 roster caching")
         except Exception as e:
-            logger.warning(
-                "Redis unavailable (%s); running purely on in-memory roster cache", e
-            )
+            logger.warning("Redis unavailable (%s); running purely on in-memory roster cache", e)
             self.redis_client = None
             self.redis_enabled = False
 
     def _cache_key(self, team_id: int) -> str:
         return f"roster:team:{team_id}"
 
-    def get_roster(self, team_id: int) -> Optional[str]:
+    def get_roster(self, team_id: int) -> str | None:
         """
         Retrieve serialized roster JSON string for a team.
         Returns None if cache miss or expired.
@@ -102,9 +99,7 @@ class RosterCacheManager:
 
         return None
 
-    def set_roster(
-        self, team_id: int, serialized_json: str, ttl: Optional[int] = None
-    ) -> None:
+    def set_roster(self, team_id: int, serialized_json: str, ttl: int | None = None) -> None:
         """
         Populate serialized roster JSON string in L1 and L2 caches.
         """

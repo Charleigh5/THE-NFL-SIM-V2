@@ -6,23 +6,23 @@ and routes. Used by the app factory to build the FastAPI application.
 """
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.exceptions import RequestValidationError
-from sqlalchemy.exc import IntegrityError, OperationalError
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import ValidationError
 from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from prometheus_fastapi_instrumentator import Instrumentator
+from slowapi.util import get_remote_address
+from sqlalchemy.exc import IntegrityError, OperationalError
 
 from app.core.config import settings
 from app.core.error_handlers import (
     database_exception_handler,
     database_operational_error_handler,
-    validation_exception_handler,
+    generic_exception_handler,
     pydantic_validation_handler,
-    generic_exception_handler
+    validation_exception_handler,
 )
 from app.middlewares.logging_middleware import LoggingMiddleware
 
@@ -69,15 +69,43 @@ def configure_exception_handlers(app: FastAPI) -> None:
 def configure_routes(app: FastAPI) -> None:
     """Register all API routers."""
     # Import routers here to avoid circular imports
-    from app.api.endpoints import (
-        system, simulation, data, websocket, teams, players, season,
-        genesis, feedback, draft, settings as settings_endpoint, traits,
-        news, agent_tasks, trades, scouts, medical, gameplans, abilities,
-        playbook, physics_api, training, live_visualization, broadcast, coaches,
-        society, playcalling, capology, cap_ledger, social_graph, orthopedic, hud_telemetry,
-        roster_sync, spatial_visualization
-    )
     from app.api import combine
+    from app.api.endpoints import (
+        abilities,
+        agent_tasks,
+        broadcast,
+        cap_ledger,
+        capology,
+        coaches,
+        data,
+        draft,
+        feedback,
+        gameplans,
+        genesis,
+        hud_telemetry,
+        live_visualization,
+        medical,
+        news,
+        orthopedic,
+        physics_api,
+        playbook,
+        playcalling,
+        players,
+        roster_sync,
+        scouts,
+        season,
+        simulation,
+        social_graph,
+        society,
+        spatial_visualization,
+        system,
+        teams,
+        trades,
+        training,
+        traits,
+        websocket,
+    )
+    from app.api.endpoints import settings as settings_endpoint
 
     # Core system routes
     app.include_router(system.router)
@@ -114,7 +142,6 @@ def configure_routes(app: FastAPI) -> None:
     app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
     app.include_router(feedback.errors_router)
 
-
     # RPG and traits
     app.include_router(traits.router, prefix="/api/traits", tags=["traits"])
     app.include_router(abilities.router, prefix="/api", tags=["RPG Abilities"])
@@ -148,5 +175,3 @@ def configure_routes(app: FastAPI) -> None:
 
     # Scouting Combine
     app.include_router(combine.router, prefix="/api")
-
-

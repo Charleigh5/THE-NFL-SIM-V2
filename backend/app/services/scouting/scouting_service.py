@@ -6,32 +6,26 @@ Service layer managing scouting operations with database persistence.
 Integrates SQLAlchemy > ScoutingEngine > SQLAlchemy.
 """
 
-from typing import Dict, List, Optional, Any
-from datetime import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy.future import select
 
-# DB Models
-from app.models.scout import Scout, ScoutingReport as DBReport, ScoutBias as DBScoutBias
 from app.models.player import Player
 
+# DB Models
+from app.models.scout import Scout
+from app.models.scout import ScoutingReport as DBReport
+from app.services.scouting.scout import ScoutBias as EngineBias
+
 # Logic Engine
-from app.services.scouting.scout import (
-    ScoutingEngine,
-    ScoutProfile,
-    ScoutingReport as EngineReport,
-    ScoutRegion,
-    ScoutSpecialty,
-    ScoutBias as EngineBias,
-    KnowledgeTier
-)
+from app.services.scouting.scout import ScoutingEngine, ScoutProfile, ScoutRegion, ScoutSpecialty
+from app.services.scouting.scout import ScoutingReport as EngineReport
+
 
 class ScoutingService:
     def __init__(self, db: Session):
         self.db = db
         self.engine = ScoutingEngine()
 
-    def get_team_scouts(self, team_id: int) -> List[Scout]:
+    def get_team_scouts(self, team_id: int) -> list[Scout]:
         """Get all scouts for a team from DB."""
         return self.db.query(Scout).filter(Scout.team_id == team_id).all()
 
@@ -43,10 +37,11 @@ class ScoutingService:
         We can use the existence of a ScoutingReport as an 'Assignment' or create a placeholder one.
         """
         # Check if report exists
-        report = self.db.query(DBReport).filter(
-            DBReport.scout_id == scout_id,
-            DBReport.player_id == prospect_id
-        ).first()
+        report = (
+            self.db.query(DBReport)
+            .filter(DBReport.scout_id == scout_id, DBReport.player_id == prospect_id)
+            .first()
+        )
 
         if report:
             # Already assigned, maybe increment 'visits' or 'focus' count if we track that
@@ -57,16 +52,16 @@ class ScoutingService:
         new_report = DBReport(
             scout_id=scout_id,
             player_id=prospect_id,
-            season_id=2025, # TODO: Get current season
+            season_id=2025,  # TODO: Get current season
             perceived_overall=0,
             confidence_score=0,
-            is_unlocked=True
+            is_unlocked=True,
         )
         self.db.add(new_report)
         self.db.commit()
         return True
 
-    def generate_report(self, team_id: int, prospect_id: int) -> Optional[EngineReport]:
+    def generate_report(self, team_id: int, prospect_id: int) -> EngineReport | None:
         """
         Generate report using the engine, based on DB state.
         """
@@ -80,7 +75,7 @@ class ScoutingService:
             "strength": player.strength,
             "agility": player.agility,
             "throw_power": player.throw_power,
-            "awareness": player.awareness
+            "awareness": player.awareness,
             # Add more...
         }
 
@@ -89,10 +84,11 @@ class ScoutingService:
         team_scouts = self.db.query(Scout).filter(Scout.team_id == team_id).all()
         scout_ids = [s.id for s in team_scouts]
 
-        db_report = self.db.query(DBReport).filter(
-            DBReport.player_id == prospect_id,
-            DBReport.scout_id.in_(scout_ids)
-        ).first() # Simplified: grab first report found
+        db_report = (
+            self.db.query(DBReport)
+            .filter(DBReport.player_id == prospect_id, DBReport.scout_id.in_(scout_ids))
+            .first()
+        )  # Simplified: grab first report found
 
         if not db_report:
             return None
@@ -104,10 +100,10 @@ class ScoutingService:
             scout_id=str(scout.id),
             name=scout.name,
             region=ScoutRegion(scout.region) if scout.region else ScoutRegion.NATIONAL,
-            specialty=ScoutSpecialty.GENERALIST, # Default if missing
+            specialty=ScoutSpecialty.GENERALIST,  # Default if missing
             efficiency=scout.efficiency,
             accuracy=scout.evaluation_ability,
-            bias=EngineBias(scout.bias) if scout.bias else EngineBias.NEUTRAL
+            bias=EngineBias(scout.bias) if scout.bias else EngineBias.NEUTRAL,
         )
 
         # 4. Run Engine (Assume 3 visits for now)
@@ -120,7 +116,7 @@ class ScoutingService:
 
         return engine_report
 
-    def get_formatted_report(self, team_id: int, prospect_id: int) -> Dict[str, str]:
+    def get_formatted_report(self, team_id: int, prospect_id: int) -> dict[str, str]:
         engine_report = self.generate_report(team_id, prospect_id)
         if not engine_report:
             return {"error": "No report"}

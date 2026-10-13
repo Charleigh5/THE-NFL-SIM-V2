@@ -1,12 +1,14 @@
 """
 Redis caching for chemistry calculations
 """
-import json
+
 import hashlib
-from typing import Optional, Dict
-import redis.asyncio as redis
-from app.core.config import settings
+import json
 import logging
+
+import redis.asyncio as redis
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ class ChemistryCache:
     """
 
     def __init__(self):
-        self.redis: Optional[redis.Redis] = None
+        self.redis: redis.Redis | None = None
         # Check if REDIS_ENABLED exists in settings, default to False if not
         self.enabled = getattr(settings, "REDIS_ENABLED", False)
         self.ttl = 604800  # 7 days in seconds
@@ -30,9 +32,7 @@ class ChemistryCache:
 
         try:
             self.redis = await redis.from_url(
-                settings.REDIS_URL,
-                encoding="utf-8",
-                decode_responses=True
+                settings.REDIS_URL, encoding="utf-8", decode_responses=True
             )
             await self.redis.ping()
             logger.info("✅ Connected to Redis for chemistry caching")
@@ -40,28 +40,18 @@ class ChemistryCache:
             logger.warning(f"Redis connection failed, disabling cache: {e}")
             self.enabled = False
 
-    def _make_key(
-        self,
-        team_id: int,
-        season_id: int,
-        week: int,
-        lineup_hash: str
-    ) -> str:
+    def _make_key(self, team_id: int, season_id: int, week: int, lineup_hash: str) -> str:
         """Generate cache key"""
         return f"chemistry:{team_id}:{season_id}:{week}:{lineup_hash}"
 
-    def _hash_lineup(self, lineup: Dict[str, int]) -> str:
+    def _hash_lineup(self, lineup: dict[str, int]) -> str:
         """Create deterministic hash of OL lineup"""
         lineup_str = ",".join(f"{k}:{v}" for k, v in sorted(lineup.items()))
         return hashlib.md5(lineup_str.encode()).hexdigest()[:12]
 
     async def get(
-        self,
-        team_id: int,
-        season_id: int,
-        week: int,
-        lineup: Dict[str, int]
-    ) -> Optional[Dict]:
+        self, team_id: int, season_id: int, week: int, lineup: dict[str, int]
+    ) -> dict | None:
         """
         Retrieve cached chemistry metadata.
 
@@ -87,12 +77,7 @@ class ChemistryCache:
             return None
 
     async def set(
-        self,
-        team_id: int,
-        season_id: int,
-        week: int,
-        lineup: Dict[str, int],
-        metadata: Dict
+        self, team_id: int, season_id: int, week: int, lineup: dict[str, int], metadata: dict
     ):
         """
         Store chemistry metadata in cache.
@@ -104,11 +89,7 @@ class ChemistryCache:
         key = self._make_key(team_id, season_id, week, lineup_hash)
 
         try:
-            await self.redis.setex(
-                key,
-                self.ttl,
-                json.dumps(metadata)
-            )
+            await self.redis.setex(key, self.ttl, json.dumps(metadata))
             logger.debug(f"💾 Chemistry cached: {key}")
         except Exception as e:
             logger.warning(f"Redis set error: {e}")
@@ -133,11 +114,7 @@ class ChemistryCache:
 
             # Scan and delete matching keys
             while True:
-                cursor, keys = await self.redis.scan(
-                    cursor,
-                    match=pattern,
-                    count=100
-                )
+                cursor, keys = await self.redis.scan(cursor, match=pattern, count=100)
 
                 if keys:
                     await self.redis.delete(*keys)

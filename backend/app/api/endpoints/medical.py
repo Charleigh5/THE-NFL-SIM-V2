@@ -1,18 +1,18 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, List, Optional, Any
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.services.medical_service import MedicalService
-from app.services.medical.orthopedic_triage_service import orthopedic_triage_service
 from app.schemas.deep_dive import (
     MedicalProtocolType,
     OrthopedicProtocolOption,
     TriageDecisionResult,
 )
+from app.services.medical.orthopedic_triage_service import orthopedic_triage_service
+from app.services.medical_service import MedicalService
 
 medical_router = APIRouter(prefix="/api/medical", tags=["medical"])
+
 
 class BodyHealthResponse(BaseModel):
     player_id: int
@@ -26,16 +26,19 @@ class BodyHealthResponse(BaseModel):
     general_wear: float
     is_injured: bool
 
+
 def get_medical_service(db: Session = Depends(get_db)) -> MedicalService:
     return MedicalService(db)
+
 
 @medical_router.get("/player/{player_id}", response_model=BodyHealthResponse)
 async def get_player_health(
     player_id: int,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
+
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -44,35 +47,44 @@ async def get_player_health(
         # Initialize if missing
         health = service.initialize_body_health(player_id)
     elif isinstance(player.body_health, list):
-        health = player.body_health[0] if len(player.body_health) > 0 else service.initialize_body_health(player_id)
+        health = (
+            player.body_health[0]
+            if len(player.body_health) > 0
+            else service.initialize_body_health(player_id)
+        )
     else:
         health = player.body_health
 
     return BodyHealthResponse(
         player_id=player_id,
         head_health=health.head_health,
-        neck_health=getattr(health, 'neck_health', 100.0) if getattr(health, 'neck_health', None) is not None else 100.0,
+        neck_health=getattr(health, "neck_health", 100.0)
+        if getattr(health, "neck_health", None) is not None
+        else 100.0,
         torso_health=health.torso_health,
         right_arm_health=health.right_arm_health,
         left_arm_health=health.left_arm_health,
         right_leg_health=health.right_leg_health,
         left_leg_health=health.left_leg_health,
         general_wear=health.general_wear,
-        is_injured=player.injury_status not in (InjuryStatus.ACTIVE, "ACTIVE")
+        is_injured=player.injury_status not in (InjuryStatus.ACTIVE, "ACTIVE"),
     )
+
 
 class ApplyWearRequest(BaseModel):
     player_id: int
     snaps: int
     position: str
 
+
 @medical_router.post("/apply-wear")
 async def apply_wear(
     request: ApplyWearRequest,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     from app.models.player import Player
+
     player = db.query(Player).filter(Player.id == request.player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
@@ -85,19 +97,20 @@ class TreatmentDecisionRequest(BaseModel):
     player_id: int
     treatment: str  # "REST", "SURGERY", "PLAY_THROUGH"
 
+
 class TreatmentDecisionResponse(BaseModel):
     player_id: int
     treatment: str
     recovery_weeks: int
-    surgery_risk: Optional[float] = None
-    performance_penalty: Optional[Dict[str, int]] = None
+    surgery_risk: float | None = None
+    performance_penalty: dict[str, int] | None = None
 
 
 @medical_router.post("/treatment", response_model=TreatmentDecisionResponse)
 async def apply_treatment(
     request: TreatmentDecisionRequest,
     service: MedicalService = Depends(get_medical_service),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Apply a treatment decision to an injured player.
@@ -107,8 +120,9 @@ async def apply_treatment(
     - SURGERY: Faster recovery but surgery risk (5-15% complication)
     - PLAY_THROUGH: Player continues to play with performance penalties
     """
-    from app.models.player import Player, InjuryStatus
     import random
+
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == request.player_id).first()
     if not player:
@@ -156,9 +170,7 @@ async def apply_treatment(
 
         # Toughness reduces penalties
         toughness_reduction = toughness / 200.0  # Max 50% reduction
-        performance_penalty = {
-            k: int(v * (1 - toughness_reduction)) for k, v in penalties.items()
-        }
+        performance_penalty = {k: int(v * (1 - toughness_reduction)) for k, v in penalties.items()}
 
         player.injury_status = InjuryStatus.QUESTIONABLE
 
@@ -173,7 +185,7 @@ async def apply_treatment(
         treatment=treatment,
         recovery_weeks=recovery_weeks,
         surgery_risk=surgery_risk,
-        performance_penalty=performance_penalty
+        performance_penalty=performance_penalty,
     )
 
 
@@ -182,24 +194,22 @@ class InjuredPlayerResponse(BaseModel):
     first_name: str
     last_name: str
     position: str
-    injury_type: Optional[str]
+    injury_type: str | None
     injury_status: str
     severity: int
     weeks_remaining: int
 
 
-@medical_router.get("/team/{team_id}/injuries", response_model=List[InjuredPlayerResponse])
-async def get_team_injuries(
-    team_id: int,
-    db: Session = Depends(get_db)
-):
+@medical_router.get("/team/{team_id}/injuries", response_model=list[InjuredPlayerResponse])
+async def get_team_injuries(team_id: int, db: Session = Depends(get_db)):
     """Get all injured players for a team."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
-    injured_players = db.query(Player).filter(
-        Player.team_id == team_id,
-        Player.injury_status != InjuryStatus.ACTIVE
-    ).all()
+    injured_players = (
+        db.query(Player)
+        .filter(Player.team_id == team_id, Player.injury_status != InjuryStatus.ACTIVE)
+        .all()
+    )
 
     return [
         InjuredPlayerResponse(
@@ -208,9 +218,11 @@ async def get_team_injuries(
             last_name=p.last_name,
             position=p.position,
             injury_type=p.injury_type,
-            injury_status=p.injury_status.value if hasattr(p.injury_status, 'value') else str(p.injury_status),
+            injury_status=p.injury_status.value
+            if hasattr(p.injury_status, "value")
+            else str(p.injury_status),
             severity=p.injury_severity or 0,
-            weeks_remaining=p.weeks_to_recovery or 0
+            weeks_remaining=p.weeks_to_recovery or 0,
         )
         for p in injured_players
     ]
@@ -226,12 +238,9 @@ class SurgeryRiskResponse(BaseModel):
 
 
 @medical_router.get("/surgery-risk/{player_id}", response_model=SurgeryRiskResponse)
-async def calculate_surgery_risk(
-    player_id: int,
-    db: Session = Depends(get_db)
-):
+async def calculate_surgery_risk(player_id: int, db: Session = Depends(get_db)):
     """Calculate surgery risk and potential recovery improvement for a player."""
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
@@ -260,7 +269,7 @@ async def calculate_surgery_risk(
         age_risk=age_risk,
         severity_risk=severity_risk,
         total_risk=total_risk,
-        estimated_recovery_reduction=estimated_reduction
+        estimated_recovery_reduction=estimated_reduction,
     )
 
 
@@ -268,29 +277,29 @@ async def calculate_surgery_risk(
 # 5-PATHWAY ORTHOPEDIC TRIAGE ENDPOINTS
 # =============================================================================
 
+
 class InjuryDiagnosis(BaseModel):
-    injury_type: Optional[str] = "Soft Tissue Strain"
+    injury_type: str | None = "Soft Tissue Strain"
     severity: int = 2
     weeks_to_recovery: int = 2
     body_zone: str = "right_leg"
     current_integrity: float = 60.0
 
+
 class TriageProtocolsResponse(BaseModel):
     player_id: int
     current_diagnosis: InjuryDiagnosis
-    protocols: List[OrthopedicProtocolOption]
+    protocols: list[OrthopedicProtocolOption]
+
 
 class TriageDecisionRequest(BaseModel):
     protocol: MedicalProtocolType
-    zone_key: Optional[str] = None
+    zone_key: str | None = None
 
 
 @medical_router.get("/players/{player_id}/triage/protocols", response_model=TriageProtocolsResponse)
 @medical_router.get("/triage/protocols/{player_id}", response_model=TriageProtocolsResponse)
-async def get_player_triage_protocols(
-    player_id: int,
-    db: Session = Depends(get_db)
-):
+async def get_player_triage_protocols(player_id: int, db: Session = Depends(get_db)):
     """
     Get all available 5-pathway orthopedic triage protocols for a player.
     Pathways: REST, PRP_THERAPY, ARTHROSCOPIC_SURGERY, RECONSTRUCTIVE_SURGERY, CORTISONE_STABILIZATION.
@@ -324,9 +333,15 @@ async def get_player_triage_protocols(
     else:
         current_integrity = 60.0
 
-    baseline_weeks = player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    baseline_weeks = (
+        player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    )
     player_age = player.age or 26
-    is_x_factor = getattr(player, "development_trait", "") in ["SUPERSTAR", "X_FACTOR", "SUPERSTAR_X_FACTOR"]
+    is_x_factor = getattr(player, "development_trait", "") in [
+        "SUPERSTAR",
+        "X_FACTOR",
+        "SUPERSTAR_X_FACTOR",
+    ]
 
     options = orthopedic_triage_service.get_protocol_options(
         zone_key=zone_key,
@@ -351,7 +366,7 @@ async def get_player_triage_protocols(
     )
 
 
-@medical_router.get("/triage/options", response_model=List[OrthopedicProtocolOption])
+@medical_router.get("/triage/options", response_model=list[OrthopedicProtocolOption])
 async def get_triage_protocol_options():
     """Get general clinical protocol options for orthopedic triage."""
     return orthopedic_triage_service.get_protocol_options(
@@ -364,22 +379,22 @@ async def get_triage_protocol_options():
 
 @medical_router.post("/players/{player_id}/triage/apply", response_model=TriageDecisionResult)
 async def apply_player_triage_protocol(
-    player_id: int,
-    request: TriageDecisionRequest,
-    db: Session = Depends(get_db)
+    player_id: int, request: TriageDecisionRequest, db: Session = Depends(get_db)
 ):
     """
     Apply a 5-pathway clinical triage protocol to an injured player.
     Executes recovery calculations, rolls for complication risk, and updates player recovery timetable.
     """
-    from app.models.player import Player, InjuryStatus
+    from app.models.player import InjuryStatus, Player
 
     player = db.query(Player).filter(Player.id == player_id).first()
     if not player:
         raise HTTPException(status_code=404, detail=f"Player {player_id} not found")
 
     zone_key = request.zone_key or "right_leg"
-    baseline_weeks = player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    baseline_weeks = (
+        player.weeks_to_recovery if player.weeks_to_recovery and player.weeks_to_recovery > 0 else 3
+    )
     player_age = player.age or 26
     toughness = player.injury_resistance or 80
 
@@ -405,6 +420,7 @@ async def apply_player_triage_protocol(
 
     # Persist final_integrity_forecast to body_health
     from app.models.medical import BodyPart, InjuryEvent
+
     bh = player.body_health
     if bh is None:
         bh = BodyPart(player_id=player.id)
@@ -427,7 +443,9 @@ async def apply_player_triage_protocol(
         "leftleg": "left_leg_health",
     }
     normalized_key = zone_key.lower().replace(" ", "").replace("-", "")
-    attr_name = zone_mapping.get(normalized_key, f"{zone_key}_health" if hasattr(bh, f"{zone_key}_health") else None)
+    attr_name = zone_mapping.get(
+        normalized_key, f"{zone_key}_health" if hasattr(bh, f"{zone_key}_health") else None
+    )
     if attr_name and hasattr(bh, attr_name):
         setattr(bh, attr_name, float(result.final_integrity_forecast))
 
@@ -441,7 +459,9 @@ async def apply_player_triage_protocol(
         severity=player.injury_severity or 2,
         duration_weeks=result.projected_recovery_weeks,
         is_career_ending=False,
-        treatment_chosen=request.protocol.value if hasattr(request.protocol, "value") else str(request.protocol),
+        treatment_chosen=request.protocol.value
+        if hasattr(request.protocol, "value")
+        else str(request.protocol),
     )
     db.add(injury_event)
 
@@ -452,7 +472,3 @@ async def apply_player_triage_protocol(
 
 
 router = medical_router
-
-
-
-

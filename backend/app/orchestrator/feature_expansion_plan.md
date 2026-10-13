@@ -35,13 +35,13 @@ This plan transforms the existing `simulation_orchestrator.py` into a deeply imm
 class PlayerDevelopmentSystem:
     def __init__(self):
         self.skill_trees = {
-            'QB': ['Accuracy', 'ArmStrength', 'DecisionMaking', 'Mobility'],
-            'WR': ['RouteRunning', 'Speed', 'Hands', 'Release'],
-            'RB': ['Vision', 'Power', 'Agility', 'PassBlocking']
+            "QB": ["Accuracy", "ArmStrength", "DecisionMaking", "Mobility"],
+            "WR": ["RouteRunning", "Speed", "Hands", "Release"],
+            "RB": ["Vision", "Power", "Agility", "PassBlocking"],
         }
         self.training_regimens = {
-            'Offseason': {'duration': 12, 'xp_multiplier': 1.5},
-            'InSeason': {'duration': 1, 'xp_multiplier': 0.8}
+            "Offseason": {"duration": 12, "xp_multiplier": 1.5},
+            "InSeason": {"duration": 1, "xp_multiplier": 0.8},
         }
 
     def apply_training(self, player_id: int, focus_area: str, intensity: float):
@@ -67,10 +67,10 @@ class ScoutingSystem:
         injury_risk = self._assess_injury_risk(attributes)
 
         return {
-            'attributes': attributes,
-            'projected_ceiling': projected_ceiling,
-            'injury_risk': injury_risk,
-            'comparables': self._find_comparables(attributes)
+            "attributes": attributes,
+            "projected_ceiling": projected_ceiling,
+            "injury_risk": injury_risk,
+            "comparables": self._find_comparables(attributes),
         }
 ```
 
@@ -82,9 +82,9 @@ class ScoutingSystem:
 class AdvancedPlayCaller:
     def __init__(self):
         self.tendency_models = {
-            'WestCoast': {'short_pass': 0.6, 'run': 0.3, 'play_action': 0.1},
-            'AirCoryell': {'deep_pass': 0.5, 'run': 0.2, 'screen': 0.3},
-            'PowerRun': {'run': 0.7, 'play_action': 0.2, 'deep_pass': 0.1}
+            "WestCoast": {"short_pass": 0.6, "run": 0.3, "play_action": 0.1},
+            "AirCoryell": {"deep_pass": 0.5, "run": 0.2, "screen": 0.3},
+            "PowerRun": {"run": 0.7, "play_action": 0.2, "deep_pass": 0.1},
         }
         self.situational_awareness = SituationalAwarenessEngine()
 
@@ -95,9 +95,7 @@ class AdvancedPlayCaller:
         opponent_weakness = self._identify_opponent_weakness(context.opponent_id)
 
         final_decision = self._weighted_decision(
-            base_tendency,
-            situational_adjustment,
-            opponent_weakness
+            base_tendency, situational_adjustment, opponent_weakness
         )
 
         return self._generate_play_command(final_decision)
@@ -124,7 +122,7 @@ class GamePlanEngine:
         # Set adaptive triggers
         self.adaptive_strategy.set_triggers(
             falling_behind=self._generate_catchup_strategy(),
-            building_lead=self._generate_clock_management_strategy()
+            building_lead=self._generate_clock_management_strategy(),
         )
 ```
 
@@ -136,13 +134,13 @@ class GamePlanEngine:
 class AdvancedWeatherSystem:
     def __init__(self):
         self.weather_patterns = {
-            'Snow': {'wind_impact': 0.3, 'visibility': 0.7, 'footing': 0.6},
-            'Rain': {'wind_impact': 0.1, 'visibility': 0.8, 'footing': 0.7},
-            'HeatWave': {'fatigue_multiplier': 1.3, 'hydration_factor': 0.8}
+            "Snow": {"wind_impact": 0.3, "visibility": 0.7, "footing": 0.6},
+            "Rain": {"wind_impact": 0.1, "visibility": 0.8, "footing": 0.7},
+            "HeatWave": {"fatigue_multiplier": 1.3, "hydration_factor": 0.8},
         }
         self.venue_effects = {
-            'Seattle': {'crowd_noise': 0.9, 'home_field_advantage': 0.15},
-            'GreenBay': {'cold_weather_tolerance': 0.8, 'snow_management': 0.9}
+            "Seattle": {"crowd_noise": 0.9, "home_field_advantage": 0.15},
+            "GreenBay": {"cold_weather_tolerance": 0.8, "snow_management": 0.9},
         }
 
     def apply_environmental_effects(self, play_context: PlayContext):
@@ -178,7 +176,7 @@ class CrowdMomentumSystem:
         self.crowd_energy = max(0.2, min(0.9, self.crowd_energy + crowd_reaction))
 
         # Apply momentum effects to next play probability
-        return {'momentum_factor': self.momentum_factor, 'crowd_energy': self.crowd_energy}
+        return {"momentum_factor": self.momentum_factor, "crowd_energy": self.crowd_energy}
 ```
 
 ### 4. Advanced Statistical Realism
@@ -202,9 +200,9 @@ class HistoricalContextEngine:
         narrative = self._generate_narrative_context(similar_games)
 
         return {
-            'win_probability': win_probability,
-            'historical_comparison': narrative,
-            'key_statistical_insights': self._extract_insights(similar_games)
+            "win_probability": win_probability,
+            "historical_comparison": narrative,
+            "key_statistical_insights": self._extract_insights(similar_games),
         }
 ```
 
@@ -214,9 +212,9 @@ class HistoricalContextEngine:
 class AdvancedAnalyticsSystem:
     def __init__(self):
         self.metric_calculators = {
-            'QBR': QBREngine(),
-            'WinProbability': WinProbabilityCalculator(),
-            'ExpectedPoints': ExpectedPointsModel()
+            "QBR": QBREngine(),
+            "WinProbability": WinProbabilityCalculator(),
+            "ExpectedPoints": ExpectedPointsModel(),
         }
 
     def calculate_advanced_metrics(self, game_state: GameState):
@@ -227,7 +225,7 @@ class AdvancedAnalyticsSystem:
             metrics[metric_name] = calculator.calculate(game_state)
 
         # Add contextual analysis
-        metrics['contextual_analysis'] = self._provide_contextual_analysis(metrics)
+        metrics["contextual_analysis"] = self._provide_contextual_analysis(metrics)
 
         return metrics
 ```
@@ -240,9 +238,9 @@ class AdvancedAnalyticsSystem:
 class FranchiseProgressionSystem:
     def __init__(self):
         self.season_arcs = {
-            'Rebuilding': {'player_development_focus': 0.8, 'win_now_focus': 0.2},
-            'Contending': {'player_development_focus': 0.5, 'win_now_focus': 0.5},
-            'Dynasty': {'player_development_focus': 0.3, 'win_now_focus': 0.7}
+            "Rebuilding": {"player_development_focus": 0.8, "win_now_focus": 0.2},
+            "Contending": {"player_development_focus": 0.5, "win_now_focus": 0.5},
+            "Dynasty": {"player_development_focus": 0.3, "win_now_focus": 0.7},
         }
         self.legacy_tracker = LegacyTracker()
 
@@ -261,10 +259,10 @@ class FranchiseProgressionSystem:
         storylines = self._generate_offseason_storylines(franchise_id, season_results)
 
         return {
-            'new_phase': new_phase,
-            'development_results': self._get_development_results(franchise_id),
-            'legacy_update': self.legacy_tracker.get_legacy_summary(franchise_id),
-            'offseason_storylines': storylines
+            "new_phase": new_phase,
+            "development_results": self._get_development_results(franchise_id),
+            "legacy_update": self.legacy_tracker.get_legacy_summary(franchise_id),
+            "offseason_storylines": storylines,
         }
 ```
 
@@ -275,9 +273,9 @@ class ContractManagementSystem:
     def __init__(self):
         self.salary_cap = 208_200_000  # 2023 NFL salary cap
         self.contract_structures = {
-            'Rookie': {'years': 4, 'guaranteed_percentage': 0.8},
-            'Veteran': {'years': 3, 'guaranteed_percentage': 0.5},
-            'Superstar': {'years': 5, 'guaranteed_percentage': 0.7}
+            "Rookie": {"years": 4, "guaranteed_percentage": 0.8},
+            "Veteran": {"years": 3, "guaranteed_percentage": 0.5},
+            "Superstar": {"years": 5, "guaranteed_percentage": 0.7},
         }
 
     def negotiate_contract(self, player_id: int, market_value: float, team_cap_space: float):
@@ -301,14 +299,14 @@ class ContractManagementSystem:
 class MediaNarrativeSystem:
     def __init__(self):
         self.story_arcs = {
-            'Underdog': StoryArcTemplate(),
-            'Dynasty': StoryArcTemplate(),
-            'Rebuilding': StoryArcTemplate()
+            "Underdog": StoryArcTemplate(),
+            "Dynasty": StoryArcTemplate(),
+            "Rebuilding": StoryArcTemplate(),
         }
         self.media_outlets = {
-            'ESPN': {'bias': 'neutral', 'depth': 'high'},
-            'LocalBeat': {'bias': 'hometeam', 'depth': 'medium'},
-            'SocialMedia': {'bias': 'polarized', 'depth': 'low'}
+            "ESPN": {"bias": "neutral", "depth": "high"},
+            "LocalBeat": {"bias": "hometeam", "depth": "medium"},
+            "SocialMedia": {"bias": "polarized", "depth": "low"},
         }
 
     def generate_media_coverage(self, game_results: GameResults, team_id: int):
@@ -326,10 +324,10 @@ class MediaNarrativeSystem:
         social_buzz = self._generate_social_media_reactions(game_results)
 
         return {
-            'main_narrative': narratives['ESPN'],
-            'local_coverage': narratives['LocalBeat'],
-            'social_buzz': social_buzz,
-            'story_arc_progress': self._update_story_arc_progress(team_id, game_results)
+            "main_narrative": narratives["ESPN"],
+            "local_coverage": narratives["LocalBeat"],
+            "social_buzz": social_buzz,
+            "story_arc_progress": self._update_story_arc_progress(team_id, game_results),
         }
 ```
 
@@ -340,9 +338,9 @@ class FanEngagementSystem:
     def __init__(self):
         self.fan_base_profiles = {}
         self.engagement_metrics = {
-            'attendance': 0.8,
-            'merchandise_sales': 0.6,
-            'social_media_growth': 0.5
+            "attendance": 0.8,
+            "merchandise_sales": 0.6,
+            "social_media_growth": 0.5,
         }
 
     def update_fan_engagement(self, team_id: int, game_results: GameResults):
@@ -359,9 +357,9 @@ class FanEngagementSystem:
         self._update_long_term_trends(team_id, engagement_impact)
 
         return {
-            'immediate_reactions': fan_reactions,
-            'engagement_metrics': self._get_current_metrics(team_id),
-            'trend_analysis': self._get_trend_analysis(team_id)
+            "immediate_reactions": fan_reactions,
+            "engagement_metrics": self._get_current_metrics(team_id),
+            "trend_analysis": self._get_trend_analysis(team_id),
         }
 ```
 
@@ -373,13 +371,13 @@ class FanEngagementSystem:
 class BroadcastVisualizationSystem:
     def __init__(self):
         self.camera_angles = {
-            'Standard': {'position': (0, 15, 30), 'fov': 45},
-            'Skycam': {'position': (0, 50, 0), 'fov': 60},
-            'Sideline': {'position': (-20, 5, 10), 'fov': 35}
+            "Standard": {"position": (0, 15, 30), "fov": 45},
+            "Skycam": {"position": (0, 50, 0), "fov": 60},
+            "Sideline": {"position": (-20, 5, 10), "fov": 35},
         }
         self.graphics_packages = {
-            'PrimeTime': {'style': 'cinematic', 'transitions': 'smooth'},
-            'Classic': {'style': 'traditional', 'transitions': 'standard'}
+            "PrimeTime": {"style": "cinematic", "transitions": "smooth"},
+            "Classic": {"style": "traditional", "transitions": "standard"},
         }
 
     def generate_broadcast_feed(self, play_data: PlayData, context: BroadcastContext):
@@ -394,10 +392,10 @@ class BroadcastVisualizationSystem:
 
         # Compile broadcast package
         return {
-            'camera_sequence': camera_sequence,
-            'visual_elements': visual_elements,
-            'commentary': commentary,
-            'graphics_package': self._select_graphics_package(context.broadcast_style)
+            "camera_sequence": camera_sequence,
+            "visual_elements": visual_elements,
+            "commentary": commentary,
+            "graphics_package": self._select_graphics_package(context.broadcast_style),
         }
 ```
 
@@ -407,10 +405,10 @@ class BroadcastVisualizationSystem:
 class InteractiveStorytellingEngine:
     def __init__(self):
         self.story_beats = {
-            'Pregame': StoryBeatTemplate(),
-            'Halftime': StoryBeatTemplate(),
-            'Postgame': StoryBeatTemplate(),
-            'Weekly': StoryBeatTemplate()
+            "Pregame": StoryBeatTemplate(),
+            "Halftime": StoryBeatTemplate(),
+            "Postgame": StoryBeatTemplate(),
+            "Weekly": StoryBeatTemplate(),
         }
         self.user_preferences = UserPreferenceTracker()
 
@@ -422,17 +420,15 @@ class InteractiveStorytellingEngine:
         story_beats = {}
         for beat_type, template in self.story_beats.items():
             if self._should_generate_beat(beat_type, game_state):
-                story_beats[beat_type] = template.generate(
-                    game_state, preferences
-                )
+                story_beats[beat_type] = template.generate(game_state, preferences)
 
         # Create interactive decision points
         decision_points = self._identify_decision_points(game_state)
 
         return {
-            'story_beats': story_beats,
-            'decision_points': decision_points,
-            'personalized_content': self._generate_personalized_content(game_state, preferences)
+            "story_beats": story_beats,
+            "decision_points": decision_points,
+            "personalized_content": self._generate_personalized_content(game_state, preferences),
         }
 ```
 

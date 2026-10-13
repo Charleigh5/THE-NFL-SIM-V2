@@ -8,15 +8,16 @@ FastAPI endpoints for:
 """
 
 from fastapi import APIRouter, HTTPException, status
+
+from app.engine.fourth_down_calculator import FourthDownCalculator
 from app.schemas.playcalling import (
-    PlayCallRequest,
-    PlayCallResponse,
     FourthDownRecommendationRequest,
     FourthDownRecommendationResponse,
+    PlayCallRequest,
+    PlayCallResponse,
     TimeoutRequest,
     TimeoutResponse,
 )
-from app.engine.fourth_down_calculator import FourthDownCalculator
 
 router = APIRouter(prefix="/api/playcalling", tags=["playcalling"])
 

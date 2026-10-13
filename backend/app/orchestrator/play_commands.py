@@ -5,19 +5,27 @@ Command pattern implementation for different play types
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel
+from typing import Any
+
 from app.schemas.play import PlayResult
-
-
-
 
 
 class PlayCommand(ABC):
     """Abstract base class for all play commands"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any], modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20, is_home_team: bool = True, possession: str = "home", start_yard_line: int = 20):
+    def __init__(
+        self,
+        offense_players: list[Any],
+        defense_players: list[Any],
+        modifiers: dict[str, Any] | None = None,
+        play_id: str | None = None,
+        distance: int = 10,
+        down: int = 1,
+        yard_line: int = 20,
+        is_home_team: bool = True,
+        possession: str = "home",
+        start_yard_line: int = 20,
+    ):
         self.offense = offense_players
         self.defense = defense_players
         self.modifiers = modifiers or {}
@@ -34,7 +42,7 @@ class PlayCommand(ABC):
         self.statistical_realism_score = 0.92
 
     @abstractmethod
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute the play and return result"""
         pass
 
@@ -47,92 +55,111 @@ class PlayCommand(ABC):
 class PassPlayCommand(PlayCommand):
     """Command for passing plays"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 target_receiver_id: Optional[int] = None, depth: str = "short", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20):
-        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
+    def __init__(
+        self,
+        offense_players: list[Any],
+        defense_players: list[Any],
+        target_receiver_id: int | None = None,
+        depth: str = "short",
+        modifiers: dict[str, Any] | None = None,
+        play_id: str | None = None,
+        distance: int = 10,
+        down: int = 1,
+        yard_line: int = 20,
+    ):
+        super().__init__(
+            offense_players, defense_players, modifiers, play_id, distance, down, yard_line
+        )
         self.target_receiver = target_receiver_id
         self.depth = depth  # short, mid, deep
 
     def get_play_type(self) -> str:
         return f"PASS_{self.depth.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """
         Execute a passing play
         This will be called by PlayResolver which integrates all engines
         """
         # Placeholder - actual logic in PlayResolver
-        return PlayResult(
-            yards_gained=0,
-            description=f"Pass play targeting {self.depth} route"
-        )
+        return PlayResult(yards_gained=0, description=f"Pass play targeting {self.depth} route")
 
 
 class RunPlayCommand(PlayCommand):
     """Command for running plays"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 run_direction: str = "middle", modifiers: Optional[Dict[str, Any]] = None, play_id: Optional[str] = None,
-                 distance: int = 10, down: int = 1, yard_line: int = 20):
-        super().__init__(offense_players, defense_players, modifiers, play_id, distance, down, yard_line)
+    def __init__(
+        self,
+        offense_players: list[Any],
+        defense_players: list[Any],
+        run_direction: str = "middle",
+        modifiers: dict[str, Any] | None = None,
+        play_id: str | None = None,
+        distance: int = 10,
+        down: int = 1,
+        yard_line: int = 20,
+    ):
+        super().__init__(
+            offense_players, defense_players, modifiers, play_id, distance, down, yard_line
+        )
         self.run_direction = run_direction  # left, middle, right
 
     def get_play_type(self) -> str:
         return f"RUN_{self.run_direction.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a running play"""
         # Placeholder - actual logic in PlayResolver
-        return PlayResult(
-            yards_gained=0,
-            description=f"Run to the {self.run_direction}"
-        )
+        return PlayResult(yards_gained=0, description=f"Run to the {self.run_direction}")
 
 
 class KickoffCommand(PlayCommand):
     """Command for kickoffs"""
 
-    def __init__(self, kicking_team: List[Any], receiving_team: List[Any]):
+    def __init__(self, kicking_team: list[Any], receiving_team: list[Any]):
         super().__init__(kicking_team, receiving_team)
 
     def get_play_type(self) -> str:
         return "KICKOFF"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a kickoff"""
         from app.core.random_utils import DeterministicRNG
+
         actual_rng = rng or DeterministicRNG("kickoff_default")
         base_yards = actual_rng.randint(15, 30)
 
         # Weather impact
         weather = context.get("weather", {})
         if weather:
-             wind_speed = weather.get("wind_speed", 0)
-             if wind_speed > 15:
-                 base_yards += actual_rng.randint(-5, 5)
+            wind_speed = weather.get("wind_speed", 0)
+            if wind_speed > 15:
+                base_yards += actual_rng.randint(-5, 5)
 
-        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1)
+        time_elapsed = round(
+            actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1
+        )
 
         return PlayResult(
             yards_gained=base_yards,
             time_elapsed=time_elapsed,
-            description=f"Kickoff returned to the {base_yards} yard line"
+            description=f"Kickoff returned to the {base_yards} yard line",
         )
 
 
 class PuntCommand(PlayCommand):
     """Command for punts"""
 
-    def __init__(self, punting_team: List[Any], receiving_team: List[Any]):
+    def __init__(self, punting_team: list[Any], receiving_team: list[Any]):
         super().__init__(punting_team, receiving_team)
 
     def get_play_type(self) -> str:
         return "PUNT"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a punt"""
         from app.core.random_utils import DeterministicRNG
+
         actual_rng = rng or DeterministicRNG("punt_default")
         punt_distance = actual_rng.randint(35, 55)
         return_yards = actual_rng.randint(0, 15)
@@ -140,40 +167,43 @@ class PuntCommand(PlayCommand):
         # Weather impact
         weather = context.get("weather", {})
         if weather:
-             wind_speed = weather.get("wind_speed", 0)
-             temp = weather.get("temperature", 75)
+            wind_speed = weather.get("wind_speed", 0)
+            temp = weather.get("temperature", 75)
 
-             # Wind affects punt distance
-             if wind_speed > 10:
-                 punt_distance -= int((wind_speed - 10) * 0.5)
+            # Wind affects punt distance
+            if wind_speed > 10:
+                punt_distance -= int((wind_speed - 10) * 0.5)
 
-             # Cold air reduces distance
-             if temp < 40:
-                 punt_distance -= int((40 - temp) * 0.2)
+            # Cold air reduces distance
+            if temp < 40:
+                punt_distance -= int((40 - temp) * 0.2)
 
         net_yards = -(punt_distance - return_yards)
-        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1)
+        time_elapsed = round(
+            actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 6.0, 1
+        )
 
         return PlayResult(
             yards_gained=net_yards,
             time_elapsed=time_elapsed,
-            description=f"Punt {punt_distance} yards, returned {return_yards} yards"
+            description=f"Punt {punt_distance} yards, returned {return_yards} yards",
         )
 
 
 class FieldGoalCommand(PlayCommand):
     """Command for field goal attempts"""
 
-    def __init__(self, kicking_team: List[Any], defense: List[Any], distance: int):
+    def __init__(self, kicking_team: list[Any], defense: list[Any], distance: int):
         super().__init__(kicking_team, defense)
         self.distance = distance
 
     def get_play_type(self) -> str:
         return "FIELD_GOAL"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute a field goal attempt"""
         from app.core.random_utils import DeterministicRNG
+
         actual_rng = rng or DeterministicRNG(f"fg_default_{self.distance}")
 
         # Simple success calculation based on distance
@@ -183,40 +213,43 @@ class FieldGoalCommand(PlayCommand):
         weather = context.get("weather", {})
         weather_desc = ""
         if weather:
-             wind_speed = weather.get("wind_speed", 0)
-             temp = weather.get("temperature", 75)
-             precip = weather.get("precipitation_type", "None")
+            wind_speed = weather.get("wind_speed", 0)
+            temp = weather.get("temperature", 75)
+            precip = weather.get("precipitation_type", "None")
 
-             # Wind penalty
-             if wind_speed > 10:
-                 penalty = (wind_speed - 10) * 1.5
-                 base_success -= penalty
-                 if penalty > 10: weather_desc = " battling strong winds"
+            # Wind penalty
+            if wind_speed > 10:
+                penalty = (wind_speed - 10) * 1.5
+                base_success -= penalty
+                if penalty > 10:
+                    weather_desc = " battling strong winds"
 
-             # Cold penalty
-             if temp < 32:
-                 base_success -= 5
+            # Cold penalty
+            if temp < 32:
+                base_success -= 5
 
-             # Precip penalty
-             if precip in ["Rain", "Snow"]:
-                 base_success -= 5
+            # Precip penalty
+            if precip in ["Rain", "Snow"]:
+                base_success -= 5
 
         is_good = actual_rng.randint(0, 100) < base_success
-        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1)
+        time_elapsed = round(
+            actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1
+        )
 
         if is_good:
             return PlayResult(
                 yards_gained=0,
                 time_elapsed=time_elapsed,
                 description=f"{self.distance}-yard field goal GOOD!{weather_desc}",
-                is_highlight_worthy=self.distance > 50
+                is_highlight_worthy=self.distance > 50,
             )
         else:
             return PlayResult(
                 yards_gained=0,
                 time_elapsed=time_elapsed,
                 is_turnover=True,
-                description=f"{self.distance}-yard field goal NO GOOD{weather_desc}"
+                description=f"{self.distance}-yard field goal NO GOOD{weather_desc}",
             )
 
 
@@ -226,33 +259,37 @@ class ExtraPointCommand(PlayCommand):
     def get_play_type(self) -> str:
         return "EXTRA_POINT"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """Execute an extra point attempt"""
         from app.core.random_utils import DeterministicRNG
+
         actual_rng = rng or DeterministicRNG("pat_default")
         is_good = actual_rng.randint(0, 100) < 95  # 95% success rate
-        time_elapsed = round(actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1)
+        time_elapsed = round(
+            actual_rng.uniform(5.0, 8.0) if hasattr(actual_rng, "uniform") else 5.0, 1
+        )
 
         return PlayResult(
             yards_gained=0,
             time_elapsed=time_elapsed,
-            description="Extra point " + ("GOOD!" if is_good else "NO GOOD")
+            description="Extra point " + ("GOOD!" if is_good else "NO GOOD"),
         )
 
 
 class TwoPointConversionCommand(PlayCommand):
     """Command for 2-point conversion attempts"""
 
-    def __init__(self, offense_players: List[Any], defense_players: List[Any],
-                 play_type: str = "pass"):
+    def __init__(
+        self, offense_players: list[Any], defense_players: list[Any], play_type: str = "pass"
+    ):
         super().__init__(offense_players, defense_players)
         self.play_type = play_type  # pass or run
-        self.executed_command: Optional[PlayCommand] = None
+        self.executed_command: PlayCommand | None = None
 
     def get_play_type(self) -> str:
         return f"TWO_POINT_{self.play_type.upper()}"
 
-    def execute(self, context: Dict[str, Any], rng: Any = None) -> PlayResult:
+    def execute(self, context: dict[str, Any], rng: Any = None) -> PlayResult:
         """
         Execute a 2-point conversion attempt.
 
@@ -272,5 +309,5 @@ class TwoPointConversionCommand(PlayCommand):
         return PlayResult(
             yards_gained=0,
             is_touchdown=False,
-            description="2-point conversion failed (No Play Selected)"
+            description="2-point conversion failed (No Play Selected)",
         )

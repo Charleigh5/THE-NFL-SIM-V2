@@ -10,31 +10,35 @@ Phase 10: Hyper-Immersion
 - Statistical callouts
 """
 
-from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Any
-from enum import Enum
 import random
+from dataclasses import dataclass
+from enum import StrEnum
+
 from pydantic import BaseModel
-from app.services.ai.ai_provider import get_ai_registry, AIProviderType
+
+from app.services.ai.ai_provider import AIProviderType, get_ai_registry
 
 
 class BroadcastCommentaryAI(BaseModel):
     """Structured AI-generated commentary payload."""
+
     call: str
     energy_level: int = 8
-    color_analysis: Optional[str] = None
+    color_analysis: str | None = None
 
 
-class BroadcastStyle(str, Enum):
+class BroadcastStyle(StrEnum):
     """Broadcasting style/network flavor."""
-    ESPN = "ESPN"           # High energy, modern stats
-    CBS = "CBS"             # Traditional, analytical
-    FOX = "FOX"             # Dramatic, entertainment
+
+    ESPN = "ESPN"  # High energy, modern stats
+    CBS = "CBS"  # Traditional, analytical
+    FOX = "FOX"  # Dramatic, entertainment
     NFL_NETWORK = "NFL_NETWORK"  # Insider knowledge, technical
 
 
-class MomentType(str, Enum):
+class MomentType(StrEnum):
     """Types of significant moments."""
+
     TOUCHDOWN = "TOUCHDOWN"
     TURNOVER = "TURNOVER"
     SACK = "SACK"
@@ -49,6 +53,7 @@ class MomentType(str, Enum):
 @dataclass
 class GameContext:
     """Current game situation for commentary context."""
+
     home_team: str
     away_team: str
     home_score: int
@@ -61,7 +66,7 @@ class GameContext:
     possession_team: str
     is_redzone: bool = False
     is_two_minute: bool = False
-    momentum_team: Optional[str] = None
+    momentum_team: str | None = None
 
     @property
     def score_diff(self) -> int:
@@ -195,6 +200,7 @@ SITUATIONAL_TEMPLATES = {
 # BROADCASTING SERVICE
 # =============================================================================
 
+
 class BroadcastingService:
     """
     Generates dynamic play-by-play commentary with context awareness.
@@ -205,10 +211,7 @@ class BroadcastingService:
         self.rng = random.Random(seed)
 
     def generate_play_commentary(
-        self,
-        play_type: str,
-        play_data: Dict,
-        context: GameContext
+        self, play_type: str, play_data: dict, context: GameContext
     ) -> str:
         """
         Generate commentary for a specific play.
@@ -248,10 +251,7 @@ class BroadcastingService:
         return commentary
 
     async def generate_commentary_ai(
-        self,
-        play_type: str,
-        play_data: Dict,
-        context: GameContext
+        self, play_type: str, play_data: dict, context: GameContext
     ) -> BroadcastCommentaryAI:
         """
         Generate contextual broadcast commentary using AI provider with fallback.
@@ -267,7 +267,10 @@ class BroadcastingService:
             f"Down: {context.down} & {context.yards_to_go}, Score: {context.home_team} {context.home_score} - {context.away_team} {context.away_score}."
         )
 
-        if provider.provider_type != AIProviderType.DETERMINISTIC_FALLBACK and provider.is_available:
+        if (
+            provider.provider_type != AIProviderType.DETERMINISTIC_FALLBACK
+            and provider.is_available
+        ):
             result = await provider.generate_structured(prompt, BroadcastCommentaryAI)
             if result:
                 return result
@@ -277,7 +280,7 @@ class BroadcastingService:
         return BroadcastCommentaryAI(
             call=fallback_call,
             energy_level=9 if play_type in ["TOUCHDOWN", "TURNOVER", "SACK"] else 6,
-            color_analysis=self._get_situational_addon(play_type, context) or None
+            color_analysis=self._get_situational_addon(play_type, context) or None,
         )
 
     def _get_situational_addon(self, play_type: str, context: GameContext) -> str:
@@ -335,7 +338,7 @@ class BroadcastingService:
         }
         return endings.get(self.style, endings[BroadcastStyle.ESPN])
 
-    def generate_big_moment(self, moment_type: MomentType, data: Dict, context: GameContext) -> str:
+    def generate_big_moment(self, moment_type: MomentType, data: dict, context: GameContext) -> str:
         """Generate commentary for significant moments."""
         if moment_type == MomentType.TOUCHDOWN:
             return self.generate_play_commentary("TOUCHDOWN", data, context)
@@ -350,7 +353,7 @@ class BroadcastingService:
             templates = SITUATIONAL_TEMPLATES["CLUTCH_DRIVE"]
             return self.rng.choice(templates).format(qb=qb, team=context.possession_team)
         else:
-            return f"A significant moment in this contest!"
+            return "A significant moment in this contest!"
 
     def generate_stat_callout(self, player: str, stat: str, value: int) -> str:
         """Generate statistical highlight commentary."""

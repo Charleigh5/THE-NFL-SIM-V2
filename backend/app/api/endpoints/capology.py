@@ -5,19 +5,18 @@ Exposes high-speed simulation endpoints for NFL CBA multi-year cap modeling,
 void years proration, accelerated dead money, and compensatory pick forecasting.
 """
 
-from typing import List
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi import APIRouter, HTTPException, status
 from starlette.concurrency import run_in_threadpool
 
 from app.core.database import SessionLocal
-from app.models.team import Team
 from app.schemas.capology import (
-    MultiYearContractProposal,
     MultiYearCapProjectionResponse,
+    MultiYearContractProposal,
     YearlyCapLiability,
 )
-from app.services.capology_engine import CapologyEngine, BASE_LEAGUE_YEAR
+from app.services.capology_engine import BASE_LEAGUE_YEAR, CapologyEngine
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +38,7 @@ async def simulate_contract_proposal(proposal: MultiYearContractProposal):
     - Appendix V Compensatory Free Agent (CFA) draft pick cancellation alerts.
     Execution latency: <40ms.
     """
+
     def _execute():
         with SessionLocal() as sync_db:
             engine = CapologyEngine(sync_db)
@@ -49,13 +49,14 @@ async def simulate_contract_proposal(proposal: MultiYearContractProposal):
 
 @router.get(
     "/teams/{team_id}/five-year-outlook",
-    response_model=List[YearlyCapLiability],
+    response_model=list[YearlyCapLiability],
     summary="Fetch franchise baseline 5-year cap outlook",
 )
 async def get_team_five_year_outlook(team_id: int):
     """
     Retrieve baseline 5-year salary cap outlook for a team without any pending proposals.
     """
+
     def _execute():
         with SessionLocal() as sync_db:
             if team_id <= 0:
@@ -66,7 +67,7 @@ async def get_team_five_year_outlook(team_id: int):
             engine = CapologyEngine(sync_db)
             committed_schedule = engine.get_team_payroll_commitments(team_id)
 
-            schedule: List[YearlyCapLiability] = []
+            schedule: list[YearlyCapLiability] = []
             for i in range(5):
                 cal_year = BASE_LEAGUE_YEAR + i
                 projected_cap = engine.get_projected_cap(i)

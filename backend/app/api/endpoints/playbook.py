@@ -6,14 +6,13 @@ Phase 3: B-059, B-060
 Provides endpoints for querying and updating player playbook familiarity.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from typing import Dict, Optional
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.player import Player
-from app.services.playbook.familiarity import FamiliarityManager, PlaybookFamiliarity
+from app.services.playbook.familiarity import FamiliarityManager
 
 router = APIRouter(prefix="/playbook", tags=["Playbook"])
 
@@ -25,8 +24,10 @@ _familiarity_manager = FamiliarityManager()
 # SCHEMAS
 # =============================================================================
 
+
 class PlayKnowledge(BaseModel):
     """Schema for individual play knowledge."""
+
     familiarity: float = Field(..., ge=0.0, le=1.0)
     tier: str
     times_executed: int
@@ -35,13 +36,14 @@ class PlayKnowledge(BaseModel):
 
 class FamiliarityResponse(BaseModel):
     """B-059: Response for GET /playbook/familiarity/{player_id}."""
+
     player_id: int
     experience_years: int
-    current_scheme: Optional[str]
+    current_scheme: str | None
     total_plays_known: int
     mastered_plays_count: int
     average_familiarity: float
-    plays: Dict[str, PlayKnowledge]
+    plays: dict[str, PlayKnowledge]
 
     class Config:
         from_attributes = True
@@ -49,6 +51,7 @@ class FamiliarityResponse(BaseModel):
 
 class LearnPlayRequest(BaseModel):
     """B-060: Request for POST /playbook/learn."""
+
     player_id: int
     play_id: str
     success: bool = True
@@ -57,6 +60,7 @@ class LearnPlayRequest(BaseModel):
 
 class LearnPlayResponse(BaseModel):
     """B-060: Response for POST /playbook/learn."""
+
     player_id: int
     play_id: str
     previous_familiarity: float
@@ -66,6 +70,7 @@ class LearnPlayResponse(BaseModel):
 
 class SchemeChangeRequest(BaseModel):
     """Request for POST /playbook/scheme-change."""
+
     player_id: int
     new_scheme: str
 
@@ -74,11 +79,9 @@ class SchemeChangeRequest(BaseModel):
 # ENDPOINTS
 # =============================================================================
 
+
 @router.get("/familiarity/{player_id}", response_model=FamiliarityResponse)
-async def get_player_familiarity(
-    player_id: int,
-    db: Session = Depends(get_db)
-):
+async def get_player_familiarity(player_id: int, db: Session = Depends(get_db)):
     """
     B-059: Get a player's playbook familiarity data.
 
@@ -103,18 +106,12 @@ async def get_player_familiarity(
         total_plays_known=data["total_plays_known"],
         mastered_plays_count=data["mastered_plays_count"],
         average_familiarity=data["average_familiarity"],
-        plays={
-            play_id: PlayKnowledge(**play_data)
-            for play_id, play_data in data["plays"].items()
-        }
+        plays={play_id: PlayKnowledge(**play_data) for play_id, play_data in data["plays"].items()},
     )
 
 
 @router.post("/learn", response_model=LearnPlayResponse)
-async def learn_play(
-    request: LearnPlayRequest,
-    db: Session = Depends(get_db)
-):
+async def learn_play(request: LearnPlayRequest, db: Session = Depends(get_db)):
     """
     B-060: Trigger learning for a specific play.
 
@@ -134,9 +131,7 @@ async def learn_play(
 
     # Apply learning
     new_fam = familiarity.learn_play(
-        request.play_id,
-        success=request.success,
-        practice_bonus=request.practice_bonus
+        request.play_id, success=request.success, practice_bonus=request.practice_bonus
     )
 
     # Get current tier
@@ -148,15 +143,12 @@ async def learn_play(
         play_id=request.play_id,
         previous_familiarity=prev_fam,
         new_familiarity=new_fam,
-        tier=tier
+        tier=tier,
     )
 
 
 @router.post("/scheme-change")
-async def apply_scheme_change(
-    request: SchemeChangeRequest,
-    db: Session = Depends(get_db)
-):
+async def apply_scheme_change(request: SchemeChangeRequest, db: Session = Depends(get_db)):
     """
     Apply scheme change penalty to a player.
 
@@ -187,15 +179,12 @@ async def apply_scheme_change(
         "new_scheme": request.new_scheme,
         "previous_average_familiarity": prev_avg,
         "new_average_familiarity": new_avg,
-        "penalty_applied": prev_scheme != request.new_scheme
+        "penalty_applied": prev_scheme != request.new_scheme,
     }
 
 
 @router.get("/team/{team_id}/familiarity")
-async def get_team_familiarity(
-    team_id: int,
-    db: Session = Depends(get_db)
-):
+async def get_team_familiarity(team_id: int, db: Session = Depends(get_db)):
     """
     Get average familiarity for all players on a team.
 
@@ -210,14 +199,16 @@ async def get_team_familiarity(
     for player in players:
         experience = getattr(player, "years_pro", 0)
         familiarity = _familiarity_manager.get_or_create(player.id, experience)
-        player_familiarity.append({
-            "player_id": player.id,
-            "name": f"{player.first_name} {player.last_name}",
-            "position": player.position,
-            "average_familiarity": familiarity.get_average_familiarity(),
-            "mastered_plays": len(familiarity.get_mastered_plays()),
-            "total_plays_known": familiarity.get_total_plays_known()
-        })
+        player_familiarity.append(
+            {
+                "player_id": player.id,
+                "name": f"{player.first_name} {player.last_name}",
+                "position": player.position,
+                "average_familiarity": familiarity.get_average_familiarity(),
+                "mastered_plays": len(familiarity.get_mastered_plays()),
+                "total_plays_known": familiarity.get_total_plays_known(),
+            }
+        )
 
     # Sort by familiarity
     player_familiarity.sort(key=lambda x: x["average_familiarity"], reverse=True)
@@ -228,5 +219,5 @@ async def get_team_familiarity(
         "team_id": team_id,
         "total_players": len(player_familiarity),
         "team_average_familiarity": total_avg,
-        "players": player_familiarity
+        "players": player_familiarity,
     }

@@ -4,19 +4,19 @@ Commercial production-grade feed for NFL rosters, official depth charts, and inj
 """
 
 import logging
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+
 import httpx
 
+from app.services.nflverse_service import map_position, map_team_abbr
 from app.services.roster_sync.base import (
     BaseRosterProvider,
+    DepthOrderDTO,
+    InjuryDTO,
+    ProviderStatusDTO,
     RosterPlayerDTO,
     TransactionDTO,
-    InjuryDTO,
-    DepthOrderDTO,
-    ProviderStatusDTO,
 )
-from app.services.nflverse_service import map_team_abbr, map_position
 
 logger = logging.getLogger(__name__)
 
@@ -28,17 +28,19 @@ class SportsDataIOProvider(BaseRosterProvider):
 
     BASE_URL = "https://api.sportsdata.io"
 
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: str | None = None):
         self.api_key = api_key
-        self._last_sync: Optional[str] = None
+        self._last_sync: str | None = None
 
     @property
     def provider_id(self) -> str:
         return "sportsdataio"
 
-    def _get_headers(self) -> Dict[str, str]:
+    def _get_headers(self) -> dict[str, str]:
         if not self.api_key:
-            raise ValueError("SportsDataIO API key is missing. Configure SPORTSDATAIO_API_KEY in .env.")
+            raise ValueError(
+                "SportsDataIO API key is missing. Configure SPORTSDATAIO_API_KEY in .env."
+            )
         return {
             "Ocp-Apim-Subscription-Key": self.api_key,
             "Accept": "application/json",
@@ -52,17 +54,22 @@ class SportsDataIOProvider(BaseRosterProvider):
             masked_key=masked,
             description="Enterprise curated NFL feeds featuring granular 1-4 depth charts, injuries, and transactions.",
             last_sync_timestamp=self._last_sync,
-            available_features=["Full Roster Feed", "1-4 Depth Charts", "Official Injury Wire", "24/7 Curation"],
+            available_features=[
+                "Full Roster Feed",
+                "1-4 Depth Charts",
+                "Official Injury Wire",
+                "24/7 Curation",
+            ],
         )
 
-    def fetch_rosters(self) -> List[RosterPlayerDTO]:
+    def fetch_rosters(self) -> list[RosterPlayerDTO]:
         """Fetch all active NFL players."""
         if not self.api_key:
             logger.warning("SportsDataIO API key missing, returning empty list.")
             return []
 
         headers = self._get_headers()
-        players: List[RosterPlayerDTO] = []
+        players: list[RosterPlayerDTO] = []
 
         try:
             with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=20.0) as client:
@@ -76,7 +83,8 @@ class SportsDataIOProvider(BaseRosterProvider):
 
                         players.append(
                             RosterPlayerDTO(
-                                gsis_id=item.get("UsaTodayPlayerID") or str(item.get("PlayerID", "")),
+                                gsis_id=item.get("UsaTodayPlayerID")
+                                or str(item.get("PlayerID", "")),
                                 first_name=item.get("FirstName", "Unknown"),
                                 last_name=item.get("LastName", "Player"),
                                 position=pos,
@@ -95,17 +103,17 @@ class SportsDataIOProvider(BaseRosterProvider):
         self._last_sync = datetime.utcnow().isoformat()
         return players
 
-    def fetch_transactions(self) -> List[TransactionDTO]:
+    def fetch_transactions(self) -> list[TransactionDTO]:
         """SportsDataIO transactions / roster movements."""
         return []
 
-    def fetch_injuries(self) -> List[InjuryDTO]:
+    def fetch_injuries(self) -> list[InjuryDTO]:
         """Fetch current injury statuses."""
         if not self.api_key:
             return []
 
         headers = self._get_headers()
-        injuries: List[InjuryDTO] = []
+        injuries: list[InjuryDTO] = []
 
         try:
             with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=15.0) as client:
@@ -118,7 +126,8 @@ class SportsDataIOProvider(BaseRosterProvider):
                                 player_name=item.get("Name", "Unknown"),
                                 team_abbr=map_team_abbr(item.get("Team", "")),
                                 position=item.get("Position"),
-                                status=item.get("DeclaredInjuryStatus") or item.get("InjuryStatus", "Questionable"),
+                                status=item.get("DeclaredInjuryStatus")
+                                or item.get("InjuryStatus", "Questionable"),
                                 injury_type=item.get("BodyPart", "Undisclosed"),
                             )
                         )
@@ -127,13 +136,13 @@ class SportsDataIOProvider(BaseRosterProvider):
 
         return injuries
 
-    def fetch_depth_charts(self) -> List[DepthOrderDTO]:
+    def fetch_depth_charts(self) -> list[DepthOrderDTO]:
         """Fetch official team depth charts."""
         if not self.api_key:
             return []
 
         headers = self._get_headers()
-        depth_list: List[DepthOrderDTO] = []
+        depth_list: list[DepthOrderDTO] = []
 
         try:
             with httpx.Client(base_url=self.BASE_URL, headers=headers, timeout=15.0) as client:

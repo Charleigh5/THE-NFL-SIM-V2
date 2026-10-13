@@ -8,26 +8,28 @@ Endpoints for:
 """
 
 import logging
-from typing import Optional, List
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.engine.society.locker_room_agent import LockerRoomAgentService
 from app.models.player import Player
 from app.schemas.society import (
-    PsychologicalDNA,
     LockerRoomEventResponse,
     LockerRoomResolutionRequest,
     LockerRoomResolutionResponse,
+    PsychologicalDNA,
 )
-from app.engine.society.locker_room_agent import LockerRoomAgentService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/society", tags=["Society Engine"])
 
 
-@router.post("/teams/{team_id}/locker-room/evaluate", response_model=Optional[LockerRoomEventResponse])
+@router.post(
+    "/teams/{team_id}/locker-room/evaluate", response_model=LockerRoomEventResponse | None
+)
 def evaluate_team_locker_room(
     team_id: int,
     week: int = Query(default=1, ge=1, le=22),

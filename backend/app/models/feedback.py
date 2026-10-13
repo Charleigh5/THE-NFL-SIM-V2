@@ -1,6 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+
 from app.models.base import Base
+
 
 class UserFeedback(Base):
     __tablename__ = "user_feedback"
@@ -13,4 +16,6 @@ class UserFeedback(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"<UserFeedback(id={self.id}, context={self.context_type}, helpful={self.is_helpful})>"
+        return (
+            f"<UserFeedback(id={self.id}, context={self.context_type}, helpful={self.is_helpful})>"
+        )

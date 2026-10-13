@@ -7,19 +7,17 @@ void years dead money acceleration, and Appendix V compensatory pick impacts.
 Execution budget: <40ms.
 """
 
-from typing import List, Optional, Tuple, Dict, Any
-import math
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
 
-from app.models.team import Team
 from app.models.player import Player
 from app.models.player_contract import PlayerContract
+from app.models.team import Team
 from app.schemas.capology import (
-    MultiYearContractProposal,
-    YearlyCapLiability,
     CompPickImpact,
     MultiYearCapProjectionResponse,
+    MultiYearContractProposal,
+    YearlyCapLiability,
 )
 
 # Baseline 2026 NFL Hard Cap with 5.5% annual compound inflation
@@ -34,9 +32,9 @@ ROSTER_DECAY_RATES = [1.00, 0.78, 0.54, 0.32, 0.16]
 CFA_TIERS = [
     (20_000_000, 3),  # Round 3 pick
     (14_000_000, 4),  # Round 4 pick
-    (9_000_000, 5),   # Round 5 pick
-    (5_000_000, 6),   # Round 6 pick
-    (3_000_000, 7),   # Round 7 pick
+    (9_000_000, 5),  # Round 5 pick
+    (5_000_000, 6),  # Round 6 pick
+    (3_000_000, 7),  # Round 7 pick
 ]
 CFA_MINIMUM_QUALIFYING_APY = 3_000_000
 
@@ -46,7 +44,7 @@ class CapologyEngine:
     Engine executing deterministic multi-year cap modeling adhering to NFL CBA Article 13 & Appendix V.
     """
 
-    def __init__(self, db: Optional[Session] = None):
+    def __init__(self, db: Session | None = None):
         self.db = db
 
     @staticmethod
@@ -57,7 +55,7 @@ class CapologyEngine:
         multiplier = (1.0 + ANNUAL_CAP_INFLATION_RATE) ** year_index
         return int(BASE_SALARY_CAP * multiplier)
 
-    def get_team_payroll_commitments(self, team_id: int) -> List[int]:
+    def get_team_payroll_commitments(self, team_id: int) -> list[int]:
         """
         Determine baseline committed payroll for the next 5 league years for a team.
         Derives from active player contracts in the database with graceful fallback.
@@ -104,7 +102,9 @@ class CapologyEngine:
         """
         Evaluate NFL CBA Appendix V Compensatory Free Agent draft pick ramifications.
         """
-        total_real_money = (proposal.annual_base_salary * proposal.real_years) + proposal.signing_bonus_total
+        total_real_money = (
+            proposal.annual_base_salary * proposal.real_years
+        ) + proposal.signing_bonus_total
         apy = total_real_money // max(1, proposal.real_years)
 
         if apy < CFA_MINIMUM_QUALIFYING_APY:
@@ -113,7 +113,7 @@ class CapologyEngine:
                 cfa_tier=None,
                 cancelled_pick_round=None,
                 projected_comp_picks_lost=[],
-                impact_summary="Contract does not meet the $3.0M APY threshold. No compensatory draft picks will be cancelled."
+                impact_summary="Contract does not meet the $3.0M APY threshold. No compensatory draft picks will be cancelled.",
             )
 
         # Determine CFA tier
@@ -154,12 +154,14 @@ class CapologyEngine:
 
         # CBA Article 13 Section 5(c): Max 5-year proration ceiling
         proration_years = min(real_years + void_years, 5)
-        annual_proration = proposal.signing_bonus_total // proration_years if proration_years > 0 else 0
+        annual_proration = (
+            proposal.signing_bonus_total // proration_years if proration_years > 0 else 0
+        )
 
         # Existing payroll commitments for 5 projected years
         committed_schedule = self.get_team_payroll_commitments(proposal.team_id)
 
-        yearly_schedule: List[YearlyCapLiability] = []
+        yearly_schedule: list[YearlyCapLiability] = []
         accelerated_dead_money_void_year = 0
 
         # Unamortized bonus remaining when real contract years expire
@@ -191,7 +193,12 @@ class CapologyEngine:
                 accelerated_dead_money_void_year = dead_money
 
             # 3. Post-Void Second Year (if Post-June 1st designation was elected)
-            elif i == (real_years + 1) and void_years > 0 and proposal.post_june_1_designation and remaining_unamortized_years > 1:
+            elif (
+                i == (real_years + 1)
+                and void_years > 0
+                and proposal.post_june_1_designation
+                and remaining_unamortized_years > 1
+            ):
                 dead_money = total_accelerated_bonus - annual_proration
 
             net_cap_space = projected_cap - (committed_sal + proposed_cap_hit + dead_money)
@@ -211,7 +218,9 @@ class CapologyEngine:
             )
 
         # Overall contract figures
-        total_contract_value = (proposal.annual_base_salary * real_years) + proposal.signing_bonus_total
+        total_contract_value = (
+            proposal.annual_base_salary * real_years
+        ) + proposal.signing_bonus_total
         aav = total_contract_value // real_years
 
         # Compensatory pick evaluation

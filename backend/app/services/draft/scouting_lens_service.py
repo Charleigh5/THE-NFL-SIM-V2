@@ -7,18 +7,18 @@ and dynamic in-draft trade-up urgency algorithms.
 
 import math
 import random
-from typing import Dict, List, Optional
+
 from app.schemas.deep_dive import (
-    ScoutBiasLens,
-    ProspectIntelligence,
     DraftTradeUrgency,
+    ProspectIntelligence,
+    ScoutBiasLens,
 )
 
 
 class ScoutingLensService:
     """Service evaluating prospects through distinct front-office scouting lenses."""
 
-    def __init__(self, seed: Optional[int] = 42):
+    def __init__(self, seed: int | None = 42):
         if seed is not None:
             random.seed(seed)
 
@@ -49,16 +49,16 @@ class ScoutingLensService:
         speed_delta = (gps_speed_max - 20.0) * 2.5
         burst_delta = (burst_score - 75.0) * 0.15
         analytics_mod = speed_delta + burst_delta
-        analytics_ovr = max(55, min(99, int(round(true_ovr + analytics_mod + random.gauss(0, 1.0)))))
+        analytics_ovr = max(
+            55, min(99, int(round(true_ovr + analytics_mod + random.gauss(0, 1.0))))
+        )
 
         # 4. Regional Scout: High variance, visceral subjective conviction
         regional_bias = random.gauss(0, 4.0)
         regional_ovr = max(55, min(99, int(round(true_ovr + regional_bias))))
 
         # Boom/Bust factor calculation
-        variance_index = (
-            abs(film_ovr - analytics_ovr) + abs(regional_ovr - consensus_ovr)
-        ) / 20.0
+        variance_index = (abs(film_ovr - analytics_ovr) + abs(regional_ovr - consensus_ovr)) / 20.0
         boom_bust_factor = max(0.05, min(0.95, round(variance_index, 2)))
 
         # Medical grade based on random risk model
@@ -113,7 +113,7 @@ class ScoutingLensService:
         self,
         team_id: str,
         target_position: str,
-        roster_need_score: float, # 0.0 to 1.0
+        roster_need_score: float,  # 0.0 to 1.0
         remaining_in_tier: int,
         current_pick: int,
     ) -> DraftTradeUrgency:
@@ -126,7 +126,7 @@ class ScoutingLensService:
 
         # Scarcity factor
         scarcity = 1.0 / max(1, remaining_in_tier)
-        base_urgency = (roster_need_score ** 1.5) * scarcity * pos_mult
+        base_urgency = (roster_need_score**1.5) * scarcity * pos_mult
         urgency_index = max(0.0, min(1.0, round(base_urgency, 3)))
 
         # Willingness to overpay above Jimmy Johnson chart value

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any
 
-from app.core.logging_config import get_logger, ErrorCategory, log_error
+from app.core.logging_config import ErrorCategory, get_logger, log_error
 from app.models.player import Player
 
 logger = get_logger(__name__)
+
 
 class SackCalculator:
     """
@@ -30,7 +31,7 @@ class SackCalculator:
     def calculate_sack_probability(
         qb: Player,
         pressure_level: float,  # 0.0 to 1.0 representing pass rush win rate
-        ol_chemistry_bonus: int  # 0 to 5
+        ol_chemistry_bonus: int,  # 0 to 5
     ) -> float:
         """
         Calculate the refined probability of a sack occurring given the pressure.
@@ -44,6 +45,7 @@ class SackCalculator:
         - <40 pocket presence → ~9% sack rate (poor)
         """
         try:
+
             def _safe_val(v: Any, default: float = 50.0) -> float:
                 if hasattr(v, "chemistry_level"):
                     return float(getattr(v, "chemistry_level", 0.0) * 5.0)
@@ -54,7 +56,7 @@ class SackCalculator:
             # 1. Pocket Presence Effect (0.0 to 0.45 reduction)
             # Higher presence = lower sack chance
             # NFL: Elite QBs (90+ rating) have ~30-40% fewer sacks
-            pocket_presence = _safe_val(getattr(qb, 'pocket_presence', 50), 50.0)
+            pocket_presence = _safe_val(getattr(qb, "pocket_presence", 50), 50.0)
             presence_factor = pocket_presence * 0.005  # 90 rating = 45% reduction
 
             # 2. Chemistry Effect (0.0 to 0.1 reduction)
@@ -65,9 +67,9 @@ class SackCalculator:
             # 3. Mobility Factor (Escape)
             # Combine speed/agility/acceleration with safe defaults
             # NFL: Mobile QBs like Jackson, Allen have lower sack rates
-            qb_speed = _safe_val(getattr(qb, 'speed', 50), 50.0)
-            qb_accel = _safe_val(getattr(qb, 'acceleration', 50), 50.0)
-            qb_agility = _safe_val(getattr(qb, 'agility', 50), 50.0)
+            qb_speed = _safe_val(getattr(qb, "speed", 50), 50.0)
+            qb_accel = _safe_val(getattr(qb, "acceleration", 50), 50.0)
+            qb_agility = _safe_val(getattr(qb, "agility", 50), 50.0)
             mobility_score = (qb_speed + qb_accel + qb_agility) / 300.0  # 0.0-1.0
             escape_factor = mobility_score * 0.25  # Up to 25% reduction for elite mobility
 
@@ -76,7 +78,9 @@ class SackCalculator:
             safe_pressure = _safe_val(pressure_level, 0.5)
             initial_prob = SackCalculator.BASE_SACK_PROBABILITY * (1 + safe_pressure)
 
-            final_prob = initial_prob * (1 - presence_factor) * (1 - chemistry_factor) * (1 - escape_factor)
+            final_prob = (
+                initial_prob * (1 - presence_factor) * (1 - chemistry_factor) * (1 - escape_factor)
+            )
 
             # Clamp to reasonable bounds
             final_prob = max(0.02, min(0.25, final_prob))
@@ -89,17 +93,22 @@ class SackCalculator:
                 presence_mod=presence_factor,
                 chem_mod=chemistry_factor,
                 escape_mod=escape_factor,
-                result=final_prob
+                result=final_prob,
             )
 
             return final_prob
 
         except Exception as e:
-            log_error(logger, ErrorCategory.SACK_CALC_ERROR, "Failed to calculate sack probability", exc_info=e)
-            return SackCalculator.BASE_SACK_PROBABILITY # Fallback
+            log_error(
+                logger,
+                ErrorCategory.SACK_CALC_ERROR,
+                "Failed to calculate sack probability",
+                exc_info=e,
+            )
+            return SackCalculator.BASE_SACK_PROBABILITY  # Fallback
 
     @staticmethod
-    def resolve_sack_outcome(qb: Player, sack_prob: float, rng: Optional[Any] = None) -> str:
+    def resolve_sack_outcome(qb: Player, sack_prob: float, rng: Any | None = None) -> str:
         """
         Determine if a play results in a Sack, Throw Away, or Scramble based on probability.
         Uses deterministic seeded RNG.
@@ -108,6 +117,7 @@ class SackCalculator:
             roll = rng.random()
         else:
             from app.core.random_utils import DeterministicRNG
+
             roll = DeterministicRNG(f"sack_{getattr(qb, 'id', 0)}_{sack_prob}").random()
 
         if roll < sack_prob:
