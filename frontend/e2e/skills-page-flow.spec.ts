@@ -98,7 +98,7 @@ test.describe("Skills Page Flow", () => {
 
     // The Canvas element should be rendered (part of @react-three/fiber)
     // Canvas renders as a <canvas> element
-    await expect(page.locator("canvas")).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("canvas").first()).toBeVisible({ timeout: 15000 });
   });
 
   test("should display control hints in footer", async ({ page }) => {
@@ -120,10 +120,10 @@ test.describe("Skills Page Flow", () => {
     await page.goto("/players/1/skills");
 
     // Wait for canvas to be ready
-    await expect(page.locator("canvas")).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("canvas").first()).toBeVisible({ timeout: 15000 });
 
     // Click on the canvas (center area where nodes would be)
-    const canvas = page.locator("canvas");
+    const canvas = page.locator("canvas").first();
     const box = await canvas.boundingBox();
     if (box) {
       // Click center of canvas
