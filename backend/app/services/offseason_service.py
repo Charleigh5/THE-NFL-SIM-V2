@@ -240,7 +240,7 @@ class OffseasonService:
     def simulate_player_progression(self, season_id: int) -> list[PlayerProgressionResult]:
         """Simulate player progression and regression based on age and experience."""
         # Query only active roster players
-        stmt = select(Player).where(Player.team_id is not None)
+        stmt = select(Player).where(Player.team_id.is_not(None))
         players = list(self.db.execute(stmt).scalars().all())
         progression_results = []
 
@@ -369,7 +369,7 @@ class OffseasonService:
 
     def process_contract_expirations(self) -> None:
         """Decrement contract years and release expired players."""
-        stmt = select(Player).where(Player.team_id is not None)
+        stmt = select(Player).where(Player.team_id.is_not(None))
         players = list(self.db.execute(stmt).scalars().all())
         for player in players:
             player.contract_years -= 1
@@ -501,7 +501,7 @@ class OffseasonService:
         """Get top available rookie prospects."""
         stmt = (
             select(Player)
-            .where(Player.is_rookie, Player.team_id is None)
+            .where(Player.is_rookie, Player.team_id.is_(None))
             .order_by(Player.overall_rating.desc())
             .limit(limit)
         )
@@ -521,7 +521,7 @@ class OffseasonService:
         """Get the next available draft pick."""
         stmt = (
             select(DraftPick)
-            .where(DraftPick.season_id == season_id, DraftPick.player_id is None)
+            .where(DraftPick.season_id == season_id, DraftPick.player_id.is_(None))
             .order_by(DraftPick.pick_number)
         )
         return self.db.execute(stmt).scalars().first()
@@ -568,7 +568,7 @@ class OffseasonService:
         # Optimization: Just get top 20 to choose from
         stmt = (
             select(Player)
-            .where(Player.is_rookie, Player.team_id is None)
+            .where(Player.is_rookie, Player.team_id.is_(None))
             .order_by(Player.overall_rating.desc())
             .limit(20)
         )
@@ -656,7 +656,7 @@ class OffseasonService:
 
         # Get available FAs
         stmt_fa = (
-            select(Player).where(Player.team_id is None).order_by(Player.overall_rating.desc())
+            select(Player).where(Player.team_id.is_(None)).order_by(Player.overall_rating.desc())
         )
         free_agents = list(self.db.execute(stmt_fa).scalars().all())
         fa_pool = list(free_agents)
@@ -687,7 +687,7 @@ class OffseasonService:
         if not season:
             return []
 
-        stmt = select(Player).where(not Player.is_retired, Player.team_id is not None)
+        stmt = select(Player).where(~Player.is_retired, Player.team_id.is_not(None))
         players = list(self.db.execute(stmt).scalars().all())
 
         retired_names = []

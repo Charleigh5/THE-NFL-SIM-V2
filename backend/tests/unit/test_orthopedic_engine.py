@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from app.models.player import Player, InjuryStatus, Position
 from app.models.player_injury import PlayerInjury
+from app.models.team import Team
 from app.models.medical import BodyPart
 from app.services.orthopedic_engine import OrthopedicEngine, orthopedic_engine
 from app.schemas.orthopedic_rtp import (
@@ -31,6 +32,12 @@ from tests.conftest import create_player
 @pytest.fixture
 def injured_test_player(db_session: Session) -> Player:
     """Create a persistent test player with an active orthopedic injury."""
+    team = db_session.get(Team, 1)
+    if not team:
+        team = Team(id=1, name="49ers", city="San Francisco", abbreviation="SF", conference="NFC", division="West")
+        db_session.add(team)
+        db_session.flush()
+
     player = create_player(
         id=None,
         first_name="Christian",

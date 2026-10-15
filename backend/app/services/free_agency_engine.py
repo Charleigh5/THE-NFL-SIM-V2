@@ -199,7 +199,7 @@ class FreeAgencyEngine:
         # 1. Fetch available free agents (unassigned players, not rookies, not retired)
         stmt_fa = (
             select(Player)
-            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .where(Player.team_id.is_(None), ~Player.is_rookie, ~Player.is_retired)
             .order_by(Player.overall_rating.desc())
         )
         free_agents = list(self.db.execute(stmt_fa).scalars().all())
@@ -219,7 +219,7 @@ class FreeAgencyEngine:
             t.id: max(1_000_000.0, t.salary_cap_space or 40_000_000.0) for t in teams
         }
 
-        stmt_rosters = select(Player).where(Player.team_id is not None)
+        stmt_rosters = select(Player).where(Player.team_id.is_not(None))
         active_players = list(self.db.execute(stmt_rosters).scalars().all())
         for p in active_players:
             if p.team_id in team_roster_counts:
@@ -348,7 +348,7 @@ class FreeAgencyEngine:
         """Ensure all teams have at least 48 players by signing low-cost depth."""
         stmt_remain = (
             select(Player)
-            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .where(Player.team_id.is_(None), ~Player.is_rookie, ~Player.is_retired)
             .order_by(Player.overall_rating.desc())
         )
         remain_fas = list(self.db.execute(stmt_remain).scalars().all())
@@ -425,7 +425,7 @@ class FreeAgencyEngine:
         """
         stmt = (
             select(Player)
-            .where(Player.team_id is None, not Player.is_rookie, not Player.is_retired)
+            .where(Player.team_id.is_(None), ~Player.is_rookie, ~Player.is_retired)
             .order_by(Player.overall_rating.desc())
             .limit(limit)
         )

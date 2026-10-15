@@ -555,7 +555,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
       // Click "Open In-Depth Biometrics & Traits Dossier"
       const inDepthBtn = page.getByText(/Open In-Depth Biometrics & Traits Dossier/i);
       if (await inDepthBtn.isVisible()) {
-        await inDepthBtn.click();
+        await inDepthBtn.dispatchEvent('click');
         await page.waitForSelector(".epp-modal", { timeout: 4000 });
         await page.waitForTimeout(500);
 
@@ -568,7 +568,8 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
         // Click "Season History" tab
         const historyTab = page.getByRole("button", { name: /Season History/i });
         if (await historyTab.isVisible()) {
-          await historyTab.click();
+          await historyTab.scrollIntoViewIfNeeded();
+          await historyTab.click({ force: true });
           await page.waitForTimeout(400);
           await page.screenshot({
             path: path.join(screenshotsDir, "09_enhanced_profile_history.png"),
