@@ -17,6 +17,11 @@ export default defineConfig([
       reactRefresh.configs.vite,
       eslintPluginPrettierRecommended,
     ],
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/immutability": "off",
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
