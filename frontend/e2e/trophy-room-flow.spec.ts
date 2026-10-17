@@ -48,14 +48,14 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should load trophy room page", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Verify page loaded with title
     await expect(page.locator("text=Hall of Champions")).toBeVisible();
   });
 
   test("should display franchise name in subtitle", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Check for trophy case subtitle
     const subtitle = page.locator(".trophy-room__subtitle");
@@ -63,7 +63,7 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should have 3D canvas container", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Verify canvas container exists (for 3D rendering)
     const canvasContainer = page.locator(".canvas-container");
@@ -71,7 +71,7 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should have UI overlay layer", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Verify UI layer exists
     const uiLayer = page.locator(".ui-layer");
@@ -79,7 +79,7 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should display dynasty championship history", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Look for championship list or timeline
     const championshipSection = page
@@ -94,7 +94,7 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should show championship details on click", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Look for trophy or championship item to click
     const trophyItem = page
@@ -131,7 +131,7 @@ test.describe("Trophy Room Flow", () => {
       });
     });
 
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Should still load page
     await expect(page.locator("text=Hall of Champions")).toBeVisible();
@@ -144,7 +144,7 @@ test.describe("Trophy Room Flow", () => {
   });
 
   test("should display team branding in trophy room", async ({ page }) => {
-    await page.goto("/trophy-room");
+    await page.goto("/empire/trophy-room");
 
     // Check for team colors or logo
     const teamBranding = page
