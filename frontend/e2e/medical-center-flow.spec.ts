@@ -112,7 +112,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should load the medical center page", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Verify header
     await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
@@ -122,7 +122,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should display body status diagram area", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Verify the diagram target/placeholder exists
     await expect(
@@ -133,7 +133,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should display injury list when available", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Wait for potential injury list
     await page.waitForTimeout(500);
@@ -149,7 +149,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should show injury severity indicators", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     await page.waitForTimeout(500);
 
@@ -171,7 +171,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should filter players by injury status", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Look for filter buttons/tabs
     const filterBtn = page
@@ -187,7 +187,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should display recovery timeline", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Look for timeline or expected return dates
     const timeline = page
@@ -205,7 +205,7 @@ test.describe("Medical Center Flow", () => {
   });
 
   test("should show health summary statistics", async ({ page }) => {
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Verify health stats display
     await expect(page.locator("text=/92%/").first()).toBeVisible();
@@ -228,7 +228,7 @@ test.describe("Medical Center Flow", () => {
       await route.fulfill({ json: [] });
     });
 
-    await page.goto("/medical-center");
+    await page.goto("/empire/medical-center");
 
     // Should either show empty state or just the header
     await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
