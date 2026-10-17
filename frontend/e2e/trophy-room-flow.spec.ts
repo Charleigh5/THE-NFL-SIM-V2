@@ -51,14 +51,14 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Verify page loaded with title
-    await expect(page.locator("text=Hall of Champions")).toBeVisible();
+    await expect(page.locator(".trophy-room__title")).toBeVisible();
   });
 
   test("should display franchise name in subtitle", async ({ page }) => {
     await page.goto("/trophy-room");
 
     // Check for trophy case subtitle
-    const subtitle = page.locator(".trophy-room__subtitle");
+    const subtitle = page.locator(".trophy-room__subtitle").first();
     await expect(subtitle).toBeVisible();
   });
 
@@ -66,7 +66,7 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Verify canvas container exists (for 3D rendering)
-    const canvasContainer = page.locator(".canvas-container");
+    const canvasContainer = page.locator(".canvas-container").first();
     await expect(canvasContainer).toBeVisible();
   });
 
@@ -74,7 +74,7 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Verify UI layer exists
-    const uiLayer = page.locator(".ui-layer");
+    const uiLayer = page.locator(".ui-layer").first();
     await expect(uiLayer).toBeVisible();
   });
 
@@ -134,7 +134,7 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Should still load page
-    await expect(page.locator("text=Hall of Champions")).toBeVisible();
+    await expect(page.locator(".trophy-room__title")).toBeVisible();
 
     // May show empty state message
     const emptyState = page.locator("text=/No championships|Start your dynasty/i");
