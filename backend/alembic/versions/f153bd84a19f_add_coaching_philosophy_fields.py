@@ -36,7 +36,7 @@ def upgrade() -> None:
                type_=sa.Enum('LEGEND', 'ELITE', 'VETERAN', 'DEVELOPING', 'ROOKIE', name='coachtier'),
                nullable=False,
                existing_server_default=sa.text("'DEVELOPING'"),
-               postgresql_using="tier::coachtier")
+               postgresql_using="tier::text::coachtier")
 
     with op.batch_alter_table('game', schema=None) as batch_op:
         batch_op.alter_column('game_type',
@@ -44,7 +44,7 @@ def upgrade() -> None:
                type_=sa.Enum('REGULAR', 'THANKSGIVING', 'PRIMETIME', 'PLAYOFF', 'SUPER_BOWL', name='gametype'),
                nullable=False,
                existing_server_default=sa.text("'REGULAR'"),
-               postgresql_using="game_type::gametype")
+               postgresql_using="game_type::text::gametype")
 
     # ### end Alembic commands ###
 
