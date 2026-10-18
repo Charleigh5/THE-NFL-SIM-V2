@@ -213,6 +213,7 @@ export function VirtualizedTable<T>({
   }, [data, searchQuery, searchFilter, sortColumnId, sortDirection, columns]);
 
   // Virtualizer
+
   const rowVirtualizer = useVirtualizer({
     count: processedData.length,
     getScrollElement: () => parentRef.current,

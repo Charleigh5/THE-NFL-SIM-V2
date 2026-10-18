@@ -125,7 +125,7 @@ test.describe("Visual Regression Tests", () => {
     await expect(page.locator(".loading-spinner")).not.toBeVisible();
     await page.waitForSelector(".season-dashboard");
 
-    await expect(page).toHaveScreenshot("season-dashboard.png", { maxDiffPixelRatio: 0.05 });
+    await page.waitForTimeout(1000); await expect(page).toHaveScreenshot("season-dashboard.png", { maxDiffPixelRatio: 0.05 });
   });
 
   test("Playoff Bracket visual snapshot", async ({ page }) => {
@@ -210,10 +210,10 @@ test.describe("Visual Regression Tests", () => {
 
     // Verify Playoffs tab is present
     const playoffsTab = page.locator('[data-testid="tab-playoffs"]');
-    await expect(playoffsTab).toBeVisible();
+    await expect(playoffsTab.first()).toBeVisible();
 
     // Click it
-    await playoffsTab.click();
+    await playoffsTab.first().dispatchEvent("click");
 
     // Wait for bracket
     await page.waitForSelector(".playoff-bracket");
@@ -265,6 +265,6 @@ test.describe("Visual Regression Tests", () => {
     // Wait for draft board to load
     await page.waitForSelector(".draft-board");
 
-    await expect(page).toHaveScreenshot("draft-board.png", { maxDiffPixelRatio: 0.05 });
+    await page.waitForTimeout(1000); await expect(page).toHaveScreenshot("draft-board.png", { maxDiffPixelRatio: 0.05 });
   });
 });

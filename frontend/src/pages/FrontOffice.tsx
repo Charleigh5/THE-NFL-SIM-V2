@@ -833,7 +833,7 @@ export const FrontOffice: React.FC = () => {
             </div>
 
             <div
-              data-testid="roster-grid"
+              data-testid="roster-section"
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 max-h-[720px] overflow-y-auto pr-2 custom-scrollbar"
             >
               {filteredAndSortedRoster.map((player) => (
@@ -1002,7 +1002,7 @@ export const FrontOffice: React.FC = () => {
               </div>
 
               <div
-                data-testid="roster-grid"
+                data-testid="roster-section"
                 className="space-y-2.5 max-h-[640px] overflow-y-auto pr-1 custom-scrollbar"
               >
                 {filteredAndSortedRoster.map((player) => (
@@ -1075,7 +1075,7 @@ export const FrontOffice: React.FC = () => {
               </span>
             </div>
 
-            <div data-testid="roster-grid" className="flex-1">
+            <div data-testid="roster-section" className="flex-1">
               <VirtualizedTable
                 data={filteredAndSortedRoster}
                 columns={tableColumns}
