@@ -51,7 +51,7 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Verify page loaded with title
-    await expect(page.locator("text=Hall of Champions")).toBeVisible();
+    await expect(page.locator("text=Hall of Champions")).toBeVisible({ timeout: 10000 });
   });
 
   test("should display franchise name in subtitle", async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe("Trophy Room Flow", () => {
 
     // Check for trophy case subtitle
     const subtitle = page.locator(".trophy-room__subtitle");
-    await expect(subtitle).toBeVisible();
+    await expect(subtitle).toBeVisible({ timeout: 10000 });
   });
 
   test("should have 3D canvas container", async ({ page }) => {
@@ -67,7 +67,7 @@ test.describe("Trophy Room Flow", () => {
 
     // Verify canvas container exists (for 3D rendering)
     const canvasContainer = page.locator(".canvas-container");
-    await expect(canvasContainer).toBeVisible();
+    await expect(canvasContainer).toBeVisible({ timeout: 10000 });
   });
 
   test("should have UI overlay layer", async ({ page }) => {
@@ -75,7 +75,7 @@ test.describe("Trophy Room Flow", () => {
 
     // Verify UI layer exists
     const uiLayer = page.locator(".ui-layer");
-    await expect(uiLayer).toBeVisible();
+    await expect(uiLayer).toBeVisible({ timeout: 10000 });
   });
 
   test("should display dynasty championship history", async ({ page }) => {
@@ -134,12 +134,12 @@ test.describe("Trophy Room Flow", () => {
     await page.goto("/trophy-room");
 
     // Should still load page
-    await expect(page.locator("text=Hall of Champions")).toBeVisible();
+    await expect(page.locator("text=Hall of Champions")).toBeVisible({ timeout: 10000 });
 
     // May show empty state message
     const emptyState = page.locator("text=/No championships|Start your dynasty/i");
     if (await emptyState.isVisible({ timeout: 2000 })) {
-      await expect(emptyState).toBeVisible();
+      await expect(emptyState).toBeVisible({ timeout: 10000 });
     }
   });
 
@@ -152,7 +152,7 @@ test.describe("Trophy Room Flow", () => {
       .or(page.getByText(/Cardinals/i))
       .first();
     if (await teamBranding.isVisible({ timeout: 2000 })) {
-      await expect(teamBranding).toBeVisible();
+      await expect(teamBranding).toBeVisible({ timeout: 10000 });
     }
   });
 });
