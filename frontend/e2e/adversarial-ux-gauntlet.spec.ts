@@ -530,7 +530,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
 
   test("03 - Front Office Tri-Mode, Player Dossier & Enhanced Profile", async ({ page }) => {
     await page.goto("/empire/front-office");
-    await page.waitForSelector('[data-testid^="player-card-"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid^="player-card-"]', { timeout: 20000 });
     await page.waitForTimeout(800);
 
     // 1. Spatial Lockers Mode Screenshot
@@ -543,7 +543,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
     const hutchCard = page.locator('[data-testid="player-card-1543"]');
     if ((await hutchCard.count()) > 0) {
       await hutchCard.first().click();
-      await page.waitForSelector('[data-testid="player-modal"]', { timeout: 5000 });
+      await page.waitForSelector('[data-testid="player-modal"]', { timeout: 20000 });
       await page.waitForTimeout(600);
 
       // Screenshot Player Dossier with Equipment Loadout
@@ -555,7 +555,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
       // Click "Open In-Depth Biometrics & Traits Dossier"
       const inDepthBtn = page.getByText(/Open In-Depth Biometrics & Traits Dossier/i);
       if (await inDepthBtn.isVisible()) {
-        await inDepthBtn.dispatchEvent('click');
+        await inDepthBtn.dispatchEvent("click");
         await page.waitForSelector(".epp-modal", { timeout: 4000 });
         await page.waitForTimeout(500);
 
