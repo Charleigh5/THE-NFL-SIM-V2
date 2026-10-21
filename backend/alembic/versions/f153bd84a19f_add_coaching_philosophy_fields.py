@@ -33,6 +33,7 @@ def upgrade() -> None:
         batch_op.alter_column('tier',
                existing_type=sa.VARCHAR(length=20),
                type_=sa.Enum('LEGEND', 'ELITE', 'VETERAN', 'DEVELOPING', 'ROOKIE', name='coachtier'),
+               postgresql_using='tier::coachtier',
                nullable=False,
                existing_server_default=sa.text("'DEVELOPING'"))
 
@@ -40,6 +41,7 @@ def upgrade() -> None:
         batch_op.alter_column('game_type',
                existing_type=sa.VARCHAR(length=20),
                type_=sa.Enum('REGULAR', 'THANKSGIVING', 'PRIMETIME', 'PLAYOFF', 'SUPER_BOWL', name='gametype'),
+               postgresql_using='game_type::gametype',
                nullable=False,
                existing_server_default=sa.text("'REGULAR'"))
 
