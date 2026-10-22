@@ -30,7 +30,7 @@ test.describe("Dashboard Flow", () => {
     await page.goto("/dashboard");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Mission Control" }).first()).toBeVisible();
     await expect(
       page.locator("p", { hasText: "War Room overview under the stadium lights." })
     ).toBeVisible();
@@ -87,7 +87,7 @@ test.describe("Dashboard Flow", () => {
     await page.goto("/dashboard");
 
     // Verify Quick Actions section exists
-    await expect(page.locator("text=Quick Actions")).toBeVisible();
+    await expect(page.locator("text=Quick Actions").first()).toBeVisible();
 
     // Verify all quick action links exist
     const quickActions = page.locator(".quick-actions-section");
@@ -169,7 +169,7 @@ test.describe("Dashboard Flow", () => {
     await page.goto("/dashboard");
 
     // Verify season status card shows year and week
-    await expect(page.locator("text=Current Season")).toBeVisible();
+    await expect(page.locator("text=Current Season").first()).toBeVisible();
     await expect(page.locator(".season-year", { hasText: "2024" })).toBeVisible();
     await expect(page.locator(".season-week", { hasText: /Week 1/i })).toBeVisible();
   });

@@ -29,7 +29,7 @@ if not is_sqlite:
         }
     )
 
-engine = create_engine(settings.DATABASE_URL, **engine_args)
+engine = create_engine(settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://"), **engine_args)
 
 # Create async engine
 async_engine = create_async_engine(
