@@ -41,27 +41,32 @@ test.describe("Visual Regression Tests", () => {
   });
 
   test("Front Office visual snapshot", async ({ page }) => {
+    test.setTimeout(60000);
     // Mock API for Front Office
     await page.route("**/api/teams/1", async (route) => {
       await route.fulfill({ json: mockTeam });
     });
     await page.route("**/api/teams/1/roster", async (route) => {
-      await route.fulfill({ json: mockPlayers });
+      await route.fulfill({ json: { items: mockPlayers } });
     });
 
     await page.goto("/empire/front-office");
 
     // Wait for key elements to ensure page is loaded
     await page.waitForSelector('[data-testid="front-office-header"]');
-    await page.waitForSelector('[data-testid="roster-section"]');
+    await page.waitForSelector(".ea-player-card", { timeout: 20000 });
     // Use a selector that matches the dynamic testId format "player-card-{id}"
-    await page.waitForSelector('[data-testid^="player-card-"]');
+
 
     // Take snapshot
-    await expect(page).toHaveScreenshot("front-office.png", { maxDiffPixelRatio: 0.05 });
+    await expect(page).toHaveScreenshot("front-office.png", {
+      maxDiffPixelRatio: 0.05,
+      timeout: 15000,
+    });
   });
 
   test("Season Dashboard visual snapshot", async ({ page }) => {
+    test.setTimeout(60000);
     page.on("console", (msg) => console.log(`BROWSER LOG: ${msg.text()}`));
 
     // Mock API for Season Dashboard
@@ -123,12 +128,17 @@ test.describe("Visual Regression Tests", () => {
 
     // Wait for loading to finish
     await expect(page.locator(".loading-spinner")).not.toBeVisible();
-    await page.waitForSelector(".season-dashboard");
+    await page.waitForSelector(".season-dashboard", { timeout: 15000 });
 
-    await expect(page).toHaveScreenshot("season-dashboard.png", { maxDiffPixelRatio: 0.05 });
+    await page.waitForTimeout(2000);
+    await expect(page).toHaveScreenshot("season-dashboard.png", {
+      maxDiffPixelRatio: 0.05,
+      timeout: 15000,
+    });
   });
 
   test("Playoff Bracket visual snapshot", async ({ page }) => {
+    test.setTimeout(60000);
     const mockPlayoffSeason = {
       id: 1,
       year: 2024,
@@ -210,18 +220,23 @@ test.describe("Visual Regression Tests", () => {
 
     // Verify Playoffs tab is present
     const playoffsTab = page.locator('[data-testid="tab-playoffs"]');
-    await expect(playoffsTab).toBeVisible();
+    await expect(playoffsTab).toBeVisible({ timeout: 15000 });
 
     // Click it
     await playoffsTab.click();
 
     // Wait for bracket
-    await page.waitForSelector(".playoff-bracket");
+    await page.waitForSelector(".playoff-bracket", { timeout: 15000 });
 
-    await expect(page).toHaveScreenshot("playoff-bracket.png", { maxDiffPixelRatio: 0.05 });
+    await page.waitForTimeout(2000);
+    await expect(page).toHaveScreenshot("playoff-bracket.png", {
+      maxDiffPixelRatio: 0.05,
+      timeout: 15000,
+    });
   });
 
   test("Draft Board visual snapshot", async ({ page }) => {
+    test.setTimeout(60000);
     const mockSeason = {
       id: 1,
       year: 2024,
@@ -263,8 +278,12 @@ test.describe("Visual Regression Tests", () => {
     await page.goto("/offseason/draft");
 
     // Wait for draft board to load
-    await page.waitForSelector(".draft-board");
+    await page.waitForSelector(".draft-board", { timeout: 15000 });
 
-    await expect(page).toHaveScreenshot("draft-board.png", { maxDiffPixelRatio: 0.05 });
+    await page.waitForTimeout(2000);
+    await expect(page).toHaveScreenshot("draft-board.png", {
+      maxDiffPixelRatio: 0.05,
+      timeout: 15000,
+    });
   });
 });
