@@ -57,7 +57,6 @@ test.describe("Visual Regression Tests", () => {
     await page.waitForSelector(".ea-player-card", { timeout: 20000 });
     // Use a selector that matches the dynamic testId format "player-card-{id}"
 
-
     // Take snapshot
     await expect(page).toHaveScreenshot("front-office.png", {
       maxDiffPixelRatio: 0.05,

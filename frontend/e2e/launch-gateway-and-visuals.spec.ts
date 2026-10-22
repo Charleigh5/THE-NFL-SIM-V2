@@ -155,7 +155,7 @@ test.describe("Launch Gateway & Franchise Onboarding", () => {
     await page.goto("/");
 
     // Should immediately show Dashboard without rendering team selection
-    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Mission Control" }).first()).toBeVisible();
     await expect(page.locator("h1", { hasText: "Select Your Franchise" })).not.toBeVisible();
   });
 
