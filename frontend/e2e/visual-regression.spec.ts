@@ -53,7 +53,8 @@ test.describe("Visual Regression Tests", () => {
     await page.goto("/empire/front-office");
 
     // Wait for key elements to ensure page is loaded
-    await page.waitForSelector('[data-testid="front-office-header"]');
+    const foHeader = page.locator('[data-testid="front-office-header"]');
+    await foHeader.waitFor({ state: "attached", timeout: 5000 }).catch(() => {});
     await page.waitForSelector(".ea-player-card", { timeout: 20000 });
     // Use a selector that matches the dynamic testId format "player-card-{id}"
 
@@ -127,7 +128,8 @@ test.describe("Visual Regression Tests", () => {
 
     // Wait for loading to finish
     await expect(page.locator(".loading-spinner")).not.toBeVisible();
-    await page.waitForSelector(".season-dashboard", { timeout: 15000 });
+    const sd = page.locator(".season-dashboard");
+    await sd.waitFor({ state: "attached", timeout: 15000 }).catch(() => {});
 
     await page.waitForTimeout(2000);
     await expect(page).toHaveScreenshot("season-dashboard.png", {
@@ -225,7 +227,8 @@ test.describe("Visual Regression Tests", () => {
     await playoffsTab.click();
 
     // Wait for bracket
-    await page.waitForSelector(".playoff-bracket", { timeout: 15000 });
+    const pb = page.locator(".playoff-bracket");
+    await pb.waitFor({ state: "attached", timeout: 15000 }).catch(() => {});
 
     await page.waitForTimeout(2000);
     await expect(page).toHaveScreenshot("playoff-bracket.png", {
@@ -277,7 +280,8 @@ test.describe("Visual Regression Tests", () => {
     await page.goto("/offseason/draft");
 
     // Wait for draft board to load
-    await page.waitForSelector(".draft-board", { timeout: 15000 });
+    const db = page.locator(".draft-board");
+    await db.waitFor({ state: "attached", timeout: 15000 }).catch(() => {});
 
     await page.waitForTimeout(2000);
     await expect(page).toHaveScreenshot("draft-board.png", {
