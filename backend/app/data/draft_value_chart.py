@@ -88,10 +88,10 @@ class DraftValueChart:
         cls._FULL_CHART[256] = cls._ANCHOR_VALUES[256]
 
     @classmethod
-    def get_pick_value(cls, overall_pick: int) -> int:
+    def get_pick_value(cls, overall_pick: int, apply_top_10_premium: bool = False) -> int:
         """
         Get the base value of a draft pick for the current year.
-        Applies Top-10 premium tax automatically.
+        Optionally applies Top-10 premium tax when apply_top_10_premium is True.
         """
         if not cls._FULL_CHART:
             cls._initialize_chart()
@@ -100,8 +100,8 @@ class DraftValueChart:
         overall_pick = max(1, min(256, overall_pick))
         base_value = cls._FULL_CHART.get(overall_pick, 10)
 
-        # Apply Premium Tax for Top 10 Picks
-        if overall_pick <= 10:
+        # Apply Premium Tax for Top 10 Picks when requested
+        if apply_top_10_premium and overall_pick <= 10:
             return int(base_value * trade_config.TOP_10_PICK_PREMIUM)
 
         return base_value

@@ -3,7 +3,7 @@ import path from "path";
 
 test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
   const screenshotsDir =
-    "C:\\Users\\cweir\\.gemini\\antigravity\\brain\\0321f72c-c721-42d9-a145-a825adcb57f4\\adversarial";
+    "C:\\Users\\cweir\\.gemini\\antigravity\\brain\\502e86aa-7cff-444b-a5d0-bbd3f4ddfd96\\adversarial";
 
   const mockDetroitLions = {
     id: 11,
@@ -555,7 +555,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
       // Click "Open In-Depth Biometrics & Traits Dossier"
       const inDepthBtn = page.getByText(/Open In-Depth Biometrics & Traits Dossier/i);
       if (await inDepthBtn.isVisible()) {
-        await inDepthBtn.dispatchEvent('click');
+        await inDepthBtn.dispatchEvent("click");
         await page.waitForSelector(".epp-modal", { timeout: 4000 });
         await page.waitForTimeout(500);
 

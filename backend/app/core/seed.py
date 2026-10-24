@@ -729,6 +729,8 @@ def seed_players_from_nflverse(db: Session, season: int = 2026, force: bool = Fa
             play_recognition=ratings.get("play_recognition", 50),
             pocket_presence=ratings.get("pocket_presence", 50),
             quick_release=ratings.get("quick_release", 50),
+            kick_power=ratings.get("kick_power", 50),
+            kick_accuracy=ratings.get("kick_accuracy", 50),
         )
         if player.contract:
             player.contract.annual_base_salary = player.contract_salary

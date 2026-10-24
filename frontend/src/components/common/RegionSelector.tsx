@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect, useLayoutEffect } from "react";
-import html2canvas from "html2canvas";
 import "./RegionSelector.css";
 
 interface RegionSelectorProps {
@@ -108,7 +107,8 @@ const RegionSelector = ({ isActive, onCapture, onCancel }: RegionSelectorProps) 
           overlayRef.current.style.display = "none";
         }
 
-        // Capture the full document body
+        // Dynamically load html2canvas only when a screenshot region is captured
+        const { default: html2canvas } = await import("html2canvas");
         const canvas = await html2canvas(document.body, {
           x: rect.x + window.scrollX,
           y: rect.y + window.scrollY,

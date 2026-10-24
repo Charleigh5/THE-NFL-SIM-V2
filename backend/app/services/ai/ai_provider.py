@@ -210,7 +210,7 @@ class GoogleGenAIProvider(BaseAIProvider):
     def __init__(self, api_key: str | None = None, model_name: str | None = None):
         self._api_key = api_key or os.getenv("VERTEX_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self._model_name = model_name or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-        self._client = None
+        self._client: Any = None
         self._initialized = False
 
     @property
@@ -235,7 +235,8 @@ class GoogleGenAIProvider(BaseAIProvider):
             from google.genai.types import HttpOptions
 
             self._client = genai.Client(
-                api_key=self._api_key, http_options=HttpOptions(api_version="v1")
+                api_key=self._api_key,
+                http_options=HttpOptions(api_version="v1", timeout=10_000),
             )
             logger.info(f"Google GenAI client initialized with model: {self._model_name}")
             return True
@@ -253,13 +254,13 @@ class GoogleGenAIProvider(BaseAIProvider):
     async def generate_text(
         self, prompt: str, temperature: float = 0.7, max_tokens: int = 2048
     ) -> str | None:
-        if not self._ensure_initialized():
+        if not self._ensure_initialized() or self._client is None:
             return None
 
         try:
             from google.genai.types import GenerateContentConfig
 
-            response = self._client.models.generate_content(
+            response = await self._client.aio.models.generate_content(
                 model=self._model_name,
                 contents=prompt,
                 config=GenerateContentConfig(temperature=temperature, max_output_tokens=max_tokens),
@@ -276,14 +277,14 @@ class GoogleGenAIProvider(BaseAIProvider):
         temperature: float = 0.7,
         max_tokens: int = 2048,
     ) -> T | None:
-        if not self._ensure_initialized():
+        if not self._ensure_initialized() or self._client is None:
             return None
 
         try:
             from google.genai.types import GenerateContentConfig
 
             json_schema = response_schema.model_json_schema()
-            response = self._client.models.generate_content(
+            response = await self._client.aio.models.generate_content(
                 model=self._model_name,
                 contents=prompt,
                 config=GenerateContentConfig(

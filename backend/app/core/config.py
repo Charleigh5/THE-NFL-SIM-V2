@@ -68,6 +68,14 @@ class Settings(BaseSettings):
     REDIS_ENABLED: bool = False
     ROSTER_CACHE_TTL_SECONDS: int = 60
 
+    # VoiceStudio Sidecar & Narrator Cache (TASK-NARRATOR-001)
+    VOICESTUDIO_BASE_URL: str = "http://127.0.0.1:3900"
+    VOICESTUDIO_VOICE_ID: str = "en_anchor_male"
+    VOICESTUDIO_MODEL: str = "OmniVoice"  # Note: k2-fsa/OmniVoice weights are CC-BY-NC (non-commercial)
+    VOICESTUDIO_SEED: int = 42
+    NARRATOR_CACHE_DIR: str = "logs/narrator_cache"
+    NARRATOR_CACHE_MAX_FILES: int = 128
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=False
     )

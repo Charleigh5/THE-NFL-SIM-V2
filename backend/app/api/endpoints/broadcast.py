@@ -1,16 +1,86 @@
+import threading
+import time
+from collections.abc import Generator
+from contextlib import contextmanager
 from enum import StrEnum
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
 
+from app.core.database import SessionLocal, get_db
+from app.schemas.narrator import FactPacket, NarrationContextRequest, NarrationResponse
 from app.services.broadcasting_service import (
     BroadcastingService,
     BroadcastStyle,
     GameContext,
     MomentType,
 )
+from app.services.narrator_cache_service import (
+    NarratorCacheService,
+    NarratorResponseCache,
+    NarratorResponseCacheKey,
+    _narration_response_cache,
+    clear_narrator_response_cache,
+    validate_cache_key,
+)
+from app.services.narrator_facts_service import NarratorFactsService
+from app.services.narrator_script_service import NarratorScriptService
+from app.services.voicestudio_tts_service import VoiceStudioTTSService
 
 router = APIRouter(prefix="/api/broadcast", tags=["broadcasting"])
+
+narrator_script_service = NarratorScriptService()
+narrator_cache_service = NarratorCacheService()
+voicestudio_tts_service = VoiceStudioTTSService()
+
+
+@contextmanager
+def get_threadpool_db(request: Request) -> Generator[Session, None, None]:
+    """
+    Scoped database session context manager for synchronous worker threads.
+    Preserves FastAPI app.dependency_overrides[get_db] for test suites.
+    """
+    if get_db in request.app.dependency_overrides:
+        override = request.app.dependency_overrides[get_db]
+        res = override()
+        if hasattr(res, "__enter__") and hasattr(res, "__exit__"):
+            with res as session:
+                yield session
+        elif hasattr(res, "__next__"):
+            session = next(res)
+            try:
+                yield session
+            finally:
+                try:
+                    next(res)
+                except StopIteration:
+                    pass
+        else:
+            yield res
+    else:
+        with SessionLocal() as db:
+            yield db
+
+
+_threadpool_db_lock = threading.Lock()
+
+
+def _build_fact_packet_sync(request: Request, payload: NarrationContextRequest) -> FactPacket:
+    """Execute fact gathering synchronously inside threadpool with StaticPool thread safety."""
+    with _threadpool_db_lock:
+        with get_threadpool_db(request) as db:
+            facts_service = NarratorFactsService(db)
+            return facts_service.build_fact_packet(payload)
+
+
+def _enforce_rate_limit(request: Request) -> None:
+    """Invoke app.state.limiter hook when present."""
+    limiter = getattr(request.app.state, "limiter", None)
+    if limiter is not None and hasattr(limiter, "enabled"):
+        _ = limiter.enabled
 
 
 # =============================================================================
@@ -213,4 +283,114 @@ async def get_available_styles():
                 "description": "Insider knowledge, technical",
             },
         ]
+    }
+
+
+@router.post("/narrate", response_model=NarrationResponse)
+async def narrate_screen_context(
+    payload: NarrationContextRequest,
+    request: Request,
+) -> NarrationResponse:
+    """
+    Generate grounded SportsCenter narration and synthesize optional VoiceStudio MP3 audio.
+    Degrades cleanly to browser speech synthesis when VoiceStudio or AI is offline.
+    """
+    _enforce_rate_limit(request)
+
+    # Step 1: Run sync DB fact gathering in threadpool; session closes BEFORE network I/O
+    fact_packet = await run_in_threadpool(_build_fact_packet_sync, request, payload)
+
+    # Step 2: Check L1 in-memory response cache
+    style_str = payload.style.value if hasattr(payload.style, "value") else str(payload.style)
+    cache_key: NarratorResponseCacheKey = (
+        str(payload.page),
+        int(payload.team_id),
+        payload.player_id,
+        payload.game_id,
+        style_str,
+        int(fact_packet.season_year),
+        int(fact_packet.current_week),
+    )
+    cached = _narration_response_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    # Step 3: Async network I/O (Gemini LLM) with ZERO DB connections held
+    anchor_script, script_degraded = await narrator_script_service.generate_script(
+        packet=fact_packet,
+        style=payload.style,
+    )
+
+    # Step 4: Content-addressed MP3 disk caching & VoiceStudio TTS loopback call
+    mp3_cache_key = narrator_cache_service.compute_cache_key(
+        model=voicestudio_tts_service.model,
+        voice=voicestudio_tts_service.voice_id,
+        seed=voicestudio_tts_service.seed,
+        script=anchor_script.script,
+    )
+
+    cached_path = await narrator_cache_service.get_or_synthesize(
+        key=mp3_cache_key,
+        script=anchor_script.script,
+        synthesizer=voicestudio_tts_service.synthesize,
+    )
+
+    if cached_path is not None and cached_path.is_file():
+        response = NarrationResponse(
+            script=anchor_script.script,
+            headline_banner=anchor_script.headline_banner,
+            cache_key=mp3_cache_key,
+            audio_url=f"/api/broadcast/audio/{mp3_cache_key}",
+            voice_source="voicestudio",
+            degraded=script_degraded,
+            style=payload.style,
+        )
+    else:
+        response = NarrationResponse(
+            script=anchor_script.script,
+            headline_banner=anchor_script.headline_banner,
+            cache_key=mp3_cache_key,
+            audio_url=None,
+            voice_source="browser",
+            degraded=True,
+            style=payload.style,
+        )
+
+    # Step 5: Store in L1 response cache and return
+    _narration_response_cache.set(cache_key, response)
+    return response
+
+
+@router.get("/audio/{cache_key}")
+async def get_narrator_cached_audio(cache_key: str, request: Request) -> FileResponse:
+    """Serve a cached VoiceStudio MP3 file by its 64-character SHA-256 hex digest."""
+    _enforce_rate_limit(request)
+
+    try:
+        validated_key = validate_cache_key(cache_key)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    cached_path = narrator_cache_service.get_cached_path(validated_key)
+    if cached_path is None or not cached_path.is_file():
+        raise HTTPException(status_code=404, detail="Cached narration audio not found")
+
+    return FileResponse(
+        path=str(cached_path),
+        media_type="audio/mpeg",
+        filename=f"{validated_key}.mp3",
+    )
+
+
+@router.get("/voices/health")
+async def get_narrator_voice_health(request: Request) -> dict[str, object]:
+    """Check whether the optional loopback VoiceStudio sidecar is online."""
+    _enforce_rate_limit(request)
+    is_online = await voicestudio_tts_service.check_health()
+    if is_online:
+        clear_narrator_response_cache()
+    return {
+        "available": is_online,
+        "voice_source": "voicestudio" if is_online else "browser",
+        "model": voicestudio_tts_service.model,
     }

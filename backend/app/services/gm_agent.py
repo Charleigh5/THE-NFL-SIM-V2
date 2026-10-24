@@ -10,6 +10,10 @@ from app.core.trade_config import trade_config  # Fix import to get instance
 from app.models.gm import GMDecision
 from app.models.player import Player
 from app.models.team import Team
+from app.services.trade_engine.decision import evaluate_trade_package
+from app.services.trade_engine.market import PlayerSnapshot
+from app.services.trade_engine.modifiers import TeamContextProfile
+from app.services.trade_engine.picks import PickValuationInput
 
 
 class GMAgent:
@@ -46,6 +50,8 @@ class GMAgent:
         requested_players_ids: list[int],
         offered_picks: list[dict] = None,
         requested_picks: list[dict] = None,
+        offering_team_id: int | None = None,
+        log_decision: bool = True,
     ) -> dict[str, Any]:
         """
         Evaluate a trade proposal based on value, team needs, and GM personality.
@@ -90,52 +96,164 @@ class GMAgent:
                     "score": -100,
                     "reasoning": f"Cannot afford trade. Net change: ${net_salary_change / 1000000:.2f}M, Cap Space: ${salary_cap_space / 1000000:.2f}M",
                 }
-                self._log_decision("TRADE_EVALUATION", "REJECT", result)
+                if log_decision:
+                    self._log_decision("TRADE_EVALUATION", "REJECT", result)
                 return result
 
-            # 3. Value Calculation
-            offered_value = self._calculate_package_value(
-                offered_players, offered_picks, is_acquiring=True
+            # 3. CTVE Package Evaluation
+            offered_snapshots = [PlayerSnapshot.from_orm_player(p) for p in offered_players]
+            requested_snapshots = [PlayerSnapshot.from_orm_player(p) for p in requested_players]
+
+            offered_pick_inputs = [
+                PickValuationInput(
+                    round=pk.get("round", 1),
+                    year=pk.get("year", 2025),
+                    projected_slot_in_round=pk.get("projected_slot_in_round", 16),
+                    original_team_id=pk.get("original_team_id"),
+                )
+                for pk in (offered_picks or [])
+            ]
+            requested_pick_inputs = [
+                PickValuationInput(
+                    round=pk.get("round", 1),
+                    year=pk.get("year", 2025),
+                    projected_slot_in_round=pk.get("projected_slot_in_round", 16),
+                    original_team_id=pk.get("original_team_id"),
+                )
+                for pk in (requested_picks or [])
+            ]
+
+            ai_team_profile = TeamContextProfile(
+                team_id=self.team_id,
+                conference=getattr(self.team, "conference", "") or "",
+                division=getattr(self.team, "division", "") or "",
             )
-            requested_value = self._calculate_package_value(
-                requested_players, requested_picks, is_acquiring=False
+            if offering_team_id is None:
+                if offered_players and hasattr(offered_players[0], "team_id") and offered_players[0].team_id:
+                    offering_team_id = offered_players[0].team_id
+                elif offered_pick_inputs and offered_pick_inputs[0].original_team_id:
+                    offering_team_id = offered_pick_inputs[0].original_team_id
+                else:
+                    offering_team_id = 1
+
+            offering_team_profile = TeamContextProfile(team_id=offering_team_id)
+            if hasattr(self.db, "get"):
+                offering_team_orm = self.db.get(Team, offering_team_id)
+                if offering_team_orm:
+                    offering_team_profile = TeamContextProfile(
+                        team_id=offering_team_id,
+                        conference=getattr(offering_team_orm, "conference", "") or "",
+                        division=getattr(offering_team_orm, "division", "") or "",
+                    )
+
+            ai_roster_snapshots = []
+            if hasattr(self.team, "players") and self.team.players:
+                ai_roster_snapshots = [
+                    PlayerSnapshot.from_orm_player(p) for p in self.team.players
+                    if p is not None
+                ]
+
+            gm_philosophy = getattr(self.gm, "philosophy", "BALANCED") if self.gm else "BALANCED"
+            gm_aggr = self.gm_traits.get("aggression", 50)
+
+            ctve_result = evaluate_trade_package(
+                offered_players=offered_snapshots,
+                requested_players=requested_snapshots,
+                offered_picks=offered_pick_inputs,
+                requested_picks=requested_pick_inputs,
+                offering_team_id=offering_team_id,
+                receiving_team_id=self.team_id,
+                offering_roster=[],
+                receiving_roster=ai_roster_snapshots,
+                offering_cap_space=50_000_000,
+                receiving_cap_space=int(salary_cap_space),
+                offering_team_profile=offering_team_profile,
+                receiving_team_profile=ai_team_profile,
+                gm_archetype=str(gm_philosophy),
+                gm_trade_aggression=int(gm_aggr),
             )
 
-            # Base score is the difference in value
-            raw_score = offered_value - requested_value
+            decision = "ACCEPT" if ctve_result.is_accepted else "REJECT"
+            final_score = round(ctve_result.score, 1)
 
-            # 4. Apply GM Personality Modifiers
-            modified_score = self._apply_gm_traits(
-                raw_score, offered_players, requested_players, offered_picks, requested_picks
-            )
-
-            # 5. MCP/LLM Context (Mocked for now, but structured for integration)
+            # 4. MCP/LLM Context (Mocked for now, but structured for integration)
             try:
                 llm_adjustment = await self._get_llm_trade_opinion(
                     offered_players, requested_players
                 )
-                modified_score += llm_adjustment.get("score_modifier", 0)
+                if llm_adjustment.get("score_modifier"):
+                    final_score += round(llm_adjustment["score_modifier"], 1)
                 if llm_adjustment.get("reasoning"):
                     reasoning.append(llm_adjustment["reasoning"])
             except Exception:
                 pass  # Ignore LLM errors
 
-            # 6. Final Decision
-            # Aggression lowers the threshold to accept
-            acceptance_threshold = 0 - (self.gm_traits["aggression"] - 50) * 0.5
-
-            decision = "ACCEPT" if modified_score >= acceptance_threshold else "REJECT"
-
-            reasoning.append(f"Base Value Diff: {raw_score:.1f}")
-            reasoning.append(f"GM Adjusted Score: {modified_score:.1f}")
+            reasoning.append(ctve_result.reasoning)
+            if ctve_result.narrative_notes:
+                reasoning.extend(ctve_result.narrative_notes)
 
             result = {
                 "decision": decision,
-                "score": modified_score,
+                "score": final_score,
                 "reasoning": "; ".join(reasoning),
+                "offered_value": ctve_result.ai_side.value_in_tvp,
+                "requested_value": ctve_result.ai_side.value_out_tvp,
+                "user_side": {
+                    "team_id": ctve_result.user_side.team_id,
+                    "competitive_window": ctve_result.user_side.competitive_window,
+                    "value_in_tvp": ctve_result.user_side.value_in_tvp,
+                    "value_out_tvp": ctve_result.user_side.value_out_tvp,
+                    "ratio": ctve_result.user_side.ratio,
+                    "grade": ctve_result.user_side.grade,
+                    "factors": {
+                        "market_tvp": ctve_result.user_side.factors.market_tvp,
+                        "need_fit_delta": ctve_result.user_side.factors.need_fit_delta,
+                        "cap_impact_delta": ctve_result.user_side.factors.cap_impact_delta,
+                        "window_fit_delta": ctve_result.user_side.factors.window_fit_delta,
+                        "class_fit_delta": ctve_result.user_side.factors.class_fit_delta,
+                        "realism_modifiers_delta": ctve_result.user_side.factors.realism_modifiers_delta,
+                        "gm_threshold": ctve_result.user_side.factors.gm_threshold,
+                    },
+                },
+                "ai_side": {
+                    "team_id": ctve_result.ai_side.team_id,
+                    "competitive_window": ctve_result.ai_side.competitive_window,
+                    "value_in_tvp": ctve_result.ai_side.value_in_tvp,
+                    "value_out_tvp": ctve_result.ai_side.value_out_tvp,
+                    "ratio": ctve_result.ai_side.ratio,
+                    "grade": ctve_result.ai_side.grade,
+                    "factors": {
+                        "market_tvp": ctve_result.ai_side.factors.market_tvp,
+                        "need_fit_delta": ctve_result.ai_side.factors.need_fit_delta,
+                        "cap_impact_delta": ctve_result.ai_side.factors.cap_impact_delta,
+                        "window_fit_delta": ctve_result.ai_side.factors.window_fit_delta,
+                        "class_fit_delta": ctve_result.ai_side.factors.class_fit_delta,
+                        "realism_modifiers_delta": ctve_result.ai_side.factors.realism_modifiers_delta,
+                        "gm_threshold": ctve_result.ai_side.factors.gm_threshold,
+                    },
+                },
+                "ai_threshold": ctve_result.ai_threshold,
+                "counter_offer": (
+                    {
+                        "add_player_ids": ctve_result.counter_offer.add_player_ids,
+                        "add_picks": [
+                            {
+                                "round": pk.round,
+                                "year": pk.year,
+                                "original_team_id": pk.original_team_id,
+                            }
+                            for pk in ctve_result.counter_offer.add_picks
+                        ],
+                        "summary": ctve_result.counter_offer.summary,
+                    }
+                    if ctve_result.counter_offer
+                    else None
+                ),
+                "narrative_notes": ctve_result.narrative_notes,
             }
 
-            self._log_decision("TRADE_EVALUATION", decision, result)
+            if log_decision:
+                self._log_decision("TRADE_EVALUATION", decision, result)
             return result
 
         except Exception as e:
@@ -155,7 +273,7 @@ class GMAgent:
         """
         # Identify need if not provided
         if not target_position:
-            positions = ["QB", "RB", "WR", "TE", "OL", "DL", "LB", "CB", "S"]
+            positions = ["QB", "RB", "WR", "TE", "OT", "OG", "C", "DE", "DT", "LB", "CB", "S"]
             # Find position with highest need multiplier
             target_position = max(positions, key=lambda p: self._get_position_need(p))
 
@@ -402,6 +520,8 @@ class GMAgent:
         if position == "QB" and count < 2:
             multiplier += 0.2
         if position in ["WR", "CB"] and count < 5:
+            multiplier += 0.1
+        if position in ["OT", "OG", "DE", "DT", "LB", "S"] and count < 3:
             multiplier += 0.1
         if position in ["OL", "DL"] and count < 7:
             multiplier += 0.1

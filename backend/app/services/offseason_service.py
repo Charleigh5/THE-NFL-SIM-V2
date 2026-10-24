@@ -18,6 +18,7 @@ from app.models.team import Team
 from app.schemas.offseason import DraftPickSummary, PlayerProgressionResult, Prospect, TeamNeed
 from app.services.rookie_generator import RookieGenerator
 from app.services.standings_calculator import StandingsCalculator
+from app.services.trade_engine.picks import assign_draft_order_preserving_trades
 
 
 class OffseasonService:
@@ -54,7 +55,10 @@ class OffseasonService:
             self.process_contract_expirations()
 
             # 3. Generate Draft Order
-            stmt = select(DraftPick).where(DraftPick.season_id == season_id)
+            stmt = select(DraftPick).where(
+                DraftPick.season_id == season_id,
+                DraftPick.pick_number.is_not(None),
+            )
             existing_picks = self.db.execute(stmt).first()
             if not existing_picks:
                 self.generate_draft_order(season_id)
@@ -437,18 +441,17 @@ class OffseasonService:
         elif not sb_matchup:
             print("Warning: No Super Bowl matchup found for draft order generation.")
 
-        # Create Picks
-        for round_num in range(1, 8):
-            for i, team_id in enumerate(ordered_team_ids):
-                pick = DraftPick(
-                    season_id=season_id,
-                    team_id=team_id,
-                    original_team_id=team_id,
-                    round=round_num,
-                    pick_number=(round_num - 1) * 32 + (i + 1),
-                    player_id=None,
-                )
-                self.db.add(pick)
+        # Create or update Picks while preserving prior trades
+        season = self.db.get(Season, season_id)
+        raw_year = getattr(season, "year", 2025) if season is not None else 2025
+        year = raw_year if isinstance(raw_year, int) else 2025
+
+        assign_draft_order_preserving_trades(
+            self.db,
+            season_id=season_id,
+            year=year,
+            ordered_team_ids=ordered_team_ids,
+        )
 
     def _get_team_needs(self, team_id: int) -> dict:
         """Analyze roster and return count of players by position."""

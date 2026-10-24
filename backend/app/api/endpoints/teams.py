@@ -56,6 +56,21 @@ class PlayerSchema(BaseModel):
     strength: int | None = 50
     agility: int | None = 50
     awareness: int | None = 50
+    throw_power: int | None = None
+    throw_accuracy_short: int | None = None
+    catching: int | None = None
+    route_running: int | None = None
+    pass_block: int | None = None
+    run_block: int | None = None
+    tackle: int | None = None
+    block_shed: int | None = None
+    pass_rush_power: int | None = None
+    pass_rush_finesse: int | None = None
+    man_coverage: int | None = None
+    zone_coverage: int | None = None
+    play_recognition: int | None = None
+    kick_power: int | None = None
+    kick_accuracy: int | None = None
     injury_status: str | None = "ACTIVE"
     development_trait: str | None = "NORMAL"
 

@@ -29,6 +29,7 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(prefs.volume);
   const [isMuted, setIsMuted] = useState(prefs.isMuted);
+  const [duckFactor, setDuckFactor] = useState(1);
   const soundRef = useRef<Howl | null>(null);
 
   // Initialize Howl instance
@@ -38,7 +39,7 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       loop: true,
       volume: isMuted ? 0 : volume,
       html5: true, // Better for large files, enables streaming
-      preload: true,
+      preload: false,
       onplay: () => setIsPlaying(true),
       onpause: () => setIsPlaying(false),
       onstop: () => setIsPlaying(false),
@@ -54,10 +55,10 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Update volume when changed
   useEffect(() => {
     if (soundRef.current) {
-      soundRef.current.volume(isMuted ? 0 : volume);
+      soundRef.current.volume(isMuted ? 0 : volume * duckFactor);
     }
     savePreferences({ volume, isMuted });
-  }, [volume, isMuted]);
+  }, [volume, isMuted, duckFactor]);
 
   const play = useCallback(() => {
     if (soundRef.current && !soundRef.current.playing()) {
@@ -96,6 +97,24 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsMuted((prev) => !prev);
   }, []);
 
+  const duckVolume = useCallback(
+    (factor: number = 0.2) => {
+      const clampedFactor = Math.max(0, Math.min(1, factor));
+      setDuckFactor(clampedFactor);
+      if (soundRef.current) {
+        soundRef.current.volume(isMuted ? 0 : volume * clampedFactor);
+      }
+    },
+    [isMuted, volume]
+  );
+
+  const restoreVolume = useCallback(() => {
+    setDuckFactor(1);
+    if (soundRef.current) {
+      soundRef.current.volume(isMuted ? 0 : volume);
+    }
+  }, [isMuted, volume]);
+
   return (
     <AudioContext.Provider
       value={{
@@ -107,6 +126,8 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         toggle,
         setVolume,
         toggleMute,
+        duckVolume,
+        restoreVolume,
       }}
     >
       {children}

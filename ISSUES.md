@@ -172,3 +172,19 @@ Stack: TypeError: Cannot read properties of undefined at TestWidget.render
 Stack: TypeError: Cannot read properties of undefined at TestWidget.render
 
 ---
+
+### [2026-10-24 14:11:10] Issue Report
+> **Context**: ClientError:ui (http://localhost:5173/training-center)
+
+[ERROR] Uncaught TypeError in TestWidget
+Stack: TypeError: Cannot read properties of undefined at TestWidget.render
+
+---
+
+### [2026-10-24 14:20:45] Issue Report
+> **Context**: ClientError:ui (http://localhost:5173/training-center)
+
+[ERROR] Uncaught TypeError in TestWidget
+Stack: TypeError: Cannot read properties of undefined at TestWidget.render
+
+---

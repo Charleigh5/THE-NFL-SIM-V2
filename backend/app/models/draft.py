@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Index, Integer
+from sqlalchemy import JSON, Boolean, Column, ForeignKey, Index, Integer
 from sqlalchemy.orm import relationship
 
 from app.models.base import Base
@@ -9,7 +9,8 @@ class DraftPick(Base):
     __table_args__ = (Index("ix_draft_pick_season_round", "season_id", "round"),)
 
     id = Column(Integer, primary_key=True, index=True)
-    season_id = Column(Integer, ForeignKey("season.id"), nullable=False, index=True)
+    season_id = Column(Integer, ForeignKey("season.id"), nullable=True, index=True)
+    year = Column(Integer, nullable=False, default=2025, index=True)
 
     team_id = Column(
         Integer, ForeignKey("team.id"), nullable=False, index=True
@@ -17,7 +18,9 @@ class DraftPick(Base):
     original_team_id = Column(Integer, ForeignKey("team.id"), nullable=False)  # Original owner
 
     round = Column(Integer, nullable=False, index=True)
-    pick_number = Column(Integer, nullable=False, index=True)  # Overall pick number
+    pick_number = Column(Integer, nullable=True, index=True)  # Overall pick number
+    is_compensatory = Column(Boolean, default=False, nullable=False)
+    conditions = Column(JSON, nullable=True)
 
     player_id = Column(Integer, ForeignKey("player.id"), nullable=True)  # The player selected
 

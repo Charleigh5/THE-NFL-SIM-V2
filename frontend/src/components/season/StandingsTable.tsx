@@ -256,6 +256,8 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
         <div className="standings-header">
           <div className="standings-filters">
             <select
+              id="standings-conference-filter"
+              name="standingsConferenceFilter"
               className="filter-select"
               value={conferenceFilter}
               onChange={(e) => setConferenceFilter(e.target.value)}
@@ -268,6 +270,8 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
             </select>
 
             <select
+              id="standings-division-filter"
+              name="standingsDivisionFilter"
               className="filter-select"
               value={divisionFilter}
               onChange={(e) => setDivisionFilter(e.target.value)}

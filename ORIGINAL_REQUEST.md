@@ -423,3 +423,53 @@ All git and GitHub operations must run non-interactively within `c:\Users\cweir\
 - [ ] Backend `pytest` suite exits with code 0.
 - [ ] Frontend Playwright E2E suite (`npx playwright test` in `frontend/`) exits with code 0.
 </USER_REQUEST>
+
+## 2026-10-18T22:42:21Z
+
+<USER_REQUEST>
+Implement the 5 full-stack performance optimizations (`TASK-PERF-001`) in the NFL Sim Engine (`THE-NFL-SIM-V2`) to eliminate the 2.24s offline VoiceStudio loopback TCP SYN timeout, reduce `NarratorFactsService` SQL query fan-out from 17 to <= 6 queries, bring `/api/season/summary` and `/api/season/{id}/standings` under the 300ms P95 concurrent load-test SLA, decouple synchronous `StaticPool` DB sessions from async LLM/TTS I/O, and split `html2canvas` from initial page loads while optimizing Zustand store subscriptions.
+
+Working directory: c:\Users\cweir\OneDrive\Desktop\DevOps\THE-NFL-SIM-V2
+Integrity mode: development
+
+## Reference Material & Existing Verification Resources
+- Plan & Architectural Spec: `docs/tasks/TASK-PERF-001.md`
+- Reference Cache Pattern: `backend/app/core/roster_cache.py`
+- Benchmark & Load Test Harnesses:
+  - `backend/scripts/run_all_benchmarks.py`
+  - `backend/scripts/load_test.py`
+  - `backend/tests/verify_performance.py`
+- Industry Best Practices Rule (`.agent/rules/frontend-backend-task-gen.md`): Verify implementation against official technical documentation (`httpx` granular timeouts, SQLAlchemy 2.0 `noload`, Zustand v5 `useShallow`, Vite dynamic imports) and reuse proven open-source/project blocks.
+
+## Requirements
+
+### R1. Fast-Fail VoiceStudio Loopback Client & Narrator Response Caching
+Configure granular HTTP timeouts (`connect=0.15s` vs. `read` synthesis timeout) and a 30-second monotonic negative circuit breaker in `backend/app/services/voicestudio_tts_service.py` so offline loopback requests to `http://127.0.0.1:3900` fail fast without triggering Windows 2-second TCP SYN retransmissions. Add a thread-safe TTL in-memory response cache in `backend/app/api/endpoints/broadcast.py` for `POST /api/broadcast/narrate`.
+
+### R2. ORM Query Consolidation in `NarratorFactsService` (`17 -> <= 6` SQL Queries)
+Eliminate unnecessary 1:1 satellite table `selectin` queries (`attributes`, `contract`, `physics`, `injury`, `progression`) when loading `Player` records in `backend/app/services/narrator_facts_service.py` using SQLAlchemy `noload("*")`, and consolidate duplicate `SeasonHistory` (`champion_team_id` / `runner_up_team_id`) and `Season` queries so `build_fact_packet` executes at most 6 SQL queries.
+
+### R3. Decouple Synchronous DB Sessions from Async Network I/O in `broadcast.py`
+Ensure `POST /api/broadcast/narrate` in `backend/app/api/endpoints/broadcast.py` executes synchronous database fact gathering in a short-lived threadpool-scoped session that closes before awaiting external Gemini LLM or VoiceStudio TTS network calls, while preserving compatibility with FastAPI `app.dependency_overrides[get_db]` in test suites.
+
+### R4. Season Summary & Standings Cache-Aside, Single-Pass Aggregation & Router De-duplication
+Implement a thread-safe L1 TTL cache (`backend/app/core/season_cache.py`, modeled after `backend/app/core/roster_cache.py`) for `/api/season/summary` and `/api/season/{season_id}/standings` with automatic cache invalidation when weeks or playoff rounds are simulated. Consolidate the two `Game` count queries in `backend/app/api/endpoints/season.py` into a single `CASE` aggregation, and update `seasonDashboardLoader` in `frontend/src/router.tsx` to fetch teams and season summary concurrently and reuse the returned `standings` and `league_leaders` rather than re-fetching them in a second waterfall.
+
+### R5. Frontend Dynamic `html2canvas` Import & Scoped Zustand Selectors
+Replace the static top-level `import html2canvas from "html2canvas"` in `frontend/src/components/common/RegionSelector.tsx` with a dynamic `await import("html2canvas")` inside the capture handler so `MainLayout` does not eagerly bundle `html2canvas` on initial load, and wrap `useNarratorStore` in `frontend/src/components/audio/NarratorBar.tsx` with `useShallow` from `zustand/react/shallow`.
+
+## Acceptance Criteria
+
+### Backend Performance & Latency SLAs
+- [ ] `POST /api/broadcast/narrate` and `GET /api/broadcast/voices/health` achieve P95 latency `< 25ms` when VoiceStudio (`127.0.0.1:3900`) is offline (after the initial fast-fail probe opens the 30s circuit breaker).
+- [ ] `NarratorFactsService.build_fact_packet` executes `<= 6` SQL queries for a full team + player context request (verified via SQLAlchemy `before_cursor_execute` event counter in `pytest`).
+- [ ] `python backend/scripts/load_test.py --endpoint /api/season/summary --concurrency 25 --requests 150 --budget-p95 300` exits `0` (`PASS`, P95 `< 300ms`).
+- [ ] `python backend/scripts/load_test.py --endpoint /api/season/2/standings --concurrency 25 --requests 150 --budget-p95 300` exits `0` (`PASS`, P95 `< 300ms`).
+
+### Code Quality, Type Safety & Regression Suites
+- [ ] `pytest backend/tests/services/test_narrator_*.py backend/tests/services/test_voicestudio_tts.py backend/tests/api/test_broadcast_narrator.py -v` passes with 0 failures.
+- [ ] `$env:MYPYPATH="backend"; mypy --follow-imports=silent --explicit-package-bases backend/app/schemas/narrator.py backend/app/services/narrator_facts_service.py backend/app/services/narrator_script_service.py backend/app/services/voicestudio_tts_service.py backend/app/services/narrator_cache_service.py backend/app/core/season_cache.py` exits `0` with 0 issues.
+- [ ] `npm --prefix frontend run lint` and `npm --prefix frontend run build` exit `0` with 0 TypeScript or ESLint errors.
+- [ ] `npx --prefix frontend playwright test e2e/narrator.spec.ts --project=chromium` passes (`2 passed`).
+- [ ] `docs/tasks/TASK-PERF-001.md` checkboxes (`[x]`) are updated upon completion.
+</USER_REQUEST>

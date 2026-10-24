@@ -176,7 +176,7 @@ export const Dashboard = () => {
         <div>
           <h1 className="font-header text-[clamp(2.5rem,6vw,4.5rem)] uppercase italic tracking-tighter text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] leading-none">
             WAR{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">
+            <span className="inline-block pr-3 text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500">
               ROOM
             </span>
             <span className="sr-only">Mission Control</span>
@@ -282,7 +282,7 @@ export const Dashboard = () => {
               <div className="text-xs font-mono uppercase tracking-widest text-yellow-400 font-bold mb-1">
                 Week {currentSeason?.current_week || 1} • Primetime Clash
               </div>
-              <div className="font-header text-[clamp(2.5rem,5vw,3.75rem)] uppercase italic tracking-tighter text-white/90 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+              <div className="inline-block pr-2 font-header text-[clamp(2.5rem,5vw,3.75rem)] uppercase italic tracking-tighter text-white/90 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                 VS
               </div>
               <div className="flex items-center gap-2 text-xs font-mono text-gray-300 mt-2 bg-black/40 px-3 py-1 rounded-full border border-white/10">

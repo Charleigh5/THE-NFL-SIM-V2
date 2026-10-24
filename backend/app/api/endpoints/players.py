@@ -291,7 +291,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "throw_on_run": player.throw_on_run,
         }
     # RB attributes
-    elif position == "RB":
+    elif position in ["RB", "FB"]:
         return {
             "catching": player.catching,
             "route_running": player.route_running,
@@ -309,7 +309,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "run_block": player.run_block,
         }
     # OL attributes
-    elif position in ["OT", "OG", "C", "LT", "LG", "RG", "RT"]:
+    elif position in ["OT", "OG", "C", "LT", "LG", "RG", "RT", "OL", "T", "G"]:
         return {
             "pass_block": player.pass_block,
             "run_block": player.run_block,
@@ -318,7 +318,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "discipline": player.discipline,
         }
     # DL attributes
-    elif position in ["DE", "DT"]:
+    elif position in ["DE", "DT", "DL", "EDGE", "NT", "ED"]:
         return {
             "tackle": player.tackle,
             "block_shed": player.block_shed,
@@ -328,7 +328,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "gap_integrity": player.gap_integrity,
         }
     # LB attributes
-    elif position == "LB":
+    elif position in ["LB", "ILB", "OLB", "MLB"]:
         return {
             "tackle": player.tackle,
             "block_shed": player.block_shed,
@@ -340,7 +340,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "run_fit": player.run_fit,
         }
     # DB attributes
-    elif position in ["CB", "S"]:
+    elif position in ["CB", "S", "FS", "SS", "DB"]:
         return {
             "tackle": player.tackle,
             "man_coverage": player.man_coverage,
@@ -351,7 +351,7 @@ def _get_position_attributes(player: Player) -> dict[str, int]:
             "run_support": player.run_support,
         }
     # Kicker/Punter attributes
-    elif position in ["K", "P"]:
+    elif position in ["K", "P", "LS"]:
         return {
             "kick_power": player.kick_power,
             "kick_accuracy": player.kick_accuracy,
@@ -382,6 +382,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         select(Player)
         .options(
             selectinload(Player.attributes),
+            selectinload(Player.contract),
             joinedload(Player.team),
             selectinload(Player.player_traits).joinedload(PlayerTrait.trait),
         )
@@ -451,7 +452,7 @@ async def get_enhanced_player_profile(player_id: int, db: AsyncSession = Depends
         "passing_yards": int(stats.passing_yards or 0) if stats else 0,
         "passing_tds": int(stats.passing_tds or 0) if stats else 0,
         "rushing_yards": int(stats.rushing_yards or 0) if stats else 0,
-        "rushing_tds": int(stats.rush_tds or 0) if stats else 0,
+        "rushing_tds": int(stats.rushing_tds or 0) if stats else 0,
         "receiving_yards": int(stats.receiving_yards or 0) if stats else 0,
         "receiving_tds": int(stats.receiving_tds or 0) if stats else 0,
         "tackles": total_tackles,

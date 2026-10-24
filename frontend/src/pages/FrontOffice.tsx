@@ -69,6 +69,82 @@ const OFFICE_PARALLAX = {
   maxRotateY: 3.0,
 };
 
+interface StatBadge {
+  label: string;
+  value: number;
+  colorClass: string;
+}
+
+const getPositionalBadges = (player: Player): [StatBadge, StatBadge, StatBadge] => {
+  const pos = player.position?.toUpperCase() || "";
+
+  if (pos === "QB") {
+    return [
+      { label: "THP", value: player.throw_power ?? 84, colorClass: "text-emerald-400" },
+      { label: "THA", value: player.throw_accuracy_short ?? 82, colorClass: "text-cyan-400" },
+      { label: "SPD", value: player.speed ?? 72, colorClass: "text-amber-400" },
+    ];
+  }
+  if (pos === "RB" || pos === "FB") {
+    return [
+      { label: "SPD", value: player.speed ?? 86, colorClass: "text-emerald-400" },
+      { label: "ACC", value: player.acceleration ?? 87, colorClass: "text-cyan-400" },
+      { label: "AGI", value: player.agility ?? 84, colorClass: "text-amber-400" },
+    ];
+  }
+  if (pos === "WR" || pos === "TE") {
+    return [
+      { label: "REC", value: player.catching ?? 82, colorClass: "text-emerald-400" },
+      { label: "RTE", value: player.route_running ?? 80, colorClass: "text-cyan-400" },
+      { label: "SPD", value: player.speed ?? 86, colorClass: "text-amber-400" },
+    ];
+  }
+  if (["OT", "OG", "C", "OL", "LT", "LG", "RG", "RT", "T", "G"].includes(pos)) {
+    return [
+      { label: "PBK", value: player.pass_block ?? 78, colorClass: "text-emerald-400" },
+      { label: "RBK", value: player.run_block ?? 80, colorClass: "text-cyan-400" },
+      { label: "STR", value: player.strength ?? 84, colorClass: "text-amber-400" },
+    ];
+  }
+  if (["DE", "DT", "NT", "DL", "EDGE", "ED"].includes(pos)) {
+    return [
+      { label: "TAK", value: player.tackle ?? 80, colorClass: "text-emerald-400" },
+      {
+        label: "POW",
+        value: player.pass_rush_power ?? player.block_shed ?? 80,
+        colorClass: "text-cyan-400",
+      },
+      { label: "STR", value: player.strength ?? 82, colorClass: "text-amber-400" },
+    ];
+  }
+  if (["LB", "ILB", "OLB", "MLB"].includes(pos)) {
+    return [
+      { label: "TAK", value: player.tackle ?? 82, colorClass: "text-emerald-400" },
+      { label: "PRC", value: player.play_recognition ?? 78, colorClass: "text-cyan-400" },
+      { label: "SPD", value: player.speed ?? 82, colorClass: "text-amber-400" },
+    ];
+  }
+  if (["CB", "S", "FS", "SS", "DB"].includes(pos)) {
+    return [
+      { label: "MCV", value: player.man_coverage ?? 80, colorClass: "text-emerald-400" },
+      { label: "ZCV", value: player.zone_coverage ?? 80, colorClass: "text-cyan-400" },
+      { label: "SPD", value: player.speed ?? 88, colorClass: "text-amber-400" },
+    ];
+  }
+  if (["K", "P", "LS"].includes(pos)) {
+    return [
+      { label: "KPW", value: player.kick_power ?? 82, colorClass: "text-emerald-400" },
+      { label: "KAC", value: player.kick_accuracy ?? 80, colorClass: "text-cyan-400" },
+      { label: "STR", value: player.strength ?? 60, colorClass: "text-amber-400" },
+    ];
+  }
+  return [
+    { label: "SPD", value: player.speed ?? 80, colorClass: "text-emerald-400" },
+    { label: "STR", value: player.strength ?? 75, colorClass: "text-cyan-400" },
+    { label: "AGI", value: player.agility ?? 78, colorClass: "text-amber-400" },
+  ];
+};
+
 interface LockerStallCardProps {
   player: Player;
   teamAbbr?: string;
@@ -175,27 +251,27 @@ const LockerStallCard: React.FC<LockerStallCardProps> = ({
           </p>
         </div>
 
-        {/* Athletic Stat Bar Breakdown */}
-        <div className="w-full grid grid-cols-3 gap-1.5 pt-2 border-t border-white/10 text-center font-mono z-10">
-          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
-            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">SPD</span>
-            <span className="font-bold text-xs text-emerald-400 leading-none">
-              {player.speed ?? 85}
-            </span>
-          </div>
-          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
-            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">STR</span>
-            <span className="font-bold text-xs text-cyan-400 leading-none">
-              {player.strength ?? 80}
-            </span>
-          </div>
-          <div className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs">
-            <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">AGI</span>
-            <span className="font-bold text-xs text-amber-400 leading-none">
-              {player.agility ?? 84}
-            </span>
-          </div>
-        </div>
+        {/* Dynamic Positional Stat Breakdown */}
+        {(() => {
+          const badges = getPositionalBadges(player);
+          return (
+            <div className="w-full grid grid-cols-3 gap-1.5 pt-2 border-t border-white/10 text-center font-mono z-10">
+              {badges.map((badge, idx) => (
+                <div
+                  key={idx}
+                  className="bg-black/50 p-1.5 rounded-[2px] border border-white/5 shadow-hard-xs"
+                >
+                  <span className="text-[9px] text-gray-400 uppercase block leading-none mb-1">
+                    {badge.label}
+                  </span>
+                  <span className={`font-bold text-xs ${badge.colorClass} leading-none`}>
+                    {badge.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Locker Shelf Action Tag */}
         <div className="w-full mt-3 pt-2 flex items-center justify-between text-[11px] font-mono text-cyan-300/80 group-hover:text-cyan-200 transition-colors border-t border-[#0076B6]/20 z-10">

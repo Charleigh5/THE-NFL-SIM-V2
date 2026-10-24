@@ -6,8 +6,7 @@ import MainLayout from "./layouts/MainLayout";
 import { api } from "./services/api";
 import type { Team } from "./services/api";
 import { seasonApi } from "./services/season";
-import type { PlayoffMatchup } from "./types/playoff";
-import type { Season } from "./types/season";
+import type { Season, TeamStanding } from "./types/season";
 import type { DraftPickDetail } from "./types/offseason";
 import { LoadingSpinner } from "./components/ui/LoadingSpinner";
 
@@ -69,50 +68,14 @@ const SuspendedRoute = ({ children }: { children: ReactNode }) => (
 // Season Dashboard Loader - Fetches all season-related data
 export async function seasonDashboardLoader() {
   try {
-    // Fetch teams first as they're needed by other components
-    const teams = await api.getTeams();
+    // 1. Fetch teams and season summary concurrently in parallel
+    const [teamsRes, summaryRes] = await Promise.allSettled([
+      api.getTeams(),
+      seasonApi.getSeasonSummary(),
+    ]);
 
-    // Try to get current season summary
-    try {
-      const summary = await seasonApi.getSeasonSummary();
-
-      // Fetch all season data in parallel using resilient Promise.allSettled
-      const [standingsRes, scheduleRes, leadersRes, awardsRes] = await Promise.allSettled([
-        seasonApi.getStandings(summary.season.id),
-        seasonApi.getSchedule(summary.season.id, summary.season.current_week),
-        seasonApi.getLeagueLeaders(summary.season.id),
-        seasonApi.getProjectedAwards(summary.season.id),
-      ]);
-
-      const standings =
-        standingsRes.status === "fulfilled" && Array.isArray(standingsRes.value)
-          ? standingsRes.value
-          : [];
-      const schedule =
-        scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)
-          ? scheduleRes.value
-          : [];
-      const leaders = leadersRes.status === "fulfilled" ? leadersRes.value : null;
-      const awards = awardsRes.status === "fulfilled" ? awardsRes.value : null;
-
-      // If in playoffs, fetch bracket too
-      let playoffBracket: PlayoffMatchup[] = [];
-      if (summary.season.status === "POST_SEASON" || summary.season.status === "OFF_SEASON") {
-        playoffBracket = await seasonApi.getPlayoffBracket(summary.season.id);
-      }
-
-      return {
-        teams,
-        season: summary.season,
-        seasonProgress: summary.completion_percentage,
-        standings,
-        schedule,
-        leaders,
-        awards,
-        playoffBracket,
-      };
-    } catch {
-      // No active season - return minimal data
+    const teams = teamsRes.status === "fulfilled" ? teamsRes.value : [];
+    if (summaryRes.status !== "fulfilled" || !summaryRes.value?.season) {
       return {
         teams,
         season: null,
@@ -124,6 +87,58 @@ export async function seasonDashboardLoader() {
         playoffBracket: [],
       };
     }
+
+    const summary = summaryRes.value;
+    const seasonId = summary.season.id;
+    const currentWeek = summary.season.current_week;
+
+    // 2. Reuse standings, leaders, bracket directly if available
+    let standings: TeamStanding[] = [];
+    if (summary.standings && Array.isArray(summary.standings)) {
+      standings = summary.standings.flatMap((conf) => conf.divisions.flatMap((div) => div.teams));
+    }
+
+    const leaders = summary.league_leaders ?? null;
+    const playoffBracket = summary.playoff_bracket ?? [];
+
+    // 3. Fetch only non-aggregated / missing fields in parallel
+    const needStandings = standings.length === 0;
+    const needLeaders = leaders === null;
+    const needBracket =
+      (summary.season.status === "POST_SEASON" || summary.season.status === "OFF_SEASON") &&
+      playoffBracket.length === 0;
+
+    const [scheduleRes, awardsRes, fallbackStandings, fallbackLeaders, fallbackBracket] =
+      await Promise.allSettled([
+        seasonApi.getSchedule(seasonId, currentWeek),
+        seasonApi.getProjectedAwards(seasonId),
+        needStandings ? seasonApi.getStandings(seasonId) : Promise.resolve(standings),
+        needLeaders ? seasonApi.getLeagueLeaders(seasonId) : Promise.resolve(leaders),
+        needBracket ? seasonApi.getPlayoffBracket(seasonId) : Promise.resolve(playoffBracket),
+      ]);
+
+    return {
+      teams,
+      season: summary.season,
+      seasonProgress: summary.completion_percentage,
+      standings:
+        needStandings &&
+        fallbackStandings.status === "fulfilled" &&
+        Array.isArray(fallbackStandings.value)
+          ? fallbackStandings.value
+          : standings,
+      schedule:
+        scheduleRes.status === "fulfilled" && Array.isArray(scheduleRes.value)
+          ? scheduleRes.value
+          : [],
+      leaders:
+        needLeaders && fallbackLeaders.status === "fulfilled" ? fallbackLeaders.value : leaders,
+      awards: awardsRes.status === "fulfilled" ? awardsRes.value : null,
+      playoffBracket:
+        needBracket && fallbackBracket.status === "fulfilled"
+          ? fallbackBracket.value
+          : playoffBracket,
+    };
   } catch (error) {
     console.error("Failed to load season data:", error);
     throw new Response("Failed to load season data", { status: 500 });

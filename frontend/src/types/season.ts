@@ -1,3 +1,6 @@
+import type { PlayoffMatchup } from "./playoff";
+import type { LeagueLeaders } from "./stats";
+
 export const SeasonStatus = {
   PRE_SEASON: "PRE_SEASON",
   REGULAR_SEASON: "REGULAR_SEASON",
@@ -112,12 +115,26 @@ export interface SingleGameResult {
   winner: "home" | "away" | "tie";
 }
 
+export interface DivisionStandings {
+  division: string;
+  teams: TeamStanding[];
+}
+
+export interface ConferenceStandings {
+  conference: string;
+  divisions: DivisionStandings[];
+}
+
 export interface SeasonSummary {
   season: Season;
   total_games?: number;
   games_played?: number;
   completion_percentage: number;
   current_phase?: SeasonStatus;
+  playoff_bracket?: PlayoffMatchup[] | null;
+  league_leaders?: LeagueLeaders | null;
+  standings?: ConferenceStandings[] | null;
+  current_playoff_round?: string | null;
 }
 
 export interface AwardCandidate {

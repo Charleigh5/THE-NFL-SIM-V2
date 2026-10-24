@@ -41,12 +41,42 @@ export interface TradePick {
 }
 
 export interface DraftPickInfo {
+  id?: number;
   round: number;
   year: number;
   original_team_id?: number;
 }
 
+export type TradeLetterGrade = "A+" | "A" | "A-" | "B+" | "B" | "B-" | "C+" | "C" | "D" | "F";
+
+export interface FactorBreakdown {
+  market_tvp: number;
+  need_fit_delta: number;
+  cap_impact_delta: number;
+  window_fit_delta: number;
+  class_fit_delta: number;
+  realism_modifiers_delta: number;
+  gm_threshold: number;
+}
+
+export interface TeamSideGrade {
+  team_id: number;
+  competitive_window: string;
+  value_in_tvp: number;
+  value_out_tvp: number;
+  ratio: number;
+  grade: TradeLetterGrade;
+  factors: FactorBreakdown;
+}
+
+export interface CounterOfferSuggestion {
+  add_player_ids: number[];
+  add_picks: DraftPickInfo[];
+  summary: string;
+}
+
 export interface TradeOfferRequest {
+  offering_team_id?: number;
   target_team_id: number;
   offered_player_ids: number[];
   requested_player_ids: number[];
@@ -78,12 +108,20 @@ export interface TradeEvaluation {
   requested_value?: number;
   gm_philosophy?: string;
   gm_personality?: string;
-  counter_offer?: {
-    add_players?: number[];
-    add_picks?: number[];
-    remove_players?: number[];
-    remove_picks?: number[];
-  };
+  user_side?: TeamSideGrade;
+  ai_side?: TeamSideGrade;
+  ai_threshold?: number;
+  counter_offer?:
+    | CounterOfferSuggestion
+    | {
+        add_players?: number[];
+        add_picks?: number[] | DraftPickInfo[];
+        remove_players?: number[];
+        remove_picks?: number[];
+        summary?: string;
+      }
+    | null;
+  narrative_notes?: string[];
 }
 
 export interface IncomingTradeOffer {

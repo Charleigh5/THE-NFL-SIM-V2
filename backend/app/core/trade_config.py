@@ -28,12 +28,12 @@ class TradeConfigSettings(BaseSettings):
             "description": "Franchise cornerstones. Hardest to acquire.",
         },
         "PREMIUM": {
-            "positions": ["EDGE", "LT", "WR", "CB"],
+            "positions": ["DE", "OT", "WR", "CB", "EDGE", "LT"],
             "multiplier": 1.25,
             "description": "High-impact positions that paid at top of market.",
         },
         "HIGH": {
-            "positions": ["DT", "RT", "S"],
+            "positions": ["DT", "S", "RT"],
             "multiplier": 1.15,
             "description": "Core starters, increasing in modern value.",
         },
@@ -98,8 +98,9 @@ class TradeConfigSettings(BaseSettings):
 
     def get_position_tier(self, position: str) -> str:
         """Finds the tier key for a given position."""
+        pos_str = str(position.value) if hasattr(position, "value") else str(position)
         for tier, data in self.POSITION_VALUE_TIERS.items():
-            if position in data["positions"]:
+            if pos_str in data["positions"]:
                 return tier
         return "STANDARD"  # Default
 

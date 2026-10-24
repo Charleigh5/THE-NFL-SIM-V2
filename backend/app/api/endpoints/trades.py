@@ -11,7 +11,11 @@ from sqlalchemy.orm import selectinload
 from app.core.database import SessionLocal, get_async_db
 from app.core.error_decorators import handle_errors
 from app.core.roster_cache import invalidate_team_roster_cache
+from app.core.season_cache import invalidate_season_caches
+from app.services.narrator_cache_service import clear_narrator_response_cache
+from app.models.draft import DraftPick
 from app.models.player import Player
+from app.models.season import Season
 from app.models.team import Team
 from app.models.trade_offer import TradeOffer
 from app.models.trade_offer import TradeOfferStatus as DBTradeOfferStatus
@@ -144,11 +148,27 @@ async def evaluate_trade(request: TradeEvaluationRequest, db: AsyncSession = Dep
     # Convert picks to dict format for GMAgent
     offered_picks_dict = []
     if request.offered_picks:
-        offered_picks_dict = [{"round": p.round, "year": p.year} for p in request.offered_picks]
+        offered_picks_dict = [
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in request.offered_picks
+        ]
 
     requested_picks_dict = []
     if request.requested_picks:
-        requested_picks_dict = [{"round": p.round, "year": p.year} for p in request.requested_picks]
+        requested_picks_dict = [
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in request.requested_picks
+        ]
 
     # Run GMAgent evaluation in sync context (it uses sync Session)
     async def evaluate_sync():
@@ -159,6 +179,8 @@ async def evaluate_trade(request: TradeEvaluationRequest, db: AsyncSession = Dep
                 requested_players_ids=request.requested_player_ids or [],
                 offered_picks=offered_picks_dict,
                 requested_picks=requested_picks_dict,
+                offering_team_id=request.offering_team_id,
+                log_decision=False,
             )
 
     # GMAgent.evaluate_trade is async, but uses sync db internally
@@ -174,6 +196,13 @@ async def evaluate_trade(request: TradeEvaluationRequest, db: AsyncSession = Dep
         score=evaluation["score"],
         reasoning=evaluation["reasoning"],
         gm_philosophy=target_team.gm.philosophy if target_team and target_team.gm else None,
+        offered_value=evaluation.get("offered_value"),
+        requested_value=evaluation.get("requested_value"),
+        user_side=evaluation.get("user_side"),
+        ai_side=evaluation.get("ai_side"),
+        ai_threshold=evaluation.get("ai_threshold"),
+        counter_offer=evaluation.get("counter_offer"),
+        narrative_notes=evaluation.get("narrative_notes", []),
     )
 
 
@@ -203,9 +232,9 @@ async def submit_trade_offer(request: TradeOfferRequest, db: AsyncSession = Depe
             status_code=404, detail=f"Target team {request.target_team_id} not found"
         )
 
-    # Determine offering team (first offered player's team, or first requested player's team for receiving)
-    offering_team_id = None
-    if request.offered_player_ids:
+    # Determine offering team (explicit offering_team_id or first offered player's team)
+    offering_team_id = request.offering_team_id
+    if not offering_team_id and request.offered_player_ids:
         stmt = select(Player).where(Player.id == request.offered_player_ids[0])
         result = await db.execute(stmt)
         player = result.scalar_one_or_none()
@@ -221,10 +250,26 @@ async def submit_trade_offer(request: TradeOfferRequest, db: AsyncSession = Depe
         receiving_team_id=request.target_team_id,
         offered_player_ids=request.offered_player_ids or [],
         requested_player_ids=request.requested_player_ids or [],
-        offered_picks=[{"round": p.round, "year": p.year} for p in request.offered_picks]
+        offered_picks=[
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in request.offered_picks
+        ]
         if request.offered_picks
         else None,
-        requested_picks=[{"round": p.round, "year": p.year} for p in request.requested_picks]
+        requested_picks=[
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in request.requested_picks
+        ]
         if request.requested_picks
         else None,
         status=DBTradeOfferStatus.PENDING,
@@ -326,6 +371,26 @@ async def respond_to_offer(
         )
 
     if action == "accept":
+        # Verify ownership of all assets before executing
+        for pid in offer.offered_player_ids or []:
+            stmt = select(Player).where(Player.id == pid)
+            result = await db.execute(stmt)
+            player = result.scalar_one_or_none()
+            if not player or player.team_id != offer.offering_team_id:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Player {pid} is no longer owned by offering team {offer.offering_team_id}. Trade aborted.",
+                )
+        for pid in offer.requested_player_ids or []:
+            stmt = select(Player).where(Player.id == pid)
+            result = await db.execute(stmt)
+            player = result.scalar_one_or_none()
+            if not player or player.team_id != offer.receiving_team_id:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Player {pid} is no longer owned by receiving team {offer.receiving_team_id}. Trade aborted.",
+                )
+
         # Execute the trade: swap player team IDs
         # Move offered players to receiving team
         for pid in offer.offered_player_ids or []:
@@ -342,6 +407,52 @@ async def respond_to_offer(
             player = result.scalar_one_or_none()
             if player:
                 player.team_id = offer.offering_team_id
+
+        # Transfer offered draft picks to receiving team
+        for pick in offer.offered_picks or []:
+            if pick.get("id") is not None:
+                stmt = select(DraftPick).where(DraftPick.id == pick["id"])
+            else:
+                stmt = select(DraftPick).where(
+                    DraftPick.team_id == offer.offering_team_id,
+                    DraftPick.round == pick["round"],
+                )
+                if pick.get("original_team_id") is not None:
+                    stmt = stmt.where(DraftPick.original_team_id == pick["original_team_id"])
+                if pick.get("year") is not None:
+                    if hasattr(DraftPick, "year"):
+                        stmt = stmt.where(getattr(DraftPick, "year") == pick["year"])
+                    else:
+                        stmt = stmt.join(Season, DraftPick.season_id == Season.id).where(
+                            Season.year == pick["year"]
+                        )
+            result = await db.execute(stmt)
+            draft_pick = result.scalars().first()
+            if draft_pick:
+                draft_pick.team_id = offer.receiving_team_id
+
+        # Transfer requested draft picks to offering team
+        for pick in offer.requested_picks or []:
+            if pick.get("id") is not None:
+                stmt = select(DraftPick).where(DraftPick.id == pick["id"])
+            else:
+                stmt = select(DraftPick).where(
+                    DraftPick.team_id == offer.receiving_team_id,
+                    DraftPick.round == pick["round"],
+                )
+                if pick.get("original_team_id") is not None:
+                    stmt = stmt.where(DraftPick.original_team_id == pick["original_team_id"])
+                if pick.get("year") is not None:
+                    if hasattr(DraftPick, "year"):
+                        stmt = stmt.where(getattr(DraftPick, "year") == pick["year"])
+                    else:
+                        stmt = stmt.join(Season, DraftPick.season_id == Season.id).where(
+                            Season.year == pick["year"]
+                        )
+            result = await db.execute(stmt)
+            draft_pick = result.scalars().first()
+            if draft_pick:
+                draft_pick.team_id = offer.offering_team_id
 
         offer.status = DBTradeOfferStatus.ACCEPTED
         offer.gm_response = gm_reasoning or request.message or "Trade accepted!"
@@ -361,6 +472,8 @@ async def respond_to_offer(
     if action == "accept":
         invalidate_team_roster_cache(offer.offering_team_id)
         invalidate_team_roster_cache(offer.receiving_team_id)
+        invalidate_season_caches()
+        clear_narrator_response_cache()
 
     return {
         "success": True,
@@ -404,11 +517,25 @@ async def counter_trade_offer(
         receiving_team_id=counter_receiving_team_id,
         offered_player_ids=counter_request.offered_player_ids or [],
         requested_player_ids=counter_request.requested_player_ids or [],
-        offered_picks=[{"round": p.round, "year": p.year} for p in counter_request.offered_picks]
+        offered_picks=[
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in counter_request.offered_picks
+        ]
         if counter_request.offered_picks
         else None,
         requested_picks=[
-            {"round": p.round, "year": p.year} for p in counter_request.requested_picks
+            {
+                "id": p.id,
+                "round": p.round,
+                "year": p.year,
+                "original_team_id": p.original_team_id,
+            }
+            for p in counter_request.requested_picks
         ]
         if counter_request.requested_picks
         else None,

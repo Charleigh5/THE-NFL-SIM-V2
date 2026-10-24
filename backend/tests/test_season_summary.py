@@ -1,4 +1,5 @@
 import pytest
+from app.core.season_cache import season_cache
 from app.models.season import Season, SeasonStatus
 from app.models.team import Team
 from app.models.game import Game
@@ -6,6 +7,14 @@ from app.models.player import Player, Position
 from app.models.stats import PlayerGameStats
 from app.models.playoff import PlayoffMatchup, PlayoffRound
 from datetime import datetime
+
+
+@pytest.fixture(autouse=True)
+def clear_season_cache_fixture():
+    season_cache.clear()
+    yield
+    season_cache.clear()
+
 
 @pytest.mark.asyncio
 async def test_get_season_summary_no_season(async_client):
@@ -466,3 +475,85 @@ async def test_season_summary_league_leaders_integration(async_client, async_db_
     top_rusher = leaders["rushing_yards"][0]
     assert top_rusher["name"] == "Adrian Peterson"
     assert top_rusher["value"] == 120
+
+
+def test_season_cache_manager_unit():
+    """Unit test SeasonCacheManager operations: get, set, ttl expiration, invalidation."""
+    from app.core.season_cache import SeasonCacheManager
+
+    mgr = SeasonCacheManager(default_ttl=10)
+
+    # Summary cache
+    assert mgr.get_summary() is None
+    mgr.set_summary('{"test": 1}', key="active")
+    assert mgr.get_summary() == '{"test": 1}'
+
+    # Summary TTL expiration
+    mgr.set_summary('{"expired": 1}', key="active", ttl=-1)
+    assert mgr.get_summary() is None
+
+    # Standings cache
+    assert mgr.get_standings(101, "AFC", "East") is None
+    mgr.set_standings(101, '[{"team_id": 1}]', conference="AFC", division="East")
+    assert mgr.get_standings(101, "AFC", "East") == '[{"team_id": 1}]'
+    assert mgr.get_standings(101, "NFC", "East") is None
+
+    # Standings TTL expiration
+    mgr.set_standings(101, '[{"expired": 1}]', conference="AFC", division="East", ttl=-1)
+    assert mgr.get_standings(101, "AFC", "East") is None
+
+    # Specific season invalidation
+    mgr.set_summary('{"active": 1}')
+    mgr.set_standings(101, '[{"team_id": 1}]')
+    mgr.set_standings(202, '[{"team_id": 2}]')
+    mgr.invalidate_season_caches(101)
+
+    assert mgr.get_summary() is None  # summary is cleared
+    assert mgr.get_standings(101) is None
+    assert mgr.get_standings(202) == '[{"team_id": 2}]'  # season 202 preserved
+
+    # Full clear
+    mgr.clear()
+    assert mgr.get_standings(202) is None
+
+
+@pytest.mark.asyncio
+async def test_season_summary_and_standings_endpoint_caching(async_client, async_db_session):
+    """Test that /api/season/summary and /api/season/{id}/standings populate and return from cache."""
+    # Setup team and season
+    team = Team(name="Lions", city="Detroit", abbreviation="DET", conference="NFC", division="North", prestige=75)
+    async_db_session.add(team)
+    await async_db_session.commit()
+
+    season = Season(year=2026, is_active=True, status=SeasonStatus.REGULAR_SEASON, total_weeks=18, current_week=1)
+    async_db_session.add(season)
+    await async_db_session.commit()
+
+    # 1. First call to summary populates cache
+    assert season_cache.get_summary() is None
+    resp1 = await async_client.get("/api/season/summary")
+    assert resp1.status_code == 200
+    assert season_cache.get_summary() is not None
+
+    # 2. Second call returns from cache
+    resp2 = await async_client.get("/api/season/summary")
+    assert resp2.status_code == 200
+    assert resp1.json() == resp2.json()
+
+    # 3. First call to standings populates cache
+    assert season_cache.get_standings(season.id) is None
+    resp_standings1 = await async_client.get(f"/api/season/{season.id}/standings")
+    assert resp_standings1.status_code == 200
+    assert season_cache.get_standings(season.id) is not None
+
+    # 4. Second call returns cached standings
+    resp_standings2 = await async_client.get(f"/api/season/{season.id}/standings")
+    assert resp_standings2.status_code == 200
+    assert resp_standings1.json() == resp_standings2.json()
+
+    # 5. advance_week invalidates both caches
+    advance_resp = await async_client.post(f"/api/season/{season.id}/advance-week")
+    assert advance_resp.status_code == 200
+    assert season_cache.get_summary() is None
+    assert season_cache.get_standings(season.id) is None
+

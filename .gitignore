@@ -133,3 +133,4 @@ frontend/playwright-report/
 # Agent transcripts & scratch files
 .agents/
 
+backend/logs/

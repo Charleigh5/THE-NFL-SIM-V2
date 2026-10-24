@@ -29,7 +29,10 @@ if not is_sqlite:
         }
     )
 
-engine = create_engine(settings.DATABASE_URL, **engine_args)
+sync_db_url = settings.DATABASE_URL
+if sync_db_url.startswith("postgresql://"):
+    sync_db_url = sync_db_url.replace("postgresql://", "postgresql+psycopg://")
+engine = create_engine(sync_db_url, **engine_args)
 
 # Create async engine
 async_engine = create_async_engine(

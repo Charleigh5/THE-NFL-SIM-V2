@@ -115,6 +115,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         <div className="week-selector">
           <span className="week-label">Viewing:</span>
           <select
+            id="schedule-week-selector"
+            name="scheduleWeekSelector"
             className="week-select"
             value={selectedWeek}
             onChange={(e) => handleWeekChange(Number(e.target.value))}
@@ -244,7 +246,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                           />
                         ) : (
                           <span className="team-logo-text">
-                            {(awayTeam.abbreviation || awayTeam.name || "AW").substring(0, 2)}
+                            {(awayTeam.abbreviation || awayTeam.name || "AW").substring(0, 3)}
                           </span>
                         )}
                       </TeamLogoContainer>
@@ -277,7 +279,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                           />
                         ) : (
                           <span className="team-logo-text">
-                            {(homeTeam.abbreviation || homeTeam.name || "HM").substring(0, 2)}
+                            {(homeTeam.abbreviation || homeTeam.name || "HM").substring(0, 3)}
                           </span>
                         )}
                       </TeamLogoContainer>

@@ -1,22 +1,25 @@
+import json
 import logging
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.routing import APIRoute
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import desc, func, select
+from sqlalchemy import case, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, joinedload
 from starlette.concurrency import run_in_threadpool
 
 from app.core.database import SessionLocal, get_async_db, get_db
 from app.core.error_decorators import handle_errors
+from app.core.season_cache import invalidate_season_caches, season_cache
 from app.models.game import Game
 from app.models.player import Player
 from app.models.season import Season, SeasonStatus
 from app.models.stats import PlayerGameStats
 from app.models.team import Team
 from app.schemas import draft as draft_schemas
+from app.services.narrator_cache_service import clear_narrator_response_cache
 from app.schemas.offseason import (
     DraftPickDetail,
     DraftPickSummary,
@@ -133,6 +136,10 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
     - League leaders (top 5 passing/rushing/receiving)
     - Current standings (all teams, division-grouped)
     """
+    cached_payload = season_cache.get_summary()
+    if cached_payload is not None:
+        return Response(content=cached_payload, media_type="application/json")
+
     logger.info("Fetching enhanced season summary")
     stmt = select(Season).where(Season.is_active)
     result = await db.execute(stmt)
@@ -141,13 +148,20 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
         raise HTTPException(status_code=404, detail="No active season found")
 
     # Calculate basic stats
-    stmt = select(func.count(Game.id)).where(Game.season_id == season.id)
+    stmt = (
+        select(
+            func.count(Game.id).label("total_games"),
+            func.coalesce(
+                func.sum(case((Game.is_played.is_(True), 1), else_=0)),
+                0,
+            ).label("games_played"),
+        )
+        .where(Game.season_id == season.id)
+    )
     result = await db.execute(stmt)
-    total_games = result.scalar() or 0
-
-    stmt = select(func.count(Game.id)).where(Game.season_id == season.id, Game.is_played)
-    result = await db.execute(stmt)
-    games_played = result.scalar() or 0
+    row = result.one()
+    total_games = int(row.total_games or 0)
+    games_played = int(row.games_played or 0)
 
     completion = 0.0
     if total_games > 0:
@@ -251,7 +265,7 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
 
         # Group by Conference -> Division
         grouped_standings = []
-        conferences = {}
+        conferences: dict[str, dict[str, list[TeamStanding]]] = {}
 
         for team in flat_standings:
             if team.conference not in conferences:
@@ -276,7 +290,7 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
 
     logger.info(f"Enhanced season summary retrieved: {season.id}")
 
-    return {
+    response_data = {
         "season": season,
         "total_games": total_games,
         "games_played": games_played,
@@ -286,6 +300,9 @@ async def get_season_summary(db: AsyncSession = Depends(get_async_db)):
         "league_leaders": league_leaders,
         "standings": standings,
     }
+    serialized_json = SeasonSummaryResponse.model_validate(response_data).model_dump_json()
+    season_cache.set_summary(serialized_json)
+    return Response(content=serialized_json, media_type="application/json")
 
 
 @router.post("/init", response_model=SeasonResponse)
@@ -308,15 +325,17 @@ async def initialize_season(season_data: SeasonCreate, db: AsyncSession = Depend
         # Deactivate all other seasons
         from sqlalchemy import update
 
-        stmt = update(Season).values(is_active=False)
-        await db.execute(stmt)
+        update_stmt = update(Season).values(is_active=False)
+        await db.execute(update_stmt)
 
         # Activate this season
-        existing.is_active = True
+        existing.is_active = True  # type: ignore[assignment]
         await db.commit()
         await db.refresh(existing)
 
         logger.info(f"Season {existing.id} activated")
+        invalidate_season_caches(existing.id)
+        clear_narrator_response_cache()
         return existing
 
     # Deactivate all other seasons
@@ -324,8 +343,8 @@ async def initialize_season(season_data: SeasonCreate, db: AsyncSession = Depend
     # Simple update statement:
     from sqlalchemy import update
 
-    stmt = update(Season).values(is_active=False)
-    await db.execute(stmt)
+    update_all_stmt = update(Season).values(is_active=False)
+    await db.execute(update_all_stmt)
     await db.flush()
 
     # Create season
@@ -435,6 +454,8 @@ async def initialize_season(season_data: SeasonCreate, db: AsyncSession = Depend
     await db.refresh(new_season)
 
     logger.info(f"Season {new_season.id} initialized successfully")
+    invalidate_season_caches(new_season.id)
+    clear_narrator_response_cache()
     return new_season
 
 
@@ -483,7 +504,7 @@ async def get_schedule(
         raise HTTPException(status_code=404, detail="Season not found")
 
     # Build query with eager loading to prevent N+1 queries
-    stmt = (
+    game_stmt = (
         select(Game)
         .options(
             joinedload(Game.home_team), joinedload(Game.away_team), joinedload(Game.weather_info)
@@ -492,10 +513,10 @@ async def get_schedule(
     )
 
     if week is not None:
-        stmt = stmt.where(Game.week == week)
+        game_stmt = game_stmt.where(Game.week == week)
 
-    stmt = stmt.order_by(Game.week, Game.date)
-    result = await db.execute(stmt)
+    game_stmt = game_stmt.order_by(Game.week, Game.date)
+    result = await db.execute(game_stmt)
     games = result.scalars().all()
 
     logger.info(f"Retrieved {len(games)} games")
@@ -515,6 +536,10 @@ async def get_standings(
 
     Can optionally filter by conference and/or division.
     """
+    cached_payload = season_cache.get_standings(season_id, conference, division)
+    if cached_payload is not None:
+        return Response(content=cached_payload, media_type="application/json")
+
     logger.info(f"Calculating standings for season {season_id}")
     # Verify season exists
     stmt = select(Season).where(Season.id == season_id)
@@ -536,7 +561,9 @@ async def get_standings(
     standings = await run_in_threadpool(get_standings_sync, season_id, conference, division)
 
     logger.info(f"Standings calculated: {len(standings)} teams")
-    return standings
+    serialized_json = json.dumps([s.model_dump() for s in standings])
+    season_cache.set_standings(season_id, serialized_json, conference, division)
+    return Response(content=serialized_json, media_type="application/json")
 
 
 @router.post("/{season_id}/advance-week")
@@ -556,20 +583,20 @@ async def advance_week(season_id: int, db: AsyncSession = Depends(get_async_db))
     if season.status == SeasonStatus.PRE_SEASON:
         if season.current_week >= preseason_weeks:
             # Transition from preseason to regular season
-            season.status = SeasonStatus.REGULAR_SEASON
-            season.current_week = 1
+            season.status = SeasonStatus.REGULAR_SEASON  # type: ignore[assignment]
+            season.current_week = 1  # type: ignore[assignment]
             logger.info(f"Season {season_id} transitioning from preseason to regular season")
         else:
-            season.current_week += 1
+            season.current_week += 1  # type: ignore[assignment]
     elif season.current_week >= season.total_weeks:
         # Move to playoffs or offseason
         if season.status == SeasonStatus.REGULAR_SEASON:
-            season.status = SeasonStatus.POST_SEASON
-            season.current_week = 1
+            season.status = SeasonStatus.POST_SEASON  # type: ignore[assignment]
+            season.current_week = 1  # type: ignore[assignment]
         else:
-            season.status = SeasonStatus.OFF_SEASON
+            season.status = SeasonStatus.OFF_SEASON  # type: ignore[assignment]
     else:
-        season.current_week += 1
+        season.current_week += 1  # type: ignore[assignment]
 
     logger.info(
         f"Season {season_id} advanced to week {season.current_week}, status: {season.status}"
@@ -577,6 +604,9 @@ async def advance_week(season_id: int, db: AsyncSession = Depends(get_async_db))
 
     await db.commit()
     await db.refresh(season)
+
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
 
     return {
         "season_id": season.id,
@@ -614,22 +644,24 @@ async def simulate_week(
         raise HTTPException(status_code=404, detail="Season not found")
 
     # Use current week if not specified
-    if week is None:
-        week = season.current_week
+    target_week = int(season.current_week) if week is None else week
 
     # Create simulator and run
     # WeekSimulator is now async and accepts AsyncSession
     simulator = WeekSimulator(db)
     results = await simulator.simulate_week(
-        season_id=season_id, week=week, play_count=play_count, use_fast_sim=True
+        season_id=season_id, week=target_week, play_count=play_count, use_fast_sim=True
     )
 
-    logger.info(f"Week {week} simulation complete: {len(results)} games")
+    logger.info(f"Week {target_week} simulation complete: {len(results)} games")
 
     # Auto-advance to next week after simulating
-    if week == season.current_week and season.current_week < season.total_weeks:
-        season.current_week += 1
+    if target_week == season.current_week and season.current_week < season.total_weeks:
+        season.current_week += 1  # type: ignore[assignment]
         await db.commit()
+
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
 
     return results
 
@@ -646,6 +678,9 @@ async def simulate_game(game_id: int, db: AsyncSession = Depends(get_async_db)):
 
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
+
+    invalidate_season_caches()
+    clear_narrator_response_cache()
 
     return result
 
@@ -672,15 +707,15 @@ async def simulate_to_playoffs(season_id: int, db: AsyncSession = Depends(get_as
         # Simulate current week
         await simulator.simulate_week(
             season_id=season_id,
-            week=season.current_week,
+            week=int(season.current_week),
             play_count=50,  # Faster sim
             use_fast_sim=True,
         )
 
         # Advance week logic (duplicated from advance_week to avoid API overhead)
         if season.current_week >= season.total_weeks:
-            season.status = SeasonStatus.POST_SEASON
-            season.current_week = 1
+            season.status = SeasonStatus.POST_SEASON  # type: ignore[assignment]
+            season.current_week = 1  # type: ignore[assignment]
 
             # Generate playoffs - use sync session
             def generate_playoffs_sync(s_id):
@@ -689,11 +724,14 @@ async def simulate_to_playoffs(season_id: int, db: AsyncSession = Depends(get_as
 
             await run_in_threadpool(generate_playoffs_sync, season_id)
         else:
-            season.current_week += 1
+            season.current_week += 1  # type: ignore[assignment]
 
         await db.commit()
         await db.refresh(season)
         weeks_simulated += 1
+
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
 
     return {"message": f"Simulated {weeks_simulated} weeks", "season": season}
 
@@ -711,6 +749,8 @@ async def generate_playoffs(season_id: int, db: AsyncSession = Depends(get_async
 
     result = await run_in_threadpool(generate_sync)
     logger.info(f"Playoff bracket generated: {len(result)} matchups")
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
     return result
 
 
@@ -741,6 +781,8 @@ async def advance_playoff_round(season_id: int, db: AsyncSession = Depends(get_a
 
     await run_in_threadpool(advance_sync)
     logger.info(f"Playoff round advanced for season {season_id}")
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
     return {"message": "Advanced playoff round"}
 
 
@@ -769,6 +811,8 @@ async def start_offseason(season_id: int, db: AsyncSession = Depends(get_async_d
         sync_db.close()
 
     logger.info(f"Offseason started for season {season_id}")
+    invalidate_season_caches(season_id)
+    clear_narrator_response_cache()
     return result
 
 
@@ -990,14 +1034,14 @@ async def suggest_draft_pick(
         # We can use sync_db to query
         available_players = (
             sync_db.query(Player)
-            .filter(Player.is_rookie, Player.team_id is None)
+            .filter(Player.is_rookie, Player.team_id.is_(None))
             .order_by(Player.overall_rating.desc())
             .limit(20)
             .all()
         )
 
-        assistant = DraftAssistant(sync_db)
-        suggestion = await assistant.suggest_pick(team_id, available_players)
+        assistant = DraftAssistant()  # type: ignore[call-arg]
+        suggestion = await assistant.suggest_pick(team_id, 1, [int(p.id) for p in available_players], db)  # type: ignore[arg-type]
         return suggestion
     finally:
         sync_db.close()
@@ -1190,11 +1234,13 @@ def get_team_salary_cap(team_id: int, season_id: int | None = None, db: Session 
 
     # If season_id not provided, use current season
     if not season_id:
-        season = db.execute(select(Season).where(Season.is_active)).scalar_one_or_none()
-        season_id = season.id if season else 0
+        active_season = db.execute(select(Season).where(Season.is_active)).scalar_one_or_none()
+        resolved_season_id: int = int(active_season.id) if active_season and active_season.id is not None else 0
+    else:
+        resolved_season_id = season_id
 
     service = SalaryCapService(db)
-    return service.get_team_cap_breakdown(team_id, season_id)
+    return service.get_team_cap_breakdown(team_id, resolved_season_id)
 
 
 @router.get("/{season_id}/offseason/needs/{team_id}/enhanced")

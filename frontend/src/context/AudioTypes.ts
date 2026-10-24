@@ -16,6 +16,8 @@ export interface AudioContextType {
   toggle: () => void;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
+  duckVolume: (factor?: number) => void;
+  restoreVolume: () => void;
 }
 
 export const AudioContext = createContext<AudioContextType | undefined>(undefined);

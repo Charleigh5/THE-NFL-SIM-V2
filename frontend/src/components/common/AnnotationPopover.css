@@ -55,7 +55,7 @@
   max-width: 200px;
 }
 
-textarea {
+.annotation-popover textarea {
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -70,7 +70,7 @@ textarea {
   transition: border-color 0.2s;
 }
 
-textarea:focus {
+.annotation-popover textarea:focus {
   border-color: #2ecc71;
 }
 
@@ -97,7 +97,7 @@ textarea:focus {
   gap: 8px;
 }
 
-button {
+.annotation-popover button {
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 13px;

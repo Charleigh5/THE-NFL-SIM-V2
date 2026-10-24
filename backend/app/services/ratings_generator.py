@@ -195,8 +195,10 @@ def generate_te_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) ->
     separation = ngstats.get("avg_separation", 2.0)
     ratings["route_running"] = scale_percentile(separation, 1.0, 3.5)
 
-    forty = player_data.get("forty_yard_dash", 4.7)
+    forty = player_data.get("forty_yard_dash") or 4.7
     ratings["speed"] = inverse_scale(forty, 4.5, 5.0)
+    three_cone = player_data.get("three_cone_drill") or 7.1
+    ratings["agility"] = inverse_scale(three_cone, 6.7, 7.5)
 
     # Tier 3
     ratings["pass_block"] = 50 + random.randint(-5, 10)
@@ -206,30 +208,33 @@ def generate_te_ratings(player_data: dict[str, Any], ngstats: dict[str, Any]) ->
 
 def generate_ol_ratings(player_data: dict[str, Any], position: str) -> dict[str, int]:
     """
-    Generate OL ratings (LT, LG, C, RG, RT).
+    Generate OL ratings (LT, LG, C, RG, RT, OT, OG, OL).
 
     Tackles: Tier 1 = pass_block, agility, strength
     Interior: Tier 1 = run_block, strength, awareness
     """
     ratings = {}
 
-    bench = player_data.get("bench_press", 25)
-    three_cone = player_data.get("three_cone_drill", 7.5)
-    shuttle = player_data.get("twenty_yard_shuttle", 4.6)
-    experience = player_data.get("years_exp", 0)
-    weight = player_data.get("weight", 305)
+    bench = player_data.get("bench_press") or 25
+    three_cone = player_data.get("three_cone_drill") or 7.6
+    shuttle = player_data.get("twenty_yard_shuttle") or 4.7
+    experience = player_data.get("years_exp") or player_data.get("experience") or 0
+    weight = player_data.get("weight") or 310
+    forty = player_data.get("forty_yard_dash") or 5.25
 
-    ratings["strength"] = scale_percentile(bench, 20, 35)
+    ratings["strength"] = scale_percentile(bench + (weight - 300) * 0.05, 20, 36)
+    ratings["speed"] = inverse_scale(forty, 4.9, 5.5)
+    ratings["acceleration"] = inverse_scale(three_cone, 7.2, 8.2)
 
-    if position in ("LT", "RT", "OT"):
+    if position in ("LT", "RT", "OT", "T"):
         # Tackles need agility
         ratings["agility"] = inverse_scale(three_cone, 7.0, 8.0)
         ratings["pass_block"] = clamp_rating(
-            ratings["agility"] * 0.4 + ratings["strength"] * 0.4 + experience * 2
+            ratings["agility"] * 0.4 + ratings["strength"] * 0.4 + experience * 1.5
         )
         ratings["run_block"] = clamp_rating(ratings["strength"] * 0.5 + 30)
     else:
-        # Interior: C, LG, RG
+        # Interior: C, LG, RG, G, OG, OL
         ratings["run_block"] = scale_percentile(bench + weight * 0.05, 30, 55)
         ratings["awareness"] = scale_percentile(experience, 0, 10)
         ratings["pass_block"] = clamp_rating(ratings["strength"] * 0.4 + 35)
@@ -244,26 +249,28 @@ def generate_dl_ratings(
     player_data: dict[str, Any], position: str, stats: dict[str, Any]
 ) -> dict[str, int]:
     """
-    Generate DL ratings (DT, NT, DE, EDGE).
+    Generate DL ratings (DT, NT, DE, EDGE, DL).
 
-    Interior (DT/NT): Tier 1 = strength, run_def (block_shed), tackles
-    Edge (DE): Classified into Speed/Power/Hybrid archetypes
+    Interior (DT/NT/DL): Tier 1 = strength, run_def (block_shed), tackles
+    Edge (DE/EDGE): Classified into Speed/Power/Hybrid archetypes
     """
     ratings = {}
 
-    bench = player_data.get("bench_press", 25)
-    broad_jump = player_data.get("broad_jump", 110)
-    forty = player_data.get("forty_yard_dash", 4.9)
-    three_cone = player_data.get("three_cone_drill", 7.3)
-    weight = player_data.get("weight", 280)
+    bench = player_data.get("bench_press") or 26
+    broad_jump = player_data.get("broad_jump") or 108
+    forty = player_data.get("forty_yard_dash") or 4.95
+    three_cone = player_data.get("three_cone_drill") or 7.4
+    weight = player_data.get("weight") or 285
 
     sacks = stats.get("sacks", 0)
     qb_hits = stats.get("qb_hits", 0)
     tackles = stats.get("solo_tackles", 0) + stats.get("assist_tackles", 0)
     tfls = stats.get("tackles_for_loss", 0)
 
-    if position in ("DT", "NT"):
+    if position in ("DT", "NT", "DL"):
         # Interior
+        ratings["speed"] = inverse_scale(forty, 4.8, 5.4)
+        ratings["acceleration"] = scale_percentile(broad_jump, 95, 125)
         ratings["strength"] = scale_percentile(bench + weight * 0.05, 30, 60)
         ratings["block_shed"] = scale_percentile(tfls, 0, 15)
         ratings["tackle"] = scale_percentile(tackles, 10, 60)
@@ -271,12 +278,10 @@ def generate_dl_ratings(
         ratings["agility"] = inverse_scale(three_cone, 7.0, 8.0)
     else:
         # Edge (DE/EDGE) - Archetype Classification
-        # Classify based on physicals
         speed_score = inverse_scale(forty, 4.5, 5.0)
         power_score = scale_percentile(bench + weight * 0.03, 25, 50)
         agility_score = inverse_scale(three_cone, 6.8, 7.8)
 
-        # Determine archetype: Speed > 80 & Agility > 75 = Speed, Power > 80 & Weight > 260 = Power, else Hybrid
         is_speed = speed_score >= 80 and agility_score >= 75 and forty <= 4.7
         is_power = power_score >= 80 and weight >= 260
 
@@ -287,34 +292,23 @@ def generate_dl_ratings(
         else:
             archetype = "HYBRID"
 
-        # Base ratings
         ratings["speed"] = speed_score
         ratings["acceleration"] = scale_percentile(broad_jump, 100, 130)
         ratings["agility"] = agility_score
         ratings["strength"] = power_score
         ratings["tackle"] = scale_percentile(tackles, 20, 70)
 
-        # Archetype-specific adjustments
         if archetype == "SPEED":
-            # Speed Rushers: Elite finesse, bend, acceleration (Von Miller, Micah Parsons)
             ratings["pass_rush_finesse"] = clamp_rating(ratings["agility"] * 0.6 + sacks * 3)
-            ratings["pass_rush_power"] = clamp_rating(
-                sacks * 2 + qb_hits * 1.5
-            )  # Lower power emphasis
-            ratings["acceleration"] = min(99, ratings["acceleration"] + 5)  # Boost
+            ratings["pass_rush_power"] = clamp_rating(sacks * 2 + qb_hits * 1.5)
+            ratings["acceleration"] = min(99, ratings["acceleration"] + 5)
             ratings["speed"] = min(99, ratings["speed"] + 3)
-
         elif archetype == "POWER":
-            # Power Rushers: Elite strength, bull rush (Myles Garrett, Cameron Heyward)
-            ratings["pass_rush_power"] = scale_percentile(sacks + qb_hits, 0, 22)  # Higher ceiling
-            ratings["pass_rush_finesse"] = clamp_rating(
-                ratings["agility"] * 0.4 + sacks * 1.5
-            )  # Lower finesse
-            ratings["strength"] = min(99, ratings["strength"] + 5)  # Boost
-            ratings["block_shed"] = scale_percentile(tfls, 0, 12)  # Strong vs run
-
-        else:  # HYBRID
-            # Balanced (Nick Bosa, Khalil Mack)
+            ratings["pass_rush_power"] = scale_percentile(sacks + qb_hits, 0, 22)
+            ratings["pass_rush_finesse"] = clamp_rating(ratings["agility"] * 0.4 + sacks * 1.5)
+            ratings["strength"] = min(99, ratings["strength"] + 5)
+            ratings["block_shed"] = scale_percentile(tfls, 0, 12)
+        else:
             ratings["pass_rush_power"] = scale_percentile(sacks + qb_hits, 0, 20)
             ratings["pass_rush_finesse"] = clamp_rating(ratings["agility"] * 0.5 + sacks * 2.5)
             ratings["block_shed"] = scale_percentile(tfls, 0, 10)
@@ -331,8 +325,10 @@ def generate_lb_ratings(player_data: dict[str, Any], stats: dict[str, Any]) -> d
     """
     ratings = {}
 
-    forty = player_data.get("forty_yard_dash", 4.7)
-    player_data.get("three_cone_drill", 7.0)
+    forty = player_data.get("forty_yard_dash") or 4.65
+    three_cone = player_data.get("three_cone_drill") or 7.05
+    bench = player_data.get("bench_press") or 22
+    broad_jump = player_data.get("broad_jump") or 118
 
     tackles = stats.get("solo_tackles", 0) + stats.get("assist_tackles", 0)
     tfls = stats.get("tackles_for_loss", 0)
@@ -346,6 +342,9 @@ def generate_lb_ratings(player_data: dict[str, Any], stats: dict[str, Any]) -> d
 
     # Tier 2
     ratings["speed"] = inverse_scale(forty, 4.4, 4.9)
+    ratings["acceleration"] = scale_percentile(broad_jump, 105, 128)
+    ratings["strength"] = scale_percentile(bench, 15, 30)
+    ratings["agility"] = inverse_scale(three_cone, 6.7, 7.4)
     ratings["zone_coverage"] = scale_percentile(pds + ints * 2, 0, 15)
     ratings["block_shed"] = scale_percentile(tfls, 0, 10)
 
@@ -363,9 +362,10 @@ def generate_db_ratings(
     """
     ratings = {}
 
-    forty = player_data.get("forty_yard_dash", 4.5)
-    three_cone = player_data.get("three_cone_drill", 6.9)
-    vertical = player_data.get("vertical_jump", 36)
+    forty = player_data.get("forty_yard_dash") or 4.5
+    three_cone = player_data.get("three_cone_drill") or 6.95
+    vertical = player_data.get("vertical_jump") or 36
+    bench = player_data.get("bench_press") or 15
 
     pds = stats.get("passes_defended", 0)
     ints = stats.get("interceptions", 0)
@@ -378,6 +378,7 @@ def generate_db_ratings(
         ratings["man_coverage"] = scale_percentile(pds + ints * 2, 2, 18)
         ratings["zone_coverage"] = clamp_rating(ratings["man_coverage"] - 5)
         ratings["agility"] = inverse_scale(three_cone, 6.6, 7.2)
+        ratings["strength"] = scale_percentile(bench, 10, 22)
         ratings["press"] = scale_percentile(vertical, 32, 42)
     else:
         # Safety
@@ -386,6 +387,8 @@ def generate_db_ratings(
         ratings["awareness"] = scale_percentile(ints, 0, 6)
         ratings["tackle"] = scale_percentile(tackles, 30, 90)
         ratings["hit_power"] = 60 + random.randint(-5, 15)
+        ratings["agility"] = inverse_scale(three_cone, 6.7, 7.3)
+        ratings["strength"] = scale_percentile(bench, 12, 25)
 
     return ratings
 
@@ -418,25 +421,32 @@ def generate_player_ratings(
 
     if position == "QB":
         return generate_qb_ratings(player_data, ngstats)
-    elif position == "RB":
+    elif position in ("RB", "FB"):
         return generate_rb_ratings(player_data, ngstats)
     elif position == "WR":
         return generate_wr_ratings(player_data, ngstats)
     elif position == "TE":
         return generate_te_ratings(player_data, ngstats)
-    elif position in ("OT", "OG", "C"):
+    elif position in ("OT", "OG", "C", "OL", "T", "G", "LT", "LG", "RG", "RT"):
         return generate_ol_ratings(player_data, position_raw)
-    elif position in ("DT", "DE"):
+    elif position in ("DT", "DE", "DL", "EDGE", "NT", "ED"):
         return generate_dl_ratings(player_data, position_raw, standard_stats)
-    elif position == "LB":
+    elif position in ("LB", "ILB", "OLB", "MLB"):
         return generate_lb_ratings(player_data, standard_stats)
-    elif position in ("CB", "S"):
+    elif position in ("CB", "S", "DB", "FS", "SS"):
         return generate_db_ratings(player_data, position, standard_stats)
     else:
         # Default ratings for K, P, LS, etc.
+        is_p = position == "P"
         return {
-            "kick_power": 70 + random.randint(-10, 20),
-            "kick_accuracy": 70 + random.randint(-10, 20),
+            "kick_power": 75 + random.randint(-5, 18),
+            "kick_accuracy": 75 + random.randint(-5, 18),
+            "hang_time": 72 + random.randint(-8, 18) if is_p else 60,
+            "speed": 62 + random.randint(-4, 8),
+            "acceleration": 65 + random.randint(-4, 8),
+            "strength": 55 + random.randint(-4, 10),
+            "agility": 62 + random.randint(-4, 8),
+            "awareness": 65 + random.randint(-4, 10),
         }
 
 

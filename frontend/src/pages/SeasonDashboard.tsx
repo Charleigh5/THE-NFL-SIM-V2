@@ -19,7 +19,22 @@ import { RibbonTicker } from "../components/immersive/RibbonTicker";
 import { BroadcastPanel } from "../components/immersive/BroadcastPanel";
 import { BlitzBoltIcon, LombardiTrophyIcon } from "../components/icons";
 import stylesModule from "./SeasonDashboard.module.css";
-// import "./SeasonDashboard.css"; // Disabling old CSS to prefer module
+import "./SeasonDashboard.css";
+
+const formatCompactGameDate = (game: Game, fallbackWeek: number): string => {
+  const rawDate = game.date || game.scheduled_date;
+  if (rawDate) {
+    const parsed = new Date(rawDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+    }
+  }
+  return `Week ${game.week || fallbackWeek}`;
+};
 
 const SeasonDashboard: React.FC = () => {
   const loaderData = useLoaderData() as {
@@ -262,6 +277,21 @@ const SeasonDashboard: React.FC = () => {
     return undefined;
   }, [season, playoffBracket]);
 
+  // Merge active season standings records into teams so ScheduleView displays live W-L records
+  const enrichedTeams = useMemo(() => {
+    if (!standings || standings.length === 0) return teams;
+    const standingByTeamId = new Map(standings.map((s) => [s.team_id, s]));
+    return teams.map((t) => {
+      const st = standingByTeamId.get(t.id);
+      if (!st) return t;
+      return {
+        ...t,
+        wins: st.wins,
+        losses: st.losses,
+      };
+    });
+  }, [teams, standings]);
+
   const handleSimulateGame = async (gameId: number) => {
     if (!season) return;
     try {
@@ -383,7 +413,7 @@ const SeasonDashboard: React.FC = () => {
         )}
 
         <header className={stylesModule.header} data-testid="season-dashboard-header">
-          <span className={stylesModule.headerText}>
+          <span className="sr-only">
             {season.year} Season - Week {season.current_week}
           </span>
           <SeasonSummaryCard
@@ -391,6 +421,9 @@ const SeasonDashboard: React.FC = () => {
             progress={seasonProgress}
             actions={actions}
             champion={championName}
+            games={games}
+            teams={teams}
+            standings={standings}
           />
         </header>
 
@@ -465,7 +498,7 @@ const SeasonDashboard: React.FC = () => {
                                 </span>
                               </div>
                               <div className="game-date">
-                                {new Date(game.scheduled_date).toLocaleDateString()}
+                                {formatCompactGameDate(game, season.current_week)}
                               </div>
                             </div>
                             {game.weather_info && (
@@ -559,7 +592,7 @@ const SeasonDashboard: React.FC = () => {
               {activeTab === "schedule" && (
                 <ScheduleView
                   games={games}
-                  teams={teams}
+                  teams={enrichedTeams}
                   currentWeek={season.current_week}
                   totalWeeks={season.total_weeks + 4} // Approx playoff weeks
                   onWeekChange={handleWeekChange}
@@ -570,7 +603,7 @@ const SeasonDashboard: React.FC = () => {
               {activeTab === "playoffs" && <PlayoffBracket matchups={playoffBracket} />}
 
               {activeTab === "leaders" && (
-                <LeagueLeaders leaders={leaders} loading={loading} teams={teams} />
+                <LeagueLeaders leaders={leaders} loading={loading} teams={enrichedTeams} />
               )}
             </BroadcastPanel>
           </div>

@@ -18,8 +18,9 @@ class DraftPickInfo(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    id: int | None = Field(default=None, description="Specific DraftPick DB row ID if known")
     round: int = Field(ge=1, le=7, description="Draft round (1-7)")
-    year: int = Field(ge=2024, le=2030, description="Draft year")
+    year: int = Field(ge=2024, le=2035, description="Draft year")
     original_team_id: int | None = Field(
         default=None, description="Original team that owned the pick (if traded)"
     )
@@ -30,6 +31,9 @@ class TradeEvaluationRequest(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    offering_team_id: int | None = Field(
+        default=None, description="Team ID making the offer (required for pick-only trades)"
+    )
     offered_player_ids: list[int] = Field(
         default_factory=list, description="Player IDs being offered to the target team"
     )
@@ -43,6 +47,38 @@ class TradeEvaluationRequest(BaseModel):
     requested_picks: list[DraftPickInfo] | None = Field(
         default=None, description="Draft picks being requested"
     )
+
+
+class FactorBreakdownSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    market_tvp: float = 0.0
+    need_fit_delta: float = 0.0
+    cap_impact_delta: float = 0.0
+    window_fit_delta: float = 0.0
+    class_fit_delta: float = 0.0
+    realism_modifiers_delta: float = 0.0
+    gm_threshold: float = 1.00
+
+
+class TeamSideGradeSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    team_id: int
+    competitive_window: str = "BUBBLE"
+    value_in_tvp: float = 0.0
+    value_out_tvp: float = 0.0
+    ratio: float = 1.0
+    grade: str = "B"
+    factors: FactorBreakdownSchema = Field(default_factory=FactorBreakdownSchema)
+
+
+class CounterOfferSuggestion(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    add_player_ids: list[int] = Field(default_factory=list)
+    add_picks: list[DraftPickInfo] = Field(default_factory=list)
+    summary: str = ""
 
 
 class TradeEvaluationResponse(BaseModel):
@@ -65,12 +101,32 @@ class TradeEvaluationResponse(BaseModel):
         default=None, description="Target team's GM philosophy that influenced decision"
     )
 
+    # CTVE V2 additions
+    user_side: TeamSideGradeSchema | None = Field(
+        default=None, description="Evaluation and grade from offering user team's perspective"
+    )
+    ai_side: TeamSideGradeSchema | None = Field(
+        default=None, description="Evaluation and grade from receiving AI team's perspective"
+    )
+    ai_threshold: float | None = Field(
+        default=None, description="Target GM's contextual acceptance threshold"
+    )
+    counter_offer: CounterOfferSuggestion | None = Field(
+        default=None, description="Minimal knapsack sweetener to balance a close trade"
+    )
+    narrative_notes: list[str] = Field(
+        default_factory=list, description="Contextual narrative tags (rivalry, comp floor, medical, etc.)"
+    )
+
 
 class TradeOfferRequest(BaseModel):
     """Request body for submitting a formal trade offer."""
 
     model_config = ConfigDict(from_attributes=True)
 
+    offering_team_id: int | None = Field(
+        default=None, description="Team ID making the offer (required for pick-only trades)"
+    )
     offered_player_ids: list[int] = Field(
         default_factory=list, description="Player IDs being offered"
     )

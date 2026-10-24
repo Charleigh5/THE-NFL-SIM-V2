@@ -46,19 +46,32 @@ export const tradeApi = {
 
       const players: Player[] = await response.json();
 
-      return players.map((p) => ({
-        id: p.id,
-        first_name: p.first_name,
-        last_name: p.last_name,
-        position: p.position,
-        overall_rating: p.overall_rating,
-        age: p.age,
-        salary: 5000000,
-        years_remaining: 2,
-        team_id: teamId,
-        trade_value: calculateTradeValue(p.overall_rating, p.age),
-        is_on_trade_block: false,
-      }));
+      return players.map((p) => {
+        const rawSalary =
+          (p as unknown as { contract_salary?: number; contract?: { contract_salary?: number } })
+            .contract_salary ??
+          (p as unknown as { contract?: { contract_salary?: number } }).contract?.contract_salary ??
+          1000000;
+        const rawYears =
+          (p as unknown as { contract_years?: number; contract?: { contract_years?: number } })
+            .contract_years ??
+          (p as unknown as { contract?: { contract_years?: number } }).contract?.contract_years ??
+          1;
+
+        return {
+          id: p.id,
+          first_name: p.first_name,
+          last_name: p.last_name,
+          position: p.position,
+          overall_rating: p.overall_rating,
+          age: p.age,
+          salary: rawSalary,
+          years_remaining: rawYears,
+          team_id: teamId,
+          trade_value: calculateTradeValue(p.overall_rating, p.age, p.position),
+          is_on_trade_block: false,
+        };
+      });
     } catch (error) {
       console.error("Failed to fetch tradeable players:", error);
       return [];
@@ -91,11 +104,13 @@ export const tradeApi = {
     offeredPlayerIds: number[],
     requestedPlayerIds: number[],
     offeredPicks?: DraftPickInfo[],
-    requestedPicks?: DraftPickInfo[]
+    requestedPicks?: DraftPickInfo[],
+    offeringTeamId?: number
   ): Promise<TradeEvaluation> => {
     return await fetchJson<TradeEvaluation>(`/api/trades/evaluate`, {
       method: "POST",
       body: JSON.stringify({
+        offering_team_id: offeringTeamId || undefined,
         offered_player_ids: offeredPlayerIds,
         requested_player_ids: requestedPlayerIds,
         target_team_id: targetTeamId,
@@ -138,6 +153,7 @@ export const tradeApi = {
         method: "POST",
         body: JSON.stringify({
           target_team_id: targetTeamId,
+          offering_team_id: proposal.offering_team_id ?? (proposal as any).team_id ?? null,
           offered_player_ids: offeredPlayers,
           requested_player_ids: requestedPlayers,
           offered_picks: proposal.offered_picks || null,
@@ -316,16 +332,40 @@ export const tradeApi = {
 };
 
 /**
- * Calculate trade value based on overall and age
+ * Calculate trade value based on overall, age, and position on the Fitzgerald-Spielberger TVP scale
  */
-function calculateTradeValue(overall: number, age: number): number {
-  let value = overall;
-  if (age < 23) value += 10;
-  else if (age < 26) value += 5;
-  else if (age <= 28) value += 0;
-  else if (age <= 30) value -= 5;
-  else if (age <= 32) value -= 10;
-  else value -= 20;
+export function calculateTradeValue(overall: number, age: number, position: string = "WR"): number {
+  const posUpper = position.toUpperCase();
+  let posMult = 1.0;
+  if (posUpper === "QB") posMult = 1.45;
+  else if (["DE", "OT", "WR", "CB", "EDGE", "LT"].includes(posUpper)) posMult = 1.25;
+  else if (["DT", "S", "DL"].includes(posUpper)) posMult = 1.15;
+  else if (["TE", "LB", "OL", "OG", "C", "RB"].includes(posUpper)) posMult = 1.0;
+  else if (["K", "P", "FB", "LS"].includes(posUpper)) posMult = 0.65;
 
-  return Math.max(0, Math.min(100, value));
+  // Non-linear elite star curve on Fitzgerald-Spielberger scale (#1 overall pick = 3000 TVP)
+  const effectiveOvr = Math.max(50, Math.min(99, overall));
+  const baseTvp = Math.pow((effectiveOvr - 50) / 49.0, 2.2) * 2800;
+
+  // Positional age curve
+  let ageMult = 1.0;
+  if (posUpper === "RB") {
+    if (age <= 24) ageMult = 1.2;
+    else if (age <= 26) ageMult = 1.0;
+    else if (age <= 28) ageMult = 0.75;
+    else ageMult = 0.4;
+  } else if (posUpper === "QB") {
+    if (age <= 25) ageMult = 1.15;
+    else if (age <= 32) ageMult = 1.0;
+    else if (age <= 35) ageMult = 0.85;
+    else ageMult = 0.6;
+  } else {
+    if (age <= 24) ageMult = 1.2;
+    else if (age <= 28) ageMult = 1.0;
+    else if (age <= 30) ageMult = 0.85;
+    else if (age <= 32) ageMult = 0.65;
+    else ageMult = 0.45;
+  }
+
+  return Math.max(10, Math.round(baseTvp * posMult * ageMult));
 }

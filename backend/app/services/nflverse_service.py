@@ -32,8 +32,13 @@ POSITION_MAP = {
     # Offense
     "LT": "OT",
     "RT": "OT",
+    "T": "OT",
+    "OT": "OT",
     "LG": "OG",
     "RG": "OG",
+    "G": "OG",
+    "OG": "OG",
+    "OL": "OG",
     "C": "C",
     "QB": "QB",
     "RB": "RB",
@@ -42,8 +47,11 @@ POSITION_MAP = {
     "TE": "TE",
     # Defense
     "DE": "DE",
+    "EDGE": "DE",
+    "ED": "DE",
     "DT": "DT",
     "NT": "DT",  # Nose Tackle -> DT
+    "DL": "DT",
     "LB": "LB",
     "ILB": "LB",
     "MLB": "LB",
@@ -51,6 +59,7 @@ POSITION_MAP = {
     "CB": "CB",
     "SS": "S",
     "FS": "S",
+    "S": "S",
     "DB": "CB",  # Generic DB -> CB
     # Special Teams
     "K": "K",
@@ -322,12 +331,16 @@ class NflverseService:
         for row in rosters.iter_rows(named=True):
             gsis_id = row.get("gsis_id")
 
+            # Determine position: prefer specific depth_chart_position ("DE", "DT", "T", "G", "C", etc.) over generic position ("DL", "OL")
+            raw_pos = row.get("depth_chart_position") or row.get("position", "WR")
+            norm_pos = map_position(raw_pos)
+
             # Base Player Dict
             player = {
                 "first_name": row.get("first_name", "Unknown"),
                 "last_name": row.get("last_name", "Player"),
-                "position": map_position(row.get("position", "WR")),
-                "position_raw": row.get("position", "WR"),
+                "position": norm_pos,
+                "position_raw": raw_pos,
                 "team_abbr": map_team_abbr(row.get("team", "")),
                 "college": row.get("college"),
                 "height": row.get("height", 72),
