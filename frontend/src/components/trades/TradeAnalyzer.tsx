@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import "./TradeAnalyzer.css";
 import { FeedbackCollector } from "../draft/FeedbackCollector";
+import { AccessibleTooltip } from "../ui/AccessibleTooltip";
+import { Handshake, Info } from "lucide-react";
 import type { CounterOfferSuggestion, DraftPickInfo, TradeEvaluation } from "../../types/trade";
+import { humanizeNarrativeNote } from "./tradeNarrative";
 
+/**
+ * Props for the TradeAnalyzer component.
+ */
 interface TradeAnalyzerProps {
   seasonId: number;
   teamId: number;
@@ -14,6 +20,12 @@ interface TradeAnalyzerProps {
   onApplyCounterOffer?: (counter: CounterOfferSuggestion) => void;
 }
 
+/**
+ * TradeAnalyzer Component
+ * ======================
+ * Renders live contextual trade evaluation telemetry with WAI-APG accessible tooltips,
+ * humanized narrative feedback, and GM counter-offer proposal mechanics.
+ */
 export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
   seasonId,
   teamId,
@@ -84,7 +96,7 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
         className="analyze-btn"
         onClick={handleAnalyze}
         data-testid="analyze-btn"
-        disabled={loading || !targetTeamId || (!hasOffered || !hasRequested)}
+        disabled={loading || !targetTeamId || !hasOffered || !hasRequested}
       >
         {loading ? "Consulting GM & Analytics..." : "Analyze Fairness"}
       </button>
@@ -127,7 +139,12 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
           </div>
 
           <div className="fairness-score">
-            <span className="label">Fairness Surplus:</span>
+            <div className="flex items-center gap-1.5">
+              <span className="label">Fairness Surplus:</span>
+              <AccessibleTooltip content="Surplus percentage difference between offered and requested value. Positive values favor your franchise; negative values favor the trade partner.">
+                <Info className="w-3.5 h-3.5 text-zinc-400 hover:text-cyan-400 cursor-help" />
+              </AccessibleTooltip>
+            </div>
             <span
               className={`score ${evaluation.score >= 0 ? "positive" : "negative"}`}
               data-testid="fairness-score"
@@ -143,27 +160,42 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
           {evaluation.offered_value !== undefined && evaluation.requested_value !== undefined && (
             <div className="tvp-values-row">
               <div className="tvp-stat">
-                <span className="tvp-label">You Offer</span>
-                <span className="tvp-val">
-                  {Math.round(evaluation.offered_value).toLocaleString()} TVP
+                <div className="flex items-center gap-1">
+                  <span className="tvp-label">You Offer Capital</span>
+                  <AccessibleTooltip content="Contextual Trade Value Points (TVP): Jimmy Johnson draft value combined with contract cap efficiency, age decay, and positional scarcity.">
+                    <Info className="w-3 h-3 text-zinc-400 hover:text-cyan-400 cursor-help" />
+                  </AccessibleTooltip>
+                </div>
+                <span className="tvp-val" data-testid="offered-capital-val">
+                  {Math.round(evaluation.offered_value).toLocaleString()} Pts
                 </span>
               </div>
               <div className="tvp-stat">
-                <span className="tvp-label">You Receive</span>
-                <span className="tvp-val">
-                  {Math.round(evaluation.requested_value).toLocaleString()} TVP
+                <div className="flex items-center gap-1">
+                  <span className="tvp-label">You Receive Capital</span>
+                  <AccessibleTooltip content="Contextual Trade Value Points (TVP): Jimmy Johnson draft value combined with contract cap efficiency, age decay, and positional scarcity.">
+                    <Info className="w-3 h-3 text-zinc-400 hover:text-cyan-400 cursor-help" />
+                  </AccessibleTooltip>
+                </div>
+                <span className="tvp-val" data-testid="received-capital-val">
+                  {Math.round(evaluation.requested_value).toLocaleString()} Pts
                 </span>
               </div>
             </div>
           )}
 
           {evaluation.narrative_notes && evaluation.narrative_notes.length > 0 && (
-            <div className="narrative-tags-container">
-              {evaluation.narrative_notes.map((note, idx) => (
-                <span key={idx} className="narrative-tag">
-                  {note}
-                </span>
-              ))}
+            <div className="narrative-tags-container" data-testid="narrative-tags">
+              {evaluation.narrative_notes.map((note, idx) => {
+                const humanized = humanizeNarrativeNote(note);
+                return (
+                  <AccessibleTooltip key={idx} content={humanized.tooltip}>
+                    <span className="narrative-tag" data-testid={`narrative-tag-${idx}`}>
+                      {humanized.label}
+                    </span>
+                  </AccessibleTooltip>
+                );
+              })}
             </div>
           )}
 
@@ -174,7 +206,9 @@ export const TradeAnalyzer: React.FC<TradeAnalyzerProps> = ({
           {evaluation.counter_offer && (
             <div className="counter-offer-banner" data-testid="counter-offer-banner">
               <div className="counter-offer-header">
-                <span className="counter-icon">💡</span>
+                <div className="counter-icon-box">
+                  <Handshake className="w-5 h-5 text-amber-400" />
+                </div>
                 <strong>GM Counter-Offer Proposal</strong>
               </div>
               <p className="counter-offer-summary">

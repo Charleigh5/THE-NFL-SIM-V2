@@ -1,0 +1,56 @@
+.accessible-tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+}
+
+.accessible-tooltip-trigger:focus-visible {
+  outline: 2px solid #06b6d4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.accessible-tooltip-bubble {
+  position: absolute;
+  z-index: 100;
+  background-color: #090d16;
+  color: #f1f5f9;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  max-width: 260px;
+  width: max-content;
+  pointer-events: none;
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: left;
+}
+
+/* Positioning variants */
+.accessible-tooltip-bubble.position-top {
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.accessible-tooltip-bubble.position-bottom {
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.accessible-tooltip-bubble.position-left {
+  right: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.accessible-tooltip-bubble.position-right {
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+}
