@@ -287,6 +287,7 @@ export const DepthChart: React.FC = () => {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [draftOrders, setDraftOrders] = useState<Record<string, number[]>>({});
   const [chemistry, setChemistry] = useState<ChemistryMetadata | null>(null);
+  const [activeDragPlayerId, setActiveDragPlayerId] = useState<number | null>(null);
 
   const draftKey = `${selectedTeamId}:${selectedPosition}`;
 
@@ -304,13 +305,16 @@ export const DepthChart: React.FC = () => {
   const endPointerDrag = () => {
     isPointerDownRef.current = false;
     draggingIdRef.current = null;
+    setActiveDragPlayerId(null);
   };
 
   useEffect(() => {
     window.addEventListener("pointerup", endPointerDrag);
+    window.addEventListener("pointercancel", endPointerDrag);
     window.addEventListener("blur", endPointerDrag);
     return () => {
       window.removeEventListener("pointerup", endPointerDrag);
+      window.removeEventListener("pointercancel", endPointerDrag);
       window.removeEventListener("blur", endPointerDrag);
     };
   }, []);
@@ -851,7 +855,7 @@ export const DepthChart: React.FC = () => {
               <div className="bg-white/5 border border-white/5 rounded-xl p-3">
                 <div className="text-[10px] font-mono text-gray-400 uppercase">ROOM AVERAGE</div>
                 <div className="text-2xl font-black font-heading text-white mt-1">
-                  {averageGroupOvr ?? "—"}{" "}
+                  {averageGroupOvr ?? "--"}{" "}
                   <span className="text-xs text-cyan-400 font-mono">OVR</span>
                 </div>
               </div>
@@ -896,7 +900,7 @@ export const DepthChart: React.FC = () => {
             {["OT", "OG", "C", "LT", "LG", "RG", "RT"].includes(selectedPosition) && chemistry && (
               <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30">
                 <div className="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <span>⚗️ Unit Chemistry Synergy</span>
+                  <span>⚡ Unit Chemistry Synergy</span>
                 </div>
                 <ChemistryBadge
                   level={chemistry.chemistry_level}
@@ -918,7 +922,7 @@ export const DepthChart: React.FC = () => {
                   {selectedPosition} Depth Chart
                 </h2>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Drag athletes or use ▲/▼ buttons to set rotational depth for live game sim.
+                  Drag athletes or use ↑/↓ buttons to set rotational depth for live game sim.
                 </p>
               </div>
 
@@ -951,6 +955,8 @@ export const DepthChart: React.FC = () => {
                 {positionPlayers.map((player, index) => {
                   const rankBadge = getRankBadge(index);
                   const ovrClass = getOvrTierClass(player.overall_rating);
+                  const isDropCandidate =
+                    activeDragPlayerId !== null && activeDragPlayerId !== player.id;
 
                   return (
                     <Reorder.Item
@@ -960,6 +966,7 @@ export const DepthChart: React.FC = () => {
                       dragListener={false}
                       data-testid={`depth-player-${player.id}`}
                       data-rank={index + 1}
+                      data-is-dragging={activeDragPlayerId === player.id}
                       onPointerEnter={() => {
                         if (!isPointerDownRef.current) return;
                         const draggingId = draggingIdRef.current;
@@ -974,7 +981,9 @@ export const DepthChart: React.FC = () => {
                         next.splice(toIndex, 0, moved);
                         commitDraftOrder(next);
                       }}
-                      className={`depth-player-magnet bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/10 border transition-all duration-200 group ${
+                      className={`depth-player-magnet min-h-[76px] ${
+                        isDropCandidate ? "depth-drop-active" : ""
+                      } bg-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/10 border transition-all duration-200 group ${
                         index === 0 ? "border-emerald-500/30 bg-emerald-950/10" : "border-white/5"
                       }`}
                     >
@@ -1122,8 +1131,12 @@ export const DepthChart: React.FC = () => {
                           aria-label={`Drag ${player.first_name} ${player.last_name} to reorder depth chart`}
                           onPointerDown={(event) => {
                             event.stopPropagation();
+                            if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                              event.currentTarget.releasePointerCapture(event.pointerId);
+                            }
                             isPointerDownRef.current = true;
                             draggingIdRef.current = player.id;
+                            setActiveDragPlayerId(player.id);
                           }}
                         >
                           <svg
