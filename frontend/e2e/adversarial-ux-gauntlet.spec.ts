@@ -555,7 +555,7 @@ test.describe("Adversarial UX Audit & Validation Gauntlet", () => {
       // Click "Open In-Depth Biometrics & Traits Dossier"
       const inDepthBtn = page.getByText(/Open In-Depth Biometrics & Traits Dossier/i);
       if (await inDepthBtn.isVisible()) {
-        await inDepthBtn.dispatchEvent('click');
+        await inDepthBtn.dispatchEvent("click");
         await page.waitForSelector(".epp-modal", { timeout: 4000 });
         await page.waitForTimeout(500);
 
