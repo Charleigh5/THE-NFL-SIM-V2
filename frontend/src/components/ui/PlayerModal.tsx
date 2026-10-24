@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { api } from "../../services/api";
 import type { Player, PlayerStats } from "../../services/api";
 import { PlayerAvatar } from "./PlayerAvatar";
 import { getTeamAbbr } from "../../utils/teamUtils";
+import { ModalShell } from "./ModalShell";
 import "./PlayerModal.css";
 
 interface PlayerModalProps {
@@ -45,16 +45,6 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
     };
   }, [playerId]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
-
   if (!playerId) return null;
 
   const isDefense = ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(
@@ -67,8 +57,15 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
 
   const isSpecial = ["K", "P", "LS"].includes(player?.position?.toUpperCase() || "");
 
-  return createPortal(
-    <div className="player-modal-overlay" onClick={onClose}>
+  return (
+    <ModalShell
+      id={`player-modal-${playerId}`}
+      isOpen={Boolean(playerId)}
+      onClose={onClose}
+      title={`${player?.first_name || ""} ${player?.last_name || ""} Dossier`}
+      overlayClassName="player-modal-overlay"
+      testId="player-modal-shell"
+    >
       <div
         className="player-modal-content"
         data-testid="player-modal"
@@ -242,8 +239,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
           )}
         </div>
       </div>
-    </div>,
-    document.body
+    </ModalShell>
   );
 };
 

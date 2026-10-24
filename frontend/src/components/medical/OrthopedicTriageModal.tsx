@@ -23,6 +23,7 @@ import { medicalApi } from "../../services/medicalApi";
 import { RTPTrajectoryGraph } from "./RTPTrajectoryGraph";
 import { orthopedicApi } from "../../services/orthopedicApi";
 import type { TreatmentTrajectory } from "../../types/orthopedicRtp";
+import { ModalShell } from "../ui/ModalShell";
 
 interface OrthopedicTriageModalProps {
   isOpen: boolean;
@@ -169,8 +170,6 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
     };
   }, [isOpen, playerId, fallbackProtocols]);
 
-  if (!isOpen) return null;
-
   const displayProtocols = liveProtocols || fallbackProtocols;
 
   const protocolIcons: Record<MedicalProtocolType, React.FC<{ className?: string }>> = {
@@ -201,7 +200,13 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-lg p-4 font-sans">
+    <ModalShell
+      id={`orthopedic-triage-${playerId}-${zoneKey}`}
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Orthopedic Triage - ${zoneName}`}
+      testId="orthopedic-triage-modal"
+    >
       <motion.div
         initial={{ scale: 0.94, opacity: 0, y: 15 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -389,6 +394,6 @@ export const OrthopedicTriageModal: React.FC<OrthopedicTriageModalProps> = ({
           </button>
         </div>
       </motion.div>
-    </div>
+    </ModalShell>
   );
 };

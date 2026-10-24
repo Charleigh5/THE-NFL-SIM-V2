@@ -3,6 +3,7 @@ import { X, BookOpen } from "lucide-react";
 import { HelmetIcon } from "../icons";
 import { scoutingService } from "../../services/scouting";
 import type { PlayerBackstory } from "../../types/api/scouting";
+import { ModalShell } from "../ui/ModalShell";
 
 interface PlayerBackstoryModalProps {
   playerId: string;
@@ -47,10 +48,14 @@ export const PlayerBackstoryModal: React.FC<PlayerBackstoryModalProps> = ({
     fetchBackstory();
   }, [isOpen, playerId]);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <ModalShell
+      id={`player-backstory-${playerId}`}
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${playerName} Origin Story`}
+      testId="player-backstory-modal"
+    >
       <div className="relative w-full max-w-2xl bg-slate-900/90 border border-white/10 rounded-[2px] shadow-hard-lg overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header with decorative background */}
         <div className="relative h-32 bg-gradient-to-r from-blue-900 to-slate-900 flex items-end p-6">
@@ -131,6 +136,6 @@ export const PlayerBackstoryModal: React.FC<PlayerBackstoryModalProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 };

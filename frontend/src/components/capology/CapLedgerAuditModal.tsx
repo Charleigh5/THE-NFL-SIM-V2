@@ -23,6 +23,7 @@ import type {
   MultiYearLedgerStatementResponse,
 } from "../../types/capLedger";
 import { capLedgerApi } from "../../services/capLedgerApi";
+import { ModalShell } from "../ui/ModalShell";
 
 interface CapLedgerAuditModalProps {
   isOpen: boolean;
@@ -69,14 +70,13 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
     };
   }, [isOpen, teamId]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn"
-      role="dialog"
-      aria-modal="true"
-      data-testid="cap-ledger-audit-modal"
+    <ModalShell
+      id={`cap-ledger-audit-${teamId}`}
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Capology Double-Entry Ledger"
+      testId="cap-ledger-audit-modal"
     >
       <div className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 border border-emerald-500/30 rounded-[2px] shadow-hard-md flex flex-col overflow-hidden">
         {/* Header */}
@@ -380,6 +380,6 @@ export const CapLedgerAuditModal: React.FC<CapLedgerAuditModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 };
