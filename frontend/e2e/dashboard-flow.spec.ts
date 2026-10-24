@@ -39,7 +39,7 @@ test.describe("Dashboard Flow", () => {
     await expect(page.locator(".system-status .badge")).toContainText("All Systems Online");
 
     // Verify season button exists
-    await expect(page.locator("[data-testid='start-season-btn']")).toBeVisible();
+    await expect(page.locator(".start-season-btn")).toBeVisible();
   });
 
   // This test verifies dashboard behavior when no active season exists
@@ -69,10 +69,10 @@ test.describe("Dashboard Flow", () => {
     await page.goto("/dashboard");
 
     // Verify "Start Season" button
-    await expect(page.locator("[data-testid='start-season-btn']")).toBeVisible();
+    await expect(page.locator(".start-season-btn")).toBeVisible();
 
     // Click Start Season button
-    await page.locator("[data-testid='start-season-btn']").click();
+    await page.locator(".start-season-btn").click();
     await page.waitForTimeout(500);
   });
 
