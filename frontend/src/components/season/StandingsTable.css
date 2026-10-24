@@ -14,6 +14,58 @@
   background-color: #252525;
   border-bottom: 1px solid #333;
   padding: 12px 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Segmented Quick-Toggle Controls */
+.standings-segmented-controls {
+  display: flex;
+  gap: 0.375rem;
+  background-color: #222;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #383838;
+  align-items: center;
+}
+
+.segmented-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 150ms ease;
+  border: none;
+  outline: none;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.segmented-btn:focus-visible,
+.filter-select:focus-visible,
+.toggle-btn:focus-visible {
+  outline: 2px solid #06b6d4;
+  outline-offset: 2px;
+}
+
+.segmented-btn.active {
+  background-color: #06b6d4;
+  color: #000;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.4);
+}
+
+.segmented-btn:not(.active) {
+  background-color: transparent;
+  color: #d4d4d8;
+}
+
+.segmented-btn:not(.active):hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .standings-filters {
@@ -24,8 +76,9 @@
 .standings-legend {
   display: flex;
   gap: 16px;
-  font-size: 12px;
-  color: #888;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #d4d4d8;
 }
 
 .filter-select {
@@ -57,11 +110,11 @@
 
 .standings-table th {
   background-color: #2a2a2a;
-  color: #aaa;
-  font-weight: 600;
+  color: #e4e4e7;
+  font-weight: 700;
   text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.5px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
   cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
@@ -115,11 +168,13 @@
 }
 
 .team-rank {
-  color: #666;
-  font-weight: 500;
+  color: #a1a1aa;
+  font-weight: 600;
   width: 20px;
   text-align: right;
   cursor: help;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .team-name {
@@ -149,7 +204,8 @@
 }
 
 .team-abbr {
-  color: #888;
+  color: #d4d4d8;
+  font-weight: 500;
   font-size: 12px;
 }
 
@@ -178,21 +234,26 @@
   }
 }
 
-.stat-cell {
-  color: #ddd;
+.stat-cell,
+.standings-table td.stat-cell {
+  color: #f4f4f5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-primary {
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .diff-positive {
-  color: #4caf50;
+  color: #4ade80;
+  font-weight: 700;
 }
 
 .diff-negative {
-  color: #f44336;
+  color: #f87171;
+  font-weight: 700;
 }
 
 .division-group {
@@ -226,12 +287,19 @@
 .toggle-btn {
   background: none;
   border: none;
-  color: #888;
+  color: #d4d4d8;
   padding: 6px 12px;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   border-radius: 3px;
   transition: all 0.2s;
+}
+
+.standings-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .toggle-btn:hover {
