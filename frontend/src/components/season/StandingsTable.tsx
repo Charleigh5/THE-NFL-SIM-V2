@@ -359,7 +359,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               aria-pressed={quickView === "ALL"}
               data-testid="quick-toggle-all"
             >
-              ALL
+              <span data-testid="standings-toggle-all">ALL</span>
             </button>
             <button
               type="button"
@@ -368,7 +368,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               aria-pressed={quickView === "AFC"}
               data-testid="quick-toggle-afc"
             >
-              AFC
+              <span data-testid="standings-toggle-afc">AFC</span>
             </button>
             <button
               type="button"
@@ -377,7 +377,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               aria-pressed={quickView === "NFC"}
               data-testid="quick-toggle-nfc"
             >
-              NFC
+              <span data-testid="standings-toggle-nfc">NFC</span>
             </button>
             <button
               type="button"
@@ -386,7 +386,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               aria-pressed={quickView === "PLAYOFFS"}
               data-testid="quick-toggle-playoffs"
             >
-              PLAYOFF PICTURE
+              <span data-testid="standings-toggle-playoffs">PLAYOFF PICTURE</span>
             </button>
           </div>
 
