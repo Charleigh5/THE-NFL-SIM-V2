@@ -216,6 +216,31 @@ export const UNIT_TABS: { id: DepthUnit; label: string; icon: string }[] = [
   { id: "SPECIALISTS", label: "SPECIALISTS & SUB", icon: "⭐" },
 ];
 
+export const UNIT_HOTKEY_MAP: Record<string, DepthUnit> = {
+  "1": "OFFENSE",
+  "2": "DEFENSE",
+  "3": "SPECIAL_TEAMS",
+  "4": "SPECIALISTS",
+};
+
+export const isHotkeySuppressed = (
+  activeElement: { tagName?: string; isContentEditable?: boolean } | null,
+  modalStackDepth: number
+): boolean => {
+  if (modalStackDepth > 0) return true;
+  if (!activeElement) return false;
+  const tag = activeElement.tagName?.toUpperCase();
+  if (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    Boolean(activeElement.isContentEditable)
+  ) {
+    return true;
+  }
+  return false;
+};
+
 export const isPlayerCompatibleWithPosition = (
   playerPosition: string,
   targetCode: string,

@@ -14,6 +14,7 @@ import { api } from "../services/api";
 import type { Player, Team, ChemistryMetadata } from "../services/api";
 import { useTheme } from "../context/useTheme";
 import { useSettingsStore } from "../store/useSettingsStore";
+import { useModalStackStore } from "../store/useModalStackStore";
 import { ChemistryBadge } from "../components/ui/ChemistryBadge";
 import { EnhancedPlayerProfile } from "../components/ui/EnhancedPlayerProfile";
 import { PlayerAvatar } from "../components/ui/PlayerAvatar";
@@ -23,6 +24,7 @@ import { DEPTH_CHART_SCENE } from "../components/spatial/spatialSceneManifest";
 import {
   POSITION_CONFIGS,
   UNIT_TABS,
+  UNIT_HOTKEY_MAP,
   isPlayerCompatibleWithPosition,
   isPositionUnderfilled,
   getUnderfilledAlertTitle,
@@ -89,6 +91,49 @@ export const DepthChart: React.FC = () => {
       window.removeEventListener("blur", endPointerDrag);
     };
   }, []);
+
+  // Pro-Coach Hotkey listener for master depth chart units (1: Offense, 2: Defense, 3: Special Teams, 4: Specialists)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore if player profile overlay is open
+      if (selectedPlayerId !== null) {
+        return;
+      }
+
+      // Ignore if document.activeElement is INPUT, TEXTAREA, SELECT, or isContentEditable
+      const activeEl = document.activeElement as HTMLElement | null;
+      if (
+        activeEl?.tagName === "INPUT" ||
+        activeEl?.tagName === "TEXTAREA" ||
+        activeEl?.tagName === "SELECT" ||
+        Boolean(activeEl?.isContentEditable)
+      ) {
+        return;
+      }
+
+      // Ignore if a modal is open in useModalStackStore.getState().stack.length > 0
+      if (useModalStackStore.getState().stack.length > 0) {
+        return;
+      }
+
+      // Ignore modifier keys
+      if (event.ctrlKey || event.altKey || event.metaKey) {
+        return;
+      }
+
+      const targetUnit = UNIT_HOTKEY_MAP[event.key];
+      if (targetUnit) {
+        event.preventDefault();
+        soundEffects.playSnap();
+        setActiveUnit(targetUnit);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPlayerId]);
 
   // Sync teams list if not provided by loader
   useEffect(() => {
@@ -592,11 +637,12 @@ export const DepthChart: React.FC = () => {
       {/* 4-Unit Master Navigation Bar (NCAA 25 / Madden 25 Style) */}
       <div className="relative z-10 mb-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/10 backdrop-blur-xl">
-          {UNIT_TABS.map((tab) => {
+          {UNIT_TABS.map((tab, idx) => {
             const isActive = activeUnit === tab.id;
             return (
               <button
                 key={tab.id}
+                data-testid={`unit-tab-${tab.id.toLowerCase()}`}
                 aria-pressed={isActive}
                 onClick={() => {
                   soundEffects.playSnap();
@@ -610,6 +656,13 @@ export const DepthChart: React.FC = () => {
               >
                 <span className="text-base">{tab.icon}</span>
                 <span>{tab.label}</span>
+                <kbd
+                  className="unit-hotkey-chip"
+                  data-testid={`unit-hotkey-${idx + 1}`}
+                  title={`Press ${idx + 1} to switch to ${tab.label}`}
+                >
+                  {idx + 1}
+                </kbd>
               </button>
             );
           })}
