@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Reorder, motion, AnimatePresence } from "framer-motion";
 import { useLoaderData } from "react-router-dom";
-import { ArrowUp, ArrowDown, RotateCcw, Save, CheckCircle2, SlidersHorizontal } from "lucide-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  RotateCcw,
+  Save,
+  CheckCircle2,
+  SlidersHorizontal,
+  AlertTriangle,
+} from "lucide-react";
 import { api } from "../services/api";
 import type { Player, Team, ChemistryMetadata } from "../services/api";
 import { useTheme } from "../context/useTheme";
@@ -12,253 +20,16 @@ import { PlayerAvatar } from "../components/ui/PlayerAvatar";
 import { soundEffects } from "../services/soundEffects";
 import { SpatialSceneShell } from "../components/spatial/SpatialSceneShell";
 import { DEPTH_CHART_SCENE } from "../components/spatial/spatialSceneManifest";
+import {
+  POSITION_CONFIGS,
+  UNIT_TABS,
+  isPlayerCompatibleWithPosition,
+  isPositionUnderfilled,
+  getUnderfilledAlertTitle,
+  calculateGamedayRosterMetrics,
+} from "../utils/depthChartTaxonomy";
+import type { DepthUnit } from "../utils/depthChartTaxonomy";
 import "./DepthChartSpatial.css";
-
-// ============================================================================
-// NCAA & MADDEN UNIT / POSITION TAXONOMY
-// ============================================================================
-
-export type DepthUnit = "OFFENSE" | "DEFENSE" | "SPECIAL_TEAMS" | "SPECIALISTS";
-
-interface PositionConfig {
-  code: string;
-  name: string;
-  unit: DepthUnit;
-  targetCount: number;
-  compatiblePositions: string[];
-  description: string;
-}
-
-const POSITION_CONFIGS: PositionConfig[] = [
-  // --- OFFENSE ---
-  {
-    code: "QB",
-    name: "Quarterback",
-    unit: "OFFENSE",
-    targetCount: 3,
-    compatiblePositions: ["QB"],
-    description: "Field general orchestrating pre-snap audibles and pass distribution.",
-  },
-  {
-    code: "RB",
-    name: "Halfback / RB",
-    unit: "OFFENSE",
-    targetCount: 3,
-    compatiblePositions: ["RB", "FB"],
-    description: "Primary ball carrier and zone/gap running weapon.",
-  },
-  {
-    code: "FB",
-    name: "Fullback",
-    unit: "OFFENSE",
-    targetCount: 2,
-    compatiblePositions: ["FB", "RB", "TE"],
-    description: "Lead blocker in power/I-form sets and short yardage receiver.",
-  },
-  {
-    code: "WR",
-    name: "Wide Receiver",
-    unit: "OFFENSE",
-    targetCount: 5,
-    compatiblePositions: ["WR", "TE", "RB"],
-    description: "Perimeter route runners and vertical boundary targets.",
-  },
-  {
-    code: "TE",
-    name: "Tight End",
-    unit: "OFFENSE",
-    targetCount: 3,
-    compatiblePositions: ["TE", "WR", "FB", "OL"],
-    description: "In-line run blocker and middle-of-field seam threat.",
-  },
-  {
-    code: "OT",
-    name: "Offensive Tackle (LT/RT)",
-    unit: "OFFENSE",
-    targetCount: 4,
-    compatiblePositions: ["OT", "OL", "OG", "LT", "RT", "C"],
-    description: "Edge pass protectors maintaining the pocket perimeter.",
-  },
-  {
-    code: "OG",
-    name: "Offensive Guard (LG/RG)",
-    unit: "OFFENSE",
-    targetCount: 4,
-    compatiblePositions: ["OG", "OL", "C", "LG", "RG", "OT"],
-    description: "Interior road-graders for inside zone and trap pulling.",
-  },
-  {
-    code: "C",
-    name: "Center",
-    unit: "OFFENSE",
-    targetCount: 2,
-    compatiblePositions: ["C", "OL", "OG", "OT"],
-    description: "Offensive line captain calling blitz protections and snapping.",
-  },
-
-  // --- DEFENSE ---
-  {
-    code: "DE",
-    name: "Defensive End / Edge",
-    unit: "DEFENSE",
-    targetCount: 4,
-    compatiblePositions: ["DE", "LE", "RE", "DL", "EDGE", "LB", "LOLB", "ROLB"],
-    description: "Perimeter pass rushers and outside run containment anchors.",
-  },
-  {
-    code: "DT",
-    name: "Defensive Tackle / NT",
-    unit: "DEFENSE",
-    targetCount: 4,
-    compatiblePositions: ["DT", "NT", "DL", "DE"],
-    description: "Interior trench stalwarts plugging A/B gaps and collapsing the pocket.",
-  },
-  {
-    code: "LB",
-    name: "Linebacker (MLB/OLB)",
-    unit: "DEFENSE",
-    targetCount: 5,
-    compatiblePositions: ["LB", "MLB", "LOLB", "ROLB", "DE", "EDGE", "S"],
-    description: "Second-level enforcers diagnosing runs and dropping into zone coverage.",
-  },
-  {
-    code: "CB",
-    name: "Cornerback",
-    unit: "DEFENSE",
-    targetCount: 5,
-    compatiblePositions: ["CB", "S", "FS", "SS"],
-    description: "Boundary island defenders matching outside wideouts in press/man.",
-  },
-  {
-    code: "S",
-    name: "Safety (FS/SS)",
-    unit: "DEFENSE",
-    targetCount: 4,
-    compatiblePositions: ["S", "FS", "SS", "CB", "LB"],
-    description: "Deep centerfield ball-hawks and box support tacklers.",
-  },
-
-  // --- SPECIAL TEAMS ---
-  {
-    code: "K",
-    name: "Placekicker",
-    unit: "SPECIAL_TEAMS",
-    targetCount: 1,
-    compatiblePositions: ["K", "P"],
-    description: "Field goal and extra point scoring specialist.",
-  },
-  {
-    code: "P",
-    name: "Punter",
-    unit: "SPECIAL_TEAMS",
-    targetCount: 1,
-    compatiblePositions: ["P", "K"],
-    description: "Field position tactician delivering high-hangtime directional punts.",
-  },
-  {
-    code: "LS",
-    name: "Long Snapper",
-    unit: "SPECIAL_TEAMS",
-    targetCount: 1,
-    compatiblePositions: ["LS", "C", "TE", "OL"],
-    description: "Precision snapping specialist for punts and field goal holds.",
-  },
-  {
-    code: "KR",
-    name: "Kick Returner",
-    unit: "SPECIAL_TEAMS",
-    targetCount: 2,
-    compatiblePositions: ["WR", "RB", "CB", "S"],
-    description: "High-speed return specialist exploiting kickoff lane blocking.",
-  },
-  {
-    code: "PR",
-    name: "Punt Returner",
-    unit: "SPECIAL_TEAMS",
-    targetCount: 2,
-    compatiblePositions: ["WR", "CB", "RB", "S"],
-    description: "Agile open-field playmaker fielding punts with ball security.",
-  },
-
-  // --- SPECIALISTS / SUB PACKAGES (NCAA / MADDEN) ---
-  {
-    code: "3DRB",
-    name: "3rd Down Running Back",
-    unit: "SPECIALISTS",
-    targetCount: 2,
-    compatiblePositions: ["RB", "WR"],
-    description: "Pass-catching back and blitz protection specialist in obvious passing downs.",
-  },
-  {
-    code: "PWHB",
-    name: "Power Halfback",
-    unit: "SPECIALISTS",
-    targetCount: 2,
-    compatiblePositions: ["RB", "FB"],
-    description: "Bruising short-yardage and goal-line north-south runner.",
-  },
-  {
-    code: "SLWR",
-    name: "Slot Wide Receiver",
-    unit: "SPECIALISTS",
-    targetCount: 2,
-    compatiblePositions: ["WR", "TE", "RB"],
-    description: "Quick-twitch inside receiver attacking soft middle zones in 3+ WR sets.",
-  },
-  {
-    code: "SUBLB",
-    name: "Sub Linebacker",
-    unit: "SPECIALISTS",
-    targetCount: 2,
-    compatiblePositions: ["LB", "MLB", "S", "SS", "FS"],
-    description: "High-speed coverage linebacker or safety deployed in Nickel and Dime packages.",
-  },
-  {
-    code: "SLCB",
-    name: "Slot Cornerback (Nickel)",
-    unit: "SPECIALISTS",
-    targetCount: 2,
-    compatiblePositions: ["CB", "S", "FS", "SS"],
-    description: "Agile nickelback dedicated to matching up with slot receivers.",
-  },
-];
-
-const UNIT_TABS: { id: DepthUnit; label: string; icon: string }[] = [
-  { id: "OFFENSE", label: "OFFENSE", icon: "🏈" },
-  { id: "DEFENSE", label: "DEFENSE", icon: "🛡️" },
-  { id: "SPECIAL_TEAMS", label: "SPECIAL TEAMS", icon: "⚡" },
-  { id: "SPECIALISTS", label: "SPECIALISTS & SUB", icon: "⭐" },
-];
-
-export const isPlayerCompatibleWithPosition = (
-  playerPosition: string,
-  targetCode: string,
-  compatible: string[]
-): boolean => {
-  if (playerPosition === targetCode) return true;
-  if (compatible.includes(playerPosition)) return true;
-  if (
-    ["LT", "LG", "C", "RG", "RT", "OT", "OG"].includes(targetCode) &&
-    ["OL", "OT", "OG", "C"].includes(playerPosition)
-  )
-    return true;
-  if (
-    ["DE", "LE", "RE", "DT", "NT"].includes(targetCode) &&
-    ["DL", "DE", "DT", "EDGE"].includes(playerPosition)
-  )
-    return true;
-  if (
-    ["LOLB", "MLB", "ROLB", "LB", "SUBLB"].includes(targetCode) &&
-    ["LB", "MLB", "LOLB", "ROLB"].includes(playerPosition)
-  )
-    return true;
-  if (
-    ["CB", "FS", "SS", "S", "SLCB"].includes(targetCode) &&
-    ["CB", "S", "FS", "SS"].includes(playerPosition)
-  )
-    return true;
-  return false;
-};
 
 export const DepthChart: React.FC = () => {
   const loaderData = useLoaderData() as
@@ -636,6 +407,12 @@ export const DepthChart: React.FC = () => {
   const starterPlayer = positionPlayers[0];
   const isDirty = Boolean(draftOrders[draftKey]?.length);
 
+  // Gameday Active Roster & Cap Space Metrics (Ticket 10)
+  const rosterMetrics = useMemo(
+    () => calculateGamedayRosterMetrics(roster.length, currentTeam.salary_cap_space),
+    [roster.length, currentTeam.salary_cap_space]
+  );
+
   return (
     <SpatialSceneShell
       manifest={DEPTH_CHART_SCENE}
@@ -644,6 +421,55 @@ export const DepthChart: React.FC = () => {
     >
       {/* Background Stadium Carbon Texture */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.06),transparent_50%)] pointer-events-none" />
+
+      {/* Sticky Roster Limit & Active Gameday Cap Bar (Step 3.4 / Ticket 10) */}
+      <div
+        className="depth-roster-hud sticky top-0 z-30 mb-6 px-4 py-3 rounded-2xl bg-slate-950/85 border border-white/10 backdrop-blur-xl shadow-2xl flex flex-wrap items-center justify-between gap-4 font-mono tabular-nums text-xs"
+        data-testid="gameday-roster-hud"
+      >
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-1.5">
+            <span className="text-gray-400 font-sans text-[11px] font-semibold uppercase tracking-wider">
+              GAMEDAY ACTIVE:
+            </span>
+            <span className="text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40">
+              {rosterMetrics.gamedayActive} / {rosterMetrics.maxActive}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-gray-400 font-sans text-[11px] font-semibold uppercase tracking-wider">
+              INACTIVE:
+            </span>
+            <span className="text-amber-400 font-bold px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/40">
+              {rosterMetrics.inactive} / {rosterMetrics.maxInactive}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-gray-400 font-sans text-[11px] font-semibold uppercase tracking-wider">
+              TOTAL ROSTER:
+            </span>
+            <span className="text-cyan-400 font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/40">
+              {rosterMetrics.totalRoster} / {rosterMetrics.maxRoster}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-gray-400 font-sans text-[11px] font-semibold uppercase tracking-wider">
+              CAP ROOM:
+            </span>
+            <span className="text-white font-bold px-2 py-0.5 rounded bg-cyan-950/40 border border-cyan-400/40 text-cyan-300">
+              {rosterMetrics.capRoomFormatted}
+            </span>
+          </div>
+        </div>
+
+        <div className="text-[11px] font-mono text-gray-400 hidden lg:flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>NFL ACTIVE ROSTER PROTOCOL</span>
+        </div>
+      </div>
 
       <div className="relative z-10 mb-4">
         <span className="depth-scene-kicker">
@@ -799,6 +625,8 @@ export const DepthChart: React.FC = () => {
             const count = roster.filter((p) =>
               isPlayerCompatibleWithPosition(p.position, pos.code, pos.compatiblePositions)
             ).length;
+            const isUnderfilled = isPositionUnderfilled(count, pos.targetCount);
+            const alertTitle = getUnderfilledAlertTitle(pos.code, count, pos.targetCount);
 
             return (
               <button
@@ -823,6 +651,17 @@ export const DepthChart: React.FC = () => {
                 >
                   {count}
                 </span>
+
+                {/* Positional Vacancy Alert Badge (Step 3.2 / Ticket 6) */}
+                {isUnderfilled && (
+                  <span
+                    data-testid={`underfilled-badge-${pos.code}`}
+                    title={alertTitle}
+                    className="underfilled-pos-badge inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border border-amber-500/50 bg-amber-500/20 text-amber-300 font-bold"
+                  >
+                    <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />
+                  </span>
+                )}
               </button>
             );
           })}
