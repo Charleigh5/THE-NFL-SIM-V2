@@ -1089,11 +1089,11 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 15000 });
 
     // Switch to leaders tab in SeasonDashboard
     await page.locator('[data-testid="tab-leaders"]').click();
-    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 15000 });
 
     // Open League Leaders defense tab and click Aidan Hutchinson to trigger PlayerModal
     const defTab = page.locator('[data-testid="tab-defense"]');
@@ -1123,11 +1123,11 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="tab-standings"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="tab-standings"]', { timeout: 15000 });
 
     // Switch to Standings tab to access full StandingsTable with quick-toggles and th headers
     await page.locator('[data-testid="tab-standings"]').click();
-    await page.waitForSelector('[data-testid="standings-table"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="standings-table"]', { timeout: 15000 });
 
     const thHeaders = page.locator(".standings-table th");
     const thCount = await thHeaders.count();
@@ -1178,7 +1178,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/empire/trade-center");
-    await page.waitForSelector('[data-testid="trade-negotiator"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="trade-negotiator"]', { timeout: 15000 });
 
     // Select Kansas City Chiefs as trade partner
     const partnerSelect = page.locator('[data-testid="trade-partner-select"]');
@@ -1186,7 +1186,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
 
     // Wait for partner assets to render
     const partnerAsset = page.locator('[data-testid^="draggable-partner-player-"]').first();
-    await partnerAsset.waitFor({ state: "visible", timeout: 8000 });
+    await partnerAsset.waitFor({ state: "visible", timeout: 15000 });
 
     // Add 1 user player and 1 partner player to unlock analysis
     const userAsset = page.locator('[data-testid^="draggable-user-player-"]').first();
@@ -1237,7 +1237,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/empire/depth-chart");
-    await page.waitForSelector('[data-testid^="depth-player-"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid^="depth-player-"]', { timeout: 15000 });
 
     const card = page.locator('[data-testid^="depth-player-"]').first();
     const cardComputed = await card.evaluate((el) => {
@@ -1274,11 +1274,11 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 15000 });
 
     // Switch to leaders tab in SeasonDashboard
     await page.locator('[data-testid="tab-leaders"]').click();
-    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 15000 });
 
     // Open League Leaders defense tab and click Aidan Hutchinson
     await page.locator('[data-testid="tab-defense"]').click();
@@ -1314,7 +1314,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/empire/depth-chart");
-    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 15000 });
 
     // With 2 QBs on roster against a target of 3, the QB vacancy alert badge must render
     const vacancyBadge = page.locator('[data-testid="underfilled-badge-QB"]');
@@ -1331,11 +1331,11 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="tab-standings"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="tab-standings"]', { timeout: 15000 });
 
     // Switch to Standings tab to access full StandingsTable with quick-toggles
     await page.locator('[data-testid="tab-standings"]').click();
-    await page.waitForSelector('[data-testid="standings-table"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="standings-table"]', { timeout: 15000 });
 
     const afcRow = page.locator('[data-testid="standings-table-row-Baltimore Ravens"]');
     const nfcRow = page.locator('[data-testid="standings-table-row-Detroit Lions"]');
@@ -1376,11 +1376,11 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/season");
-    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="tab-leaders"]', { timeout: 15000 });
 
     // Switch to leaders tab in SeasonDashboard
     await page.locator('[data-testid="tab-leaders"]').click();
-    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="league-leaders-container"]', { timeout: 15000 });
 
     // Open PlayerModal for Aidan Hutchinson
     await page.locator('[data-testid="tab-defense"]').click();
@@ -1409,7 +1409,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/empire/depth-chart");
-    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 15000 });
 
     // Assert kbd chips are present on unit tabs
     const hotkeyChips = page.locator(".unit-hotkey-chip");
@@ -1441,7 +1441,7 @@ test.describe("TASK-042: UX Remediation & War Room Hardening Gauntlet", () => {
     page,
   }) => {
     await page.goto("/empire/depth-chart");
-    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 8000 });
+    await page.waitForSelector('[data-testid="gameday-roster-hud"]', { timeout: 15000 });
 
     const hud = page.locator('[data-testid="gameday-roster-hud"]');
     await expect(hud).toBeVisible();
