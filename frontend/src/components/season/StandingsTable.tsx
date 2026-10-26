@@ -246,7 +246,9 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
       <thead>
         <tr>
           <th {...getSortHeaderProps("win_percentage")}>Rank</th>
-          <th className="text-left" role="columnheader">Team</th>
+          <th className="text-left" role="columnheader">
+            Team
+          </th>
           <th {...getSortHeaderProps("wins")}>W</th>
           <th {...getSortHeaderProps("losses")}>L</th>
           <th {...getSortHeaderProps("ties")}>T</th>
@@ -259,7 +261,9 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               <th {...getSortHeaderProps("strength_of_schedule")} title="Strength of Schedule">
                 SOS
               </th>
-              <th title="Power Ranking (Elo Rating)" role="columnheader">PWR</th>
+              <th title="Power Ranking (Elo Rating)" role="columnheader">
+                PWR
+              </th>
             </>
           )}
         </tr>
@@ -276,62 +280,60 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               data-testid={`standings-table-row-${team.team_name}`}
               data-team-row={`standings-row-${team.team_abbreviation}`}
             >
-                <td
-                  className="team-rank"
-                  title={team.tiebreaker_reason || `Ranked by Win %, SOS, then Point Diff`}
-                >
-                  {groupBy === "conference"
-                    ? team.conference_rank
-                    : team.division_rank || index + 1}
-                </td>
-                <td className="team-cell text-left">
-                  <span className="team-name">
-                    {renderClinchedIndicator(team)}
-                    {compact ? (
-                      team.team_abbreviation
-                    ) : (
-                      <>
-                        <span className="team-name-full">{team.team_name}</span>
-                        <span className="team-name-short">{team.team_abbreviation}</span>
-                      </>
-                    )}
-                  </span>
-                  {!compact && <span className="team-abbr">{team.team_abbreviation}</span>}
-                </td>
-                <td className="stat-cell stat-primary">{team.wins}</td>
-                <td className="stat-cell">{team.losses}</td>
-                <td className="stat-cell">{team.ties}</td>
-                {!compact && (
-                  <>
-                    <td className="stat-cell">{((team.win_percentage ?? 0) * 100).toFixed(1)}%</td>
-                    <td className="stat-cell">{team.points_for ?? 0}</td>
-                    <td className="stat-cell">{team.points_against ?? 0}</td>
-                    <td
-                      className={`stat-cell ${
-                        (team.point_differential ?? 0) > 0
-                          ? "diff-positive"
-                          : (team.point_differential ?? 0) < 0
-                            ? "diff-negative"
-                            : ""
-                      }`}
-                    >
-                      {(team.point_differential ?? 0) > 0 ? "+" : ""}
-                      {team.point_differential ?? 0}
-                    </td>
-                    <td className="stat-cell">
-                      {team.strength_of_schedule != null
-                        ? team.strength_of_schedule.toFixed(3)
-                        : "0.000"}
-                    </td>
-                    <td
-                      className="stat-cell stat-power-rank"
-                      title={`Elo: ${team.elo_rating?.toFixed(0) ?? 1500}`}
-                    >
-                      {team.elo_rating ? Math.round(team.elo_rating) : 1500}
-                    </td>
-                  </>
-                )}
-              </tr>
+              <td
+                className="team-rank"
+                title={team.tiebreaker_reason || `Ranked by Win %, SOS, then Point Diff`}
+              >
+                {groupBy === "conference" ? team.conference_rank : team.division_rank || index + 1}
+              </td>
+              <td className="team-cell text-left">
+                <span className="team-name">
+                  {renderClinchedIndicator(team)}
+                  {compact ? (
+                    team.team_abbreviation
+                  ) : (
+                    <>
+                      <span className="team-name-full">{team.team_name}</span>
+                      <span className="team-name-short">{team.team_abbreviation}</span>
+                    </>
+                  )}
+                </span>
+                {!compact && <span className="team-abbr">{team.team_abbreviation}</span>}
+              </td>
+              <td className="stat-cell stat-primary">{team.wins}</td>
+              <td className="stat-cell">{team.losses}</td>
+              <td className="stat-cell">{team.ties}</td>
+              {!compact && (
+                <>
+                  <td className="stat-cell">{((team.win_percentage ?? 0) * 100).toFixed(1)}%</td>
+                  <td className="stat-cell">{team.points_for ?? 0}</td>
+                  <td className="stat-cell">{team.points_against ?? 0}</td>
+                  <td
+                    className={`stat-cell ${
+                      (team.point_differential ?? 0) > 0
+                        ? "diff-positive"
+                        : (team.point_differential ?? 0) < 0
+                          ? "diff-negative"
+                          : ""
+                    }`}
+                  >
+                    {(team.point_differential ?? 0) > 0 ? "+" : ""}
+                    {team.point_differential ?? 0}
+                  </td>
+                  <td className="stat-cell">
+                    {team.strength_of_schedule != null
+                      ? team.strength_of_schedule.toFixed(3)
+                      : "0.000"}
+                  </td>
+                  <td
+                    className="stat-cell stat-power-rank"
+                    title={`Elo: ${team.elo_rating?.toFixed(0) ?? 1500}`}
+                  >
+                    {team.elo_rating ? Math.round(team.elo_rating) : 1500}
+                  </td>
+                </>
+              )}
+            </tr>
           );
         })}
       </tbody>

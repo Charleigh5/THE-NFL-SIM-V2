@@ -243,7 +243,9 @@
   padding: 0.25rem 0.6rem;
   border-radius: 12px;
   border: 1px solid #475569;
-  transition: border-color 0.15s, background-color 0.15s;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
   cursor: default;
 }
 

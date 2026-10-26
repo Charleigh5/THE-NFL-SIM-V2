@@ -5,6 +5,7 @@ import type { Player, PlayerStats } from "../../services/api";
 import { PlayerAvatar } from "./PlayerAvatar";
 import { getTeamAbbr } from "../../utils/teamUtils";
 import { ModalShell } from "./ModalShell";
+import { calculateSchemeFit, getPrimaryTraits, getSecondaryTraits } from "../../utils/schemeFit";
 import "./PlayerModal.css";
 
 interface PlayerModalProps {
@@ -46,6 +47,10 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
   }, [playerId]);
 
   if (!playerId) return null;
+
+  const schemeFit = player ? calculateSchemeFit(player) : null;
+  const primaryTraits = getPrimaryTraits(player?.position);
+  const secondaryTraits = getSecondaryTraits(player?.position);
 
   const isDefense = ["DL", "DE", "DT", "LB", "MLB", "OLB", "CB", "S", "FS", "SS", "DB"].includes(
     player?.position?.toUpperCase() || ""
@@ -95,6 +100,15 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
                     <span>{player?.position}</span>
                     {player?.college && <span>&bull; {player.college}</span>}
                   </div>
+                  {schemeFit && (
+                    <div
+                      className={`scheme-fit-badge ${schemeFit.badgeClass}`}
+                      data-testid="scheme-fit-badge"
+                    >
+                      <span className="scheme-fit-label">Scheme Fit:</span>
+                      <span className="scheme-fit-val">{schemeFit.tagLabel}</span>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -116,7 +130,8 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
             </div>
           ) : (
             <>
-              <div className="attributes-grid">
+              {/* Core Biometrics Bar */}
+              <div className="attributes-grid biometrics-bar">
                 <div className="attribute-item">
                   <span className="attribute-label">Overall</span>
                   <span className="attribute-value text-cyan-400">{player?.overall_rating}</span>
@@ -150,6 +165,49 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({ playerId, onClose }) =
                   <span className="attribute-value">{player?.strength ?? 80}</span>
                 </div>
               </div>
+
+              {/* Tier 1: Key Positional Attributes */}
+              <div className="primary-attributes-section mb-6">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-2">
+                  Key Positional Attributes
+                </h4>
+                <div className="primary-attributes-grid" data-testid="primary-attributes-grid">
+                  {primaryTraits.map((trait) => (
+                    <div
+                      key={trait.key}
+                      className="primary-attribute-card"
+                      data-testid={`primary-trait-${trait.key}`}
+                    >
+                      <span className="text-2xl font-black font-heading text-cyan-300">
+                        {player?.[trait.key] ?? 75}
+                      </span>
+                      <span className="primary-trait-label">{trait.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tier 2: Full Athletic & Technical Profile (Progressive Disclosure) */}
+              <details className="full-traits-disclosure mb-6" data-testid="full-traits-disclosure">
+                <summary className="traits-summary traits-summary-btn flex items-center justify-between cursor-pointer">
+                  <span>
+                    View Full Athletic & Technical Profile ({secondaryTraits.length} traits)
+                  </span>
+                  <span className="text-xs text-cyan-400 font-mono">Expand</span>
+                </summary>
+                <div className="secondary-traits-grid">
+                  {secondaryTraits.map((trait) => (
+                    <div
+                      key={trait.key}
+                      className="secondary-trait-item"
+                      data-testid={`secondary-trait-${trait.key}`}
+                    >
+                      <span className="secondary-trait-label">{trait.label}</span>
+                      <span className="secondary-trait-val">{player?.[trait.key] ?? 70}</span>
+                    </div>
+                  ))}
+                </div>
+              </details>
 
               <div className="career-stats-section">
                 <h3>Career Performance</h3>

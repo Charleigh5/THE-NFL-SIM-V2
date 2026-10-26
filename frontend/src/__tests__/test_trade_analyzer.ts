@@ -19,14 +19,8 @@ console.log("===================================================================
 // -----------------------------------------------------------------------------
 console.log("Test 1: AccessibleTooltip Component & CSS Contracts...");
 {
-  const tsxPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/ui/AccessibleTooltip.tsx"
-  );
-  const cssPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/ui/AccessibleTooltip.css"
-  );
+  const tsxPath = path.resolve(process.cwd(), "frontend/src/components/ui/AccessibleTooltip.tsx");
+  const cssPath = path.resolve(process.cwd(), "frontend/src/components/ui/AccessibleTooltip.css");
 
   assert.ok(fs.existsSync(tsxPath), "AccessibleTooltip.tsx must exist");
   assert.ok(fs.existsSync(cssPath), "AccessibleTooltip.css must exist");
@@ -49,48 +43,24 @@ console.log("Test 1: AccessibleTooltip Component & CSS Contracts...");
   );
 
   // 2. Mouse & Keyboard Interaction Handlers
-  assert.ok(
-    tsxContent.includes("onMouseEnter"),
-    "AccessibleTooltip must support onMouseEnter"
-  );
-  assert.ok(
-    tsxContent.includes("onMouseLeave"),
-    "AccessibleTooltip must support onMouseLeave"
-  );
-  assert.ok(
-    tsxContent.includes("onFocus"),
-    "AccessibleTooltip must support onFocus"
-  );
-  assert.ok(
-    tsxContent.includes("onBlur"),
-    "AccessibleTooltip must support onBlur"
-  );
-  assert.ok(
-    tsxContent.includes("onKeyDown"),
-    "AccessibleTooltip must support onKeyDown"
-  );
-  assert.ok(
-    tsxContent.includes('"Escape"'),
-    "AccessibleTooltip must dismiss on Escape key press"
-  );
+  assert.ok(tsxContent.includes("onMouseEnter"), "AccessibleTooltip must support onMouseEnter");
+  assert.ok(tsxContent.includes("onMouseLeave"), "AccessibleTooltip must support onMouseLeave");
+  assert.ok(tsxContent.includes("onFocus"), "AccessibleTooltip must support onFocus");
+  assert.ok(tsxContent.includes("onBlur"), "AccessibleTooltip must support onBlur");
+  assert.ok(tsxContent.includes("onKeyDown"), "AccessibleTooltip must support onKeyDown");
+  assert.ok(tsxContent.includes('"Escape"'), "AccessibleTooltip must dismiss on Escape key press");
 
   // 3. High-Contrast CSS Invariants
   assert.ok(
     cssContent.includes("#090d16"),
     "AccessibleTooltip.css must use high-contrast dark background #090d16"
   );
-  assert.ok(
-    cssContent.includes("#334155"),
-    "AccessibleTooltip.css must use border #334155"
-  );
+  assert.ok(cssContent.includes("#334155"), "AccessibleTooltip.css must use border #334155");
   assert.ok(
     cssContent.includes("#f1f5f9"),
     "AccessibleTooltip.css must use high-contrast text color #f1f5f9"
   );
-  assert.ok(
-    cssContent.includes("z-index: 100"),
-    "AccessibleTooltip.css must specify z-index: 100"
-  );
+  assert.ok(cssContent.includes("z-index: 100"), "AccessibleTooltip.css must specify z-index: 100");
   assert.ok(
     cssContent.includes("rgba(0, 0, 0, 0.5)") || cssContent.includes("rgba(0,0,0,0.5)"),
     "AccessibleTooltip.css must specify high-elevation box shadow"
@@ -122,14 +92,8 @@ console.log("Test 1: AccessibleTooltip Component & CSS Contracts...");
 // -----------------------------------------------------------------------------
 console.log("\nTest 2: TradeAnalyzer Corrupted Unicode Elimination & Lucide Icon Contracts...");
 {
-  const tsxPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/trades/TradeAnalyzer.tsx"
-  );
-  const cssPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/trades/TradeAnalyzer.css"
-  );
+  const tsxPath = path.resolve(process.cwd(), "frontend/src/components/trades/TradeAnalyzer.tsx");
+  const cssPath = path.resolve(process.cwd(), "frontend/src/components/trades/TradeAnalyzer.css");
 
   const tsxContent = fs.readFileSync(tsxPath, "utf-8");
   const cssContent = fs.readFileSync(cssPath, "utf-8");
@@ -178,14 +142,8 @@ console.log("\nTest 2: TradeAnalyzer Corrupted Unicode Elimination & Lucide Icon
 // -----------------------------------------------------------------------------
 console.log("\nTest 3: Metric Humanization & Accessible Tooltip Wrappers...");
 {
-  const tsxPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/trades/TradeAnalyzer.tsx"
-  );
-  const cssPath = path.resolve(
-    process.cwd(),
-    "frontend/src/components/trades/TradeAnalyzer.css"
-  );
+  const tsxPath = path.resolve(process.cwd(), "frontend/src/components/trades/TradeAnalyzer.tsx");
+  const cssPath = path.resolve(process.cwd(), "frontend/src/components/trades/TradeAnalyzer.css");
 
   const tsxContent = fs.readFileSync(tsxPath, "utf-8");
   const cssContent = fs.readFileSync(cssPath, "utf-8");
@@ -209,10 +167,7 @@ console.log("\nTest 3: Metric Humanization & Accessible Tooltip Wrappers...");
     tsxContent.includes("You Receive Capital"),
     "TradeAnalyzer.tsx must replace bare 'You Receive' with natural 'You Receive Capital'"
   );
-  assert.ok(
-    tsxContent.includes("Pts"),
-    "TradeAnalyzer.tsx values must display formatted 'Pts'"
-  );
+  assert.ok(tsxContent.includes("Pts"), "TradeAnalyzer.tsx values must display formatted 'Pts'");
   assert.ok(
     tsxContent.includes("Jimmy Johnson draft value"),
     "TradeAnalyzer.tsx must explain TVP calculation context in tooltip"
@@ -243,14 +198,8 @@ console.log("\nTest 4: Narrative Notes Humanizer Helper Invariants...");
     tniResult.label.includes("Team Need Fit"),
     "TNI abbreviation must translate to 'Team Need Fit'"
   );
-  assert.ok(
-    !tniResult.label.includes("TNI"),
-    "Label must not contain untranslated 'TNI'"
-  );
-  assert.ok(
-    tniResult.label.includes("Pts"),
-    "TVP suffix must translate to 'Pts'"
-  );
+  assert.ok(!tniResult.label.includes("TNI"), "Label must not contain untranslated 'TNI'");
+  assert.ok(tniResult.label.includes("Pts"), "TVP suffix must translate to 'Pts'");
   assert.ok(
     tniResult.tooltip.includes("Team Need Fit") || tniResult.tooltip.includes("TNI"),
     "Tooltip must explain Team Need Fit"
@@ -263,10 +212,7 @@ console.log("\nTest 4: Narrative Notes Humanizer Helper Invariants...");
     evResult.label.includes("Draft Value Drift"),
     "EV Decay must translate to 'Draft Value Drift'"
   );
-  assert.ok(
-    !evResult.label.includes("EV Decay"),
-    "Label must not contain untranslated 'EV Decay'"
-  );
+  assert.ok(!evResult.label.includes("EV Decay"), "Label must not contain untranslated 'EV Decay'");
   assert.ok(
     evResult.tooltip.includes("Draft Value Drift") || evResult.tooltip.includes("EV Decay"),
     "Tooltip must explain Draft Value Drift"
@@ -289,7 +235,8 @@ console.log("\nTest 4: Narrative Notes Humanizer Helper Invariants...");
   );
 
   // 4. Medical / Durability Risk
-  const medicalNote = "Medical Flag: Player carries IR designation with elevated knee re-injury risk";
+  const medicalNote =
+    "Medical Flag: Player carries IR designation with elevated knee re-injury risk";
   const medicalResult = humanizeNarrativeNote(medicalNote);
   assert.ok(
     medicalResult.tooltip.includes("Medical") || medicalResult.tooltip.includes("injury"),
@@ -311,10 +258,7 @@ console.log("\nTest 4: Narrative Notes Humanizer Helper Invariants...");
     compResult.tooltip.includes("Compensatory") || compResult.tooltip.includes("floor"),
     "Comp notes must explain compensatory pick floor"
   );
-  assert.ok(
-    compResult.label.includes("Pts"),
-    "TVP inside compensatory note must translate to Pts"
-  );
+  assert.ok(compResult.label.includes("Pts"), "TVP inside compensatory note must translate to Pts");
 
   // 7. Intradivision tax
   const rivalryNote = "Intradivision Tax: AFC West divisional matchup premium applied";
@@ -324,7 +268,9 @@ console.log("\nTest 4: Narrative Notes Humanizer Helper Invariants...");
     "Rivalry notes must explain intradivision tax"
   );
 
-  console.log("  [PASS] All technical abbreviations (TNI, EV Decay, Cap Surcharge, etc.) accurately humanized.");
+  console.log(
+    "  [PASS] All technical abbreviations (TNI, EV Decay, Cap Surcharge, etc.) accurately humanized."
+  );
 }
 
 // -----------------------------------------------------------------------------
