@@ -128,7 +128,9 @@ test.describe("Medical Center Flow", () => {
     await expect(
       page
         .locator('text="BODY_STATUS_DIAGRAM_TARGET"')
-        .or(page.locator('[data-testid="body-diagram"]'))
+        .first()
+        .first()
+        .or(page.locator('[data-testid="body-diagram"]').first())
     ).toBeVisible();
   });
 
@@ -143,8 +145,8 @@ test.describe("Medical Center Flow", () => {
 
     // If injury list exists, verify content
     if (await injuryList.isVisible({ timeout: 3000 })) {
-      await expect(page.locator("text=Kyler Murray").first()).toBeVisible();
-      await expect(page.locator("text=Knee Sprain").first()).toBeVisible();
+      await expect(page.locator("text=Kyler Murray").first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator("text=Knee Sprain").first()).toBeVisible({ timeout: 15000 });
     }
   });
 

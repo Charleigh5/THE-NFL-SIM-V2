@@ -30,7 +30,9 @@ test.describe("Dashboard Flow", () => {
     await page.goto("/dashboard");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible({
+      timeout: 15000,
+    });
     await expect(
       page.locator("p", { hasText: "War Room overview under the stadium lights." })
     ).toBeVisible();
