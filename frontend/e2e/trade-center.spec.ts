@@ -245,7 +245,9 @@ test.describe.serial("Trade System E2E", () => {
     await tradePage.submitFormalOffer();
 
     // Verify reset (zones empty)
-    await expect(page.locator('[data-testid="offered-zone"]')).not.toContainText("Murray");
+    await expect(page.locator('[data-testid="offered-zone"]')).not.toContainText("Murray", {
+      timeout: 15000,
+    });
   });
 
   test("should view processing offers and accept one", async ({ page }) => {

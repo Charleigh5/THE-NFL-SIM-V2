@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Sequence
 
-from app.models.player import DevelopmentTrait, Position
+from app.models.player import Position
 from app.services.trade_engine.market import (
-    POSITION_PROFILES,
     PlayerSnapshot,
     get_position_profile,
     project_player_ovr_curve,

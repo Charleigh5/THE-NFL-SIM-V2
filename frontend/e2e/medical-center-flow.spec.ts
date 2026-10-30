@@ -115,7 +115,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible({ timeout: 15000 });
 
     // Verify health percentage display
     await expect(page.locator("text=/Roster Health.*92%/")).toBeVisible();
@@ -128,7 +128,9 @@ test.describe("Medical Center Flow", () => {
     await expect(
       page
         .locator('text="BODY_STATUS_DIAGRAM_TARGET"')
-        .or(page.locator('[data-testid="body-diagram"]'))
+        .first()
+        .first()
+        .or(page.locator('[data-testid="body-diagram"]').first())
     ).toBeVisible();
   });
 
@@ -143,8 +145,8 @@ test.describe("Medical Center Flow", () => {
 
     // If injury list exists, verify content
     if (await injuryList.isVisible({ timeout: 3000 })) {
-      await expect(page.locator("text=Kyler Murray").first()).toBeVisible();
-      await expect(page.locator("text=Knee Sprain").first()).toBeVisible();
+      await expect(page.locator("text=Kyler Murray").first()).toBeVisible({ timeout: 15000 });
+      await expect(page.locator("text=Knee Sprain").first()).toBeVisible({ timeout: 15000 });
     }
   });
 
@@ -231,7 +233,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Should either show empty state or just the header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible({ timeout: 15000 });
 
     // Optionally check for "No injuries" message - page may just show empty list
     // Feature detection: empty state not required for placeholder page

@@ -153,7 +153,10 @@ export const tradeApi = {
         method: "POST",
         body: JSON.stringify({
           target_team_id: targetTeamId,
-          offering_team_id: proposal.offering_team_id ?? (proposal as any).team_id ?? null,
+          offering_team_id:
+            proposal.offering_team_id ??
+            (proposal as unknown as { team_id?: number }).team_id ??
+            null,
           offered_player_ids: offeredPlayers,
           requested_player_ids: requestedPlayers,
           offered_picks: proposal.offered_picks || null,
