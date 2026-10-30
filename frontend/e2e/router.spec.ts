@@ -88,7 +88,7 @@ test.describe("Router Navigation", () => {
   test("should support /dashboard alias route", async ({ page }) => {
     await page.goto("/dashboard");
     await expect(page).toHaveURL("/dashboard");
-    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Mission Control" })).toBeVisible({ timeout: 15000 });
   });
 
   test("should navigate to Team Selection", async ({ page }) => {

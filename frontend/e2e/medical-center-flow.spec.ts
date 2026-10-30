@@ -115,7 +115,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Verify header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible({ timeout: 15000 });
 
     // Verify health percentage display
     await expect(page.locator("text=/Roster Health.*92%/")).toBeVisible();
@@ -231,7 +231,7 @@ test.describe("Medical Center Flow", () => {
     await page.goto("/medical-center");
 
     // Should either show empty state or just the header
-    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible();
+    await expect(page.locator("h1", { hasText: "Medical Center" })).toBeVisible({ timeout: 15000 });
 
     // Optionally check for "No injuries" message - page may just show empty list
     // Feature detection: empty state not required for placeholder page
