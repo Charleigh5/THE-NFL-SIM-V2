@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable
-from hashlib import sha256
 import os
-from pathlib import Path
 import re
 import threading
 import time
 import uuid
+from collections.abc import Awaitable, Callable
+from hashlib import sha256
+from pathlib import Path
 
 from app.core.config import settings
 from app.schemas.narrator import NarrationResponse
@@ -84,7 +84,7 @@ class NarratorCacheService:
 
     @staticmethod
     def compute_cache_key(model: str, voice: str, seed: int, script: str) -> str:
-        return sha256(f"{model}:{voice}:{seed}:{script}".encode("utf-8")).hexdigest()
+        return sha256(f"{model}:{voice}:{seed}:{script}".encode()).hexdigest()
 
     def _get_lock(self, key: str) -> asyncio.Lock:
         lock = self._locks.get(key)

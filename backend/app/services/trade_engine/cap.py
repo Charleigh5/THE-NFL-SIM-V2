@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 from app.core.nfl_reference_data import SALARY_CAP_CAGR
 from app.services.trade_engine.market import PlayerSnapshot

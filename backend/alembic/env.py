@@ -73,6 +73,9 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    if db_url.startswith("sqlite+aiosqlite://"):
+        db_url_sync = db_url.replace("sqlite+aiosqlite://", "sqlite://")
+        config.set_main_option("sqlalchemy.url", db_url_sync)
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

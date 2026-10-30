@@ -12,7 +12,6 @@ from app.core.database import SessionLocal, get_async_db
 from app.core.error_decorators import handle_errors
 from app.core.roster_cache import invalidate_team_roster_cache
 from app.core.season_cache import invalidate_season_caches
-from app.services.narrator_cache_service import clear_narrator_response_cache
 from app.models.draft import DraftPick
 from app.models.player import Player
 from app.models.season import Season
@@ -32,6 +31,7 @@ from app.schemas.trade import (
     TradeRespondRequest,
 )
 from app.services.gm_agent import GMAgent
+from app.services.narrator_cache_service import clear_narrator_response_cache
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 logger = logging.getLogger(__name__)
@@ -421,7 +421,7 @@ async def respond_to_offer(
                     stmt = stmt.where(DraftPick.original_team_id == pick["original_team_id"])
                 if pick.get("year") is not None:
                     if hasattr(DraftPick, "year"):
-                        stmt = stmt.where(getattr(DraftPick, "year") == pick["year"])
+                        stmt = stmt.where(DraftPick.year == pick["year"])
                     else:
                         stmt = stmt.join(Season, DraftPick.season_id == Season.id).where(
                             Season.year == pick["year"]
@@ -444,7 +444,7 @@ async def respond_to_offer(
                     stmt = stmt.where(DraftPick.original_team_id == pick["original_team_id"])
                 if pick.get("year") is not None:
                     if hasattr(DraftPick, "year"):
-                        stmt = stmt.where(getattr(DraftPick, "year") == pick["year"])
+                        stmt = stmt.where(DraftPick.year == pick["year"])
                     else:
                         stmt = stmt.join(Season, DraftPick.season_id == Season.id).where(
                             Season.year == pick["year"]

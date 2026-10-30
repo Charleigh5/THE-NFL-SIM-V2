@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Sequence
 
 from app.models.player import Position
-from app.services.trade_engine.cap import TeamCapTradeImpact, evaluate_team_cap_impact
+from app.services.trade_engine.cap import evaluate_team_cap_impact
 from app.services.trade_engine.class_fit import (
     ProspectBoardEntry,
     evaluate_pick_class_fit,
 )
 from app.services.trade_engine.context import (
     CompetitiveWindow,
+    calculate_position_need,
     evaluate_roster_context_multiplier,
 )
 from app.services.trade_engine.market import (
@@ -18,7 +19,6 @@ from app.services.trade_engine.market import (
     calculate_player_market_tvp,
 )
 from app.services.trade_engine.modifiers import (
-    RealismEvaluation,
     TeamContextProfile,
     evaluate_player_realism_modifiers,
     evaluate_trade_relationship_modifiers,
@@ -131,7 +131,7 @@ def evaluate_trade_package(
     ai_roster_post_departures = [p for p in receiving_roster if p.id not in ai_requested_ids]
 
     user_offered_ids = {o.id for o in offered_players}
-    user_roster_post_departures = [p for p in offering_roster if p.id not in user_offered_ids]
+    [p for p in offering_roster if p.id not in user_offered_ids]
 
     # 2. AI Side Value In (what AI receives: offered players + offered picks)
     ai_in_player_tvp = 0.0
