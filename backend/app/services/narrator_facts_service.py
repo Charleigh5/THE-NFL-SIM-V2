@@ -287,7 +287,7 @@ class NarratorFactsService:
         computed_record: str | None = None
         if played_games:
             w = 0
-            l = 0
+            losses = 0
             t = 0
             for g in played_games:
                 home = g.home_team_id == team_id
@@ -296,10 +296,10 @@ class NarratorFactsService:
                 if ts > os:
                     w += 1
                 elif ts < os:
-                    l += 1
+                    losses += 1
                 else:
                     t += 1
-            computed_record = f"{w}-{l}-{t}" if t > 0 else f"{w}-{l}"
+            computed_record = f"{w}-{losses}-{t}" if t > 0 else f"{w}-{losses}"
 
         if game and game.is_played:
             is_home = game.home_team_id == team_id
