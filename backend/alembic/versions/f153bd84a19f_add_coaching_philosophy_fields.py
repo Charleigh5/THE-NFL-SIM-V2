@@ -29,6 +29,10 @@ def upgrade() -> None:
         gametype_enum = sa.Enum('REGULAR', 'THANKSGIVING', 'PRIMETIME', 'PLAYOFF', 'SUPER_BOWL', name='gametype')
         gametype_enum.create(bind, checkfirst=True)
 
+    if bind.dialect.name == 'postgresql':
+        bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        op.execute('ALTER TABLE coach ALTER COLUMN tier TYPE varchar(20) USING tier::varchar')
     with op.batch_alter_table('coach', schema=None) as batch_op:
         batch_op.alter_column('tier',
                existing_type=sa.VARCHAR(length=20),
@@ -57,6 +61,10 @@ def downgrade() -> None:
                nullable=False,
                existing_server_default=sa.text("'REGULAR'"))
 
+    if bind.dialect.name == 'postgresql':
+        bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        op.execute('ALTER TABLE coach ALTER COLUMN tier TYPE varchar(20) USING tier::varchar')
     with op.batch_alter_table('coach', schema=None) as batch_op:
         batch_op.alter_column('tier',
                existing_type=sa.Enum('LEGEND', 'ELITE', 'VETERAN', 'DEVELOPING', 'ROOKIE', name='coachtier'),
