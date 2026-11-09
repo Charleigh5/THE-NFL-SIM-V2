@@ -231,8 +231,7 @@ console.log("\nTest 3: AST & DOM Test ID Contracts in DepthChart.tsx...");
     "DepthChart.tsx HUD must render 'TOTAL ROSTER:' label"
   );
   assert.ok(
-    tsxContent.includes("{rosterMetrics.totalRoster}") ||
-      tsxContent.includes("{roster.length}"),
+    tsxContent.includes("{rosterMetrics.totalRoster}") || tsxContent.includes("{roster.length}"),
     "DepthChart.tsx HUD must display total roster count"
   );
 
