@@ -19,7 +19,6 @@ from app.models.season import Season, SeasonStatus
 from app.models.stats import PlayerGameStats
 from app.models.team import Team
 from app.schemas import draft as draft_schemas
-from app.services.narrator_cache_service import clear_narrator_response_cache
 from app.schemas.offseason import (
     DraftPickDetail,
     DraftPickSummary,
@@ -33,6 +32,7 @@ from app.schemas.offseason import (
 from app.schemas.playoff import PlayoffMatchup as PlayoffMatchupSchema
 from app.schemas.stats import LeagueLeaders, PlayerLeader
 from app.schemas.weather import GameWeatherSchema
+from app.services.narrator_cache_service import clear_narrator_response_cache
 from app.services.offseason_service import OffseasonService
 from app.services.playoff_service import PlayoffService
 from app.services.schedule_generator import ScheduleGenerator
